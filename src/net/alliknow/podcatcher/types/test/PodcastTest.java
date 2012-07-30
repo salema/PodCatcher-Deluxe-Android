@@ -53,37 +53,12 @@ public class PodcastTest {
 		assertNotNull(podcast.getEpisodes());
 		assertEquals(0, podcast.getEpisodes().size());
 		
-		try {
-			podcast = new Podcast("Linux Outlaws", new URL("http://feeds.feedburner.com/linuxoutlaws"));
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		for (ExamplePodcast ep : ExamplePodcast.values()) {
+			podcast = new Podcast(ep.name(), ep.getURL());
+			podcast.setRssFile(loadRssFile(podcast));
+			assertNotNull(podcast.getEpisodes());
+			assertTrue(podcast.getEpisodes().size() > 0);
 		}
-		podcast.setRssFile(loadRssFile(podcast));
-		assertNotNull(podcast.getEpisodes());
-		assertEquals(10, podcast.getEpisodes().size());
-		
-		try {
-			podcast = new Podcast("This American Life", new URL("http://feeds.thisamericanlife.org/talpodcast"));
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		podcast.setRssFile(loadRssFile(podcast));
-		assertNotNull(podcast.getEpisodes());
-		assertEquals(1, podcast.getEpisodes().size());
-		
-		try {
-			podcast = new Podcast("Radiolab", new URL("http://feeds.wnyc.org/radiolab"));
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		podcast.setRssFile(loadRssFile(podcast));
-		assertNotNull(podcast.getEpisodes());
-		assertTrue(podcast.getEpisodes().size() > 0);
-		assertTrue(podcast.getEpisodes().get(0).getName() != null);
-		assertTrue(podcast.getEpisodes().get(0).getName().length() > 0);
 	}
 	
 	private Document loadRssFile(Podcast podcast) {

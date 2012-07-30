@@ -25,6 +25,12 @@ import org.w3c.dom.Document;
 
 import android.os.AsyncTask;
 
+/**
+ * Loads podcast RSS file asynchroniously. Auto-cancelles itself
+ * on network or document parsing errors.
+ * 
+ * @author Kevin Hausmann
+ */
 public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 	
 	/** Owner */
