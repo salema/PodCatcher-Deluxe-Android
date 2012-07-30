@@ -1,0 +1,14 @@
+===============================================================
+A simple pod catcher written for Android
+===============================================================
+
+This software is a podcatcher targeted for devices
+running Google's Android. It features an intuitive three column 
+layout and basic playback functionality. Multiple feeds are 
+supported. Feeds can be searched while playing. The podcast 
+description is displayed, supporting HTML content.
+Visit http://www.podcatcher-deluxe.com for more information.
+
+===============================================================
+Copyright 2012 Kevin Hausmann
+This software is licensed under the GPL. See COPYING for details.
