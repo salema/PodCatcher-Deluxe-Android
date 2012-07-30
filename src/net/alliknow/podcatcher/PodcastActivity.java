@@ -16,15 +16,19 @@
  */
 package net.alliknow.podcatcher;
 
+
 import net.alliknow.podcatcher.PodcastListFragment.OnPodcastSelectedListener;
+import net.alliknow.podcatcher.tasks.LoadPodcastTask;
 import net.alliknow.podcatcher.types.Podcast;
+
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.StrictMode;
-import android.util.Log;
 
 public class PodcastActivity extends Activity implements OnPodcastSelectedListener {
 
+	/** The current podcast load task */
+	private LoadPodcastTask loadPodcastTask;
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -35,9 +39,29 @@ public class PodcastActivity extends Activity implements OnPodcastSelectedListen
 
 	@Override
 	public void onPodcastSelected(Podcast podcast) {
-		Log.d("Podcast", "Selected " + podcast.toString());
+		// Stopp loading previous task
+		if (this.loadPodcastTask != null) this.loadPodcastTask.cancel(true);   
+		// Download podcast RSS feed (async)
+		this.loadPodcastTask = new LoadPodcastTask(this);
+		this.loadPodcastTask.execute(podcast);
+	}
+	
+	/**
+	 * Notified by async RSS file loader on completion.
+	 * Updates UI to display the podcast's episodes.
+	 * @param podcast Podcast RSS feed loaded for
+	 */
+	public void onPodcastLoaded(Podcast podcast) {
+		this.loadPodcastTask = null;
 		
 		EpisodeListFragment elf = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
 		elf.setPodcast(podcast);
+	}
+	
+	/**
+	 * Notified by the async RSS loader on failure.
+	 */
+	public void onPodcastLoadFailed() {
+		this.loadPodcastTask = null;
 	}
 }

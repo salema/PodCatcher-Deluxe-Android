@@ -16,19 +16,14 @@
  */
 package net.alliknow.podcatcher.types;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import net.alliknow.podcatcher.tags.RSS;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * The podcast type.
@@ -39,10 +34,14 @@ public class Podcast {
 
 	private String name;
 	private URL url;
+	private Document podcastRssFile;
+	private List<Episode> episodes;
 	
 	public Podcast(String name, URL url) {
 		this.name = name;
 		this.url = url;
+		
+		this.episodes = new ArrayList<Episode>();
 	}
 
 	/**
@@ -61,43 +60,41 @@ public class Podcast {
 	
 	/**
 	 * Find and return all episodes for this podcast. Will never return null
-	 * but an empty list when encountering problems.
+	 * but an empty list when encountering problems. Set the RSS file before
+	 * expecting any results. 
 	 * @return The list of episodes as listed in the feed.
+	 * @see setRssFile
 	 */
 	public List<Episode> getEpisodes() {
-		List<Episode> episodes = new ArrayList<Episode>();
-		if (this.url == null) return episodes;
-		
-		try {
-			Document podcastFile = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this.url.openStream());
-			NodeList episodeNodes = podcastFile.getElementsByTagName(RSS.ITEM);
-			
-			for (int index = 0; index < episodeNodes.getLength(); index++) {
-				NodeList itemNodes = episodeNodes.item(index).getChildNodes();
-				
-				for (int index2 = 0; index2 < itemNodes.getLength(); index2++) {
-					if (itemNodes.item(index2).getNodeName() == RSS.TITLE) 
-						episodes.add(new Episode(itemNodes.item(index2).getNodeValue()));
-				}
-			}
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return episodes;
+		return this.episodes;
 	}
 		
+	public void setRssFile(Document rssFile) {
+		this.podcastRssFile = rssFile;
+		this.episodes.clear();
+		
+		NodeList episodeNodes = this.podcastRssFile.getElementsByTagName(RSS.ITEM);
+		
+		for (int episodeIndex = 0; episodeIndex < episodeNodes.getLength(); episodeIndex++) {
+			NodeList itemNodes = episodeNodes.item(episodeIndex).getChildNodes();
+			
+			for (int index = 0; index < itemNodes.getLength(); index++) {
+				if (itemNodes.item(index).getNodeName().equals(RSS.TITLE)) 
+					this.episodes.add(new Episode(itemNodes.item(index).getTextContent().trim()));
+			}
+		}
+	}
+	
 	@Override
 	public String toString() {
 		if (name == null) return "Unnamed podcast";
 		if (url == null) return name;
 		else return name + " at " + url.toString();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Podcast)) return false;
+		else return this.url.equals(((Podcast) o).getUrl());
 	}
 }

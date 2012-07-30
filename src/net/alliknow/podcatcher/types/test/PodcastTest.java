@@ -2,12 +2,18 @@ package net.alliknow.podcatcher.types.test;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import net.alliknow.podcatcher.types.Podcast;
 
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 public class PodcastTest {
 
@@ -53,6 +59,7 @@ public class PodcastTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		podcast.setRssFile(loadRssFile(podcast));
 		assertNotNull(podcast.getEpisodes());
 		assertEquals(10, podcast.getEpisodes().size());
 		
@@ -62,6 +69,7 @@ public class PodcastTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		podcast.setRssFile(loadRssFile(podcast));
 		assertNotNull(podcast.getEpisodes());
 		assertEquals(1, podcast.getEpisodes().size());
 		
@@ -71,7 +79,27 @@ public class PodcastTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		podcast.setRssFile(loadRssFile(podcast));
 		assertNotNull(podcast.getEpisodes());
 		assertTrue(podcast.getEpisodes().size() > 0);
+		assertTrue(podcast.getEpisodes().get(0).getName() != null);
+		assertTrue(podcast.getEpisodes().get(0).getName().length() > 0);
+	}
+	
+	private Document loadRssFile(Podcast podcast) {
+		try {
+			return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(podcast.getUrl().openStream());
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 }

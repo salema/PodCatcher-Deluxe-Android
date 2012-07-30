@@ -16,6 +16,8 @@
  */
 package net.alliknow.podcatcher.types;
 
+import java.net.URL;
+
 /**
  * The episode type.
  * 
@@ -24,6 +26,7 @@ package net.alliknow.podcatcher.types;
 public class Episode {
 
 	private String name;
+	private URL mediaUrl;
 	
 	public Episode(String name) {
 		this.name = name;
@@ -31,5 +34,20 @@ public class Episode {
 	
 	public String getName() {
 		return name;
+	}
+	
+	public URL getMediaUrl() {
+		return mediaUrl;
+	}
+	
+	@Override
+	public String toString() {
+		return getName();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Episode)) return false;
+		else return this.mediaUrl.equals(((Episode) o).getMediaUrl());
 	}
 }
