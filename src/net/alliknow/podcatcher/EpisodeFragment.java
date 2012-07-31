@@ -22,7 +22,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.webkit.WebView;
 
 public class EpisodeFragment extends Fragment {
 
@@ -34,6 +34,7 @@ public class EpisodeFragment extends Fragment {
 	}
 
 	public void setEpisode(Episode selectedEpisode) {
-		((TextView) getActivity().findViewById(R.id.episodeDescription)).setText(selectedEpisode.getName());
+		((WebView) getView().findViewById(R.id.episodeDescription))
+			.loadData(selectedEpisode.getDescription(), "text/html", null);
 	}
 }

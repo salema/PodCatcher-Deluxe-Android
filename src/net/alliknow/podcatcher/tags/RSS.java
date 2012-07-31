@@ -33,5 +33,6 @@ public class RSS {
 	public static final String DATE = "date";
 	public static final String PUBDATE = "pubDate";
 	public static final String THUMBNAIL = "thumbnail";
-	
+	public static final String DESCRIPTION = "description";
+		
 }

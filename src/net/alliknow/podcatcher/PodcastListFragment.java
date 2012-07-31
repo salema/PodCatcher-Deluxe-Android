@@ -38,6 +38,8 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -72,6 +74,7 @@ public class PodcastListFragment extends ListFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		this.setHasOptionsMenu(true);
 		// Loads podcasts from stored file to this.podcastList
 		this.loadPodcastList();
 		// Maps the podcast list items to the list UI
@@ -95,6 +98,11 @@ public class PodcastListFragment extends ListFragment {
             throw new ClassCastException(activity.toString() + " must implement OnPodcastSelectedListener");
         }
     }
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.podcast_list_menu, menu);
+	}
 	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {

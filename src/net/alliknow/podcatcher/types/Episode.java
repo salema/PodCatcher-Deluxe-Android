@@ -44,6 +44,8 @@ public class Episode implements Comparable<Episode> {
 	private Podcast podcast;
 	/** The episode's release date */
 	private Date pubDate;
+	/** The episode's description */
+	private String description;
 	
 	/**
 	 * Create a new episode
@@ -77,10 +79,17 @@ public class Episode implements Comparable<Episode> {
 	}
 	
 	/**
-	 * @return the publication date for this episode
+	 * @return The publication date for this episode
 	 */
 	public Date getPubDate() {
 		return pubDate;
+	}
+	
+	/**
+	 * @return The description for this episode (if any). Might be null.
+	 */
+	public String getDescription() {
+		return description;
 	}
 	
 	@Override
@@ -115,6 +124,9 @@ public class Episode implements Comparable<Episode> {
 				this.pubDate = parsePubDate(currentNode.getTextContent());
 			else if (currentNode.getNodeName().equals(RSS.PUBDATE))
 				this.pubDate = parsePubDate(currentNode.getTextContent());
+			// Episode description
+			else if (currentNode.getNodeName().equals(RSS.DESCRIPTION))
+				this.description = currentNode.getTextContent();
 		}
 	}
 	

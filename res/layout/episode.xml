@@ -8,12 +8,11 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Download" />
-    <TextView
+    <WebView
         android:id="@+id/episodeDescription"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="No episode selected" />
+        android:layout_weight="1" />
     <Button
         android:id="@+id/playButton"
         android:layout_width="match_parent"
