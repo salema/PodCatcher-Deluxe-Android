@@ -34,9 +34,13 @@ import org.w3c.dom.NodeList;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -75,6 +79,13 @@ public class PodcastListFragment extends ListFragment {
 	}
 	
 	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		
+		return inflater.inflate(R.layout.podcast_list, container, false);
+	}
+	
+	@Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
        
@@ -89,6 +100,11 @@ public class PodcastListFragment extends ListFragment {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		Podcast selectedPodcast = this.podcastList.get(position);
 		listener.onPodcastSelected(selectedPodcast);
+	}
+	
+	public void setPodcastLogo(Bitmap logo) {
+		ImageView logoView = (ImageView) getView().findViewById(R.id.podcastImage);
+		logoView.setImageBitmap(logo);
 	}
 	
 	private void createAndSetListAdapter() {
@@ -118,7 +134,10 @@ public class PodcastListFragment extends ListFragment {
 		if (! Arrays.asList(this.getActivity().fileList()).contains(OPML_FILENAME)) this.writeDummyPodcastList();
 		
 		try {
-			Document podcastFile = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this.getActivity().openFileInput(OPML_FILENAME));
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setNamespaceAware(true);
+			
+			Document podcastFile = factory.newDocumentBuilder().parse(this.getActivity().openFileInput(OPML_FILENAME));
 			NodeList podcasts = podcastFile.getElementsByTagName(OPML.OUTLINE);
 			
 			for (int index = 0; index < podcasts.getLength(); index++) {
@@ -140,6 +159,7 @@ public class PodcastListFragment extends ListFragment {
 			fos.write("<body>".getBytes());
 			fos.write("<outline text=\"This American Life\" xmlUrl=\"http://feeds.thisamericanlife.org/talpodcast\"/>".getBytes());
 			fos.write("<outline text=\"Radiolab\" xmlUrl=\"http://feeds.wnyc.org/radiolab\"/>".getBytes());
+			fos.write("<outline text=\"Linux Outlaws\" xmlUrl=\"http://feeds.feedburner.com/linuxoutlaws\"/>".getBytes());
 			fos.write("</body></opml>".getBytes());
 			fos.close();
 			

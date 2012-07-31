@@ -25,6 +25,13 @@ package net.alliknow.podcatcher.tags;
 public class RSS {
 
 	public static final String ITEM = "item";
+	public static final String IMAGE = "image";
 	public static final String TITLE = "title";
+	public static final String ENCLOSURE = "enclosure";
+	public static final String URL = "url";
+	public static final String HREF = "href";
+	public static final String DATE = "date";
+	public static final String PUBDATE = "pubDate";
+	public static final String THUMBNAIL = "thumbnail";
 	
 }

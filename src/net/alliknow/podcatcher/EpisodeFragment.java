@@ -16,11 +16,13 @@
  */
 package net.alliknow.podcatcher;
 
+import net.alliknow.podcatcher.types.Episode;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 public class EpisodeFragment extends Fragment {
 
@@ -29,5 +31,9 @@ public class EpisodeFragment extends Fragment {
 			Bundle savedInstanceState) {
 		
 		return inflater.inflate(R.layout.episode, container, false);
+	}
+
+	public void setEpisode(Episode selectedEpisode) {
+		((TextView) getActivity().findViewById(R.id.episodeDescription)).setText(selectedEpisode.getName());
 	}
 }

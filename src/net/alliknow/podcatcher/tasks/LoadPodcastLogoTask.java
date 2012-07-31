@@ -16,66 +16,45 @@
  */
 package net.alliknow.podcatcher.tasks;
 
-import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.IOException;
 
 import net.alliknow.podcatcher.PodcastActivity;
 import net.alliknow.podcatcher.types.Podcast;
-
-import org.w3c.dom.Document;
-
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 
 /**
- * Loads podcast RSS file asynchroniously. Auto-cancelles itself
- * on network or document parsing errors.
- * 
  * @author Kevin Hausmann
+ *
  */
-public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
-	
+public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
+
 	/** Owner */
 	private final PodcastActivity podcastActivity;
-
-	/** Podcast currently loading */
-	private Podcast podcast;
-	
-	/** Document builder to use */
-	private DocumentBuilderFactory factory;
 	
 	/**
 	 * Create new task
 	 * @param podcastActivity Owner activity
 	 */
-	public LoadPodcastTask(PodcastActivity podcastActivity) {
+	public LoadPodcastLogoTask(PodcastActivity podcastActivity) {
 		this.podcastActivity = podcastActivity;
-		
-		this.factory = DocumentBuilderFactory.newInstance();
-		this.factory.setNamespaceAware(true);
 	}
 	
 	@Override
-	protected Document doInBackground(Podcast... podcasts) {
-		this.podcast = podcasts[0];
-
+	protected Bitmap doInBackground(Podcast... podcasts) {
 		try {
-			return this.factory.newDocumentBuilder().parse(podcast.getUrl().openStream());
-		} catch (Exception e) {
-			this.cancel(true);
+			return BitmapFactory.decodeStream(podcasts[0].getLogoUrl().openStream());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		return null;
 	}
 	
 	@Override
-	protected void onCancelled(Document result) {
-		this.podcastActivity.onPodcastLoadFailed();
+	protected void onPostExecute(Bitmap result) {
+		this.podcastActivity.onPodcastLogoLoaded(result);
 	}
-	
-	
-	@Override
-	protected void onPostExecute(Document result) {
-		this.podcast.setRssFile(result);
-		this.podcastActivity.onPodcastLoaded(podcast);
-	}
-	
 }

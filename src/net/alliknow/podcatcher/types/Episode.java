@@ -16,28 +16,71 @@
  */
 package net.alliknow.podcatcher.types;
 
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import net.alliknow.podcatcher.tags.RSS;
+
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * The episode type.
  * 
  * @author Kevin Hausmann
  */
-public class Episode {
+public class Episode implements Comparable<Episode> {
 
+	/** This episode title */
 	private String name;
+	/** The episode's online location */
 	private URL mediaUrl;
+	/** The podcast this episode is part of */
+	private Podcast podcast;
+	/** The episode's release date */
+	private Date pubDate;
 	
-	public Episode(String name) {
-		this.name = name;
+	/**
+	 * Create a new episode
+	 * @param episodeNodes XML document nodes representing this episode
+	 */
+	public Episode(Podcast podcast, NodeList episodeNodes) {
+		this.podcast = podcast;
+		
+		readData(episodeNodes);
 	}
-	
+
+	/**
+	 * @return The episode's title
+	 */
 	public String getName() {
 		return name;
 	}
 	
+	/**
+	 * @return The media content online location
+	 */
 	public URL getMediaUrl() {
 		return mediaUrl;
+	}
+	
+	/**
+	 * @return The owning podcast
+	 */
+	public Podcast getPodcast() {
+		return podcast;
+	}
+	
+	/**
+	 * @return the publication date for this episode
+	 */
+	public Date getPubDate() {
+		return pubDate;
 	}
 	
 	@Override
@@ -49,5 +92,52 @@ public class Episode {
 	public boolean equals(Object o) {
 		if (!(o instanceof Episode)) return false;
 		else return this.mediaUrl.equals(((Episode) o).getMediaUrl());
+	}
+
+	@Override
+	public int compareTo(Episode another) {
+		return this.pubDate.compareTo(another.getPubDate());
+	}
+	
+	private void readData(NodeList episodeNodes) {
+		// Go through all nodes and find the relevant information
+		for (int index = 0; index < episodeNodes.getLength(); index++) {
+			Node currentNode = episodeNodes.item(index);
+			
+			// Episode title
+			if (currentNode.getNodeName().equals(RSS.TITLE)) 
+				this.name = currentNode.getTextContent().trim();
+			// Episode media URL
+			else if (currentNode.getNodeName().equals(RSS.ENCLOSURE))
+				this.mediaUrl = createMediaUrl(currentNode.getAttributes().getNamedItem(RSS.URL).getNodeValue());
+			// Episode publication date (2 options)
+			else if (currentNode.getNodeName().equals(RSS.DATE))
+				this.pubDate = parsePubDate(currentNode.getTextContent());
+			else if (currentNode.getNodeName().equals(RSS.PUBDATE))
+				this.pubDate = parsePubDate(currentNode.getTextContent());
+		}
+	}
+	
+	private URL createMediaUrl(String attributeValue) {
+		try {
+			return new URL(attributeValue);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	private Date parsePubDate(String attributeValue) {
+		try {
+			DateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
+			return formatter.parse(attributeValue);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 }

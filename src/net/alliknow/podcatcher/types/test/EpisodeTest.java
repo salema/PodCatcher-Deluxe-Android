@@ -1,8 +1,10 @@
 package net.alliknow.podcatcher.types.test;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -21,9 +23,13 @@ public class EpisodeTest {
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
 			podcast.setRssFile(loadRssFile(podcast));
-			Episode episode = podcast.getEpisodes().get(0);
-			assertTrue(episode.getName() != null);
-			assertTrue(episode.getName().length() > 0);
+			for (Episode episode : podcast.getEpisodes()) {
+				assertNotNull(episode.getName());
+				assertTrue(episode.getName().length() > 0);
+				assertFalse(episode.getName().contains("\n"));
+				assertFalse(episode.getName().contains("\r"));
+				assertFalse(episode.getName().contains("\r\n"));
+			}
 		}	
 	}
 
@@ -32,14 +38,42 @@ public class EpisodeTest {
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
 			podcast.setRssFile(loadRssFile(podcast));
-			Episode episode = podcast.getEpisodes().get(0);
-			assertTrue(episode.getMediaUrl() != null);
+			for (Episode episode : podcast.getEpisodes()) {
+				assertNotNull(episode.getMediaUrl());
+			}
+		}
+	}
+	
+	@Test
+	public final void testGetPodcast() {
+		for (ExamplePodcast ep : ExamplePodcast.values()) {
+			Podcast podcast = new Podcast(ep.name(), ep.getURL());
+			podcast.setRssFile(loadRssFile(podcast));
+			for (Episode episode : podcast.getEpisodes()) {
+				assertEquals(episode.getPodcast(), podcast);
+			}
+		}
+	}
+	
+	@Test
+	public final void testGetPubDate() {
+		for (ExamplePodcast ep : ExamplePodcast.values()) {
+			Podcast podcast = new Podcast(ep.name(), ep.getURL());
+			podcast.setRssFile(loadRssFile(podcast));
+			for (Episode episode : podcast.getEpisodes()) {
+				assertNotNull(episode.getPubDate());
+				assertTrue(episode.getPubDate().after(new Date(0)));
+				assertTrue(episode.getPubDate().before(new Date()));
+			}
 		}
 	}
 
 	private Document loadRssFile(Podcast podcast) {
 		try {
-			return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(podcast.getUrl().openStream());
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			dbf.setNamespaceAware(true);
+			
+			return dbf.newDocumentBuilder().parse(podcast.getUrl().openStream());
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

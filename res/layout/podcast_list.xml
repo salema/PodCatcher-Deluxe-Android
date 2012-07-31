@@ -8,9 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1" />
-    <TextView
-        android:id="@id/android:empty"
+    <ImageView
+        android:id="@+id/podcastImage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="No podcast selected" />
+        android:layout_height="200dp" />
 </LinearLayout>

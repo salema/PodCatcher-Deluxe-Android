@@ -16,6 +16,7 @@
  */
 package net.alliknow.podcatcher.types;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,8 @@ import java.util.List;
 import net.alliknow.podcatcher.tags.RSS;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -30,13 +33,28 @@ import org.w3c.dom.NodeList;
  * 
  * @author Kevin Hausmann
  */
-public class Podcast {
+public class Podcast implements Comparable<Podcast> {
 
+	/** Name of the podcast */
 	private String name;
+	/** Location of the podcast's RSS file */
 	private URL url;
+	/** XML document representing the RSS file */
 	private Document podcastRssFile;
+	/** The podcasts list of episodes */
 	private List<Episode> episodes;
+	/** The podcast's image (logo) location */
+	private URL logoUrl;
 	
+	/**
+	 * Create new podcast by name and RSS file location.
+	 * The name will not be read from the file, but remain as given. 
+	 * All other data on the podcast will only be available after
+	 * <code>setRssFile</code> was called.
+	 * @param name The podcast's name
+	 * @param url The location of the podcast's RSS file
+	 * @see setRssFile
+	 */
 	public Podcast(String name, URL url) {
 		this.name = name;
 		this.url = url;
@@ -45,14 +63,14 @@ public class Podcast {
 	}
 
 	/**
-	 * @return the name
+	 * @return the podcast's name
 	 */
 	public String getName() {
 		return name;
 	}
 	
 	/**
-	 * @return the url
+	 * @return the podcast's online location
 	 */
 	public URL getUrl() {
 		return url;
@@ -68,23 +86,32 @@ public class Podcast {
 	public List<Episode> getEpisodes() {
 		return this.episodes;
 	}
-		
+	
+	/**
+	 * Find and return the podcast's image location (logo).
+	 * Only works after RSS file is set.
+	 * @return URL pointing at the logo location
+	 * @see setRssFile
+	 */
+	public URL getLogoUrl() {
+		return this.logoUrl;
+	}
+	
+	/**
+	 * Set the RSS file representing this podcast. This is were the object
+	 * gets its information from. Many of its methods will not return valid results
+	 * unless this method was called. Calling this method also resets all
+	 * information read earlier.
+	 * @param rssFile XML document representing the podcast
+	 */
 	public void setRssFile(Document rssFile) {
 		this.podcastRssFile = rssFile;
 		this.episodes.clear();
 		
-		NodeList episodeNodes = this.podcastRssFile.getElementsByTagName(RSS.ITEM);
-		
-		for (int episodeIndex = 0; episodeIndex < episodeNodes.getLength(); episodeIndex++) {
-			NodeList itemNodes = episodeNodes.item(episodeIndex).getChildNodes();
-			
-			for (int index = 0; index < itemNodes.getLength(); index++) {
-				if (itemNodes.item(index).getNodeName().equals(RSS.TITLE)) 
-					this.episodes.add(new Episode(itemNodes.item(index).getTextContent().trim()));
-			}
-		}
+		loadMetadata();
+		loadEpisodes();
 	}
-	
+
 	@Override
 	public String toString() {
 		if (name == null) return "Unnamed podcast";
@@ -96,5 +123,53 @@ public class Podcast {
 	public boolean equals(Object o) {
 		if (!(o instanceof Podcast)) return false;
 		else return this.url.equals(((Podcast) o).getUrl());
+	}
+
+	@Override
+	public int compareTo(Podcast another) {
+		return this.getName().compareTo(another.getName());
+	}
+	
+	private void loadMetadata() {
+		NodeList imageNodes = this.podcastRssFile.getElementsByTagNameNS("*", RSS.IMAGE);
+		
+		// image tag used?
+		if (imageNodes.getLength() > 0) {
+			Node imageNode = imageNodes.item(0);
+			
+			if (imageNode.getChildNodes().getLength() > 0) {
+				this.logoUrl = createLogoUrl(((Element) imageNode).getElementsByTagName(RSS.URL).item(0).getTextContent());
+			}
+			else this.logoUrl = createLogoUrl(imageNode.getAttributes().getNamedItem(RSS.HREF).getTextContent());
+		}
+		// image in thumbnail tag
+		else {
+			NodeList thumbnailNodes = this.podcastRssFile.getElementsByTagName(RSS.THUMBNAIL);
+			
+			if (thumbnailNodes.getLength() > 0)
+				this.logoUrl = createLogoUrl(thumbnailNodes.item(0).getAttributes().getNamedItem(RSS.URL).getTextContent());
+		}
+	}
+	
+	private void loadEpisodes() {
+		NodeList episodeNodes = this.podcastRssFile.getElementsByTagName(RSS.ITEM);
+		
+		for (int episodeIndex = 0; episodeIndex < episodeNodes.getLength(); episodeIndex++) {
+			Episode newEpisode = new Episode(this, episodeNodes.item(episodeIndex).getChildNodes());
+			
+			// Only add if there is some actual content to play
+			if (newEpisode.getMediaUrl() != null) this.episodes.add(newEpisode);
+		}
+	}
+	
+	private URL createLogoUrl(String nodeValue) {
+		try {
+			return new URL(nodeValue);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 }

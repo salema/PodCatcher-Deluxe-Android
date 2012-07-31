@@ -1,10 +1,10 @@
 package net.alliknow.podcatcher.types.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -61,9 +61,22 @@ public class PodcastTest {
 		}
 	}
 	
+	@Test
+	public final void testGetLogoUrl() {
+		for (ExamplePodcast ep : ExamplePodcast.values()) {
+			Podcast podcast = new Podcast(ep.name(), ep.getURL());
+			podcast.setRssFile(loadRssFile(podcast));
+			if (podcast.getLogoUrl() == null) System.out.println(podcast.getName());
+			assertNotNull(podcast.getLogoUrl());
+		}
+	}
+	
 	private Document loadRssFile(Podcast podcast) {
 		try {
-			return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(podcast.getUrl().openStream());
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			dbf.setNamespaceAware(true);
+			
+			return dbf.newDocumentBuilder().parse(podcast.getUrl().openStream());
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

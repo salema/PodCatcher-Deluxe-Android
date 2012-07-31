@@ -22,11 +22,13 @@ import java.util.List;
 
 import net.alliknow.podcatcher.types.Episode;
 import net.alliknow.podcatcher.types.Podcast;
+import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 /**
@@ -37,6 +39,20 @@ import android.widget.SimpleAdapter;
  */
 public class EpisodeListFragment extends ListFragment {
 
+	/** The list of episode showing */
+	private List<Episode> episodeList;
+	
+	/** Container Activity must implement this interface */
+    public interface OnEpisodeSelectedListener {
+    	/**
+    	 * Updates the UI to reflect that a podcast has been selected.
+    	 * @param selectedPodcast Podcast selected by the user
+    	 */
+    	public void onEpisodeSelected(Episode selectedEpisode);
+    }
+    /** The activity we are in (listens to user selection) */ 
+    private OnEpisodeSelectedListener listener;
+    
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -44,8 +60,26 @@ public class EpisodeListFragment extends ListFragment {
 		return inflater.inflate(R.layout.episode_list, container, false);
 	}
 	
+	@Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+       
+        try {
+            listener = (OnEpisodeSelectedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnEpisodeSelectedListener");
+        }
+    }
+
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		Episode selectedEpisode = this.episodeList.get(position);
+		listener.onEpisodeSelected(selectedEpisode);
+	}
+	
 	public void setPodcast(Podcast podcast) {
 		final String episodeName = "episodeName"; 
+		this.episodeList = podcast.getEpisodes();
 		
 		// create the UI mapping
 		String[] from = new String[] { episodeName };
@@ -53,7 +87,7 @@ public class EpisodeListFragment extends ListFragment {
 
 		// prepare the list of all records
 		List<HashMap<String, String>> fillMaps = new ArrayList<HashMap<String, String>>();
-		for (Episode episode : podcast.getEpisodes()) {
+		for (Episode episode : this.episodeList) {
 			HashMap<String, String> map = new HashMap<String, String>();
 			
 			map.put(episodeName, episode.getName());
