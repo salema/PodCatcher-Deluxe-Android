@@ -3,11 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    <Button
-        android:id="@+id/downloadButton"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Download" />
     <WebView
         android:id="@+id/episodeDescription"
         android:layout_width="match_parent"
@@ -17,5 +12,6 @@
         android:id="@+id/playButton"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Play" />
+        android:onClick="playEpisode"
+        android:text="@string/play" />
 </LinearLayout>

@@ -16,25 +16,104 @@
  */
 package net.alliknow.podcatcher;
 
+import java.io.IOException;
+
 import net.alliknow.podcatcher.types.Episode;
 import android.app.Fragment;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.Button;
 
-public class EpisodeFragment extends Fragment {
+public class EpisodeFragment extends Fragment implements OnPreparedListener {
 
+	/** Current episode */
+	private Episode episode; 
+	/** Our MediaPlayer handle */
+	private MediaPlayer player;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
-		return inflater.inflate(R.layout.episode, container, false);
+		View view = inflater.inflate(R.layout.episode, container, false);
+		
+		Button button = (Button) view.findViewById(R.id.playButton);
+		button.setOnClickListener(new View.OnClickListener() {
+		    public void onClick(View v) {
+		        playEpisode();
+		    }
+		});
+		
+		return view;
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		
+		this.releasePlayer();
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		
+		this.releasePlayer();
 	}
 
 	public void setEpisode(Episode selectedEpisode) {
+		this.episode = selectedEpisode;
+		
 		((WebView) getView().findViewById(R.id.episodeDescription))
-			.loadData(selectedEpisode.getDescription(), "text/html", null);
+			.loadData(this.episode.getDescription(), "text/html", null);
+	}
+	
+	public void playEpisode() {
+		if (this.player != null && this.player.isPlaying()) {
+			this.player.stop();
+			this.releasePlayer();
+		}
+		else 
+			try {
+				this.initPlayer();
+				this.player.setDataSource(this.episode.getMediaUrl().toExternalForm());
+				this.player.prepareAsync(); // might take long! (for buffering, etc)
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalStateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		
+	}
+
+	@Override
+	public void onPrepared(MediaPlayer mp) {
+		this.player.start();
+	}
+	
+	private void initPlayer() {
+		this.player = new MediaPlayer();
+		this.player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+		this.player.setOnPreparedListener(this);
+	}
+	
+	private void releasePlayer() {
+		if (this.player != null) {
+			this.player.release();
+			this.player = null;
+		}
 	}
 }
