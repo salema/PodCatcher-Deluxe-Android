@@ -20,11 +20,11 @@ import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import net.alliknow.podcatcher.adapters.PodcastListAdapter;
 import net.alliknow.podcatcher.tags.OPML;
 import net.alliknow.podcatcher.types.Podcast;
 
@@ -44,7 +44,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
 /**
  * List fragment to display the list of podcasts as part of the
@@ -78,7 +77,7 @@ public class PodcastListFragment extends ListFragment {
 		// Loads podcasts from stored file to this.podcastList
 		this.loadPodcastList();
 		// Maps the podcast list items to the list UI
-		this.createAndSetListAdapter();
+		setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
 	}
 	
 	@Override
@@ -107,34 +106,13 @@ public class PodcastListFragment extends ListFragment {
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		Podcast selectedPodcast = this.podcastList.get(position);
+		
 		listener.onPodcastSelected(selectedPodcast);
 	}
 	
 	public void setPodcastLogo(Bitmap logo) {
-		ImageView logoView = (ImageView) getView().findViewById(R.id.podcastImage);
+		ImageView logoView = (ImageView) getView().findViewById(R.id.podcast_image);
 		logoView.setImageBitmap(logo);
-	}
-	
-	private void createAndSetListAdapter() {
-		final String podcastName = "podcastName"; 
-		
-		// create the UI mapping
-		String[] from = new String[] { podcastName };
-		int[] to = new int[] { R.id.podcastName };
-
-		// prepare the list of all records
-		List<HashMap<String, String>> fillMaps = new ArrayList<HashMap<String, String>>();
-		for (Podcast podcast : podcastList) {
-			HashMap<String, String> map = new HashMap<String, String>();
-			
-			map.put(podcastName, podcast.getName());
-			
-			fillMaps.add(map);
-		}
-
-		// fill in the layout
-		SimpleAdapter adapter = new SimpleAdapter(this.getActivity(), fillMaps, R.layout.podcast_list_item, from, to);
-		setListAdapter(adapter);
 	}
 	
 	private void loadPodcastList() {

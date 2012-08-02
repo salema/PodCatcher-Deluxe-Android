@@ -16,10 +16,9 @@
  */
 package net.alliknow.podcatcher;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
+import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.types.Episode;
 import net.alliknow.podcatcher.types.Podcast;
 import android.app.Activity;
@@ -29,7 +28,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
 /**
  * List fragment to display the list of episodes as part of the
@@ -78,25 +76,15 @@ public class EpisodeListFragment extends ListFragment {
 	}
 	
 	public void setPodcast(Podcast podcast) {
-		final String episodeName = "episodeName"; 
+		getView().findViewById(R.id.episode_list_progress).setVisibility(View.GONE);
 		this.episodeList = podcast.getEpisodes();
-		
-		// create the UI mapping
-		String[] from = new String[] { episodeName };
-		int[] to = new int[] { R.id.episodeName };
+		setListAdapter(new EpisodeListAdapter(getActivity(), this.episodeList));
+		getListView().setVisibility(View.VISIBLE);
+	}
 
-		// prepare the list of all records
-		List<HashMap<String, String>> fillMaps = new ArrayList<HashMap<String, String>>();
-		for (Episode episode : this.episodeList) {
-			HashMap<String, String> map = new HashMap<String, String>();
-			
-			map.put(episodeName, episode.getName());
-			
-			fillMaps.add(map);
-		}
-
-		// fill in the layout
-		SimpleAdapter adapter = new SimpleAdapter(this.getActivity(), fillMaps, R.layout.episode_list_item, from, to);
-		setListAdapter(adapter);
+	public void clearAndSpin() {
+		getListView().setVisibility(View.GONE);
+		getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
+		getView().findViewById(R.id.episode_list_progress).setVisibility(View.VISIBLE);
 	}
 }

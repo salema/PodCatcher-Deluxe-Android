@@ -49,6 +49,9 @@ public class PodcastActivity extends Activity implements OnPodcastSelectedListen
 		if (this.loadPodcastTask != null) this.loadPodcastTask.cancel(true);
 		if (this.loadPodcastLogoTask != null) this.loadPodcastLogoTask.cancel(true);
 		
+		EpisodeListFragment elf = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
+		elf.clearAndSpin();
+		
 		// Download podcast RSS feed (async)
 		this.loadPodcastTask = new LoadPodcastTask(this);
 		this.loadPodcastTask.execute(podcast);

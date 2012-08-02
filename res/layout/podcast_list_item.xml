@@ -2,10 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal" >
+    android:orientation="vertical" >
     <TextView
-        android:id="@+id/podcastName"
+        android:id="@+id/podcast_name"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingLeft="5dp" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingLeft="5dp"
+        android:singleLine="true"
+        android:textSize="14sp" />
+    <TextView
+        android:id="@+id/podcast_episode_count"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingLeft="5dp"
+        android:singleLine="true"
+        android:textSize="10sp"
+        android:visibility="gone" />
 </LinearLayout>

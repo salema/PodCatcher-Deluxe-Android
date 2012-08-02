@@ -43,7 +43,7 @@ public class EpisodeFragment extends Fragment implements OnPreparedListener {
 		
 		View view = inflater.inflate(R.layout.episode, container, false);
 		
-		Button button = (Button) view.findViewById(R.id.playButton);
+		Button button = (Button) view.findViewById(R.id.play_button);
 		button.setOnClickListener(new View.OnClickListener() {
 		    public void onClick(View v) {
 		        playEpisode();
@@ -70,7 +70,7 @@ public class EpisodeFragment extends Fragment implements OnPreparedListener {
 	public void setEpisode(Episode selectedEpisode) {
 		this.episode = selectedEpisode;
 		
-		((WebView) getView().findViewById(R.id.episodeDescription))
+		((WebView) getView().findViewById(R.id.episode_description))
 			.loadData(this.episode.getDescription(), "text/html", null);
 	}
 	
