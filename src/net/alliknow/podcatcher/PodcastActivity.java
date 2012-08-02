@@ -30,6 +30,9 @@ import android.util.Log;
 
 public class PodcastActivity extends Activity implements OnPodcastSelectedListener, OnEpisodeSelectedListener {
 
+	/** The minimum time podcast content is buffered (in milliseconds). If older, we reload. */
+	public static long PODCAST_TIME_TO_LIFE = 15 * 60 * 1000;
+	
 	/** The current podcast load task */
 	private LoadPodcastTask loadPodcastTask;
 	/** The current podcast logo load task */
@@ -48,13 +51,15 @@ public class PodcastActivity extends Activity implements OnPodcastSelectedListen
 		// Stopp loading previous tasks
 		if (this.loadPodcastTask != null) this.loadPodcastTask.cancel(true);
 		if (this.loadPodcastLogoTask != null) this.loadPodcastLogoTask.cancel(true);
-		
-		EpisodeListFragment elf = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
-		elf.clearAndSpin();
-		
-		// Download podcast RSS feed (async)
-		this.loadPodcastTask = new LoadPodcastTask(this);
-		this.loadPodcastTask.execute(podcast);
+					
+		if (! this.podcastNeedsReload(podcast)) this.onPodcastLoaded(podcast);
+		else {
+			findEpisodeListFragment().clearAndSpin();
+			
+			// Download podcast RSS feed (async)
+			this.loadPodcastTask = new LoadPodcastTask(this);
+			this.loadPodcastTask.execute(podcast);
+		}
 	}
 	
 	/**
@@ -65,8 +70,7 @@ public class PodcastActivity extends Activity implements OnPodcastSelectedListen
 	public void onPodcastLoaded(Podcast podcast) {
 		this.loadPodcastTask = null;
 		
-		EpisodeListFragment elf = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
-		elf.setPodcast(podcast);
+		findEpisodeListFragment().setPodcast(podcast);
 		
 		// Download podcast logo
 		if (podcast.getLogoUrl() != null) {
@@ -78,8 +82,7 @@ public class PodcastActivity extends Activity implements OnPodcastSelectedListen
 	public void onPodcastLogoLoaded(Bitmap logo) {
 		this.loadPodcastLogoTask = null;
 		
-		PodcastListFragment plf = (PodcastListFragment) getFragmentManager().findFragmentById(R.id.podcast_list);
-		plf.setPodcastLogo(logo);
+		findPodcastListFragment().setPodcastLogo(logo);
 	}
 	
 	/**
@@ -93,5 +96,17 @@ public class PodcastActivity extends Activity implements OnPodcastSelectedListen
 	public void onEpisodeSelected(Episode selectedEpisode) {
 		EpisodeFragment ef = (EpisodeFragment) getFragmentManager().findFragmentById(R.id.episode);
 		ef.setEpisode(selectedEpisode);
+	}
+	
+	private boolean podcastNeedsReload(Podcast podcast) {
+		return podcast.getAge() == 0 || podcast.getAge() > PODCAST_TIME_TO_LIFE;
+	}
+	
+	private PodcastListFragment findPodcastListFragment() {
+		return (PodcastListFragment) getFragmentManager().findFragmentById(R.id.podcast_list);
+	}
+	
+	private EpisodeListFragment findEpisodeListFragment() {
+		return (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
 	}
 }

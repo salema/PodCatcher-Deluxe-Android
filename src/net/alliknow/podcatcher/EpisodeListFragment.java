@@ -70,7 +70,7 @@ public class EpisodeListFragment extends ListFragment {
     }
 
 	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
+	public void onListItemClick(ListView list, View view, int position, long id) {
 		Episode selectedEpisode = this.episodeList.get(position);
 		listener.onEpisodeSelected(selectedEpisode);
 	}

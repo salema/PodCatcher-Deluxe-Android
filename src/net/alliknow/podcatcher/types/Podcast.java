@@ -19,6 +19,7 @@ package net.alliknow.podcatcher.types;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import net.alliknow.podcatcher.tags.RSS;
@@ -45,6 +46,8 @@ public class Podcast implements Comparable<Podcast> {
 	private List<Episode> episodes;
 	/** The podcast's image (logo) location */
 	private URL logoUrl;
+	/** The point in time when the RSS file as last been set */
+	private Date updated;
 	
 	/**
 	 * Create new podcast by name and RSS file location.
@@ -98,6 +101,18 @@ public class Podcast implements Comparable<Podcast> {
 	}
 	
 	/**
+	 * Return the age of this podcast's contents. This relates
+	 * to the time that <code>setRssFile</code> has last been
+	 * called on this object and has nothing to do with the updating
+	 * of the podcast RSS file on the provider's server.
+	 * @return Age in milliseconds
+	 */
+	public long getAge() {
+		if (this.updated == null) return 0;
+		else return new Date().getTime() - this.updated.getTime();
+	}
+	
+	/**
 	 * Set the RSS file representing this podcast. This is were the object
 	 * gets its information from. Many of its methods will not return valid results
 	 * unless this method was called. Calling this method also resets all
@@ -106,6 +121,7 @@ public class Podcast implements Comparable<Podcast> {
 	 */
 	public void setRssFile(Document rssFile) {
 		this.podcastRssFile = rssFile;
+		this.updated = new Date();
 		this.episodes.clear();
 		
 		loadMetadata();

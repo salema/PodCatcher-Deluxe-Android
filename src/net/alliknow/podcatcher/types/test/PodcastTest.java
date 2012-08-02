@@ -71,6 +71,20 @@ public class PodcastTest {
 		}
 	}
 	
+	@Test
+	public final void testGetAge() {
+		for (ExamplePodcast ep : ExamplePodcast.values()) {
+			Podcast podcast = new Podcast(ep.name(), ep.getURL());
+			assertTrue(podcast.getAge() == 0);
+		}
+		
+		for (ExamplePodcast ep : ExamplePodcast.values()) {
+			Podcast podcast = new Podcast(ep.name(), ep.getURL());
+			podcast.setRssFile(loadRssFile(podcast));
+			assertTrue(podcast.getAge() > 0);
+		}
+	}
+	
 	private Document loadRssFile(Podcast podcast) {
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();

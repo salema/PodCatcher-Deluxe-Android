@@ -66,6 +66,8 @@ public class PodcastListFragment extends ListFragment {
     
 	/** The list of podcasts we know */
 	private List<Podcast> podcastList = new ArrayList<Podcast>();
+	/** Currently selected podcast */
+	private Podcast currentPodcast;
 	/** The name of the file we store our saved podcasts in (as OPML) */
 	private static String OPML_FILENAME = "podcasts.opml";
 	
@@ -104,10 +106,15 @@ public class PodcastListFragment extends ListFragment {
 	}
 	
 	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
+	public void onListItemClick(ListView list, View view, int position, long id) {
 		Podcast selectedPodcast = this.podcastList.get(position);
 		
-		listener.onPodcastSelected(selectedPodcast);
+		if (this.currentPodcast == null || !this.currentPodcast.equals(selectedPodcast)) {
+			this.currentPodcast = selectedPodcast;
+			
+			setPodcastLogo(null);
+			listener.onPodcastSelected(selectedPodcast);
+		}
 	}
 	
 	public void setPodcastLogo(Bitmap logo) {

@@ -30,6 +30,11 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
 
+/**
+ * Fragment showing episode details
+ * 
+ * @author Kevin Hausmann
+ */
 public class EpisodeFragment extends Fragment implements OnPreparedListener {
 
 	/** Current episode */
@@ -67,6 +72,10 @@ public class EpisodeFragment extends Fragment implements OnPreparedListener {
 		this.releasePlayer();
 	}
 
+	/**
+	 * Set the displayed episode, all UI will be updated
+	 * @param selectedEpisode Episode to show
+	 */
 	public void setEpisode(Episode selectedEpisode) {
 		this.episode = selectedEpisode;
 		
