@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.alliknow.podcatcher;
+package net.alliknow.podcatcher.fragments;
 
 import java.io.FileOutputStream;
 import java.net.URL;
@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.PodcastListAdapter;
 import net.alliknow.podcatcher.tags.OPML;
 import net.alliknow.podcatcher.types.Podcast;

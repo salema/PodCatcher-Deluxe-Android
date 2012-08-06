@@ -17,8 +17,11 @@
 package net.alliknow.podcatcher;
 
 
-import net.alliknow.podcatcher.EpisodeListFragment.OnEpisodeSelectedListener;
-import net.alliknow.podcatcher.PodcastListFragment.OnPodcastSelectedListener;
+import net.alliknow.podcatcher.fragments.EpisodeFragment;
+import net.alliknow.podcatcher.fragments.EpisodeListFragment;
+import net.alliknow.podcatcher.fragments.EpisodeListFragment.OnEpisodeSelectedListener;
+import net.alliknow.podcatcher.fragments.PodcastListFragment;
+import net.alliknow.podcatcher.fragments.PodcastListFragment.OnPodcastSelectedListener;
 import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
 import net.alliknow.podcatcher.types.Episode;

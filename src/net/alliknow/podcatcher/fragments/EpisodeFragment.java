@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.alliknow.podcatcher;
+package net.alliknow.podcatcher.fragments;
 
+import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayEpisodeBinder;
 import net.alliknow.podcatcher.types.Episode;
