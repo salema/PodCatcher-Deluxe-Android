@@ -81,6 +81,7 @@ public class PodcastTest {
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
 			podcast.setRssFile(loadRssFile(podcast));
+			System.out.println(podcast.getName() + ": " + podcast.getAge());
 			assertTrue(podcast.getAge() > 0);
 		}
 	}

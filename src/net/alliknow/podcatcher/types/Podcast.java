@@ -120,9 +120,10 @@ public class Podcast implements Comparable<Podcast> {
 	 * @param rssFile XML document representing the podcast
 	 */
 	public void setRssFile(Document rssFile) {
+		this.episodes.clear();
+		
 		this.podcastRssFile = rssFile;
 		this.updated = new Date();
-		this.episodes.clear();
 		
 		loadMetadata();
 		loadEpisodes();
