@@ -16,54 +16,66 @@
  */
 package net.alliknow.podcatcher.adapters;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.types.Podcast;
 import android.content.Context;
-import android.widget.SimpleAdapter;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 /**
  * Adapter class used for the list of podcasts
  * 
  * @author Kevin Hausmann
  */
-public class PodcastListAdapter extends SimpleAdapter {
-	
-	/** Map key for UI element referal */
-	private static String PODCAST_NAME = "podcast_name";
-	private static String PODCAST_EPISODE_COUNT = "podcast_episode_count";
-	
-	/** Create the actual UI mapping */
-	private static String[] FROM = new String[] { PODCAST_NAME, PODCAST_EPISODE_COUNT };
-	private static int[] TO = new int[] { R.id.podcast_name, R.id.podcast_episode_count };
+public class PodcastListAdapter extends BaseAdapter {
 
+	/** The list our date resides in */
+	private List<Podcast> list;
+	/** Inflater for new views */
+	private LayoutInflater inflater;
+	
 	/**
 	 * Create new adapter
-	 * 
-	 * @param context The activity
-	 * @param podcastList The list of podcasts to show in list
+	 * @param context The current context
+	 * @param podcastList List of podcasts to wrap
 	 */
 	public PodcastListAdapter(Context context, List<Podcast> podcastList) {
-		super(context, fillMaps(context, podcastList), R.layout.podcast_list_item, FROM, TO);
+		this.inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		this.list = podcastList;
+	}
+	
+	@Override
+	public int getCount() {
+		return list.size();
 	}
 
-	private static List<? extends Map<String, ?>> fillMaps(Context context, List<Podcast> podcastList) {
-		// prepare the list of maps for all podcasts
-		List<HashMap<String, String>> podcastMaps = new ArrayList<HashMap<String, String>>();
-		for (Podcast podcast : podcastList) {
-			HashMap<String, String> podcastMap = new HashMap<String, String>();
-			
-			podcastMap.put(PODCAST_NAME, podcast.getName());
-			//podcastMap.put(PODCAST_EPISODE_COUNT, podcast.getEpisodes().size() + " " + 
-			//		context.getResources().getText(R.string.episodes).toString());
-			
-			podcastMaps.add(podcastMap);
-		}
+	@Override
+	public Object getItem(int position) {
+		return list.get(position);
+	}
 
-		return podcastMaps;
+	@Override
+	public long getItemId(int position) {
+		return list.get(position).getUrl().hashCode();
+	}
+	
+	@Override
+	public boolean hasStableIds() {
+		return true;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		if (convertView == null) 
+			convertView = inflater.inflate(R.layout.podcast_list_item, parent, false);
+		
+		((TextView) convertView).setText(this.list.get(position).getName());
+		
+		return convertView;
 	}
 }

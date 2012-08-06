@@ -17,30 +17,30 @@
 package net.alliknow.podcatcher.adapters;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.types.Episode;
 import android.content.Context;
-import android.widget.SimpleAdapter;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 /**
  * Adapter class used for the list of episodes
  * 
  * @author Kevin Hausmann
  */
-public class EpisodeListAdapter extends SimpleAdapter {
+public class EpisodeListAdapter extends BaseAdapter {
 
-	/** Map key for UI element referal */
-	private static String EPISODE_NAME = "episode_name";
-	private static String EPISODE_DATE = "episode_date";
-	
-	/** Create the actual UI mapping */
-	private static String[] FROM = new String[] { EPISODE_NAME, EPISODE_DATE };
-	private static int[] TO = new int[] { R.id.episode_name, R.id.episode_date };
+	/** The list our date resides in */
+	private List<Episode> list;
+	/** Inflater for new views */
+	private LayoutInflater inflater;
+	/** Formatter to use for the episode date */
+	private final DateFormat formatter = DateFormat.getDateInstance(DateFormat.LONG);
 	
 	/**
 	 * Create new adapter
@@ -49,23 +49,39 @@ public class EpisodeListAdapter extends SimpleAdapter {
 	 * @param episodeList The list of episodes to show in list
 	 */
 	public EpisodeListAdapter(Context context, List<Episode> episodeList) {
-		super(context, fillMaps(context, episodeList), R.layout.episode_list_item, FROM, TO);
+		this.inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		this.list = episodeList;
 	}
 
-	private static List<? extends Map<String, ?>> fillMaps(Context context,	List<Episode> episodeList) {
-		DateFormat formatter = DateFormat.getDateInstance(DateFormat.LONG);
+	@Override
+	public int getCount() {
+		return list.size();
+	}
+
+	@Override
+	public Object getItem(int position) {
+		return list.get(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return list.get(position).getMediaUrl().hashCode();
+	}
+	
+	@Override
+	public boolean hasStableIds() {
+		return true;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		if (convertView == null) 
+			convertView = inflater.inflate(R.layout.episode_list_item, parent, false);
 		
-		// prepare the list of maps for all episodes
-		List<HashMap<String, String>> episodeMaps = new ArrayList<HashMap<String, String>>();
-		for (Episode episode : episodeList) {
-			HashMap<String, String> episodeMap = new HashMap<String, String>();
-			
-			episodeMap.put(EPISODE_NAME, episode.getName());
-			episodeMap.put(EPISODE_DATE, formatter.format(episode.getPubDate()));
-			
-			episodeMaps.add(episodeMap);
-		}
+		((TextView) convertView.findViewById(R.id.episode_name)).setText(this.list.get(position).getName());
+		((TextView) convertView.findViewById(R.id.episode_date))
+			.setText(formatter.format(this.list.get(position).getPubDate()));
 		
-		return episodeMaps;
+		return convertView;
 	}
 }
