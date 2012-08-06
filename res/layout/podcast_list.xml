@@ -7,11 +7,20 @@
         android:id="@id/android:list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3" />
+        android:layout_weight="2"
+        android:choiceMode="singleChoice"
+        android:paddingRight="5dp" />
     <ImageView
         android:id="@+id/podcast_image"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:contentDescription="@string/podcast_image" />
+        android:contentDescription="@string/podcast_image"
+        android:padding="2dp"
+        android:scaleType="centerInside" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:background="@android:color/black"
+        android:orientation="horizontal" />
 </LinearLayout>
