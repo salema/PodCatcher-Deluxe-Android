@@ -50,10 +50,23 @@ public class EpisodeFragment extends Fragment {
 	private boolean bound;
 		
 	@Override
+    public void onCreate(Bundle savedInstanceState) {
+    	super.onCreate(savedInstanceState);
+    	setRetainInstance(true);
+    }
+	
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
-		View view = inflater.inflate(R.layout.episode, container, false);
+		return inflater.inflate(R.layout.episode, container, false);
+	}
+	
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		
+		if (this.episode != null) setEpisode(this.episode);
 		
 		this.playButton = (Button) view.findViewById(R.id.play_button);
 		this.playButton.setOnClickListener(new View.OnClickListener() {
@@ -61,8 +74,6 @@ public class EpisodeFragment extends Fragment {
 		        playEpisode();
 		    }
 		});
-		
-		return view;
 	}
 	
 	@Override

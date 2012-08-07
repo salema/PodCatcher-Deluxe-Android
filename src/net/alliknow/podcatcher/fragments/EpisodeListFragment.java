@@ -41,6 +41,8 @@ public class EpisodeListFragment extends ListFragment {
 	/** The list of episode showing */
 	private List<Episode> episodeList;
 	
+	private boolean showProgress = false;
+	
 	/** Container Activity must implement this interface */
     public interface OnEpisodeSelectedListener {
     	/**
@@ -52,11 +54,24 @@ public class EpisodeListFragment extends ListFragment {
     /** The activity we are in (listens to user selection) */ 
     private OnEpisodeSelectedListener listener;
     
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+    	super.onCreate(savedInstanceState);
+    	setRetainInstance(true);
+    }
+    
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
 		return inflater.inflate(R.layout.episode_list, container, false);
+	}
+	
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		
+		if (this.showProgress) clearAndSpin();
 	}
 	
 	@Override
@@ -78,12 +93,15 @@ public class EpisodeListFragment extends ListFragment {
 	
 	public void setPodcast(Podcast podcast) {
 		getView().findViewById(R.id.episode_list_progress).setVisibility(View.GONE);
+		
+		this.showProgress = false;
 		this.episodeList = podcast.getEpisodes();
 		setListAdapter(new EpisodeListAdapter(getActivity(), this.episodeList));
 		getListView().setVisibility(View.VISIBLE);
 	}
 
 	public void clearAndSpin() {
+		this.showProgress = true;
 		getListView().setVisibility(View.GONE);
 		getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
 		getView().findViewById(R.id.episode_list_progress).setVisibility(View.VISIBLE);

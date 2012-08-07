@@ -76,6 +76,7 @@ public class PodcastListFragment extends ListFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		this.setRetainInstance(true);
 		this.setHasOptionsMenu(true);
 		// Loads podcasts from stored file to this.podcastList
 		this.loadPodcastList();
