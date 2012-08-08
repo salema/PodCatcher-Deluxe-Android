@@ -18,27 +18,28 @@ package net.alliknow.podcatcher.tasks;
 
 import java.io.IOException;
 
-import net.alliknow.podcatcher.PodcastActivity;
+import net.alliknow.podcatcher.fragments.PodcastListFragment;
 import net.alliknow.podcatcher.types.Podcast;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 
 /**
+ * An async task to load a podcast logo
+ * 
  * @author Kevin Hausmann
- *
  */
 public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 
 	/** Owner */
-	private final PodcastActivity podcastActivity;
+	private final PodcastListFragment owner;
 	
 	/**
 	 * Create new task
 	 * @param podcastActivity Owner activity
 	 */
-	public LoadPodcastLogoTask(PodcastActivity podcastActivity) {
-		this.podcastActivity = podcastActivity;
+	public LoadPodcastLogoTask(PodcastListFragment fragment) {
+		this.owner = fragment;
 	}
 	
 	@Override
@@ -55,6 +56,6 @@ public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 	
 	@Override
 	protected void onPostExecute(Bitmap result) {
-		this.podcastActivity.onPodcastLogoLoaded(result);
+		this.owner.onPodcastLogoLoaded(result);
 	}
 }

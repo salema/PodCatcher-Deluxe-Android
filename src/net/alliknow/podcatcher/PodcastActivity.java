@@ -21,25 +21,15 @@ import net.alliknow.podcatcher.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.fragments.EpisodeListFragment.OnEpisodeSelectedListener;
 import net.alliknow.podcatcher.fragments.PodcastListFragment;
+import net.alliknow.podcatcher.fragments.PodcastListFragment.OnPodcastLoadedListener;
 import net.alliknow.podcatcher.fragments.PodcastListFragment.OnPodcastSelectedListener;
-import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask;
-import net.alliknow.podcatcher.tasks.LoadPodcastTask;
 import net.alliknow.podcatcher.types.Episode;
 import net.alliknow.podcatcher.types.Podcast;
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 
-public class PodcastActivity extends Activity implements OnPodcastSelectedListener, OnEpisodeSelectedListener {
-
-	/** The minimum time podcast content is buffered (in milliseconds). If older, we reload. */
-	public static long PODCAST_TIME_TO_LIFE = 15 * 60 * 1000;
-	
-	/** The current podcast load task */
-	private LoadPodcastTask loadPodcastTask;
-	/** The current podcast logo load task */
-	private LoadPodcastLogoTask loadPodcastLogoTask;
+public class PodcastActivity extends Activity implements 
+	OnPodcastSelectedListener, OnPodcastLoadedListener, OnEpisodeSelectedListener {
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -51,18 +41,7 @@ public class PodcastActivity extends Activity implements OnPodcastSelectedListen
 
 	@Override
 	public void onPodcastSelected(Podcast podcast) {
-		// Stopp loading previous tasks
-		if (this.loadPodcastTask != null) this.loadPodcastTask.cancel(true);
-		if (this.loadPodcastLogoTask != null) this.loadPodcastLogoTask.cancel(true);
-					
-		if (! this.podcastNeedsReload(podcast)) this.onPodcastLoaded(podcast);
-		else {
-			findEpisodeListFragment().clearAndSpin();
-			
-			// Download podcast RSS feed (async)
-			this.loadPodcastTask = new LoadPodcastTask(this);
-			this.loadPodcastTask.execute(podcast);
-		}
+		findEpisodeListFragment().clearAndSpin();
 	}
 	
 	/**
@@ -71,38 +50,13 @@ public class PodcastActivity extends Activity implements OnPodcastSelectedListen
 	 * @param podcast Podcast RSS feed loaded for
 	 */
 	public void onPodcastLoaded(Podcast podcast) {
-		this.loadPodcastTask = null;
-		
 		findEpisodeListFragment().setPodcast(podcast);
-		
-		// Download podcast logo
-		if (podcast.getLogoUrl() != null) {
-			this.loadPodcastLogoTask = new LoadPodcastLogoTask(this);
-			this.loadPodcastLogoTask.execute(podcast);
-		} else Log.d("Logo", "No logo for podcast " + podcast);
-	}
-	
-	public void onPodcastLogoLoaded(Bitmap logo) {
-		this.loadPodcastLogoTask = null;
-		
-		findPodcastListFragment().setPodcastLogo(logo);
-	}
-	
-	/**
-	 * Notified by the async RSS loader on failure.
-	 */
-	public void onPodcastLoadFailed() {
-		this.loadPodcastTask = null;
 	}
 
 	@Override
 	public void onEpisodeSelected(Episode selectedEpisode) {
 		EpisodeFragment ef = (EpisodeFragment) getFragmentManager().findFragmentById(R.id.episode);
 		ef.setEpisode(selectedEpisode);
-	}
-	
-	private boolean podcastNeedsReload(Podcast podcast) {
-		return podcast.getAge() == 0 || podcast.getAge() > PODCAST_TIME_TO_LIFE;
 	}
 	
 	private PodcastListFragment findPodcastListFragment() {

@@ -18,7 +18,7 @@ package net.alliknow.podcatcher.tasks;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import net.alliknow.podcatcher.PodcastActivity;
+import net.alliknow.podcatcher.fragments.PodcastListFragment;
 import net.alliknow.podcatcher.types.Podcast;
 
 import org.w3c.dom.Document;
@@ -34,7 +34,7 @@ import android.os.AsyncTask;
 public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 	
 	/** Owner */
-	private final PodcastActivity podcastActivity;
+	private final PodcastListFragment owner;
 
 	/** Podcast currently loading */
 	private Podcast podcast;
@@ -46,8 +46,8 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 	 * Create new task
 	 * @param podcastActivity Owner activity
 	 */
-	public LoadPodcastTask(PodcastActivity podcastActivity) {
-		this.podcastActivity = podcastActivity;
+	public LoadPodcastTask(PodcastListFragment fragment) {
+		this.owner = fragment;
 		
 		this.factory = DocumentBuilderFactory.newInstance();
 		this.factory.setNamespaceAware(true);
@@ -68,14 +68,14 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 	
 	@Override
 	protected void onCancelled(Document result) {
-		this.podcastActivity.onPodcastLoadFailed();
+		this.owner.onPodcastLoadFailed(podcast);
 	}
 	
 	
 	@Override
 	protected void onPostExecute(Document result) {
 		this.podcast.setRssFile(result);
-		this.podcastActivity.onPodcastLoaded(podcast);
+		this.owner.onPodcastLoaded(podcast);
 	}
 	
 }

@@ -27,6 +27,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.PodcastListAdapter;
 import net.alliknow.podcatcher.tags.OPML;
+import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask;
+import net.alliknow.podcatcher.tasks.LoadPodcastTask;
 import net.alliknow.podcatcher.types.Podcast;
 
 import org.w3c.dom.Document;
@@ -63,7 +65,18 @@ public class PodcastListFragment extends ListFragment {
     	public void onPodcastSelected(Podcast selectedPodcast);
     }
     /** The activity we are in (listens to user selection) */ 
-    private OnPodcastSelectedListener listener;
+    private OnPodcastSelectedListener selectedListener;
+    
+    /** Container Activity must implement this interface */
+    public interface OnPodcastLoadedListener {
+    	/**
+    	 * Updates the UI to reflect that a podcast has been loaded.
+    	 * @param loadedPodcast Podcast loaded
+    	 */
+    	public void onPodcastLoaded(Podcast loadedPodcast);
+    }
+    /** The activity we are in (listens to loading complete) */ 
+    private OnPodcastLoadedListener loadedListener;
     
 	/** The list of podcasts we know */
 	private List<Podcast> podcastList = new ArrayList<Podcast>();
@@ -71,6 +84,14 @@ public class PodcastListFragment extends ListFragment {
 	private Podcast currentPodcast;
 	/** The name of the file we store our saved podcasts in (as OPML) */
 	private static String OPML_FILENAME = "podcasts.opml";
+	
+	/** The minimum time podcast content is buffered (in milliseconds). If older, we reload. */
+	public static long PODCAST_TIME_TO_LIFE = 15 * 60 * 1000;
+	
+	/** The current podcast load task */
+	private LoadPodcastTask loadPodcastTask;
+	/** The current podcast logo load task */
+	private LoadPodcastLogoTask loadPodcastLogoTask;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -96,7 +117,8 @@ public class PodcastListFragment extends ListFragment {
         super.onAttach(activity);
        
         try {
-            listener = (OnPodcastSelectedListener) activity;
+            selectedListener = (OnPodcastSelectedListener) activity;
+            loadedListener = (OnPodcastLoadedListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement OnPodcastSelectedListener");
         }
@@ -111,17 +133,66 @@ public class PodcastListFragment extends ListFragment {
 	public void onListItemClick(ListView list, View view, int position, long id) {
 		Podcast selectedPodcast = this.podcastList.get(position);
 		
+		// Is this a new selection ?
 		if (this.currentPodcast == null || !this.currentPodcast.equals(selectedPodcast)) {
 			this.currentPodcast = selectedPodcast;
 			
+			// Prepare UI
 			setPodcastLogo(null);
-			listener.onPodcastSelected(selectedPodcast);
+			selectedListener.onPodcastSelected(selectedPodcast);
+			
+			// Stopp loading previous tasks
+			if (this.loadPodcastTask != null) this.loadPodcastTask.cancel(true);
+			if (this.loadPodcastLogoTask != null) this.loadPodcastLogoTask.cancel(true);
+						
+			// Load if too old, otherwise just use previously loaded version
+			if (! this.podcastNeedsReload(selectedPodcast)) this.onPodcastLoaded(selectedPodcast);
+			else {
+				// Download podcast RSS feed (async)
+				this.loadPodcastTask = new LoadPodcastTask(this);
+				this.loadPodcastTask.execute(selectedPodcast);
+			}
 		}
 	}
 	
-	public void setPodcastLogo(Bitmap logo) {
+	/**
+	 * Notified by async RSS file loader on completion.
+	 * Updates UI to display the podcast's episodes.
+	 * @param podcast Podcast RSS feed loaded for
+	 */
+	public void onPodcastLoaded(Podcast podcast) {
+		this.loadPodcastTask = null;
+		
+		// TODO Handle the case where the fragment is not attached because the activity is recreated
+		loadedListener.onPodcastLoaded(podcast);
+		
+		// Download podcast logo
+		if (podcast.getLogoUrl() != null) {
+			this.loadPodcastLogoTask = new LoadPodcastLogoTask(this);
+			this.loadPodcastLogoTask.execute(podcast);
+		} else Log.i("Logo", "No logo for podcast " + podcast);
+	}
+	
+	public void onPodcastLogoLoaded(Bitmap logo) {
+		this.loadPodcastLogoTask = null;
+		setPodcastLogo(logo);
+	}
+	
+	/**
+	 * Notified by the async RSS loader on failure.
+	 */
+	public void onPodcastLoadFailed(Podcast podcast) {
+		this.loadPodcastTask = null;
+		Log.w("podcast", "Podcast failed to load " + podcast);
+	}
+	
+	private void setPodcastLogo(Bitmap logo) {
 		ImageView logoView = (ImageView) getView().findViewById(R.id.podcast_image);
 		logoView.setImageBitmap(logo);
+	}
+	
+	private boolean podcastNeedsReload(Podcast podcast) {
+		return podcast.getAge() == 0 || podcast.getAge() > PODCAST_TIME_TO_LIFE;
 	}
 	
 	private void loadPodcastList() {
