@@ -38,6 +38,7 @@ import android.app.Activity;
 import android.app.ListFragment;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -138,7 +139,7 @@ public class PodcastListFragment extends ListFragment {
 			this.currentPodcast = selectedPodcast;
 			
 			// Prepare UI
-			setPodcastLogo(null);
+			setPodcastLogo(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.default_podcast_logo));
 			selectedListener.onPodcastSelected(selectedPodcast);
 			
 			// Stopp loading previous tasks

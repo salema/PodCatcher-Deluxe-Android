@@ -11,13 +11,24 @@
         android:choiceMode="singleChoice"
         android:paddingRight="5dp" />
     <ImageView
+        android:id="@+id/podcast_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="2dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="2dp"
+        android:scaleType="fitXY"
+        android:src="@android:drawable/divider_horizontal_bright" />
+    <ImageView
         android:id="@+id/podcast_image"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:contentDescription="@string/podcast_image"
         android:padding="2dp"
-        android:scaleType="centerInside" />
+        android:scaleType="centerInside"
+        android:src="@drawable/default_podcast_logo" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="35dp"
