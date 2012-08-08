@@ -139,6 +139,7 @@ public class PodcastListFragment extends ListFragment {
 			this.currentPodcast = selectedPodcast;
 			
 			// Prepare UI
+			((PodcastListAdapter) getListAdapter()).setSelectedPosition(position);
 			setPodcastLogo(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.default_podcast_logo));
 			selectedListener.onPodcastSelected(selectedPodcast);
 			

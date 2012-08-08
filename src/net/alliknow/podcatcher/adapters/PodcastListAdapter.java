@@ -36,6 +36,8 @@ public class PodcastListAdapter extends BaseAdapter {
 
 	/** The list our date resides in */
 	private List<Podcast> list;
+	/** We need to know the selected podcast's position in the list */
+	private int selectedPosition = -1;
 	/** Inflater for new views */
 	private LayoutInflater inflater;
 	
@@ -47,6 +49,11 @@ public class PodcastListAdapter extends BaseAdapter {
 	public PodcastListAdapter(Context context, List<Podcast> podcastList) {
 		this.inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.list = podcastList;
+	}
+	
+	public void setSelectedPosition(int position) {
+		this.selectedPosition = position;
+		this.notifyDataSetChanged();
 	}
 	
 	@Override
@@ -74,7 +81,11 @@ public class PodcastListAdapter extends BaseAdapter {
 		if (convertView == null) 
 			convertView = inflater.inflate(R.layout.podcast_list_item, parent, false);
 		
-		((TextView) convertView).setText(this.list.get(position).getName());
+		TextView nameView = (TextView) convertView.findViewById(R.id.podcast_name);
+		nameView.setText(this.list.get(position).getName());
+		
+		if (position == selectedPosition) nameView.setBackgroundResource(android.R.color.holo_blue_light);
+		else nameView.setBackgroundResource(android.R.color.transparent);
 		
 		return convertView;
 	}
