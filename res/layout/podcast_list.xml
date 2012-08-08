@@ -11,7 +11,6 @@
         android:choiceMode="singleChoice"
         android:paddingRight="5dp" />
     <ImageView
-        android:id="@+id/podcast_divider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="2dp"
