@@ -83,6 +83,8 @@ public class PodcastListFragment extends ListFragment {
 	private List<Podcast> podcastList = new ArrayList<Podcast>();
 	/** Currently selected podcast */
 	private Podcast currentPodcast;
+	/** Currently show podcast logo */
+	private Bitmap currentLogo;
 	/** The name of the file we store our saved podcasts in (as OPML) */
 	private static String OPML_FILENAME = "podcasts.opml";
 	
@@ -111,6 +113,13 @@ public class PodcastListFragment extends ListFragment {
 			Bundle savedInstanceState) {
 		
 		return inflater.inflate(R.layout.podcast_list, container, false);
+	}
+	
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		
+		if (this.currentLogo != null) setPodcastLogo(this.currentLogo);
 	}
 	
 	@Override
@@ -177,6 +186,8 @@ public class PodcastListFragment extends ListFragment {
 	
 	public void onPodcastLogoLoaded(Bitmap logo) {
 		this.loadPodcastLogoTask = null;
+		this.currentLogo = logo;
+		
 		setPodcastLogo(logo);
 	}
 	
@@ -185,6 +196,7 @@ public class PodcastListFragment extends ListFragment {
 	 */
 	public void onPodcastLoadFailed(Podcast podcast) {
 		this.loadPodcastTask = null;
+		
 		Log.w("podcast", "Podcast failed to load " + podcast);
 	}
 	
