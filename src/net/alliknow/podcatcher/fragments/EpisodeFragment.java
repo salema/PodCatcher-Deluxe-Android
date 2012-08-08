@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.TextView;
 
 /**
  * Fragment showing episode details
@@ -103,6 +104,10 @@ public class EpisodeFragment extends Fragment {
 	public void setEpisode(Episode selectedEpisode) {
 		this.episode = selectedEpisode;
 		
+		getView().findViewById(R.id.episode_divider).setVisibility(View.VISIBLE);
+		((TextView) getView().findViewById(R.id.podcast_title)).setText(episode.getPodcast().getName());
+		((TextView) getView().findViewById(R.id.episode_title)).setText(episode.getName());
+				
 		WebView view = (WebView) getView().findViewById(R.id.episode_description);
 		view.getSettings().setDefaultFontSize(12);
 		view.loadData(this.episode.getDescription(), "text/html", null);
