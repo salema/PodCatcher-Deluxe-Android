@@ -50,7 +50,7 @@ public class PodcastActivity extends Activity implements
 	 * @param podcast Podcast RSS feed loaded for
 	 */
 	public void onPodcastLoaded(Podcast podcast) {
-		findEpisodeListFragment().setPodcast(podcast);
+		findEpisodeListFragment().setEpisodeList(podcast.getEpisodes());
 	}
 
 	@Override

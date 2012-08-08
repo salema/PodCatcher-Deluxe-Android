@@ -21,10 +21,8 @@ import java.util.List;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.types.Podcast;
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 /**
@@ -32,28 +30,19 @@ import android.widget.TextView;
  * 
  * @author Kevin Hausmann
  */
-public class PodcastListAdapter extends BaseAdapter {
+public class PodcastListAdapter extends PodcatcherBaseAdapter {
 
-	/** The list our date resides in */
+	/** The list our data resides in */
 	private List<Podcast> list;
-	/** We need to know the selected podcast's position in the list */
-	private int selectedPosition = -1;
-	/** Inflater for new views */
-	private LayoutInflater inflater;
-	
+
 	/**
 	 * Create new adapter
 	 * @param context The current context
 	 * @param podcastList List of podcasts to wrap
 	 */
 	public PodcastListAdapter(Context context, List<Podcast> podcastList) {
-		this.inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		super(context);
 		this.list = podcastList;
-	}
-	
-	public void setSelectedPosition(int position) {
-		this.selectedPosition = position;
-		this.notifyDataSetChanged();
 	}
 	
 	@Override
@@ -72,20 +61,13 @@ public class PodcastListAdapter extends BaseAdapter {
 	}
 	
 	@Override
-	public boolean hasStableIds() {
-		return true;
-	}
-
-	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null) 
 			convertView = inflater.inflate(R.layout.podcast_list_item, parent, false);
 		
 		TextView nameView = (TextView) convertView.findViewById(R.id.podcast_name);
 		nameView.setText(this.list.get(position).getName());
-		
-		if (position == selectedPosition) nameView.setBackgroundResource(android.R.color.holo_blue_light);
-		else nameView.setBackgroundResource(android.R.color.transparent);
+		setBackground(position, nameView);
 		
 		return convertView;
 	}

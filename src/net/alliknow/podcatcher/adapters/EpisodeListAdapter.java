@@ -22,10 +22,8 @@ import java.util.List;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.types.Episode;
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 /**
@@ -33,12 +31,10 @@ import android.widget.TextView;
  * 
  * @author Kevin Hausmann
  */
-public class EpisodeListAdapter extends BaseAdapter {
+public class EpisodeListAdapter extends PodcatcherBaseAdapter {
 
 	/** The list our date resides in */
 	private List<Episode> list;
-	/** Inflater for new views */
-	private LayoutInflater inflater;
 	/** Formatter to use for the episode date */
 	private final DateFormat formatter = DateFormat.getDateInstance(DateFormat.LONG);
 	
@@ -49,7 +45,7 @@ public class EpisodeListAdapter extends BaseAdapter {
 	 * @param episodeList The list of episodes to show in list
 	 */
 	public EpisodeListAdapter(Context context, List<Episode> episodeList) {
-		this.inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		super(context);
 		this.list = episodeList;
 	}
 
@@ -69,18 +65,17 @@ public class EpisodeListAdapter extends BaseAdapter {
 	}
 	
 	@Override
-	public boolean hasStableIds() {
-		return true;
-	}
-
-	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null) 
 			convertView = inflater.inflate(R.layout.episode_list_item, parent, false);
 		
-		((TextView) convertView.findViewById(R.id.episode_name)).setText(this.list.get(position).getName());
-		((TextView) convertView.findViewById(R.id.episode_date))
-			.setText(formatter.format(this.list.get(position).getPubDate()));
+		TextView nameView = (TextView) convertView.findViewById(R.id.episode_name);
+		nameView.setText(this.list.get(position).getName());
+		setBackground(position, nameView);
+		
+		TextView dateView = (TextView) convertView.findViewById(R.id.episode_date);
+		dateView.setText(formatter.format(this.list.get(position).getPubDate()));
+		setBackground(position, dateView);		
 		
 		return convertView;
 	}

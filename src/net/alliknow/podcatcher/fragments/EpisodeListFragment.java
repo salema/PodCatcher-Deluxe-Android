@@ -21,7 +21,6 @@ import java.util.List;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.types.Episode;
-import net.alliknow.podcatcher.types.Podcast;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Bundle;
@@ -88,14 +87,16 @@ public class EpisodeListFragment extends ListFragment {
 	@Override
 	public void onListItemClick(ListView list, View view, int position, long id) {
 		Episode selectedEpisode = this.episodeList.get(position);
+		((EpisodeListAdapter) getListAdapter()).setSelectedPosition(position);
+		
 		listener.onEpisodeSelected(selectedEpisode);
 	}
 	
-	public void setPodcast(Podcast podcast) {
+	public void setEpisodeList(List<Episode> list) {
 		getView().findViewById(R.id.episode_list_progress).setVisibility(View.GONE);
 		
 		this.showProgress = false;
-		this.episodeList = podcast.getEpisodes();
+		this.episodeList = list;
 		setListAdapter(new EpisodeListAdapter(getActivity(), this.episodeList));
 		getListView().setVisibility(View.VISIBLE);
 	}
@@ -104,6 +105,6 @@ public class EpisodeListFragment extends ListFragment {
 		this.showProgress = true;
 		getListView().setVisibility(View.GONE);
 		getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
-		getView().findViewById(R.id.episode_list_progress).setVisibility(View.VISIBLE);
+		//getView().findViewById(R.id.episode_list_progress).setVisibility(View.VISIBLE);
 	}
 }
