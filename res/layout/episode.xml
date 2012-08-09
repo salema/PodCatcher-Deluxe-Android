@@ -8,14 +8,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="8dp"
-        android:singleLine="true"
         android:textSize="14sp" />
     <TextView
         android:id="@+id/podcast_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="8dp"
-        android:singleLine="true"
         android:textSize="12sp" />
     <ImageView
         android:id="@+id/episode_divider"
