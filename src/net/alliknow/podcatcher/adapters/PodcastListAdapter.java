@@ -23,7 +23,6 @@ import net.alliknow.podcatcher.types.Podcast;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 /**
  * Adapter class used for the list of podcasts
@@ -37,6 +36,7 @@ public class PodcastListAdapter extends PodcatcherBaseAdapter {
 
 	/**
 	 * Create new adapter
+	 * 
 	 * @param context The current context
 	 * @param podcastList List of podcasts to wrap
 	 */
@@ -54,7 +54,7 @@ public class PodcastListAdapter extends PodcatcherBaseAdapter {
 	public Object getItem(int position) {
 		return list.get(position);
 	}
-
+	
 	@Override
 	public long getItemId(int position) {
 		return list.get(position).getUrl().hashCode();
@@ -62,12 +62,9 @@ public class PodcastListAdapter extends PodcatcherBaseAdapter {
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		if (convertView == null) 
-			convertView = inflater.inflate(R.layout.podcast_list_item, parent, false);
+		convertView = findReturnView(convertView, parent, R.layout.podcast_list_item);
 		
-		TextView nameView = (TextView) convertView.findViewById(R.id.podcast_name);
-		nameView.setText(this.list.get(position).getName());
-		setBackground(position, nameView);
+		setTextAndBackground(convertView, R.id.podcast_name, this.list.get(position).getName(), position);
 		
 		return convertView;
 	}

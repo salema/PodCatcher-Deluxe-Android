@@ -88,9 +88,6 @@ public class PodcastListFragment extends ListFragment {
 	/** The name of the file we store our saved podcasts in (as OPML) */
 	private static String OPML_FILENAME = "podcasts.opml";
 	
-	/** The minimum time podcast content is buffered (in milliseconds). If older, we reload. */
-	public static long PODCAST_TIME_TO_LIFE = 15 * 60 * 1000;
-	
 	/** The current podcast load task */
 	private LoadPodcastTask loadPodcastTask;
 	/** The current podcast logo load task */
@@ -157,12 +154,14 @@ public class PodcastListFragment extends ListFragment {
 			if (this.loadPodcastLogoTask != null) this.loadPodcastLogoTask.cancel(true);
 						
 			// Load if too old, otherwise just use previously loaded version
-			if (! this.podcastNeedsReload(selectedPodcast)) this.onPodcastLoaded(selectedPodcast);
-			else {
+			if (selectedPodcast.needsReload()) {
 				// Download podcast RSS feed (async)
 				this.loadPodcastTask = new LoadPodcastTask(this);
 				this.loadPodcastTask.execute(selectedPodcast);
+				
 			}
+			// Use buffered content
+			else this.onPodcastLoaded(selectedPodcast);
 		}
 	}
 	
@@ -203,10 +202,6 @@ public class PodcastListFragment extends ListFragment {
 	private void setPodcastLogo(Bitmap logo) {
 		ImageView logoView = (ImageView) getView().findViewById(R.id.podcast_image);
 		logoView.setImageBitmap(logo);
-	}
-	
-	private boolean podcastNeedsReload(Podcast podcast) {
-		return podcast.getAge() == 0 || podcast.getAge() > PODCAST_TIME_TO_LIFE;
 	}
 	
 	private void loadPodcastList() {

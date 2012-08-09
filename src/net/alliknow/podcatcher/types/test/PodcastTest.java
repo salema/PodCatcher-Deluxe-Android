@@ -72,17 +72,16 @@ public class PodcastTest {
 	}
 	
 	@Test
-	public final void testGetAge() {
+	public final void testNeedsReload() {
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
-			assertTrue(podcast.getAge() == 0);
+			assertTrue(podcast.needsReload());
 		}
 		
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
 			podcast.setRssFile(loadRssFile(podcast));
-			System.out.println(podcast.getName() + ": " + podcast.getAge());
-			assertTrue(podcast.getAge() > 0);
+			assertTrue(! podcast.needsReload());
 		}
 	}
 	

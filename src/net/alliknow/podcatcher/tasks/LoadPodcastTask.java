@@ -24,6 +24,7 @@ import net.alliknow.podcatcher.types.Podcast;
 import org.w3c.dom.Document;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 /**
  * Loads podcast RSS file asynchroniously. Auto-cancelles itself
@@ -44,13 +45,13 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 	
 	/**
 	 * Create new task
-	 * @param podcastActivity Owner activity
+	 * @param fragment Owner fragment
 	 */
 	public LoadPodcastTask(PodcastListFragment fragment) {
 		this.owner = fragment;
 		
-		this.factory = DocumentBuilderFactory.newInstance();
-		this.factory.setNamespaceAware(true);
+		factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true);
 	}
 	
 	@Override
@@ -58,9 +59,10 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 		this.podcast = podcasts[0];
 
 		try {
-			return this.factory.newDocumentBuilder().parse(podcast.getUrl().openStream());
+			return factory.newDocumentBuilder().parse(podcast.getUrl().openStream());
 		} catch (Exception e) {
-			this.cancel(true);
+			Log.w("Load Podcast", "Load failed podcast \"" + podcasts[0] + "\"", e);
+			cancel(true);
 		}
 		
 		return null;
@@ -68,14 +70,14 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 	
 	@Override
 	protected void onCancelled(Document result) {
-		this.owner.onPodcastLoadFailed(podcast);
+		owner.onPodcastLoadFailed(podcast);
 	}
 	
 	
 	@Override
 	protected void onPostExecute(Document result) {
-		this.podcast.setRssFile(result);
-		this.owner.onPodcastLoaded(podcast);
+		podcast.setRssFile(result);
+		owner.onPodcastLoaded(podcast);
 	}
 	
 }

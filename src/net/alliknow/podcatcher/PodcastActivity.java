@@ -16,11 +16,9 @@
  */
 package net.alliknow.podcatcher;
 
-
 import net.alliknow.podcatcher.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.fragments.EpisodeListFragment.OnEpisodeSelectedListener;
-import net.alliknow.podcatcher.fragments.PodcastListFragment;
 import net.alliknow.podcatcher.fragments.PodcastListFragment.OnPodcastLoadedListener;
 import net.alliknow.podcatcher.fragments.PodcastListFragment.OnPodcastSelectedListener;
 import net.alliknow.podcatcher.types.Episode;
@@ -28,10 +26,16 @@ import net.alliknow.podcatcher.types.Podcast;
 import android.app.Activity;
 import android.os.Bundle;
 
+/**
+ * Our main activity class. Handles configuration changes.
+ * All the heavy lifting is done in fragments, that will be
+ * retaining on activity restarts.
+ * 
+ * @author Kevin Hausmann
+ */
 public class PodcastActivity extends Activity implements 
 	OnPodcastSelectedListener, OnPodcastLoadedListener, OnEpisodeSelectedListener {
 	
-	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
@@ -44,11 +48,7 @@ public class PodcastActivity extends Activity implements
 		findEpisodeListFragment().clearAndSpin();
 	}
 	
-	/**
-	 * Notified by async RSS file loader on completion.
-	 * Updates UI to display the podcast's episodes.
-	 * @param podcast Podcast RSS feed loaded for
-	 */
+	@Override
 	public void onPodcastLoaded(Podcast podcast) {
 		findEpisodeListFragment().setEpisodeList(podcast.getEpisodes());
 	}
@@ -57,10 +57,6 @@ public class PodcastActivity extends Activity implements
 	public void onEpisodeSelected(Episode selectedEpisode) {
 		EpisodeFragment ef = (EpisodeFragment) getFragmentManager().findFragmentById(R.id.episode);
 		ef.setEpisode(selectedEpisode);
-	}
-	
-	private PodcastListFragment findPodcastListFragment() {
-		return (PodcastListFragment) getFragmentManager().findFragmentById(R.id.podcast_list);
 	}
 	
 	private EpisodeListFragment findEpisodeListFragment() {

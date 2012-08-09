@@ -18,6 +18,7 @@ package net.alliknow.podcatcher.fragments;
 
 import java.util.List;
 
+import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.types.Episode;
@@ -92,6 +93,10 @@ public class EpisodeListFragment extends ListFragment {
 		listener.onEpisodeSelected(selectedEpisode);
 	}
 	
+	/**
+	 * Set the episode list to display and update the UI accordingly
+	 * @param list List of episodes to display
+	 */
 	public void setEpisodeList(List<Episode> list) {
 		getView().findViewById(R.id.episode_list_progress).setVisibility(View.GONE);
 		
@@ -101,10 +106,14 @@ public class EpisodeListFragment extends ListFragment {
 		getListView().setVisibility(View.VISIBLE);
 	}
 
+	/**
+	 * Show the UI to be working
+	 */
 	public void clearAndSpin() {
 		this.showProgress = true;
 		getListView().setVisibility(View.GONE);
 		getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
-		//getView().findViewById(R.id.episode_list_progress).setVisibility(View.VISIBLE);
+		if (! Podcatcher.isInDebugMode(getActivity()))
+				getView().findViewById(R.id.episode_list_progress).setVisibility(View.VISIBLE);
 	}
 }

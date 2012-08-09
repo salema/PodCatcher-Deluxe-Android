@@ -36,6 +36,10 @@ import org.w3c.dom.NodeList;
  */
 public class Podcast implements Comparable<Podcast> {
 
+	/** The minimum time podcast content is buffered (in milliseconds). 
+	 * If older, we need to reload. */
+	public static int TIME_TO_LIFE = 15 * 60 * 1000;
+	
 	/** Name of the podcast */
 	private String name;
 	/** Location of the podcast's RSS file */
@@ -101,18 +105,6 @@ public class Podcast implements Comparable<Podcast> {
 	}
 	
 	/**
-	 * Return the age of this podcast's contents. This relates
-	 * to the time that <code>setRssFile</code> has last been
-	 * called on this object and has nothing to do with the updating
-	 * of the podcast RSS file on the provider's server.
-	 * @return Age in milliseconds
-	 */
-	public long getAge() {
-		if (this.updated == null) return 0;
-		else return new Date().getTime() - this.updated.getTime();
-	}
-	
-	/**
 	 * Set the RSS file representing this podcast. This is were the object
 	 * gets its information from. Many of its methods will not return valid results
 	 * unless this method was called. Calling this method also resets all
@@ -127,6 +119,21 @@ public class Podcast implements Comparable<Podcast> {
 		
 		loadMetadata();
 		loadEpisodes();
+	}
+	
+	/**
+	 * Whether the podcast content is old enough to need reloading. This relates
+	 * to the time that <code>setRssFile</code> has last been
+	 * called on this object and has nothing to do with the updating
+	 * of the podcast RSS file on the provider's server.
+	 * 
+	 * @return True if time to life expired or the podcast has never been loaded.
+	 */
+	public boolean needsReload() {
+		// Has never been loaded
+		if (this.updated == null) return true;
+		// Check age
+		else return new Date().getTime() - this.updated.getTime() > TIME_TO_LIFE;
 	}
 
 	@Override

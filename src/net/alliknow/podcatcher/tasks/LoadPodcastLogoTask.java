@@ -23,6 +23,7 @@ import net.alliknow.podcatcher.types.Podcast;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 
 /**
  * An async task to load a podcast logo
@@ -36,7 +37,7 @@ public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 	
 	/**
 	 * Create new task
-	 * @param podcastActivity Owner activity
+	 * @param fragment Owner fragment
 	 */
 	public LoadPodcastLogoTask(PodcastListFragment fragment) {
 		this.owner = fragment;
@@ -47,8 +48,9 @@ public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 		try {
 			return BitmapFactory.decodeStream(podcasts[0].getLogoUrl().openStream());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.w("Load Logo", "Logo failed to load for podcast \"" + podcasts[0] + "\" with " +
+					"logo URL " + podcasts[0].getLogoUrl(), e);
+			cancel(true);
 		}
 		
 		return null;
@@ -56,6 +58,6 @@ public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 	
 	@Override
 	protected void onPostExecute(Bitmap result) {
-		this.owner.onPodcastLogoLoaded(result);
+		owner.onPodcastLogoLoaded(result);
 	}
 }

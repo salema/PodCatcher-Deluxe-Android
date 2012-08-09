@@ -24,7 +24,6 @@ import net.alliknow.podcatcher.types.Episode;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 /**
  * Adapter class used for the list of episodes
@@ -33,7 +32,7 @@ import android.widget.TextView;
  */
 public class EpisodeListAdapter extends PodcatcherBaseAdapter {
 
-	/** The list our date resides in */
+	/** The list our data resides in */
 	private List<Episode> list;
 	/** Formatter to use for the episode date */
 	private final DateFormat formatter = DateFormat.getDateInstance(DateFormat.LONG);
@@ -48,7 +47,7 @@ public class EpisodeListAdapter extends PodcatcherBaseAdapter {
 		super(context);
 		this.list = episodeList;
 	}
-
+	
 	@Override
 	public int getCount() {
 		return list.size();
@@ -66,16 +65,11 @@ public class EpisodeListAdapter extends PodcatcherBaseAdapter {
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		if (convertView == null) 
-			convertView = inflater.inflate(R.layout.episode_list_item, parent, false);
+		convertView = findReturnView(convertView, parent, R.layout.episode_list_item);
 		
-		TextView nameView = (TextView) convertView.findViewById(R.id.episode_name);
-		nameView.setText(this.list.get(position).getName());
-		setBackground(position, nameView);
-		
-		TextView dateView = (TextView) convertView.findViewById(R.id.episode_date);
-		dateView.setText(formatter.format(this.list.get(position).getPubDate()));
-		setBackground(position, dateView);		
+		setTextAndBackground(convertView, R.id.episode_name, list.get(position).getName(), position);
+		setTextAndBackground(convertView, R.id.episode_date, 
+				formatter.format(list.get(position).getPubDate()), position);	
 		
 		return convertView;
 	}

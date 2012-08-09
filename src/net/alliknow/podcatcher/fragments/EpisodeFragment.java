@@ -48,6 +48,7 @@ public class EpisodeFragment extends Fragment {
 	private Episode episode;
 	/** Play service */
 	private PlayEpisodeService service;
+	/** Whether we are currently bound to the service */
 	private boolean bound;
 		
 	@Override
@@ -121,7 +122,7 @@ public class EpisodeFragment extends Fragment {
 		else this.playButton.setText(R.string.play);
 	}
 	
-	 /** Defines callbacks for service binding, passed to bindService() */
+	/** Defines callbacks for service binding, passed to bindService() */
     private ServiceConnection connection = new ServiceConnection() {
 
         @Override
