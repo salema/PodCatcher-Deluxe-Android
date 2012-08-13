@@ -35,8 +35,12 @@ import android.util.Log;
  */
 public class PlayEpisodeService extends Service implements OnPreparedListener {
 
+	/** Current episode */
+	private Episode currentEpisode;
 	/** Our MediaPlayer handle */
 	private MediaPlayer player;
+	/** Is the player preparing */
+	private boolean preparing = false;
 	
 	/** Binder given to clients */
     private final IBinder binder = new PlayEpisodeBinder();
@@ -53,40 +57,65 @@ public class PlayEpisodeService extends Service implements OnPreparedListener {
 		return binder;
 	}
 	
-	public boolean plays() {
+	/**
+	 * @return Whether the player is currently playing
+	 */
+	public boolean isPlaying() {
 		return this.player != null && this.player.isPlaying();
 	}
 	
+	/**
+	 * @return Whether the player is currently preparing
+	 */
+	public boolean isPreparing() {
+		return this.preparing;
+	}
+	
+	public void pause() {
+		this.player.pause();
+	}
+	
+	public void resume() {
+		this.player.start();
+	}
+	
 	public void playEpisode(Episode episode) {
-		Log.d("Play Service", "Play called for " + episode);
+		Log.d("Play Service", "Play called for " + episode + " (" + episode.getMediaUrl() + ")");
+		this.currentEpisode = episode;
 		
-		if (this.player != null && this.player.isPlaying()) {
+		if (isPlaying()) {
 			this.player.stop();
 			this.releasePlayer();
 		}
-		else 
-			try {
-				this.initPlayer();
-				this.player.setDataSource(episode.getMediaUrl().toExternalForm());
-				this.player.prepareAsync(); // might take long! (for buffering, etc)
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalStateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}		
+		 
+		try {
+			this.initPlayer();
+			this.player.setDataSource(episode.getMediaUrl().toExternalForm());
+			this.player.prepareAsync(); // might take long! (for buffering, etc)
+			this.preparing = true;
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 	}
 	
 	@Override
 	public void onPrepared(MediaPlayer mp) {
+		this.preparing = false;
 		this.player.start();
+	}
+	
+	public Episode getCurrentEpisode() {
+		return this.currentEpisode;
 	}
 	
 	private void initPlayer() {
