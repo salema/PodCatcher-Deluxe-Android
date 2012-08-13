@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="@string/no_podcast" />
+        android:text="@string/no_episode" />
     <ProgressBar
         android:id="@+id/episode_list_progress"
         android:layout_width="match_parent"

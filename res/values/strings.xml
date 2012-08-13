@@ -3,6 +3,7 @@
     <string name="play">Play</string>
     <string name="podcast_image">Podcast Logo</string>
     <string name="episodes">Episode(s)</string>
-    <string name="no_podcast">No podcast selected</string>
+    <string name="no_podcast">No podcast added</string>
     <string name="pause">Pause</string>
+    <string name="no_episode">No podcast selected</string>
 </resources>
