@@ -34,9 +34,4 @@
         android:padding="2dp"
         android:scaleType="centerInside"
         android:src="@drawable/default_podcast_logo" />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:background="@android:color/black"
-        android:orientation="horizontal" />
 </LinearLayout>

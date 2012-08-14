@@ -28,10 +28,12 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.TextView;
 
 /**
@@ -42,7 +44,7 @@ import android.widget.TextView;
 public class EpisodeFragment extends Fragment {
 
 	/** The play button */
-	private Button playButton;
+	private MenuItem playButton;
 	private boolean plays = false;
 	/** Current episode */
 	private Episode episode;
@@ -54,7 +56,9 @@ public class EpisodeFragment extends Fragment {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
-    	setRetainInstance(true);
+    	
+    	this.setRetainInstance(true);
+    	this.setHasOptionsMenu(true);
     }
 	
 	@Override
@@ -65,17 +69,18 @@ public class EpisodeFragment extends Fragment {
 	}
 	
 	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.episode_menu, menu);
+		
+		this.playButton = menu.findItem(R.id.play);
+	}
+	
+	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		
+		// Restore from configuration change 
 		if (this.episode != null) setEpisode(this.episode);
-		
-		this.playButton = (Button) view.findViewById(R.id.play_button);
-		this.playButton.setOnClickListener(new View.OnClickListener() {
-		    public void onClick(View v) {
-		        playEpisode();
-		    }
-		});
 	}
 	
 	@Override
@@ -85,6 +90,21 @@ public class EpisodeFragment extends Fragment {
 		// Bind to service
         Intent intent = new Intent(this.getActivity(), PlayEpisodeService.class);
         getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		togglePlay();
+		
+		return true;
+	}
+	
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+		
+		menu.findItem(R.id.play).setShowAsAction(
+				this.episode == null ? MenuItem.SHOW_AS_ACTION_NEVER : MenuItem.SHOW_AS_ACTION_ALWAYS);
 	}
 	
 	@Override
@@ -112,14 +132,30 @@ public class EpisodeFragment extends Fragment {
 		WebView view = (WebView) getView().findViewById(R.id.episode_description);
 		view.getSettings().setDefaultFontSize(12);
 		view.loadData(this.episode.getDescription(), "text/html", null);
+		
+		getActivity().invalidateOptionsMenu();
 	}
 	
-	public void playEpisode() {
-		service.playEpisode(this.episode);
+	public void togglePlay() {
+		if (this.episode == null) return;
+		
 		this.plays = !this.plays;
 		
-		if (this.plays) this.playButton.setText(R.string.pause);
-		else this.playButton.setText(R.string.play);
+		// Episode not played before
+		if (! this.episode.equals(service.getCurrentEpisode())) {
+			this.playButton.setTitle(R.string.pause);
+			service.playEpisode(this.episode); 
+		}
+		// Player in pause
+		else if (plays) {
+			this.playButton.setTitle(R.string.pause);
+			service.resume();
+		} 
+		// Player playing
+		else {
+			this.playButton.setTitle(R.string.play);
+			service.pause();
+		}		
 	}
 	
 	/** Defines callbacks for service binding, passed to bindService() */
