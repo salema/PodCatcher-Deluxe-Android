@@ -94,6 +94,8 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	protected void setTextAndBackground(View listItem, int viewId, String text, int position) {
 		TextView textView = (TextView) listItem.findViewById(viewId);
 		textView.setText(text);
+		textView.setSingleLine(position != selectedPosition);
+		
 		setBackground(position, textView);
 	}
 	
