@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
-        android:id="@+id/addPodcast"
+        android:id="@+id/add_podcast_button"
         android:showAsAction="always"
-        android:title="Add Podcast"/>
+        android:title="@string/add_podcast"/>
 </menu>

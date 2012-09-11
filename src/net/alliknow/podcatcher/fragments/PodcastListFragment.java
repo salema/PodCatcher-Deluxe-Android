@@ -20,12 +20,14 @@ import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.PodcastListAdapter;
+import net.alliknow.podcatcher.fragments.AddPodcastFragment.AddPodcastListener;
 import net.alliknow.podcatcher.tags.OPML;
 import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
@@ -44,6 +46,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -55,7 +58,7 @@ import android.widget.ListView;
  * 
  * @author Kevin Hausmann
  */
-public class PodcastListFragment extends ListFragment {
+public class PodcastListFragment extends ListFragment implements AddPodcastListener {
 	
 	/** Container Activity must implement this interface */
     public interface OnPodcastSelectedListener {
@@ -137,6 +140,17 @@ public class PodcastListFragment extends ListFragment {
 	}
 	
 	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.add_podcast_button) {
+			AddPodcastFragment fragment = new AddPodcastFragment();
+			fragment.setAddPodcastListener(this);
+			fragment.show(getFragmentManager(), "add_podcast");
+		}
+		
+		return item.getItemId() == R.id.add_podcast_button;
+	}
+	
+	@Override
 	public void onListItemClick(ListView list, View view, int position, long id) {
 		Podcast selectedPodcast = this.podcastList.get(position);
 		
@@ -199,6 +213,23 @@ public class PodcastListFragment extends ListFragment {
 		Log.w("podcast", "Podcast failed to load " + podcast);
 	}
 	
+	@Override
+	public void addPodcast(Podcast newPodcast) {
+		if (! podcastList.contains(newPodcast)) {
+			podcastList.add(newPodcast);
+			Collections.sort(podcastList);
+			
+			setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
+		} else Log.d("Add podcast", "Podcast \"" + newPodcast.getName() + "\" is already in list.");
+	}
+	
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		
+		storePodcastList();
+	}
+	
 	private void setPodcastLogo(Bitmap logo) {
 		ImageView logoView = (ImageView) getView().findViewById(R.id.podcast_image);
 		logoView.setImageBitmap(logo);
@@ -221,7 +252,31 @@ public class PodcastListFragment extends ListFragment {
 				
 				podcastList.add(new Podcast(name, new URL(url)));
 			}
+			
+			Collections.sort(podcastList); 
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void storePodcastList() {
+		try {
+			FileOutputStream fos = this.getActivity().openFileOutput(OPML_FILENAME, Context.MODE_PRIVATE);
+			fos.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>".getBytes());
+			fos.write("<opml version=\"2.0\">".getBytes());
+			fos.write("<body>".getBytes());
+			
+			for (Podcast podcast : podcastList) {
+				String outline = "<outline text=\"" + podcast.getName() + "\" xmlUrl=\"" + podcast.getUrl() + "\" />";
+				fos.write(outline.getBytes());
+			}
+			
+			fos.write("</body></opml>".getBytes());
+			fos.close();
+			
+			Log.d("File", "OPML podcast file written");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

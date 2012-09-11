@@ -94,9 +94,9 @@ public class EpisodeFragment extends Fragment {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		togglePlay();
+		if (item.getItemId() == R.id.play) togglePlay();
 		
-		return true;
+		return item.getItemId() == R.id.play;
 	}
 	
 	@Override

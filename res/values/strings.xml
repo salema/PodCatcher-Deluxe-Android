@@ -6,4 +6,7 @@
     <string name="no_podcast">No podcast added</string>
     <string name="pause">Pause</string>
     <string name="no_episode">No podcast selected</string>
+    <string name="add_podcast">New podcast</string>
+    <string name="podcast_url">New podcast URL:</string>
+    <string name="enter_podcast_url_here">Put the URL of your podcast here</string>
 </resources>
