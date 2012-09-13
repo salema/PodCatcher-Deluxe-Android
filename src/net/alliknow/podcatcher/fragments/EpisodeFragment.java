@@ -131,7 +131,7 @@ public class EpisodeFragment extends Fragment {
 				
 		WebView view = (WebView) getView().findViewById(R.id.episode_description);
 		view.getSettings().setDefaultFontSize(12);
-		view.loadData(this.episode.getDescription(), "text/html", this.episode.getPodcast().getEncoding());
+		view.loadDataWithBaseURL(null, this.episode.getDescription(), "text/html", "utf-8", null);
 		
 		getActivity().invalidateOptionsMenu();
 	}

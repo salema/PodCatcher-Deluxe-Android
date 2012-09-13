@@ -14,8 +14,9 @@ public enum ExamplePodcast {
 	DAILYBACON("http://downloads.bbc.co.uk/podcasts/fivelive/dailybacon/rss.xml"),
 	GREENCAST("http://www.greenpeace-berlin.de/fileadmin/podcast/greencast.xml"),
 	NERDIST("http://nerdist.libsyn.com/rss"),
-	INTUNE("http://downloads.bbc.co.uk/podcasts/radio3/r3intune/rss.xml");
-	
+	INTUNE("http://downloads.bbc.co.uk/podcasts/radio3/r3intune/rss.xml"),
+	GEO("http://www.geo.de/GEOaudio/index.xml");
+		
 	private String url;
 	
 	private ExamplePodcast(String url) {
