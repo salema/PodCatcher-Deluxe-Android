@@ -19,7 +19,6 @@ package net.alliknow.podcatcher.fragments;
 import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,7 +29,9 @@ import net.alliknow.podcatcher.adapters.PodcastListAdapter;
 import net.alliknow.podcatcher.fragments.AddPodcastFragment.AddPodcastListener;
 import net.alliknow.podcatcher.tags.OPML;
 import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask;
+import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask.PodcastLogoLoader;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
+import net.alliknow.podcatcher.tasks.LoadPodcastTask.PodcastLoader;
 import net.alliknow.podcatcher.types.Podcast;
 
 import org.w3c.dom.Document;
@@ -58,7 +59,7 @@ import android.widget.ListView;
  * 
  * @author Kevin Hausmann
  */
-public class PodcastListFragment extends ListFragment implements AddPodcastListener {
+public class PodcastListFragment extends ListFragment implements AddPodcastListener, PodcastLoader, PodcastLogoLoader {
 	
 	/** Container Activity must implement this interface */
     public interface OnPodcastSelectedListener {
@@ -171,8 +172,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 			if (selectedPodcast.needsReload()) {
 				// Download podcast RSS feed (async)
 				this.loadPodcastTask = new LoadPodcastTask(this);
-				this.loadPodcastTask.execute(selectedPodcast);
-				
+				this.loadPodcastTask.execute(selectedPodcast);	
 			}
 			// Use buffered content
 			else this.onPodcastLoaded(selectedPodcast);
@@ -184,6 +184,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	 * Updates UI to display the podcast's episodes.
 	 * @param podcast Podcast RSS feed loaded for
 	 */
+	@Override
 	public void onPodcastLoaded(Podcast podcast) {
 		this.loadPodcastTask = null;
 		
@@ -197,6 +198,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 		} else Log.i("Logo", "No logo for podcast " + podcast);
 	}
 	
+	@Override
 	public void onPodcastLogoLoaded(Bitmap logo) {
 		this.loadPodcastLogoTask = null;
 		this.currentLogo = logo;
@@ -204,14 +206,15 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 		setPodcastLogo(logo);
 	}
 	
-	/**
-	 * Notified by the async RSS loader on failure.
-	 */
+	@Override
 	public void onPodcastLoadFailed(Podcast podcast) {
 		this.loadPodcastTask = null;
 		
 		Log.w("podcast", "Podcast failed to load " + podcast);
 	}
+	
+	@Override
+	public void onPodcastLogoLoadFailed() {}
 	
 	@Override
 	public void addPodcast(Podcast newPodcast) {
@@ -237,7 +240,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	
 	private void loadPodcastList() {
 		//this is just for testing
-		if (! Arrays.asList(this.getActivity().fileList()).contains(OPML_FILENAME)) this.writeDummyPodcastList();
+		/*if (! Arrays.asList(this.getActivity().fileList()).contains(OPML_FILENAME))*/ this.writeDummyPodcastList();
 		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

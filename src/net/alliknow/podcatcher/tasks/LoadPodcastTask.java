@@ -18,7 +18,6 @@ package net.alliknow.podcatcher.tasks;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import net.alliknow.podcatcher.fragments.PodcastListFragment;
 import net.alliknow.podcatcher.types.Podcast;
 
 import org.w3c.dom.Document;
@@ -34,8 +33,26 @@ import android.util.Log;
  */
 public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 	
+	/**
+     * Interface definition for a callback to be invoked when a podcast is loaded.
+     */
+	public interface PodcastLoader {
+		
+		/**
+		 * Called on completion.
+		 * @param podcast Podcast loaded.
+		 */
+		void onPodcastLoaded(Podcast podcast);
+		
+		/**
+		 * Called when loading the podcast failed.
+		 * @param podcast Podcast failing to load.
+		 */
+		void onPodcastLoadFailed(Podcast podcast);
+	}
+	
 	/** Owner */
-	private final PodcastListFragment owner;
+	private final PodcastLoader loader;
 
 	/** Podcast currently loading */
 	private Podcast podcast;
@@ -47,8 +64,8 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 	 * Create new task
 	 * @param fragment Owner fragment
 	 */
-	public LoadPodcastTask(PodcastListFragment fragment) {
-		this.owner = fragment;
+	public LoadPodcastTask(PodcastLoader fragment) {
+		this.loader = fragment;
 		
 		factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
@@ -69,15 +86,13 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 	}
 	
 	@Override
-	protected void onCancelled(Document result) {
-		owner.onPodcastLoadFailed(podcast);
-	}
-	
-	
-	@Override
 	protected void onPostExecute(Document result) {
 		podcast.setRssFile(result);
-		owner.onPodcastLoaded(podcast);
+		loader.onPodcastLoaded(podcast);
 	}
 	
+	@Override
+	protected void onCancelled(Document result) {
+		loader.onPodcastLoadFailed(podcast);
+	}
 }

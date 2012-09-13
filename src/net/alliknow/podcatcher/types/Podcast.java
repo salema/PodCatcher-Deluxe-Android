@@ -52,6 +52,8 @@ public class Podcast implements Comparable<Podcast> {
 	private URL logoUrl;
 	/** The point in time when the RSS file as last been set */
 	private Date updated;
+	/** The encoding of the loaded file */
+	private String encoding;
 	
 	/**
 	 * Create new podcast by name and RSS file location.
@@ -105,6 +107,15 @@ public class Podcast implements Comparable<Podcast> {
 	}
 	
 	/**
+	 * The podcast's encoding.
+	 * @return Get the input encoding for the podcast file loaded. 
+	 * This may be <code>null</code>, if unknown.
+	 */
+	public String getEncoding() {
+		return this.encoding;
+	}
+	
+	/**
 	 * Set the RSS file representing this podcast. This is were the object
 	 * gets its information from. Many of its methods will not return valid results
 	 * unless this method was called. Calling this method also resets all
@@ -116,7 +127,9 @@ public class Podcast implements Comparable<Podcast> {
 		
 		this.podcastRssFile = rssFile;
 		this.updated = new Date();
+		this.encoding = rssFile.getInputEncoding();
 		
+		if (name == null) loadName();
 		loadMetadata();
 		loadEpisodes();
 	}
@@ -152,6 +165,12 @@ public class Podcast implements Comparable<Podcast> {
 	@Override
 	public int compareTo(Podcast another) {
 		return this.getName().compareTo(another.getName());
+	}
+	
+	private void loadName() {
+		NodeList titleNodes = this.podcastRssFile.getElementsByTagName(RSS.TITLE);
+		
+		if (titleNodes.getLength() > 0) this.name = titleNodes.item(0).getTextContent();
 	}
 	
 	private void loadMetadata() {

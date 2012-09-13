@@ -20,21 +20,25 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.tasks.LoadPodcastTask;
+import net.alliknow.podcatcher.tasks.LoadPodcastTask.PodcastLoader;
 import net.alliknow.podcatcher.types.Podcast;
 import android.app.DialogFragment;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 /**
- * A dialog to let an user add a podcast.
+ * A dialog to let the user add a podcast.
  * 
  * @author Kevin Hausmann
  */
-public class AddPodcastFragment extends DialogFragment {
+public class AddPodcastFragment extends DialogFragment implements PodcastLoader {
 
 	/**
      * Interface definition for a callback to be invoked when a podcast is added.
@@ -51,6 +55,11 @@ public class AddPodcastFragment extends DialogFragment {
 	/** The add podcast listener */
 	private AddPodcastListener listener;
 	
+	/** The podcast URL text field */
+	private EditText podcastUrlEditText;
+	/** The add podcast button */
+	private Button addPodcastButton;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -61,12 +70,16 @@ public class AddPodcastFragment extends DialogFragment {
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		getDialog().setTitle(R.string.add_podcast);
-		Button add = (Button)view.findViewById(R.id.add_podcast_button);
-		add.setOnClickListener(new View.OnClickListener() {
+		
+		podcastUrlEditText = (EditText)view.findViewById(R.id.podcast_url);
+		checkClipboardForPodcastUrl();
+		
+		addPodcastButton = (Button)view.findViewById(R.id.add_podcast_button);
+		addPodcastButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				addPodcast("http://downloads.bbc.co.uk/podcasts/worldservice/bizdaily/rss.xml");
+				addPodcast();
 			}
 		});
 	}
@@ -75,14 +88,36 @@ public class AddPodcastFragment extends DialogFragment {
 		this.listener = listener;
 	}
 	
-	private void addPodcast(String string) {
-		dismiss();
-		Log.d("Add Podcast", string);
+	private void addPodcast() {
+		String spec = podcastUrlEditText.getText().toString();
+		
 		try {
-			listener.addPodcast(new Podcast("Test", new URL(string)));
+			new LoadPodcastTask(this).execute(new Podcast(null, new URL(spec)));
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			onPodcastLoadFailed(null);
+		}	
+	}
+
+	@Override
+	public void onPodcastLoaded(Podcast podcast) {
+		listener.addPodcast(podcast);
+		dismiss();
+	}
+
+	@Override
+	public void onPodcastLoadFailed(Podcast podcast) {
+		// TODO Auto-generated method stub
+	}
+	
+	private void checkClipboardForPodcastUrl() {
+		ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+		
+		if (clipboard.hasPrimaryClip()) {
+			CharSequence candidate = clipboard.getPrimaryClip().getItemAt(0).getText();
+			
+			if (candidate != null && candidate.length() > 7 && 
+					(candidate.subSequence(0, 7).equals("http://") || candidate.subSequence(0, 8).equals("https://")))
+				podcastUrlEditText.setText(candidate);
 		}
 	}
 }

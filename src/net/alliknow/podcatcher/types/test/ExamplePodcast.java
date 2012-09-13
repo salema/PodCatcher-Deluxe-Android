@@ -13,8 +13,8 @@ public enum ExamplePodcast {
 	MAUS("http://podcast.wdr.de/maus.xml"),
 	DAILYBACON("http://downloads.bbc.co.uk/podcasts/fivelive/dailybacon/rss.xml"),
 	GREENCAST("http://www.greenpeace-berlin.de/fileadmin/podcast/greencast.xml"),
-	NERDIST("http://nerdist.libsyn.com/rss");
-	
+	NERDIST("http://nerdist.libsyn.com/rss"),
+	INTUNE("http://downloads.bbc.co.uk/podcasts/radio3/r3intune/rss.xml");
 	
 	private String url;
 	

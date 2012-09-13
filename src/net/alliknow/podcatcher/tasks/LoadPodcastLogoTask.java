@@ -18,7 +18,6 @@ package net.alliknow.podcatcher.tasks;
 
 import java.io.IOException;
 
-import net.alliknow.podcatcher.fragments.PodcastListFragment;
 import net.alliknow.podcatcher.types.Podcast;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -32,15 +31,32 @@ import android.util.Log;
  */
 public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 
+	/**
+     * Interface definition for a callback to be invoked when a podcast logo is loaded.
+     */
+	public interface PodcastLogoLoader {
+		
+		/**
+		 * Called on completion.
+		 * @param logo Podcast logo loaded.
+		 */
+		void onPodcastLogoLoaded(Bitmap logo);
+		
+		/**
+		 * Called when loading the podcast logo failed.
+		 */
+		void onPodcastLogoLoadFailed();
+	}
+	
 	/** Owner */
-	private final PodcastListFragment owner;
+	private final PodcastLogoLoader loader;
 	
 	/**
 	 * Create new task
 	 * @param fragment Owner fragment
 	 */
-	public LoadPodcastLogoTask(PodcastListFragment fragment) {
-		this.owner = fragment;
+	public LoadPodcastLogoTask(PodcastLogoLoader fragment) {
+		this.loader = fragment;
 	}
 	
 	@Override
@@ -58,6 +74,11 @@ public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 	
 	@Override
 	protected void onPostExecute(Bitmap result) {
-		owner.onPodcastLogoLoaded(result);
+		loader.onPodcastLogoLoaded(result);
+	}
+	
+	@Override
+	protected void onCancelled() {
+		loader.onPodcastLogoLoadFailed();
 	}
 }

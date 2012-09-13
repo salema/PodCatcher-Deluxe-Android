@@ -30,6 +30,21 @@ public class PodcastTest {
 		name = "Test";
 		podcast = new Podcast(name, null);
 		assertEquals(name, podcast.getName());
+		
+		for (ExamplePodcast ep : ExamplePodcast.values()) {
+			podcast = new Podcast(null, ep.getURL());
+			podcast.setRssFile(loadRssFile(podcast));
+			assertNotNull(podcast.getName());
+		}
+	}
+	
+	@Test
+	public final void testGetEncoding() {
+		for (ExamplePodcast ep : ExamplePodcast.values()) {
+			Podcast podcast = new Podcast(ep.name(), ep.getURL());
+			podcast.setRssFile(loadRssFile(podcast));
+			assertNotNull(podcast.getEncoding());
+		}
 	}
 
 	@Test
