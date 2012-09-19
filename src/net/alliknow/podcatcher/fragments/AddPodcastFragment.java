@@ -27,11 +27,15 @@ import android.app.DialogFragment;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 /**
  * A dialog to let the user add a podcast.
@@ -57,6 +61,8 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoader 
 	
 	/** The podcast URL text field */
 	private EditText podcastUrlEditText;
+	/** The error text view */
+	private TextView errorView;
 	/** The add podcast button */
 	private Button addPodcastButton;
 	
@@ -72,7 +78,21 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoader 
 		getDialog().setTitle(R.string.add_podcast);
 		
 		podcastUrlEditText = (EditText)view.findViewById(R.id.podcast_url);
-		checkClipboardForPodcastUrl();
+		podcastUrlEditText.addTextChangedListener(new TextWatcher() {
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				updateButtonEnablement();
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,	int after) {}
+
+			@Override
+			public void afterTextChanged(Editable s) {}
+		});
+		
+		errorView = (TextView)view.findViewById(R.id.add_podcast_error);
 		
 		addPodcastButton = (Button)view.findViewById(R.id.add_podcast_button);
 		addPodcastButton.setOnClickListener(new View.OnClickListener() {
@@ -82,6 +102,9 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoader 
 				addPodcast();
 			}
 		});
+	
+		checkClipboardForPodcastUrl();
+		updateButtonEnablement();
 	}
 	
 	public void setAddPodcastListener(AddPodcastListener listener) {
@@ -89,6 +112,9 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoader 
 	}
 	
 	private void addPodcast() {
+		addPodcastButton.setEnabled(false);
+		errorView.setVisibility(View.GONE);
+		
 		String spec = podcastUrlEditText.getText().toString();
 		
 		try {
@@ -101,12 +127,21 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoader 
 	@Override
 	public void onPodcastLoaded(Podcast podcast) {
 		listener.addPodcast(podcast);
+		
 		dismiss();
+		errorView.setVisibility(View.GONE);
+		podcastUrlEditText.setText(null);
+		updateButtonEnablement();
 	}
 
 	@Override
 	public void onPodcastLoadFailed(Podcast podcast) {
-		// TODO Auto-generated method stub
+		errorView.setVisibility(View.VISIBLE);
+		updateButtonEnablement();
+	}
+	
+	private void updateButtonEnablement() {
+		addPodcastButton.setEnabled(isValidPodcastUrl(podcastUrlEditText.getText()));
 	}
 	
 	private void checkClipboardForPodcastUrl() {
@@ -115,9 +150,11 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoader 
 		if (clipboard.hasPrimaryClip()) {
 			CharSequence candidate = clipboard.getPrimaryClip().getItemAt(0).getText();
 			
-			if (candidate != null && candidate.length() > 7 && 
-					(candidate.subSequence(0, 7).equals("http://") || candidate.subSequence(0, 8).equals("https://")))
-				podcastUrlEditText.setText(candidate);
+			if (isValidPodcastUrl(candidate)) podcastUrlEditText.setText(candidate);
 		}
+	}
+	
+	private boolean isValidPodcastUrl(CharSequence candidate) {
+		return URLUtil.isNetworkUrl(candidate.toString());
 	}
 }

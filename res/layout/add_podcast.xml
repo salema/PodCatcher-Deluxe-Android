@@ -11,9 +11,19 @@
         android:hint="@string/enter_podcast_url_here"
         android:imeOptions="actionDone"
         android:inputType="text" />
+    <TextView
+        android:id="@+id/add_podcast_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="@string/add_podcast_error"
+        android:textColor="@android:color/holo_red_dark"
+        android:visibility="gone" />
     <Button
         android:id="@+id/add_podcast_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/add_podcast" />
+        android:text="@string/add_podcast_button" />
 </LinearLayout>
