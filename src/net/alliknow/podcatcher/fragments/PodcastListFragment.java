@@ -154,29 +154,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	@Override
 	public void onListItemClick(ListView list, View view, int position, long id) {
 		Podcast selectedPodcast = this.podcastList.get(position);
-		
-		// Is this a new selection ?
-		if (this.currentPodcast == null || !this.currentPodcast.equals(selectedPodcast)) {
-			this.currentPodcast = selectedPodcast;
-			
-			// Prepare UI
-			((PodcastListAdapter) getListAdapter()).setSelectedPosition(position);
-			setPodcastLogo(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.default_podcast_logo));
-			selectedListener.onPodcastSelected(selectedPodcast);
-			
-			// Stopp loading previous tasks
-			if (this.loadPodcastTask != null) this.loadPodcastTask.cancel(true);
-			if (this.loadPodcastLogoTask != null) this.loadPodcastLogoTask.cancel(true);
-						
-			// Load if too old, otherwise just use previously loaded version
-			if (selectedPodcast.needsReload()) {
-				// Download podcast RSS feed (async)
-				this.loadPodcastTask = new LoadPodcastTask(this);
-				this.loadPodcastTask.execute(selectedPodcast);	
-			}
-			// Use buffered content
-			else this.onPodcastLoaded(selectedPodcast);
-		}
+		selectPodcast(selectedPodcast);
 	}
 	
 	/**
@@ -224,6 +202,8 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 			
 			setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
 		} else Log.d("Add podcast", "Podcast \"" + newPodcast.getName() + "\" is already in list.");
+		
+		selectPodcast(newPodcast);
 	}
 	
 	@Override
@@ -231,6 +211,31 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 		super.onDetach();
 		
 		storePodcastList();
+	}
+	
+	private void selectPodcast(Podcast selectedPodcast) {
+		// Is this a valid selection (in podcast list and new)?
+		if (podcastList.contains(selectedPodcast) && (currentPodcast == null || !currentPodcast.equals(selectedPodcast))) {
+			currentPodcast = selectedPodcast;
+			
+			// Prepare UI
+			((PodcastListAdapter) getListAdapter()).setSelectedPosition(this.podcastList.indexOf(selectedPodcast));
+			setPodcastLogo(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.default_podcast_logo));
+			selectedListener.onPodcastSelected(selectedPodcast);
+			
+			// Stopp loading previous tasks
+			if (this.loadPodcastTask != null) this.loadPodcastTask.cancel(true);
+			if (this.loadPodcastLogoTask != null) this.loadPodcastLogoTask.cancel(true);
+						
+			// Load if too old, otherwise just use previously loaded version
+			if (selectedPodcast.needsReload()) {
+				// Download podcast RSS feed (async)
+				this.loadPodcastTask = new LoadPodcastTask(this);
+				this.loadPodcastTask.execute(selectedPodcast);	
+			}
+			// Use buffered content
+			else this.onPodcastLoaded(selectedPodcast);
+		}
 	}
 	
 	private void setPodcastLogo(Bitmap logo) {
