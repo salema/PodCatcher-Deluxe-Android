@@ -16,8 +16,6 @@
  */
 package net.alliknow.podcatcher.tasks;
 
-import java.io.IOException;
-
 import net.alliknow.podcatcher.types.Podcast;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -62,8 +60,10 @@ public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 	@Override
 	protected Bitmap doInBackground(Podcast... podcasts) {
 		try {
+			if (podcasts[0] == null || podcasts[0].getLogoUrl() == null) throw new Exception("Podcast and/or logo URL cannot be null!");
+			
 			return BitmapFactory.decodeStream(podcasts[0].getLogoUrl().openStream());
-		} catch (IOException e) {
+		} catch (Exception e) {
 			Log.w("Load Logo", "Logo failed to load for podcast \"" + podcasts[0] + "\" with " +
 					"logo URL " + podcasts[0].getLogoUrl(), e);
 			cancel(true);

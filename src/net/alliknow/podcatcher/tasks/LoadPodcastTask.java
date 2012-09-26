@@ -16,6 +16,8 @@
  */
 package net.alliknow.podcatcher.tasks;
 
+import java.net.URLConnection;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import net.alliknow.podcatcher.types.Podcast;
@@ -76,9 +78,15 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 		this.podcast = podcasts[0];
 
 		try {
-			return factory.newDocumentBuilder().parse(podcast.getUrl().openStream());
+			if (podcast == null || podcast.getUrl() == null) throw new Exception("Podcast and/or URL cannot be null!");
+			
+			URLConnection connection = podcast.getUrl().openConnection();
+			connection.setConnectTimeout(8000);
+			// TODO I might want to set a ReadTimeout here ???
+			
+			return factory.newDocumentBuilder().parse(connection.getInputStream());
 		} catch (Exception e) {
-			Log.w("Load Podcast", "Load failed podcast \"" + podcasts[0] + "\"", e);
+			Log.w("Load Podcast", "Load failed for podcast \"" + podcasts[0] + "\"", e);
 			cancel(true);
 		}
 		

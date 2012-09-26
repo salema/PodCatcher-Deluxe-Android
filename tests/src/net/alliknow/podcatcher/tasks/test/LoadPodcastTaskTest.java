@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.alliknow.podcatcher.test;
+package net.alliknow.podcatcher.tasks.test;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -23,6 +23,7 @@ import net.alliknow.podcatcher.tasks.LoadPodcastTask;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask.PodcastLoader;
 import net.alliknow.podcatcher.types.Podcast;
 import net.alliknow.podcatcher.types.test.ExamplePodcast;
+import android.os.AsyncTask;
 import android.test.AndroidTestCase;
 
 /**
@@ -69,22 +70,62 @@ public class LoadPodcastTaskTest extends AndroidTestCase {
 		MockPodcastLoader mockLoader = new MockPodcastLoader();
 		LoadPodcastTask task = new LoadPodcastTask(mockLoader);
 		
-		task.execute(new Podcast(ExamplePodcast.DAILYBACON.name(), ExamplePodcast.DAILYBACON.getURL()));
+		// Actual example Podcast
+		for (ExamplePodcast ep : ExamplePodcast.values()) {
+			Podcast podcast = new Podcast(ep.name(), ep.getURL());
+			
+			task = new LoadPodcastTask(mockLoader);
+			task.execute(podcast);
+			
+			synchronized (mockLoader) { mockLoader.wait(10000); }
+			
+			assertEquals(AsyncTask.Status.FINISHED, task.getStatus());
+			assertFalse(task.isCancelled());
+			assertFalse(mockLoader.hasFailed());
+			assertNotNull(mockLoader.getResult());
+			assertFalse(mockLoader.getResult().getEpisodes().isEmpty());
+			assertFalse(mockLoader.getResult().needsReload());
+			
+			System.out.println("Tested \"" + ep + "\" - okay...");
+		}
 		
-		synchronized (mockLoader) {
-			mockLoader.wait(10000);
-	    }
-		
-		assertNotNull(mockLoader.getResult());
-		
+		// null
 		task = new LoadPodcastTask(mockLoader);
-		task.execute(new Podcast(ExamplePodcast.DAILYBACON.name(), new URL("http://bla")));
+		task.execute((Podcast)null);
 		
 		synchronized (mockLoader) {
 			mockLoader.wait(10000);
 	    }
 		
+		assertEquals(AsyncTask.Status.FINISHED, task.getStatus());
+		assertEquals(true, task.isCancelled());
 		assertTrue(mockLoader.hasFailed());
+		
+		// null URL
+		task = new LoadPodcastTask(mockLoader);
+		task.execute(new Podcast(null, null));
+		
+		synchronized (mockLoader) {
+			mockLoader.wait(10000);
+	    }
+		
+		assertEquals(AsyncTask.Status.FINISHED, task.getStatus());
+		assertEquals(true, task.isCancelled());
+		assertTrue(mockLoader.hasFailed());
+		assertTrue(mockLoader.getResult().needsReload());
+		
+		// bad URL
+		task = new LoadPodcastTask(mockLoader);
+		task.execute(new Podcast("Mist", new URL("http://bla")));
+		
+		synchronized (mockLoader) {
+			mockLoader.wait(10000);
+	    }
+		
+		assertEquals(AsyncTask.Status.FINISHED, task.getStatus());
+		assertEquals(true, task.isCancelled());
+		assertTrue(mockLoader.hasFailed());
+		assertTrue(mockLoader.getResult().needsReload());
 	}
 
 }
