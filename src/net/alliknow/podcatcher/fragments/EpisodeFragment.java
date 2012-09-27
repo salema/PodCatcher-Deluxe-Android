@@ -90,9 +90,11 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	public void onStart() {
 		super.onStart();
 		
-		// Bind to service
-        Intent intent = new Intent(this.getActivity(), PlayEpisodeService.class);
-        getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
+		// Bind to service if not done
+        if (service == null) {
+        	Intent intent = new Intent(this.getActivity(), PlayEpisodeService.class);
+        	getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        }
 	}
 	
 	@Override
@@ -101,18 +103,10 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		
 		return item.getItemId() == R.id.play;
 	}
-	
-	@Override
-	public void onPrepareOptionsMenu(Menu menu) {
-		super.onPrepareOptionsMenu(menu);
 		
-		menu.findItem(R.id.play).setShowAsAction(
-				this.episode == null ? MenuItem.SHOW_AS_ACTION_NEVER : MenuItem.SHOW_AS_ACTION_ALWAYS);
-	}
-	
 	@Override
-	public void onStop() {
-		super.onStop();
+	public void onDestroy() {
+		super.onDestroy();
 		
 		// Unbind from the service
         if (bound) {
@@ -137,9 +131,12 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 			view.getSettings().setDefaultFontSize(12);
 			view.loadDataWithBaseURL(null, this.episode.getDescription(), "text/html", "utf-8", null);
 			
-			getActivity().invalidateOptionsMenu();
 			playButton.setEnabled(true);
-			plays = false;
+			playButton.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+			
+			if (selectedEpisode.equals(service.getCurrentEpisode()))
+				this.playButton.setTitle(plays ? R.string.pause : R.string.play);
+			else this.playButton.setTitle(R.string.play);
 		}
 	}
 	
@@ -153,6 +150,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		
 		// Episode not played before
 		if (! this.episode.equals(service.getCurrentEpisode())) {
+			plays = false;
 			service.playEpisode(this.episode);
 			playButton.setEnabled(false);
 		}

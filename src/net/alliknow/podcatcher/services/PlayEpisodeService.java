@@ -16,8 +16,6 @@
  */
 package net.alliknow.podcatcher.services;
 
-import java.io.IOException;
-
 import net.alliknow.podcatcher.types.Episode;
 import android.app.Service;
 import android.content.Intent;
@@ -27,6 +25,7 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
 /**
  * Play an episode service
@@ -91,39 +90,34 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	}
 
 	public void pause() {
+		Log.d("Play Service", "Pausing episode " +  currentEpisode);
 		if (! preparing) this.player.pause();
 	}
 	
 	public void resume() {
+		Log.d("Play Service", "Resuming episode " +  currentEpisode);
 		if (! preparing) this.player.start();
 	}
 	
 	public void playEpisode(Episode episode) {
+		Log.d("Play Service", "Loading episode " +  episode);
 		this.currentEpisode = episode;
 		
-		if (isPlaying()) {
-			this.player.stop();
-			this.releasePlayer();
+		if (episode != null) {		
+			if (isPlaying()) {
+				this.player.stop();
+				this.releasePlayer();
+			}
+			 
+			try {
+				this.initPlayer();
+				this.player.setDataSource(episode.getMediaUrl().toExternalForm());
+				this.player.prepareAsync(); // might take long! (for buffering, etc)
+				this.preparing = true;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}		
 		}
-		 
-		try {
-			this.initPlayer();
-			this.player.setDataSource(episode.getMediaUrl().toExternalForm());
-			this.player.prepareAsync(); // might take long! (for buffering, etc)
-			this.preparing = true;
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
 	}
 	
 	@Override
@@ -136,6 +130,15 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	@Override
 	public void onCompletion(MediaPlayer mp) {
 		if (completeListener != null) completeListener.onPlaybackComplete();
+	}
+	
+	@Override
+	public void onDestroy() {
+		releasePlayer();
+		currentEpisode = null;
+		
+		readyListener = null;
+		completeListener = null;
 	}
 	
 	public Episode getCurrentEpisode() {
