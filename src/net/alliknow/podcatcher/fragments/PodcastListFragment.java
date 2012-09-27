@@ -204,12 +204,6 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 		} else Log.d("Add podcast", "Podcast \"" + newPodcast.getName() + "\" is already in list.");
 		
 		selectPodcast(newPodcast);
-	}
-	
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		
 		storePodcastList();
 	}
 	
@@ -245,7 +239,8 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	
 	private void loadPodcastList() {
 		//this is just for testing
-		/*if (! Arrays.asList(this.getActivity().fileList()).contains(OPML_FILENAME))*/ this.writeDummyPodcastList();
+		//if (! Arrays.asList(this.getActivity().fileList()).contains(OPML_FILENAME)) 
+		this.writeDummyPodcastList();
 		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
