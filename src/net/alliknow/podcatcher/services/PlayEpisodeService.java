@@ -23,24 +23,28 @@ import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
 
 /**
  * Play an episode service
  * 
  * @author Kevin Hausmann
  */
-public class PlayEpisodeService extends Service implements OnPreparedListener {
+public class PlayEpisodeService extends Service implements OnPreparedListener, OnCompletionListener {
 
 	/** Current episode */
 	private Episode currentEpisode;
 	/** Our MediaPlayer handle */
 	private MediaPlayer player;
+	/** A listener notified on preparation success */
+	private OnReadyToPlayListener readyListener;
 	/** Is the player preparing */
 	private boolean preparing = false;
+	/** A listener notified on playback completion */
+	private OnPlaybackCompleteListener completeListener;
 	
 	/** Binder given to clients */
     private final IBinder binder = new PlayEpisodeBinder();
@@ -51,6 +55,14 @@ public class PlayEpisodeService extends Service implements OnPreparedListener {
             return PlayEpisodeService.this;
         }
     }
+	
+	public interface OnReadyToPlayListener {
+		public void onReadyToPlay();
+	}
+	
+	public interface OnPlaybackCompleteListener {
+		public void onPlaybackComplete();
+	}
 	
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -65,22 +77,28 @@ public class PlayEpisodeService extends Service implements OnPreparedListener {
 	}
 	
 	/**
-	 * @return Whether the player is currently preparing
+	 * @param readyListener A listener to be alerted on preparation success
 	 */
-	public boolean isPreparing() {
-		return this.preparing;
+	public void setReadyToPlayListener(OnReadyToPlayListener readyListener) {
+		this.readyListener = readyListener;
 	}
 	
+	/**
+	 * @param readyListener A listener to be alerted on playback completion
+	 */
+	public void setPlaybackCompleteListener(OnPlaybackCompleteListener completeListener) {
+		this.completeListener = completeListener;
+	}
+
 	public void pause() {
-		this.player.pause();
+		if (! preparing) this.player.pause();
 	}
 	
 	public void resume() {
-		this.player.start();
+		if (! preparing) this.player.start();
 	}
 	
 	public void playEpisode(Episode episode) {
-		Log.d("Play Service", "Play called for " + episode + " (" + episode.getMediaUrl() + ")");
 		this.currentEpisode = episode;
 		
 		if (isPlaying()) {
@@ -111,7 +129,13 @@ public class PlayEpisodeService extends Service implements OnPreparedListener {
 	@Override
 	public void onPrepared(MediaPlayer mp) {
 		this.preparing = false;
+		if (readyListener != null) readyListener.onReadyToPlay();
 		this.player.start();
+	}
+	
+	@Override
+	public void onCompletion(MediaPlayer mp) {
+		if (completeListener != null) completeListener.onPlaybackComplete();
 	}
 	
 	public Episode getCurrentEpisode() {
@@ -122,6 +146,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener {
 		this.player = new MediaPlayer();
 		this.player.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		this.player.setOnPreparedListener(this);
+		this.player.setOnCompletionListener(this);
 	}
 	
 	private void releasePlayer() {
@@ -130,4 +155,5 @@ public class PlayEpisodeService extends Service implements OnPreparedListener {
 			this.player = null;
 		}
 	}
+
 }

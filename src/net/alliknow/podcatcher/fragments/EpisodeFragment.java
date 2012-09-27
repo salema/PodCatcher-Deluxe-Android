@@ -18,6 +18,8 @@ package net.alliknow.podcatcher.fragments;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
+import net.alliknow.podcatcher.services.PlayEpisodeService.OnPlaybackCompleteListener;
+import net.alliknow.podcatcher.services.PlayEpisodeService.OnReadyToPlayListener;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayEpisodeBinder;
 import net.alliknow.podcatcher.types.Episode;
 import android.app.Fragment;
@@ -41,10 +43,11 @@ import android.widget.TextView;
  * 
  * @author Kevin Hausmann
  */
-public class EpisodeFragment extends Fragment {
+public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, OnPlaybackCompleteListener {
 
 	/** The play button */
 	private MenuItem playButton;
+	/** Whether we are currently playing an episode */
 	private boolean plays = false;
 	/** Current episode */
 	private Episode episode;
@@ -120,42 +123,53 @@ public class EpisodeFragment extends Fragment {
 	
 	/**
 	 * Set the displayed episode, all UI will be updated
-	 * @param selectedEpisode Episode to show
+	 * @param selectedEpisode Episode to show (cannot be null)
 	 */
 	public void setEpisode(Episode selectedEpisode) {
-		this.episode = selectedEpisode;
-		
-		getView().findViewById(R.id.episode_divider).setVisibility(View.VISIBLE);
-		((TextView) getView().findViewById(R.id.podcast_title)).setText(episode.getPodcast().getName());
-		((TextView) getView().findViewById(R.id.episode_title)).setText(episode.getName());
-				
-		WebView view = (WebView) getView().findViewById(R.id.episode_description);
-		view.getSettings().setDefaultFontSize(12);
-		view.loadDataWithBaseURL(null, this.episode.getDescription(), "text/html", "utf-8", null);
-		
-		getActivity().invalidateOptionsMenu();
+		if (episode == null || (selectedEpisode != null && !episode.equals(selectedEpisode))) {
+			this.episode = selectedEpisode;
+			
+			getView().findViewById(R.id.episode_divider).setVisibility(View.VISIBLE);
+			((TextView) getView().findViewById(R.id.podcast_title)).setText(episode.getPodcast().getName());
+			((TextView) getView().findViewById(R.id.episode_title)).setText(episode.getName());
+					
+			WebView view = (WebView) getView().findViewById(R.id.episode_description);
+			view.getSettings().setDefaultFontSize(12);
+			view.loadDataWithBaseURL(null, this.episode.getDescription(), "text/html", "utf-8", null);
+			
+			getActivity().invalidateOptionsMenu();
+			playButton.setEnabled(true);
+			plays = false;
+		}
+	}
+	
+	@Override
+	public void onReadyToPlay() {
+		playButton.setEnabled(true);
 	}
 	
 	public void togglePlay() {
 		if (this.episode == null) return;
 		
-		this.plays = !this.plays;
-		
 		// Episode not played before
 		if (! this.episode.equals(service.getCurrentEpisode())) {
-			this.playButton.setTitle(R.string.pause);
-			service.playEpisode(this.episode); 
+			service.playEpisode(this.episode);
+			playButton.setEnabled(false);
 		}
 		// Player in pause
-		else if (plays) {
-			this.playButton.setTitle(R.string.pause);
-			service.resume();
-		} 
+		else if (! plays) service.resume();
 		// Player playing
-		else {
-			this.playButton.setTitle(R.string.play);
-			service.pause();
-		}		
+		else service.pause();
+		
+		this.plays = !this.plays;
+		
+		this.playButton.setTitle(plays ? R.string.pause : R.string.play);
+	}
+	
+	@Override
+	public void onPlaybackComplete() {
+		playButton.setEnabled(false);
+		plays = false;
 	}
 	
 	/** Defines callbacks for service binding, passed to bindService() */
@@ -165,6 +179,8 @@ public class EpisodeFragment extends Fragment {
         public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
         	PlayEpisodeBinder binder = (PlayEpisodeBinder) serviceBinder;
             service = binder.getService();
+            service.setReadyToPlayListener(EpisodeFragment.this);
+            service.setPlaybackCompleteListener(EpisodeFragment.this);
             bound = true;
         }
 
