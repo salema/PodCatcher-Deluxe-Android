@@ -35,6 +35,8 @@ import android.util.Log;
  */
 public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 	
+	private static final int PODCAST_LOAD_TIMEOUT = 8000;
+
 	/**
      * Interface definition for a callback to be invoked when a podcast is loaded.
      */
@@ -81,7 +83,7 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 			if (podcast == null || podcast.getUrl() == null) throw new Exception("Podcast and/or URL cannot be null!");
 			
 			URLConnection connection = podcast.getUrl().openConnection();
-			connection.setConnectTimeout(8000);
+			connection.setConnectTimeout(PODCAST_LOAD_TIMEOUT);
 			// TODO I might want to set a ReadTimeout here ???
 			
 			return factory.newDocumentBuilder().parse(connection.getInputStream());
