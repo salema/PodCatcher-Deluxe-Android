@@ -161,6 +161,11 @@ public class Podcast implements Comparable<Podcast> {
 		if (!(o instanceof Podcast)) return false;
 		else return this.url.equals(((Podcast) o).getUrl());
 	}
+	
+	@Override
+	public int hashCode() {
+		return this.url.hashCode();
+	}
 
 	@Override
 	public int compareTo(Podcast another) {

@@ -102,6 +102,11 @@ public class Episode implements Comparable<Episode> {
 		if (!(o instanceof Episode)) return false;
 		else return this.mediaUrl.equals(((Episode) o).getMediaUrl());
 	}
+	
+	@Override
+	public int hashCode() {
+		return this.mediaUrl.hashCode();
+	}
 
 	@Override
 	public int compareTo(Episode another) {
