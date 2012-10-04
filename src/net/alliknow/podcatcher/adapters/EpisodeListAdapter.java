@@ -45,6 +45,7 @@ public class EpisodeListAdapter extends PodcatcherBaseAdapter {
 	 */
 	public EpisodeListAdapter(Context context, List<Episode> episodeList) {
 		super(context);
+		
 		this.list = episodeList;
 	}
 	

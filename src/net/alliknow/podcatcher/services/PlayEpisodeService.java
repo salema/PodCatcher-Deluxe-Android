@@ -72,7 +72,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	 * @return Whether the player is currently playing
 	 */
 	public boolean isPlaying() {
-		return this.player != null && this.player.isPlaying();
+		return player != null && player.isPlaying();
 	}
 	
 	/**
@@ -91,12 +91,12 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 
 	public void pause() {
 		Log.d("Play Service", "Pausing episode " +  currentEpisode);
-		if (! preparing) this.player.pause();
+		if (! preparing) player.pause();
 	}
 	
 	public void resume() {
 		Log.d("Play Service", "Resuming episode " +  currentEpisode);
-		if (! preparing) this.player.start();
+		if (! preparing) player.start();
 	}
 	
 	public void playEpisode(Episode episode) {
@@ -105,15 +105,15 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 		
 		if (episode != null) {		
 			if (isPlaying()) {
-				this.player.stop();
-				this.releasePlayer();
+				player.stop();
+				releasePlayer();
 			}
 			 
 			try {
-				this.initPlayer();
-				this.player.setDataSource(episode.getMediaUrl().toExternalForm());
-				this.player.prepareAsync(); // might take long! (for buffering, etc)
-				this.preparing = true;
+				initPlayer();
+				player.setDataSource(episode.getMediaUrl().toExternalForm());
+				player.prepareAsync(); // might take long! (for buffering, etc)
+				preparing = true;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}		
@@ -122,9 +122,9 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	
 	@Override
 	public void onPrepared(MediaPlayer mp) {
-		this.preparing = false;
+		preparing = false;
 		if (readyListener != null) readyListener.onReadyToPlay();
-		this.player.start();
+		player.start();
 	}
 	
 	@Override
@@ -142,20 +142,20 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	}
 	
 	public Episode getCurrentEpisode() {
-		return this.currentEpisode;
+		return currentEpisode;
 	}
 	
 	private void initPlayer() {
-		this.player = new MediaPlayer();
-		this.player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-		this.player.setOnPreparedListener(this);
-		this.player.setOnCompletionListener(this);
+		player = new MediaPlayer();
+		player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+		player.setOnPreparedListener(this);
+		player.setOnCompletionListener(this);
 	}
 	
 	private void releasePlayer() {
-		if (this.player != null) {
-			this.player.release();
-			this.player = null;
+		if (player != null) {
+			player.release();
+			player = null;
 		}
 	}
 

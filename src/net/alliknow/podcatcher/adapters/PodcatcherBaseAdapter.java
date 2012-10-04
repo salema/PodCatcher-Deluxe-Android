@@ -57,8 +57,8 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	 */
 	public void setSelectedPosition(int position) {
 		if (this.selectedPosition != position) {
-			this.selectedPosition = position;
-			this.notifyDataSetChanged();
+			selectedPosition = position;
+			notifyDataSetChanged();
 		}
 	}
 	

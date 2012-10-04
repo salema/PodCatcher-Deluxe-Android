@@ -60,8 +60,8 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
     	
-    	this.setRetainInstance(true);
-    	this.setHasOptionsMenu(true);
+    	setRetainInstance(true);
+    	setHasOptionsMenu(true);
     }
 	
 	@Override
@@ -75,7 +75,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.episode_menu, menu);
 		
-		this.playButton = menu.findItem(R.id.play);
+		playButton = menu.findItem(R.id.play);
 	}
 	
 	@Override
@@ -83,7 +83,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		super.onViewCreated(view, savedInstanceState);
 		
 		// Restore from configuration change 
-		if (this.episode != null) setEpisode(this.episode);
+		if (episode != null) setEpisode(episode);
 	}
 	
 	@Override
@@ -92,7 +92,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		
 		// Bind to service if not done
         if (service == null) {
-        	Intent intent = new Intent(this.getActivity(), PlayEpisodeService.class);
+        	Intent intent = new Intent(getActivity(), PlayEpisodeService.class);
         	getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
         }
 	}
@@ -129,14 +129,14 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 					
 			WebView view = (WebView) getView().findViewById(R.id.episode_description);
 			view.getSettings().setDefaultFontSize(12);
-			view.loadDataWithBaseURL(null, this.episode.getDescription(), "text/html", "utf-8", null);
+			view.loadDataWithBaseURL(null, episode.getDescription(), "text/html", "utf-8", null);
 			
 			playButton.setEnabled(true);
 			playButton.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 			
 			if (selectedEpisode.equals(service.getCurrentEpisode()))
-				this.playButton.setTitle(plays ? R.string.pause : R.string.play);
-			else this.playButton.setTitle(R.string.play);
+				playButton.setTitle(plays ? R.string.pause : R.string.play);
+			else playButton.setTitle(R.string.play);
 		}
 	}
 	
@@ -146,12 +146,12 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	}
 	
 	public void togglePlay() {
-		if (this.episode == null) return;
+		if (episode == null) return;
 		
 		// Episode not played before
-		if (! this.episode.equals(service.getCurrentEpisode())) {
+		if (! episode.equals(service.getCurrentEpisode())) {
 			plays = false;
-			service.playEpisode(this.episode);
+			service.playEpisode(episode);
 			playButton.setEnabled(false);
 		}
 		// Player in pause
@@ -159,9 +159,9 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		// Player playing
 		else service.pause();
 		
-		this.plays = !this.plays;
+		plays = !plays;
 		
-		this.playButton.setTitle(plays ? R.string.pause : R.string.play);
+		playButton.setTitle(plays ? R.string.pause : R.string.play);
 	}
 	
 	@Override

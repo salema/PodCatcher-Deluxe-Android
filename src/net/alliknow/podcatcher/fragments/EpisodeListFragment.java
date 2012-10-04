@@ -71,7 +71,7 @@ public class EpisodeListFragment extends ListFragment {
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		
-		if (this.showProgress) clearAndSpin();
+		if (showProgress) clearAndSpin();
 	}
 	
 	@Override
@@ -87,7 +87,7 @@ public class EpisodeListFragment extends ListFragment {
 
 	@Override
 	public void onListItemClick(ListView list, View view, int position, long id) {
-		Episode selectedEpisode = this.episodeList.get(position);
+		Episode selectedEpisode = episodeList.get(position);
 		((EpisodeListAdapter) getListAdapter()).setSelectedPosition(position);
 		
 		listener.onEpisodeSelected(selectedEpisode);
@@ -100,9 +100,9 @@ public class EpisodeListFragment extends ListFragment {
 	public void setEpisodeList(List<Episode> list) {
 		getView().findViewById(R.id.episode_list_progress).setVisibility(View.GONE);
 		
-		this.showProgress = false;
+		showProgress = false;
 		this.episodeList = list;
-		setListAdapter(new EpisodeListAdapter(getActivity(), this.episodeList));
+		setListAdapter(new EpisodeListAdapter(getActivity(), episodeList));
 		getListView().setVisibility(View.VISIBLE);
 	}
 
@@ -110,7 +110,7 @@ public class EpisodeListFragment extends ListFragment {
 	 * Show the UI to be working
 	 */
 	public void clearAndSpin() {
-		this.showProgress = true;
+		showProgress = true;
 		getListView().setVisibility(View.GONE);
 		getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
 		if (! Podcatcher.isInDebugMode(getActivity()))

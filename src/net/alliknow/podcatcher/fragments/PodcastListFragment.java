@@ -101,10 +101,10 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		this.setRetainInstance(true);
-		this.setHasOptionsMenu(true);
+		setRetainInstance(true);
+		setHasOptionsMenu(true);
 		// Loads podcasts from stored file to this.podcastList
-		this.loadPodcastList();
+		loadPodcastList();
 		// Maps the podcast list items to the list UI
 		setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
 	}
@@ -120,7 +120,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		
-		if (this.currentLogo != null) setPodcastLogo(this.currentLogo);
+		if (currentLogo != null) setPodcastLogo(currentLogo);
 	}
 	
 	@Override
@@ -153,7 +153,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	
 	@Override
 	public void onListItemClick(ListView list, View view, int position, long id) {
-		Podcast selectedPodcast = this.podcastList.get(position);
+		Podcast selectedPodcast = podcastList.get(position);
 		selectPodcast(selectedPodcast);
 	}
 	
@@ -164,29 +164,29 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	 */
 	@Override
 	public void onPodcastLoaded(Podcast podcast) {
-		this.loadPodcastTask = null;
+		loadPodcastTask = null;
 		
 		// TODO Handle the case where the fragment is not attached because the activity is recreated
 		loadedListener.onPodcastLoaded(podcast);
 		
 		// Download podcast logo
 		if (podcast.getLogoUrl() != null) {
-			this.loadPodcastLogoTask = new LoadPodcastLogoTask(this);
-			this.loadPodcastLogoTask.execute(podcast);
+			loadPodcastLogoTask = new LoadPodcastLogoTask(this);
+			loadPodcastLogoTask.execute(podcast);
 		} else Log.i("Logo", "No logo for podcast " + podcast);
 	}
 	
 	@Override
 	public void onPodcastLogoLoaded(Bitmap logo) {
-		this.loadPodcastLogoTask = null;
-		this.currentLogo = logo;
+		loadPodcastLogoTask = null;
+		currentLogo = logo;
 		
 		setPodcastLogo(logo);
 	}
 	
 	@Override
 	public void onPodcastLoadFailed(Podcast podcast) {
-		this.loadPodcastTask = null;
+		loadPodcastTask = null;
 		
 		Log.w("podcast", "Podcast failed to load " + podcast);
 	}
@@ -213,22 +213,22 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 			currentPodcast = selectedPodcast;
 			
 			// Prepare UI
-			((PodcastListAdapter) getListAdapter()).setSelectedPosition(this.podcastList.indexOf(selectedPodcast));
+			((PodcastListAdapter) getListAdapter()).setSelectedPosition(podcastList.indexOf(selectedPodcast));
 			setPodcastLogo(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.default_podcast_logo));
 			selectedListener.onPodcastSelected(selectedPodcast);
 			
 			// Stopp loading previous tasks
-			if (this.loadPodcastTask != null) this.loadPodcastTask.cancel(true);
-			if (this.loadPodcastLogoTask != null) this.loadPodcastLogoTask.cancel(true);
+			if (loadPodcastTask != null) loadPodcastTask.cancel(true);
+			if (loadPodcastLogoTask != null) loadPodcastLogoTask.cancel(true);
 						
 			// Load if too old, otherwise just use previously loaded version
 			if (selectedPodcast.needsReload()) {
 				// Download podcast RSS feed (async)
-				this.loadPodcastTask = new LoadPodcastTask(this);
-				this.loadPodcastTask.execute(selectedPodcast);	
+				loadPodcastTask = new LoadPodcastTask(this);
+				loadPodcastTask.execute(selectedPodcast);	
 			}
 			// Use buffered content
-			else this.onPodcastLoaded(selectedPodcast);
+			else onPodcastLoaded(selectedPodcast);
 		}
 	}
 	
@@ -239,14 +239,14 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	
 	private void loadPodcastList() {
 		//this is just for testing
-		//if (! Arrays.asList(this.getActivity().fileList()).contains(OPML_FILENAME)) 
-		this.writeDummyPodcastList();
+		//if (! Arrays.asList(getActivity().fileList()).contains(OPML_FILENAME)) 
+		writeDummyPodcastList();
 		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(true);
 			
-			Document podcastFile = factory.newDocumentBuilder().parse(this.getActivity().openFileInput(OPML_FILENAME));
+			Document podcastFile = factory.newDocumentBuilder().parse(getActivity().openFileInput(OPML_FILENAME));
 			NodeList podcasts = podcastFile.getElementsByTagName(OPML.OUTLINE);
 			
 			for (int index = 0; index < podcasts.getLength(); index++) {
@@ -264,7 +264,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	
 	private void storePodcastList() {
 		try {
-			FileOutputStream fos = this.getActivity().openFileOutput(OPML_FILENAME, Context.MODE_PRIVATE);
+			FileOutputStream fos = getActivity().openFileOutput(OPML_FILENAME, Context.MODE_PRIVATE);
 			fos.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>".getBytes());
 			fos.write("<opml version=\"2.0\">".getBytes());
 			fos.write("<body>".getBytes());
@@ -286,7 +286,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 
 	private void writeDummyPodcastList() {
 		try {
-			FileOutputStream fos = this.getActivity().openFileOutput(OPML_FILENAME, Context.MODE_PRIVATE);
+			FileOutputStream fos = getActivity().openFileOutput(OPML_FILENAME, Context.MODE_PRIVATE);
 			fos.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>".getBytes());
 			fos.write("<opml version=\"2.0\">".getBytes());
 			fos.write("<body>".getBytes());

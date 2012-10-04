@@ -42,6 +42,7 @@ public class PodcastListAdapter extends PodcatcherBaseAdapter {
 	 */
 	public PodcastListAdapter(Context context, List<Podcast> podcastList) {
 		super(context);
+		
 		this.list = podcastList;
 	}
 	
@@ -64,7 +65,7 @@ public class PodcastListAdapter extends PodcatcherBaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		convertView = findReturnView(convertView, parent, R.layout.podcast_list_item);
 		
-		setTextAndBackground(convertView, R.id.podcast_name, this.list.get(position).getName(), position);
+		setTextAndBackground(convertView, R.id.podcast_name, list.get(position).getName(), position);
 		
 		return convertView;
 	}
