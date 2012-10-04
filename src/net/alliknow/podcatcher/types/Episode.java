@@ -100,17 +100,17 @@ public class Episode implements Comparable<Episode> {
 	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof Episode)) return false;
-		else return this.mediaUrl.equals(((Episode) o).getMediaUrl());
+		else return mediaUrl.equals(((Episode) o).getMediaUrl());
 	}
 	
 	@Override
 	public int hashCode() {
-		return this.mediaUrl.hashCode();
+		return mediaUrl.hashCode();
 	}
 
 	@Override
 	public int compareTo(Episode another) {
-		return this.pubDate.compareTo(another.getPubDate());
+		return pubDate.compareTo(another.getPubDate());
 	}
 	
 	private void readData(NodeList episodeNodes) {
@@ -120,18 +120,18 @@ public class Episode implements Comparable<Episode> {
 			
 			// Episode title
 			if (currentNode.getNodeName().equals(RSS.TITLE)) 
-				this.name = currentNode.getTextContent().trim();
+				name = currentNode.getTextContent().trim();
 			// Episode media URL
 			else if (currentNode.getNodeName().equals(RSS.ENCLOSURE))
-				this.mediaUrl = createMediaUrl(currentNode.getAttributes().getNamedItem(RSS.URL).getNodeValue());
+				mediaUrl = createMediaUrl(currentNode.getAttributes().getNamedItem(RSS.URL).getNodeValue());
 			// Episode publication date (2 options)
 			else if (currentNode.getNodeName().equals(RSS.DATE))
-				this.pubDate = parsePubDate(currentNode.getTextContent());
+				pubDate = parsePubDate(currentNode.getTextContent());
 			else if (currentNode.getNodeName().equals(RSS.PUBDATE))
-				this.pubDate = parsePubDate(currentNode.getTextContent());
+				pubDate = parsePubDate(currentNode.getTextContent());
 			// Episode description
 			else if (currentNode.getNodeName().equals(RSS.DESCRIPTION))
-				this.description = currentNode.getTextContent();
+				description = currentNode.getTextContent();
 		}
 	}
 	

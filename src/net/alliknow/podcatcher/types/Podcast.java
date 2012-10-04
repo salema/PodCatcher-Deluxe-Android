@@ -68,7 +68,7 @@ public class Podcast implements Comparable<Podcast> {
 		this.name = name;
 		this.url = url;
 		
-		this.episodes = new ArrayList<Episode>();
+		episodes = new ArrayList<Episode>();
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class Podcast implements Comparable<Podcast> {
 	 * @see setRssFile
 	 */
 	public List<Episode> getEpisodes() {
-		return this.episodes;
+		return episodes;
 	}
 	
 	/**
@@ -103,7 +103,7 @@ public class Podcast implements Comparable<Podcast> {
 	 * @see setRssFile
 	 */
 	public URL getLogoUrl() {
-		return this.logoUrl;
+		return logoUrl;
 	}
 	
 	/**
@@ -112,7 +112,7 @@ public class Podcast implements Comparable<Podcast> {
 	 * This may be <code>null</code>, if unknown.
 	 */
 	public String getEncoding() {
-		return this.encoding;
+		return encoding;
 	}
 	
 	/**
@@ -123,11 +123,11 @@ public class Podcast implements Comparable<Podcast> {
 	 * @param rssFile XML document representing the podcast
 	 */
 	public void setRssFile(Document rssFile) {
-		this.episodes.clear();
+		episodes.clear();
 		
-		this.podcastRssFile = rssFile;
-		this.updated = new Date();
-		this.encoding = rssFile.getInputEncoding();
+		podcastRssFile = rssFile;
+		updated = new Date();
+		encoding = rssFile.getInputEncoding();
 		
 		if (name == null) loadName();
 		loadMetadata();
@@ -144,9 +144,9 @@ public class Podcast implements Comparable<Podcast> {
 	 */
 	public boolean needsReload() {
 		// Has never been loaded
-		if (this.updated == null) return true;
+		if (updated == null) return true;
 		// Check age
-		else return new Date().getTime() - this.updated.getTime() > TIME_TO_LIFE;
+		else return new Date().getTime() - updated.getTime() > TIME_TO_LIFE;
 	}
 
 	@Override
@@ -159,54 +159,54 @@ public class Podcast implements Comparable<Podcast> {
 	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof Podcast)) return false;
-		else return this.url.equals(((Podcast) o).getUrl());
+		else return url.equals(((Podcast) o).getUrl());
 	}
 	
 	@Override
 	public int hashCode() {
-		return this.url.hashCode();
+		return url.hashCode();
 	}
 
 	@Override
 	public int compareTo(Podcast another) {
-		return this.getName().compareTo(another.getName());
+		return getName().compareTo(another.getName());
 	}
 	
 	private void loadName() {
-		NodeList titleNodes = this.podcastRssFile.getElementsByTagName(RSS.TITLE);
+		NodeList titleNodes = podcastRssFile.getElementsByTagName(RSS.TITLE);
 		
-		if (titleNodes.getLength() > 0) this.name = titleNodes.item(0).getTextContent();
+		if (titleNodes.getLength() > 0) name = titleNodes.item(0).getTextContent();
 	}
 	
 	private void loadMetadata() {
-		NodeList imageNodes = this.podcastRssFile.getElementsByTagNameNS("*", RSS.IMAGE);
+		NodeList imageNodes = podcastRssFile.getElementsByTagNameNS("*", RSS.IMAGE);
 		
 		// image tag used?
 		if (imageNodes.getLength() > 0) {
 			Node imageNode = imageNodes.item(0);
 			
 			if (imageNode.getChildNodes().getLength() > 0) {
-				this.logoUrl = createLogoUrl(((Element) imageNode).getElementsByTagName(RSS.URL).item(0).getTextContent());
+				logoUrl = createLogoUrl(((Element) imageNode).getElementsByTagName(RSS.URL).item(0).getTextContent());
 			}
-			else this.logoUrl = createLogoUrl(imageNode.getAttributes().getNamedItem(RSS.HREF).getTextContent());
+			else logoUrl = createLogoUrl(imageNode.getAttributes().getNamedItem(RSS.HREF).getTextContent());
 		}
 		// image in thumbnail tag
 		else {
-			NodeList thumbnailNodes = this.podcastRssFile.getElementsByTagName(RSS.THUMBNAIL);
+			NodeList thumbnailNodes = podcastRssFile.getElementsByTagName(RSS.THUMBNAIL);
 			
 			if (thumbnailNodes.getLength() > 0)
-				this.logoUrl = createLogoUrl(thumbnailNodes.item(0).getAttributes().getNamedItem(RSS.URL).getTextContent());
+				logoUrl = createLogoUrl(thumbnailNodes.item(0).getAttributes().getNamedItem(RSS.URL).getTextContent());
 		}
 	}
 	
 	private void loadEpisodes() {
-		NodeList episodeNodes = this.podcastRssFile.getElementsByTagName(RSS.ITEM);
+		NodeList episodeNodes = podcastRssFile.getElementsByTagName(RSS.ITEM);
 		
 		for (int episodeIndex = 0; episodeIndex < episodeNodes.getLength(); episodeIndex++) {
 			Episode newEpisode = new Episode(this, episodeNodes.item(episodeIndex).getChildNodes());
 			
 			// Only add if there is some actual content to play
-			if (newEpisode.getMediaUrl() != null) this.episodes.add(newEpisode);
+			if (newEpisode.getMediaUrl() != null) episodes.add(newEpisode);
 		}
 	}
 	
