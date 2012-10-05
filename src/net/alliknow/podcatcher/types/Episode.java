@@ -54,7 +54,8 @@ public class Episode implements Comparable<Episode> {
 	public Episode(Podcast podcast, NodeList episodeNodes) {
 		this.podcast = podcast;
 		
-		readData(episodeNodes);
+		if (episodeNodes != null && episodeNodes.getLength() > 0)
+			readData(episodeNodes);
 	}
 
 	/**
@@ -82,7 +83,7 @@ public class Episode implements Comparable<Episode> {
 	 * @return The publication date for this episode
 	 */
 	public Date getPubDate() {
-		return pubDate;
+		return new Date(pubDate.getTime());
 	}
 	
 	/**
@@ -99,13 +100,18 @@ public class Episode implements Comparable<Episode> {
 	
 	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof Episode)) return false;
-		else return mediaUrl.equals(((Episode) o).getMediaUrl());
+		if (this == o) return true;
+		else if (!(o instanceof Episode)) return false;
+		
+		Episode other = (Episode)o;
+		
+		if (other.getMediaUrl() == null) return false;
+		else return mediaUrl.toExternalForm().equals(((Episode) o).getMediaUrl().toExternalForm());
 	}
 	
 	@Override
 	public int hashCode() {
-		return mediaUrl.hashCode();
+		return mediaUrl.toExternalForm().hashCode();
 	}
 
 	@Override

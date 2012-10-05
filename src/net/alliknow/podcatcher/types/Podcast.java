@@ -38,7 +38,7 @@ public class Podcast implements Comparable<Podcast> {
 
 	/** The minimum time podcast content is buffered (in milliseconds). 
 	 * If older, we need to reload. */
-	public static int TIME_TO_LIFE = 15 * 60 * 1000;
+	public static final int TIME_TO_LIFE = 15 * 60 * 1000;
 	
 	/** Name of the podcast */
 	private String name;
@@ -158,13 +158,18 @@ public class Podcast implements Comparable<Podcast> {
 	
 	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof Podcast)) return false;
-		else return url.equals(((Podcast) o).getUrl());
+		if (this == o) return true;
+		else if (!(o instanceof Podcast)) return false;
+		
+		Podcast other = (Podcast)o;
+		
+		if (other.getUrl() == null) return false; 
+		else return url.toExternalForm().equals(((Podcast) o).getUrl().toExternalForm());
 	}
 	
 	@Override
 	public int hashCode() {
-		return url.hashCode();
+		return url.toExternalForm().hashCode();
 	}
 
 	@Override

@@ -58,7 +58,7 @@ public class PodcastListAdapter extends PodcatcherBaseAdapter {
 	
 	@Override
 	public long getItemId(int position) {
-		return list.get(position).getUrl().hashCode();
+		return list.get(position).getUrl().toExternalForm().hashCode();
 	}
 	
 	@Override

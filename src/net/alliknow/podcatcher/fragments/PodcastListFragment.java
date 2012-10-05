@@ -16,7 +16,11 @@
  */
 package net.alliknow.podcatcher.fragments;
 
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -90,7 +94,9 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	/** Currently show podcast logo */
 	private Bitmap currentLogo;
 	/** The name of the file we store our saved podcasts in (as OPML) */
-	private static String OPML_FILENAME = "podcasts.opml";
+	private static final String OPML_FILENAME = "podcasts.opml";
+	/** The OPML file encoding */
+	private static final String OPML_FILE_ENCODING = "utf8";
 	
 	/** The current podcast load task */
 	private LoadPodcastTask loadPodcastTask;
@@ -263,19 +269,20 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	}
 	
 	private void storePodcastList() {
-		try {
-			FileOutputStream fos = getActivity().openFileOutput(OPML_FILENAME, Context.MODE_PRIVATE);
-			fos.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>".getBytes());
-			fos.write("<opml version=\"2.0\">".getBytes());
-			fos.write("<body>".getBytes());
+		try {			
+			BufferedWriter writer = getPodcastFileWriter();
+			
+			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			writer.write("<opml version=\"2.0\">");
+			writer.write("<body>");
 			
 			for (Podcast podcast : podcastList) {
 				String outline = "<outline text=\"" + podcast.getName() + "\" xmlUrl=\"" + podcast.getUrl() + "\" />";
-				fos.write(outline.getBytes());
+				writer.write(outline);
 			}
 			
-			fos.write("</body></opml>".getBytes());
-			fos.close();
+			writer.write("</body></opml>");
+			writer.close();
 			
 			Log.d("File", "OPML podcast file written");
 		} catch (Exception e) {
@@ -284,23 +291,32 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 		}
 	}
 
+	
+
 	private void writeDummyPodcastList() {
 		try {
-			FileOutputStream fos = getActivity().openFileOutput(OPML_FILENAME, Context.MODE_PRIVATE);
-			fos.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>".getBytes());
-			fos.write("<opml version=\"2.0\">".getBytes());
-			fos.write("<body>".getBytes());
-			fos.write("<outline text=\"This American Life\" xmlUrl=\"http://feeds.thisamericanlife.org/talpodcast\"/>".getBytes());
-			fos.write("<outline text=\"Radiolab\" xmlUrl=\"http://feeds.wnyc.org/radiolab\"/>".getBytes());
-			fos.write("<outline text=\"Linux Outlaws\" xmlUrl=\"http://feeds.feedburner.com/linuxoutlaws\"/>".getBytes());
-			fos.write("<outline text=\"GEO\" xmlUrl=\"http://www.geo.de/GEOaudio/index.xml\"/>".getBytes());
-			fos.write("</body></opml>".getBytes());
-			fos.close();
+			BufferedWriter writer = getPodcastFileWriter();
+			
+			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			writer.write("<opml version=\"2.0\">");
+			writer.write("<body>");
+			writer.write("<outline text=\"This American Life\" xmlUrl=\"http://feeds.thisamericanlife.org/talpodcast\"/>");
+			writer.write("<outline text=\"Radiolab\" xmlUrl=\"http://feeds.wnyc.org/radiolab\"/>");
+			writer.write("<outline text=\"Linux Outlaws\" xmlUrl=\"http://feeds.feedburner.com/linuxoutlaws\"/>");
+			writer.write("<outline text=\"GEO\" xmlUrl=\"http://www.geo.de/GEOaudio/index.xml\"/>");
+			writer.write("</body></opml>");
+			writer.close();
 			
 			Log.d("File", "Dummy OPML written");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private BufferedWriter getPodcastFileWriter() throws FileNotFoundException,	UnsupportedEncodingException {
+		FileOutputStream fos = getActivity().openFileOutput(OPML_FILENAME, Context.MODE_PRIVATE);
+		
+		return new BufferedWriter(new OutputStreamWriter(fos, OPML_FILE_ENCODING));
 	}
 }

@@ -21,6 +21,44 @@ import org.xml.sax.SAXException;
 public class EpisodeTest {
 
 	@Test
+	public final void testEquals() {
+		for (ExamplePodcast ep : ExamplePodcast.values()) {
+			Podcast podcast = new Podcast(ep.name(), ep.getURL());
+			podcast.setRssFile(loadRssFile(podcast));
+			
+			Episode first = null;
+			for (Episode episode : podcast.getEpisodes()) {
+				assertFalse(episode.equals(null));
+				assertTrue(episode.equals(episode));
+				assertFalse(episode.equals(new Object()));
+				assertFalse(episode.equals(new Podcast(null, null)));
+				assertFalse(episode.equals(ep));
+				assertFalse(episode.equals(podcast));
+				assertFalse(episode.equals(new Episode(null, null)));
+				
+				if (podcast.getEpisodes().indexOf(episode) == 0) first = episode;
+				else if (first != null) assertFalse(first.equals(episode));
+			}
+		}	
+	}
+	
+	@Test
+	public final void testHashCode() {
+		for (ExamplePodcast ep : ExamplePodcast.values()) {
+			Podcast podcast = new Podcast(ep.name(), ep.getURL());
+			podcast.setRssFile(loadRssFile(podcast));
+			
+			Episode first = null;
+			for (Episode episode : podcast.getEpisodes()) {
+				assertTrue(episode.hashCode() != 0);
+				
+				if (podcast.getEpisodes().indexOf(episode) == 0) first = episode;
+				else if (first != null) assertFalse(first.hashCode() == episode.hashCode());
+			}
+		}	
+	}
+	
+	@Test
 	public final void testGetName() {
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
