@@ -65,6 +65,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	
 	@Override
 	public IBinder onBind(Intent intent) {
+		Log.d("Play Service", "Service bound");
 		return binder;
 	}
 	
@@ -134,6 +135,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	
 	@Override
 	public void onDestroy() {
+		Log.d("Play Service", "Service destroyed");
 		releasePlayer();
 		currentEpisode = null;
 		
@@ -158,5 +160,4 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 			player = null;
 		}
 	}
-
 }

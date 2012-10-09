@@ -22,6 +22,7 @@ import net.alliknow.podcatcher.services.PlayEpisodeService.OnPlaybackCompleteLis
 import net.alliknow.podcatcher.services.PlayEpisodeService.OnReadyToPlayListener;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayEpisodeBinder;
 import net.alliknow.podcatcher.types.Episode;
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
@@ -29,6 +30,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -53,9 +55,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	private Episode episode;
 	/** Play service */
 	private PlayEpisodeService service;
-	/** Whether we are currently bound to the service */
-	private boolean bound;
-		
+	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
@@ -90,11 +90,17 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	public void onStart() {
 		super.onStart();
 		
-		// Bind to service if not done
-        if (service == null) {
-        	Intent intent = new Intent(getActivity(), PlayEpisodeService.class);
-        	getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
-        }
+		// Make sure the service runs as long as this fragment exists
+    	getActivity().startService(new Intent(getActivity(), PlayEpisodeService.class));
+	}
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		
+		// Attach to play service via this fragment's activity
+		Intent intent = new Intent(getActivity(), PlayEpisodeService.class);
+    	getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
 	}
 	
 	@Override
@@ -103,16 +109,21 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		
 		return item.getItemId() == R.id.play;
 	}
+	
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		
+		// Detach from play service via this fragment's activity
+		getActivity().unbindService(connection);
+	}
 		
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		
-		// Unbind from the service
-        if (bound) {
-            getActivity().unbindService(connection);
-            bound = false;
-        }
+		        
+        // Make sure the service is stopped on destroy of this fragment 
+        getActivity().stopService(new Intent(getActivity(), PlayEpisodeService.class));
 	}
 	
 	/**
@@ -179,12 +190,12 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
             service = binder.getService();
             service.setReadyToPlayListener(EpisodeFragment.this);
             service.setPlaybackCompleteListener(EpisodeFragment.this);
-            bound = true;
+            Log.d("Play Service", "Bound to service");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            bound = false;
+            Log.d("Play Service", "Unbound from service");
         }
     };
 }
