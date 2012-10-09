@@ -72,18 +72,19 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	}
 	
 	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.episode_menu, menu);
-		
-		playButton = menu.findItem(R.id.play);
-	}
-	
-	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		
 		// Restore from configuration change 
 		if (episode != null) setEpisode(episode);
+	}
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.episode_menu, menu);
+		
+		playButton = menu.findItem(R.id.play);
+		updatePlayButton();
 	}
 	
 	@Override
@@ -131,24 +132,18 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	 * @param selectedEpisode Episode to show (cannot be null)
 	 */
 	public void setEpisode(Episode selectedEpisode) {
-		if (episode == null || (selectedEpisode != null && !episode.equals(selectedEpisode))) {
-			this.episode = selectedEpisode;
-			
-			getView().findViewById(R.id.episode_divider).setVisibility(View.VISIBLE);
-			((TextView) getView().findViewById(R.id.podcast_title)).setText(episode.getPodcast().getName());
-			((TextView) getView().findViewById(R.id.episode_title)).setText(episode.getName());
-					
-			WebView view = (WebView) getView().findViewById(R.id.episode_description);
-			view.getSettings().setDefaultFontSize(12);
-			view.loadDataWithBaseURL(null, episode.getDescription(), "text/html", "utf-8", null);
-			
-			playButton.setEnabled(true);
-			playButton.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-			
-			if (selectedEpisode.equals(service.getCurrentEpisode()))
-				playButton.setTitle(plays ? R.string.pause : R.string.play);
-			else playButton.setTitle(R.string.play);
-		}
+		this.episode = selectedEpisode;
+		
+		getView().findViewById(R.id.episode_divider).setVisibility(View.VISIBLE);
+		((TextView) getView().findViewById(R.id.podcast_title)).setText(episode.getPodcast().getName());
+		((TextView) getView().findViewById(R.id.episode_title)).setText(episode.getName());
+				
+		WebView view = (WebView) getView().findViewById(R.id.episode_description);
+		view.getSettings().setDefaultFontSize(12);
+		view.loadDataWithBaseURL(null, episode.getDescription(), "text/html", "utf-8", null);
+		
+		playButton.setEnabled(true);
+		updatePlayButton();
 	}
 	
 	@Override
@@ -172,13 +167,24 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		
 		plays = !plays;
 		
-		playButton.setTitle(plays ? R.string.pause : R.string.play);
+		updatePlayButton();
 	}
-	
+		
 	@Override
 	public void onPlaybackComplete() {
 		playButton.setEnabled(false);
 		plays = false;
+	}
+	
+	private void updatePlayButton() {
+		// State
+		playButton.setShowAsAction(episode == null ? 
+				MenuItem.SHOW_AS_ACTION_NEVER : MenuItem.SHOW_AS_ACTION_ALWAYS);
+		
+		// Label
+		if (plays && episode != null && service != null && 
+				episode.equals(service.getCurrentEpisode())) playButton.setTitle(R.string.pause);
+		else playButton.setTitle(R.string.play);
 	}
 	
 	/** Defines callbacks for service binding, passed to bindService() */
