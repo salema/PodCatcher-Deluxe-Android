@@ -1,10 +1,9 @@
 <resources>
     <string name="app_name">Simple PodCatcher</string>
     <string name="play">Play</string>
-    <string name="podcast_image">Podcast Logo</string>
-    <string name="episodes">Episode(s)</string>
-    <string name="no_podcast">No podcast added</string>
     <string name="pause">Pause</string>
+    <string name="podcast_image">Podcast Logo</string>
+    <string name="no_podcast">No podcast added</string>
     <string name="no_episode">No podcast selected</string>
     <string name="add_podcast">New podcast</string>
     <string name="add_podcast_button">Add</string>

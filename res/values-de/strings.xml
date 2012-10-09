@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Simple PodCatcher</string>
+    <string name="play">Start</string>
+    <string name="pause">Pause</string>
+    <string name="podcast_image">Podcast Logo</string>
+    <string name="no_podcast">Kein Podcast vorhanden</string>
+    <string name="no_episode">Kein Podcast ausgewählt</string>
+    <string name="add_podcast">Neuer Podcast</string>
+    <string name="add_podcast_button">Hinzufügen</string>
+    <string name="add_podcast_error">Der Podcast konnte nicht geladen werden</string>
+    <string name="enter_podcast_url_here">Geben Sie die Podcast-URL an</string>
+</resources>
