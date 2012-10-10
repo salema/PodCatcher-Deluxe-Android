@@ -141,6 +141,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		WebView view = (WebView) getView().findViewById(R.id.episode_description);
 		view.getSettings().setDefaultFontSize(getResources().getDimensionPixelSize(R.dimen.small_font_size));
 		view.loadDataWithBaseURL(null, episode.getDescription(), "text/html", "utf-8", null);
+		view.setVisibility(View.VISIBLE);
 		
 		playButton.setEnabled(true);
 		updatePlayButton();
