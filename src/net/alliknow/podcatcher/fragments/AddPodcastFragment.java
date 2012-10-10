@@ -122,6 +122,10 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoader 
 		errorView.setVisibility(View.GONE);
 		
 		String spec = podcastUrlEditText.getText().toString();
+		if (! URLUtil.isNetworkUrl(spec.toString())) {
+			spec = "http://" + spec;
+			podcastUrlEditText.setText(spec);
+		}
 		
 		try {
 			new LoadPodcastTask(this).execute(new Podcast(null, new URL(spec)));
@@ -162,6 +166,7 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoader 
 	}
 	
 	private boolean isValidPodcastUrl(CharSequence candidate) {
-		return URLUtil.isNetworkUrl(candidate.toString());
+		return URLUtil.isNetworkUrl(candidate.toString()) ||
+				(candidate.length() > 5 && candidate.toString().contains("."));
 	}
 }
