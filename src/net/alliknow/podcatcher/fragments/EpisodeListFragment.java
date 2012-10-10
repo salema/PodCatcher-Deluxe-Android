@@ -129,6 +129,7 @@ public class EpisodeListFragment extends ListFragment {
 		TextView emptyView = (TextView) getView().findViewById(android.R.id.empty);
 		emptyView.setText(message);
 		emptyView.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+		emptyView.setTextSize(getResources().getDimension(R.dimen.default_font_size));
 		emptyView.setVisibility(View.VISIBLE);	
 	}
 }

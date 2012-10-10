@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="default_font_size">14sp</dimen>
+    <dimen name="default_font_size">16sp</dimen>
     <dimen name="small_font_size">12sp</dimen>
-    <dimen name="large_font_size">18sp</dimen>
+    <dimen name="large_font_size">22sp</dimen>
     <dimen name="list_item">48dp</dimen>
 </resources>
