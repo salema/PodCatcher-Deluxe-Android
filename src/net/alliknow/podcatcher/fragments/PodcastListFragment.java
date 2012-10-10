@@ -65,6 +65,8 @@ import android.widget.ListView;
  */
 public class PodcastListFragment extends ListFragment implements AddPodcastListener, PodcastLoader, PodcastLogoLoader {
 	
+	private AddPodcastFragment addPodcastFragment = new AddPodcastFragment();
+	
 	/** Container Activity must implement this interface */
     public interface OnPodcastSelectedListener {
     	/**
@@ -119,6 +121,10 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 		loadPodcastList();
 		// Maps the podcast list items to the list UI
 		setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
+		// Make sure we are alerted if a new podcast is added
+		addPodcastFragment.setAddPodcastListener(this);
+		// If podcast list is empty we show dialog on startup
+		if (getListAdapter().isEmpty()) addPodcastFragment.show(getFragmentManager(), "add_podcast");
 	}
 	
 	@Override
@@ -132,7 +138,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		
-		if (currentLogo != null) setPodcastLogo(currentLogo);
+		//if (currentLogo != null) setPodcastLogo(currentLogo);
 	}
 	
 	@Override
@@ -154,12 +160,9 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.add_podcast_button) {
-			AddPodcastFragment fragment = new AddPodcastFragment();
-			fragment.setAddPodcastListener(this);
-			fragment.show(getFragmentManager(), "add_podcast");
-		}
-		
+		if (item.getItemId() == R.id.add_podcast_button) 
+			addPodcastFragment.show(getFragmentManager(), "add_podcast");
+				
 		return item.getItemId() == R.id.add_podcast_button;
 	}
 	
@@ -256,7 +259,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	private void loadPodcastList() {
 		//this is just for testing
 		//if (! Arrays.asList(getActivity().fileList()).contains(OPML_FILENAME)) 
-		writeDummyPodcastList();
+		//writeDummyPodcastList();
 		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
