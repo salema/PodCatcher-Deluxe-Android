@@ -124,6 +124,7 @@ public class EpisodeListFragment extends ListFragment {
 	 */
 	public void showError(String message) {
 		showProgress = false;
+		getView().findViewById(R.id.episode_list_progress).setVisibility(View.GONE);
 		getListView().setVisibility(View.GONE);
 		
 		TextView emptyView = (TextView) getView().findViewById(android.R.id.empty);
