@@ -10,7 +10,7 @@
         android:layout_weight="1"
         android:paddingLeft="3dp"
         android:singleLine="true"
-        android:textSize="12sp" />
+        android:textSize="@dimen/default_font_size" />
     <TextView
         android:id="@+id/episode_date"
         android:layout_width="match_parent"
@@ -18,5 +18,5 @@
         android:layout_weight="1"
         android:paddingLeft="3dp"
         android:singleLine="true"
-        android:textSize="10sp" />
+        android:textSize="@dimen/small_font_size" />
 </LinearLayout>
