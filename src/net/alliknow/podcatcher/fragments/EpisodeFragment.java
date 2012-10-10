@@ -179,6 +179,9 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	}
 	
 	private void updatePlayButton() {
+		// Visibility
+		playButton.setVisible(episode != null);
+		
 		// State
 		playButton.setShowAsAction(episode == null ? 
 				MenuItem.SHOW_AS_ACTION_NEVER : MenuItem.SHOW_AS_ACTION_ALWAYS);
