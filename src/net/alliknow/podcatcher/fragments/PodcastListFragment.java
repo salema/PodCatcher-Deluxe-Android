@@ -138,7 +138,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		
-		//if (currentLogo != null) setPodcastLogo(currentLogo);
+		if (currentLogo != null) setPodcastLogo(currentLogo);
 	}
 	
 	@Override
