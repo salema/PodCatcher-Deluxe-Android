@@ -52,6 +52,11 @@ public class PodcastActivity extends Activity implements
 	public void onPodcastLoaded(Podcast podcast) {
 		findEpisodeListFragment().setEpisodeList(podcast.getEpisodes());
 	}
+	
+	@Override
+	public void onPodcastLoadFailed(Podcast failedPodcast) {
+		findEpisodeListFragment().showError(getResources().getString(R.string.error_podcast_load));
+	}
 
 	@Override
 	public void onEpisodeSelected(Episode selectedEpisode) {

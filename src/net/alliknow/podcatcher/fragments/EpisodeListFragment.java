@@ -29,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  * List fragment to display the list of episodes as part of the
@@ -115,5 +116,19 @@ public class EpisodeListFragment extends ListFragment {
 		getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
 		if (! Podcatcher.isInDebugMode(getActivity()))
 				getView().findViewById(R.id.episode_list_progress).setVisibility(View.VISIBLE);
+	}
+
+	/**
+	 * Show error view
+	 * @param string Error message to show
+	 */
+	public void showError(String message) {
+		showProgress = false;
+		getListView().setVisibility(View.GONE);
+		
+		TextView emptyView = (TextView) getView().findViewById(android.R.id.empty);
+		emptyView.setText(message);
+		emptyView.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+		emptyView.setVisibility(View.VISIBLE);	
 	}
 }

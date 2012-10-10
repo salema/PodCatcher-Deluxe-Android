@@ -9,4 +9,5 @@
     <string name="add_podcast_button">Hinzufügen</string>
     <string name="add_podcast_error">Der Podcast konnte nicht geladen werden</string>
     <string name="enter_podcast_url_here">Geben Sie die Podcast-URL an</string>
+    <string name="error_podcast_load">Podcast kann nicht geladen werden, bitte prüfen Sie Ihre Internetverbindung!</string>
 </resources>

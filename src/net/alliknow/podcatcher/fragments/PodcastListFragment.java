@@ -83,6 +83,12 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
     	 * @param loadedPodcast Podcast loaded
     	 */
     	public void onPodcastLoaded(Podcast loadedPodcast);
+    	
+    	/**
+    	 * Notifies listener that a podcast load failed
+    	 * @param failedPodcast Podcast that failed loading
+    	 */
+    	public void onPodcastLoadFailed(Podcast failedPodcast);
     }
     /** The activity we are in (listens to loading complete) */ 
     private OnPodcastLoadedListener loadedListener;
@@ -173,7 +179,8 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 		loadPodcastTask = null;
 		
 		// TODO Handle the case where the fragment is not attached because the activity is recreated
-		loadedListener.onPodcastLoaded(podcast);
+		if (loadedListener != null) loadedListener.onPodcastLoaded(podcast);
+		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
 		
 		// Download podcast logo
 		if (podcast.getLogoUrl() != null) {
@@ -193,6 +200,9 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	@Override
 	public void onPodcastLoadFailed(Podcast podcast) {
 		loadPodcastTask = null;
+		
+		if (loadedListener != null) loadedListener.onPodcastLoadFailed(podcast);
+		else Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
 		
 		Log.w(getClass().getSimpleName(), "Podcast failed to load " + podcast);
 	}
