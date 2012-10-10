@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingLeft="3dp"
+        android:paddingLeft="@dimen/list_item_padding"
+        android:gravity="center_vertical"
         android:singleLine="true"
         android:textSize="@dimen/default_font_size" />
     <TextView
@@ -17,7 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingLeft="3dp"
+        android:paddingLeft="@dimen/list_item_padding"
+        android:gravity="center_vertical"
         android:singleLine="true"
         android:textSize="@dimen/small_font_size" />
 </LinearLayout>

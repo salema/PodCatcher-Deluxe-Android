@@ -4,4 +4,6 @@
     <dimen name="small_font_size">10sp</dimen>
     <dimen name="large_font_size">14sp</dimen>
     <dimen name="list_item">32dp</dimen>
+    <dimen name="list_item_padding">3dp</dimen>
+    <dimen name="episode_view_padding">5dp</dimen>
 </resources>

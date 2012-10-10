@@ -259,7 +259,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	private void loadPodcastList() {
 		//this is just for testing
 		//if (! Arrays.asList(getActivity().fileList()).contains(OPML_FILENAME)) 
-		//writeDummyPodcastList();
+		writeDummyPodcastList();
 		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
