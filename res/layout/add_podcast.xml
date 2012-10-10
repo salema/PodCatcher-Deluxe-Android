@@ -25,5 +25,9 @@
         android:id="@+id/add_podcast_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/add_podcast_button" />
+        android:layout_margin="3dp"
+        android:background="@drawable/button_green"
+        android:gravity="center"
+        android:text="@string/add_podcast_button"
+        android:textColor="#ffffff" />
 </LinearLayout>
