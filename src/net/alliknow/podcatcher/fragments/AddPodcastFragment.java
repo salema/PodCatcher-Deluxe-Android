@@ -29,6 +29,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -107,6 +108,11 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoader 
 		updateButtonEnablement();
 	}
 	
+	/**
+	 * Add a listener to be notified if a new podcast was selected and loaded.
+	 * Overwrites any current listener.
+	 * @param listener The listener
+	 */
 	public void setAddPodcastListener(AddPodcastListener listener) {
 		this.listener = listener;
 	}
@@ -126,7 +132,8 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoader 
 
 	@Override
 	public void onPodcastLoaded(Podcast podcast) {
-		listener.addPodcast(podcast);
+		if (listener != null) listener.addPodcast(podcast);
+		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
 		
 		dismiss();
 		errorView.setVisibility(View.GONE);

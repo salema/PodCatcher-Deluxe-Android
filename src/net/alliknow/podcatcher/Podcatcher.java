@@ -27,6 +27,11 @@ import android.content.pm.PackageManager;
  */
 public class Podcatcher {
 	
+	/**
+	 * Checks whether the app is in debug mode
+	 * @param context Activity context
+	 * @return true when in debug
+	 */
 	public static boolean isInDebugMode(Context context) {
 		boolean debuggable = false;
 		 

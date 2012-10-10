@@ -152,28 +152,30 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	}
 	
 	public void togglePlay() {
-		if (episode == null) return;
-		
-		// Episode not played before
-		if (! episode.equals(service.getCurrentEpisode())) {
-			plays = false;
-			service.playEpisode(episode);
-			playButton.setEnabled(false);
-		}
-		// Player in pause
-		else if (! plays) service.resume();
-		// Player playing
-		else service.pause();
-		
-		plays = !plays;
-		
-		updatePlayButton();
+		if (episode != null && service != null) {		
+			// Episode not played before
+			if (! episode.equals(service.getCurrentEpisode())) {
+				plays = false;
+				service.playEpisode(episode);
+				playButton.setEnabled(false);
+			}
+			// Player in pause
+			else if (! plays) service.resume();
+			// Player playing
+			else service.pause();
+			
+			plays = !plays;
+			
+			updatePlayButton();
+		} else Log.d(getClass().getSimpleName(), "Cannot play episode (episode or service are null)");
 	}
 		
 	@Override
 	public void onPlaybackComplete() {
 		playButton.setEnabled(false);
 		plays = false;
+		
+		service.reset();
 	}
 	
 	private void updatePlayButton() {
@@ -196,12 +198,12 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
             service = binder.getService();
             service.setReadyToPlayListener(EpisodeFragment.this);
             service.setPlaybackCompleteListener(EpisodeFragment.this);
-            Log.d("Play Service", "Bound to service");
+            Log.d(EpisodeFragment.this.getClass().getSimpleName(), "Bound to playback service");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            Log.d("Play Service", "Unbound from service");
+            Log.d(EpisodeFragment.this.getClass().getSimpleName(), "Unbound from playback service");
         }
     };
 }

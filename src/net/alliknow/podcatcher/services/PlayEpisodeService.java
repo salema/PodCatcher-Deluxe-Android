@@ -65,7 +65,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	
 	@Override
 	public IBinder onBind(Intent intent) {
-		Log.d("Play Service", "Service bound");
+		Log.d(getClass().getSimpleName(), "Service bound");
 		return binder;
 	}
 	
@@ -90,26 +90,38 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 		this.completeListener = completeListener;
 	}
 
+	/**
+	 * Pause current playback
+	 */
 	public void pause() {
-		Log.d("Play Service", "Pausing episode " +  currentEpisode);
-		if (! preparing) player.pause();
+		if (currentEpisode == null) Log.d(getClass().getSimpleName(), "Called pause without setting episode");
+		else if (! preparing && isPlaying()) player.pause();
 	}
 	
+	/**
+	 * Resume to play current episode
+	 */
 	public void resume() {
-		Log.d("Play Service", "Resuming episode " +  currentEpisode);
-		if (! preparing) player.start();
+		if (currentEpisode == null) Log.d(getClass().getSimpleName(), "Called resume without setting episode");
+		else if (! preparing && player != null && ! isPlaying()) player.start();
 	}
 	
+	/**
+	 * Load and start playback for given episode. Will end any current playback.
+	 * @param episode Episode to play (not null)
+	 */
 	public void playEpisode(Episode episode) {
-		Log.d("Play Service", "Loading episode " +  episode);
-		this.currentEpisode = episode;
-		
-		if (episode != null) {		
+		if (episode != null) {
+			Log.d(getClass().getSimpleName(), "Loading episode " +  episode);
+			this.currentEpisode = episode;
+			
+			// Stop current playback if any
 			if (isPlaying()) {
 				player.stop();
 				releasePlayer();
 			}
-			 
+			
+			// Start playback for episode
 			try {
 				initPlayer();
 				player.setDataSource(episode.getMediaUrl().toExternalForm());
@@ -121,30 +133,46 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 		}
 	}
 	
+	/**
+	 * @return The episode currently loaded by the service (may be null)
+	 */
+	public Episode getCurrentEpisode() {
+		return currentEpisode;
+	}
+	
+	/**
+	 * Reset the service to creation state
+	 */
+	public void reset() {
+		this.currentEpisode = null;
+		this.preparing = false;
+		
+		releasePlayer();
+	}
+	
 	@Override
 	public void onPrepared(MediaPlayer mp) {
 		preparing = false;
 		if (readyListener != null) readyListener.onReadyToPlay();
+		else Log.d(getClass().getSimpleName(), "Episode prepared, but no listener attached");
+		
 		player.start();
 	}
 	
 	@Override
 	public void onCompletion(MediaPlayer mp) {
 		if (completeListener != null) completeListener.onPlaybackComplete();
+		else Log.d(getClass().getSimpleName(), "Episode playback completed, but no listener attached");
 	}
 	
 	@Override
 	public void onDestroy() {
-		Log.d("Play Service", "Service destroyed");
+		Log.d(getClass().getSimpleName(), "Service destroyed");
 		releasePlayer();
 		currentEpisode = null;
 		
 		readyListener = null;
 		completeListener = null;
-	}
-	
-	public Episode getCurrentEpisode() {
-		return currentEpisode;
 	}
 	
 	private void initPlayer() {

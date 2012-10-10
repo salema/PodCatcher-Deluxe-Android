@@ -179,7 +179,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 		if (podcast.getLogoUrl() != null) {
 			loadPodcastLogoTask = new LoadPodcastLogoTask(this);
 			loadPodcastLogoTask.execute(podcast);
-		} else Log.i("Logo", "No logo for podcast " + podcast);
+		} else Log.d(getClass().getSimpleName(), "No logo for podcast " + podcast);
 	}
 	
 	@Override
@@ -194,7 +194,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	public void onPodcastLoadFailed(Podcast podcast) {
 		loadPodcastTask = null;
 		
-		Log.w("podcast", "Podcast failed to load " + podcast);
+		Log.w(getClass().getSimpleName(), "Podcast failed to load " + podcast);
 	}
 	
 	@Override
@@ -207,7 +207,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 			Collections.sort(podcastList);
 			
 			setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
-		} else Log.d("Add podcast", "Podcast \"" + newPodcast.getName() + "\" is already in list.");
+		} else Log.d(getClass().getSimpleName(), "Podcast \"" + newPodcast.getName() + "\" is already in list.");
 		
 		selectPodcast(newPodcast);
 		storePodcastList();
@@ -284,7 +284,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 			writer.write("</body></opml>");
 			writer.close();
 			
-			Log.d("File", "OPML podcast file written");
+			Log.d(getClass().getSimpleName(), "OPML podcast file written");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -307,7 +307,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 			writer.write("</body></opml>");
 			writer.close();
 			
-			Log.d("File", "Dummy OPML written");
+			Log.d(getClass().getSimpleName(), "Dummy OPML written");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

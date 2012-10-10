@@ -88,7 +88,7 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 			
 			return factory.newDocumentBuilder().parse(connection.getInputStream());
 		} catch (Exception e) {
-			Log.w("Load Podcast", "Load failed for podcast \"" + podcasts[0] + "\"", e);
+			Log.w(getClass().getSimpleName(), "Load failed for podcast \"" + podcasts[0] + "\"", e);
 			cancel(true);
 		}
 		
@@ -98,11 +98,14 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 	@Override
 	protected void onPostExecute(Document result) {
 		podcast.setRssFile(result);
-		loader.onPodcastLoaded(podcast);
+		
+		if (loader != null) loader.onPodcastLoaded(podcast);
+		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
 	}
 	
 	@Override
 	protected void onCancelled(Document result) {
-		loader.onPodcastLoadFailed(podcast);
+		if (loader != null) loader.onPodcastLoadFailed(podcast);
+		else Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
 	}
 }
