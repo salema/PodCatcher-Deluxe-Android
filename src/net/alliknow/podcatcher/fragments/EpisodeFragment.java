@@ -54,6 +54,16 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 
 	/** The load episode menu bar item */
 	private MenuItem loadMenuItem;
+	/** The episode title view */
+	private TextView episodeTitleView;
+	/** The podcast title view */
+	private TextView podcastTitleView;
+	/** The episode description web view */
+	private WebView episodeDetailView;
+	/** The player title view */
+	private View playerDividerView;
+	/** The player title view */
+	private TextView playerTitleView;
 	/** The player view */
 	private View playerView;
 	/** The play/pause button */
@@ -73,6 +83,8 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	private Timer playUpdateTimer = new Timer();
 	/** Play update timer task */
 	private TimerTask playUpdateTimerTask;
+	/** Do we need to restart the timer on attach ? */
+	private boolean needsTimerRestart = false;
 	
 	private class PlayProgressTask extends TimerTask {
 
@@ -129,6 +141,13 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		
+		episodeTitleView = (TextView) getView().findViewById(R.id.episode_title);
+		podcastTitleView = (TextView) getView().findViewById(R.id.podcast_title);
+		episodeDetailView = (WebView) getView().findViewById(R.id.episode_description);
+		episodeDetailView.getSettings().setDefaultFontSize(getResources().getDimensionPixelSize(R.dimen.default_font_size));
+		
+		playerDividerView = getView().findViewById(R.id.player_divider);
+		playerTitleView = (TextView) getView().findViewById(R.id.player_title);
 		playerView = view.findViewById(R.id.player);
 		playPauseButton = (Button) view.findViewById(R.id.playPause);
 		playPauseButton.setOnClickListener(new OnClickListener() {
@@ -142,6 +161,10 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		
 		// Restore from configuration change 
 		if (episode != null) setEpisode(episode);
+		
+		playerView.setVisibility(plays ? View.VISIBLE : View.GONE);
+		playPauseButton.setText(plays ? R.string.pause : R.string.play);
+		playPauseButton.setBackgroundResource(plays ? R.drawable.button_red : R.drawable.button_green);
 	}
 	
 	@Override
@@ -149,7 +172,8 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		inflater.inflate(R.menu.episode_menu, menu);
 		
 		loadMenuItem = menu.findItem(R.id.load);
-		updateLoadMenuItem();
+		loadMenuItem.setEnabled(episode != null && service != null && ! episode.equals(service.getCurrentEpisode()));
+		loadMenuItem.setShowAsAction(episode == null ? MenuItem.SHOW_AS_ACTION_NEVER : MenuItem.SHOW_AS_ACTION_ALWAYS);
 	}
 	
 	@Override
@@ -167,6 +191,11 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		// Attach to play service via this fragment's activity
 		Intent intent = new Intent(getActivity(), PlayEpisodeService.class);
     	getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
+    	
+    	if (needsTimerRestart) {
+    		playUpdateTimerTask = new PlayProgressTask();
+    		playUpdateTimer.schedule(playUpdateTimerTask, 1000, 1000);
+    	}
 	}
 	
 	@Override
@@ -182,6 +211,8 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		
 		// Detach from play service via this fragment's activity
 		getActivity().unbindService(connection);
+		playUpdateTimerTask.cancel();
+		needsTimerRestart = plays;
 	}
 		
 	@Override
@@ -203,26 +234,35 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		this.episode = selectedEpisode;
 		
 		getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
+		
+		episodeTitleView.setVisibility(View.VISIBLE);
+		episodeTitleView.setText(episode.getName());
+		podcastTitleView.setText(episode.getPodcast().getName());
+		podcastTitleView.setVisibility(View.VISIBLE);
 		getView().findViewById(R.id.episode_divider).setVisibility(View.VISIBLE);
-		((TextView) getView().findViewById(R.id.podcast_title)).setVisibility(View.VISIBLE);
-		((TextView) getView().findViewById(R.id.podcast_title)).setText(episode.getPodcast().getName());
-		((TextView) getView().findViewById(R.id.episode_title)).setVisibility(View.VISIBLE);
-		((TextView) getView().findViewById(R.id.episode_title)).setText(episode.getName());
-				
-		WebView view = (WebView) getView().findViewById(R.id.episode_description);
-		view.getSettings().setDefaultFontSize(getResources().getDimensionPixelSize(R.dimen.default_font_size));
-		view.loadDataWithBaseURL(null, episode.getDescription(), "text/html", "utf-8", null);
-		view.setVisibility(View.VISIBLE);
+						
+		episodeDetailView.loadDataWithBaseURL(null, episode.getDescription(), "text/html", "utf-8", null);
+		episodeDetailView.setVisibility(View.VISIBLE);
 		
 		loadMenuItem.setVisible(true);
-		updateLoadMenuItem();
+		loadMenuItem.setEnabled(! episode.equals(service.getCurrentEpisode()));
+		loadMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		
+		if (service.getCurrentEpisode() != null && !episode.equals(service.getCurrentEpisode())) {
+			playerDividerView.setVisibility(View.VISIBLE);
+			playerTitleView.setVisibility(View.VISIBLE);
+		} else {
+			playerDividerView.setVisibility(View.GONE);
+			playerTitleView.setVisibility(View.GONE);
+		}
 	}
-	
-	
-	
+		
 	@Override
 	public void onReadyToPlay() {
 		plays = true;
+		
+		playPauseButton.setText(R.string.pause);
+		playPauseButton.setBackgroundResource(R.drawable.button_red);
 		playerView.setVisibility(View.VISIBLE);
 		
 		playUpdateTimerTask = new PlayProgressTask();
@@ -243,6 +283,9 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 			if (! episode.equals(service.getCurrentEpisode())) {
 				if (playUpdateTimerTask != null) playUpdateTimerTask.cancel();
 				playerView.setVisibility(View.GONE);
+				playerDividerView.setVisibility(View.GONE);
+				playerTitleView.setVisibility(View.GONE);
+				playerTitleView.setText(episode.getName() + " - " + episode.getPodcast().getName());
 				
 				service.playEpisode(episode);
 				loadMenuItem.setEnabled(false);
@@ -265,18 +308,10 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 			}
 			
 			plays = !plays;
+			
 			playPauseButton.setText(plays ? R.string.pause : R.string.play);
+			playPauseButton.setBackgroundResource(plays ? R.drawable.button_red : R.drawable.button_green);
 		} else Log.d(getClass().getSimpleName(), "Cannot play episode (episode or service are null)");
-	}
-	
-	private void updateLoadMenuItem() {
-		// Enabled
-		loadMenuItem.setEnabled(episode != null && service != null && 
-				! episode.equals(service.getCurrentEpisode()));
-		
-		// State
-		loadMenuItem.setShowAsAction(episode == null ? 
-				MenuItem.SHOW_AS_ACTION_NEVER : MenuItem.SHOW_AS_ACTION_ALWAYS);
 	}
 	
 	/** Defines callbacks for service binding, passed to bindService() */
@@ -289,6 +324,10 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
             service.setReadyToPlayListener(EpisodeFragment.this);
             service.setPlaybackCompleteListener(EpisodeFragment.this);
             Log.d(EpisodeFragment.this.getClass().getSimpleName(), "Bound to playback service");
+        
+            Episode serviceEpisode = service.getCurrentEpisode();
+            if (serviceEpisode != null) 
+            	playerTitleView.setText(serviceEpisode.getName() + " - " + serviceEpisode.getPodcast().getName());
         }
 
         @Override

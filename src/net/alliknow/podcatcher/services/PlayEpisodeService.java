@@ -140,12 +140,22 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 		return currentEpisode;
 	}
 	
+	/**
+	 * @return Current position of playback in seconds from media start
+	 * Does not throw any exception but returns at least zero 
+	 */
 	public int getCurrentPosition() {
-		return player.getCurrentPosition() / 1000;
+		if (player == null || preparing) return 0;
+		else return player.getCurrentPosition() / 1000;
 	}
 	
+	/**
+	 * @return Duration of media element in seconds
+	 * Does not throw any exception but returns at least zero 
+	 */
 	public int getDuration() {
-		return player.getDuration() / 1000;
+		if (player == null || preparing) return 0;
+		else return player.getDuration() / 1000;
 	}
 	
 	/**

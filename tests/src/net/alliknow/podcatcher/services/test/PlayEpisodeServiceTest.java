@@ -84,6 +84,20 @@ public class PlayEpisodeServiceTest extends AndroidTestCase {
 		service.resume();
 	}
 	
+	public final void testGetPosition() throws InterruptedException {
+		synchronized (connection) { connection.wait(10000); }
+		assertNotNull(service);
+		assertTrue(service.getCurrentPosition() > -1);
+		
+		Podcast podcast = new Podcast(ExamplePodcast.GEO.name(), ExamplePodcast.GEO.getURL());
+		podcast.setRssFile(loadRssFile(podcast));
+		service.playEpisode(podcast.getEpisodes().get(0));
+		
+		synchronized (this) { wait(10000); }
+		
+		assertTrue(service.getCurrentPosition() > 0);
+	}
+	
 	/** Defines callbacks for service binding, passed to bindService() */
     private ServiceConnection connection = new ServiceConnection() {
 
