@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Simple PodCatcher</string>
-    <string name="play">Start</string>
+    <string name="play">Abspielen</string>
     <string name="pause">Pause</string>
+    <string name="of">von</string>
     <string name="podcast_image">Podcast Logo</string>
     <string name="no_podcast">Kein Podcast vorhanden</string>
     <string name="no_podcast_selected">Kein Podcast ausgewählt</string>

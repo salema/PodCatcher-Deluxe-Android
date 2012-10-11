@@ -119,6 +119,7 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoader 
 	
 	private void addPodcast() {
 		addPodcastButton.setEnabled(false);
+		podcastUrlEditText.setEnabled(false);
 		errorView.setVisibility(View.GONE);
 		
 		String spec = podcastUrlEditText.getText().toString();
@@ -142,12 +143,14 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoader 
 		dismiss();
 		errorView.setVisibility(View.GONE);
 		podcastUrlEditText.setText(null);
+		podcastUrlEditText.setEnabled(true);
 		updateButtonEnablement();
 	}
 
 	@Override
 	public void onPodcastLoadFailed(Podcast podcast) {
 		errorView.setVisibility(View.VISIBLE);
+		podcastUrlEditText.setEnabled(true);
 		updateButtonEnablement();
 	}
 	

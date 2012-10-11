@@ -140,6 +140,14 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 		return currentEpisode;
 	}
 	
+	public int getCurrentPosition() {
+		return player.getCurrentPosition() / 1000;
+	}
+	
+	public int getDuration() {
+		return player.getDuration() / 1000;
+	}
+	
 	/**
 	 * Reset the service to creation state
 	 */

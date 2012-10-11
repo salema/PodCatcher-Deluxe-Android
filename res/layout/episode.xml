@@ -17,13 +17,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/episode_view_padding"
-        android:textSize="@dimen/large_font_size" />
+        android:textSize="@dimen/large_font_size"
+        android:visibility="gone" />
     <TextView
         android:id="@+id/podcast_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/episode_view_padding"
-        android:textSize="@dimen/default_font_size" />
+        android:textSize="@dimen/default_font_size"
+        android:visibility="gone" />
     <ImageView
         android:id="@+id/episode_divider"
         android:layout_width="match_parent"
@@ -41,4 +43,27 @@
         android:layout_marginLeft="3dp"
         android:layout_weight="1"
         android:visibility="gone" />
+    <LinearLayout
+        android:id="@+id/player"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:visibility="gone" >
+        <Button
+            android:id="@+id/playPause"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/button_green"
+            android:gravity="center"
+            android:text="@string/pause"
+            android:textColor="#ffffff" />
+        <TextView
+            android:id="@+id/playPosition"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="@dimen/default_font_size" />
+    </LinearLayout>
 </LinearLayout>

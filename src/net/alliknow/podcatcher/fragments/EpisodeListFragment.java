@@ -114,7 +114,7 @@ public class EpisodeListFragment extends ListFragment {
 		showProgress = true;
 		getListView().setVisibility(View.GONE);
 		getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
-		//if (! Podcatcher.isInDebugMode(getActivity()))
+		if (! Podcatcher.isInDebugMode(getActivity()))
 				getView().findViewById(R.id.episode_list_progress).setVisibility(View.VISIBLE);
 	}
 
