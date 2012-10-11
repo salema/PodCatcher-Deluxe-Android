@@ -123,8 +123,9 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	public void onDestroy() {
 		super.onDestroy();
 		        
-        // Make sure the service is stopped on destroy of this fragment 
-        getActivity().stopService(new Intent(getActivity(), PlayEpisodeService.class));
+        // Make sure the service is stopped on destroy of this fragment
+		// TODO Do we actually want this??? (playback will stop on back button press
+        //getActivity().stopService(new Intent(getActivity(), PlayEpisodeService.class));
 	}
 	
 	/**
@@ -134,6 +135,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	public void setEpisode(Episode selectedEpisode) {
 		this.episode = selectedEpisode;
 		
+		getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
 		getView().findViewById(R.id.episode_divider).setVisibility(View.VISIBLE);
 		((TextView) getView().findViewById(R.id.podcast_title)).setText(episode.getPodcast().getName());
 		((TextView) getView().findViewById(R.id.episode_title)).setText(episode.getName());

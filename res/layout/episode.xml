@@ -4,6 +4,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     <TextView
+        android:id="@id/android:empty"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/no_episode_selected"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="@dimen/small_font_size" />
+    <TextView
         android:id="@+id/episode_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,7 +38,7 @@
         android:id="@+id/episode_description"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_marginLeft="3dp"
+        android:layout_weight="1"
         android:visibility="gone" />
 </LinearLayout>

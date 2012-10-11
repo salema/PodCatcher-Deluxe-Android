@@ -14,7 +14,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="@string/no_episode"
+        android:text="@string/no_podcast_selected"
         android:textColor="@android:color/darker_gray"
         android:textSize="@dimen/small_font_size" />
     <ProgressBar
