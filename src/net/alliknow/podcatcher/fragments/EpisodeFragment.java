@@ -19,6 +19,7 @@ package net.alliknow.podcatcher.fragments;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.OnPlaybackCompleteListener;
@@ -68,9 +69,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	private View playerView;
 	/** The play/pause button */
 	private Button playPauseButton;
-	/** The play position text view */
-	private TextView playPositionView;
-	
+		
 	/** Current episode */
 	private Episode episode;
 	
@@ -90,35 +89,15 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 
 		@Override
 		public void run() {
-			final String position = formatTime(service.getCurrentPosition());
-			final String duration = formatTime(service.getDuration());
-			final String of = getResources().getString(R.string.of);
+			if (EpisodeFragment.this == null || EpisodeFragment.this.getActivity() == null) return;
 			
 			EpisodeFragment.this.getActivity().runOnUiThread(new Runnable() {
 				
 				@Override
 				public void run() {
-					playPositionView.setText(position + " " + of + " " + duration);
+					updatePlayButton();
 				}
 			});
-		}
-		
-		private String formatTime(int time) {
-			int hours = (int) Math.floor(time / 3600);
-			
-			int minutes = (int) (Math.floor(time / 60) - 60 * hours);
-			int seconds = (int) (Math.floor(time) % 60);
-			
-			String minutesString = this.formatNumber(minutes, hours > 0);
-			String secondsString = this.formatNumber(seconds, true);
-			
-			if (hours > 0) return hours + ":" + minutesString + ":" + secondsString;
-			else return minutesString + ":" + secondsString; 
-		}
-		
-		private String formatNumber(int number, boolean makeTwoDigits) {
-			if (number < 10 && makeTwoDigits) return "0" + number;
-			else return number + "";
 		}
 	}
 	
@@ -157,14 +136,12 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 				togglePlay();
 			}
 		});
-		playPositionView = (TextView) view.findViewById(R.id.playPosition);
 		
 		// Restore from configuration change 
 		if (episode != null) setEpisode(episode);
 		
 		playerView.setVisibility(plays ? View.VISIBLE : View.GONE);
-		playPauseButton.setText(plays ? R.string.pause : R.string.play);
-		playPauseButton.setBackgroundResource(plays ? R.drawable.button_red : R.drawable.button_green);
+		updatePlayButton();
 	}
 	
 	@Override
@@ -172,6 +149,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		inflater.inflate(R.menu.episode_menu, menu);
 		
 		loadMenuItem = menu.findItem(R.id.load);
+		loadMenuItem.setVisible(episode != null);
 		loadMenuItem.setEnabled(episode != null && service != null && ! episode.equals(service.getCurrentEpisode()));
 		loadMenuItem.setShowAsAction(episode == null ? MenuItem.SHOW_AS_ACTION_NEVER : MenuItem.SHOW_AS_ACTION_ALWAYS);
 	}
@@ -261,8 +239,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	public void onReadyToPlay() {
 		plays = true;
 		
-		playPauseButton.setText(R.string.pause);
-		playPauseButton.setBackgroundResource(R.drawable.button_red);
+		updatePlayButton();
 		playerView.setVisibility(View.VISIBLE);
 		
 		playUpdateTimerTask = new PlayProgressTask();
@@ -294,7 +271,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	}
 	
 	private void togglePlay() {
-		if (episode != null && service != null) {		
+		if (service != null && service.getCurrentEpisode() != null) {		
 			// Player is playing
 			if (plays) {
 				service.pause();
@@ -308,10 +285,21 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 			}
 			
 			plays = !plays;
-			
-			playPauseButton.setText(plays ? R.string.pause : R.string.play);
-			playPauseButton.setBackgroundResource(plays ? R.drawable.button_red : R.drawable.button_green);
+			updatePlayButton();
 		} else Log.d(getClass().getSimpleName(), "Cannot play episode (episode or service are null)");
+	}
+	
+	private void updatePlayButton() {
+		playPauseButton.setText(plays ? R.string.pause : R.string.resume);
+		playPauseButton.setBackgroundResource(plays ? R.drawable.button_red : R.drawable.button_green);
+		
+		if (isAdded() && service != null && service.getDuration() > 0) {
+			final String position = Podcatcher.formatTime(service.getCurrentPosition());
+			final String duration = Podcatcher.formatTime(service.getDuration());
+			
+			playPauseButton.setText(playPauseButton.getText() + " " + getResources().getString(R.string.at) +
+					" " + position + " " + getResources().getString(R.string.of) + " " + duration);
+		}
 	}
 	
 	/** Defines callbacks for service binding, passed to bindService() */
@@ -326,8 +314,21 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
             Log.d(EpisodeFragment.this.getClass().getSimpleName(), "Bound to playback service");
         
             Episode serviceEpisode = service.getCurrentEpisode();
-            if (serviceEpisode != null) 
-            	playerTitleView.setText(serviceEpisode.getName() + " - " + serviceEpisode.getPodcast().getName());
+            if (serviceEpisode != null) {
+            	playerDividerView.setVisibility(View.VISIBLE);
+    			playerTitleView.setVisibility(View.VISIBLE);
+    			playerTitleView.setText(serviceEpisode.getName() + " - " + serviceEpisode.getPodcast().getName());
+            }
+            if (service.getDuration() > 0) {
+            	updatePlayButton();
+        		playerView.setVisibility(View.VISIBLE);
+            }
+            if (service.isPlaying()) {
+            	plays = true;
+            	
+        		playUpdateTimerTask = new PlayProgressTask();
+        		playUpdateTimer.schedule(playUpdateTimerTask, 0, 1000);
+            }
         }
 
         @Override

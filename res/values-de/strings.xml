@@ -2,7 +2,8 @@
     <string name="app_name">Simple PodCatcher</string>
     <string name="play">Abspielen</string>
     <string name="pause">Pause</string>
-    <string name="resume">Weiter bei</string>
+    <string name="resume">Weiterspielen</string>
+    <string name="at">bei</string>
     <string name="of">von</string>
     <string name="podcast_image">Podcast Logo</string>
     <string name="no_podcast">Kein Podcast vorhanden</string>

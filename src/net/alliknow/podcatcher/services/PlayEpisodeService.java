@@ -42,6 +42,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	private OnReadyToPlayListener readyListener;
 	/** Is the player preparing */
 	private boolean preparing = false;
+	/** Is the player prepared ? */
+	private boolean prepared = false;
 	/** A listener notified on playback completion */
 	private OnPlaybackCompleteListener completeListener;
 	
@@ -95,7 +97,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	 */
 	public void pause() {
 		if (currentEpisode == null) Log.d(getClass().getSimpleName(), "Called pause without setting episode");
-		else if (! preparing && isPlaying()) player.pause();
+		else if (prepared && isPlaying()) player.pause();
 	}
 	
 	/**
@@ -103,7 +105,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	 */
 	public void resume() {
 		if (currentEpisode == null) Log.d(getClass().getSimpleName(), "Called resume without setting episode");
-		else if (! preparing && player != null && ! isPlaying()) player.start();
+		else if (prepared && player != null && ! isPlaying()) player.start();
 	}
 	
 	/**
@@ -145,7 +147,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	 * Does not throw any exception but returns at least zero 
 	 */
 	public int getCurrentPosition() {
-		if (player == null || preparing) return 0;
+		if (player == null || !prepared) return 0;
 		else return player.getCurrentPosition() / 1000;
 	}
 	
@@ -154,7 +156,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	 * Does not throw any exception but returns at least zero 
 	 */
 	public int getDuration() {
-		if (player == null || preparing) return 0;
+		if (player == null || !prepared) return 0;
 		else return player.getDuration() / 1000;
 	}
 	
@@ -164,6 +166,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	public void reset() {
 		this.currentEpisode = null;
 		this.preparing = false;
+		this.prepared = false;
 		
 		releasePlayer();
 	}
@@ -171,6 +174,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	@Override
 	public void onPrepared(MediaPlayer mp) {
 		preparing = false;
+		prepared = true;
 		if (readyListener != null) readyListener.onReadyToPlay();
 		else Log.d(getClass().getSimpleName(), "Episode prepared, but no listener attached");
 		

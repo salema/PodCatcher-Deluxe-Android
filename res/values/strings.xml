@@ -3,6 +3,7 @@
     <string name="play">Play</string>
     <string name="pause">Pause</string>
     <string name="resume">Resume</string>
+    <string name="at">at</string>
     <string name="of">of</string>
     <string name="podcast_image">Podcast Logo</string>
     <string name="no_podcast">No podcast added</string>

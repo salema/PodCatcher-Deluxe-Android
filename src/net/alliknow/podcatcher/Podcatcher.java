@@ -45,4 +45,22 @@ public class Podcatcher {
 	     
 	    return debuggable;
 	}
+	
+	public static String formatTime(int time) {
+		int hours = (int) Math.floor(time / 3600);
+		
+		int minutes = (int) (Math.floor(time / 60) - 60 * hours);
+		int seconds = (int) (Math.floor(time) % 60);
+		
+		String minutesString = formatNumber(minutes, hours > 0);
+		String secondsString = formatNumber(seconds, true);
+		
+		if (hours > 0) return hours + ":" + minutesString + ":" + secondsString;
+		else return minutesString + ":" + secondsString; 
+	}
+	
+	public static String formatNumber(int number, boolean makeTwoDigits) {
+		if (number < 10 && makeTwoDigits) return "0" + number;
+		else return number + "";
+	}
 }

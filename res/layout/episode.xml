@@ -69,6 +69,7 @@
         android:orientation="horizontal"
         android:paddingLeft="@dimen/episode_view_padding"
         android:paddingBottom="2dp"
+        android:paddingRight="@dimen/play_button_right_padding"
         android:visibility="gone" >
         <Button
             android:id="@+id/playPause"
@@ -77,13 +78,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/pause"
-            android:textColor="#ffffff" />
-        <TextView
-            android:id="@+id/playPosition"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
+            android:textColor="#ffffff"
             android:textSize="@dimen/default_font_size" />
     </LinearLayout>
 </LinearLayout>
