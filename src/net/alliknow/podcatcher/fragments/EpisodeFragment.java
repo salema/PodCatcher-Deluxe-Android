@@ -65,6 +65,8 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	private View playerDividerView;
 	/** The player title view */
 	private TextView playerTitleView;
+	/** The player progress view */
+	private View playerProgress;
 	/** The player view */
 	private View playerView;
 	/** The play/pause button */
@@ -127,6 +129,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		
 		playerDividerView = getView().findViewById(R.id.player_divider);
 		playerTitleView = (TextView) getView().findViewById(R.id.player_title);
+		playerProgress = getView().findViewById(R.id.player_progress);
 		playerView = view.findViewById(R.id.player);
 		playPauseButton = (Button) view.findViewById(R.id.playPause);
 		playPauseButton.setOnClickListener(new OnClickListener() {
@@ -239,6 +242,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	public void onReadyToPlay() {
 		plays = true;
 		
+		playerProgress.setVisibility(View.GONE);
 		updatePlayButton();
 		playerView.setVisibility(View.VISIBLE);
 		
@@ -263,6 +267,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 				playerDividerView.setVisibility(View.GONE);
 				playerTitleView.setVisibility(View.GONE);
 				playerTitleView.setText(episode.getName() + " - " + episode.getPodcast().getName());
+				playerProgress.setVisibility(View.VISIBLE);
 				
 				service.playEpisode(episode);
 				loadMenuItem.setEnabled(false);
@@ -315,6 +320,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
         
             Episode serviceEpisode = service.getCurrentEpisode();
             if (serviceEpisode != null) {
+            	// TODO only if we are not currently displaying this episode above
             	playerDividerView.setVisibility(View.VISIBLE);
     			playerTitleView.setVisibility(View.VISIBLE);
     			playerTitleView.setText(serviceEpisode.getName() + " - " + serviceEpisode.getPodcast().getName());

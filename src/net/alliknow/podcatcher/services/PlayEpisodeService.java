@@ -115,6 +115,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	public void playEpisode(Episode episode) {
 		if (episode != null) {
 			Log.d(getClass().getSimpleName(), "Loading episode " +  episode);
+			this.prepared = false;
 			this.currentEpisode = episode;
 			
 			// Stop current playback if any
