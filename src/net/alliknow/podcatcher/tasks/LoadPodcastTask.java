@@ -101,15 +101,18 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 	@Override
 	protected void onPostExecute(Document result) {
 		// Background task failed to complete
-		if (failed || result == null) {
-			if (loader != null) loader.onPodcastLoadFailed(podcast);
-			else Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
+		if (failed || result == null) notifyFailed();
 		// Podcast was loaded
-		} else {
+		else {
 			podcast.setRssFile(result);
 			
 			if (loader != null) loader.onPodcastLoaded(podcast);
 			else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
 		}
+	}
+	
+	private void notifyFailed() {
+		if (loader != null) loader.onPodcastLoadFailed(podcast);
+		else Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
 	}
 }

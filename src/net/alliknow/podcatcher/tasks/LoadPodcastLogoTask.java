@@ -78,12 +78,17 @@ public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 	
 	@Override
 	protected void onPostExecute(Bitmap result) {
-		if (failed || result == null) {
+		// Background task failed to complete
+		if (failed || result == null) notifyFailed();
+		// Podcast logo was loaded
+		else {
 			if (loader != null) loader.onPodcastLogoLoaded(result);
 			else Log.d(getClass().getSimpleName(), "Podcast logo loaded, but no listener attached");
-		} else {
-			if (loader != null) loader.onPodcastLogoLoadFailed();
-			else Log.d(getClass().getSimpleName(), "Podcast logo loading failed, but no listener attached");
 		}
+	}
+
+	private void notifyFailed() {
+		if (loader != null) loader.onPodcastLogoLoadFailed();
+		else Log.d(getClass().getSimpleName(), "Podcast logo loading failed, but no listener attached");
 	}
 }
