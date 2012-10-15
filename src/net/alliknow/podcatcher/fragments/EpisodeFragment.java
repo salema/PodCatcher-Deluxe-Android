@@ -313,8 +313,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
             Log.d(EpisodeFragment.this.getClass().getSimpleName(), "Bound to playback service");
         
             Episode serviceEpisode = service.getCurrentEpisode();
-            if (serviceEpisode != null) {
-            	// TODO only if we are not currently displaying this episode above
+            if (serviceEpisode != null && !serviceEpisode.equals(EpisodeFragment.this.episode)) {
             	playerDividerView.setVisibility(View.VISIBLE);
     			playerTitleView.setVisibility(View.VISIBLE);
     			playerTitleView.setText(serviceEpisode.getName() + " - " + serviceEpisode.getPodcast().getName());
