@@ -86,8 +86,10 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 
 		@Override
 		public void run() {
+			// This will only work, if our callback actually exists
 			if (EpisodeFragment.this == null || EpisodeFragment.this.getActivity() == null) return;
 			
+			// Need to run on UI thread, since we want to update the play button
 			EpisodeFragment.this.getActivity().runOnUiThread(new Runnable() {
 				
 				@Override
@@ -126,7 +128,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		playerTitleView = (TextView) getView().findViewById(R.id.player_title);
 		playerProgress = getView().findViewById(R.id.player_progress);
 		playerView = view.findViewById(R.id.player);
-		playerButton = (Button) view.findViewById(R.id.playPause);
+		playerButton = (Button) view.findViewById(R.id.player_button);
 		playerButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -203,24 +205,26 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	 * @param selectedEpisode Episode to show (cannot be null)
 	 */
 	public void setEpisode(Episode selectedEpisode) {
-		this.episode = selectedEpisode;
-		
-		getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
-		
-		episodeTitleView.setVisibility(View.VISIBLE);
-		episodeTitleView.setText(episode.getName());
-		podcastTitleView.setText(episode.getPodcast().getName());
-		podcastTitleView.setVisibility(View.VISIBLE);
-		getView().findViewById(R.id.episode_divider).setVisibility(View.VISIBLE);
-						
-		episodeDetailView.loadDataWithBaseURL(null, episode.getDescription(), "text/html", "utf-8", null);
-		episodeDetailView.setVisibility(View.VISIBLE);
-		
-		loadMenuItem.setVisible(true);
-		loadMenuItem.setEnabled(! episode.equals(service.getCurrentEpisode()));
-		loadMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		
-		updatePlayer();
+		if (selectedEpisode != null) {
+			this.episode = selectedEpisode;
+			
+			getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
+			
+			episodeTitleView.setVisibility(View.VISIBLE);
+			episodeTitleView.setText(episode.getName());
+			podcastTitleView.setText(episode.getPodcast().getName());
+			podcastTitleView.setVisibility(View.VISIBLE);
+			getView().findViewById(R.id.episode_divider).setVisibility(View.VISIBLE);
+							
+			episodeDetailView.loadDataWithBaseURL(null, episode.getDescription(), "text/html", "utf-8", null);
+			episodeDetailView.setVisibility(View.VISIBLE);
+			
+			loadMenuItem.setVisible(true);
+			loadMenuItem.setEnabled(! episode.equals(service.getCurrentEpisode()));
+			loadMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+			
+			updatePlayer();
+		}
 	}
 		
 	@Override
@@ -235,7 +239,10 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	public void onPlaybackComplete() {
 		stopPlayProgressTimer();
 		
+		loadMenuItem.setEnabled(true);
+		
 		service.reset();
+		updatePlayer();
 	}
 	
 	private void loadEpisode() {
@@ -254,7 +261,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	}
 	
 	private void togglePlay() {
-		if (service != null && service.getCurrentEpisode() != null) {		
+		if (service != null && service.isPrepared()) {		
 			// Player is playing
 			if (service.isPlaying()) {
 				service.pause();
@@ -266,7 +273,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 			}
 			
 			updatePlayer();
-		} else Log.d(getClass().getSimpleName(), "Cannot play episode (episode or service are null)");
+		} else Log.d(getClass().getSimpleName(), "Cannot play/pause episode (episode or service are null)");
 	}
 	
 	private void updatePlayer() {
@@ -287,7 +294,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		playerButton.setText(service.isPlaying() ? R.string.pause : R.string.resume);
 		playerButton.setBackgroundResource(service.isPlaying() ? R.drawable.button_red : R.drawable.button_green);
 		
-		if (isAdded() && service != null && service.getDuration() > 0) {
+		if (isAdded() && service != null && service.isPrepared()) {
 			final String position = Podcatcher.formatTime(service.getCurrentPosition());
 			final String duration = Podcatcher.formatTime(service.getDuration());
 			

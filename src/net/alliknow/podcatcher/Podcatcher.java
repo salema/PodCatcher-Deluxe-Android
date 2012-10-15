@@ -47,10 +47,10 @@ public class Podcatcher {
 	}
 	
 	public static String formatTime(int time) {
-		int hours = (int) Math.floor(time / 3600);
+		int hours = Math.round(time / 3600);
 		
-		int minutes = (int) (Math.floor(time / 60) - 60 * hours);
-		int seconds = (int) (Math.floor(time) % 60);
+		int minutes = Math.round((time / 60) - 60 * hours);
+		int seconds = Math.round(time % 60);
 		
 		String minutesString = formatNumber(minutes, hours > 0);
 		String secondsString = formatNumber(seconds, true);

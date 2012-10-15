@@ -189,7 +189,10 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	@Override
 	public void onCompletion(MediaPlayer mp) {
 		if (completeListener != null) completeListener.onPlaybackComplete();
-		else Log.d(getClass().getSimpleName(), "Episode playback completed, but no listener attached");
+		else {
+			reset();
+			Log.d(getClass().getSimpleName(), "Episode playback completed, but no listener attached");
+		}
 	}
 	
 	@Override
