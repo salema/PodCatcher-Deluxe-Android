@@ -28,7 +28,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 /**
- * Play an episode service
+ * Play an episode service, wraps media player.
  * 
  * @author Kevin Hausmann
  */
@@ -38,12 +38,11 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	private Episode currentEpisode;
 	/** Our MediaPlayer handle */
 	private MediaPlayer player;
-	/** A listener notified on preparation success */
-	private OnReadyToPlayListener readyListener;
-	/** Is the player preparing */
-	private boolean preparing = false;
 	/** Is the player prepared ? */
 	private boolean prepared = false;
+	
+	/** A listener notified on preparation success */
+	private OnReadyToPlayListener readyListener;
 	/** A listener notified on playback completion */
 	private OnPlaybackCompleteListener completeListener;
 	
@@ -93,6 +92,33 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	}
 
 	/**
+	 * Load and start playback for given episode. Will end any current playback.
+	 * @param episode Episode to play (not null)
+	 */
+	public void playEpisode(Episode episode) {
+		if (episode != null) {
+			Log.d(getClass().getSimpleName(), "Loading episode " +  episode);
+			
+			this.prepared = false;
+			this.currentEpisode = episode;
+			
+			// Stop current playback if any
+			if (isPlaying()) player.stop();
+			// Release the current player
+			releasePlayer();
+						
+			// Start playback for new episode
+			try {
+				initPlayer();
+				player.setDataSource(episode.getMediaUrl().toExternalForm());
+				player.prepareAsync(); // might take long! (for buffering, etc)
+			} catch (Exception e) {
+				Log.e(getClass().getSimpleName(), "Play failed for episode: " +  episode, e);
+			}		
+		}
+	}
+	
+	/**
 	 * Pause current playback
 	 */
 	public void pause() {
@@ -105,35 +131,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	 */
 	public void resume() {
 		if (currentEpisode == null) Log.d(getClass().getSimpleName(), "Called resume without setting episode");
-		else if (prepared && player != null && ! isPlaying()) player.start();
-	}
-	
-	/**
-	 * Load and start playback for given episode. Will end any current playback.
-	 * @param episode Episode to play (not null)
-	 */
-	public void playEpisode(Episode episode) {
-		if (episode != null) {
-			Log.d(getClass().getSimpleName(), "Loading episode " +  episode);
-			this.prepared = false;
-			this.currentEpisode = episode;
-			
-			// Stop current playback if any
-			if (isPlaying()) {
-				player.stop();
-				releasePlayer();
-			}
-			
-			// Start playback for episode
-			try {
-				initPlayer();
-				player.setDataSource(episode.getMediaUrl().toExternalForm());
-				player.prepareAsync(); // might take long! (for buffering, etc)
-				preparing = true;
-			} catch (Exception e) {
-				e.printStackTrace();
-			}		
-		}
+		else if (prepared && !isPlaying()) player.start();
 	}
 	
 	/**
@@ -141,6 +139,14 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	 */
 	public Episode getCurrentEpisode() {
 		return currentEpisode;
+	}
+	
+	/**
+	 * @return Whether the service is prepared, i.e.
+	 * any episode is loaded;
+	 */
+	public boolean isPrepared() {
+		return prepared;
 	}
 	
 	/**
@@ -166,7 +172,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	 */
 	public void reset() {
 		this.currentEpisode = null;
-		this.preparing = false;
 		this.prepared = false;
 		
 		releasePlayer();
@@ -174,12 +179,11 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	
 	@Override
 	public void onPrepared(MediaPlayer mp) {
-		preparing = false;
 		prepared = true;
+		player.start();
+		
 		if (readyListener != null) readyListener.onReadyToPlay();
 		else Log.d(getClass().getSimpleName(), "Episode prepared, but no listener attached");
-		
-		player.start();
 	}
 	
 	@Override
@@ -206,6 +210,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	}
 	
 	private void releasePlayer() {
+		this.prepared = false;
+		
 		if (player != null) {
 			player.release();
 			player = null;
