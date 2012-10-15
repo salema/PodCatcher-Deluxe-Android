@@ -84,9 +84,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	private Timer playUpdateTimer = new Timer();
 	/** Play update timer task */
 	private TimerTask playUpdateTimerTask;
-	/** Do we need to restart the timer on attach ? */
-	private boolean needsTimerRestart = false;
-	
+		
 	private class PlayProgressTask extends TimerTask {
 
 		@Override
@@ -172,11 +170,6 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		// Attach to play service via this fragment's activity
 		Intent intent = new Intent(getActivity(), PlayEpisodeService.class);
     	getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
-    	
-    	if (needsTimerRestart) {
-    		playUpdateTimerTask = new PlayProgressTask();
-    		playUpdateTimer.schedule(playUpdateTimerTask, 1000, 1000);
-    	}
 	}
 	
 	@Override
@@ -192,8 +185,9 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		
 		// Detach from play service via this fragment's activity
 		getActivity().unbindService(connection);
-		playUpdateTimerTask.cancel();
-		needsTimerRestart = plays;
+		
+		// Stop progress update task if existing
+		if (playUpdateTimerTask != null) playUpdateTimerTask.cancel();
 	}
 		
 	@Override
