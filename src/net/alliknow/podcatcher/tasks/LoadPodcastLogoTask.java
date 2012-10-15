@@ -23,7 +23,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 /**
- * An async task to load a podcast logo
+ * An async task to load a podcast logo.
+ * Implement PodcastLogoLoader to be alerted on completion or failure
  * 
  * @author Kevin Hausmann
  */
@@ -49,6 +50,9 @@ public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 	/** Owner */
 	private final PodcastLogoLoader loader;
 	
+	/** Store whether loading failed */
+	private boolean failed = false;
+	
 	/**
 	 * Create new task
 	 * @param fragment Owner fragment
@@ -64,9 +68,9 @@ public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 			
 			return BitmapFactory.decodeStream(podcasts[0].getLogoUrl().openStream());
 		} catch (Exception e) {
+			failed = true;
 			Log.w(getClass().getSimpleName(), "Logo failed to load for podcast \"" + podcasts[0] + "\" with " +
 					"logo URL " + podcasts[0].getLogoUrl(), e);
-			cancel(true);
 		}
 		
 		return null;
@@ -74,13 +78,12 @@ public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 	
 	@Override
 	protected void onPostExecute(Bitmap result) {
-		if (loader != null) loader.onPodcastLogoLoaded(result);
-		else Log.d(getClass().getSimpleName(), "Podcast logo loaded, but no listener attached");
-	}
-	
-	@Override
-	protected void onCancelled() {
-		if (loader != null) loader.onPodcastLogoLoadFailed();
-		else Log.d(getClass().getSimpleName(), "Podcast logo loading failed, but no listener attached");
+		if (failed || result == null) {
+			if (loader != null) loader.onPodcastLogoLoaded(result);
+			else Log.d(getClass().getSimpleName(), "Podcast logo loaded, but no listener attached");
+		} else {
+			if (loader != null) loader.onPodcastLogoLoadFailed();
+			else Log.d(getClass().getSimpleName(), "Podcast logo loading failed, but no listener attached");
+		}
 	}
 }

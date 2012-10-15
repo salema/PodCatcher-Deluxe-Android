@@ -28,8 +28,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 /**
- * Loads podcast RSS file asynchroniously. Auto-cancelles itself
- * on network or document parsing errors.
+ * Loads podcast RSS file asynchroniously.
+ * Implement to PodcastLoader interface to be alerted on completion or failure
  * 
  * @author Kevin Hausmann
  */
@@ -64,6 +64,9 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 	/** Document builder to use */
 	private DocumentBuilderFactory factory;
 	
+	/** Store whether loading failed */
+	private boolean failed = false;
+	
 	/**
 	 * Create new task
 	 * @param fragment Owner fragment
@@ -88,8 +91,8 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 			
 			return factory.newDocumentBuilder().parse(connection.getInputStream());
 		} catch (Exception e) {
+			failed = true;
 			Log.w(getClass().getSimpleName(), "Load failed for podcast \"" + podcasts[0] + "\"", e);
-			cancel(true);
 		}
 		
 		return null;
@@ -97,15 +100,16 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 	
 	@Override
 	protected void onPostExecute(Document result) {
-		podcast.setRssFile(result);
-		
-		if (loader != null) loader.onPodcastLoaded(podcast);
-		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
-	}
-	
-	@Override
-	protected void onCancelled(Document result) {
-		if (loader != null) loader.onPodcastLoadFailed(podcast);
-		else Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
+		// Background task failed to complete
+		if (failed || result == null) {
+			if (loader != null) loader.onPodcastLoadFailed(podcast);
+			else Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
+		// Podcast was loaded
+		} else {
+			podcast.setRssFile(result);
+			
+			if (loader != null) loader.onPodcastLoaded(podcast);
+			else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
+		}
 	}
 }

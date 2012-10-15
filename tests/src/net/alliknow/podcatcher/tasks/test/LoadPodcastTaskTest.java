@@ -98,7 +98,6 @@ public class LoadPodcastTaskTest extends AndroidTestCase {
 	    }
 		
 		assertEquals(AsyncTask.Status.FINISHED, task.getStatus());
-		assertEquals(true, task.isCancelled());
 		assertTrue(mockLoader.hasFailed());
 		
 		// null URL
@@ -110,7 +109,6 @@ public class LoadPodcastTaskTest extends AndroidTestCase {
 	    }
 		
 		assertEquals(AsyncTask.Status.FINISHED, task.getStatus());
-		assertEquals(true, task.isCancelled());
 		assertTrue(mockLoader.hasFailed());
 		assertTrue(mockLoader.getResult().needsReload());
 		
@@ -123,7 +121,6 @@ public class LoadPodcastTaskTest extends AndroidTestCase {
 	    }
 		
 		assertEquals(AsyncTask.Status.FINISHED, task.getStatus());
-		assertEquals(true, task.isCancelled());
 		assertTrue(mockLoader.hasFailed());
 		assertTrue(mockLoader.getResult().needsReload());
 	}

@@ -202,11 +202,14 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	
 	@Override
 	public void onPodcastLoadFailed(Podcast podcast) {
-		loadPodcastTask = null;
-		
-		if (loadedListener != null) loadedListener.onPodcastLoadFailed(podcast);
-		else Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
-		
+		// Only react if the podcast failed to load that we are actually waiting for
+		if (currentPodcast.equals(podcast)) {
+			loadPodcastTask = null;
+			
+			if (loadedListener != null) loadedListener.onPodcastLoadFailed(podcast);
+			else Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
+		}
+			
 		Log.w(getClass().getSimpleName(), "Podcast failed to load " + podcast);
 	}
 	
@@ -231,15 +234,16 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 		if (podcastList.contains(selectedPodcast) && (currentPodcast == null || !currentPodcast.equals(selectedPodcast))) {
 			currentPodcast = selectedPodcast;
 			
-			// Prepare UI
-			((PodcastListAdapter) getListAdapter()).setSelectedPosition(podcastList.indexOf(selectedPodcast));
-			setPodcastLogo(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.default_podcast_logo));
-			selectedListener.onPodcastSelected(selectedPodcast);
-			
 			// Stopp loading previous tasks
 			if (loadPodcastTask != null) loadPodcastTask.cancel(true);
 			if (loadPodcastLogoTask != null) loadPodcastLogoTask.cancel(true);
 						
+			// Prepare UI
+			((PodcastListAdapter) getListAdapter()).setSelectedPosition(podcastList.indexOf(selectedPodcast));
+			setPodcastLogo(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.default_podcast_logo));
+			// Alert parent activity
+			selectedListener.onPodcastSelected(selectedPodcast);
+			
 			// Load if too old, otherwise just use previously loaded version
 			if (selectedPodcast.needsReload()) {
 				// Download podcast RSS feed (async)

@@ -84,7 +84,7 @@ public class LoadPodcastLogoTaskTest extends AndroidTestCase {
 			task = new LoadPodcastLogoTask(mockLoader);
 			task.execute(podcast);
 			
-			synchronized (mockLoader) { mockLoader.wait(10000); }
+			synchronized (mockLoader) { mockLoader.wait(); }
 			
 			assertEquals(AsyncTask.Status.FINISHED, task.getStatus());
 			assertFalse(task.isCancelled());
