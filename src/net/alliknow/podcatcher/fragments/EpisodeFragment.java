@@ -147,7 +147,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		
 		loadMenuItem = menu.findItem(R.id.load);
 		loadMenuItem.setVisible(episode != null);
-		loadMenuItem.setEnabled(episode != null && service != null && ! episode.equals(service.getCurrentEpisode()));
+		loadMenuItem.setEnabled(episode != null && service != null && !service.hasPreparedEpisode(episode));
 		loadMenuItem.setShowAsAction(episode == null ? MenuItem.SHOW_AS_ACTION_NEVER : MenuItem.SHOW_AS_ACTION_ALWAYS);
 	}
 	
@@ -220,7 +220,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 			episodeDetailView.setVisibility(View.VISIBLE);
 			
 			loadMenuItem.setVisible(true);
-			loadMenuItem.setEnabled(! episode.equals(service.getCurrentEpisode()));
+			loadMenuItem.setEnabled(! service.hasPreparedEpisode(episode));
 			loadMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 			
 			updatePlayer();
@@ -248,7 +248,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	private void loadEpisode() {
 		if (episode != null && service != null) {		
 			// Episode should not be loaded
-			if (! episode.equals(service.getCurrentEpisode())) {
+			if (! service.hasPreparedEpisode(episode)) {
 				stopPlayProgressTimer();
 				
 				playerProgress.setVisibility(View.VISIBLE);
@@ -278,14 +278,14 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	
 	private void updatePlayer() {
 		// Is the loaded episode different from the displayed one?
-		Episode serviceEpisode = service.getCurrentEpisode();
-		if (serviceEpisode != null) {
-			playerDividerView.setVisibility(serviceEpisode.equals(episode) ? View.GONE : View.VISIBLE);
-			playerTitleView.setVisibility(serviceEpisode.equals(episode) ? View.GONE : View.VISIBLE);
-			playerTitleView.setText(serviceEpisode.getName() + " - " + serviceEpisode.getPodcast().getName());
-		}
-		// Is any episode loaded?
-		if (service.isPrepared()) updatePlayerButton();
+		if (service.isPrepared()) {
+			playerDividerView.setVisibility(service.hasPreparedEpisode(episode) ? View.GONE : View.VISIBLE);
+			playerTitleView.setVisibility(service.hasPreparedEpisode(episode) ? View.GONE : View.VISIBLE);
+			playerTitleView.setText(service.getCurrentEpisodeName() + " - " 
+					+ service.getCurrentEpisodePodcastName());
+			
+			updatePlayerButton();
+		} 
 		
 		playerView.setVisibility(service.isPrepared() ? View.VISIBLE : View.GONE);
 	}
@@ -317,8 +317,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
-        	PlayServiceBinder binder = (PlayServiceBinder) serviceBinder;
-            service = binder.getService();
+        	service = ((PlayServiceBinder) serviceBinder).getService();
             Log.d(EpisodeFragment.this.getClass().getSimpleName(), "Bound to playback service");
             
             // Register listeners
@@ -327,7 +326,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
             
             // Update UI to reflect service status
             updatePlayer();
-            // Restart play progress timer task
+            // Restart play progress timer task if service is playing
             if (service.isPlaying()) startPlayProgressTimer();
         }
 

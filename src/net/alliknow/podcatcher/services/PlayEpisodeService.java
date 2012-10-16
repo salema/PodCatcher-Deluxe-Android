@@ -164,19 +164,36 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	}
 	
 	/**
-	 * @return The episode currently loaded by the service (may be null)
-	 */
-	public Episode getCurrentEpisode() {
-		// TODO Might be better to use a copy constructor here and not return the actual object!
-		return currentEpisode;
-	}
-	
-	/**
 	 * @return Whether the service is prepared, i.e.
 	 * any episode is loaded;
 	 */
 	public boolean isPrepared() {
 		return prepared;
+	}
+	
+	/**
+	 * Checks whether the currently loaded episode is equal to the one given
+	 * @param episode Episode to check for
+	 * @return true iff given episode is loaded, false otherwise
+	 */
+	public boolean hasPreparedEpisode(Episode episode) {
+		return currentEpisode != null && currentEpisode.equals(episode);
+	}
+	
+	/**
+	 * @return The title of the currently loaded episode (if any, might be <code>null</code>)
+	 */
+	public String getCurrentEpisodeName() {
+		if (currentEpisode == null) return null;
+		else return currentEpisode.getName();
+	}
+	
+	/**
+	 * @return The title of the currently loaded episode's podcast (if any, might be <code>null</code>)
+	 */
+	public String getCurrentEpisodePodcastName() {
+		if (currentEpisode == null) return null;
+		else return currentEpisode.getPodcast().getName();
 	}
 	
 	/**
