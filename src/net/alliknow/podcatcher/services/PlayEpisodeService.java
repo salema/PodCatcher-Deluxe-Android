@@ -29,6 +29,12 @@ import android.util.Log;
 
 /**
  * Play an episode service, wraps media player.
+ * This class implements a Android service. It can be used to play back
+ * podcast episodes and tries to hide away the complexity of the media
+ * player support in Android. All methods should fail gracefully.
+ * 
+ * Connect to the service from your activity/fragment to use it. Also
+ * implement the listeners defined here for interaction.
  * 
  * @author Kevin Hausmann
  */
@@ -47,26 +53,50 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	private OnPlaybackCompleteListener completeListener;
 	
 	/** Binder given to clients */
-    private final IBinder binder = new PlayEpisodeBinder();
+    private final IBinder binder = new PlayServiceBinder();
     
-	public class PlayEpisodeBinder extends Binder {
+    /**
+     * The binder to return to client. 
+     */
+	public class PlayServiceBinder extends Binder {
 		public PlayEpisodeService getService() {
-            // Return this instance of LocalService so clients can call public methods
+            // Return this instance of this service, so clients can call public methods
             return PlayEpisodeService.this;
         }
     }
 	
+	/**
+	 * Listener interface to implement if you are interested to be alerted
+	 * when the service loaded an episode and is prepared to play it back.
+	 */
 	public interface OnReadyToPlayListener {
+		
+		/**
+		 * Called by the service on the listener if an episode is loaded
+		 * and ready to play (the service might in fact already have started
+		 * playback...)
+		 */
 		public void onReadyToPlay();
 	}
 	
+	/**
+	 * Listener interface to implement if you are interested to be alerted
+	 * when the service finished playing an episode.
+	 */
 	public interface OnPlaybackCompleteListener {
+		
+		/**
+		 * Called by the service on the listener if an episode finished playing.
+		 * The service does not free resources on completion automatically,
+		 * you might want to call <code>reset()</code>.
+		 */
 		public void onPlaybackComplete();
 	}
 	
 	@Override
 	public IBinder onBind(Intent intent) {
 		Log.d(getClass().getSimpleName(), "Service bound");
+		
 		return binder;
 	}
 	
@@ -99,13 +129,12 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 		if (episode != null) {
 			Log.d(getClass().getSimpleName(), "Loading episode " +  episode);
 			
-			this.prepared = false;
-			this.currentEpisode = episode;
-			
 			// Stop current playback if any
 			if (isPlaying()) player.stop();
-			// Release the current player
-			releasePlayer();
+			// Release the current player and reset variables
+			reset();
+			
+			this.currentEpisode = episode;
 						
 			// Start playback for new episode
 			try {
@@ -113,7 +142,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 				player.setDataSource(episode.getMediaUrl().toExternalForm());
 				player.prepareAsync(); // might take long! (for buffering, etc)
 			} catch (Exception e) {
-				Log.e(getClass().getSimpleName(), "Play failed for episode: " +  episode, e);
+				Log.e(getClass().getSimpleName(), "Prepare/Play failed for episode: " +  episode, e);
 			}		
 		}
 	}
@@ -138,6 +167,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	 * @return The episode currently loaded by the service (may be null)
 	 */
 	public Episode getCurrentEpisode() {
+		// TODO Might be better to use a copy constructor here and not return the actual object!
 		return currentEpisode;
 	}
 	
@@ -167,16 +197,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 		else return player.getDuration() / 1000;
 	}
 	
-	/**
-	 * Reset the service to creation state
-	 */
-	public void reset() {
-		this.currentEpisode = null;
-		this.prepared = false;
-		
-		releasePlayer();
-	}
-	
 	@Override
 	public void onPrepared(MediaPlayer mp) {
 		prepared = true;
@@ -198,11 +218,24 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	@Override
 	public void onDestroy() {
 		Log.d(getClass().getSimpleName(), "Service destroyed");
-		releasePlayer();
-		currentEpisode = null;
+		
+		reset();
 		
 		readyListener = null;
 		completeListener = null;
+	}
+	
+	/**
+	 * Reset the service to creation state
+	 */
+	public void reset() {
+		this.currentEpisode = null;
+		this.prepared = false;
+		
+		if (player != null) {
+			player.release();
+			player = null;
+		}
 	}
 	
 	private void initPlayer() {
@@ -210,14 +243,5 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 		player.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		player.setOnPreparedListener(this);
 		player.setOnCompletionListener(this);
-	}
-	
-	private void releasePlayer() {
-		this.prepared = false;
-		
-		if (player != null) {
-			player.release();
-			player = null;
-		}
 	}
 }

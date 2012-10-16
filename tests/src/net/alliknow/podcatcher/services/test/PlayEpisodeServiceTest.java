@@ -22,7 +22,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import net.alliknow.podcatcher.services.PlayEpisodeService;
-import net.alliknow.podcatcher.services.PlayEpisodeService.PlayEpisodeBinder;
+import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
 import net.alliknow.podcatcher.types.Podcast;
 import net.alliknow.podcatcher.types.test.ExamplePodcast;
 
@@ -103,7 +103,7 @@ public class PlayEpisodeServiceTest extends AndroidTestCase {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
-        	PlayEpisodeBinder binder = (PlayEpisodeBinder) serviceBinder;
+        	PlayServiceBinder binder = (PlayServiceBinder) serviceBinder;
             service = binder.getService();
             bound = true;
             synchronized(this) {

@@ -24,7 +24,7 @@ import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.OnPlaybackCompleteListener;
 import net.alliknow.podcatcher.services.PlayEpisodeService.OnReadyToPlayListener;
-import net.alliknow.podcatcher.services.PlayEpisodeService.PlayEpisodeBinder;
+import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
 import net.alliknow.podcatcher.types.Episode;
 import android.app.Activity;
 import android.app.Fragment;
@@ -317,7 +317,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
-        	PlayEpisodeBinder binder = (PlayEpisodeBinder) serviceBinder;
+        	PlayServiceBinder binder = (PlayServiceBinder) serviceBinder;
             service = binder.getService();
             Log.d(EpisodeFragment.this.getClass().getSimpleName(), "Bound to playback service");
             
