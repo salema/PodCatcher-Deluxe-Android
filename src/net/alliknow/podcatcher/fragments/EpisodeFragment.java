@@ -194,7 +194,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		super.onDestroy();
 		        
         // Make sure the service is stopped on destroy of this fragment
-		// TODO Do we actually want this??? (playback will stop on back button press
+		// TODO Do we actually want this??? (playback will stop on back button press)
         //getActivity().stopService(new Intent(getActivity(), PlayEpisodeService.class));
 		
 		playUpdateTimer.cancel();
@@ -273,7 +273,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 			}
 			
 			updatePlayer();
-		} else Log.d(getClass().getSimpleName(), "Cannot play/pause episode (episode or service are null)");
+		} else Log.d(getClass().getSimpleName(), "Cannot play/pause episode (service null or unprepared)");
 	}
 	
 	private void updatePlayer() {

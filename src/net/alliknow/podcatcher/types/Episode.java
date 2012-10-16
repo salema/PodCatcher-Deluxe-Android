@@ -29,6 +29,8 @@ import net.alliknow.podcatcher.tags.RSS;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import android.util.Log;
+
 /**
  * The episode type.
  * 
@@ -145,8 +147,7 @@ public class Episode implements Comparable<Episode> {
 		try {
 			return new URL(attributeValue);
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e(getClass().getSimpleName(), "Episode has invalid URL", e);
 		}
 		
 		return null;
@@ -157,8 +158,7 @@ public class Episode implements Comparable<Episode> {
 			DateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
 			return formatter.parse(attributeValue);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e(getClass().getSimpleName(), "Episode has invalid publication date", e);
 		}
 		
 		return null;

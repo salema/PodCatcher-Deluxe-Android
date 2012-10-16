@@ -172,6 +172,14 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 		selectPodcast(selectedPodcast);
 	}
 	
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		
+		selectedListener = null;
+        loadedListener = null;
+	}
+	
 	/**
 	 * Notified by async RSS file loader on completion.
 	 * Updates UI to display the podcast's episodes.
@@ -181,7 +189,6 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	public void onPodcastLoaded(Podcast podcast) {
 		loadPodcastTask = null;
 		
-		// TODO Handle the case where the fragment is not attached because the activity is recreated
 		if (loadedListener != null) loadedListener.onPodcastLoaded(podcast);
 		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
 		
@@ -234,7 +241,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 		if (podcastList.contains(selectedPodcast) && (currentPodcast == null || !currentPodcast.equals(selectedPodcast))) {
 			currentPodcast = selectedPodcast;
 			
-			// Stopp loading previous tasks
+			// Stop loading previous tasks
 			if (loadPodcastTask != null) loadPodcastTask.cancel(true);
 			if (loadPodcastLogoTask != null) loadPodcastLogoTask.cancel(true);
 						
@@ -303,8 +310,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 			
 			Log.d(getClass().getSimpleName(), "OPML podcast file written");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e(getClass().getSimpleName(), "Cannot store podcast OPML file", e);
 		}
 	}
 
@@ -326,8 +332,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 			
 			Log.d(getClass().getSimpleName(), "Dummy OPML written");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e(getClass().getSimpleName(), "Cannot write dummy OPML file", e);
 		}
 	}
 	

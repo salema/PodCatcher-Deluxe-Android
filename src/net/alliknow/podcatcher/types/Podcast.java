@@ -29,6 +29,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import android.util.Log;
+
 /**
  * The podcast type.
  * 
@@ -219,8 +221,7 @@ public class Podcast implements Comparable<Podcast> {
 		try {
 			return new URL(nodeValue);
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e(getClass().getSimpleName(), "Podcast has invalid logo URL", e);
 		}
 		
 		return null;
