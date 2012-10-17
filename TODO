@@ -1,4 +1,4 @@
 Register to open URL
-WakeLook/WifiLook?
-Audio focus
-AUDIO_BECOMING_NOISY
+MediaPlayer.OnInfoListener
+MediaPlayer.OnBufferingListener
+Rotate device as episode loads
