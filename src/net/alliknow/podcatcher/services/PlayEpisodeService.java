@@ -16,15 +16,27 @@
  */
 package net.alliknow.podcatcher.services;
 
+import net.alliknow.podcatcher.PodcastActivity;
+import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.types.Episode;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.WifiLock;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.util.Log;
 
 /**
@@ -38,7 +50,8 @@ import android.util.Log;
  * 
  * @author Kevin Hausmann
  */
-public class PlayEpisodeService extends Service implements OnPreparedListener, OnCompletionListener {
+public class PlayEpisodeService extends Service implements OnPreparedListener, 
+	OnCompletionListener, OnErrorListener, OnAudioFocusChangeListener {
 
 	/** Current episode */
 	private Episode currentEpisode;
@@ -46,6 +59,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	private MediaPlayer player;
 	/** Is the player prepared ? */
 	private boolean prepared = false;
+	/** Do we have audio focus ? */
+	private boolean hasFocus = false;
 	
 	/** A listener notified on preparation success */
 	private OnReadyToPlayListener readyListener;
@@ -55,6 +70,11 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	/** Binder given to clients */
     private final IBinder binder = new PlayServiceBinder();
     
+    /** Our wifi lock */ 
+    private WifiLock wifiLock;
+    /** Our notification id */
+    private static final int NOTIFICATION_ID = 123;
+	    
     /**
      * The binder to return to client. 
      */
@@ -91,6 +111,28 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 		 * you might want to call <code>reset()</code>.
 		 */
 		public void onPlaybackComplete();
+	}
+	
+	/** Receiver for unplugging headphones */ 
+	private final BroadcastReceiver receiver = new BroadcastReceiver() {
+		  
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY))
+				pause();
+		}
+	};
+	
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		
+		wifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
+		    	    .createWifiLock(WifiManager.WIFI_MODE_FULL, "mylock");
+		
+		IntentFilter filter = new IntentFilter();
+		filter.addAction("android.media.AUDIO_BECOMING_NOISY");
+		registerReceiver(receiver, filter);
 	}
 	
 	@Override
@@ -140,6 +182,11 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 			try {
 				initPlayer();
 				player.setDataSource(episode.getMediaUrl().toExternalForm());
+				player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+				wifiLock.acquire();
+				
+				putForeground(false);
+				
 				player.prepareAsync(); // might take long! (for buffering, etc)
 			} catch (Exception e) {
 				Log.e(getClass().getSimpleName(), "Prepare/Play failed for episode: " +  episode, e);
@@ -160,6 +207,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 	 */
 	public void resume() {
 		if (currentEpisode == null) Log.d(getClass().getSimpleName(), "Called resume without setting episode");
+		else if (! hasFocus) Log.d(getClass().getSimpleName(), "Called resume without having audio focus");
 		else if (prepared && !isPlaying()) player.start();
 	}
 	
@@ -214,10 +262,25 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 		else return player.getDuration() / 1000;
 	}
 	
+	/**
+	 * @param show Whether to show a notification for the running service
+	 */
+	public void showNotification(boolean show) {
+		if (prepared) putForeground(show);
+	}
+	
 	@Override
 	public void onPrepared(MediaPlayer mp) {
 		prepared = true;
-		player.start();
+		
+		// Try to get audio focus
+		AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+
+		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+			hasFocus = true;
+			player.start();
+		}
 		
 		if (readyListener != null) readyListener.onReadyToPlay();
 		else Log.d(getClass().getSimpleName(), "Episode prepared, but no listener attached");
@@ -240,6 +303,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 		
 		readyListener = null;
 		completeListener = null;
+		
+		unregisterReceiver(receiver);
 	}
 	
 	/**
@@ -249,10 +314,23 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 		this.currentEpisode = null;
 		this.prepared = false;
 		
+		((AudioManager) getSystemService(Context.AUDIO_SERVICE)).abandonAudioFocus(this);
+		hasFocus = false;
+		
+		if (wifiLock.isHeld()) wifiLock.release();
+		stopForeground(true);
+		
 		if (player != null) {
 			player.release();
 			player = null;
 		}
+	}
+	
+	@Override
+	public boolean onError(MediaPlayer mp, int what, int extra) {
+		reset();
+		
+		return true;
 	}
 	
 	private void initPlayer() {
@@ -260,5 +338,66 @@ public class PlayEpisodeService extends Service implements OnPreparedListener, O
 		player.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		player.setOnPreparedListener(this);
 		player.setOnCompletionListener(this);
+		player.setOnErrorListener(this);
+	}
+	
+	private void putForeground(boolean showNotification) {
+		// This will bring back to app (activity in single mode!)
+		PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
+				new Intent(getApplicationContext(), PodcastActivity.class),
+		        PendingIntent.FLAG_UPDATE_CURRENT);
+		
+		// Prepare the notification
+		Notification notification = new Notification();
+		notification.tickerText = currentEpisode.getName();
+		notification.icon = R.drawable.launcher;
+		notification.flags |= Notification.FLAG_ONGOING_EVENT;
+		notification.setLatestEventInfo(getApplicationContext(), 
+				getResources().getString(R.string.app_name), currentEpisode.getName(), pi);
+		
+		// Providing zero as the id hides the notification
+		startForeground(showNotification ? NOTIFICATION_ID : 0, notification);
+	}
+
+	@Override
+	public void onAudioFocusChange(int focusChange) {
+		Log.d(getClass().getSimpleName(), "Audio focus changed to: " + focusChange);		
+
+		switch (focusChange) {
+	        case AudioManager.AUDIOFOCUS_GAIN:
+	        	hasFocus = true;
+	        	
+	            // resume playback
+	            if (prepared) {
+	            	resume();
+	            	player.setVolume(1.0f, 1.0f);
+	            }
+	            break;
+	
+	        case AudioManager.AUDIOFOCUS_LOSS:
+	            // Lost focus for an unbounded amount of time: stop playback and release media player
+	        	hasFocus = false;
+	        	
+	            if (isPlaying()) player.stop();
+	            onCompletion(player);
+	            break;
+	
+	        case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+	            // Lost focus for a short time, but we have to stop
+	            // playback. We don't release the media player because playback
+	            // is likely to resume
+	        	hasFocus = false;
+	        	
+	        	if (isPlaying()) pause();
+	            break;
+	
+	        case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+	            // Lost focus for a short time, but it's ok to keep playing
+	            // at an attenuated level
+	        	hasFocus = false;
+	        	
+	        	if (isPlaying()) player.setVolume(0.1f, 0.1f);
+	            break;	
+		}
 	}
 }

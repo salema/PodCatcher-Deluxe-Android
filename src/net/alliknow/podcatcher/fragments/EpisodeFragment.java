@@ -176,15 +176,31 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	}
 	
 	@Override
+	public void onPause() {
+		super.onPause();
+		
+		if (service != null && service.isPrepared()) service.showNotification(true);
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+		if (service != null) service.showNotification(false);
+		
+	}
+	
+	@Override
 	public void onDetach() {
 		super.onDetach();
 		
-		// Detach from play service via this fragment's activity
-		getActivity().unbindService(connection);
 		// Detach from service callbacks
 		if (service != null) service.setReadyToPlayListener(null);
 		if (service != null) service.setPlaybackCompleteListener(null);
 		
+		// Detach from play service via this fragment's activity
+		getActivity().unbindService(connection);
+				
 		// Stop progress update task if existing
 		stopPlayProgressTimer();
 	}
@@ -323,6 +339,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
             // Register listeners
             service.setReadyToPlayListener(EpisodeFragment.this);
             service.setPlaybackCompleteListener(EpisodeFragment.this);
+            service.showNotification(false);
             
             // Update UI to reflect service status
             updatePlayer();
