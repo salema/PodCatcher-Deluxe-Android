@@ -343,18 +343,20 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	
 	private void putForeground(boolean showNotification) {
 		// This will bring back to app (activity in single mode!)
-		PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
+		PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
 				new Intent(getApplicationContext(), PodcastActivity.class),
 		        PendingIntent.FLAG_UPDATE_CURRENT);
 		
 		// Prepare the notification
-		Notification notification = new Notification();
-		notification.tickerText = currentEpisode.getName();
-		notification.icon = R.drawable.launcher;
-		notification.flags |= Notification.FLAG_ONGOING_EVENT;
-		notification.setLatestEventInfo(getApplicationContext(), 
-				getResources().getString(R.string.app_name), currentEpisode.getName(), pi);
-		
+		Notification notification = new Notification.Builder(getApplicationContext())
+			.setContentIntent(pendingIntent)
+			.setTicker(currentEpisode.getName())
+			.setSmallIcon(R.drawable.launcher)
+			.setContentTitle(currentEpisode.getName())
+			.setContentText(currentEpisode.getPodcast().getName())
+			.setContentInfo(getResources().getString(R.string.app_name))
+			.setOngoing(true).getNotification();
+			
 		// Providing zero as the id hides the notification
 		startForeground(showNotification ? NOTIFICATION_ID : 0, notification);
 	}
