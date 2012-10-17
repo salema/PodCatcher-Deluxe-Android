@@ -113,26 +113,12 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 		public void onPlaybackComplete();
 	}
 	
-	/** Receiver for unplugging headphones */ 
-	private final BroadcastReceiver receiver = new BroadcastReceiver() {
-		  
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if (intent.getAction().equals(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY))
-				pause();
-		}
-	};
-	
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		
 		wifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
 		    	    .createWifiLock(WifiManager.WIFI_MODE_FULL, "mylock");
-		
-		IntentFilter filter = new IntentFilter();
-		filter.addAction("android.media.AUDIO_BECOMING_NOISY");
-		registerReceiver(receiver, filter);
 	}
 	
 	@Override
@@ -303,8 +289,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 		
 		readyListener = null;
 		completeListener = null;
-		
-		unregisterReceiver(receiver);
 	}
 	
 	/**

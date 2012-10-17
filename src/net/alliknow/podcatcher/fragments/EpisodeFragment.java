@@ -28,9 +28,11 @@ import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
 import net.alliknow.podcatcher.types.Episode;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -100,6 +102,17 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		}
 	}
 	
+	/** Receiver for unplugging headphones */ 
+	private final BroadcastReceiver receiver = new BroadcastReceiver() {
+		  
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY) &&
+					service != null && service.isPlaying())
+				togglePlay();
+		}
+	};
+	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
@@ -165,7 +178,11 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		
 		// Attach to play service via this fragment's activity
 		Intent intent = new Intent(getActivity(), PlayEpisodeService.class);
-    	getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
+    	activity.bindService(intent, connection, Context.BIND_AUTO_CREATE);
+    	
+    	IntentFilter filter = new IntentFilter();
+		filter.addAction("android.media.AUDIO_BECOMING_NOISY");
+		activity.registerReceiver(receiver, filter);
 	}
 	
 	@Override
@@ -200,7 +217,8 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		
 		// Detach from play service via this fragment's activity
 		getActivity().unbindService(connection);
-				
+		getActivity().unregisterReceiver(receiver);
+		
 		// Stop progress update task if existing
 		stopPlayProgressTimer();
 	}
