@@ -19,6 +19,7 @@ package net.alliknow.podcatcher;
 import net.alliknow.podcatcher.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.fragments.EpisodeListFragment.OnEpisodeSelectedListener;
+import net.alliknow.podcatcher.fragments.PodcastListFragment;
 import net.alliknow.podcatcher.fragments.PodcastListFragment.OnPodcastLoadedListener;
 import net.alliknow.podcatcher.fragments.PodcastListFragment.OnPodcastSelectedListener;
 import net.alliknow.podcatcher.types.Episode;
@@ -35,36 +36,63 @@ import android.os.Bundle;
  */
 public class PodcastActivity extends Activity implements 
 	OnPodcastSelectedListener, OnPodcastLoadedListener, OnEpisodeSelectedListener {
-	
+		
+	/** The podcast list fragment */
+	private PodcastListFragment podcastListFragment;
+	/** The episode list fragment */
+	private EpisodeListFragment episodeListFragment;
+	/** The episode details fragment */
+	private EpisodeFragment episodeFragment;
+		
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	
 	    setContentView(R.layout.main);
+	    findFragments();
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		
+		podcastListFragment.setPodcastSelectedListener(this);
+		podcastListFragment.setPodcastLoadedListener(this);
+		episodeListFragment.setEpisodeSelectedListener(this);
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		
+		podcastListFragment.setPodcastSelectedListener(null);
+		podcastListFragment.setPodcastLoadedListener(null);
+		episodeListFragment.setEpisodeSelectedListener(null);
 	}
 
 	@Override
 	public void onPodcastSelected(Podcast podcast) {
-		findEpisodeListFragment().clearAndSpin();
+		episodeListFragment.clearAndSpin();
 	}
 	
 	@Override
 	public void onPodcastLoaded(Podcast podcast) {
-		findEpisodeListFragment().setEpisodeList(podcast.getEpisodes());
+		episodeListFragment.setEpisodeList(podcast.getEpisodes());
 	}
 	
 	@Override
 	public void onPodcastLoadFailed(Podcast failedPodcast) {
-		findEpisodeListFragment().showError(getResources().getString(R.string.error_podcast_load));
+		episodeListFragment.showError(getResources().getString(R.string.error_podcast_load));
 	}
 
 	@Override
 	public void onEpisodeSelected(Episode selectedEpisode) {
-		EpisodeFragment ef = (EpisodeFragment) getFragmentManager().findFragmentById(R.id.episode);
-		ef.setEpisode(selectedEpisode);
+		episodeFragment.setEpisode(selectedEpisode);
 	}
 	
-	private EpisodeListFragment findEpisodeListFragment() {
-		return (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
+	private void findFragments() {
+		podcastListFragment = (PodcastListFragment) getFragmentManager().findFragmentById(R.id.podcast_list);
+		episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
+		episodeFragment = (EpisodeFragment) getFragmentManager().findFragmentById(R.id.episode);
 	}
 }
