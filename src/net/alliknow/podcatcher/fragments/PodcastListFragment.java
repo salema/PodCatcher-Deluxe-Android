@@ -41,7 +41,6 @@ import net.alliknow.podcatcher.types.Podcast;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import android.app.Activity;
 import android.app.ListFragment;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -142,18 +141,6 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	}
 	
 	@Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-       
-        try {
-            selectedListener = (OnPodcastSelectedListener) activity;
-            loadedListener = (OnPodcastLoadedListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnPodcastSelectedListener");
-        }
-    }
-	
-	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.podcast_list_menu, menu);
 	}
@@ -172,12 +159,18 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 		selectPodcast(selectedPodcast);
 	}
 	
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		
-		selectedListener = null;
-        loadedListener = null;
+	/**
+	 * @param listener Listener to be alerted on podcast selection
+	 */
+	public void setPodcastSelectedListener(OnPodcastSelectedListener listener) {
+		this.selectedListener = listener;
+	}
+
+	/**
+	 * @param listener Listener to be alerted on podcast load completion
+	 */
+	public void setPodcastLoadedListener(OnPodcastLoadedListener listener) {
+		this.loadedListener = listener;
 	}
 	
 	/**
@@ -193,10 +186,10 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
 		
 		// Download podcast logo
-		if (podcast.getLogoUrl() != null) {
+		if (isAdded() && podcast.getLogoUrl() != null) {
 			loadPodcastLogoTask = new LoadPodcastLogoTask(this);
 			loadPodcastLogoTask.execute(podcast);
-		} else Log.d(getClass().getSimpleName(), "No logo for podcast " + podcast);
+		} else Log.d(getClass().getSimpleName(), "Not attached or no logo for podcast " + podcast);
 	}
 	
 	@Override
@@ -204,7 +197,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 		loadPodcastLogoTask = null;
 		currentLogo = logo;
 		
-		setPodcastLogo(logo);
+		if (isAdded()) setPodcastLogo(logo);
 	}
 	
 	@Override
@@ -249,7 +242,8 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 			((PodcastListAdapter) getListAdapter()).setSelectedPosition(podcastList.indexOf(selectedPodcast));
 			setPodcastLogo(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.default_podcast_logo));
 			// Alert parent activity
-			selectedListener.onPodcastSelected(selectedPodcast);
+			if (selectedListener != null) selectedListener.onPodcastSelected(currentPodcast);
+			else Log.d(getClass().getSimpleName(), "Podcast selected, but no listener attached");
 			
 			// Load if too old, otherwise just use previously loaded version
 			if (selectedPodcast.needsReload()) {

@@ -22,9 +22,9 @@ import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.types.Episode;
-import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +53,7 @@ public class EpisodeListFragment extends ListFragment {
     	public void onEpisodeSelected(Episode selectedEpisode);
     }
     /** The activity we are in (listens to user selection) */ 
-    private OnEpisodeSelectedListener listener;
+    private OnEpisodeSelectedListener selectedListener;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,22 +76,19 @@ public class EpisodeListFragment extends ListFragment {
 	}
 	
 	@Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-       
-        try {
-            listener = (OnEpisodeSelectedListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnEpisodeSelectedListener");
-        }
-    }
-
-	@Override
 	public void onListItemClick(ListView list, View view, int position, long id) {
 		Episode selectedEpisode = episodeList.get(position);
 		((EpisodeListAdapter) getListAdapter()).setSelectedPosition(position);
 		
-		listener.onEpisodeSelected(selectedEpisode);
+		if (selectedListener != null) selectedListener.onEpisodeSelected(selectedEpisode);
+		else Log.d(getClass().getSimpleName(), "Episode selected, but no listener attached");
+	}
+	
+	/**
+	 * @param listener Listener to be alerted on episode selection
+	 */
+	public void setEpisodeSelectedListener(OnEpisodeSelectedListener listener) {
+		this.selectedListener = listener;
 	}
 	
 	/**
