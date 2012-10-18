@@ -22,17 +22,14 @@ import java.util.TimerTask;
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
-import net.alliknow.podcatcher.services.PlayEpisodeService.OnPlaybackCompleteListener;
-import net.alliknow.podcatcher.services.PlayEpisodeService.OnReadyToPlayListener;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
+import net.alliknow.podcatcher.services.PlayServiceListener;
 import net.alliknow.podcatcher.types.Episode;
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -46,6 +43,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 /**
@@ -53,7 +51,7 @@ import android.widget.TextView;
  * 
  * @author Kevin Hausmann
  */
-public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, OnPlaybackCompleteListener {
+public class EpisodeFragment extends Fragment implements PlayServiceListener {
 
 	/** The load episode menu bar item */
 	private MenuItem loadMenuItem;
@@ -71,6 +69,8 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 	private View playerProgress;
 	/** The player view */
 	private View playerView;
+	/** The player seek bar */
+	private ProgressBar playerSeekBar;
 	/** The play/pause button */
 	private Button playerButton;
 		
@@ -96,22 +96,12 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 				
 				@Override
 				public void run() {
+					updatePlayerSeekBar();
 					updatePlayerButton();
 				}
 			});
 		}
 	}
-	
-	/** Receiver for unplugging headphones */ 
-	private final BroadcastReceiver receiver = new BroadcastReceiver() {
-		  
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if (intent.getAction().equals(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY) &&
-					service != null && service.isPlaying())
-				togglePlay();
-		}
-	};
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -135,12 +125,13 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		episodeTitleView = (TextView) getView().findViewById(R.id.episode_title);
 		podcastTitleView = (TextView) getView().findViewById(R.id.podcast_title);
 		episodeDetailView = (WebView) getView().findViewById(R.id.episode_description);
-		episodeDetailView.getSettings().setDefaultFontSize(getResources().getDimensionPixelSize(R.dimen.default_font_size));
+		//episodeDetailView.getSettings().setTextZoom(R.dimen.default_font_size));
 		
 		playerDividerView = getView().findViewById(R.id.player_divider);
 		playerTitleView = (TextView) getView().findViewById(R.id.player_title);
 		playerProgress = getView().findViewById(R.id.player_progress);
 		playerView = view.findViewById(R.id.player);
+		playerSeekBar = (ProgressBar) view.findViewById(R.id.player_seekbar);
 		playerButton = (Button) view.findViewById(R.id.player_button);
 		playerButton.setOnClickListener(new OnClickListener() {
 			
@@ -178,11 +169,7 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		
 		// Attach to play service via this fragment's activity
 		Intent intent = new Intent(getActivity(), PlayEpisodeService.class);
-    	activity.bindService(intent, connection, Context.BIND_AUTO_CREATE);
-    	
-    	IntentFilter filter = new IntentFilter();
-		filter.addAction("android.media.AUDIO_BECOMING_NOISY");
-		activity.registerReceiver(receiver, filter);
+    	activity.bindService(intent, connection, Context.BIND_AUTO_CREATE);    	
 	}
 	
 	@Override
@@ -212,13 +199,11 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		super.onDetach();
 		
 		// Detach from service callbacks
-		if (service != null) service.setReadyToPlayListener(null);
-		if (service != null) service.setPlaybackCompleteListener(null);
+		if (service != null) service.setPlayServiceListener(null);
 		
 		// Detach from play service via this fragment's activity
 		getActivity().unbindService(connection);
-		getActivity().unregisterReceiver(receiver);
-		
+				
 		// Stop progress update task if existing
 		stopPlayProgressTimer();
 	}
@@ -268,6 +253,27 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		updatePlayer();
 		startPlayProgressTimer();
 	}
+	
+	@Override
+	public void onStopForBuffering() {
+		stopPlayProgressTimer();
+		
+		playerButton.setText(R.string.buffering);
+		playerButton.setEnabled(false);
+	}
+
+	@Override
+	public void onResumeFromBuffering() {
+		playerButton.setEnabled(true);
+		updatePlayer();
+		
+		startPlayProgressTimer();
+	}
+	
+	@Override
+	public void onBufferUpdate(int seconds) {
+		playerSeekBar.setSecondaryProgress(seconds);
+	}
 
 	@Override
 	public void onPlaybackComplete() {
@@ -277,6 +283,14 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 		
 		service.reset();
 		updatePlayer();
+	}
+	
+	@Override
+	public void onError() {
+		service.reset();
+		updatePlayer();
+		
+		Log.w(getClass().getSimpleName(), "Play service send an error");
 	}
 	
 	private void loadEpisode() {
@@ -319,11 +333,19 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
 					+ service.getCurrentEpisodePodcastName());
 			
 			updatePlayerButton();
+			updatePlayerSeekBar();
 		} 
 		
 		playerView.setVisibility(service.isPrepared() ? View.VISIBLE : View.GONE);
 	}
 	
+	private void updatePlayerSeekBar() {
+		if (isAdded() && service != null && service.isPrepared()) {
+			playerSeekBar.setMax(service.getDuration());
+			playerSeekBar.setProgress(service.getCurrentPosition());
+		}
+	}
+
 	private void updatePlayerButton() {
 		playerButton.setText(service.isPlaying() ? R.string.pause : R.string.resume);
 		playerButton.setBackgroundResource(service.isPlaying() ? R.drawable.button_red : R.drawable.button_green);
@@ -354,9 +376,8 @@ public class EpisodeFragment extends Fragment implements OnReadyToPlayListener, 
         	service = ((PlayServiceBinder) serviceBinder).getService();
             Log.d(EpisodeFragment.this.getClass().getSimpleName(), "Bound to playback service");
             
-            // Register listeners
-            service.setReadyToPlayListener(EpisodeFragment.this);
-            service.setPlaybackCompleteListener(EpisodeFragment.this);
+            // Register listener and notification
+            service.setPlayServiceListener(EpisodeFragment.this);
             service.showNotification(false);
             
             // Update UI to reflect service status

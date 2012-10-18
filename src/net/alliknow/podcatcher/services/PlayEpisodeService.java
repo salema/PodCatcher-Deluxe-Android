@@ -29,8 +29,10 @@ import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
+import android.media.MediaPlayer.OnInfoListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
@@ -51,7 +53,8 @@ import android.util.Log;
  * @author Kevin Hausmann
  */
 public class PlayEpisodeService extends Service implements OnPreparedListener, 
-	OnCompletionListener, OnErrorListener, OnAudioFocusChangeListener {
+	OnCompletionListener, OnErrorListener, OnBufferingUpdateListener,
+	OnInfoListener, OnAudioFocusChangeListener {
 
 	/** Current episode */
 	private Episode currentEpisode;
@@ -62,10 +65,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	/** Do we have audio focus ? */
 	private boolean hasFocus = false;
 	
-	/** A listener notified on preparation success */
-	private OnReadyToPlayListener readyListener;
-	/** A listener notified on playback completion */
-	private OnPlaybackCompleteListener completeListener;
+	/** A listener notified service events */
+	private PlayServiceListener serviceListener;
 	
 	/** Binder given to clients */
     private final IBinder binder = new PlayServiceBinder();
@@ -85,33 +86,16 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         }
     }
 	
-	/**
-	 * Listener interface to implement if you are interested to be alerted
-	 * when the service loaded an episode and is prepared to play it back.
-	 */
-	public interface OnReadyToPlayListener {
-		
-		/**
-		 * Called by the service on the listener if an episode is loaded
-		 * and ready to play (the service might in fact already have started
-		 * playback...)
-		 */
-		public void onReadyToPlay();
-	}
-	
-	/**
-	 * Listener interface to implement if you are interested to be alerted
-	 * when the service finished playing an episode.
-	 */
-	public interface OnPlaybackCompleteListener {
-		
-		/**
-		 * Called by the service on the listener if an episode finished playing.
-		 * The service does not free resources on completion automatically,
-		 * you might want to call <code>reset()</code>.
-		 */
-		public void onPlaybackComplete();
-	}
+	/** Receiver for unplugging headphones */ 
+	private final BroadcastReceiver receiver = new BroadcastReceiver() {
+		  
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.d(getClass().getSimpleName(), "Received intent " + intent);
+			
+			pause();
+		}
+	};
 	
 	@Override
 	public void onCreate() {
@@ -119,13 +103,25 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 		
 		wifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
 		    	    .createWifiLock(WifiManager.WIFI_MODE_FULL, "mylock");
+		
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+		registerReceiver(receiver, filter);
 	}
 	
 	@Override
 	public IBinder onBind(Intent intent) {
-		Log.d(getClass().getSimpleName(), "Service bound");
-		
 		return binder;
+	}
+	
+	@Override
+	public void onDestroy() {
+		Log.d(getClass().getSimpleName(), "Service destroyed");
+		
+		reset();
+		
+		serviceListener = null;
+		unregisterReceiver(receiver);
 	}
 	
 	/**
@@ -136,19 +132,12 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	}
 	
 	/**
-	 * @param readyListener A listener to be alerted on preparation success
+	 * @param listener A listener to be alerted on service events
 	 */
-	public void setReadyToPlayListener(OnReadyToPlayListener readyListener) {
-		this.readyListener = readyListener;
+	public void setPlayServiceListener(PlayServiceListener listener) {
+		this.serviceListener = listener;
 	}
 	
-	/**
-	 * @param readyListener A listener to be alerted on playback completion
-	 */
-	public void setPlaybackCompleteListener(OnPlaybackCompleteListener completeListener) {
-		this.completeListener = completeListener;
-	}
-
 	/**
 	 * Load and start playback for given episode. Will end any current playback.
 	 * @param episode Episode to play (not null)
@@ -268,13 +257,19 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 			player.start();
 		}
 		
-		if (readyListener != null) readyListener.onReadyToPlay();
+		if (serviceListener != null) serviceListener.onReadyToPlay();
 		else Log.d(getClass().getSimpleName(), "Episode prepared, but no listener attached");
 	}
 	
 	@Override
+	public void onBufferingUpdate(MediaPlayer mp, int percent) {
+		if (serviceListener != null) serviceListener.onBufferUpdate(getDuration() * percent / 100);
+		else Log.d(getClass().getSimpleName(), "Buffer state changed, but no listener attached");
+	}
+	
+	@Override
 	public void onCompletion(MediaPlayer mp) {
-		if (completeListener != null) completeListener.onPlaybackComplete();
+		if (serviceListener != null) serviceListener.onPlaybackComplete();
 		else {
 			reset();
 			Log.d(getClass().getSimpleName(), "Episode playback completed, but no listener attached");
@@ -282,15 +277,28 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	}
 	
 	@Override
-	public void onDestroy() {
-		Log.d(getClass().getSimpleName(), "Service destroyed");
+	public boolean onInfo(MediaPlayer mp, int what, int extra) {
+		if (serviceListener != null) {
+			if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) serviceListener.onStopForBuffering();
+			else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) serviceListener.onResumeFromBuffering();
+			
+			return true;
+		} else Log.d(getClass().getSimpleName(), "Media player send info, but no listener attached");
 		
-		reset();
-		
-		readyListener = null;
-		completeListener = null;
+		return false;
 	}
 	
+	@Override
+	public boolean onError(MediaPlayer mp, int what, int extra) {
+		if (serviceListener != null) serviceListener.onError();
+		else {
+			reset();
+			Log.d(getClass().getSimpleName(), "Buffer state changed, but no listener attached");
+		}
+		
+		return true;
+	}
+		
 	/**
 	 * Reset the service to creation state
 	 */
@@ -310,19 +318,15 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 		}
 	}
 	
-	@Override
-	public boolean onError(MediaPlayer mp, int what, int extra) {
-		reset();
-		
-		return true;
-	}
-	
 	private void initPlayer() {
 		player = new MediaPlayer();
+		
 		player.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		player.setOnPreparedListener(this);
 		player.setOnCompletionListener(this);
 		player.setOnErrorListener(this);
+		player.setOnInfoListener(this);
+		player.setOnBufferingUpdateListener(this);
 	}
 	
 	private void putForeground(boolean showNotification) {
