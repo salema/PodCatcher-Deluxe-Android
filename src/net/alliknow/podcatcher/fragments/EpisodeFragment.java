@@ -257,13 +257,11 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 	public void onStopForBuffering() {
 		stopPlayProgressTimer();
 		
-		playerButton.setText(R.string.buffering);
-		playerButton.setEnabled(false);
+		updatePlayer();
 	}
 
 	@Override
 	public void onResumeFromBuffering() {
-		playerButton.setEnabled(true);
 		updatePlayer();
 		
 		startPlayProgressTimer();
@@ -351,15 +349,20 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 	}
 
 	private void updatePlayerButton() {
-		playerButton.setText(service.isPlaying() ? R.string.pause : R.string.resume);
+		playerButton.setEnabled(! service.isBuffering());
 		playerButton.setBackgroundResource(service.isPlaying() ? R.drawable.button_red : R.drawable.button_green);
 		
-		if (isAdded() && service != null && service.isPrepared()) {
-			final String position = Podcatcher.formatTime(service.getCurrentPosition());
-			final String duration = Podcatcher.formatTime(service.getDuration());
-			
-			playerButton.setText(playerButton.getText() + " " + getResources().getString(R.string.at) +
-					" " + position + " " + getResources().getString(R.string.of) + " " + duration);
+		if (service.isBuffering()) playerButton.setText(R.string.buffering);
+		else {
+			playerButton.setText(service.isPlaying() ? R.string.pause : R.string.resume);
+		
+			if (isAdded() && service.isPrepared()) {
+				final String position = Podcatcher.formatTime(service.getCurrentPosition());
+				final String duration = Podcatcher.formatTime(service.getDuration());
+				
+				playerButton.setText(playerButton.getText() + " " + getResources().getString(R.string.at) +
+						" " + position + " " + getResources().getString(R.string.of) + " " + duration);
+			}
 		}
 	}
 	

@@ -62,6 +62,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	private MediaPlayer player;
 	/** Is the player prepared ? */
 	private boolean prepared = false;
+	/** Is the player currently buffering ? */
+	private boolean buffering = false;
 	/** Do we have audio focus ? */
 	private boolean hasFocus = false;
 	
@@ -195,6 +197,13 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	}
 	
 	/**
+	 * @return Whether the service is currently buffering data
+	 */
+	public boolean isBuffering() {
+		return buffering;
+	}
+	
+	/**
 	 * Checks whether the currently loaded episode is equal to the one given.
 	 * The check we be true regardless of whether the episode has been actually
 	 * prepared or not.
@@ -281,13 +290,20 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	@Override
 	public boolean onInfo(MediaPlayer mp, int what, int extra) {
 		if (serviceListener != null) {
-			if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) serviceListener.onStopForBuffering();
-			else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) serviceListener.onResumeFromBuffering();
-			
-			return true;
+			switch (what) {
+				case MediaPlayer.MEDIA_INFO_BUFFERING_START:
+					buffering = true;
+					serviceListener.onStopForBuffering();
+					break;
+					
+				case MediaPlayer.MEDIA_INFO_BUFFERING_END:
+					buffering = false;
+					serviceListener.onResumeFromBuffering();
+					break;				
+			}
 		} else Log.d(getClass().getSimpleName(), "Media player send info, but no listener attached");
 		
-		return false;
+		return serviceListener != null;
 	}
 	
 	@Override
@@ -307,6 +323,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	public void reset() {
 		this.currentEpisode = null;
 		this.prepared = false;
+		this.buffering = false;
 		
 		((AudioManager) getSystemService(Context.AUDIO_SERVICE)).abandonAudioFocus(this);
 		hasFocus = false;
