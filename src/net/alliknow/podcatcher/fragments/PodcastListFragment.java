@@ -264,7 +264,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	private void loadPodcastList() {
 		//this is just for testing
 		//if (! Arrays.asList(getActivity().fileList()).contains(OPML_FILENAME)) 
-		//writeDummyPodcastList();
+		writeDummyPodcastList();
 		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -282,7 +282,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 			
 			Collections.sort(podcastList); 
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(getClass().getSimpleName(), "Cannot load OPML file", e);
 		}
 	}
 	
