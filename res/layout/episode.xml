@@ -49,6 +49,15 @@
         android:layout_height="48dp"
         android:indeterminate="true"
         android:visibility="gone" />
+    <TextView
+        android:id="@+id/player_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="3dp"
+        android:text="@string/error_player"
+        android:textColor="@android:color/holo_red_dark"
+        android:visibility="gone" />
     <LinearLayout
         android:id="@+id/player"
         android:layout_width="match_parent"
@@ -79,7 +88,7 @@
             android:id="@+id/player_seekbar"
             style="@android:style/Widget.ProgressBar.Horizontal"
             android:layout_width="match_parent"
-            android:layout_height="6dp"
+            android:layout_height="@dimen/seekbar"
             android:layout_marginBottom="2dp" />
         <Button
             android:id="@+id/player_button"

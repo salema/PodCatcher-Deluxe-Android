@@ -195,11 +195,13 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	}
 	
 	/**
-	 * Checks whether the currently loaded episode is equal to the one given
+	 * Checks whether the currently loaded episode is equal to the one given.
+	 * The check we be true regardless of whether the episode has been actually
+	 * prepared or not.
 	 * @param episode Episode to check for
-	 * @return true iff given episode is loaded, false otherwise
+	 * @return true iff given episode is loaded (or loading), false otherwise
 	 */
-	public boolean hasPreparedEpisode(Episode episode) {
+	public boolean isWorkingWith(Episode episode) {
 		return currentEpisode != null && currentEpisode.equals(episode);
 	}
 	
@@ -293,7 +295,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 		if (serviceListener != null) serviceListener.onError();
 		else {
 			reset();
-			Log.d(getClass().getSimpleName(), "Buffer state changed, but no listener attached");
+			Log.d(getClass().getSimpleName(), "Media player send error, but no listener attached");
 		}
 		
 		return true;

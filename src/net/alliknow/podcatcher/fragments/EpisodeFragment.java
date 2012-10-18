@@ -151,7 +151,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 		
 		loadMenuItem = menu.findItem(R.id.load);
 		loadMenuItem.setVisible(episode != null);
-		loadMenuItem.setEnabled(episode != null && service != null && !service.hasPreparedEpisode(episode));
+		loadMenuItem.setEnabled(episode != null && service != null && !service.isWorkingWith(episode));
 		loadMenuItem.setShowAsAction(episode == null ? MenuItem.SHOW_AS_ACTION_NEVER : MenuItem.SHOW_AS_ACTION_ALWAYS);
 	}
 	
@@ -239,7 +239,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 			episodeDetailView.setVisibility(View.VISIBLE);
 			
 			loadMenuItem.setVisible(true);
-			loadMenuItem.setEnabled(! service.hasPreparedEpisode(episode));
+			loadMenuItem.setEnabled(! service.isWorkingWith(episode));
 			loadMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 			
 			updatePlayer();
@@ -248,9 +248,8 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 		
 	@Override
 	public void onReadyToPlay() {
-		playerProgress.setVisibility(View.GONE);
-		
 		updatePlayer();
+		
 		startPlayProgressTimer();
 	}
 	
@@ -290,16 +289,17 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 		service.reset();
 		updatePlayer();
 		
+		getView().findViewById(R.id.player_error).setVisibility(View.VISIBLE);
+		
 		Log.w(getClass().getSimpleName(), "Play service send an error");
 	}
 	
 	private void loadEpisode() {
 		if (episode != null && service != null) {		
 			// Episode should not be loaded
-			if (! service.hasPreparedEpisode(episode)) {
+			if (! service.isWorkingWith(episode)) {
 				stopPlayProgressTimer();
 				
-				playerProgress.setVisibility(View.VISIBLE);
 				service.playEpisode(episode);
 								
 				loadMenuItem.setEnabled(false);
@@ -325,10 +325,14 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 	}
 	
 	private void updatePlayer() {
+		playerProgress.setVisibility(service.isWorkingWith(episode) && 
+				!service.isPrepared() ? View.VISIBLE : View.GONE);
+		getView().findViewById(R.id.player_error).setVisibility(View.GONE);
+		
 		// Is the loaded episode different from the displayed one?
 		if (service.isPrepared()) {
-			playerDividerView.setVisibility(service.hasPreparedEpisode(episode) ? View.GONE : View.VISIBLE);
-			playerTitleView.setVisibility(service.hasPreparedEpisode(episode) ? View.GONE : View.VISIBLE);
+			playerDividerView.setVisibility(service.isWorkingWith(episode) ? View.GONE : View.VISIBLE);
+			playerTitleView.setVisibility(service.isWorkingWith(episode) ? View.GONE : View.VISIBLE);
 			playerTitleView.setText(service.getCurrentEpisodeName() + " - " 
 					+ service.getCurrentEpisodePodcastName());
 			

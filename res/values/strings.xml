@@ -6,6 +6,7 @@
     <string name="resume">Resume</string>
     <string name="at">at</string>
     <string name="of">of</string>
+    <string name="error_player">Playback failed</string>
     <string name="podcast_image">Podcast Logo</string>
     <string name="no_podcast">No podcast added</string>
     <string name="no_podcast_selected">No podcast selected</string>

@@ -6,6 +6,7 @@
     <string name="resume">Weiterspielen</string>
     <string name="at">bei</string>
     <string name="of">von</string>
+    <string name="error_player">Wiedergabe fehlgeschlagen</string>
     <string name="podcast_image">Podcast Logo</string>
     <string name="no_podcast">Kein Podcast vorhanden</string>
     <string name="no_podcast_selected">Kein Podcast ausgewählt</string>
