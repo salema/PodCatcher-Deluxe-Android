@@ -31,6 +31,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -40,6 +41,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
@@ -138,6 +140,15 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 			@Override
 			public void onClick(View v) {
 				togglePlay();
+			}
+		});
+		playerButton.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				onPlaybackComplete();
+				
+				return true;
 			}
 		});
 		
@@ -323,8 +334,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 	}
 	
 	private void updatePlayer() {
-		playerProgress.setVisibility(service.isWorkingWith(episode) && 
-				!service.isPrepared() ? View.VISIBLE : View.GONE);
+		playerProgress.setVisibility(service.isPreparing() ? View.VISIBLE : View.GONE);
 		getView().findViewById(R.id.player_error).setVisibility(View.GONE);
 		
 		// Is the loaded episode different from the displayed one?

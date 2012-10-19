@@ -148,9 +148,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 		if (episode != null) {
 			Log.d(getClass().getSimpleName(), "Loading episode " +  episode);
 			
-			// Stop current playback if any
-			if (isPlaying()) player.stop();
-			// Release the current player and reset variables
+			// Stop and release the current player and reset variables
 			reset();
 			
 			this.currentEpisode = episode;
@@ -186,6 +184,10 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 		if (currentEpisode == null) Log.d(getClass().getSimpleName(), "Called resume without setting episode");
 		else if (! hasFocus) Log.d(getClass().getSimpleName(), "Called resume without having audio focus");
 		else if (prepared && !isPlaying()) player.start();
+	}
+	
+	public boolean isPreparing() {
+		return currentEpisode != null && !prepared;
 	}
 	
 	/**
@@ -321,10 +323,13 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	 * Reset the service to creation state
 	 */
 	public void reset() {
+		// Stop current playback if any
+		if (isPlaying()) player.stop();
+		// Reset variables
 		this.currentEpisode = null;
 		this.prepared = false;
 		this.buffering = false;
-		
+		// Release resources
 		((AudioManager) getSystemService(Context.AUDIO_SERVICE)).abandonAudioFocus(this);
 		hasFocus = false;
 		
