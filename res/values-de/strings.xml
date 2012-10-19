@@ -13,7 +13,7 @@
     <string name="no_episode_selected">Keine Episode ausgewählt</string>
     <string name="add_podcast">Neuer Podcast</string>
     <string name="add_podcast_button">Hinzufügen</string>
-    <string name="enter_podcast_url_here">Geben Sie die Podcast-URL an</string>
+    <string name="enter_podcast_url_here">Kopieren Sie die Podcast-Adresse (URL) hierher</string>
     <string name="error_podcast_add">Der Podcast konnte nicht geladen werden</string>
     <string name="error_podcast_load">Podcast kann nicht geladen werden, bitte prüfen Sie Ihre Internetverbindung!</string>
 </resources>
