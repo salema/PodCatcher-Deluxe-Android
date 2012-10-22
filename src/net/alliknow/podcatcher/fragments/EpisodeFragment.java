@@ -67,8 +67,6 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 	private View playerDividerView;
 	/** The player title view */
 	private TextView playerTitleView;
-	/** The player progress view */
-	private View playerProgress;
 	/** The player view */
 	private View playerView;
 	/** The player seek bar */
@@ -131,7 +129,6 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 		
 		playerDividerView = getView().findViewById(R.id.player_divider);
 		playerTitleView = (TextView) getView().findViewById(R.id.player_title);
-		playerProgress = getView().findViewById(R.id.player_progress);
 		playerView = view.findViewById(R.id.player);
 		playerSeekBar = (ProgressBar) view.findViewById(R.id.player_seekbar);
 		playerButton = (Button) view.findViewById(R.id.player_button);
@@ -334,25 +331,23 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 	}
 	
 	private void updatePlayer() {
-		playerProgress.setVisibility(service.isPreparing() ? View.VISIBLE : View.GONE);
 		getView().findViewById(R.id.player_error).setVisibility(View.GONE);
 		
-		// Is the loaded episode different from the displayed one?
-		if (service.isPrepared()) {
-			playerDividerView.setVisibility(service.isWorkingWith(episode) ? View.GONE : View.VISIBLE);
-			playerTitleView.setVisibility(service.isWorkingWith(episode) ? View.GONE : View.VISIBLE);
-			playerTitleView.setText(service.getCurrentEpisodeName() + " - " 
+		playerDividerView.setVisibility(service.isWorkingWith(episode) ? View.GONE : View.VISIBLE);
+		playerTitleView.setVisibility(service.isWorkingWith(episode) ? View.GONE : View.VISIBLE);
+		playerTitleView.setText(service.getCurrentEpisodeName() + " - " 
 					+ service.getCurrentEpisodePodcastName());
 			
-			updatePlayerButton();
-			updatePlayerSeekBar();
-		} 
-		
-		playerView.setVisibility(service.isPrepared() ? View.VISIBLE : View.GONE);
+		updatePlayerSeekBar();
+		updatePlayerButton();
+				
+		playerView.setVisibility(service.isPrepared() || service.isPreparing() ? View.VISIBLE : View.GONE);
 	}
 	
 	private void updatePlayerSeekBar() {
-		if (isAdded() && service != null && service.isPrepared()) {
+		playerSeekBar.setIndeterminate(service.isBuffering());
+		
+		if (service.isPrepared()) {
 			playerSeekBar.setMax(service.getDuration());
 			playerSeekBar.setProgress(service.getCurrentPosition());
 		}
@@ -365,7 +360,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 		if (service.isBuffering()) playerButton.setText(R.string.buffering);
 		else {
 			playerButton.setText(service.isPlaying() ? R.string.pause : R.string.resume);
-		
+			// Resources are only available when fragment is added...
 			if (isAdded() && service.isPrepared()) {
 				final String position = Podcatcher.formatTime(service.getCurrentPosition());
 				final String duration = Podcatcher.formatTime(service.getDuration());

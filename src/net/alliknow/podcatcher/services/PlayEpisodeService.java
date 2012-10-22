@@ -186,6 +186,10 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 		else if (prepared && !isPlaying()) player.start();
 	}
 	
+	/**
+	 * @return Whether the service is currently preparing,
+	 * i.e. buffering data and will start playing asap
+	 */
 	public boolean isPreparing() {
 		return currentEpisode != null && !prepared;
 	}
@@ -202,7 +206,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	 * @return Whether the service is currently buffering data
 	 */
 	public boolean isBuffering() {
-		return buffering;
+		return buffering || isPreparing();
 	}
 	
 	/**
