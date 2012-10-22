@@ -36,6 +36,7 @@ import android.view.ViewGroup;
 import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 /**
@@ -62,6 +63,8 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoader 
 	
 	/** The podcast URL text field */
 	private EditText podcastUrlEditText;
+	/** The progress view */
+	private ProgressBar progressView;
 	/** The error text view */
 	private TextView errorView;
 	/** The add podcast button */
@@ -78,7 +81,7 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoader 
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		getDialog().setTitle(R.string.add_podcast);
 		
-		podcastUrlEditText = (EditText)view.findViewById(R.id.podcast_url);
+		podcastUrlEditText = (EditText) view.findViewById(R.id.podcast_url);
 		podcastUrlEditText.addTextChangedListener(new TextWatcher() {
 			
 			@Override
@@ -93,9 +96,10 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoader 
 			public void afterTextChanged(Editable s) {}
 		});
 		
-		errorView = (TextView)view.findViewById(R.id.add_podcast_error);
+		progressView = (ProgressBar) view.findViewById(R.id.add_podcast_progress);
+		errorView = (TextView) view.findViewById(R.id.add_podcast_error);
 		
-		addPodcastButton = (Button)view.findViewById(R.id.add_podcast_button);
+		addPodcastButton = (Button) view.findViewById(R.id.add_podcast_button);
 		addPodcastButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -118,8 +122,8 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoader 
 	}
 	
 	private void addPodcast() {
-		addPodcastButton.setEnabled(false);
 		podcastUrlEditText.setEnabled(false);
+		progressView.setVisibility(View.VISIBLE);
 		errorView.setVisibility(View.GONE);
 		
 		String spec = podcastUrlEditText.getText().toString();
@@ -127,6 +131,8 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoader 
 			spec = "http://" + spec;
 			podcastUrlEditText.setText(spec);
 		}
+		// Need to do this here because text might have changed above
+		addPodcastButton.setEnabled(false);
 		
 		try {
 			new LoadPodcastTask(this).execute(new Podcast(null, new URL(spec)));
@@ -137,18 +143,23 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoader 
 
 	@Override
 	public void onPodcastLoaded(Podcast podcast) {
-		if (listener != null) listener.addPodcast(podcast);
-		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
-		
-		dismiss();
-		errorView.setVisibility(View.GONE);
-		podcastUrlEditText.setText(null);
-		podcastUrlEditText.setEnabled(true);
-		updateButtonEnablement();
+		if (! podcast.getEpisodes().isEmpty()) {
+			dismiss();
+			
+			if (listener != null) listener.addPodcast(podcast);
+			else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
+			
+			errorView.setVisibility(View.GONE);
+			progressView.setVisibility(View.GONE);
+			podcastUrlEditText.setText(null);
+			podcastUrlEditText.setEnabled(true);
+			updateButtonEnablement();
+		} else onPodcastLoadFailed(podcast);
 	}
 
 	@Override
 	public void onPodcastLoadFailed(Podcast podcast) {
+		progressView.setVisibility(View.GONE);
 		errorView.setVisibility(View.VISIBLE);
 		podcastUrlEditText.setEnabled(true);
 		updateButtonEnablement();

@@ -21,6 +21,14 @@
         android:text="@string/error_podcast_add"
         android:textColor="@android:color/holo_red_dark"
         android:visibility="gone" />
+    <ProgressBar
+        android:id="@+id/add_podcast_progress"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:layout_margin="3dp"
+        android:indeterminate="true"
+        android:visibility="gone" />
     <Button
         android:id="@+id/add_podcast_button"
         android:layout_width="match_parent"
@@ -29,5 +37,5 @@
         android:background="@drawable/button_green"
         android:gravity="center"
         android:text="@string/add_podcast_button"
-        android:textColor="#ffffff" />
+        android:textColor="@color/button_label" />
 </LinearLayout>

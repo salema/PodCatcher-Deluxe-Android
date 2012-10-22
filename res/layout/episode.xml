@@ -96,7 +96,7 @@
             android:layout_height="@dimen/list_item"
             android:gravity="center"
             android:text="@string/pause"
-            android:textColor="#ffffff"
+            android:textColor="@color/button_label"
             android:textSize="@dimen/default_font_size" />
     </LinearLayout>
 </LinearLayout>
