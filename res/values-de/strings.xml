@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Simple PodCatcher</string>
+    <string name="app_name">Simple Podcatcher</string>
     <string name="play">Abspielen</string>
     <string name="buffering">Puffer füllen...</string>
     <string name="pause">Pause</string>

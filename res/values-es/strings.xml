@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Simple Podcatcher</string>
+    <string name="play">Reproducir</string>
+    <string name="buffering">Buffering...</string>
+    <string name="pause">Pausa</string>
+    <string name="resume">Continuar</string>
+    <string name="at">en</string>
+    <string name="of">de</string>
+    <string name="error_player">Error de reproducción</string>
+    <string name="podcast_image">Logo</string>
+    <string name="no_podcast">No hay podcast</string>
+    <string name="no_podcast_selected">No hay episodios</string>
+    <string name="no_episode_selected">No hay ninguna descripción disponible.</string>
+    <string name="add_podcast">Añadir podcast nuevo</string>
+    <string name="add_podcast_button">Añadir</string>
+    <string name="enter_podcast_url_here">Insertar URL del Podcast</string>
+    <string name="error_podcast_add">El podcast no se pudo cargar.</string>
+    <string name="error_podcast_load">El podcast no se pudo cargar. Comprueba la URL y asegúrate de que estás conectado.</string>
+</resources>
