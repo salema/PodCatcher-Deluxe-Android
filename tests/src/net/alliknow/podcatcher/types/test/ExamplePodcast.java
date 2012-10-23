@@ -9,7 +9,6 @@ public enum ExamplePodcast {
 	THISAMERICANLIFE("http://feeds.thisamericanlife.org/talpodcast"),
 	LINUXOUTLAWS("http://feeds.feedburner.com/linuxoutlaws"),
 	NASAEDGE("http://www.nasa.gov/rss/NASAcast_vodcast.rss"),
-	OLAFSCHUBERT("http://www.sputnik.de/podcast/serve.php?typ=rss&podcastid=9"),
 	MAUS("http://podcast.wdr.de/maus.xml"),
 	DAILYBACON("http://downloads.bbc.co.uk/podcasts/fivelive/dailybacon/rss.xml"),
 	GREENCAST("http://www.greenpeace-berlin.de/fileadmin/podcast/greencast.xml"),
