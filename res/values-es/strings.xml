@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Simple Podcatcher</string>
     <string name="play">Reproducir</string>
-    <string name="buffering">Buffering...</string>
+    <string name="buffering">Buffering&#8230;</string>
     <string name="pause">Pausa</string>
     <string name="resume">Continuar</string>
     <string name="at">en</string>

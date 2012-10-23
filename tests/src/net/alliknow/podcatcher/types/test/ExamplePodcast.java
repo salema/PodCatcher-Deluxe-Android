@@ -14,6 +14,7 @@ public enum ExamplePodcast {
 	GREENCAST("http://www.greenpeace-berlin.de/fileadmin/podcast/greencast.xml"),
 	NERDIST("http://nerdist.libsyn.com/rss"),
 	INTUNE("http://downloads.bbc.co.uk/podcasts/radio3/r3intune/rss.xml"),
+	RICHEISEN("http://richeisen.libsyn.com/rss"),
 	GEO("http://www.geo.de/GEOaudio/index.xml");
 		
 	private String url;

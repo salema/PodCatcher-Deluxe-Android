@@ -18,7 +18,6 @@ package net.alliknow.podcatcher.fragments;
 
 import java.util.List;
 
-import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.types.Episode;
@@ -111,7 +110,7 @@ public class EpisodeListFragment extends ListFragment {
 		showProgress = true;
 		getListView().setVisibility(View.GONE);
 		getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
-		if (! Podcatcher.isInDebugMode(getActivity()))
+		//if (! Podcatcher.isInDebugMode(getActivity()))
 				getView().findViewById(R.id.episode_list_progress).setVisibility(View.VISIBLE);
 	}
 
