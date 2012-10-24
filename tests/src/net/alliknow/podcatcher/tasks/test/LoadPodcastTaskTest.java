@@ -16,15 +16,15 @@
  */
 package net.alliknow.podcatcher.tasks.test;
 
+import java.net.URL;
+import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask.PodcastLoader;
 import net.alliknow.podcatcher.types.Podcast;
 import net.alliknow.podcatcher.types.test.ExamplePodcast;
-import android.os.AsyncTask;
 import android.test.InstrumentationTestCase;
-import android.util.Log;
 
 /**
  * @author Kevin Hausmann
@@ -36,8 +36,8 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
 	
 	private class MockPodcastLoader implements PodcastLoader {
 
-		private Podcast result;
-		private boolean failed;
+		protected Podcast result;
+		protected boolean failed;
 		
 		@Override
 		public void onPodcastLoaded(Podcast podcast) {
@@ -54,82 +54,56 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
 			
 			signal.countDown();
 		}
-
-		public Podcast getResult() {
-			return result;
-		}
-
-		public boolean hasFailed() {
-			return failed;
-		}
 	}
 	
 	public final void testLoadPodcast() throws Throwable {
-		System.out.println("Start testing");
-		Log.d("Test", "STARTED");
 		final MockPodcastLoader mockLoader = new MockPodcastLoader();
 				
 		// Actual example Podcast
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
-			final LoadPodcastTask task = new LoadPodcastTask(mockLoader);
-			final Podcast podcast = new Podcast(ep.name(), ep.getURL());
-			System.out.println("Testing \"" + ep + "\" - okay...");
-			signal = new CountDownLatch(1);
+			LoadPodcastTask task = loadAndWait(mockLoader,  new Podcast(ep.name(), ep.getURL()));
 			
-			runTestOnUiThread(new Runnable() {
-				
-				@Override
-				public void run() {
-					task.execute(podcast);	
-				}
-			});
-			
-			signal.await();
-			
-			assertEquals(AsyncTask.Status.FINISHED, task.getStatus());
 			assertFalse(task.isCancelled());
-			assertFalse(mockLoader.hasFailed());
-			assertNotNull(mockLoader.getResult());
-			assertFalse(mockLoader.getResult().getEpisodes().isEmpty());
-			assertFalse(mockLoader.getResult().needsReload());
+			assertFalse(mockLoader.failed);
+			assertNotNull(mockLoader.result);
+			assertFalse(mockLoader.result.getEpisodes().isEmpty());
+			assertFalse(mockLoader.result.needsReload());
 			
 			System.out.println("Tested \"" + ep + "\" - okay...");
 		}
-		/*
+		
 		// null
-		task = new LoadPodcastTask(mockLoader);
-		task.execute((Podcast)null);
-		
-		synchronized (mockLoader) {
-			mockLoader.wait(10000);
-	    }
-		
-		assertEquals(AsyncTask.Status.FINISHED, task.getStatus());
-		assertTrue(mockLoader.hasFailed());
+		LoadPodcastTask task = loadAndWait(mockLoader, (Podcast)null);
+		assertTrue(mockLoader.failed);
 		
 		// null URL
-		task = new LoadPodcastTask(mockLoader);
-		task.execute(new Podcast(null, null));
-		
-		synchronized (mockLoader) {
-			mockLoader.wait(10000);
-	    }
-		
-		assertEquals(AsyncTask.Status.FINISHED, task.getStatus());
-		assertTrue(mockLoader.hasFailed());
-		assertTrue(mockLoader.getResult().needsReload());
+		task = loadAndWait(mockLoader, new Podcast(null, null));
+		assertTrue(mockLoader.failed);
+		assertTrue(mockLoader.result.needsReload());
 		
 		// bad URL
-		task = new LoadPodcastTask(mockLoader);
-		task.execute(new Podcast("Mist", new URL("http://bla")));
-		
-		synchronized (mockLoader) {
-			mockLoader.wait(10000);
-	    }
-		
-		assertEquals(AsyncTask.Status.FINISHED, task.getStatus());
-		assertTrue(mockLoader.hasFailed());
-		assertTrue(mockLoader.getResult().needsReload());*/
+		task = loadAndWait(mockLoader, new Podcast("Mist", new URL("http://bla")));
+		assertTrue(mockLoader.failed);
+		assertTrue(mockLoader.result.needsReload());
 	}
-
+	
+	private LoadPodcastTask loadAndWait(final MockPodcastLoader mockLoader, final Podcast podcast) throws Throwable {
+		final LoadPodcastTask task = new LoadPodcastTask(mockLoader);
+		
+		signal = new CountDownLatch(1);
+		
+		runTestOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				task.execute(podcast);	
+			}
+		});
+		
+		final Date start = new Date();
+		signal.await();
+		System.out.println("Waited " + (new Date().getTime() - start.getTime()) + "ms for Podcast \"" + podcast + "\"...");
+		
+		return task;
+	}
 }

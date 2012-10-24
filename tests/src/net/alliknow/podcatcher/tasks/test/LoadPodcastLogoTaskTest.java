@@ -17,7 +17,8 @@
 package net.alliknow.podcatcher.tasks.test;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.util.Date;
+import java.util.concurrent.CountDownLatch;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -31,69 +32,58 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
-import android.test.AndroidTestCase;
+import android.test.InstrumentationTestCase;
 
 /**
  * @author Kevin Hausmann
  *
  */
-public class LoadPodcastLogoTaskTest extends AndroidTestCase {
+public class LoadPodcastLogoTaskTest extends InstrumentationTestCase {
+	
+	private CountDownLatch signal = null;
+	
 	private class MockPodcastLogoLoader implements PodcastLogoLoader {
 
-		private Bitmap result;
-		private boolean failed;
+		protected Bitmap result;
+		protected boolean failed;
 		
-		public Bitmap getResult() {
-			return result;
-		}
-
-		public boolean hasFailed() {
-			return failed;
-		}
-
 		@Override
 		public void onPodcastLogoLoaded(Bitmap logo) {
 			this.result = logo;
 			this.failed = false;
 			
-			synchronized(this) {
-	            notifyAll();
-	        }
+			signal.countDown();
 		}
 
 		@Override
 		public void onPodcastLogoLoadFailed() {
 			this.failed = true;
 			
-			synchronized(this) {
-	            notifyAll();
-	        }
+			signal.countDown();
 		}
 	}
 	
-	public final void testLoadPodcastLogo() throws InterruptedException, MalformedURLException {
+	public final void testLoadPodcastLogo() throws Throwable {
 		MockPodcastLogoLoader mockLoader = new MockPodcastLogoLoader();
-		LoadPodcastLogoTask task = new LoadPodcastLogoTask(mockLoader);
 		
 		// Actual example Podcast
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
 			podcast.setRssFile(loadRssFile(podcast));
 			
-			task = new LoadPodcastLogoTask(mockLoader);
-			task.execute(podcast);
+			LoadPodcastLogoTask task = loadAndWait(mockLoader, podcast);
 			
-			synchronized (mockLoader) { mockLoader.wait(); }
-			
-			assertEquals(AsyncTask.Status.FINISHED, task.getStatus());
 			assertFalse(task.isCancelled());
-			assertFalse(mockLoader.hasFailed());
-			assertNotNull(mockLoader.getResult());
-			assertTrue(mockLoader.getResult().getByteCount() > 0);
+			assertFalse(mockLoader.failed);
+			assertNotNull(mockLoader.result);
+			assertTrue(mockLoader.result.getByteCount() > 0);
 			
 			System.out.println("Tested \"" + ep + "\" - okay...");
 		}
+		
+		// null
+		LoadPodcastLogoTask task = loadAndWait(mockLoader, (Podcast)null);
+		assertTrue(mockLoader.failed);
 	}
 	
 	private Document loadRssFile(Podcast podcast) {
@@ -114,5 +104,25 @@ public class LoadPodcastLogoTaskTest extends AndroidTestCase {
 		}
 		
 		return null;
+	}
+	
+	private LoadPodcastLogoTask loadAndWait(final MockPodcastLogoLoader mockLoader, final Podcast podcast) throws Throwable {
+		final LoadPodcastLogoTask task = new LoadPodcastLogoTask(mockLoader);
+		
+		signal = new CountDownLatch(1);
+		
+		runTestOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				task.execute(podcast);	
+			}
+		});
+		
+		final Date start = new Date();
+		signal.await();
+		System.out.println("Waited " + (new Date().getTime() - start.getTime()) + "ms for Podcast Logo \"" + podcast + "\"...");
+		
+		return task;
 	}
 }

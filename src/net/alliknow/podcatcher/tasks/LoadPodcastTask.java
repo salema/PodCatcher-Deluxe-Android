@@ -88,6 +88,7 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 			URLConnection connection = podcast.getUrl().openConnection();
 			connection.setConnectTimeout(PODCAST_LOAD_TIMEOUT);
 			// TODO I might want to set a ReadTimeout here ???
+			// TODO Handle download here to feed onProgressUpdate
 			
 			return factory.newDocumentBuilder().parse(connection.getInputStream());
 		} catch (Exception e) {
