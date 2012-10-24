@@ -16,12 +16,10 @@
  */
 package net.alliknow.podcatcher.tasks.test;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask;
 import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask.PodcastLogoLoader;
@@ -29,7 +27,6 @@ import net.alliknow.podcatcher.types.Podcast;
 import net.alliknow.podcatcher.types.test.ExamplePodcast;
 
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import android.graphics.Bitmap;
 import android.test.InstrumentationTestCase;
@@ -92,16 +89,9 @@ public class LoadPodcastLogoTaskTest extends InstrumentationTestCase {
 			dbf.setNamespaceAware(true);
 			
 			return dbf.newDocumentBuilder().parse(podcast.getUrl().openStream());
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 		
 		return null;
 	}

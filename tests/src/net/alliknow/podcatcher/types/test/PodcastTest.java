@@ -5,17 +5,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import net.alliknow.podcatcher.types.Episode;
 import net.alliknow.podcatcher.types.Podcast;
 
 import org.junit.Test;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 public class PodcastTest {
 
@@ -144,16 +140,9 @@ public class PodcastTest {
 			dbf.setNamespaceAware(true);
 			
 			return dbf.newDocumentBuilder().parse(podcast.getUrl().openStream());
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 		
 		return null;
 	}
