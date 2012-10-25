@@ -16,36 +16,43 @@
  */
 package net.alliknow.podcatcher.services.test;
 
-import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
 import net.alliknow.podcatcher.types.Podcast;
-import net.alliknow.podcatcher.types.test.ExamplePodcast;
 
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.test.AndroidTestCase;
+import android.test.ServiceTestCase;
 
 /**
  * @author Kevin Hausmann
  *
  */
-public class PlayEpisodeServiceTest extends AndroidTestCase {
+public class PlayEpisodeServiceTest extends ServiceTestCase<PlayEpisodeService> {
+
+	/**
+	 * @param serviceClass
+	 */
+	public PlayEpisodeServiceTest() {
+		super(PlayEpisodeService.class);
+		// TODO Auto-generated constructor stub
+	}
 
 	/** Play service */
 	private PlayEpisodeService service;
 	/** Whether we are currently bound to the service */
 	private boolean bound;
+	
+	private CountDownLatch signal;
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -54,6 +61,8 @@ public class PlayEpisodeServiceTest extends AndroidTestCase {
 		// Bind to service
         Intent intent = new Intent(getContext(), PlayEpisodeService.class);
         getContext().bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        
+        signal = new CountDownLatch(1);
 	}
 
 	@Override
@@ -68,10 +77,10 @@ public class PlayEpisodeServiceTest extends AndroidTestCase {
 	}	
 	
 	public final void testPlay() throws InterruptedException {
-		synchronized (connection) { connection.wait(10000); }
+		signal.await();
 		assertNotNull(service);
 		
-		service.playEpisode(null);
+		/*service.playEpisode(null);
 		
 		Podcast podcast = new Podcast(ExamplePodcast.GEO.name(), ExamplePodcast.GEO.getURL());
 		podcast.setRssFile(loadRssFile(podcast));
@@ -81,11 +90,11 @@ public class PlayEpisodeServiceTest extends AndroidTestCase {
 		
 		synchronized (this) { wait(2000); }
 		service.pause();
-		service.resume();
+		service.resume();*/
 	}
 	
 	public final void testGetPosition() throws InterruptedException {
-		synchronized (connection) { connection.wait(10000); }
+		/*synchronized (connection) { connection.wait(10000); }
 		assertNotNull(service);
 		assertTrue(service.getCurrentPosition() > -1);
 		
@@ -95,7 +104,7 @@ public class PlayEpisodeServiceTest extends AndroidTestCase {
 		
 		synchronized (this) { wait(10000); }
 		
-		assertTrue(service.getCurrentPosition() > 0);
+		assertTrue(service.getCurrentPosition() > 0);*/
 	}
 	
 	/** Defines callbacks for service binding, passed to bindService() */
@@ -106,9 +115,8 @@ public class PlayEpisodeServiceTest extends AndroidTestCase {
         	PlayServiceBinder binder = (PlayServiceBinder) serviceBinder;
             service = binder.getService();
             bound = true;
-            synchronized(this) {
-	            notifyAll();
-	        }
+            
+            signal.countDown();
         }
 
         @Override
@@ -123,16 +131,9 @@ public class PlayEpisodeServiceTest extends AndroidTestCase {
 			dbf.setNamespaceAware(true);
 			
 			return dbf.newDocumentBuilder().parse(podcast.getUrl().openStream());
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 		
 		return null;
 	}

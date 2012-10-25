@@ -66,6 +66,7 @@ public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 		try {
 			if (podcasts[0] == null || podcasts[0].getLogoUrl() == null) throw new Exception("Podcast and/or logo URL cannot be null!");
 			
+			// TODO Handle download here to feed onProgressUpdate
 			return BitmapFactory.decodeStream(podcasts[0].getLogoUrl().openStream());
 		} catch (Exception e) {
 			failed = true;
