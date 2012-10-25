@@ -4,18 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import net.alliknow.podcatcher.test.Utils;
 import net.alliknow.podcatcher.types.Episode;
 import net.alliknow.podcatcher.types.Podcast;
 
 import org.junit.Test;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 public class PodcastTest {
 
@@ -71,7 +64,7 @@ public class PodcastTest {
 		
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			podcast = new Podcast(null, ep.getURL());
-			podcast.setRssFile(loadRssFile(podcast));
+			podcast.setRssFile(Utils.loadRssFile(podcast));
 			assertNotNull(podcast.getName());
 		}
 	}
@@ -80,7 +73,7 @@ public class PodcastTest {
 	public final void testGetEncoding() {
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
-			podcast.setRssFile(loadRssFile(podcast));
+			podcast.setRssFile(Utils.loadRssFile(podcast));
 			assertNotNull(podcast.getEncoding());
 		}
 	}
@@ -108,7 +101,7 @@ public class PodcastTest {
 		
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			podcast = new Podcast(ep.name(), ep.getURL());
-			podcast.setRssFile(loadRssFile(podcast));
+			podcast.setRssFile(Utils.loadRssFile(podcast));
 			assertNotNull(podcast.getEpisodes());
 			assertTrue(podcast.getEpisodes().size() > 0);
 		}
@@ -118,7 +111,7 @@ public class PodcastTest {
 	public final void testGetLogoUrl() {
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
-			podcast.setRssFile(loadRssFile(podcast));
+			podcast.setRssFile(Utils.loadRssFile(podcast));
 			if (podcast.getLogoUrl() == null) System.out.println(podcast.getName());
 			assertNotNull(podcast.getLogoUrl());
 		}
@@ -133,28 +126,8 @@ public class PodcastTest {
 		
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
-			podcast.setRssFile(loadRssFile(podcast));
+			podcast.setRssFile(Utils.loadRssFile(podcast));
 			assertTrue(! podcast.needsReload());
 		}
-	}
-	
-	private Document loadRssFile(Podcast podcast) {
-		try {
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			dbf.setNamespaceAware(true);
-			
-			return dbf.newDocumentBuilder().parse(podcast.getUrl().openStream());
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return null;
 	}
 }

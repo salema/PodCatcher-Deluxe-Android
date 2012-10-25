@@ -16,20 +16,13 @@
  */
 package net.alliknow.podcatcher.tasks.test;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask;
 import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask.PodcastLogoLoader;
+import net.alliknow.podcatcher.test.Utils;
 import net.alliknow.podcatcher.types.Podcast;
 import net.alliknow.podcatcher.types.test.ExamplePodcast;
-
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.test.AndroidTestCase;
@@ -79,7 +72,7 @@ public class LoadPodcastLogoTaskTest extends AndroidTestCase {
 		// Actual example Podcast
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
-			podcast.setRssFile(loadRssFile(podcast));
+			podcast.setRssFile(Utils.loadRssFile(podcast));
 			
 			task = new LoadPodcastLogoTask(mockLoader);
 			task.execute(podcast);
@@ -94,25 +87,5 @@ public class LoadPodcastLogoTaskTest extends AndroidTestCase {
 			
 			System.out.println("Tested \"" + ep + "\" - okay...");
 		}
-	}
-	
-	private Document loadRssFile(Podcast podcast) {
-		try {
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			dbf.setNamespaceAware(true);
-			
-			return dbf.newDocumentBuilder().parse(podcast.getUrl().openStream());
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return null;
 	}
 }
