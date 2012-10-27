@@ -20,8 +20,8 @@ import net.alliknow.podcatcher.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.fragments.EpisodeListFragment.OnEpisodeSelectedListener;
 import net.alliknow.podcatcher.fragments.PodcastListFragment;
-import net.alliknow.podcatcher.fragments.PodcastListFragment.OnPodcastLoadedListener;
 import net.alliknow.podcatcher.fragments.PodcastListFragment.OnPodcastSelectedListener;
+import net.alliknow.podcatcher.tasks.LoadPodcastTask.OnPodcastLoadListener;
 import net.alliknow.podcatcher.types.Episode;
 import net.alliknow.podcatcher.types.Podcast;
 import android.app.Activity;
@@ -35,7 +35,7 @@ import android.os.Bundle;
  * @author Kevin Hausmann
  */
 public class PodcastActivity extends Activity implements 
-	OnPodcastSelectedListener, OnPodcastLoadedListener, OnEpisodeSelectedListener {
+	OnPodcastSelectedListener, OnPodcastLoadListener, OnEpisodeSelectedListener {
 		
 	/** The podcast list fragment */
 	private PodcastListFragment podcastListFragment;
@@ -73,6 +73,11 @@ public class PodcastActivity extends Activity implements
 	@Override
 	public void onPodcastSelected(Podcast podcast) {
 		episodeListFragment.clearAndSpin();
+	}
+	
+	@Override
+	public void onPodcastLoadProgress(int percent) {
+		episodeListFragment.showProgress(percent);
 	}
 	
 	@Override

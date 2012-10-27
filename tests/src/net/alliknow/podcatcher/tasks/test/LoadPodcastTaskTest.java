@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
-import net.alliknow.podcatcher.tasks.LoadPodcastTask.PodcastLoader;
+import net.alliknow.podcatcher.tasks.LoadPodcastTask.OnPodcastLoadListener;
 import net.alliknow.podcatcher.types.Podcast;
 import net.alliknow.podcatcher.types.test.ExamplePodcast;
 import android.test.InstrumentationTestCase;
@@ -34,7 +34,7 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
 
 	private CountDownLatch signal = null;
 	
-	private class MockPodcastLoader implements PodcastLoader {
+	private class MockPodcastLoader implements OnPodcastLoadListener {
 
 		protected Podcast result;
 		protected boolean failed;
@@ -53,6 +53,11 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
 			this.failed = true;
 			
 			signal.countDown();
+		}
+
+		@Override
+		public void onPodcastLoadProgress(int percent) {
+			System.out.println(percent);
 		}
 	}
 	

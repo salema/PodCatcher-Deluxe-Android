@@ -35,7 +35,7 @@ import net.alliknow.podcatcher.tags.OPML;
 import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask;
 import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask.PodcastLogoLoader;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
-import net.alliknow.podcatcher.tasks.LoadPodcastTask.PodcastLoader;
+import net.alliknow.podcatcher.tasks.LoadPodcastTask.OnPodcastLoadListener;
 import net.alliknow.podcatcher.types.Podcast;
 
 import org.w3c.dom.Document;
@@ -62,7 +62,7 @@ import android.widget.ListView;
  * 
  * @author Kevin Hausmann
  */
-public class PodcastListFragment extends ListFragment implements AddPodcastListener, PodcastLoader, PodcastLogoLoader {
+public class PodcastListFragment extends ListFragment implements AddPodcastListener, OnPodcastLoadListener, PodcastLogoLoader {
 	
 	private AddPodcastFragment addPodcastFragment = new AddPodcastFragment();
 	
@@ -77,22 +77,8 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
     /** The activity we are in (listens to user selection) */ 
     private OnPodcastSelectedListener selectedListener;
     
-    /** Container Activity must implement this interface */
-    public interface OnPodcastLoadedListener {
-    	/**
-    	 * Updates the UI to reflect that a podcast has been loaded.
-    	 * @param loadedPodcast Podcast loaded
-    	 */
-    	public void onPodcastLoaded(Podcast loadedPodcast);
-    	
-    	/**
-    	 * Notifies listener that a podcast load failed
-    	 * @param failedPodcast Podcast that failed loading
-    	 */
-    	public void onPodcastLoadFailed(Podcast failedPodcast);
-    }
-    /** The activity we are in (listens to loading complete) */ 
-    private OnPodcastLoadedListener loadedListener;
+    /** The activity we are in (listens to loading events) */ 
+    private OnPodcastLoadListener loadListener;
     
 	/** The list of podcasts we know */
 	private List<Podcast> podcastList = new ArrayList<Podcast>();
@@ -169,8 +155,13 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	/**
 	 * @param listener Listener to be alerted on podcast load completion
 	 */
-	public void setPodcastLoadedListener(OnPodcastLoadedListener listener) {
-		this.loadedListener = listener;
+	public void setPodcastLoadedListener(OnPodcastLoadListener listener) {
+		this.loadListener = listener;
+	}
+	
+	@Override
+	public void onPodcastLoadProgress(int percent) {
+		if (loadListener != null) loadListener.onPodcastLoadProgress(percent);
 	}
 	
 	/**
@@ -182,7 +173,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	public void onPodcastLoaded(Podcast podcast) {
 		loadPodcastTask = null;
 		
-		if (loadedListener != null) loadedListener.onPodcastLoaded(podcast);
+		if (loadListener != null) loadListener.onPodcastLoaded(podcast);
 		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
 		
 		// Download podcast logo
@@ -206,7 +197,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 		if (currentPodcast.equals(podcast)) {
 			loadPodcastTask = null;
 			
-			if (loadedListener != null) loadedListener.onPodcastLoadFailed(podcast);
+			if (loadListener != null) loadListener.onPodcastLoadFailed(podcast);
 			else Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
 		}
 			
@@ -263,7 +254,8 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	
 	private void loadPodcastList() {
 		//this is just for testing
-		//if (! Arrays.asList(getActivity().fileList()).contains(OPML_FILENAME)) writeDummyPodcastList();
+		//if (! Arrays.asList(getActivity().fileList()).contains(OPML_FILENAME))
+		writeDummyPodcastList();
 		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -318,6 +310,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 			writer.write("<outline text=\"Radiolab\" xmlUrl=\"http://feeds.wnyc.org/radiolab\"/>");
 			writer.write("<outline text=\"Linux Outlaws\" xmlUrl=\"http://feeds.feedburner.com/linuxoutlaws\"/>");
 			writer.write("<outline text=\"GEO\" xmlUrl=\"http://www.geo.de/GEOaudio/index.xml\"/>");
+			writer.write("<outline text=\"Maus\" xmlUrl=\"http://podcast.wdr.de/maus.xml\"/>");
 			writer.write("</body></opml>");
 			writer.close();
 			

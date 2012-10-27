@@ -16,13 +16,20 @@
  */
 package net.alliknow.podcatcher.tasks;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLConnection;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import net.alliknow.podcatcher.types.Podcast;
 
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -33,30 +40,39 @@ import android.util.Log;
  * 
  * @author Kevin Hausmann
  */
-public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
+public class LoadPodcastTask extends AsyncTask<Podcast, Integer, Document> {
 	
 	private static final int PODCAST_LOAD_TIMEOUT = 8000;
 
 	/**
      * Interface definition for a callback to be invoked when a podcast is loaded.
      */
-	public interface PodcastLoader {
+	public interface OnPodcastLoadListener {
+		
+		/**
+		 * Called on progress update.
+		 * @param percent Percent of podcast RSS file loaded.
+		 * Note that this only works if the http connection
+		 * reports its content length correctly. Otherwise 
+		 * (and this happens in the wild out there) percent might be >100.
+		 */
+		public void onPodcastLoadProgress(int percent);
 		
 		/**
 		 * Called on completion.
 		 * @param podcast Podcast loaded.
 		 */
-		void onPodcastLoaded(Podcast podcast);
+		public void onPodcastLoaded(Podcast podcast);
 		
 		/**
 		 * Called when loading the podcast failed.
 		 * @param podcast Podcast failing to load.
 		 */
-		void onPodcastLoadFailed(Podcast podcast);
+		public void onPodcastLoadFailed(Podcast podcast);
 	}
 	
 	/** Owner */
-	private final PodcastLoader loader;
+	private final OnPodcastLoadListener listener;
 
 	/** Podcast currently loading */
 	private Podcast podcast;
@@ -71,8 +87,8 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 	 * Create new task
 	 * @param fragment Owner fragment
 	 */
-	public LoadPodcastTask(PodcastLoader fragment) {
-		this.loader = fragment;
+	public LoadPodcastTask(OnPodcastLoadListener listener) {
+		this.listener = listener;
 		
 		factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
@@ -88,15 +104,20 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 			URLConnection connection = podcast.getUrl().openConnection();
 			connection.setConnectTimeout(PODCAST_LOAD_TIMEOUT);
 			// TODO I might want to set a ReadTimeout here ???
-			// TODO Handle download here to feed onProgressUpdate
 			
-			return factory.newDocumentBuilder().parse(connection.getInputStream());
+			return loadPodcastFile(connection);
 		} catch (Exception e) {
 			failed = true;
 			Log.w(getClass().getSimpleName(), "Load failed for podcast \"" + podcasts[0] + "\"", e);
 		}
 		
 		return null;
+	}
+	
+	@Override
+	protected void onProgressUpdate(Integer... values) {
+		if (listener != null) listener.onPodcastLoadProgress(values[0]);
+		else Log.d(getClass().getSimpleName(), "Podcast progress update, but no listener attached");
 	}
 	
 	@Override
@@ -107,13 +128,33 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Void, Document> {
 		else {
 			podcast.setRssFile(result);
 			
-			if (loader != null) loader.onPodcastLoaded(podcast);
+			if (listener != null) listener.onPodcastLoaded(podcast);
 			else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
 		}
 	}
 	
+	private Document loadPodcastFile(URLConnection connection) throws IOException, SAXException, ParserConfigurationException {
+		InputStream in = new BufferedInputStream(connection.getInputStream());
+		boolean sendProgressUpdates = connection.getContentLength() > 0;
+		
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		
+		int currentByte = 0;
+		int bytesRead = 0;
+		while((currentByte = in.read()) >= 0) {
+		  buffer.write(currentByte);
+		  bytesRead++;
+		  
+		  if (sendProgressUpdates && bytesRead % 1000 == 0) {
+			  publishProgress((int)((float)bytesRead / (float)connection.getContentLength() * 100));
+		  }
+		}
+		
+		return factory.newDocumentBuilder().parse(new ByteArrayInputStream(buffer.toByteArray()));
+	}
+	
 	private void notifyFailed() {
-		if (loader != null) loader.onPodcastLoadFailed(podcast);
+		if (listener != null) listener.onPodcastLoadFailed(podcast);
 		else Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
 	}
 }

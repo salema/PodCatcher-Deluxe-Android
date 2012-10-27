@@ -18,6 +18,7 @@ package net.alliknow.podcatcher.fragments;
 
 import java.util.List;
 
+import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.types.Episode;
@@ -40,6 +41,15 @@ public class EpisodeListFragment extends ListFragment {
 
 	/** The list of episode showing */
 	private List<Episode> episodeList;
+	
+	/** The list view */
+	private ListView listView;
+	/** The empty view */
+	private TextView emptyView;
+	/** The progress bar */
+	private View progressView;
+	/** The progress bar text */
+	private TextView progressTextView;
 	
 	private boolean showProgress = false;
 	
@@ -71,6 +81,11 @@ public class EpisodeListFragment extends ListFragment {
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		
+		listView = getListView();
+		emptyView = (TextView) getView().findViewById(android.R.id.empty);
+		progressView = getView().findViewById(R.id.episode_list_progress);
+		progressTextView = (TextView) getView().findViewById(R.id.episode_list_progress_text);
+		
 		if (showProgress) clearAndSpin();
 	}
 	
@@ -95,12 +110,13 @@ public class EpisodeListFragment extends ListFragment {
 	 * @param list List of episodes to display
 	 */
 	public void setEpisodeList(List<Episode> list) {
-		getView().findViewById(R.id.episode_list_progress).setVisibility(View.GONE);
-		
+		progressView.setVisibility(View.GONE);
 		showProgress = false;
+		
 		this.episodeList = list;
+		
 		setListAdapter(new EpisodeListAdapter(getActivity(), episodeList));
-		getListView().setVisibility(View.VISIBLE);
+		listView.setVisibility(View.VISIBLE);
 	}
 
 	/**
@@ -108,10 +124,21 @@ public class EpisodeListFragment extends ListFragment {
 	 */
 	public void clearAndSpin() {
 		showProgress = true;
-		getListView().setVisibility(View.GONE);
-		getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
-		//if (! Podcatcher.isInDebugMode(getActivity()))
-				getView().findViewById(R.id.episode_list_progress).setVisibility(View.VISIBLE);
+		progressTextView.setText(null);
+		listView.setVisibility(View.GONE);
+		emptyView.setVisibility(View.GONE);
+				
+		if (! Podcatcher.isInDebugMode(getActivity()))
+			progressView.setVisibility(View.VISIBLE);
+	}
+	
+	/**
+	 * Update UI with load progress
+	 * @param percent Amount loaded 
+	 */
+	public void showProgress(int percent) {
+		if (percent >= 0 && percent < 100) progressTextView.setText(percent + "%");
+		else progressTextView.setText(null);
 	}
 
 	/**
@@ -120,10 +147,9 @@ public class EpisodeListFragment extends ListFragment {
 	 */
 	public void showError(String message) {
 		showProgress = false;
-		getView().findViewById(R.id.episode_list_progress).setVisibility(View.GONE);
-		getListView().setVisibility(View.GONE);
+		progressView.setVisibility(View.GONE);
+		listView.setVisibility(View.GONE);
 		
-		TextView emptyView = (TextView) getView().findViewById(android.R.id.empty);
 		emptyView.setText(message);
 		emptyView.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
 		emptyView.setVisibility(View.VISIBLE);	

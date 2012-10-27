@@ -21,7 +21,7 @@ import java.net.URL;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
-import net.alliknow.podcatcher.tasks.LoadPodcastTask.PodcastLoader;
+import net.alliknow.podcatcher.tasks.LoadPodcastTask.OnPodcastLoadListener;
 import net.alliknow.podcatcher.types.Podcast;
 import android.app.DialogFragment;
 import android.content.ClipboardManager;
@@ -44,7 +44,7 @@ import android.widget.TextView;
  * 
  * @author Kevin Hausmann
  */
-public class AddPodcastFragment extends DialogFragment implements PodcastLoader {
+public class AddPodcastFragment extends DialogFragment implements OnPodcastLoadListener {
 
 	/**
      * Interface definition for a callback to be invoked when a podcast is added.
@@ -182,5 +182,11 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoader 
 	private boolean isValidPodcastUrl(CharSequence candidate) {
 		return URLUtil.isNetworkUrl(candidate.toString()) ||
 				(candidate.length() > 5 && candidate.toString().contains("."));
+	}
+
+	@Override
+	public void onPodcastLoadProgress(int percent) {
+		// TODO Auto-generated method stub
+		
 	}
 }
