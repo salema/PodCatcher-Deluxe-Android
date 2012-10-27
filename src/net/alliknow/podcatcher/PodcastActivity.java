@@ -18,10 +18,10 @@ package net.alliknow.podcatcher;
 
 import net.alliknow.podcatcher.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.fragments.EpisodeListFragment;
-import net.alliknow.podcatcher.fragments.EpisodeListFragment.OnEpisodeSelectedListener;
 import net.alliknow.podcatcher.fragments.PodcastListFragment;
-import net.alliknow.podcatcher.fragments.PodcastListFragment.OnPodcastSelectedListener;
-import net.alliknow.podcatcher.tasks.LoadPodcastTask.OnPodcastLoadListener;
+import net.alliknow.podcatcher.listeners.EpisodeSelectedListener;
+import net.alliknow.podcatcher.listeners.PodcastSelectedListener;
+import net.alliknow.podcatcher.listeners.PodcastLoadListener;
 import net.alliknow.podcatcher.types.Episode;
 import net.alliknow.podcatcher.types.Podcast;
 import android.app.Activity;
@@ -35,7 +35,7 @@ import android.os.Bundle;
  * @author Kevin Hausmann
  */
 public class PodcastActivity extends Activity implements 
-	OnPodcastSelectedListener, OnPodcastLoadListener, OnEpisodeSelectedListener {
+	PodcastSelectedListener, PodcastLoadListener, EpisodeSelectedListener {
 		
 	/** The podcast list fragment */
 	private PodcastListFragment podcastListFragment;

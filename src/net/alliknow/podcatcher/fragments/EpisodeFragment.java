@@ -21,9 +21,9 @@ import java.util.TimerTask;
 
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
-import net.alliknow.podcatcher.services.PlayServiceListener;
 import net.alliknow.podcatcher.types.Episode;
 import android.app.Activity;
 import android.app.Fragment;

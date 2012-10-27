@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.alliknow.podcatcher.services;
+package net.alliknow.podcatcher.listeners;
 
 /**
  * Listener interface to implement if you are interested to be alerted

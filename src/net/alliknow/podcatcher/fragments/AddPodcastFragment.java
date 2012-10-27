@@ -20,8 +20,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.listeners.AddPodcastListener;
+import net.alliknow.podcatcher.listeners.PodcastLoadListener;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
-import net.alliknow.podcatcher.tasks.LoadPodcastTask.OnPodcastLoadListener;
 import net.alliknow.podcatcher.types.Podcast;
 import android.app.DialogFragment;
 import android.content.ClipboardManager;
@@ -44,19 +45,7 @@ import android.widget.TextView;
  * 
  * @author Kevin Hausmann
  */
-public class AddPodcastFragment extends DialogFragment implements OnPodcastLoadListener {
-
-	/**
-     * Interface definition for a callback to be invoked when a podcast is added.
-     */
-	public interface AddPodcastListener {
-		
-		/**
-		 * Called on listener when podcast is added.
-		 * @param newPodcast Podcast to add.
-		 */
-		void addPodcast(Podcast newPodcast);
-	}
+public class AddPodcastFragment extends DialogFragment implements PodcastLoadListener {
 
 	/** The add podcast listener */
 	private AddPodcastListener listener;

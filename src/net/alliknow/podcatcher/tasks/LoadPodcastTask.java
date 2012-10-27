@@ -26,6 +26,7 @@ import java.net.URLConnection;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.alliknow.podcatcher.listeners.PodcastLoadListener;
 import net.alliknow.podcatcher.types.Podcast;
 
 import org.w3c.dom.Document;
@@ -44,35 +45,8 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Integer, Document> {
 	
 	private static final int PODCAST_LOAD_TIMEOUT = 8000;
 
-	/**
-     * Interface definition for a callback to be invoked when a podcast is loaded.
-     */
-	public interface OnPodcastLoadListener {
-		
-		/**
-		 * Called on progress update.
-		 * @param percent Percent of podcast RSS file loaded.
-		 * Note that this only works if the http connection
-		 * reports its content length correctly. Otherwise 
-		 * (and this happens in the wild out there) percent might be >100.
-		 */
-		public void onPodcastLoadProgress(int percent);
-		
-		/**
-		 * Called on completion.
-		 * @param podcast Podcast loaded.
-		 */
-		public void onPodcastLoaded(Podcast podcast);
-		
-		/**
-		 * Called when loading the podcast failed.
-		 * @param podcast Podcast failing to load.
-		 */
-		public void onPodcastLoadFailed(Podcast podcast);
-	}
-	
 	/** Owner */
-	private final OnPodcastLoadListener listener;
+	private final PodcastLoadListener listener;
 
 	/** Podcast currently loading */
 	private Podcast podcast;
@@ -87,7 +61,7 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Integer, Document> {
 	 * Create new task
 	 * @param fragment Owner fragment
 	 */
-	public LoadPodcastTask(OnPodcastLoadListener listener) {
+	public LoadPodcastTask(PodcastLoadListener listener) {
 		this.listener = listener;
 		
 		factory = DocumentBuilderFactory.newInstance();

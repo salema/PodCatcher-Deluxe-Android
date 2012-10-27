@@ -16,6 +16,7 @@
  */
 package net.alliknow.podcatcher.tasks;
 
+import net.alliknow.podcatcher.listeners.PodcastLogoLoadListener;
 import net.alliknow.podcatcher.types.Podcast;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -30,25 +31,8 @@ import android.util.Log;
  */
 public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 
-	/**
-     * Interface definition for a callback to be invoked when a podcast logo is loaded.
-     */
-	public interface PodcastLogoLoader {
-		
-		/**
-		 * Called on completion.
-		 * @param logo Podcast logo loaded.
-		 */
-		void onPodcastLogoLoaded(Bitmap logo);
-		
-		/**
-		 * Called when loading the podcast logo failed.
-		 */
-		void onPodcastLogoLoadFailed();
-	}
-	
 	/** Owner */
-	private final PodcastLogoLoader loader;
+	private final PodcastLogoLoadListener loader;
 	
 	/** Store whether loading failed */
 	private boolean failed = false;
@@ -57,7 +41,7 @@ public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 	 * Create new task
 	 * @param fragment Owner fragment
 	 */
-	public LoadPodcastLogoTask(PodcastLogoLoader fragment) {
+	public LoadPodcastLogoTask(PodcastLogoLoadListener fragment) {
 		this.loader = fragment;
 	}
 	

@@ -19,8 +19,8 @@ package net.alliknow.podcatcher.tasks.test;
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 
+import net.alliknow.podcatcher.listeners.PodcastLogoLoadListener;
 import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask;
-import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask.PodcastLogoLoader;
 import net.alliknow.podcatcher.test.Utils;
 import net.alliknow.podcatcher.types.Podcast;
 import net.alliknow.podcatcher.types.test.ExamplePodcast;
@@ -35,7 +35,7 @@ public class LoadPodcastLogoTaskTest extends InstrumentationTestCase {
 	
 	private CountDownLatch signal = null;
 	
-	private class MockPodcastLogoLoader implements PodcastLogoLoader {
+	private class MockPodcastLogoLoader implements PodcastLogoLoadListener {
 
 		protected Bitmap result;
 		protected boolean failed;

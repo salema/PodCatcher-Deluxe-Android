@@ -30,12 +30,13 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.PodcastListAdapter;
-import net.alliknow.podcatcher.fragments.AddPodcastFragment.AddPodcastListener;
+import net.alliknow.podcatcher.listeners.AddPodcastListener;
+import net.alliknow.podcatcher.listeners.PodcastLoadListener;
+import net.alliknow.podcatcher.listeners.PodcastLogoLoadListener;
+import net.alliknow.podcatcher.listeners.PodcastSelectedListener;
 import net.alliknow.podcatcher.tags.OPML;
 import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask;
-import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask.PodcastLogoLoader;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
-import net.alliknow.podcatcher.tasks.LoadPodcastTask.OnPodcastLoadListener;
 import net.alliknow.podcatcher.types.Podcast;
 
 import org.w3c.dom.Document;
@@ -62,23 +63,15 @@ import android.widget.ListView;
  * 
  * @author Kevin Hausmann
  */
-public class PodcastListFragment extends ListFragment implements AddPodcastListener, OnPodcastLoadListener, PodcastLogoLoader {
+public class PodcastListFragment extends ListFragment implements AddPodcastListener, PodcastLoadListener, PodcastLogoLoadListener {
 	
 	private AddPodcastFragment addPodcastFragment = new AddPodcastFragment();
 	
-	/** Container Activity must implement this interface */
-    public interface OnPodcastSelectedListener {
-    	/**
-    	 * Updates the UI to reflect that a podcast has been selected.
-    	 * @param selectedPodcast Podcast selected by the user
-    	 */
-    	public void onPodcastSelected(Podcast selectedPodcast);
-    }
-    /** The activity we are in (listens to user selection) */ 
-    private OnPodcastSelectedListener selectedListener;
+	/** The activity we are in (listens to user selection) */ 
+    private PodcastSelectedListener selectedListener;
     
     /** The activity we are in (listens to loading events) */ 
-    private OnPodcastLoadListener loadListener;
+    private PodcastLoadListener loadListener;
     
 	/** The list of podcasts we know */
 	private List<Podcast> podcastList = new ArrayList<Podcast>();
@@ -148,14 +141,14 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	/**
 	 * @param listener Listener to be alerted on podcast selection
 	 */
-	public void setPodcastSelectedListener(OnPodcastSelectedListener listener) {
+	public void setPodcastSelectedListener(PodcastSelectedListener listener) {
 		this.selectedListener = listener;
 	}
 
 	/**
 	 * @param listener Listener to be alerted on podcast load completion
 	 */
-	public void setPodcastLoadedListener(OnPodcastLoadListener listener) {
+	public void setPodcastLoadedListener(PodcastLoadListener listener) {
 		this.loadListener = listener;
 	}
 	
@@ -255,7 +248,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	private void loadPodcastList() {
 		//this is just for testing
 		//if (! Arrays.asList(getActivity().fileList()).contains(OPML_FILENAME))
-		writeDummyPodcastList();
+		//writeDummyPodcastList();
 		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

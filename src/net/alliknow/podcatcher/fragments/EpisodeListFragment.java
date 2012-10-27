@@ -18,9 +18,9 @@ package net.alliknow.podcatcher.fragments;
 
 import java.util.List;
 
-import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
+import net.alliknow.podcatcher.listeners.EpisodeSelectedListener;
 import net.alliknow.podcatcher.types.Episode;
 import android.app.ListFragment;
 import android.os.Bundle;
@@ -53,16 +53,8 @@ public class EpisodeListFragment extends ListFragment {
 	
 	private boolean showProgress = false;
 	
-	/** Container Activity must implement this interface */
-    public interface OnEpisodeSelectedListener {
-    	/**
-    	 * Updates the UI to reflect that a podcast has been selected.
-    	 * @param selectedPodcast Podcast selected by the user
-    	 */
-    	public void onEpisodeSelected(Episode selectedEpisode);
-    }
-    /** The activity we are in (listens to user selection) */ 
-    private OnEpisodeSelectedListener selectedListener;
+	/** The activity we are in (listens to user selection) */ 
+    private EpisodeSelectedListener selectedListener;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -101,7 +93,7 @@ public class EpisodeListFragment extends ListFragment {
 	/**
 	 * @param listener Listener to be alerted on episode selection
 	 */
-	public void setEpisodeSelectedListener(OnEpisodeSelectedListener listener) {
+	public void setEpisodeSelectedListener(EpisodeSelectedListener listener) {
 		this.selectedListener = listener;
 	}
 	
@@ -128,7 +120,7 @@ public class EpisodeListFragment extends ListFragment {
 		listView.setVisibility(View.GONE);
 		emptyView.setVisibility(View.GONE);
 				
-		if (! Podcatcher.isInDebugMode(getActivity()))
+		//if (! Podcatcher.isInDebugMode(getActivity()))
 			progressView.setVisibility(View.VISIBLE);
 	}
 	
@@ -138,7 +130,7 @@ public class EpisodeListFragment extends ListFragment {
 	 */
 	public void showProgress(int percent) {
 		if (percent >= 0 && percent < 100) progressTextView.setText(percent + "%");
-		else progressTextView.setText(null);
+		else progressTextView.setText(getResources().getString(R.string.buffering));
 	}
 
 	/**
