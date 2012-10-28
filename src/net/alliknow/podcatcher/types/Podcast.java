@@ -59,7 +59,8 @@ public class Podcast implements Comparable<Podcast> {
 	
 	/**
 	 * Create new podcast by name and RSS file location.
-	 * The name will not be read from the file, but remain as given. 
+	 * The name will not be read from the file, but remains as given
+	 * (unless you give <code>null</code> as the name). 
 	 * All other data on the podcast will only be available after
 	 * <code>setRssFile</code> was called.
 	 * @param name The podcast's name
