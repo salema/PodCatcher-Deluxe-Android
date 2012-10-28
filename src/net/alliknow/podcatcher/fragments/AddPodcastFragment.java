@@ -31,14 +31,17 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 /**
  * A dialog to let the user add a podcast.
@@ -83,6 +86,20 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoadLis
 
 			@Override
 			public void afterTextChanged(Editable s) {}
+		});
+		podcastUrlEditText.setOnEditorActionListener(new OnEditorActionListener() {
+			
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				boolean handled = false;
+		        
+				if (actionId == EditorInfo.IME_ACTION_GO) {
+		            addPodcast();
+		            handled = true;
+		        }
+		        
+		        return handled;
+			}
 		});
 		
 		progressView = (ProgressBar) view.findViewById(R.id.add_podcast_progress);
@@ -129,6 +146,14 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoadLis
 			onPodcastLoadFailed(null);
 		}	
 	}
+	
+	@Override
+	public void onPodcastLoadProgress(int percent) {
+		if (percent >= 0 && percent <= 100) {
+			progressView.setIndeterminate(false);
+			progressView.setProgress(percent);
+		} else progressView.setIndeterminate(true);
+	}
 
 	@Override
 	public void onPodcastLoaded(Podcast podcast) {
@@ -171,11 +196,5 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoadLis
 	private boolean isValidPodcastUrl(CharSequence candidate) {
 		return URLUtil.isNetworkUrl(candidate.toString()) ||
 				(candidate.length() > 5 && candidate.toString().contains("."));
-	}
-
-	@Override
-	public void onPodcastLoadProgress(int percent) {
-		// TODO Auto-generated method stub
-		
 	}
 }

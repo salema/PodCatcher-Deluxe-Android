@@ -9,8 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/enter_podcast_url_here"
-        android:imeOptions="actionDone"
-        android:inputType="text" />
+        android:imeOptions="actionGo"
+        android:inputType="textUri|textNoSuggestions" />
     <TextView
         android:id="@+id/add_podcast_error"
         android:layout_width="match_parent"

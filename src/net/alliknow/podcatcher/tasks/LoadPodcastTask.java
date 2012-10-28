@@ -90,8 +90,8 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Integer, Document> {
 	
 	@Override
 	protected void onProgressUpdate(Integer... values) {
-		if (listener != null) listener.onPodcastLoadProgress(values[0]);
-		else Log.d(getClass().getSimpleName(), "Podcast progress update, but no listener attached");
+		if (!isCancelled() && listener != null) listener.onPodcastLoadProgress(values[0]);
+		else if (listener == null) Log.d(getClass().getSimpleName(), "Podcast progress update, but no listener attached");
 	}
 	
 	@Override
@@ -120,7 +120,7 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Integer, Document> {
 		  bytesRead++;
 		  
 		  if (sendProgressUpdates && bytesRead % 1000 == 0) {
-			  publishProgress((int)((float)bytesRead / (float)connection.getContentLength() * 100));
+			  publishProgress((int)((float)bytesRead / (float)connection.getContentLength() * 100) + 1);
 		  }
 		}
 		

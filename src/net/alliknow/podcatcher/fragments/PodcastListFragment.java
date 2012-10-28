@@ -65,11 +65,10 @@ import android.widget.ListView;
  */
 public class PodcastListFragment extends ListFragment implements AddPodcastListener, PodcastLoadListener, PodcastLogoLoadListener {
 	
+	/** The add podcast fragment to use */
 	private AddPodcastFragment addPodcastFragment = new AddPodcastFragment();
-	
 	/** The activity we are in (listens to user selection) */ 
     private PodcastSelectedListener selectedListener;
-    
     /** The activity we are in (listens to loading events) */ 
     private PodcastLoadListener loadListener;
     

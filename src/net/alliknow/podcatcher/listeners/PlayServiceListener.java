@@ -44,7 +44,7 @@ public interface PlayServiceListener {
 	public void onResumeFromBuffering();
 	
 	/**
-	 * Calley by the service on the listener if the media player buffer
+	 * Called by the service on the listener if the media player buffer
 	 * state changed.
 	 * @param seconds Seconds from the media start currently buffered.
 	 */
@@ -62,5 +62,4 @@ public interface PlayServiceListener {
 	 * or any other error occurs.
 	 */
 	public void onError();
-
 }

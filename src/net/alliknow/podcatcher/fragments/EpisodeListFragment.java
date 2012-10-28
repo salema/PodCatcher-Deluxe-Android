@@ -129,7 +129,7 @@ public class EpisodeListFragment extends ListFragment {
 	 * @param percent Amount loaded 
 	 */
 	public void showProgress(int percent) {
-		if (percent >= 0 && percent < 100) progressTextView.setText(percent + "%");
+		if (percent >= 0 && percent <= 100) progressTextView.setText(percent + "%");
 		else progressTextView.setText(getResources().getString(R.string.buffering));
 	}
 
