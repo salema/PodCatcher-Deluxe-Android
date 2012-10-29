@@ -17,6 +17,7 @@
 package net.alliknow.podcatcher.adapters;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,8 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	
 	/** We need to know the selected item's position in the list */
 	protected int selectedPosition = -1;
+	/** Our context's resources */
+	protected Resources resources;
 	/** Inflater for new views */
 	protected LayoutInflater inflater;
 
@@ -47,6 +50,7 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	 * @param context The current context
 	 */
 	public PodcatcherBaseAdapter(Context context) {
+		this.resources = context.getResources();
 		this.inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 	

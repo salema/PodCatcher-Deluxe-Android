@@ -29,10 +29,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.PodcastListAdapter;
-import net.alliknow.podcatcher.listeners.AddPodcastListener;
-import net.alliknow.podcatcher.listeners.PodcastLoadListener;
-import net.alliknow.podcatcher.listeners.PodcastLogoLoadListener;
-import net.alliknow.podcatcher.listeners.PodcastSelectedListener;
+import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
+import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
+import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
+import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.tags.OPML;
 import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
@@ -62,14 +62,14 @@ import android.widget.ListView;
  * 
  * @author Kevin Hausmann
  */
-public class PodcastListFragment extends ListFragment implements AddPodcastListener, PodcastLoadListener, PodcastLogoLoadListener {
+public class PodcastListFragment extends ListFragment implements OnAddPodcastListener, OnLoadPodcastListener, OnLoadPodcastLogoListener {
 	
 	/** The add podcast fragment to use */
 	private AddPodcastFragment addPodcastFragment = new AddPodcastFragment();
 	/** The activity we are in (listens to user selection) */ 
-    private PodcastSelectedListener selectedListener;
+    private OnSelectPodcastListener selectedListener;
     /** The activity we are in (listens to loading events) */ 
-    private PodcastLoadListener loadListener;
+    private OnLoadPodcastListener loadListener;
     
 	/** The list of podcasts we know */
 	private List<Podcast> podcastList = new ArrayList<Podcast>();
@@ -139,14 +139,14 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 	/**
 	 * @param listener Listener to be alerted on podcast selection
 	 */
-	public void setPodcastSelectedListener(PodcastSelectedListener listener) {
+	public void setPodcastSelectedListener(OnSelectPodcastListener listener) {
 		this.selectedListener = listener;
 	}
 
 	/**
 	 * @param listener Listener to be alerted on podcast load completion
 	 */
-	public void setPodcastLoadedListener(PodcastLoadListener listener) {
+	public void setPodcastLoadedListener(OnLoadPodcastListener listener) {
 		this.loadListener = listener;
 	}
 	

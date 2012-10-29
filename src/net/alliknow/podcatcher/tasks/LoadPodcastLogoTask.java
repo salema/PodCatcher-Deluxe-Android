@@ -16,7 +16,7 @@
  */
 package net.alliknow.podcatcher.tasks;
 
-import net.alliknow.podcatcher.listeners.PodcastLogoLoadListener;
+import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.types.Podcast;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -32,7 +32,7 @@ import android.util.Log;
 public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 
 	/** Owner */
-	private final PodcastLogoLoadListener loader;
+	private final OnLoadPodcastLogoListener loader;
 	
 	/** Store whether loading failed */
 	private boolean failed = false;
@@ -41,7 +41,7 @@ public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 	 * Create new task
 	 * @param fragment Owner fragment
 	 */
-	public LoadPodcastLogoTask(PodcastLogoLoadListener fragment) {
+	public LoadPodcastLogoTask(OnLoadPodcastLogoListener fragment) {
 		this.loader = fragment;
 	}
 	

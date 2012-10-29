@@ -11,6 +11,8 @@
     <string name="no_podcast">No podcast added</string>
     <string name="no_podcast_selected">No podcast selected</string>
     <string name="no_episode_selected">No episode selected</string>
+    <string name="one_episode">One episode</string>
+    <string name="episodes">episodes</string>
     <string name="add_podcast">New podcast</string>
     <string name="add_podcast_button">Add</string>
     <string name="enter_podcast_url_here">Copy podcast address here</string>

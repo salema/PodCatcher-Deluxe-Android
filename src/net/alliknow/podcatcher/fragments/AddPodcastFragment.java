@@ -20,8 +20,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.listeners.AddPodcastListener;
-import net.alliknow.podcatcher.listeners.PodcastLoadListener;
+import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
+import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
 import net.alliknow.podcatcher.types.Podcast;
 import android.app.DialogFragment;
@@ -49,10 +49,10 @@ import android.widget.TextView.OnEditorActionListener;
  * 
  * @author Kevin Hausmann
  */
-public class AddPodcastFragment extends DialogFragment implements PodcastLoadListener {
+public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastListener {
 
 	/** The add podcast listener */
-	private AddPodcastListener listener;
+	private OnAddPodcastListener listener;
 	/** The podcast load task */
 	private LoadPodcastTask loadTask;
 	
@@ -133,7 +133,7 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoadLis
 	 * Overwrites any current listener.
 	 * @param listener The listener
 	 */
-	public void setAddPodcastListener(AddPodcastListener listener) {
+	public void setAddPodcastListener(OnAddPodcastListener listener) {
 		this.listener = listener;
 	}
 	

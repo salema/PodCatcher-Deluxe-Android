@@ -20,7 +20,7 @@ import java.util.List;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
-import net.alliknow.podcatcher.listeners.EpisodeSelectedListener;
+import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.types.Episode;
 import android.app.ListFragment;
 import android.os.Bundle;
@@ -54,7 +54,7 @@ public class EpisodeListFragment extends ListFragment {
 	private boolean showProgress = false;
 	
 	/** The activity we are in (listens to user selection) */ 
-    private EpisodeSelectedListener selectedListener;
+    private OnSelectEpisodeListener selectedListener;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,7 +93,7 @@ public class EpisodeListFragment extends ListFragment {
 	/**
 	 * @param listener Listener to be alerted on episode selection
 	 */
-	public void setEpisodeSelectedListener(EpisodeSelectedListener listener) {
+	public void setEpisodeSelectedListener(OnSelectEpisodeListener listener) {
 		this.selectedListener = listener;
 	}
 	

@@ -13,4 +13,14 @@
         android:paddingLeft="@dimen/list_item_padding"
         android:singleLine="true"
         android:textSize="@dimen/large_font_size" />
+    <TextView
+        android:id="@+id/podcast_episode_number"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingLeft="@dimen/list_item_padding"
+        android:gravity="center_vertical"
+        android:singleLine="true"
+        android:visibility="gone"
+        android:textSize="@dimen/small_font_size" />
 </LinearLayout>

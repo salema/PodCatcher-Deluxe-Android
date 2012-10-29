@@ -26,7 +26,7 @@ import java.net.URLConnection;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.alliknow.podcatcher.listeners.PodcastLoadListener;
+import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.types.Podcast;
 
 import org.w3c.dom.Document;
@@ -46,7 +46,7 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Integer, Document> {
 	private static final int PODCAST_LOAD_TIMEOUT = 8000;
 
 	/** Owner */
-	private final PodcastLoadListener listener;
+	private final OnLoadPodcastListener listener;
 
 	/** Podcast currently loading */
 	private Podcast podcast;
@@ -61,7 +61,7 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Integer, Document> {
 	 * Create new task
 	 * @param fragment Owner fragment
 	 */
-	public LoadPodcastTask(PodcastLoadListener listener) {
+	public LoadPodcastTask(OnLoadPodcastListener listener) {
 		this.listener = listener;
 		
 		factory = DocumentBuilderFactory.newInstance();

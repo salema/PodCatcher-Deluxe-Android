@@ -66,7 +66,19 @@ public class PodcastListAdapter extends PodcatcherBaseAdapter {
 		convertView = findReturnView(convertView, parent, R.layout.podcast_list_item);
 		
 		setTextAndBackground(convertView, R.id.podcast_name, list.get(position).getName(), position);
+		setTextAndBackground(convertView, R.id.podcast_episode_number, getEpisodeNumberText(position), position);
+		
+		convertView.findViewById(R.id.podcast_episode_number).setVisibility(
+				list.get(position).getEpisodes().isEmpty()? View.GONE : View.VISIBLE);
 		
 		return convertView;
+	}
+
+	private String getEpisodeNumberText(int position) {
+		int numberOfEpisodes = list.get(position).getEpisodes().size(); 
+		
+		return numberOfEpisodes == 1 ? 
+				resources.getString(R.string.one_episode) :
+				numberOfEpisodes + " " + resources.getString(R.string.episodes);
 	}
 }

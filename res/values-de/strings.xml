@@ -11,6 +11,8 @@
     <string name="no_podcast">Kein Podcast vorhanden</string>
     <string name="no_podcast_selected">Kein Podcast ausgewählt</string>
     <string name="no_episode_selected">Keine Episode ausgewählt</string>
+    <string name="one_episode">Eine Episode</string>
+    <string name="episodes">Episoden</string>
     <string name="add_podcast">Neuer Podcast</string>
     <string name="add_podcast_button">Hinzufügen</string>
     <string name="enter_podcast_url_here">Podcast-Adresse hier einfügen</string>

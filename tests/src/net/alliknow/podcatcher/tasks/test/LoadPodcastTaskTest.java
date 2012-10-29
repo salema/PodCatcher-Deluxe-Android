@@ -20,7 +20,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 
-import net.alliknow.podcatcher.listeners.PodcastLoadListener;
+import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
 import net.alliknow.podcatcher.types.Podcast;
 import net.alliknow.podcatcher.types.test.ExamplePodcast;
@@ -34,7 +34,7 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
 
 	private CountDownLatch signal = null;
 	
-	private class MockPodcastLoader implements PodcastLoadListener {
+	private class MockPodcastLoader implements OnLoadPodcastListener {
 
 		protected Podcast result;
 		protected boolean failed;

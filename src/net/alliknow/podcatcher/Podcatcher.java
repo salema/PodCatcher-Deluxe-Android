@@ -46,6 +46,11 @@ public class Podcatcher {
 	    return debuggable;
 	}
 	
+	/**
+	 * Format an amount of time.
+	 * @param time Amount in seconds to format
+	 * @return The time span as hh:mm:ss with appropriate omissions
+	 */
 	public static String formatTime(int time) {
 		int hours = Math.round(time / 3600);
 		
@@ -59,7 +64,7 @@ public class Podcatcher {
 		else return minutesString + ":" + secondsString; 
 	}
 	
-	public static String formatNumber(int number, boolean makeTwoDigits) {
+	private static String formatNumber(int number, boolean makeTwoDigits) {
 		if (number < 10 && makeTwoDigits) return "0" + number;
 		else return number + "";
 	}
