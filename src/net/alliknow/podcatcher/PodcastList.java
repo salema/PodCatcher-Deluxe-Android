@@ -1,5 +1,18 @@
-/**
- * 
+/** Copyright 2012 Kevin Hausmann
+ *
+ * This file is part of PodCatcher Deluxe.
+ *
+ * PodCatcher Deluxe is free software: you can redistribute it 
+ * and/or modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * PodCatcher Deluxe is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 package net.alliknow.podcatcher;
 
@@ -23,11 +36,14 @@ import android.content.Context;
 import android.util.Log;
 
 /**
- * @author kevin
- *
+ * Custom list type for podcasts.
+ * 
+ * @author Kevin Hausmann
  */
 public class PodcastList extends ArrayList<Podcast> {
 	
+	/** The id */
+	private static final long serialVersionUID = 7226640001395545556L;
 	/** The name of the file we store our saved podcasts in (as OPML) */
 	private static final String OPML_FILENAME = "podcasts.opml";
 	/** The OPML file encoding */
@@ -41,10 +57,12 @@ public class PodcastList extends ArrayList<Podcast> {
 		this.context = context;
 	}
 	
+	/**
+	 * Load the podcast list from its default location
+	 */
 	public void load() {
 		//this is just for testing
-		//if (! Arrays.asList(getActivity().fileList()).contains(OPML_FILENAME))
-		writeDummy();
+		if (Podcatcher.isInDebugMode(context)) writeDummy();
 		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -62,6 +80,9 @@ public class PodcastList extends ArrayList<Podcast> {
 		}
 	}
 	
+	/**
+	 * Store the podcast list to its default location
+	 */
 	public void store() {
 		try {			
 			BufferedWriter writer = getPodcastFileWriter();
