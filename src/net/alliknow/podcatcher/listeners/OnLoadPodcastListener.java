@@ -19,13 +19,28 @@ package net.alliknow.podcatcher.listeners;
 import net.alliknow.podcatcher.types.Podcast;
 
 /**
- * Interface definition for a callback to be invoked when a podcast is added.
+ * Interface definition for a callback to be invoked when a podcast is loaded.
  */
-public interface AddPodcastListener {
+public interface OnLoadPodcastListener {
 	
 	/**
-	 * Called on listener when podcast is added.
-	 * @param newPodcast Podcast to add.
+	 * Called on progress update.
+	 * @param percent Percent of podcast RSS file loaded.
+	 * Note that this only works if the http connection
+	 * reports its content length correctly. Otherwise 
+	 * (and this happens in the wild out there) percent might be >100.
 	 */
-	public void addPodcast(Podcast newPodcast);
+	public void onPodcastLoadProgress(int percent);
+	
+	/**
+	 * Called on completion.
+	 * @param podcast Podcast loaded.
+	 */
+	public void onPodcastLoaded(Podcast podcast);
+	
+	/**
+	 * Called when loading the podcast failed.
+	 * @param podcast Podcast failing to load.
+	 */
+	public void onPodcastLoadFailed(Podcast podcast);
 }

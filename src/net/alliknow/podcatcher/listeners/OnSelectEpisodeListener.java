@@ -16,21 +16,16 @@
  */
 package net.alliknow.podcatcher.listeners;
 
-import android.graphics.Bitmap;
+import net.alliknow.podcatcher.types.Episode;
 
 /**
- * Interface definition for a callback to be invoked when a podcast logo is loaded.
+ * Interface definition for a callback to be invoked when an episode is selected.
  */
-public interface PodcastLogoLoadListener {
+public interface OnSelectEpisodeListener {
 	
 	/**
-	 * Called on completion.
-	 * @param logo Podcast logo loaded.
+	 * Called on listener to reflect that an episode has been selected.
+	 * @param selectedEpisode Episode selected by the user
 	 */
-	public void onPodcastLogoLoaded(Bitmap logo);
-	
-	/**
-	 * Called when loading the podcast logo failed.
-	 */
-	public void onPodcastLogoLoadFailed();
+	public void onEpisodeSelected(Episode selectedEpisode);
 }

@@ -21,7 +21,7 @@ import net.alliknow.podcatcher.types.Podcast;
 /**
  * Interface definition for a callback to be invoked when a podcast is selected.
  */
-public interface PodcastSelectedListener {
+public interface OnSelectPodcastListener {
 	
 	/**
 	 * Called on listener to reflect that a podcast has been selected.

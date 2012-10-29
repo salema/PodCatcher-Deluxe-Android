@@ -16,16 +16,16 @@
  */
 package net.alliknow.podcatcher.listeners;
 
-import net.alliknow.podcatcher.types.Episode;
+import net.alliknow.podcatcher.types.Podcast;
 
 /**
- * Interface definition for a callback to be invoked when an episode is selected.
+ * Interface definition for a callback to be invoked when a podcast is added.
  */
-public interface EpisodeSelectedListener {
+public interface OnAddPodcastListener {
 	
 	/**
-	 * Called on listener to reflect that an episode has been selected.
-	 * @param selectedEpisode Episode selected by the user
+	 * Called on listener when podcast is added.
+	 * @param newPodcast Podcast to add.
 	 */
-	public void onEpisodeSelected(Episode selectedEpisode);
+	public void addPodcast(Podcast newPodcast);
 }

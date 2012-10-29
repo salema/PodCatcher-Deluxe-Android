@@ -16,31 +16,21 @@
  */
 package net.alliknow.podcatcher.listeners;
 
-import net.alliknow.podcatcher.types.Podcast;
+import android.graphics.Bitmap;
 
 /**
- * Interface definition for a callback to be invoked when a podcast is loaded.
+ * Interface definition for a callback to be invoked when a podcast logo is loaded.
  */
-public interface PodcastLoadListener {
-	
-	/**
-	 * Called on progress update.
-	 * @param percent Percent of podcast RSS file loaded.
-	 * Note that this only works if the http connection
-	 * reports its content length correctly. Otherwise 
-	 * (and this happens in the wild out there) percent might be >100.
-	 */
-	public void onPodcastLoadProgress(int percent);
+public interface OnLoadPodcastLogoListener {
 	
 	/**
 	 * Called on completion.
-	 * @param podcast Podcast loaded.
+	 * @param logo Podcast logo loaded.
 	 */
-	public void onPodcastLoaded(Podcast podcast);
+	public void onPodcastLogoLoaded(Bitmap logo);
 	
 	/**
-	 * Called when loading the podcast failed.
-	 * @param podcast Podcast failing to load.
+	 * Called when loading the podcast logo failed.
 	 */
-	public void onPodcastLoadFailed(Podcast podcast);
+	public void onPodcastLogoLoadFailed();
 }
