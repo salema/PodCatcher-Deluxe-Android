@@ -85,7 +85,8 @@ public class Episode implements Comparable<Episode> {
 	 * @return The publication date for this episode
 	 */
 	public Date getPubDate() {
-		return new Date(pubDate.getTime());
+		if (pubDate == null) return null;
+		else return new Date(pubDate.getTime());
 	}
 	
 	/**
@@ -107,18 +108,19 @@ public class Episode implements Comparable<Episode> {
 		
 		Episode other = (Episode)o;
 		
-		if (other.getMediaUrl() == null) return false;
+		if (mediaUrl == null || other.getMediaUrl() == null) return false;
 		else return mediaUrl.toExternalForm().equals(((Episode) o).getMediaUrl().toExternalForm());
 	}
 	
 	@Override
 	public int hashCode() {
-		return mediaUrl.toExternalForm().hashCode();
+		return mediaUrl == null ? 0 : mediaUrl.toExternalForm().hashCode();
 	}
 
 	@Override
 	public int compareTo(Episode another) {
-		return pubDate.compareTo(another.getPubDate());
+		if (pubDate == null || another.getPubDate() == null) return 0;
+		else return pubDate.compareTo(another.getPubDate());
 	}
 	
 	private void readData(NodeList episodeNodes) {

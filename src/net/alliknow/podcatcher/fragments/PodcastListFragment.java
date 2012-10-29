@@ -21,7 +21,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -256,12 +255,8 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 			Document podcastFile = factory.newDocumentBuilder().parse(getActivity().openFileInput(OPML_FILENAME));
 			NodeList podcasts = podcastFile.getElementsByTagName(OPML.OUTLINE);
 			
-			for (int index = 0; index < podcasts.getLength(); index++) {
-				String name = podcasts.item(index).getAttributes().getNamedItem(OPML.TEXT).getNodeValue();
-				String url = podcasts.item(index).getAttributes().getNamedItem(OPML.XMLURL).getNodeValue();
-				
-				podcastList.add(new Podcast(name, new URL(url)));
-			}
+			for (int index = 0; index < podcasts.getLength(); index++) 
+				podcastList.add(new Podcast(podcasts.item(index)));
 			
 			Collections.sort(podcastList); 
 		} catch (Exception e) {
@@ -273,14 +268,11 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 		try {			
 			BufferedWriter writer = getPodcastFileWriter();
 			
-			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			writer.write("<?xml version=\"1.0\" encoding=\"" + OPML_FILE_ENCODING + "\"?>");
 			writer.write("<opml version=\"2.0\">");
 			writer.write("<body>");
 			
-			for (Podcast podcast : podcastList) {
-				String outline = "<outline text=\"" + podcast.getName() + "\" xmlUrl=\"" + podcast.getUrl() + "\" />";
-				writer.write(outline);
-			}
+			for (Podcast podcast : podcastList)	writer.write(podcast.toOpmlString());
 			
 			writer.write("</body></opml>");
 			writer.close();
@@ -295,7 +287,7 @@ public class PodcastListFragment extends ListFragment implements AddPodcastListe
 		try {
 			BufferedWriter writer = getPodcastFileWriter();
 			
-			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			writer.write("<?xml version=\"1.0\" encoding=\"" + OPML_FILE_ENCODING + "\"?>");
 			writer.write("<opml version=\"2.0\">");
 			writer.write("<body>");
 			writer.write("<outline text=\"This American Life\" xmlUrl=\"http://feeds.thisamericanlife.org/talpodcast\"/>");

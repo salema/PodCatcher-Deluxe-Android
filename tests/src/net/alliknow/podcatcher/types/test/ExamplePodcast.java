@@ -32,4 +32,8 @@ public enum ExamplePodcast {
 		}
 		return null;
 	}
+	
+	public String getFunnyName() {
+		return this + "\"" + " " + "\r\n\t" + "\'" + "'";
+	}
 }
