@@ -16,33 +16,19 @@
  */
 package net.alliknow.podcatcher.fragments;
 
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
+import net.alliknow.podcatcher.PodcastList;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.PodcastListAdapter;
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
-import net.alliknow.podcatcher.tags.OPML;
 import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
 import net.alliknow.podcatcher.types.Podcast;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-
 import android.app.ListFragment;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -72,15 +58,11 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
     private OnLoadPodcastListener loadListener;
     
 	/** The list of podcasts we know */
-	private List<Podcast> podcastList = new ArrayList<Podcast>();
+	private PodcastList podcastList;
 	/** Currently selected podcast */
 	private Podcast currentPodcast;
 	/** Currently show podcast logo */
 	private Bitmap currentLogo;
-	/** The name of the file we store our saved podcasts in (as OPML) */
-	private static final String OPML_FILENAME = "podcasts.opml";
-	/** The OPML file encoding */
-	private static final String OPML_FILE_ENCODING = "utf8";
 	
 	/** The current podcast load task */
 	private LoadPodcastTask loadPodcastTask;
@@ -94,7 +76,8 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		setRetainInstance(true);
 		setHasOptionsMenu(true);
 		// Loads podcasts from stored file to this.podcastList
-		loadPodcastList();
+		podcastList = new PodcastList(getActivity());
+		podcastList.load();
 		// Maps the podcast list items to the list UI
 		setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
 		// Make sure we are alerted if a new podcast is added
@@ -151,54 +134,6 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	}
 	
 	@Override
-	public void onPodcastLoadProgress(int percent) {
-		if (loadListener != null) loadListener.onPodcastLoadProgress(percent);
-	}
-	
-	/**
-	 * Notified by async RSS file loader on completion.
-	 * Updates UI to display the podcast's episodes.
-	 * @param podcast Podcast RSS feed loaded for
-	 */
-	@Override
-	public void onPodcastLoaded(Podcast podcast) {
-		loadPodcastTask = null;
-		
-		if (loadListener != null) loadListener.onPodcastLoaded(podcast);
-		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
-		
-		// Download podcast logo
-		if (isAdded() && podcast.getLogoUrl() != null) {
-			loadPodcastLogoTask = new LoadPodcastLogoTask(this);
-			loadPodcastLogoTask.execute(podcast);
-		} else Log.d(getClass().getSimpleName(), "Not attached or no logo for podcast " + podcast);
-	}
-	
-	@Override
-	public void onPodcastLogoLoaded(Bitmap logo) {
-		loadPodcastLogoTask = null;
-		currentLogo = logo;
-		
-		if (isAdded()) setPodcastLogo(logo);
-	}
-	
-	@Override
-	public void onPodcastLoadFailed(Podcast podcast) {
-		// Only react if the podcast failed to load that we are actually waiting for
-		if (currentPodcast.equals(podcast)) {
-			loadPodcastTask = null;
-			
-			if (loadListener != null) loadListener.onPodcastLoadFailed(podcast);
-			else Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
-		}
-			
-		Log.w(getClass().getSimpleName(), "Podcast failed to load " + podcast);
-	}
-	
-	@Override
-	public void onPodcastLogoLoadFailed() {}
-	
-	@Override
 	public void addPodcast(Podcast newPodcast) {
 		if (! podcastList.contains(newPodcast)) {
 			podcastList.add(newPodcast);
@@ -208,7 +143,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		} else Log.d(getClass().getSimpleName(), "Podcast \"" + newPodcast.getName() + "\" is already in list.");
 		
 		selectPodcast(newPodcast);
-		storePodcastList();
+		podcastList.store();
 	}
 	
 	private void selectPodcast(Podcast selectedPodcast) {
@@ -238,75 +173,57 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		}
 	}
 	
+	@Override
+	public void onPodcastLoadProgress(int percent) {
+		if (loadListener != null) loadListener.onPodcastLoadProgress(percent);
+	}
+	
+	/**
+	 * Notified by async RSS file loader on completion.
+	 * Updates UI to display the podcast's episodes.
+	 * @param podcast Podcast RSS feed loaded for
+	 */
+	@Override
+	public void onPodcastLoaded(Podcast podcast) {
+		loadPodcastTask = null;
+		((PodcastListAdapter)getListAdapter()).notifyDataSetChanged();
+		
+		if (loadListener != null) loadListener.onPodcastLoaded(podcast);
+		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
+		
+		// Download podcast logo
+		if (isAdded() && podcast.getLogoUrl() != null) {
+			loadPodcastLogoTask = new LoadPodcastLogoTask(this);
+			loadPodcastLogoTask.execute(podcast);
+		} else Log.d(getClass().getSimpleName(), "Not attached or no logo for podcast " + podcast);
+	}
+	
+	@Override
+	public void onPodcastLoadFailed(Podcast podcast) {
+		// Only react if the podcast failed to load that we are actually waiting for
+		if (currentPodcast.equals(podcast)) {
+			loadPodcastTask = null;
+			
+			if (loadListener != null) loadListener.onPodcastLoadFailed(podcast);
+			else Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
+		}
+			
+		Log.w(getClass().getSimpleName(), "Podcast failed to load " + podcast);
+	}
+	
+	@Override
+	public void onPodcastLogoLoaded(Bitmap logo) {
+		loadPodcastLogoTask = null;
+		currentLogo = logo;
+		
+		if (isAdded()) setPodcastLogo(logo);
+	}
+	
+	@Override
+	public void onPodcastLogoLoadFailed() {}
+	
 	private void setPodcastLogo(Bitmap logo) {
 		ImageView logoView = (ImageView) getView().findViewById(R.id.podcast_image);
 		logoView.setImageBitmap(logo);
-	}
-	
-	private void loadPodcastList() {
-		//this is just for testing
-		//if (! Arrays.asList(getActivity().fileList()).contains(OPML_FILENAME))
-		//writeDummyPodcastList();
-		
-		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			factory.setNamespaceAware(true);
-			
-			Document podcastFile = factory.newDocumentBuilder().parse(getActivity().openFileInput(OPML_FILENAME));
-			NodeList podcasts = podcastFile.getElementsByTagName(OPML.OUTLINE);
-			
-			for (int index = 0; index < podcasts.getLength(); index++) 
-				podcastList.add(new Podcast(podcasts.item(index)));
-			
-			Collections.sort(podcastList); 
-		} catch (Exception e) {
-			Log.e(getClass().getSimpleName(), "Cannot load OPML file", e);
-		}
-	}
-	
-	private void storePodcastList() {
-		try {			
-			BufferedWriter writer = getPodcastFileWriter();
-			
-			writer.write("<?xml version=\"1.0\" encoding=\"" + OPML_FILE_ENCODING + "\"?>");
-			writer.write("<opml version=\"2.0\">");
-			writer.write("<body>");
-			
-			for (Podcast podcast : podcastList)	writer.write(podcast.toOpmlString());
-			
-			writer.write("</body></opml>");
-			writer.close();
-			
-			Log.d(getClass().getSimpleName(), "OPML podcast file written");
-		} catch (Exception e) {
-			Log.e(getClass().getSimpleName(), "Cannot store podcast OPML file", e);
-		}
-	}
-
-	private void writeDummyPodcastList() {
-		try {
-			BufferedWriter writer = getPodcastFileWriter();
-			
-			writer.write("<?xml version=\"1.0\" encoding=\"" + OPML_FILE_ENCODING + "\"?>");
-			writer.write("<opml version=\"2.0\">");
-			writer.write("<body>");
-			writer.write("<outline text=\"This American Life\" xmlUrl=\"http://feeds.thisamericanlife.org/talpodcast\"/>");
-			writer.write("<outline text=\"Radiolab\" xmlUrl=\"http://feeds.wnyc.org/radiolab\"/>");
-			writer.write("<outline text=\"Linux Outlaws\" xmlUrl=\"http://feeds.feedburner.com/linuxoutlaws\"/>");
-			writer.write("<outline text=\"GEO\" xmlUrl=\"http://www.geo.de/GEOaudio/index.xml\"/>");
-			writer.write("<outline text=\"Maus\" xmlUrl=\"http://podcast.wdr.de/maus.xml\"/>");
-			writer.write("</body></opml>");
-			writer.close();
-			
-			Log.d(getClass().getSimpleName(), "Dummy OPML written");
-		} catch (Exception e) {
-			Log.e(getClass().getSimpleName(), "Cannot write dummy OPML file", e);
-		}
-	}
-	
-	private BufferedWriter getPodcastFileWriter() throws FileNotFoundException,	UnsupportedEncodingException {
-		FileOutputStream fos = getActivity().openFileOutput(OPML_FILENAME, Context.MODE_PRIVATE);
-		
-		return new BufferedWriter(new OutputStreamWriter(fos, OPML_FILE_ENCODING));
 	}
 }

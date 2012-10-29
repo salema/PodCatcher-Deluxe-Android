@@ -90,7 +90,7 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	/**
 	 * Set text and background for a list item view element.
 	 * 
-	 * @param listItem The view respresenting the whole list item
+	 * @param listItem The view representing the whole list item
 	 * @param viewId View id of the child view, has to be (a subclass of) <code>TextView</code>
 	 * @param text Text to display
 	 * @param position Position in list

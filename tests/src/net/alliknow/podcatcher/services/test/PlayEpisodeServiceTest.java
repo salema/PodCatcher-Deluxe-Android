@@ -18,51 +18,37 @@ package net.alliknow.podcatcher.services.test;
 
 import java.util.concurrent.CountDownLatch;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
-import net.alliknow.podcatcher.types.Podcast;
-
-import org.w3c.dom.Document;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.test.ServiceTestCase;
+import android.test.AndroidTestCase;
 
 /**
  * @author Kevin Hausmann
  *
  */
-public class PlayEpisodeServiceTest extends ServiceTestCase<PlayEpisodeService> {
-
-	/**
-	 * @param serviceClass
-	 */
-	public PlayEpisodeServiceTest() {
-		super(PlayEpisodeService.class);
-		// TODO Auto-generated constructor stub
-	}
+public class PlayEpisodeServiceTest extends AndroidTestCase {
 
 	/** Play service */
 	private PlayEpisodeService service;
 	/** Whether we are currently bound to the service */
 	private boolean bound;
 	
-	private CountDownLatch signal;
+	private CountDownLatch signal = null;
 	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
+		signal = new CountDownLatch(1);
+		
 		// Bind to service
         Intent intent = new Intent(getContext(), PlayEpisodeService.class);
         getContext().bindService(intent, connection, Context.BIND_AUTO_CREATE);
-        
-        signal = new CountDownLatch(1);
 	}
 
 	@Override
@@ -80,32 +66,32 @@ public class PlayEpisodeServiceTest extends ServiceTestCase<PlayEpisodeService> 
 		signal.await();
 		assertNotNull(service);
 		
-		/*service.playEpisode(null);
-		
-		Podcast podcast = new Podcast(ExamplePodcast.GEO.name(), ExamplePodcast.GEO.getURL());
-		podcast.setRssFile(loadRssFile(podcast));
-		service.playEpisode(podcast.getEpisodes().get(0));
-		service.pause();
-		service.resume();
-		
-		synchronized (this) { wait(2000); }
-		service.pause();
-		service.resume();*/
+//		service.playEpisode(null);
+//		
+//		Podcast podcast = new Podcast(ExamplePodcast.GEO.name(), ExamplePodcast.GEO.getURL());
+//		podcast.setRssFile(Utils.loadRssFile(podcast));
+//		service.playEpisode(podcast.getEpisodes().get(0));
+//		service.pause();
+//		service.resume();
+//		
+//		wait(2000);
+//		service.pause();
+//		service.resume();
 	}
 	
-	public final void testGetPosition() throws InterruptedException {
-		/*synchronized (connection) { connection.wait(10000); }
-		assertNotNull(service);
-		assertTrue(service.getCurrentPosition() > -1);
-		
-		Podcast podcast = new Podcast(ExamplePodcast.GEO.name(), ExamplePodcast.GEO.getURL());
-		podcast.setRssFile(loadRssFile(podcast));
-		service.playEpisode(podcast.getEpisodes().get(0));
-		
-		synchronized (this) { wait(10000); }
-		
-		assertTrue(service.getCurrentPosition() > 0);*/
-	}
+//	public final void testGetPosition() throws InterruptedException {
+//		synchronized (connection) { connection.wait(10000); }
+//		assertNotNull(service);
+//		assertTrue(service.getCurrentPosition() > -1);
+//		
+//		Podcast podcast = new Podcast(ExamplePodcast.GEO.name(), ExamplePodcast.GEO.getURL());
+//		podcast.setRssFile(Utils.loadRssFile(podcast));
+//		service.playEpisode(podcast.getEpisodes().get(0));
+//		
+//		synchronized (this) { wait(10000); }
+//		
+//		assertTrue(service.getCurrentPosition() > 0);
+//	}
 	
 	/** Defines callbacks for service binding, passed to bindService() */
     private ServiceConnection connection = new ServiceConnection() {
@@ -124,17 +110,4 @@ public class PlayEpisodeServiceTest extends ServiceTestCase<PlayEpisodeService> 
             bound = false;
         }
     };
-    
-    private Document loadRssFile(Podcast podcast) {
-		try {
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			dbf.setNamespaceAware(true);
-			
-			return dbf.newDocumentBuilder().parse(podcast.getUrl().openStream());
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
-		
-		return null;
-	}
 }

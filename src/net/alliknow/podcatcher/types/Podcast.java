@@ -30,6 +30,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 /**
@@ -196,8 +197,7 @@ public class Podcast implements Comparable<Podcast> {
 	 * @return The OPML XML outline as a string.
 	 */
 	public String toOpmlString() {
-		// TODO escape any special characters here!
-		return "<outline text=\"" + name + "\" xmlUrl=\"" + url + "\" />";
+		return "<outline text=\"" + TextUtils.htmlEncode(name) + "\" xmlUrl=\"" + url + "\" />";
 	}
 
 	@Override

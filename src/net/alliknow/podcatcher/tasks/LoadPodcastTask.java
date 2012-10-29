@@ -90,7 +90,7 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Integer, Document> {
 	
 	@Override
 	protected void onProgressUpdate(Integer... values) {
-		if (!isCancelled() && listener != null) listener.onPodcastLoadProgress(values[0]);
+		if (listener != null) listener.onPodcastLoadProgress(values[0]);
 		else if (listener == null) Log.d(getClass().getSimpleName(), "Podcast progress update, but no listener attached");
 	}
 	
@@ -111,20 +111,22 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Integer, Document> {
 		InputStream in = new BufferedInputStream(connection.getInputStream());
 		boolean sendProgressUpdates = connection.getContentLength() > 0;
 		
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
-		int currentByte = 0;
+		byte[] buffer = new byte[1024];
 		int bytesRead = 0;
-		while((currentByte = in.read()) >= 0) {
-		  buffer.write(currentByte);
-		  bytesRead++;
+		int totalBytes = 0;
+		while((bytesRead = in.read(buffer)) > 0) {
+		  out.write(buffer, 0, bytesRead);
+		  totalBytes += bytesRead;
 		  
-		  if (sendProgressUpdates && bytesRead % 1000 == 0) {
-			  publishProgress((int)((float)bytesRead / (float)connection.getContentLength() * 100) + 1);
+		  if (isCancelled()) return null;
+		  else if (sendProgressUpdates) {
+			  publishProgress((int)((float)totalBytes / (float)connection.getContentLength() * 100));
 		  }
 		}
 		
-		return factory.newDocumentBuilder().parse(new ByteArrayInputStream(buffer.toByteArray()));
+		return factory.newDocumentBuilder().parse(new ByteArrayInputStream(out.toByteArray()));
 	}
 	
 	private void notifyFailed() {

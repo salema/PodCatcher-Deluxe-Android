@@ -44,12 +44,12 @@ import android.util.Log;
 
 /**
  * Play an episode service, wraps media player.
- * This class implements a Android service. It can be used to play back
+ * This class implements an Android service. It can be used to play back
  * podcast episodes and tries to hide away the complexity of the media
  * player support in Android. All methods should fail gracefully.
  * 
  * Connect to the service from your activity/fragment to use it. Also
- * implement the listeners defined here for interaction.
+ * implement <code>PlayServiceListener</code> for interaction.
  * 
  * @author Kevin Hausmann
  */
@@ -68,12 +68,11 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	/** Do we have audio focus ? */
 	private boolean hasFocus = false;
 	
-	/** A listener notified service events */
-	private PlayServiceListener serviceListener;
-	
 	/** Binder given to clients */
     private final IBinder binder = new PlayServiceBinder();
-    
+    /** A listener notified service events */
+	private PlayServiceListener serviceListener;
+	
     /** Our wifi lock */ 
     private WifiLock wifiLock;
     /** Our notification id */
@@ -135,7 +134,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	}
 	
 	/**
-	 * @param listener A listener to be alerted on service events
+	 * @param listener A listener to be alerted on service events.
 	 */
 	public void setPlayServiceListener(PlayServiceListener listener) {
 		this.serviceListener = listener;
