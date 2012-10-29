@@ -27,6 +27,7 @@ import net.alliknow.podcatcher.types.Podcast;
 import android.app.DialogFragment;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -52,6 +53,8 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoadLis
 
 	/** The add podcast listener */
 	private AddPodcastListener listener;
+	/** The podcast load task */
+	private LoadPodcastTask loadTask;
 	
 	/** The podcast URL text field */
 	private EditText podcastUrlEditText;
@@ -116,6 +119,13 @@ public class AddPodcastFragment extends DialogFragment implements PodcastLoadLis
 	
 		checkClipboardForPodcastUrl();
 		updateButtonEnablement();
+	}
+	
+	@Override
+	public void onDismiss(DialogInterface dialog) {
+		super.onDismiss(dialog);
+		
+		if (loadTask != null) loadTask.cancel(true);
 	}
 	
 	/**
