@@ -49,20 +49,13 @@ public class PodcastList extends ArrayList<Podcast> {
 	/** The OPML file encoding */
 	private static final String OPML_FILE_ENCODING = "utf8";
 	
-	private Context context;
-
-	public PodcastList(Context context) {
-		super();
-		
-		this.context = context;
-	}
-	
 	/**
-	 * Load the podcast list from its default location
+	 * Load the podcast list from its default location.
+	 * @param context Context to use for loading the podcast list.
 	 */
-	public void load() {
+	public void load(Context context) {
 		//this is just for testing
-		if (Podcatcher.isInDebugMode(context)) writeDummy();
+		if (Podcatcher.isInDebugMode(context)) writeDummy(context);
 		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -81,11 +74,12 @@ public class PodcastList extends ArrayList<Podcast> {
 	}
 	
 	/**
-	 * Store the podcast list to its default location
+	 * Store the podcast list to its default location.
+	 * @param context Context to use for storing the podcast list.
 	 */
-	public void store() {
+	public void store(Context context) {
 		try {			
-			BufferedWriter writer = getPodcastFileWriter();
+			BufferedWriter writer = getPodcastFileWriter(context);
 			
 			writer.write("<?xml version=\"1.0\" encoding=\"" + OPML_FILE_ENCODING + "\"?>");
 			writer.write("<opml version=\"2.0\">");
@@ -102,9 +96,9 @@ public class PodcastList extends ArrayList<Podcast> {
 		}
 	}
 
-	private void writeDummy() {
+	private void writeDummy(Context context) {
 		try {
-			BufferedWriter writer = getPodcastFileWriter();
+			BufferedWriter writer = getPodcastFileWriter(context);
 			
 			writer.write("<?xml version=\"1.0\" encoding=\"" + OPML_FILE_ENCODING + "\"?>");
 			writer.write("<opml version=\"2.0\">");
@@ -123,7 +117,7 @@ public class PodcastList extends ArrayList<Podcast> {
 		}
 	}
 	
-	private BufferedWriter getPodcastFileWriter() throws FileNotFoundException,	UnsupportedEncodingException {
+	private BufferedWriter getPodcastFileWriter(Context context) throws FileNotFoundException,	UnsupportedEncodingException {
 		FileOutputStream fos = context.openFileOutput(OPML_FILENAME, Context.MODE_PRIVATE);
 		
 		return new BufferedWriter(new OutputStreamWriter(fos, OPML_FILE_ENCODING));

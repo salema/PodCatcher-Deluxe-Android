@@ -58,7 +58,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
     private OnLoadPodcastListener loadListener;
     
 	/** The list of podcasts we know */
-	private PodcastList podcastList;
+	private PodcastList podcastList = new PodcastList();
 	/** Currently selected podcast */
 	private Podcast currentPodcast;
 	/** Currently show podcast logo */
@@ -76,8 +76,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		setRetainInstance(true);
 		setHasOptionsMenu(true);
 		// Loads podcasts from stored file to this.podcastList
-		podcastList = new PodcastList(getActivity());
-		podcastList.load();
+		podcastList.load(getActivity());
 		// Maps the podcast list items to the list UI
 		setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
 		// Make sure we are alerted if a new podcast is added
@@ -143,7 +142,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		} else Log.d(getClass().getSimpleName(), "Podcast \"" + newPodcast.getName() + "\" is already in list.");
 		
 		selectPodcast(newPodcast);
-		podcastList.store();
+		podcastList.store(getActivity());
 	}
 	
 	private void selectPodcast(Podcast selectedPodcast) {
