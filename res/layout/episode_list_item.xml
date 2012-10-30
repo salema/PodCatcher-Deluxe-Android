@@ -4,22 +4,24 @@
     android:layout_height="match_parent"
     android:minHeight="@dimen/list_item"
     android:orientation="vertical" >
-    <TextView
+    <CheckedTextView
         android:id="@+id/episode_name"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingLeft="@dimen/list_item_padding"
+        android:background="@color/list_item_background"
         android:gravity="center_vertical"
+        android:paddingLeft="@dimen/list_item_padding"
         android:singleLine="true"
         android:textSize="@dimen/default_font_size" />
-    <TextView
+    <CheckedTextView
         android:id="@+id/episode_date"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingLeft="@dimen/list_item_padding"
+        android:background="@color/list_item_background"
         android:gravity="center_vertical"
+        android:paddingLeft="@dimen/list_item_padding"
         android:singleLine="true"
         android:textSize="@dimen/small_font_size" />
 </LinearLayout>

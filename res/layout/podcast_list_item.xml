@@ -4,23 +4,25 @@
     android:layout_height="match_parent"
     android:minHeight="@dimen/list_item"
     android:orientation="vertical" >
-    <TextView
+    <CheckedTextView
         android:id="@+id/podcast_name"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:background="@color/list_item_background"
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/list_item_padding"
         android:singleLine="true"
         android:textSize="@dimen/large_font_size" />
-    <TextView
+    <CheckedTextView
         android:id="@+id/podcast_episode_number"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingLeft="@dimen/list_item_padding"
+        android:background="@color/list_item_background"
         android:gravity="center_vertical"
+        android:paddingLeft="@dimen/list_item_padding"
         android:singleLine="true"
-        android:visibility="gone"
-        android:textSize="@dimen/small_font_size" />
+        android:textSize="@dimen/small_font_size"
+        android:visibility="gone" />
 </LinearLayout>

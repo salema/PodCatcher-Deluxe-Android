@@ -18,11 +18,12 @@ package net.alliknow.podcatcher.adapters;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
+import android.widget.CheckedTextView;
 
 /**
  * Abstract super class for this app's adapters.
@@ -40,6 +41,8 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	
 	/** We need to know the selected item's position in the list */
 	protected int selectedPosition = -1;
+	/** Also, there might be checked items */
+	protected SparseBooleanArray checkedPositions;
 	/** Our context's resources */
 	protected Resources resources;
 	/** Inflater for new views */
@@ -64,6 +67,11 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 			selectedPosition = position;
 			notifyDataSetChanged();
 		}
+	}
+	
+	public void setCheckedPositions(SparseBooleanArray positions) {
+		this.checkedPositions = positions;
+		notifyDataSetChanged();
 	}
 	
 	@Override
@@ -95,22 +103,12 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	 * @param text Text to display
 	 * @param position Position in list
 	 */
-	protected void setTextAndBackground(View listItem, int viewId, String text, int position) {
-		TextView textView = (TextView) listItem.findViewById(viewId);
+	protected void setText(View listItem, int viewId, String text, int position) {
+		CheckedTextView textView = (CheckedTextView) listItem.findViewById(viewId);
 		textView.setText(text);
 		textView.setSingleLine(position != selectedPosition);
 		
-		setBackground(position, textView);
-	}
-	
-	/**
-	 * Set a view background according to whether the item is at the
-	 * selected position.
-	 * @param position The item's position
-	 * @param view View associated with the item and to set background for
-	 */
-	protected void setBackground(int position, View view) {
-		if (position == selectedPosition) view.setBackgroundResource(SELECTED_COLOR);
-		else view.setBackgroundResource(UNSELECTED_COLOR);
+		if (checkedPositions != null) textView.setChecked(checkedPositions.get(position));
+		textView.setSelected(position == selectedPosition);
 	}
 }

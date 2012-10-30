@@ -68,8 +68,8 @@ public class EpisodeListAdapter extends PodcatcherBaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		convertView = findReturnView(convertView, parent, R.layout.episode_list_item);
 		
-		setTextAndBackground(convertView, R.id.episode_name, list.get(position).getName(), position);
-		setTextAndBackground(convertView, R.id.episode_date, 
+		setText(convertView, R.id.episode_name, list.get(position).getName(), position);
+		setText(convertView, R.id.episode_date, 
 				formatter.format(list.get(position).getPubDate()), position);	
 		
 		return convertView;

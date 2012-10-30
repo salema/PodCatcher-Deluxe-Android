@@ -63,8 +63,8 @@ public class PodcastListAdapter extends PodcatcherBaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		convertView = findReturnView(convertView, parent, R.layout.podcast_list_item);
 		
-		setTextAndBackground(convertView, R.id.podcast_name, list.get(position).getName(), position);
-		setTextAndBackground(convertView, R.id.podcast_episode_number, getEpisodeNumberText(position), position);
+		setText(convertView, R.id.podcast_name, list.get(position).getName(), position);
+		setText(convertView, R.id.podcast_episode_number, getEpisodeNumberText(position), position);
 		
 		convertView.findViewById(R.id.podcast_episode_number).setVisibility(
 				list.get(position).getEpisodes().isEmpty()? View.GONE : View.VISIBLE);

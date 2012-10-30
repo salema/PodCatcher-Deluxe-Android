@@ -25,6 +25,7 @@ import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
+import net.alliknow.podcatcher.listeners.PodcastListContextListener;
 import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
 import net.alliknow.podcatcher.types.Podcast;
@@ -33,12 +34,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -95,6 +98,9 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		
+		getListView().setMultiChoiceModeListener(new PodcastListContextListener(this));
+		getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
 		
 		if (currentLogo != null) setPodcastLogo(currentLogo);
 	}
@@ -224,5 +230,17 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	private void setPodcastLogo(Bitmap logo) {
 		ImageView logoView = (ImageView) getView().findViewById(R.id.podcast_image);
 		logoView.setImageBitmap(logo);
+	}
+
+	/**
+	 * 
+	 */
+	public void removeCheckedPodcasts() {
+		SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
+		
+		for (int index = podcastList.size() - 1; index >= 0; index--)
+			if (checkedItems.get(index)) podcastList.remove(index);
+				
+		setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
 	}
 }
