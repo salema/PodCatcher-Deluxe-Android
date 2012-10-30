@@ -33,17 +33,17 @@ public class Podcatcher {
 	 * @return true when in debug
 	 */
 	public static boolean isInDebugMode(Context context) {
-		boolean debuggable = false;
+		boolean debug = false;
 		 
 	    PackageManager manager = context.getPackageManager();
 	    try
 	    {
 	        ApplicationInfo info = manager.getApplicationInfo(context.getPackageName(), 0);
-	        debuggable = (0 != (info.flags &= ApplicationInfo.FLAG_DEBUGGABLE));
+	        debug = (0 != (info.flags &= ApplicationInfo.FLAG_DEBUGGABLE));
 	    }
 	    catch(Exception e) {}
 	     
-	    return debuggable;
+	    return debug;
 	}
 	
 	/**

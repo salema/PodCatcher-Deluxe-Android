@@ -16,10 +16,8 @@
  */
 package net.alliknow.podcatcher.adapters;
 
-import java.util.List;
-
+import net.alliknow.podcatcher.PodcastList;
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.types.Podcast;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +30,7 @@ import android.view.ViewGroup;
 public class PodcastListAdapter extends PodcatcherBaseAdapter {
 
 	/** The list our data resides in */
-	private List<Podcast> list;
+	private PodcastList list;
 
 	/**
 	 * Create new adapter
@@ -40,7 +38,7 @@ public class PodcastListAdapter extends PodcatcherBaseAdapter {
 	 * @param context The current context
 	 * @param podcastList List of podcasts to wrap
 	 */
-	public PodcastListAdapter(Context context, List<Podcast> podcastList) {
+	public PodcastListAdapter(Context context, PodcastList podcastList) {
 		super(context);
 		
 		this.list = podcastList;
