@@ -159,7 +159,8 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 		addPodcastButton.setEnabled(false);
 		
 		try {
-			new LoadPodcastTask(this).execute(new Podcast(null, new URL(spec)));
+			loadTask = new LoadPodcastTask(this);
+			loadTask.execute(new Podcast(null, new URL(spec)));
 		} catch (MalformedURLException e) {
 			onPodcastLoadFailed(null, false);
 		}	

@@ -19,18 +19,15 @@ package net.alliknow.podcatcher.tasks;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.types.Podcast;
 
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -126,31 +123,42 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Integer, Void> {
 		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
 	}
 	
-	private Document loadPodcastFile(URLConnection connection) throws IOException, SAXException, ParserConfigurationException {
-		// Open stream and check whether we know its length
-		InputStream in = new BufferedInputStream(connection.getInputStream());
-		boolean sendLoadProgress = connection.getContentLength() > 0;
-				
-		// Create the byte buffer to write to
-		ByteArrayOutputStream result = new ByteArrayOutputStream();
-		if (! background) publishProgress(PROGRESS_LOAD);
+	private Document loadPodcastFile(URLConnection connection) throws Exception {
+		InputStream in = null;
+		ByteArrayOutputStream result = null;
 		
-		byte[] buffer = new byte[1024];
-		int bytesRead = 0;
-		int totalBytes = 0;
-		// Read stream and report progress (if possible)
-		while((bytesRead = in.read(buffer)) > 0) {
-			if (isCancelled()) return null;
-			result.write(buffer, 0, bytesRead);
-			totalBytes += bytesRead;
-		  
-			if (sendLoadProgress && !background)
-				publishProgress((int)((float)totalBytes / (float)connection.getContentLength() * 100));
+		try {
+			// Open stream and check whether we know its length
+			in = new BufferedInputStream(connection.getInputStream());
+			boolean sendLoadProgress = connection.getContentLength() > 0;
+					
+			// Create the byte buffer to write to
+			result = new ByteArrayOutputStream();
+			if (! background) publishProgress(PROGRESS_LOAD);
+			
+			byte[] buffer = new byte[1024];
+			int bytesRead = 0;
+			int totalBytes = 0;
+			// Read stream and report progress (if possible)
+			while((bytesRead = in.read(buffer)) > 0) {
+				if (isCancelled()) return null;
+				result.write(buffer, 0, bytesRead);
+				totalBytes += bytesRead;
+			  
+				if (sendLoadProgress && !background)
+					publishProgress((int)((float)totalBytes / (float)connection.getContentLength() * 100));
+			}
+			
+			// Return result as a document
+			if (! background) publishProgress(PROGRESS_PARSE);
+			return factory.newDocumentBuilder().parse(new ByteArrayInputStream(result.toByteArray()));
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			// Close the streams
+			if (in != null) in.close();
+			if (result != null) result.close();
 		}
-		
-		// Return result as a document
-		if (! background) publishProgress(PROGRESS_PARSE);
-		return factory.newDocumentBuilder().parse(new ByteArrayInputStream(result.toByteArray()));
 	}
 	
 	private void notifyFailed() {

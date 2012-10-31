@@ -52,10 +52,10 @@ public class Podcatcher {
 	 * @return The time span as hh:mm:ss with appropriate omissions
 	 */
 	public static String formatTime(int time) {
-		int hours = Math.round(time / 3600);
+		int hours = time / 3600;
 		
-		int minutes = Math.round((time / 60) - 60 * hours);
-		int seconds = Math.round(time % 60);
+		int minutes = (time / 60) - 60 * hours;
+		int seconds = time % 60;
 		
 		String minutesString = formatNumber(minutes, hours > 0);
 		String secondsString = formatNumber(seconds, true);
