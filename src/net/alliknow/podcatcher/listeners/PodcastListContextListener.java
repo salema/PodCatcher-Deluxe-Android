@@ -26,13 +26,19 @@ import android.view.MenuItem;
 import android.widget.AbsListView.MultiChoiceModeListener;
 
 /**
+ * Listener for the podcast list context mode.
+ * 
  * @author Kevin Hausmann
- *
  */
 public class PodcastListContextListener implements MultiChoiceModeListener {
 
+	/** The owning fragment */
 	private PodcastListFragment fragment;
 	
+	/**
+	 * Create new listener for the podcast list context mode.
+	 * @param fragment The podcast list fragment to call back to.
+	 */
 	public PodcastListContextListener(PodcastListFragment fragment) {
 		this.fragment = fragment;
 	}

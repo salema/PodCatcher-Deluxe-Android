@@ -99,6 +99,10 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		
+		// Load all podcast TODO Make this a perference
+		//for (Podcast podcast : podcastList)
+		//	if (podcast.needsReload()) new LoadPodcastTask(this, true).execute(podcast);
+		
 		getListView().setMultiChoiceModeListener(new PodcastListContextListener(this));
 		getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
 		
@@ -151,6 +155,11 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		podcastList.store(getActivity());
 	}
 	
+	@Override
+	public void showSuggestions() {
+		
+	}
+	
 	private void selectPodcast(Podcast selectedPodcast) {
 		// Is this a valid selection (in podcast list and new)?
 		if (podcastList.contains(selectedPodcast) && (currentPodcast == null || !currentPodcast.equals(selectedPodcast))) {
@@ -174,13 +183,25 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 				loadPodcastTask.execute(selectedPodcast);	
 			}
 			// Use buffered content
-			else onPodcastLoaded(selectedPodcast);
+			else onPodcastLoaded(selectedPodcast, false);
 		}
 	}
 	
+	/**
+	 * Removes the podcast selected in context mode.
+	 */
+	public void removeCheckedPodcasts() {
+		SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
+		
+		for (int index = podcastList.size() - 1; index >= 0; index--)
+			if (checkedItems.get(index)) podcastList.remove(index);
+				
+		setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
+	}
+	
 	@Override
-	public void onPodcastLoadProgress(int percent) {
-		if (loadListener != null) loadListener.onPodcastLoadProgress(percent);
+	public void onPodcastLoadProgress(int progress) {
+		if (loadListener != null) loadListener.onPodcastLoadProgress(progress);
 	}
 	
 	/**
@@ -189,27 +210,31 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	 * @param podcast Podcast RSS feed loaded for
 	 */
 	@Override
-	public void onPodcastLoaded(Podcast podcast) {
-		loadPodcastTask = null;
+	public void onPodcastLoaded(Podcast podcast, boolean wasBackground) {
 		((PodcastListAdapter)getListAdapter()).notifyDataSetChanged();
 		
-		if (loadListener != null) loadListener.onPodcastLoaded(podcast);
-		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
-		
-		// Download podcast logo
-		if (isAdded() && podcast.getLogoUrl() != null) {
-			loadPodcastLogoTask = new LoadPodcastLogoTask(this);
-			loadPodcastLogoTask.execute(podcast);
-		} else Log.d(getClass().getSimpleName(), "Not attached or no logo for podcast " + podcast);
+		if (! wasBackground) {
+			loadPodcastTask = null;
+			
+			
+			if (loadListener != null) loadListener.onPodcastLoaded(podcast, false);
+			else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
+			
+			// Download podcast logo
+			if (isAdded() && podcast.getLogoUrl() != null) {
+				loadPodcastLogoTask = new LoadPodcastLogoTask(this);
+				loadPodcastLogoTask.execute(podcast);
+			} else Log.d(getClass().getSimpleName(), "Not attached or no logo for podcast " + podcast);
+		}
 	}
 	
 	@Override
-	public void onPodcastLoadFailed(Podcast podcast) {
+	public void onPodcastLoadFailed(Podcast podcast, boolean wasBackground) {
 		// Only react if the podcast failed to load that we are actually waiting for
-		if (currentPodcast.equals(podcast)) {
+		if (currentPodcast.equals(podcast) && !wasBackground) {
 			loadPodcastTask = null;
 			
-			if (loadListener != null) loadListener.onPodcastLoadFailed(podcast);
+			if (loadListener != null) loadListener.onPodcastLoadFailed(podcast, false);
 			else Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
 		}
 			
@@ -230,17 +255,5 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	private void setPodcastLogo(Bitmap logo) {
 		ImageView logoView = (ImageView) getView().findViewById(R.id.podcast_image);
 		logoView.setImageBitmap(logo);
-	}
-
-	/**
-	 * 
-	 */
-	public void removeCheckedPodcasts() {
-		SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
-		
-		for (int index = podcastList.size() - 1; index >= 0; index--)
-			if (checkedItems.get(index)) podcastList.remove(index);
-				
-		setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
 	}
 }

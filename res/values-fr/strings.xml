@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">Simple Podcatcher</string>
+    <string name="connect">Connecter</string>
+    <string name="load">Charger</string>
+    <string name="parse">Lire</string>
+    <string name="suggestions">Suggestions&#8230;</string>
     <string name="play">Play</string>
     <string name="buffering">Buffering&#8230;</string>
     <string name="pause">Pause</string>

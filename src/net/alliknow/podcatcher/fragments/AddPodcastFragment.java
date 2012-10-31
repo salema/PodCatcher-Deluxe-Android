@@ -108,6 +108,14 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 		progressView = (ProgressBar) view.findViewById(R.id.add_podcast_progress);
 		errorView = (TextView) view.findViewById(R.id.add_podcast_error);
 		
+		((Button) view.findViewById(R.id.add_podcast_button)).setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if (listener != null) listener.showSuggestions();
+			}
+		});
+		
 		addPodcastButton = (Button) view.findViewById(R.id.add_podcast_button);
 		addPodcastButton.setOnClickListener(new View.OnClickListener() {
 			
@@ -153,7 +161,7 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 		try {
 			new LoadPodcastTask(this).execute(new Podcast(null, new URL(spec)));
 		} catch (MalformedURLException e) {
-			onPodcastLoadFailed(null);
+			onPodcastLoadFailed(null, false);
 		}	
 	}
 	
@@ -166,7 +174,7 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 	}
 
 	@Override
-	public void onPodcastLoaded(Podcast podcast) {
+	public void onPodcastLoaded(Podcast podcast, boolean wasBackground) {
 		if (! podcast.getEpisodes().isEmpty()) {
 			dismiss();
 			
@@ -178,11 +186,11 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 			podcastUrlEditText.setText(null);
 			podcastUrlEditText.setEnabled(true);
 			updateButtonEnablement();
-		} else onPodcastLoadFailed(podcast);
+		} else onPodcastLoadFailed(podcast, false);
 	}
 
 	@Override
-	public void onPodcastLoadFailed(Podcast podcast) {
+	public void onPodcastLoadFailed(Podcast podcast, boolean wasBackground) {
 		progressView.setVisibility(View.GONE);
 		errorView.setVisibility(View.VISIBLE);
 		podcastUrlEditText.setEnabled(true);

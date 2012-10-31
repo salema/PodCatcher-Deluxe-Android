@@ -37,12 +37,20 @@ import android.util.Log;
 
 /**
  * Loads podcast RSS file asynchroniously.
- * Implement to PodcastLoader interface to be alerted on completion or failure
+ * Implement to PodcastLoader interface to be alerted on completion or failure.
  * 
  * @author Kevin Hausmann
  */
-public class LoadPodcastTask extends AsyncTask<Podcast, Integer, Document> {
+public class LoadPodcastTask extends AsyncTask<Podcast, Integer, Void> {
 	
+	/** Flag given by progress callback for connecting */
+	public static final int PROGRESS_CONNECT = -3;
+	/** Flag given by progress callback for loading */
+	public static final int PROGRESS_LOAD = -2;
+	/** Flag given by progress callback for parsing */
+	public static final int PROGRESS_PARSE = -1;
+	
+	/** The connection timeout */
 	private static final int PODCAST_LOAD_TIMEOUT = 8000;
 
 	/** Owner */
@@ -50,10 +58,11 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Integer, Document> {
 
 	/** Podcast currently loading */
 	private Podcast podcast;
-	
 	/** Document builder to use */
 	private DocumentBuilderFactory factory;
 	
+	/** Whether we run in the background */
+	private boolean background = false;
 	/** Store whether loading failed */
 	private boolean failed = false;
 	
@@ -68,18 +77,32 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Integer, Document> {
 		factory.setNamespaceAware(true);
 	}
 	
+	/**
+	 * Create new task
+	 * @param fragment Owner fragment
+	 * @param background Whether this task should run in the background, i.e.
+	 * no progress update will be given
+	 */
+	public LoadPodcastTask(OnLoadPodcastListener listener, boolean background) {
+		this(listener);
+		
+		this.background = background;
+	}
+	
 	@Override
-	protected Document doInBackground(Podcast... podcasts) {
+	protected Void doInBackground(Podcast... podcasts) {
 		this.podcast = podcasts[0];
 
 		try {
 			if (podcast == null || podcast.getUrl() == null) throw new Exception("Podcast and/or URL cannot be null!");
 			
+			if (! background) publishProgress(PROGRESS_CONNECT);
 			URLConnection connection = podcast.getUrl().openConnection();
 			connection.setConnectTimeout(PODCAST_LOAD_TIMEOUT);
 			// TODO I might want to set a ReadTimeout here ???
 			
-			return loadPodcastFile(connection);
+			Document podcastRssFile = loadPodcastFile(connection);
+			if (! isCancelled()) podcast.setRssFile(podcastRssFile);
 		} catch (Exception e) {
 			failed = true;
 			Log.w(getClass().getSimpleName(), "Load failed for podcast \"" + podcasts[0] + "\"", e);
@@ -95,42 +118,43 @@ public class LoadPodcastTask extends AsyncTask<Podcast, Integer, Document> {
 	}
 	
 	@Override
-	protected void onPostExecute(Document result) {
+	protected void onPostExecute(Void nothing) {
 		// Background task failed to complete
-		if (failed || result == null) notifyFailed();
+		if (failed) notifyFailed();
 		// Podcast was loaded
-		else {
-			podcast.setRssFile(result);
-			
-			if (listener != null) listener.onPodcastLoaded(podcast);
-			else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
-		}
+		else if (listener != null) listener.onPodcastLoaded(podcast, background);
+		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
 	}
 	
 	private Document loadPodcastFile(URLConnection connection) throws IOException, SAXException, ParserConfigurationException {
+		// Open stream and check whether we know its length
 		InputStream in = new BufferedInputStream(connection.getInputStream());
-		boolean sendProgressUpdates = connection.getContentLength() > 0;
-		
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		boolean sendLoadProgress = connection.getContentLength() > 0;
+				
+		// Create the byte buffer to write to
+		ByteArrayOutputStream result = new ByteArrayOutputStream();
+		if (! background) publishProgress(PROGRESS_LOAD);
 		
 		byte[] buffer = new byte[1024];
 		int bytesRead = 0;
 		int totalBytes = 0;
+		// Read stream and report progress (if possible)
 		while((bytesRead = in.read(buffer)) > 0) {
-		  out.write(buffer, 0, bytesRead);
-		  totalBytes += bytesRead;
+			if (isCancelled()) return null;
+			result.write(buffer, 0, bytesRead);
+			totalBytes += bytesRead;
 		  
-		  if (isCancelled()) return null;
-		  else if (sendProgressUpdates) {
-			  publishProgress((int)((float)totalBytes / (float)connection.getContentLength() * 100));
-		  }
+			if (sendLoadProgress && !background)
+				publishProgress((int)((float)totalBytes / (float)connection.getContentLength() * 100));
 		}
 		
-		return factory.newDocumentBuilder().parse(new ByteArrayInputStream(out.toByteArray()));
+		// Return result as a document
+		if (! background) publishProgress(PROGRESS_PARSE);
+		return factory.newDocumentBuilder().parse(new ByteArrayInputStream(result.toByteArray()));
 	}
 	
 	private void notifyFailed() {
-		if (listener != null) listener.onPodcastLoadFailed(podcast);
+		if (listener != null) listener.onPodcastLoadFailed(podcast, background);
 		else Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
 	}
 }

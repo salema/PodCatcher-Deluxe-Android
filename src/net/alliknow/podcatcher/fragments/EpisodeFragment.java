@@ -159,7 +159,6 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 		loadMenuItem = menu.findItem(R.id.load);
 		loadMenuItem.setVisible(episode != null);
 		loadMenuItem.setEnabled(episode != null && service != null && !service.isWorkingWith(episode));
-		loadMenuItem.setShowAsAction(episode == null ? MenuItem.SHOW_AS_ACTION_NEVER : MenuItem.SHOW_AS_ACTION_ALWAYS);
 	}
 	
 	@Override
@@ -247,7 +246,6 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 			
 			loadMenuItem.setVisible(true);
 			loadMenuItem.setEnabled(! service.isWorkingWith(episode));
-			loadMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 			
 			updatePlayer();
 		}
@@ -355,8 +353,13 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 	private void updatePlayerButton() {
 		playerButton.setEnabled(! service.isBuffering());
 		playerButton.setBackgroundResource(service.isPlaying() ? R.drawable.button_red : R.drawable.button_green);
+		playerButton.setCompoundDrawablesWithIntrinsicBounds(
+				service.isPlaying() ? android.R.drawable.ic_media_pause : android.R.drawable.ic_media_play, 0, 0, 0);
 		
-		if (service.isBuffering()) playerButton.setText(R.string.buffering);
+		if (service.isBuffering()) {
+			playerButton.setText(R.string.buffering);
+			playerButton.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_menu_rotate, 0, 0, 0);
+		}
 		else {
 			playerButton.setText(service.isPlaying() ? R.string.pause : R.string.resume);
 			// Resources are only available when fragment is added...

@@ -19,9 +19,9 @@ package net.alliknow.podcatcher;
 import net.alliknow.podcatcher.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.fragments.PodcastListFragment;
+import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
-import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.types.Episode;
 import net.alliknow.podcatcher.types.Podcast;
 import android.app.Activity;
@@ -76,17 +76,17 @@ public class PodcastActivity extends Activity implements
 	}
 	
 	@Override
-	public void onPodcastLoadProgress(int percent) {
-		episodeListFragment.showProgress(percent);
+	public void onPodcastLoadProgress(int progress) {
+		episodeListFragment.showProgress(progress);
 	}
 	
 	@Override
-	public void onPodcastLoaded(Podcast podcast) {
+	public void onPodcastLoaded(Podcast podcast, boolean wasBackground) {
 		episodeListFragment.setEpisodeList(podcast.getEpisodes());
 	}
 	
 	@Override
-	public void onPodcastLoadFailed(Podcast failedPodcast) {
+	public void onPodcastLoadFailed(Podcast failedPodcast, boolean wasBackground) {
 		episodeListFragment.showError(getResources().getString(R.string.error_podcast_load));
 	}
 

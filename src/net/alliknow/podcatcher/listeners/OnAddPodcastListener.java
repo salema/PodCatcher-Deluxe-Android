@@ -28,4 +28,10 @@ public interface OnAddPodcastListener {
 	 * @param newPodcast Podcast to add.
 	 */
 	public void addPodcast(Podcast newPodcast);
+	
+	/**
+	 * Called on listener if the user wants to 
+	 * see suggestions for podcasts to add.
+	 */
+	public void showSuggestions();
 }

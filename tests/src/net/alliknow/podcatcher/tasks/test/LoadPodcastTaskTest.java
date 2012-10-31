@@ -40,7 +40,7 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
 		protected boolean failed;
 		
 		@Override
-		public void onPodcastLoaded(Podcast podcast) {
+		public void onPodcastLoaded(Podcast podcast, boolean wasBackground) {
 			this.result = podcast;
 			this.failed = false;
 			
@@ -48,7 +48,7 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
 		}
 
 		@Override
-		public void onPodcastLoadFailed(Podcast podcast) {
+		public void onPodcastLoadFailed(Podcast podcast, boolean wasBackground) {
 			this.result = podcast;
 			this.failed = true;
 			

@@ -133,7 +133,8 @@ public class Episode implements Comparable<Episode> {
 				name = currentNode.getTextContent().trim();
 			// Episode media URL
 			else if (currentNode.getNodeName().equals(RSS.ENCLOSURE))
-				mediaUrl = createMediaUrl(currentNode.getAttributes().getNamedItem(RSS.URL).getNodeValue());
+				mediaUrl = createMediaUrl(currentNode.getAttributes().getNamedItem(RSS.URL).getNodeValue(),
+						currentNode.getAttributes().getNamedItem(RSS.TYPE).getNodeValue());
 			// Episode publication date (2 options)
 			else if (currentNode.getNodeName().equals(RSS.DATE))
 				pubDate = parsePubDate(currentNode.getTextContent());
@@ -145,9 +146,15 @@ public class Episode implements Comparable<Episode> {
 		}
 	}
 	
-	private URL createMediaUrl(String attributeValue) {
+	private URL createMediaUrl(String url, String type) {
 		try {
-			return new URL(attributeValue);
+			URL result = new URL(url);
+			
+			// TODO make this more generic!
+			if (type.equals("audio/mpeg") && !result.getFile().endsWith(".mp3"))
+				result = new URL(url + ".mp3");
+			
+			return result;
 		} catch (MalformedURLException e) {
 			Log.e(getClass().getSimpleName(), "Episode has invalid URL", e);
 		}

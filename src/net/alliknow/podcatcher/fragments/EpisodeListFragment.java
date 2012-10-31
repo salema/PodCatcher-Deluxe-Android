@@ -21,6 +21,7 @@ import java.util.List;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
+import net.alliknow.podcatcher.tasks.LoadPodcastTask;
 import net.alliknow.podcatcher.types.Episode;
 import android.app.ListFragment;
 import android.os.Bundle;
@@ -126,11 +127,17 @@ public class EpisodeListFragment extends ListFragment {
 	
 	/**
 	 * Update UI with load progress
-	 * @param percent Amount loaded 
+	 * @param progress Amount loaded or flag from load task
 	 */
-	public void showProgress(int percent) {
-		if (percent >= 0 && percent <= 100) progressTextView.setText(percent + "%");
-		else progressTextView.setText(getResources().getString(R.string.buffering));
+	public void showProgress(int progress) {
+		if (progress == LoadPodcastTask.PROGRESS_CONNECT) 
+			progressTextView.setText(getResources().getString(R.string.connect));
+		else if (progress == LoadPodcastTask.PROGRESS_LOAD)
+			progressTextView.setText(getResources().getString(R.string.load));
+		else if (progress >= 0 && progress <= 100) progressTextView.setText(progress + "%");
+		else if (progress == LoadPodcastTask.PROGRESS_PARSE)
+			progressTextView.setText(getResources().getString(R.string.parse));
+		else progressTextView.setText(getResources().getString(R.string.load));
 	}
 
 	/**

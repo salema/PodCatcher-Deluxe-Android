@@ -146,7 +146,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	 */
 	public void playEpisode(Episode episode) {
 		if (episode != null) {
-			Log.d(getClass().getSimpleName(), "Loading episode " +  episode);
+			Log.d(getClass().getSimpleName(), "Loading episode " + episode + " (" + episode.getMediaUrl() + ")");
 			
 			// Stop and release the current player and reset variables
 			reset();

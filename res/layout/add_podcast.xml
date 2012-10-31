@@ -29,13 +29,29 @@
         android:layout_margin="3dp"
         android:indeterminate="true"
         android:visibility="gone" />
-    <Button
-        android:id="@+id/add_podcast_button"
+    <LinearLayout 
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="3dp"
-        android:background="@drawable/button_green"
-        android:gravity="center"
-        android:text="@string/add_podcast_button"
-        android:textColor="@color/button_label" />
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal" >
+	    <Button
+	        android:id="@+id/add_suggestions_button"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:layout_margin="3dp"
+	        android:background="@drawable/button_orange"
+	        android:gravity="center"
+	        android:text="@string/suggestions"
+	        android:textColor="@color/button_label" />
+	    <Button
+	        android:id="@+id/add_podcast_button"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:layout_margin="3dp"
+	        android:background="@drawable/button_green"
+	        android:gravity="center"
+	        android:text="@string/add_podcast_button"
+	        android:textColor="@color/button_label" />
+    </LinearLayout>
 </LinearLayout>
