@@ -49,6 +49,14 @@ public class Podcast implements Comparable<Podcast> {
 	private String name;
 	/** Location of the podcast's RSS file */
 	private URL url;
+	/** Podcast's description */
+	private String description;
+	/** Broadcast language */
+	private Language language;
+	/** Podcast genre */
+	private Genre genre;
+	/** Podcast media type */
+	private MediaType mediaType;
 	/** XML document representing the RSS file */
 	private Document podcastRssFile;
 	/** The podcasts list of episodes */
@@ -111,6 +119,62 @@ public class Podcast implements Comparable<Podcast> {
 		return url;
 	}
 	
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * @return the language
+	 */
+	public Language getLanguage() {
+		return language;
+	}
+
+	/**
+	 * @param language the language to set
+	 */
+	public void setLanguage(Language language) {
+		this.language = language;
+	}
+
+	/**
+	 * @return the genre
+	 */
+	public Genre getGenre() {
+		return genre;
+	}
+
+	/**
+	 * @param genre the genre to set
+	 */
+	public void setGenre(Genre genre) {
+		this.genre = genre;
+	}
+
+	/**
+	 * @return the mediaType
+	 */
+	public MediaType getMediaType() {
+		return mediaType;
+	}
+
+	/**
+	 * @param mediaType the mediaType to set
+	 */
+	public void setMediaType(MediaType mediaType) {
+		this.mediaType = mediaType;
+	}
+
 	/**
 	 * Find and return all episodes for this podcast. Will never return null
 	 * but an empty list when encountering problems. Set the RSS file before
