@@ -23,6 +23,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -48,6 +49,8 @@ public class PodcastList extends ArrayList<Podcast> {
 	private static final String OPML_FILENAME = "podcasts.opml";
 	/** The OPML file encoding */
 	private static final String OPML_FILE_ENCODING = "utf8";
+	/** Content of OPML file title tag */
+	private static final String OPML_TITLE = "Simple Podcatcher Podcast file";
 	
 	/**
 	 * Load the podcast list from its default location.
@@ -55,7 +58,7 @@ public class PodcastList extends ArrayList<Podcast> {
 	 */
 	public void load(Context context) {
 		//this is just for testing
-		if (Podcatcher.isInDebugMode(context)) writeDummy(context);
+		//if (Podcatcher.isInDebugMode(context)) writeDummy(context);
 		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -83,6 +86,10 @@ public class PodcastList extends ArrayList<Podcast> {
 			
 			writer.write("<?xml version=\"1.0\" encoding=\"" + OPML_FILE_ENCODING + "\"?>");
 			writer.write("<opml version=\"2.0\">");
+			writer.write("<head>");
+			writer.write("<title>" + OPML_TITLE + "</title>");
+			writer.write("<dateModified>" + new Date().toString() + "</dateModified>");
+			writer.write("</head>");
 			writer.write("<body>");
 			
 			for (Podcast podcast : this) writer.write(podcast.toOpmlString());
@@ -103,10 +110,10 @@ public class PodcastList extends ArrayList<Podcast> {
 			writer.write("<?xml version=\"1.0\" encoding=\"" + OPML_FILE_ENCODING + "\"?>");
 			writer.write("<opml version=\"2.0\">");
 			writer.write("<body>");
-			writer.write("<outline text=\"This American Life\" xmlUrl=\"http://feeds.thisamericanlife.org/talpodcast\"/>");
-			writer.write("<outline text=\"Radiolab\" xmlUrl=\"http://feeds.wnyc.org/radiolab\"/>");
-			writer.write("<outline text=\"Linux' Outlaws\" xmlUrl=\"http://feeds.feedburner.com/linuxoutlaws\"/>");
-			writer.write("<outline text=\"GEO\" xmlUrl=\"http://www.geo.de/GEOaudio/index.xml\"/>");
+			writer.write("<outline text=\"This American Life\" type=\"rss\" xmlUrl=\"http://feeds.thisamericanlife.org/talpodcast\"/>");
+			writer.write("<outline text=\"Radiolab\" xmlUrl=\"http://feeds.wnyc.org/radiolab\" type=\"rss\"/>");
+			writer.write("<outline text=\"Linux' Outlaws\" xmlUrl=\"http://feeds.feedburner.com/linuxoutlaws\" type=\"rss\"/>");
+			writer.write("<outline text=\"GEO\" type=\"rss\" xmlUrl=\"http://www.geo.de/GEOaudio/index.xml\"/>");
 			writer.write("<outline text=\"Mäuse\" xmlUrl=\"http://podcast.wdr.de/maus.xml\"/>");
 			writer.write("</body></opml>");
 			writer.close();

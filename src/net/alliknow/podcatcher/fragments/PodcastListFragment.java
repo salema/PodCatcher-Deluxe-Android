@@ -197,6 +197,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 			if (checkedItems.get(index)) podcastList.remove(index);
 				
 		setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
+		podcastList.store(getActivity());
 	}
 	
 	@Override

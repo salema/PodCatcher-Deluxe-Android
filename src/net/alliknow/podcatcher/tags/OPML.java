@@ -26,6 +26,8 @@ public abstract class OPML {
 	
 	public static final String OUTLINE = "outline";
 	public static final String TEXT = "text";
+	public static final String TYPE = "type";
+	public static final String RSS_TYPE = "rss";
 	public static final String XMLURL = "xmlUrl";
 	
 }
