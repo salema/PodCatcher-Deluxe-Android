@@ -1,2 +1,4 @@
 Register to open URL
 Check context mode on rotation, maybe call destroy
+Load suggestions fails and works again... update UI
+Change menu item to STOP for selected episode

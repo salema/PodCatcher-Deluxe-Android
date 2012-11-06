@@ -47,6 +47,8 @@ public class SuggestionListAdapter extends PodcastListAdapter {
 		convertView = findReturnView(convertView, parent, R.layout.suggestion_list_item);
 		
 		setText(convertView, R.id.suggestion_name, list.get(position).getName(), position);
+		setText(convertView, R.id.suggestion_meta, list.get(position).getLanguage() + " " +
+				list.get(position).getGenre() + " " + list.get(position).getMediaType(), position);
 		setText(convertView, R.id.suggestion_description, list.get(position).getDescription(), position);
 		
 		Button addButton = (Button) convertView.findViewById(R.id.add_suggestion_button);

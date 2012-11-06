@@ -215,12 +215,11 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	 */
 	@Override
 	public void onPodcastLoaded(Podcast podcast, boolean wasBackground) {
-		((PodcastListAdapter)getListAdapter()).notifyDataSetChanged();
+		((PodcastListAdapter) getListAdapter()).notifyDataSetChanged();
 		
 		if (! wasBackground) {
 			loadPodcastTask = null;
-			
-			
+						
 			if (loadListener != null) loadListener.onPodcastLoaded(podcast, false);
 			else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
 			

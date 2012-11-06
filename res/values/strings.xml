@@ -4,6 +4,7 @@
     <string name="load">Load</string>
     <string name="parse">Read</string>
     <string name="suggestions">Suggestions&#8230;</string>
+    <string name="send_suggestion">Send me a suggestion!</string>
     <string name="play">Play</string>
     <string name="buffering">Buffering&#8230;</string>
     <string name="pause">Pause</string>

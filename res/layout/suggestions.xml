@@ -1,19 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:layout_gravity="center"
     android:orientation="vertical" >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:layout_weight="1"
-            android:text="Filter:" />
         <Spinner
             android:id="@+id/select_language"
             android:layout_width="0dp"
@@ -33,15 +27,50 @@
             android:layout_margin="3dp"
             android:layout_weight="1" />
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/suggestion_list_progress"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="4" />
+        <ProgressBar
+            android:id="@+id/suggestion_list_progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:indeterminate="true" />
+        <TextView
+            android:id="@+id/suggestion_list_progress_text"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_weight="4"
+            android:textSize="@dimen/small_font_size" />
+    </LinearLayout>
     <ListView
         android:id="@+id/suggested_podcasts"
         android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:listSelector="@android:color/transparent"
+        android:visibility="gone" />
+    <ImageView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxHeight="400dp" />
+        android:paddingBottom="2dp"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:paddingTop="2dp"
+        android:scaleType="fitXY"
+        android:src="@android:drawable/divider_horizontal_bright" />
     <TextView
         android:id="@+id/send_suggestion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Send me a suggestion!" />
+        android:padding="2dp" />
 </LinearLayout>

@@ -18,6 +18,7 @@ package net.alliknow.podcatcher.tasks;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 
 import net.alliknow.podcatcher.PodcastList;
 import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
@@ -67,15 +68,24 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
 			// Get result as a document
 			if (! background) publishProgress(PROGRESS_PARSE);
 			JSONObject completeJson = new JSONObject(new String(suggestionsFile, SUGGESTIONS_FILE_ENCODING));
-			JSONArray suggestions = completeJson.getJSONArray("suggestions");
 			
+			// Add all featured podcasts
+			JSONArray featured = completeJson.getJSONArray("featured");
+			for (int index = 0; index < featured.length(); index++) {
+				JSONObject suggestion = featured.getJSONObject(index);
+				
+				result.add(createSuggestion(suggestion));
+			}
+						
 			// Add all suggestions
+			JSONArray suggestions = completeJson.getJSONArray("suggestions");
 			for (int index = 0; index < suggestions.length(); index++) {
 				JSONObject suggestion = suggestions.getJSONObject(index);
 				
 				result.add(createSuggestion(suggestion));
 			}
 			
+			Collections.sort(result);
 		} catch (Exception e) {
 			failed = true;
 			Log.w(getClass().getSimpleName(), "Load failed for podcast suggestions file", e);

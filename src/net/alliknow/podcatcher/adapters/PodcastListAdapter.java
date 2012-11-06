@@ -27,7 +27,7 @@ import android.view.ViewGroup;
  * 
  * @author Kevin Hausmann
  */
-public class PodcastListAdapter extends PodcatcherBaseAdapter {
+public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 
 	/** The list our data resides in */
 	protected PodcastList list;

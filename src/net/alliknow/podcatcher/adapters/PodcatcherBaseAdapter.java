@@ -18,12 +18,10 @@ package net.alliknow.podcatcher.adapters;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckedTextView;
 
 /**
  * Abstract super class for this app's adapters.
@@ -34,10 +32,6 @@ import android.widget.CheckedTextView;
  */
 public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	
-	/** We need to know the selected item's position in the list */
-	protected int selectedPosition = -1;
-	/** Also, there might be checked items */
-	protected SparseBooleanArray checkedPositions;
 	/** Our context's resources */
 	protected Resources resources;
 	/** Inflater for new views */
@@ -49,24 +43,7 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	 */
 	public PodcatcherBaseAdapter(Context context) {
 		this.resources = context.getResources();
-		this.inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	}
-	
-	/**
-	 * Set the selected item in the list and updates the UI to reflect
-	 * the selection.
-	 * @param position Position selected.
-	 */
-	public void setSelectedPosition(int position) {
-		if (this.selectedPosition != position) {
-			selectedPosition = position;
-			notifyDataSetChanged();
-		}
-	}
-	
-	public void setCheckedPositions(SparseBooleanArray positions) {
-		this.checkedPositions = positions;
-		notifyDataSetChanged();
+		this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 	
 	@Override
@@ -88,22 +65,5 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 		if (convertView == null) return inflater.inflate(inflateId, parent, false);
 		// Yes:
 		else return convertView;
-	}
-	
-	/**
-	 * Set text and background for a list item view element.
-	 * 
-	 * @param listItem The view representing the whole list item
-	 * @param viewId View id of the child view, has to be (a subclass of) <code>TextView</code>
-	 * @param text Text to display
-	 * @param position Position in list
-	 */
-	protected void setText(View listItem, int viewId, String text, int position) {
-		CheckedTextView textView = (CheckedTextView) listItem.findViewById(viewId);
-		textView.setText(text);
-		textView.setSingleLine(position != selectedPosition);
-		
-		if (checkedPositions != null) textView.setChecked(checkedPositions.get(position));
-		textView.setSelected(position == selectedPosition);
 	}
 }
