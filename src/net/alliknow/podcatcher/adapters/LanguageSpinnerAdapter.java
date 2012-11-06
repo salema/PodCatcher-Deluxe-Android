@@ -23,6 +23,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 /**
+ * Adapter for the language spinner in the suggestion dialog.
+ * 
  * @author Kevin Hausmann
  */
 public class LanguageSpinnerAdapter extends PodcatcherBaseAdapter {

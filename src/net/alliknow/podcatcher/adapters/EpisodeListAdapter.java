@@ -33,9 +33,9 @@ import android.view.ViewGroup;
 public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
 
 	/** The list our data resides in */
-	private List<Episode> list;
+	protected List<Episode> list;
 	/** Formatter to use for the episode date */
-	private final DateFormat formatter = DateFormat.getDateInstance(DateFormat.LONG);
+	protected final DateFormat formatter = DateFormat.getDateInstance(DateFormat.LONG);
 	
 	/**
 	 * Create new adapter

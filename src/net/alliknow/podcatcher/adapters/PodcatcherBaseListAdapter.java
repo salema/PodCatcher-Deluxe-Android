@@ -21,8 +21,11 @@ import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.CheckedTextView;
 
-
 /**
+ * Abstract super class for this app's list adapters.
+ * Handles the selection/choice parts. All lists are single choice and
+ * have a background changed for the selected item.
+ * 
  * @author Kevin Hausmann
  */
 public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
@@ -31,13 +34,13 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
 	protected int selectedPosition = -1;
 	/** Also, there might be checked items */
 	protected SparseBooleanArray checkedPositions;
-	
+		
 	/**
-	 * @param context
+	 * Create new adapter
+	 * @param context The current context
 	 */
 	public PodcatcherBaseListAdapter(Context context) {
 		super(context);
-		// TODO Auto-generated constructor stub
 	}
 	
 	/**
@@ -52,13 +55,17 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
 		}
 	}
 	
+	/**
+	 * Set the choosen items in the list.
+	 * @param positions The array denoting choosen positions.
+	 */
 	public void setCheckedPositions(SparseBooleanArray positions) {
 		this.checkedPositions = positions;
 		notifyDataSetChanged();
 	}
 
 	/**
-	 * Set text and background for a list item view element.
+	 * Set text and selection/choice state for a list item view element.
 	 * 
 	 * @param listItem The view representing the whole list item
 	 * @param viewId View id of the child view, has to be (a subclass of) <code>TextView</code>

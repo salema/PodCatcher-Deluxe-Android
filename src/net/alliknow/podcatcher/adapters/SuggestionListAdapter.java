@@ -26,15 +26,21 @@ import android.widget.Button;
 import android.widget.TextView;
 
 /**
+ * Adapter for suggestion list.
+ * 
  * @author Kevin Hausmann
  */
 public class SuggestionListAdapter extends PodcastListAdapter {
 
-	private OnAddPodcastListener listener;
+	/** Owner for button call backs */
+	protected OnAddPodcastListener listener;
 	
 	/**
-	 * @param context
-	 * @param podcastList
+	 * Create new adapter
+	 * 
+	 * @param context The current context
+	 * @param podcastList List of podcasts (suggestions) to wrap
+	 * @param listener Call back for the add button to attach
 	 */
 	public SuggestionListAdapter(Context context, PodcastList podcastList, OnAddPodcastListener listener) {
 		super(context, podcastList);

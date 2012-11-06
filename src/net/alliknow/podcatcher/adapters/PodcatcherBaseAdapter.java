@@ -25,8 +25,7 @@ import android.widget.BaseAdapter;
 
 /**
  * Abstract super class for this app's adapters.
- * Handles the selection parts. All lists are single choice and
- * have a background changed for the selected item.
+ * Allows access to inflater and resources.
  * 
  * @author Kevin Hausmann
  */
