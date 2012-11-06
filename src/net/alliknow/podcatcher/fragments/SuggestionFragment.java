@@ -18,7 +18,9 @@ package net.alliknow.podcatcher.fragments;
 
 import net.alliknow.podcatcher.PodcastList;
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.adapters.GenreSpinnerAdapter;
 import net.alliknow.podcatcher.adapters.LanguageSpinnerAdapter;
+import net.alliknow.podcatcher.adapters.MediaTypeSpinnerAdapter;
 import net.alliknow.podcatcher.adapters.SuggestionListAdapter;
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
@@ -58,6 +60,10 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	
 	/** The language filter */
 	private Spinner languageFilter;
+	/** The genre filter */
+	private Spinner genreFilter;
+	/** The media type filter */
+	private Spinner mediaTypeFilter;
 	/** The progress view */
 	private View progressView;
 	/** The progress bar */
@@ -89,6 +95,15 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 		
 		languageFilter = (Spinner) getView().findViewById(R.id.select_language);
 		languageFilter.setAdapter(new LanguageSpinnerAdapter(getActivity()));
+		languageFilter.setSelection(0);
+		
+		genreFilter = (Spinner) getView().findViewById(R.id.select_genre);
+		genreFilter.setAdapter(new GenreSpinnerAdapter(getActivity()));
+		genreFilter.setSelection(0);
+		
+		mediaTypeFilter = (Spinner) getView().findViewById(R.id.select_type);
+		mediaTypeFilter.setAdapter(new MediaTypeSpinnerAdapter(getActivity()));
+		mediaTypeFilter.setSelection(0);
 		
 		progressView = getView().findViewById(R.id.suggestion_list_progress);
 		progressBar = (ProgressBar) getView().findViewById(R.id.suggestion_list_progress_bar);
