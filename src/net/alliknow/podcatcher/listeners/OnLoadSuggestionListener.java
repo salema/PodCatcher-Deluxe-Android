@@ -16,35 +16,31 @@
  */
 package net.alliknow.podcatcher.listeners;
 
-import net.alliknow.podcatcher.types.Podcast;
+import net.alliknow.podcatcher.PodcastList;
 
 /**
- * Interface definition for a callback to be invoked when a podcast is loaded.
+ * Interface definition for a callback to be invoked when podcast suggestions are loaded.
  */
-public interface OnLoadPodcastListener {
+public interface OnLoadSuggestionListener {
 	
 	/**
-	 * Called on progress update. This will only be called
-	 * if the task was not created with <code>background == true</code>.
-	 * @param progress Percent of podcast RSS file loaded 
+	 * Called on progress update.
+	 * @param progress Percent of suggestions JSON file loaded 
 	 * or flag from <code>LoadRemoteFileTask</code>.
 	 * Note that this only works if the http connection
 	 * reports its content length correctly. Otherwise 
 	 * (and this happens in the wild out there) percent might be >100.
 	 */
-	public void onPodcastLoadProgress(int progress);
+	public void onSuggestionsLoadProgress(int progress);
 	
 	/**
 	 * Called on completion.
-	 * @param podcast Podcast loaded.
-	 * @param wasBackground Whether the task was running in the background
+	 * @param suggestions Podcast suggestions loaded.
 	 */
-	public void onPodcastLoaded(Podcast podcast, boolean wasBackground);
+	public void onSuggestionsLoaded(PodcastList suggestions);
 	
 	/**
-	 * Called when loading the podcast failed.
-	 * @param podcast Podcast failing to load.
-	 * @param wasBackground Whether the task was running in the background
+	 * Called when loading the suggestions failed.
 	 */
-	public void onPodcastLoadFailed(Podcast podcast, boolean wasBackground);
+	public void onSuggestionsLoadFailed();
 }

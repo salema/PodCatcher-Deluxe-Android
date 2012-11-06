@@ -55,6 +55,8 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	
 	/** The add podcast fragment to use */
 	private AddPodcastFragment addPodcastFragment = new AddPodcastFragment();
+	/** The show suggestions fragment to use */
+	private SuggestionFragment suggestionFragment = new SuggestionFragment();
 	/** The activity we are in (listens to user selection) */ 
     private OnSelectPodcastListener selectedListener;
     /** The activity we are in (listens to loading events) */ 
@@ -84,6 +86,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
 		// Make sure we are alerted if a new podcast is added
 		addPodcastFragment.setAddPodcastListener(this);
+		suggestionFragment.setAddPodcastListener(this);
 		// If podcast list is empty we show dialog on startup
 		if (getListAdapter().isEmpty()) addPodcastFragment.show(getFragmentManager(), "add_podcast");
 	}
@@ -157,7 +160,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	
 	@Override
 	public void showSuggestions() {
-		
+		suggestionFragment.show(getFragmentManager(), "suggest_podcast");
 	}
 	
 	private void selectPodcast(Podcast selectedPodcast) {

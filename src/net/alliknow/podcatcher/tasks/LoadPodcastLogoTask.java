@@ -20,7 +20,6 @@ import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.types.Podcast;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.util.Log;
 
 /**
@@ -29,13 +28,10 @@ import android.util.Log;
  * 
  * @author Kevin Hausmann
  */
-public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
+public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 
 	/** Owner */
 	private final OnLoadPodcastLogoListener loader;
-	
-	/** Store whether loading failed */
-	private boolean failed = false;
 	
 	/**
 	 * Create new task
@@ -43,6 +39,7 @@ public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 	 */
 	public LoadPodcastLogoTask(OnLoadPodcastLogoListener fragment) {
 		this.loader = fragment;
+		this.background = true;
 	}
 	
 	@Override
@@ -50,8 +47,8 @@ public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 		try {
 			if (podcasts[0] == null || podcasts[0].getLogoUrl() == null) throw new Exception("Podcast and/or logo URL cannot be null!");
 			
-			// TODO Handle download here to feed onProgressUpdate
-			return BitmapFactory.decodeStream(podcasts[0].getLogoUrl().openStream());
+			byte[] logo = loadFile(podcasts[0].getLogoUrl());
+			return BitmapFactory.decodeByteArray(logo, 0, logo.length);
 		} catch (Exception e) {
 			failed = true;
 			Log.w(getClass().getSimpleName(), "Logo failed to load for podcast \"" + podcasts[0] + "\" with " +
@@ -64,16 +61,13 @@ public class LoadPodcastLogoTask extends AsyncTask<Podcast, Void, Bitmap> {
 	@Override
 	protected void onPostExecute(Bitmap result) {
 		// Background task failed to complete
-		if (failed || result == null) notifyFailed();
-		// Podcast logo was loaded
+		if (failed || result == null) {
+			if (loader != null) loader.onPodcastLogoLoadFailed();
+			else Log.d(getClass().getSimpleName(), "Podcast logo loading failed, but no listener attached");
+		} // Podcast logo was loaded
 		else {
 			if (loader != null) loader.onPodcastLogoLoaded(result);
 			else Log.d(getClass().getSimpleName(), "Podcast logo loaded, but no listener attached");
 		}
-	}
-
-	private void notifyFailed() {
-		if (loader != null) loader.onPodcastLogoLoadFailed();
-		else Log.d(getClass().getSimpleName(), "Podcast logo loading failed, but no listener attached");
 	}
 }

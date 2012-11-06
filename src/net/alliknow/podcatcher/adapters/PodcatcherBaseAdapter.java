@@ -33,11 +33,6 @@ import android.widget.CheckedTextView;
  * @author Kevin Hausmann
  */
 public abstract class PodcatcherBaseAdapter extends BaseAdapter {
-
-	/** Color id for selected items */
-	public static final int SELECTED_COLOR = android.R.color.holo_blue_light;
-	/** Color id for items not selected */
-	public static final int UNSELECTED_COLOR = android.R.color.transparent;
 	
 	/** We need to know the selected item's position in the list */
 	protected int selectedPosition = -1;

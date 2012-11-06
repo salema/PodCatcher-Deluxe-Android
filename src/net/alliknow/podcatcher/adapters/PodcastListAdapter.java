@@ -30,7 +30,7 @@ import android.view.ViewGroup;
 public class PodcastListAdapter extends PodcatcherBaseAdapter {
 
 	/** The list our data resides in */
-	private PodcastList list;
+	protected PodcastList list;
 
 	/**
 	 * Create new adapter

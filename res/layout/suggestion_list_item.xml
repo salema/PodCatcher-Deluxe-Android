@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minHeight="@dimen/list_item"
+    android:orientation="vertical" >
+    <TextView
+        android:id="@+id/suggestion_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/list_item_padding"
+        android:singleLine="true"
+        android:textSize="@dimen/large_font_size" />
+    <TextView
+        android:id="@+id/suggestion_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/list_item_padding"
+        android:textSize="@dimen/small_font_size" />
+    <Button
+        android:id="@+id/add_suggestion_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:background="@drawable/button_green"
+        android:gravity="center"
+        android:text="@string/add_podcast_button"
+        android:textColor="@color/button_label" />
+</LinearLayout>

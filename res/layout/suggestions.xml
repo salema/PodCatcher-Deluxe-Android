@@ -33,16 +33,11 @@
             android:layout_margin="3dp"
             android:layout_weight="1" />
     </LinearLayout>
-    <TextView
-        android:id="@+id/featured_podcast"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Featured podcast goes here" />
     <ListView
         android:id="@+id/suggested_podcasts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="300dp" />
+        android:maxHeight="400dp" />
     <TextView
         android:id="@+id/send_suggestion"
         android:layout_width="match_parent"

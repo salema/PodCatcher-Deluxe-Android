@@ -108,10 +108,11 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 		progressView = (ProgressBar) view.findViewById(R.id.add_podcast_progress);
 		errorView = (TextView) view.findViewById(R.id.add_podcast_error);
 		
-		((Button) view.findViewById(R.id.add_podcast_button)).setOnClickListener(new View.OnClickListener() {
+		((Button) view.findViewById(R.id.add_suggestions_button)).setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
+				dismiss();
 				if (listener != null) listener.showSuggestions();
 			}
 		});
