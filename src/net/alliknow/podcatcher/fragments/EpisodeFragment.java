@@ -157,8 +157,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 		inflater.inflate(R.menu.episode_menu, menu);
 		
 		loadMenuItem = menu.findItem(R.id.load);
-		loadMenuItem.setVisible(episode != null);
-		loadMenuItem.setEnabled(episode != null && service != null && !service.isWorkingWith(episode));
+		updateLoadMenuItem();
 	}
 	
 	@Override
@@ -180,7 +179,9 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.load) loadEpisode();
+		if (item.getItemId() == R.id.load)
+			if (service.isWorkingWith(episode)) onPlaybackComplete();
+			else loadEpisode();
 		
 		return item.getItemId() == R.id.load;
 	}
@@ -244,9 +245,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 			episodeDetailView.loadDataWithBaseURL(null, episode.getDescription(), "text/html", "utf-8", null);
 			episodeDetailView.setVisibility(View.VISIBLE);
 			
-			loadMenuItem.setVisible(true);
-			loadMenuItem.setEnabled(! service.isWorkingWith(episode));
-			
+			updateLoadMenuItem();
 			updatePlayer();
 		}
 	}
@@ -281,15 +280,17 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 	public void onPlaybackComplete() {
 		stopPlayProgressTimer();
 		
-		loadMenuItem.setEnabled(true);
-		
 		service.reset();
+		
+		updateLoadMenuItem();
 		updatePlayer();
 	}
 	
 	@Override
 	public void onError() {
 		service.reset();
+		
+		updateLoadMenuItem();
 		updatePlayer();
 		
 		getView().findViewById(R.id.player_error).setVisibility(View.VISIBLE);
@@ -305,7 +306,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 				
 				service.playEpisode(episode);
 								
-				loadMenuItem.setEnabled(false);
+				updateLoadMenuItem();
 				updatePlayer();
 			}
 		} else Log.d(getClass().getSimpleName(), "Cannot load episode (episode or service are null)");
@@ -325,6 +326,15 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 			
 			updatePlayer();
 		} else Log.d(getClass().getSimpleName(), "Cannot play/pause episode (service null or unprepared)");
+	}
+	
+	private void updateLoadMenuItem() {
+		loadMenuItem.setVisible(episode != null && service != null);
+		
+		if (loadMenuItem.isVisible()) {
+			loadMenuItem.setTitle(service.isWorkingWith(episode) ? R.string.stop : R.string.play );
+			loadMenuItem.setIcon(service.isWorkingWith(episode) ? R.drawable.ic_media_stop : R.drawable.ic_media_play);
+		}
 	}
 	
 	private void updatePlayer() {
@@ -354,11 +364,11 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 		playerButton.setEnabled(! service.isBuffering());
 		playerButton.setBackgroundResource(service.isPlaying() ? R.drawable.button_red : R.drawable.button_green);
 		playerButton.setCompoundDrawablesWithIntrinsicBounds(
-				service.isPlaying() ? android.R.drawable.ic_media_pause : android.R.drawable.ic_media_play, 0, 0, 0);
+				service.isPlaying() ? R.drawable.ic_media_pause : R.drawable.ic_media_play, 0, 0, 0);
 		
 		if (service.isBuffering()) {
 			playerButton.setText(R.string.buffering);
-			playerButton.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_menu_rotate, 0, 0, 0);
+			playerButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_rotate, 0, 0, 0);
 		}
 		else {
 			playerButton.setText(service.isPlaying() ? R.string.pause : R.string.resume);
@@ -395,6 +405,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
             service.showNotification(false);
             
             // Update UI to reflect service status
+            updateLoadMenuItem();
             updatePlayer();
             // Restart play progress timer task if service is playing
             if (service.isPlaying()) startPlayProgressTimer();

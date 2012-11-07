@@ -1,4 +1,4 @@
 Register to open URL
-Check context mode on rotation, maybe call destroy
+Check context mode of podcast list on rotation, maybe call destroy
 Load suggestions fails and works again... update UI
-Change menu item to STOP for selected episode
+Use animations: http://developer.android.com/training/animation/layout.html

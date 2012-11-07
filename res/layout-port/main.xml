@@ -29,7 +29,7 @@
         android:paddingRight="2dp"
         android:paddingTop="2dp"
         android:scaleType="fitXY"
-        android:src="@android:drawable/divider_horizontal_bright" />
+        android:src="@drawable/divider_horizontal_bright" />
     <fragment
         android:id="@+id/episode"
         android:name="net.alliknow.podcatcher.fragments.EpisodeFragment"

@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
         android:id="@+id/add_podcast_button"
+        android:icon="@drawable/ic_menu_add"
         android:showAsAction="always|withText"
-        android:title="@string/add_podcast"
-        android:icon="@android:drawable/ic_menu_add" />
+        android:title="@string/add_podcast"/>
 </menu>

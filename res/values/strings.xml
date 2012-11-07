@@ -2,6 +2,7 @@
     <string name="app_name">Simple Podcatcher</string>
     <string name="connect">Connect</string>
     <string name="load">Load</string>
+    <string name="stop">Stop</string>
     <string name="parse">Read</string>
     <string name="suggestions">Suggestions&#8230;</string>
     <string name="send_suggestion">Send me a suggestion!</string>
