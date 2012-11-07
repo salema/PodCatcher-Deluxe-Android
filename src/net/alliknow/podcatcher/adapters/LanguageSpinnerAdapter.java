@@ -19,16 +19,13 @@ package net.alliknow.podcatcher.adapters;
 import net.alliknow.podcatcher.fragments.SuggestionFragment;
 import net.alliknow.podcatcher.types.Language;
 import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 /**
  * Adapter for the language spinner in the suggestion dialog.
  * 
  * @author Kevin Hausmann
  */
-public class LanguageSpinnerAdapter extends PodcatcherBaseAdapter {
+public class LanguageSpinnerAdapter extends PodcatcherBaseSpinnerAdapter {
 	
 	/**
 	 * Create new adapter
@@ -36,19 +33,6 @@ public class LanguageSpinnerAdapter extends PodcatcherBaseAdapter {
 	 */
 	public LanguageSpinnerAdapter(Context context) {
 		super(context);
-	}
-	
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		TextView result = (TextView) findReturnView(convertView, parent, android.R.layout.simple_spinner_item);
-		
-		result.setText(getItem(position).toString());
-		return result;
-	}
-	
-	@Override
-	public long getItemId(int position) {
-		return getItem(position).hashCode();
 	}
 	
 	@Override

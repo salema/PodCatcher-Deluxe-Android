@@ -114,7 +114,8 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
 	
 	private Podcast createSuggestion(JSONObject json) throws MalformedURLException, JSONException {
 		Podcast suggestion = new Podcast(json.getString(JSON.TITLE), new URL(json.getString(JSON.URL)));
-		suggestion.setDescription(json.getString(JSON.DESCRIPTION));
+		suggestion.setDescription(json.getString(JSON.DESCRIPTION).trim());
+		// TODO Make sure this fails over on unknown meta data gracefully!
 		suggestion.setLanguage(Language.valueOf(json.getString(JSON.LANGUAGE).toUpperCase().trim()));
 		suggestion.setMediaType(MediaType.valueOf(json.getString(JSON.TYPE).toUpperCase().trim()));
 		suggestion.setGenre(Genre.valueOf(json.getString(JSON.CATEGORY).toUpperCase().trim()));

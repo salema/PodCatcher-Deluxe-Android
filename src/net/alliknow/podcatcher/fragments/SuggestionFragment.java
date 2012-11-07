@@ -209,7 +209,7 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 		progressBar.setVisibility(View.GONE);
 		
 		progressTextView.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
-		progressTextView.setText("Cannot load suggestions!");
+		progressTextView.setText(R.string.error_suggestions_load);
 	}
 	
 	private void setInitialFilterSelection() {

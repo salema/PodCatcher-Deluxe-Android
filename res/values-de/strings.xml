@@ -6,6 +6,22 @@
     <string name="parse">Lesen</string>
     <string name="suggestions">Vorschläge&#8230;</string>
     <string name="suggested_podcasts">Empfohlene Podcasts</string>
+    <string name="all">Alle</string>
+    <string name="english">Englisch</string>
+    <string name="german">Deutsch</string>
+    <string name="audio">Audio</string>
+    <string name="video">Video</string>
+    <string name="comedy">Comedy</string>
+    <string name="education">Erzeihung</string>
+    <string name="entertainment">Unterhaltung</string>
+    <string name="mobility">Mobilität</string>
+    <string name="music">Musik</string>
+    <string name="news">News</string>
+    <string name="politics">Politik</string>
+    <string name="science">Wissenschaft</string>
+    <string name="sports">Sport</string>
+    <string name="technology">Technik</string>
+    <string name="error_suggestions_load">Empfehlungen können nicht geladen werden, bitte prüfen Sie Ihre Internetverbindung!</string>
     <string name="send_suggestion">Ich möchte einen Podcast empfehlen&#8230;</string>
     <string name="play">Abspielen</string>
     <string name="buffering">Puffer füllen&#8230;</string>
@@ -26,6 +42,6 @@
     <string name="add_podcast_button">Hinzufügen</string>
     <string name="remove_podcast">Entfernen</string>
     <string name="enter_podcast_url_here">Podcast-Adresse hier einfügen</string>
-    <string name="error_podcast_add">Der Podcast konnte nicht geladen werden</string>
+    <string name="error_podcast_add">Der Podcast konnte nicht geladen werden.</string>
     <string name="error_podcast_load">Podcast kann nicht geladen werden, bitte prüfen Sie Ihre Internetverbindung!</string>
 </resources>

@@ -19,40 +19,20 @@ package net.alliknow.podcatcher.adapters;
 import net.alliknow.podcatcher.fragments.SuggestionFragment;
 import net.alliknow.podcatcher.types.Genre;
 import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 /**
  * Adapter for the genre spinner in the suggestion dialog.
  * 
  * @author Kevin Hausmann
  */
-public class GenreSpinnerAdapter extends PodcatcherBaseAdapter {
+public class GenreSpinnerAdapter extends PodcatcherBaseSpinnerAdapter {
 	
-	private String packageName;
-
 	/**
 	 * Create new adapter
 	 * @param context The current context
 	 */
 	public GenreSpinnerAdapter(Context context) {
 		super(context);
-		
-		this.packageName = context.getPackageName();
-	}
-	
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		TextView result = (TextView) findReturnView(convertView, parent, android.R.layout.simple_spinner_item);
-		
-		result.setText(resources.getIdentifier(getItem(position).toString().toLowerCase(), "string", packageName));
-		return result;
-	}
-	
-	@Override
-	public long getItemId(int position) {
-		return getItem(position).hashCode();
 	}
 	
 	@Override
