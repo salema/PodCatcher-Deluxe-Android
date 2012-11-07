@@ -57,20 +57,19 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:listSelector="@android:color/transparent"
+        android:minHeight="400dp"
         android:visibility="gone" />
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="2dp"
         android:paddingLeft="2dp"
         android:paddingRight="2dp"
-        android:paddingTop="2dp"
         android:scaleType="fitXY"
-        android:src="@drawable/divider_horizontal_bright" />
+        android:src="@android:drawable/divider_horizontal_bright" />
     <TextView
         android:id="@+id/send_suggestion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:padding="2dp" />
+        android:padding="3dp" />
 </LinearLayout>

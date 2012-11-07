@@ -22,6 +22,7 @@ import java.util.Collections;
 
 import net.alliknow.podcatcher.PodcastList;
 import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
+import net.alliknow.podcatcher.tags.JSON;
 import net.alliknow.podcatcher.types.Genre;
 import net.alliknow.podcatcher.types.Language;
 import net.alliknow.podcatcher.types.MediaType;
@@ -70,7 +71,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
 			JSONObject completeJson = new JSONObject(new String(suggestionsFile, SUGGESTIONS_FILE_ENCODING));
 			
 			// Add all featured podcasts
-			JSONArray featured = completeJson.getJSONArray("featured");
+			JSONArray featured = completeJson.getJSONArray(JSON.FEATURED);
 			for (int index = 0; index < featured.length(); index++) {
 				JSONObject suggestion = featured.getJSONObject(index);
 				
@@ -78,7 +79,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
 			}
 						
 			// Add all suggestions
-			JSONArray suggestions = completeJson.getJSONArray("suggestions");
+			JSONArray suggestions = completeJson.getJSONArray(JSON.SUGGESTION);
 			for (int index = 0; index < suggestions.length(); index++) {
 				JSONObject suggestion = suggestions.getJSONObject(index);
 				
@@ -112,11 +113,11 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
 	}
 	
 	private Podcast createSuggestion(JSONObject json) throws MalformedURLException, JSONException {
-		Podcast suggestion = new Podcast(json.getString("title"), new URL(json.getString("url")));
-		suggestion.setDescription(json.getString("description"));
-		suggestion.setLanguage(Language.valueOf(json.getString("language").toUpperCase().trim()));
-		suggestion.setMediaType(MediaType.valueOf(json.getString("type").toUpperCase().trim()));
-		suggestion.setGenre(Genre.valueOf(json.getString("category").toUpperCase().trim()));
+		Podcast suggestion = new Podcast(json.getString(JSON.TITLE), new URL(json.getString(JSON.URL)));
+		suggestion.setDescription(json.getString(JSON.DESCRIPTION));
+		suggestion.setLanguage(Language.valueOf(json.getString(JSON.LANGUAGE).toUpperCase().trim()));
+		suggestion.setMediaType(MediaType.valueOf(json.getString(JSON.TYPE).toUpperCase().trim()));
+		suggestion.setGenre(Genre.valueOf(json.getString(JSON.CATEGORY).toUpperCase().trim()));
 		
 		return suggestion;
 	}

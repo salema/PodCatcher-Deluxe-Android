@@ -16,6 +16,8 @@
  */
 package net.alliknow.podcatcher.fragments;
 
+import java.util.Locale;
+
 import net.alliknow.podcatcher.PodcastList;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.GenreSpinnerAdapter;
@@ -26,6 +28,10 @@ import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
 import net.alliknow.podcatcher.tasks.LoadSuggestionsTask;
+import net.alliknow.podcatcher.types.Genre;
+import net.alliknow.podcatcher.types.Language;
+import net.alliknow.podcatcher.types.MediaType;
+import net.alliknow.podcatcher.types.Podcast;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -34,6 +40,8 @@ import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -46,6 +54,9 @@ import android.widget.TextView;
  */
 public class SuggestionFragment extends DialogFragment implements OnLoadSuggestionListener {
 
+	/** The filter wildcard */
+	public static final String FILTER_WILDCARD = "ALL";
+	
 	/** Mail address to send new suggestions to */
 	private static final String SUGGESTION_MAIL_ADDRESS = "suggestion@podcatcher-deluxe.com";
 	/** Subject for mail with new suggestions */
@@ -57,6 +68,8 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	private LoadSuggestionsTask loadTask;
 	/** The list of suggestions */
 	private PodcastList suggestionList;
+	/** The list of podcasts already added */
+	private PodcastList podcastList;
 	
 	/** The language filter */
 	private Spinner languageFilter;
@@ -91,23 +104,40 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
-		getDialog().setTitle("Suggested Podcasts");
+		getDialog().setTitle(R.string.suggested_podcasts);
+		
+		OnItemSelectedListener selectionListener = new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				fillList();
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				fillList();
+			}
+		};
 		
 		languageFilter = (Spinner) getView().findViewById(R.id.select_language);
 		languageFilter.setAdapter(new LanguageSpinnerAdapter(getActivity()));
-		languageFilter.setSelection(0);
+		languageFilter.setOnItemSelectedListener(selectionListener);
 		
 		genreFilter = (Spinner) getView().findViewById(R.id.select_genre);
 		genreFilter.setAdapter(new GenreSpinnerAdapter(getActivity()));
-		genreFilter.setSelection(0);
+		genreFilter.setOnItemSelectedListener(selectionListener);
 		
 		mediaTypeFilter = (Spinner) getView().findViewById(R.id.select_type);
 		mediaTypeFilter.setAdapter(new MediaTypeSpinnerAdapter(getActivity()));
-		mediaTypeFilter.setSelection(0);
+		mediaTypeFilter.setOnItemSelectedListener(selectionListener);
+		
+		setInitialFilterSelection();
 		
 		progressView = getView().findViewById(R.id.suggestion_list_progress);
 		progressBar = (ProgressBar) getView().findViewById(R.id.suggestion_list_progress_bar);
 		progressTextView = (TextView) getView().findViewById(R.id.suggestion_list_progress_text);
+		progressTextView.setTextColor(getResources().getColor(android.R.color.black));
+		progressTextView.setText(null);
 		
 		suggestionsListView = (ListView) view.findViewById(R.id.suggested_podcasts);
 		
@@ -117,9 +147,11 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 				getResources().getString(R.string.send_suggestion) + "</a>"));
 		sendSuggestionView.setMovementMethod(LinkMovementMethod.getInstance());
 		
+		// Suggestion list has not been loaded before
 		if (suggestionList == null || suggestionList.isEmpty()) new LoadSuggestionsTask(this).execute((Void)null);
+		// List was loaded before
 		else {
-			suggestionsListView.setAdapter(new SuggestionListAdapter(getActivity(), suggestionList, listener));
+			fillList();
 			
 			progressView.setVisibility(View.GONE);
 			suggestionsListView.setVisibility(View.VISIBLE);
@@ -142,6 +174,15 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 		this.listener = listener;
 	}
 	
+	/**
+	 * Set the list of currently already listed podcasts.
+	 * These will be filtered from the suggestions.
+	 * @param currentList The list of podcasts.
+	 */
+	public void setCurrentPodcasts(PodcastList currentList) {
+		this.podcastList = currentList;
+	}
+	
 	@Override
 	public void onSuggestionsLoadProgress(int progress) {
 		if (progress == LoadPodcastTask.PROGRESS_CONNECT) 
@@ -157,8 +198,8 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	@Override
 	public void onSuggestionsLoaded(PodcastList suggestions) {
 		suggestionList = suggestions;
-		suggestionsListView.setAdapter(new SuggestionListAdapter(getActivity(), suggestionList, listener));
-		
+		fillList();
+				
 		progressView.setVisibility(View.GONE);
 		suggestionsListView.setVisibility(View.VISIBLE);
 	}
@@ -169,5 +210,34 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 		
 		progressTextView.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
 		progressTextView.setText("Cannot load suggestions!");
+	}
+	
+	private void setInitialFilterSelection() {
+		Locale current = getActivity().getResources().getConfiguration().locale;
+		languageFilter.setSelection(current.getLanguage().equalsIgnoreCase("de") ? 2 : 1);
+		
+		genreFilter.setSelection(0);
+		mediaTypeFilter.setSelection(1);
+	}
+		
+	private void fillList() {
+		if (suggestionList != null && !suggestionList.isEmpty()) {
+			PodcastList filteredSuggestionList = new PodcastList();
+			
+			for (Podcast suggestion : suggestionList)
+				if (podcastList == null || !podcastList.contains(suggestion) &&
+						matchesFilter(suggestion)) filteredSuggestionList.add(suggestion);
+			
+			suggestionsListView.setAdapter(new SuggestionListAdapter(getActivity(), filteredSuggestionList, listener));
+		}
+	}
+
+	private boolean matchesFilter(Podcast suggestion) {
+		return (languageFilter.getSelectedItemPosition() == 0 || 
+			((Language)languageFilter.getSelectedItem()).equals(suggestion.getLanguage())) &&
+			(genreFilter.getSelectedItemPosition() == 0 || 
+			((Genre)genreFilter.getSelectedItem()).equals(suggestion.getGenre())) &&
+			(mediaTypeFilter.getSelectedItemPosition() == 0 || 
+			((MediaType)mediaTypeFilter.getSelectedItem()).equals(suggestion.getMediaType()));
 	}
 }

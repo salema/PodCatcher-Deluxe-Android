@@ -63,6 +63,7 @@ public class SuggestionListAdapter extends PodcastListAdapter {
 			@Override
 			public void onClick(View v) {
 				listener.addPodcast(list.get(position));
+				v.setEnabled(false);
 			}
 		});
 		

@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
     android:orientation="vertical" >
     <TextView
         android:id="@id/android:empty"
@@ -35,7 +34,7 @@
         android:paddingRight="2dp"
         android:paddingTop="2dp"
         android:scaleType="fitXY"
-        android:src="@drawable/divider_horizontal_bright"
+        android:src="@android:drawable/divider_horizontal_bright"
         android:visibility="gone" />
     <WebView
         android:id="@+id/episode_description"
@@ -67,7 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="2dp"
             android:scaleType="fitXY"
-            android:src="@drawable/divider_horizontal_bright"
+            android:src="@android:drawable/divider_horizontal_bright"
             android:visibility="gone" />
         <TextView
             android:id="@+id/player_title"

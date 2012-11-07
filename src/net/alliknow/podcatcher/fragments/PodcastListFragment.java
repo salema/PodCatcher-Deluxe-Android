@@ -160,6 +160,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	
 	@Override
 	public void showSuggestions() {
+		suggestionFragment.setCurrentPodcasts(podcastList);
 		suggestionFragment.show(getFragmentManager(), "suggest_podcast");
 	}
 	

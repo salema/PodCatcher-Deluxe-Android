@@ -16,6 +16,7 @@
  */
 package net.alliknow.podcatcher.adapters;
 
+import net.alliknow.podcatcher.fragments.SuggestionFragment;
 import net.alliknow.podcatcher.types.Language;
 import android.content.Context;
 import android.view.View;
@@ -52,7 +53,7 @@ public class LanguageSpinnerAdapter extends PodcatcherBaseAdapter {
 	
 	@Override
 	public Object getItem(int position) {
-		if (position == 0) return "All";
+		if (position == 0) return SuggestionFragment.FILTER_WILDCARD;
 		else return Language.values()[position - 1];
 	}
 	

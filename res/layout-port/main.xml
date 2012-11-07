@@ -24,12 +24,10 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="2dp"
         android:paddingLeft="2dp"
         android:paddingRight="2dp"
-        android:paddingTop="2dp"
         android:scaleType="fitXY"
-        android:src="@drawable/divider_horizontal_bright" />
+        android:src="@android:drawable/divider_horizontal_bright" />
     <fragment
         android:id="@+id/episode"
         android:name="net.alliknow.podcatcher.fragments.EpisodeFragment"

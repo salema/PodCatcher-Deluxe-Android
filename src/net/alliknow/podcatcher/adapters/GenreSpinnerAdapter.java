@@ -16,6 +16,7 @@
  */
 package net.alliknow.podcatcher.adapters;
 
+import net.alliknow.podcatcher.fragments.SuggestionFragment;
 import net.alliknow.podcatcher.types.Genre;
 import android.content.Context;
 import android.view.View;
@@ -29,19 +30,23 @@ import android.widget.TextView;
  */
 public class GenreSpinnerAdapter extends PodcatcherBaseAdapter {
 	
+	private String packageName;
+
 	/**
 	 * Create new adapter
 	 * @param context The current context
 	 */
 	public GenreSpinnerAdapter(Context context) {
 		super(context);
+		
+		this.packageName = context.getPackageName();
 	}
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		TextView result = (TextView) findReturnView(convertView, parent, android.R.layout.simple_spinner_item);
 		
-		result.setText(getItem(position).toString());
+		result.setText(resources.getIdentifier(getItem(position).toString().toLowerCase(), "string", packageName));
 		return result;
 	}
 	
@@ -52,7 +57,7 @@ public class GenreSpinnerAdapter extends PodcatcherBaseAdapter {
 	
 	@Override
 	public Object getItem(int position) {
-		if (position == 0) return "All";
+		if (position == 0) return SuggestionFragment.FILTER_WILDCARD;
 		else return Genre.values()[position - 1];
 	}
 	

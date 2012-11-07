@@ -2,8 +2,11 @@
     <string name="app_name">Simple Podcatcher</string>
     <string name="connect">Conectar</string>
     <string name="load">Cargar</string>
+    <string name="stop">Stop</string>
     <string name="parse">Leer</string>
     <string name="suggestions">Sugerencias&#8230;</string>
+    <string name="suggested_podcasts">Podcasts recomendados</string>
+    <string name="send_suggestion">Envia una propuesta para incluirla en esta lista&#8230;</string>
     <string name="play">Reproducir</string>
     <string name="buffering">Buffering&#8230;</string>
     <string name="pause">Pausa</string>
