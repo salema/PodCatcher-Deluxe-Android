@@ -5,4 +5,10 @@
         android:icon="@drawable/ic_menu_add"
         android:showAsAction="always|withText"
         android:title="@string/add_podcast"/>
+    <item
+        android:id="@+id/remove_podcast_button"
+        android:icon="@drawable/ic_menu_delete"
+        android:showAsAction="never|withText"
+        android:title="@string/remove_podcast"
+        android:visible="false"/>
 </menu>

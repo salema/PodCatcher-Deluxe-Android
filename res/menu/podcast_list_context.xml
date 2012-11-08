@@ -4,5 +4,5 @@
         android:id="@+id/remove_podcast"
         android:icon="@drawable/ic_menu_delete"
         android:showAsAction="always|withText"
-        android:title="@string/remove_podcast"/>
+        android:title="@string/remove"/>
 </menu>
