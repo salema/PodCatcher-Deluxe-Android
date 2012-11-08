@@ -35,7 +35,12 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	protected Resources resources;
 	/** Inflater for new views */
 	protected LayoutInflater inflater;
+	/** We need to know our package name to retrieve identifiers */
+	protected String packageName;
 
+	/** The def type for string resources */
+	private static final String STRING_DEFTYPE = "string";
+	
 	/**
 	 * Create new adapter
 	 * @param context The current context
@@ -43,6 +48,7 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	public PodcatcherBaseAdapter(Context context) {
 		this.resources = context.getResources();
 		this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		this.packageName = context.getPackageName();
 	}
 	
 	@Override
@@ -64,5 +70,46 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 		if (convertView == null) return inflater.inflate(inflateId, parent, false);
 		// Yes:
 		else return convertView;
+	}
+	
+	/**
+	 * Get the resource (language-specific) string for an item.
+	 * @param item Item which <code>toString</code> method is a string resource key.
+	 * @return The string in the correct language.
+	 * @throws A runtime exception if no such resource exists.
+	 */
+	protected String getResourceString(Object item) {
+		return getResourceString(item.toString());
+	}
+	
+	/**
+	 * Get the resource (language-specific) string for the given key.
+	 * @param key Key to look up. Will be changed to lower case.
+	 * @return The string in the correct language.
+	 * @throws A runtime exception if no such resource exists.
+	 */
+	protected String getResourceString(String key) {
+		return resources.getString(getStringIdentifier(key));
+	}
+	
+	/**
+	 * Get the resource (language-specific) string for
+	 * item at the given position.
+	 * @param position Index to the item to get string for.
+	 * @return The string in the correct language.
+	 * @throws A runtime exception if no such resource exists.
+	 */
+	protected String getResourceString(int position) {
+		return getResourceString(getItem(position));
+	}
+
+	/**
+	 * Get the resource key (identifier) from the given string key.
+	 * @param key Key as a string (will be changed to lower case).
+	 * @return The resource identifier for this key.
+	 * @throws A runtime exception if no such resource exists.
+	 */
+	protected int getStringIdentifier(String key) {
+		return resources.getIdentifier(key.toLowerCase(), STRING_DEFTYPE, packageName);
 	}
 }

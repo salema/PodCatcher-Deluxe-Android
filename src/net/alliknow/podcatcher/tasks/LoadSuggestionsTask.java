@@ -16,7 +16,6 @@
  */
 package net.alliknow.podcatcher.tasks;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 
@@ -71,21 +70,10 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
 			JSONObject completeJson = new JSONObject(new String(suggestionsFile, SUGGESTIONS_FILE_ENCODING));
 			
 			// Add all featured podcasts
-			JSONArray featured = completeJson.getJSONArray(JSON.FEATURED);
-			for (int index = 0; index < featured.length(); index++) {
-				JSONObject suggestion = featured.getJSONObject(index);
-				
-				result.add(createSuggestion(suggestion));
-			}
-						
+			addSuggestionsFromJsonArray(completeJson.getJSONArray(JSON.FEATURED), result);
 			// Add all suggestions
-			JSONArray suggestions = completeJson.getJSONArray(JSON.SUGGESTION);
-			for (int index = 0; index < suggestions.length(); index++) {
-				JSONObject suggestion = suggestions.getJSONObject(index);
-				
-				result.add(createSuggestion(suggestion));
-			}
-			
+			addSuggestionsFromJsonArray(completeJson.getJSONArray(JSON.SUGGESTION), result);
+						
 			Collections.sort(result);
 		} catch (Exception e) {
 			failed = true;
@@ -112,13 +100,43 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
 		else Log.d(getClass().getSimpleName(), "Suggestions loaded, but no listener attached");
 	}
 	
-	private Podcast createSuggestion(JSONObject json) throws MalformedURLException, JSONException {
-		Podcast suggestion = new Podcast(json.getString(JSON.TITLE), new URL(json.getString(JSON.URL)));
-		suggestion.setDescription(json.getString(JSON.DESCRIPTION).trim());
-		// TODO Make sure this fails over on unknown meta data gracefully!
-		suggestion.setLanguage(Language.valueOf(json.getString(JSON.LANGUAGE).toUpperCase().trim()));
-		suggestion.setMediaType(MediaType.valueOf(json.getString(JSON.TYPE).toUpperCase().trim()));
-		suggestion.setGenre(Genre.valueOf(json.getString(JSON.CATEGORY).toUpperCase().trim()));
+	/**
+	 * Add all podcast suggestions in given array to the list. 
+	 * @param array JSON array to scan.
+	 * @param list List to add suggestions to.
+	 */
+	private void addSuggestionsFromJsonArray(JSONArray array, PodcastList list) {
+		for (int index = 0; index < array.length(); index++) {
+			JSONObject object;
+			
+			try {
+				object = array.getJSONObject(index);
+			} catch (JSONException e) {
+				continue; // If an index fails, try the next one...
+			}
+			
+			Podcast suggestion = createSuggestion(object);
+			if (suggestion != null) list.add(suggestion);
+		}
+	}
+	
+	/**
+	 * Create a podcast suggestion for the given JSON object and set its properties.
+	 * @param json The JSON object to work on.
+	 * @return The podcast suggestion or <code>null</code> if any problem occurs.
+	 */
+	private Podcast createSuggestion(JSONObject json) {
+		Podcast suggestion;
+		
+		try {
+			suggestion = new Podcast(json.getString(JSON.TITLE), new URL(json.getString(JSON.URL)));
+			suggestion.setDescription(json.getString(JSON.DESCRIPTION).trim());
+			suggestion.setLanguage(Language.valueOf(json.getString(JSON.LANGUAGE).toUpperCase().trim()));
+			suggestion.setMediaType(MediaType.valueOf(json.getString(JSON.TYPE).toUpperCase().trim()));
+			suggestion.setGenre(Genre.valueOf(json.getString(JSON.CATEGORY).toUpperCase().trim()));
+		} catch (Exception e) {
+			return null;
+		}
 		
 		return suggestion;
 	}

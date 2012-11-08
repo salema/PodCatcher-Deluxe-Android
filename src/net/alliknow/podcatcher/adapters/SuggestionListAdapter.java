@@ -19,6 +19,7 @@ package net.alliknow.podcatcher.adapters;
 import net.alliknow.podcatcher.PodcastList;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
+import net.alliknow.podcatcher.types.Podcast;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,9 +32,11 @@ import android.widget.TextView;
  * @author Kevin Hausmann
  */
 public class SuggestionListAdapter extends PodcastListAdapter {
-
+	
 	/** Owner for button call backs */
 	protected OnAddPodcastListener listener;
+	/** Separator for meta data in the UI */
+	private static final String METADATA_SEPARATOR = " ● ";
 	
 	/**
 	 * Create new adapter
@@ -51,19 +54,22 @@ public class SuggestionListAdapter extends PodcastListAdapter {
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		convertView = findReturnView(convertView, parent, R.layout.suggestion_list_item);
+		final Podcast suggestion = list.get(position);
 		
-		setText(convertView, R.id.suggestion_name, list.get(position).getName(), position);
-		setText(convertView, R.id.suggestion_meta, list.get(position).getLanguage() + " " +
-				list.get(position).getGenre() + " " + list.get(position).getMediaType(), position);
-		setText(convertView, R.id.suggestion_description, list.get(position).getDescription(), position);
+		setText(convertView, R.id.suggestion_name, suggestion.getName(), position);
+		setText(convertView, R.id.suggestion_meta,
+				getResourceString(suggestion.getLanguage()) + METADATA_SEPARATOR +
+				getResourceString(suggestion.getGenre()) + METADATA_SEPARATOR +
+				getResourceString(suggestion.getMediaType()), position);
+		setText(convertView, R.id.suggestion_description, suggestion.getDescription(), position);
 		
 		Button addButton = (Button) convertView.findViewById(R.id.add_suggestion_button);
 		addButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
-			public void onClick(View v) {
-				listener.addPodcast(list.get(position));
-				v.setEnabled(false);
+			public void onClick(View view) {
+				listener.addPodcast(suggestion);
+				view.setEnabled(false);
 			}
 		});
 		

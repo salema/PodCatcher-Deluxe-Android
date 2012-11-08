@@ -24,39 +24,31 @@ import android.widget.TextView;
 /**
  * Abstract base for spinner adapters.
  * The default implementation will use simple text views and string
- * resources named <code>item.toString().toLowerCase()</code>.
+ * resources named ("keyed") <code>item.toString().toLowerCase()</code>.
+ * (This will fail, if these resources do not exist!)
  *
  * @author Kevin Hausmann
  */
 public abstract class PodcatcherBaseSpinnerAdapter extends PodcatcherBaseAdapter {
 
-	/** We need to know our package name to retrieve identifiers */
-	protected String packageName;
-	
 	/**
 	 * Create the adapter.
 	 * @param context Context we live in.
 	 */
 	public PodcatcherBaseSpinnerAdapter(Context context) {
 		super(context);
-		
-		this.packageName = context.getPackageName();
 	}
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		TextView result = (TextView) findReturnView(convertView, parent, android.R.layout.simple_spinner_item);
 		
-		result.setText(getStringIdentifier(position));
+		result.setText(getResourceString(position));
 		return result;
 	}
 
 	@Override
 	public long getItemId(int position) {
 		return getItem(position).hashCode();
-	}
-	
-	protected int getStringIdentifier(int position) {
-		return resources.getIdentifier(getItem(position).toString().toLowerCase(), "string", packageName);
 	}
 }
