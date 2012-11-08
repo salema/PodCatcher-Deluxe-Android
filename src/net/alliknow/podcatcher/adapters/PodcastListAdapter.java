@@ -67,7 +67,7 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 		setText(convertView, R.id.podcast_episode_number, getEpisodeNumberText(position), position);
 		
 		convertView.findViewById(R.id.podcast_episode_number).setVisibility(
-				list.get(position).getEpisodes().isEmpty()? View.GONE : View.VISIBLE);
+				list.get(position).getEpisodes().isEmpty() ? View.GONE : View.VISIBLE);
 		
 		return convertView;
 	}

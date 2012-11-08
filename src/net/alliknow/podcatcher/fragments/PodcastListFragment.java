@@ -66,6 +66,8 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	private PodcastList podcastList = new PodcastList();
 	/** Currently selected podcast */
 	private Podcast currentPodcast;
+	/** Remove podcast menu item */
+	private MenuItem removeMenuItem;
 	/** Currently show podcast logo */
 	private Bitmap currentLogo;
 	
@@ -115,14 +117,20 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.podcast_list_menu, menu);
+		
+		removeMenuItem = (MenuItem) menu.findItem(R.id.remove_podcast_button);
+		updateRemoveMenuItem();
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.add_podcast_button) 
 			addPodcastFragment.show(getFragmentManager(), "add_podcast");
-				
-		return item.getItemId() == R.id.add_podcast_button;
+		else if (item.getItemId() == R.id.remove_podcast_button)
+			getListView().setItemChecked(podcastList.indexOf(currentPodcast), true);
+		
+		return item.getItemId() == R.id.add_podcast_button ||
+			item.getItemId() == R.id.remove_podcast_button;
 	}
 	
 	@Override
@@ -189,6 +197,8 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 			// Use buffered content
 			else onPodcastLoaded(selectedPodcast, false);
 		}
+		
+		updateRemoveMenuItem();
 	}
 	
 	/**
@@ -197,10 +207,22 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	public void removeCheckedPodcasts() {
 		SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
 		
+		// Remove checked podcasts
 		for (int index = podcastList.size() - 1; index >= 0; index--)
-			if (checkedItems.get(index)) podcastList.remove(index);
-				
-		setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
+			if (checkedItems.get(index)) {
+				// Reset internal variable if nesessary
+				if (podcastList.get(index).equals(currentPodcast)) currentPodcast = null;
+				// Remove podcast from list
+				podcastList.remove(index);
+			}
+		
+		// Update UI
+		PodcastListAdapter adapter = new PodcastListAdapter(getActivity(), podcastList);
+		if (currentPodcast != null) adapter.setSelectedPosition(podcastList.indexOf(currentPodcast));
+		setListAdapter(adapter);
+		updateRemoveMenuItem();
+		
+		// Store changed list
 		podcastList.store(getActivity());
 	}
 	
@@ -235,7 +257,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	@Override
 	public void onPodcastLoadFailed(Podcast podcast, boolean wasBackground) {
 		// Only react if the podcast failed to load that we are actually waiting for
-		if (currentPodcast.equals(podcast) && !wasBackground) {
+		if (podcast.equals(currentPodcast) && !wasBackground) {
 			loadPodcastTask = null;
 			
 			if (loadListener != null) loadListener.onPodcastLoadFailed(podcast, false);
@@ -255,6 +277,10 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	
 	@Override
 	public void onPodcastLogoLoadFailed() {}
+	
+	private void updateRemoveMenuItem() {
+		removeMenuItem.setVisible(currentPodcast != null);
+	}
 	
 	private void setPodcastLogo(Bitmap logo) {
 		ImageView logoView = (ImageView) getView().findViewById(R.id.podcast_image);
