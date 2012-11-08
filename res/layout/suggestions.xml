@@ -58,7 +58,6 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:listSelector="@android:color/transparent"
-        android:minHeight="400dp"
         android:visibility="gone" />
     <ImageView
         android:layout_width="match_parent"
