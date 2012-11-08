@@ -85,6 +85,8 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	private TextView progressTextView;
 	/** The suggestions list view */
 	private ListView suggestionsListView;
+	/** The no suggestions view */
+	private TextView noSuggestionsView;
 	/** The send a suggestion view */
 	private TextView sendSuggestionView;
 	
@@ -105,7 +107,7 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		getDialog().setTitle(R.string.suggested_podcasts);
-		
+				
 		OnItemSelectedListener selectionListener = new OnItemSelectedListener() {
 
 			@Override
@@ -140,6 +142,7 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 		progressTextView.setText(null);
 		
 		suggestionsListView = (ListView) view.findViewById(R.id.suggested_podcasts);
+		noSuggestionsView = (TextView) view.findViewById(R.id.no_suggestions);
 		
 		sendSuggestionView = (TextView) view.findViewById(R.id.send_suggestion);
 		sendSuggestionView.setText(Html.fromHtml("<a href=\"mailto:" + SUGGESTION_MAIL_ADDRESS +
@@ -163,6 +166,14 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 		super.onDismiss(dialog);
 		
 		if (loadTask != null) loadTask.cancel(true);
+	}
+	
+	@Override
+	public void onDestroyView() {
+		if (getDialog() != null && getRetainInstance())
+			getDialog().setDismissMessage(null);
+		
+		super.onDestroyView();
 	}
 	
 	/**
@@ -229,6 +240,14 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 						matchesFilter(suggestion)) filteredSuggestionList.add(suggestion);
 			
 			suggestionsListView.setAdapter(new SuggestionListAdapter(getActivity(), filteredSuggestionList, listener));
+			
+			if (filteredSuggestionList.isEmpty()) {
+				suggestionsListView.setVisibility(View.GONE);
+				noSuggestionsView.setVisibility(View.VISIBLE);
+			} else {
+				noSuggestionsView.setVisibility(View.GONE);
+				suggestionsListView.setVisibility(View.VISIBLE);
+			}	
 		}
 	}
 

@@ -27,7 +27,6 @@ public enum ExamplePodcast {
 		try {
 			return new URL(this.url);
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
