@@ -4,5 +4,6 @@
         android:id="@+id/about_menu"
         android:showAsAction="never|withText"
         android:icon="@drawable/launcher"
-        android:title="@string/about" />
+        android:title="@string/about"
+        android:orderInCategory="10" />
 </menu>
