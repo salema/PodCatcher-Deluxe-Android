@@ -35,6 +35,7 @@
     <string name="podcast_image">Podcast Logo</string>
     <string name="no_podcast">No podcast added</string>
     <string name="no_podcast_selected">No podcast selected</string>
+    <string name="no_episodes">No episodes in this podcast</string>
     <string name="one_podcast_selected">One podcast</string>
     <string name="podcasts_selected">podcasts</string>
     <string name="no_episode_selected">No episode selected</string>

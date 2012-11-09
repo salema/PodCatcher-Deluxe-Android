@@ -35,6 +35,7 @@
     <string name="podcast_image">Logo</string>
     <string name="no_podcast">Ajouter un podcast</string>
     <string name="no_podcast_selected">Pas d\'épisodes</string>
+    <string name="no_episodes">Pas d\'épisodes</string>
     <string name="one_podcast_selected">Un podcast</string>
     <string name="podcasts_selected">podcasts</string>
     <string name="no_episode_selected">Aucune description disponible</string>

@@ -115,6 +115,7 @@ public class PodcastList extends ArrayList<Podcast> {
 			writer.write("<outline text=\"Linux' Outlaws\" xmlUrl=\"http://feeds.feedburner.com/linuxoutlaws\" type=\"rss\"/>");
 			writer.write("<outline text=\"GEO\" type=\"rss\" xmlUrl=\"http://www.geo.de/GEOaudio/index.xml\"/>");
 			writer.write("<outline text=\"Mäuse\" xmlUrl=\"http://podcast.wdr.de/maus.xml\"/>");
+			writer.write("<outline text=\"Dude\" xmlUrl=\"http://feeds.feedburner.com/UhhYeahDude\"/>");
 			writer.write("</body></opml>");
 			writer.close();
 			
