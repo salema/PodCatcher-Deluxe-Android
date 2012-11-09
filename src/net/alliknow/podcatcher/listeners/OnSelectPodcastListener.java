@@ -26,6 +26,12 @@ public interface OnSelectPodcastListener {
 	/**
 	 * Called on listener to reflect that a podcast has been selected.
 	 * @param selectedPodcast Podcast selected by the user
+	 * (not <code>null</code>). 
 	 */
 	public void onPodcastSelected(Podcast selectedPodcast);
+	
+	/**
+	 * Called on listener to reflect that no podcast is selected anymore.
+	 */
+	public void onNoPodcastSelected();
 }

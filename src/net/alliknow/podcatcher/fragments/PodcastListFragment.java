@@ -225,7 +225,10 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 			}
 		
 		// Update UI
-		if (currentPodcast == null) adapter.setSelectedPosition(-1);
+		if (currentPodcast == null) {
+			adapter.setSelectedPosition(-1);
+			if (selectedListener != null) selectedListener.onNoPodcastSelected();
+		}
 		else adapter.setSelectedPosition(podcastList.indexOf(currentPodcast));
 		updateRemoveMenuItem();
 		
@@ -286,5 +289,9 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	
 	private void updateRemoveMenuItem() {
 		removeMenuItem.setVisible(currentPodcast != null);
+	}
+
+	public boolean isPodcastSelected() {
+		return currentPodcast != null;
 	}
 }

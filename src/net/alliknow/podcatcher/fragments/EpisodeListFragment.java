@@ -42,6 +42,8 @@ public class EpisodeListFragment extends ListFragment {
 
 	/** The list of episode showing */
 	private List<Episode> episodeList;
+	/** The selected episode */
+	private Episode selectedEpisode;
 	
 	/** The list view */
 	private ListView listView;
@@ -85,7 +87,7 @@ public class EpisodeListFragment extends ListFragment {
 	
 	@Override
 	public void onListItemClick(ListView list, View view, int position, long id) {
-		Episode selectedEpisode = episodeList.get(position);
+		selectedEpisode = episodeList.get(position);
 		((EpisodeListAdapter) getListAdapter()).setSelectedPosition(position);
 		
 		if (selectedListener != null) selectedListener.onEpisodeSelected(selectedEpisode);
@@ -154,5 +156,9 @@ public class EpisodeListFragment extends ListFragment {
 		emptyView.setText(message);
 		emptyView.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
 		emptyView.setVisibility(View.VISIBLE);	
+	}
+
+	public boolean isEpisodeSelected() {
+		return selectedEpisode != null;
 	}
 }

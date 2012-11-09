@@ -32,6 +32,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 /**
  * Our main activity class. Handles configuration changes.
@@ -50,6 +51,8 @@ public class PodcastActivity extends Activity implements
 	/** The episode details fragment */
 	private EpisodeFragment episodeFragment;
 	
+	private View firstDivider;
+	
 	/** The podcatcher website URL */
 	private static final String PODCATCHER_WEBSITE = "http://www.podcatcher-deluxe.com";
 	
@@ -62,6 +65,9 @@ public class PodcastActivity extends Activity implements
 	    podcastListFragment = (PodcastListFragment) getFragmentManager().findFragmentById(R.id.podcast_list);
 		episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
 		episodeFragment = (EpisodeFragment) getFragmentManager().findFragmentById(R.id.episode);
+		
+		if (podcastListFragment.isPodcastSelected()) switchBackground(R.id.first_divider, true);
+		if (episodeListFragment.isEpisodeSelected()) switchBackground(R.id.second_divider, true);
 	}
 	
 	@Override
@@ -104,7 +110,13 @@ public class PodcastActivity extends Activity implements
 
 	@Override
 	public void onPodcastSelected(Podcast podcast) {
+		switchBackground(R.id.first_divider, true);
 		episodeListFragment.clearAndSpin();
+	}
+	
+	@Override
+	public void onNoPodcastSelected() {
+		switchBackground(R.id.first_divider, false);
 	}
 	
 	@Override
@@ -129,6 +141,14 @@ public class PodcastActivity extends Activity implements
 
 	@Override
 	public void onEpisodeSelected(Episode selectedEpisode) {
+		switchBackground(R.id.second_divider, true);
 		episodeFragment.setEpisode(selectedEpisode);
+	}
+	
+	private void switchBackground(int viewId, boolean color) {
+		if (getWindow() == null || getWindow().findViewById(viewId) == null) return;
+		
+		View divider = getWindow().findViewById(viewId);
+		divider.setBackgroundResource(color ? android.R.color.holo_orange_dark : android.R.color.darker_gray);
 	}
 }
