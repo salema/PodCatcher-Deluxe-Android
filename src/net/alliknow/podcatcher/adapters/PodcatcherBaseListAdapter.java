@@ -53,9 +53,12 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
 		// Only act if selection actually changed
 		if (! (selectedPositions.get(position) && selectedPositions.size() == 1)) {
 			selectedPositions.clear();
-			selectedPositions.put(position, true);
 			
-			notifyDataSetChanged();
+			// If position is reset, exit silently
+			if (position >= 0) {
+				selectedPositions.put(position, true);
+				notifyDataSetChanged();
+			}
 		}
 	}
 	

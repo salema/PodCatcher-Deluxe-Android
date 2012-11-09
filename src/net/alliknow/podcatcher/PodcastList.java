@@ -58,7 +58,7 @@ public class PodcastList extends ArrayList<Podcast> {
 	 */
 	public void load(Context context) {
 		//this is just for testing
-		//if (Podcatcher.isInDebugMode(context)) writeDummy(context);
+		if (Podcatcher.isInDebugMode(context)) writeDummy(context);
 		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
