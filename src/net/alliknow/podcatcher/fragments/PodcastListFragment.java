@@ -131,13 +131,18 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.add_podcast_button) 
-			addPodcastFragment.show(getFragmentManager(), "add_podcast");
-		else if (item.getItemId() == R.id.remove_podcast_button)
-			getListView().setItemChecked(podcastList.indexOf(currentPodcast), true);
-		
-		return item.getItemId() == R.id.add_podcast_button ||
-			item.getItemId() == R.id.remove_podcast_button;
+		switch (item.getItemId()) {
+	    	case R.id.add_podcast_button:
+	    		addPodcastFragment.show(getFragmentManager(), "add_podcast");
+	    		
+	    		return true;
+	    	case R.id.remove_podcast_button:
+	    		getListView().setItemChecked(podcastList.indexOf(currentPodcast), true);
+	    		
+	    		return true;
+	    	default:
+	    		return super.onOptionsItemSelected(item);
+		}
 	}
 	
 	@Override
@@ -198,7 +203,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		if (selectedPodcast.needsReload()) {
 			// Download podcast RSS feed (async)
 			loadPodcastTask = new LoadPodcastTask(this);
-			loadPodcastTask.execute(selectedPodcast);	
+			loadPodcastTask.execute(selectedPodcast);
 		}
 		// Use buffered content
 		else onPodcastLoaded(selectedPodcast, false);

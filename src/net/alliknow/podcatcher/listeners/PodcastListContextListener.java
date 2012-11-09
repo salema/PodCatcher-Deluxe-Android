@@ -46,8 +46,9 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
 	@Override
 	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 		MenuInflater inflater = mode.getMenuInflater();
-        inflater.inflate(R.menu.podcast_list_context, menu);
-        return true;
+		inflater.inflate(R.menu.podcast_list_context, menu);
+        
+		return true;
 	}
 
 	@Override
@@ -76,6 +77,7 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
 		((PodcastListAdapter) fragment.getListAdapter()).setCheckedPositions(
 			fragment.getListView().getCheckedItemPositions());
 		
+		// Set the context menu title
 		int checkedItemCount = fragment.getListView().getCheckedItemCount();
 		mode.setTitle(checkedItemCount == 1 ? fragment.getResources().getString(R.string.one_podcast_selected) :
 			checkedItemCount + " " + fragment.getResources().getString(R.string.podcasts_selected));

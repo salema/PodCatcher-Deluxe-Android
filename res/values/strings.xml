@@ -6,7 +6,7 @@
     <string name="stop">Stop</string>
     <string name="parse">Read</string>
     <string name="suggestions">Suggestions&#8230;</string>
-    <string name="suggested_podcasts">Suggested Podcasts</string>
+    <string name="suggested_podcasts">Suggested podcasts</string>
     <string name="all">All</string>
     <string name="english">English</string>
     <string name="german">German</string>
@@ -32,7 +32,7 @@
     <string name="at">at</string>
     <string name="of">of</string>
     <string name="error_player">Playback failed</string>
-    <string name="podcast_image">Podcast Logo</string>
+    <string name="podcast_image">Podcast logo</string>
     <string name="no_podcast">No podcast added</string>
     <string name="no_podcast_selected">No podcast selected</string>
     <string name="no_episodes">No episodes in this podcast</string>

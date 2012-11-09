@@ -178,11 +178,15 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.load)
-			if (service.isWorkingWith(episode)) onPlaybackComplete();
-			else loadEpisode();
-		
-		return item.getItemId() == R.id.load;
+		switch (item.getItemId()) {
+	    	case R.id.load:
+	    		if (service.isWorkingWith(episode)) onPlaybackComplete();
+				else loadEpisode();
+	    		
+	    		return true;
+	    	default:
+	    		return super.onOptionsItemSelected(item);
+		}
 	}
 	
 	@Override

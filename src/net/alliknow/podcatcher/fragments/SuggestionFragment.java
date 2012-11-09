@@ -155,7 +155,7 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	@Override
 	public void onDestroyView() {
 		// This is a work around to prevent to dialog
-		// from being dismissed on config change
+		// from being dismissed on configuration change
 		if (getDialog() != null && getRetainInstance())
 			getDialog().setDismissMessage(null);
 		

@@ -80,7 +80,8 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 			byte[] podcastRssFile = loadFile(podcast.getUrl());
 			
 			// Get result as a document
-			if (! background) publishProgress(PROGRESS_PARSE);
+			if (isCancelled()) return null;
+			else if (! background) publishProgress(PROGRESS_PARSE);
 			Document rssDocument = factory.newDocumentBuilder().parse(new ByteArrayInputStream(podcastRssFile));
 			
 			// Set as podcast content
