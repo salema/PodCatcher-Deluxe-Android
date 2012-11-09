@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/about_menu"
+        android:showAsAction="never|withText"
+        android:icon="@drawable/launcher"
+        android:title="@string/about" />
+</menu>

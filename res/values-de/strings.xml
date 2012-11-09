@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Simple Podcatcher</string>
+    <string name="about">Über Simple Podcatcher</string>
     <string name="connect">Verbinden</string>
     <string name="load">Laden</string>
     <string name="stop">Stop</string>

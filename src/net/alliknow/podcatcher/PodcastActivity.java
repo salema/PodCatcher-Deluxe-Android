@@ -25,7 +25,11 @@ import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.types.Episode;
 import net.alliknow.podcatcher.types.Podcast;
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 /**
  * Our main activity class. Handles configuration changes.
@@ -36,18 +40,21 @@ import android.os.Bundle;
  */
 public class PodcastActivity extends Activity implements 
 	OnSelectPodcastListener, OnLoadPodcastListener, OnSelectEpisodeListener {
-		
+	
 	/** The podcast list fragment */
 	private PodcastListFragment podcastListFragment;
 	/** The episode list fragment */
 	private EpisodeListFragment episodeListFragment;
 	/** The episode details fragment */
 	private EpisodeFragment episodeFragment;
-		
+	
+	/** The podcatcher website URL */
+	private static final String PODCATCHER_WEBSITE = "http://www.podcatcher-deluxe.com";
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	
+	    
 	    setContentView(R.layout.main);
 	    findFragments();
 	}
@@ -59,6 +66,26 @@ public class PodcastActivity extends Activity implements
 		podcastListFragment.setPodcastSelectedListener(this);
 		podcastListFragment.setPodcastLoadedListener(this);
 		episodeListFragment.setEpisodeSelectedListener(this);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.podcatcher_menu, menu);
+		
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+	        case R.id.about_menu:
+	        	Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_WEBSITE));
+	   			startActivity(intent);
+	            
+	   			return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+		}
 	}
 	
 	@Override
