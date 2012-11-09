@@ -24,7 +24,6 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 /**
  * Adapter for suggestion list.
@@ -56,12 +55,12 @@ public class SuggestionListAdapter extends PodcastListAdapter {
 		convertView = findReturnView(convertView, parent, R.layout.suggestion_list_item);
 		final Podcast suggestion = list.get(position);
 		
-		setText(convertView, R.id.suggestion_name, suggestion.getName(), position);
+		setText(convertView, R.id.suggestion_name, suggestion.getName());
 		setText(convertView, R.id.suggestion_meta,
 				getResourceString(suggestion.getLanguage()) + METADATA_SEPARATOR +
 				getResourceString(suggestion.getGenre()) + METADATA_SEPARATOR +
-				getResourceString(suggestion.getMediaType()), position);
-		setText(convertView, R.id.suggestion_description, suggestion.getDescription(), position);
+				getResourceString(suggestion.getMediaType()));
+		setText(convertView, R.id.suggestion_description, suggestion.getDescription());
 		
 		Button addButton = (Button) convertView.findViewById(R.id.add_suggestion_button);
 		addButton.setOnClickListener(new View.OnClickListener() {
@@ -74,11 +73,5 @@ public class SuggestionListAdapter extends PodcastListAdapter {
 		});
 		
 		return convertView;
-	}
-	
-	@Override
-	protected void setText(View listItem, int viewId, String text, int position) {
-		TextView textView = (TextView) listItem.findViewById(viewId);
-		textView.setText(text);
 	}
 }

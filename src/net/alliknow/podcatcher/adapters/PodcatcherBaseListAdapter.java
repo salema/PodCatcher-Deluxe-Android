@@ -20,6 +20,7 @@ import android.content.Context;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.CheckedTextView;
+import android.widget.TextView;
 
 /**
  * Abstract super class for this app's list adapters.
@@ -30,10 +31,10 @@ import android.widget.CheckedTextView;
  */
 public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
 
-	/** We need to know the selected item's position in the list */
-	protected int selectedPosition = -1;
+	/** We need to know the selected item positions in the list */
+	protected SparseBooleanArray selectedPositions = new SparseBooleanArray();
 	/** Also, there might be checked items */
-	protected SparseBooleanArray checkedPositions;
+	protected SparseBooleanArray checkedPositions = new SparseBooleanArray();
 		
 	/**
 	 * Create new adapter
@@ -49,35 +50,52 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
 	 * @param position Position selected.
 	 */
 	public void setSelectedPosition(int position) {
-		if (this.selectedPosition != position) {
-			selectedPosition = position;
+		// Only act if selection actually changed
+		if (! (selectedPositions.get(position) && selectedPositions.size() == 1)) {
+			selectedPositions.clear();
+			selectedPositions.put(position, true);
+			
 			notifyDataSetChanged();
 		}
 	}
 	
 	/**
-	 * Set the choosen items in the list.
-	 * @param positions The array denoting choosen positions.
+	 * Set the chosen items in the list.
+	 * @param positions The array denoting chosen positions.
+	 * Give <code>null</code> to reset.
 	 */
 	public void setCheckedPositions(SparseBooleanArray positions) {
-		this.checkedPositions = positions;
+		if (positions == null) checkedPositions = new SparseBooleanArray();
+		else checkedPositions = positions;
+		
 		notifyDataSetChanged();
 	}
 
 	/**
-	 * Set text and selection/choice state for a list item view element.
+	 * Set text for a list item view element.
 	 * 
 	 * @param listItem The view representing the whole list item
 	 * @param viewId View id of the child view, has to be (a subclass of) <code>TextView</code>
 	 * @param text Text to display
+	 */
+	protected void setText(View listItem, int viewId, String text) {
+		((TextView) listItem.findViewById(viewId)).setText(text);
+	}
+	
+	/**
+	 * Set text and selection/choice state for a list item view element.
+	 * 
+	 * @param listItem The view representing the whole list item
+	 * @param viewId View id of the child view, has to be (a subclass of) <code>CheckedTextView</code>
+	 * @param text Text to display
 	 * @param position Position in list
 	 */
-	protected void setText(View listItem, int viewId, String text, int position) {
+	protected void setTextAndState(View listItem, int viewId, String text, int position) {
 		CheckedTextView textView = (CheckedTextView) listItem.findViewById(viewId);
 		textView.setText(text);
-		textView.setSingleLine(position != selectedPosition);
-		
-		if (checkedPositions != null) textView.setChecked(checkedPositions.get(position));
-		textView.setSelected(position == selectedPosition);
+
+		textView.setChecked(checkedPositions.get(position));
+		textView.setSelected(selectedPositions.get(position));
+		textView.setSingleLine(! selectedPositions.get(position));
 	}
 }

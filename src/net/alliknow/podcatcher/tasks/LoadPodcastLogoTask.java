@@ -48,7 +48,8 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 			if (podcasts[0] == null || podcasts[0].getLogoUrl() == null) throw new Exception("Podcast and/or logo URL cannot be null!");
 			
 			byte[] logo = loadFile(podcasts[0].getLogoUrl());
-			return BitmapFactory.decodeByteArray(logo, 0, logo.length);
+			
+			if (! isCancelled()) return BitmapFactory.decodeByteArray(logo, 0, logo.length);
 		} catch (Exception e) {
 			failed = true;
 			Log.w(getClass().getSimpleName(), "Logo failed to load for podcast \"" + podcasts[0] + "\" with " +

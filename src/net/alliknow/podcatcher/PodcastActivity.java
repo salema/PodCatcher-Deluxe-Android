@@ -16,6 +16,8 @@
  */
 package net.alliknow.podcatcher;
 
+import java.util.ArrayList;
+
 import net.alliknow.podcatcher.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.fragments.PodcastListFragment;
@@ -34,7 +36,7 @@ import android.view.MenuItem;
 /**
  * Our main activity class. Handles configuration changes.
  * All the heavy lifting is done in fragments, that will be
- * retaining on activity restarts.
+ * retained on activity restarts.
  * 
  * @author Kevin Hausmann
  */
@@ -56,7 +58,10 @@ public class PodcastActivity extends Activity implements
 	    super.onCreate(savedInstanceState);
 	    
 	    setContentView(R.layout.main);
-	    findFragments();
+	    
+	    podcastListFragment = (PodcastListFragment) getFragmentManager().findFragmentById(R.id.podcast_list);
+		episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
+		episodeFragment = (EpisodeFragment) getFragmentManager().findFragmentById(R.id.episode);
 	}
 	
 	@Override
@@ -109,22 +114,21 @@ public class PodcastActivity extends Activity implements
 	
 	@Override
 	public void onPodcastLoaded(Podcast podcast, boolean wasBackground) {
-		episodeListFragment.setEpisodeList(podcast.getEpisodes());
+		if (! wasBackground)
+			episodeListFragment.setEpisodeList(podcast.getEpisodes());
 	}
 	
 	@Override
 	public void onPodcastLoadFailed(Podcast failedPodcast, boolean wasBackground) {
-		episodeListFragment.showError(getResources().getString(R.string.error_podcast_load));
+		if (! wasBackground) {
+			// Reset the episode list so the old one would not reappear of config changes
+			episodeListFragment.setEpisodeList(new ArrayList<Episode>());
+			episodeListFragment.showError(getResources().getString(R.string.error_podcast_load));
+		}
 	}
 
 	@Override
 	public void onEpisodeSelected(Episode selectedEpisode) {
 		episodeFragment.setEpisode(selectedEpisode);
-	}
-	
-	private void findFragments() {
-		podcastListFragment = (PodcastListFragment) getFragmentManager().findFragmentById(R.id.podcast_list);
-		episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
-		episodeFragment = (EpisodeFragment) getFragmentManager().findFragmentById(R.id.episode);
 	}
 }

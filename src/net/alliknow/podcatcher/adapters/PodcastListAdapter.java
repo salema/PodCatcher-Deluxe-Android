@@ -23,7 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Adapter class used for the list of podcasts
+ * Adapter class used for the list of podcasts.
  * 
  * @author Kevin Hausmann
  */
@@ -36,7 +36,7 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 	 * Create new adapter
 	 * 
 	 * @param context The current context
-	 * @param podcastList List of podcasts to wrap
+	 * @param podcastList List of podcasts to wrap (not <code>null</code>)
 	 */
 	public PodcastListAdapter(Context context, PodcastList podcastList) {
 		super(context);
@@ -56,25 +56,24 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 	
 	@Override
 	public long getItemId(int position) {
-		return list.get(position).getUrl().toExternalForm().hashCode();
+		return list.get(position).hashCode();
 	}
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		convertView = findReturnView(convertView, parent, R.layout.podcast_list_item);
 		
-		setText(convertView, R.id.podcast_name, list.get(position).getName(), position);
-		setText(convertView, R.id.podcast_episode_number, getEpisodeNumberText(position), position);
+		int numberOfEpisodes = list.get(position).getEpisodes().size();
+		setTextAndState(convertView, R.id.podcast_name, list.get(position).getName(), position);
+		setTextAndState(convertView, R.id.podcast_episode_number, getEpisodeNumberText(numberOfEpisodes), position);
 		
-		convertView.findViewById(R.id.podcast_episode_number).setVisibility(
-				list.get(position).getEpisodes().isEmpty() ? View.GONE : View.VISIBLE);
+		convertView.findViewById(R.id.podcast_episode_number)
+			.setVisibility(numberOfEpisodes != 0 ? View.VISIBLE : View.GONE);
 		
 		return convertView;
 	}
 
-	private String getEpisodeNumberText(int position) {
-		int numberOfEpisodes = list.get(position).getEpisodes().size(); 
-		
+	private String getEpisodeNumberText(int numberOfEpisodes) {
 		return numberOfEpisodes == 1 ? 
 				resources.getString(R.string.one_episode) :
 				numberOfEpisodes + " " + resources.getString(R.string.episodes);

@@ -25,7 +25,7 @@ import android.widget.TextView;
  * Abstract base for spinner adapters.
  * The default implementation will use simple text views and string
  * resources named ("keyed") <code>item.toString().toLowerCase()</code>.
- * (This will fail, if these resources do not exist!)
+ * (This will fail if these resources do not exist!)
  *
  * @author Kevin Hausmann
  */

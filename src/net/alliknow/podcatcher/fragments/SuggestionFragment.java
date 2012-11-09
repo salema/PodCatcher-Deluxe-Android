@@ -160,7 +160,8 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 		if (suggestionList == null || suggestionList.isEmpty()) {
 			setInitialFilterSelection();
 			
-			new LoadSuggestionsTask(this).execute((Void)null);
+			loadTask = new LoadSuggestionsTask(this);
+			loadTask.execute((Void)null);
 		} // List was loaded before
 		else {
 			restoreFilterSelection();

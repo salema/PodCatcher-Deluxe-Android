@@ -68,12 +68,15 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
 			// Get result as a document
 			if (! background) publishProgress(PROGRESS_PARSE);
 			JSONObject completeJson = new JSONObject(new String(suggestionsFile, SUGGESTIONS_FILE_ENCODING));
+			if (isCancelled()) return null;
 			
 			// Add all featured podcasts
 			addSuggestionsFromJsonArray(completeJson.getJSONArray(JSON.FEATURED), result);
+			if (isCancelled()) return null;
 			// Add all suggestions
 			addSuggestionsFromJsonArray(completeJson.getJSONArray(JSON.SUGGESTION), result);
-						
+			if (isCancelled()) return null;
+			
 			Collections.sort(result);
 		} catch (Exception e) {
 			failed = true;

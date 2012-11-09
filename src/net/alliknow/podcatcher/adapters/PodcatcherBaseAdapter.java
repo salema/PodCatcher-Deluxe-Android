@@ -74,9 +74,10 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	
 	/**
 	 * Get the resource (language-specific) string for an item.
-	 * @param item Item which <code>toString</code> method is a string resource key.
-	 * @return The string in the correct language.
-	 * @throws A runtime exception if no such resource exists.
+	 * @param item Item which <code>toString</code> method result
+	 * in lower case is a string resource key.
+	 * @return The string in the correct language. Throws
+	 * a runtime exception if no such resource exists.
 	 */
 	protected String getResourceString(Object item) {
 		return getResourceString(item.toString());
@@ -85,8 +86,8 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	/**
 	 * Get the resource (language-specific) string for the given key.
 	 * @param key Key to look up. Will be changed to lower case.
-	 * @return The string in the correct language.
-	 * @throws A runtime exception if no such resource exists.
+	 * @return The string in the correct language. Throws
+	 * a runtime exception if no such resource exists.
 	 */
 	protected String getResourceString(String key) {
 		return resources.getString(getStringIdentifier(key));
@@ -96,8 +97,8 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	 * Get the resource (language-specific) string for
 	 * item at the given position.
 	 * @param position Index to the item to get string for.
-	 * @return The string in the correct language.
-	 * @throws A runtime exception if no such resource exists.
+	 * @return The string in the correct language. Throws
+	 * a runtime exception if no such resource exists.
 	 */
 	protected String getResourceString(int position) {
 		return getResourceString(getItem(position));
@@ -106,8 +107,8 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	/**
 	 * Get the resource key (identifier) from the given string key.
 	 * @param key Key as a string (will be changed to lower case).
-	 * @return The resource identifier for this key.
-	 * @throws A runtime exception if no such resource exists.
+	 * @return The resource identifier for this key. Throws
+	 * a runtime exception if no such resource exists.
 	 */
 	protected int getStringIdentifier(String key) {
 		return resources.getIdentifier(key.toLowerCase(), STRING_DEFTYPE, packageName);

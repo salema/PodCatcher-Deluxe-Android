@@ -106,10 +106,9 @@ public class EpisodeListFragment extends ListFragment {
 		progressView.setVisibility(View.GONE);
 		showProgress = false;
 		
-		this.episodeList = list;
-		
+		episodeList = list;
 		setListAdapter(new EpisodeListAdapter(getActivity(), episodeList));
-		// TODO handle empty episode list
+		
 		if (list.isEmpty()) emptyView.setText(R.string.no_episodes);
 		else listView.setVisibility(View.VISIBLE);
 	}
