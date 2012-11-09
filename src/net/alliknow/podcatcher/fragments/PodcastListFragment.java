@@ -109,7 +109,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		
-		// Load all podcast TODO Make this a preference
+		// Load all podcasts? TODO Make this a preference
 		//for (Podcast podcast : podcastList)
 		//	if (podcast.needsReload()) new LoadPodcastTask(this, true).execute(podcast);
 		
@@ -258,7 +258,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	@Override
 	public void onPodcastLoadFailed(Podcast podcast, boolean wasBackground) {
 		// Only react if the podcast failed to load that we are actually waiting for
-		if (podcast.equals(currentPodcast) && !wasBackground) {
+		if (! wasBackground) {
 			loadPodcastTask = null;
 			
 			if (loadListener != null) loadListener.onPodcastLoadFailed(podcast, false);

@@ -127,34 +127,7 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
-		getDialog().setTitle(R.string.suggested_podcasts);
-				
-		languageFilter = (Spinner) getView().findViewById(R.id.select_language);
-		languageFilter.setAdapter(new LanguageSpinnerAdapter(getActivity()));
-		languageFilter.setOnItemSelectedListener(selectionListener);
-		
-		genreFilter = (Spinner) getView().findViewById(R.id.select_genre);
-		genreFilter.setAdapter(new GenreSpinnerAdapter(getActivity()));
-		genreFilter.setOnItemSelectedListener(selectionListener);
-		
-		mediaTypeFilter = (Spinner) getView().findViewById(R.id.select_type);
-		mediaTypeFilter.setAdapter(new MediaTypeSpinnerAdapter(getActivity()));
-		mediaTypeFilter.setOnItemSelectedListener(selectionListener);
-		
-		progressView = getView().findViewById(R.id.suggestion_list_progress);
-		progressBar = (ProgressBar) getView().findViewById(R.id.suggestion_list_progress_bar);
-		progressTextView = (TextView) getView().findViewById(R.id.suggestion_list_progress_text);
-		progressTextView.setTextColor(getResources().getColor(android.R.color.black));
-		progressTextView.setText(null);
-		
-		suggestionsListView = (ListView) view.findViewById(R.id.suggested_podcasts);
-		noSuggestionsView = (TextView) view.findViewById(R.id.no_suggestions);
-		
-		sendSuggestionView = (TextView) view.findViewById(R.id.send_suggestion);
-		sendSuggestionView.setText(Html.fromHtml("<a href=\"mailto:" + SUGGESTION_MAIL_ADDRESS +
-				"?subject=" + SUGGESTION_MAIL_SUBJECT + "\">" +
-				getResources().getString(R.string.send_suggestion) + "</a>"));
-		sendSuggestionView.setMovementMethod(LinkMovementMethod.getInstance());
+		initUi(view);
 		
 		// Suggestion list has not been loaded before
 		if (suggestionList == null || suggestionList.isEmpty()) {
@@ -181,6 +154,8 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	
 	@Override
 	public void onDestroyView() {
+		// This is a work around to prevent to dialog
+		// from being dismissed on config change
 		if (getDialog() != null && getRetainInstance())
 			getDialog().setDismissMessage(null);
 		
@@ -244,18 +219,6 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 		restoreFilterSelection();
 	}
 	
-	private void storeFilterSelection() {
-		languageFilterSelection = languageFilter.getSelectedItemPosition();
-		genreFilterSelection = genreFilter.getSelectedItemPosition();
-		mediaTypeFilterSelection = mediaTypeFilter.getSelectedItemPosition();
-	}
-	
-	private void restoreFilterSelection() {
-		languageFilter.setSelection(languageFilterSelection);
-		genreFilter.setSelection(genreFilterSelection);
-		mediaTypeFilter.setSelection(mediaTypeFilterSelection);
-	}
-		
 	private void updateList() {
 		if (suggestionList != null && !suggestionList.isEmpty()) {
 			PodcastList filteredSuggestionList = new PodcastList();
@@ -283,5 +246,48 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 			((Genre)genreFilter.getSelectedItem()).equals(suggestion.getGenre())) &&
 			(mediaTypeFilter.getSelectedItemPosition() == 0 || 
 			((MediaType)mediaTypeFilter.getSelectedItem()).equals(suggestion.getMediaType()));
+	}
+	
+	private void storeFilterSelection() {
+		languageFilterSelection = languageFilter.getSelectedItemPosition();
+		genreFilterSelection = genreFilter.getSelectedItemPosition();
+		mediaTypeFilterSelection = mediaTypeFilter.getSelectedItemPosition();
+	}
+	
+	private void restoreFilterSelection() {
+		languageFilter.setSelection(languageFilterSelection);
+		genreFilter.setSelection(genreFilterSelection);
+		mediaTypeFilter.setSelection(mediaTypeFilterSelection);
+	}
+		
+	private void initUi(View view) {
+		getDialog().setTitle(R.string.suggested_podcasts);
+				
+		languageFilter = (Spinner) getView().findViewById(R.id.select_language);
+		languageFilter.setAdapter(new LanguageSpinnerAdapter(getActivity()));
+		languageFilter.setOnItemSelectedListener(selectionListener);
+		
+		genreFilter = (Spinner) getView().findViewById(R.id.select_genre);
+		genreFilter.setAdapter(new GenreSpinnerAdapter(getActivity()));
+		genreFilter.setOnItemSelectedListener(selectionListener);
+		
+		mediaTypeFilter = (Spinner) getView().findViewById(R.id.select_type);
+		mediaTypeFilter.setAdapter(new MediaTypeSpinnerAdapter(getActivity()));
+		mediaTypeFilter.setOnItemSelectedListener(selectionListener);
+		
+		progressView = getView().findViewById(R.id.suggestion_list_progress);
+		progressBar = (ProgressBar) getView().findViewById(R.id.suggestion_list_progress_bar);
+		progressTextView = (TextView) getView().findViewById(R.id.suggestion_list_progress_text);
+		progressTextView.setTextColor(getResources().getColor(android.R.color.black));
+		progressTextView.setText(null);
+		
+		suggestionsListView = (ListView) view.findViewById(R.id.suggested_podcasts);
+		noSuggestionsView = (TextView) view.findViewById(R.id.no_suggestions);
+		
+		sendSuggestionView = (TextView) view.findViewById(R.id.send_suggestion);
+		sendSuggestionView.setText(Html.fromHtml("<a href=\"mailto:" + SUGGESTION_MAIL_ADDRESS +
+				"?subject=" + SUGGESTION_MAIL_SUBJECT + "\">" +
+				getResources().getString(R.string.send_suggestion) + "</a>"));
+		sendSuggestionView.setMovementMethod(LinkMovementMethod.getInstance());
 	}
 }

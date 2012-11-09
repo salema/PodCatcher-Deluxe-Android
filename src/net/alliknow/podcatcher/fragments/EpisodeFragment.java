@@ -82,7 +82,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 	private Timer playUpdateTimer = new Timer();
 	/** Play update timer task */
 	private TimerTask playUpdateTimerTask;
-		
+	/** The actual task to regularly update the UI on playback */
 	private class PlayProgressTask extends TimerTask {
 
 		@Override
@@ -124,7 +124,6 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 		episodeTitleView = (TextView) getView().findViewById(R.id.episode_title);
 		podcastTitleView = (TextView) getView().findViewById(R.id.podcast_title);
 		episodeDetailView = (WebView) getView().findViewById(R.id.episode_description);
-		//episodeDetailView.getSettings().setTextZoom(R.dimen.default_font_size));
 		
 		playerDividerView = getView().findViewById(R.id.player_divider);
 		playerTitleView = (TextView) getView().findViewById(R.id.player_title);
@@ -218,10 +217,6 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		        
-        // Make sure the service is stopped on destroy of this fragment
-		// TODO Do we actually want this??? (playback will stop on back button press)
-        //getActivity().stopService(new Intent(getActivity(), PlayEpisodeService.class));
 		
 		playUpdateTimer.cancel();
 	}
@@ -266,9 +261,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 
 	@Override
 	public void onResumeFromBuffering() {
-		updatePlayer();
-		
-		startPlayProgressTimer();
+		onReadyToPlay();
 	}
 	
 	@Override

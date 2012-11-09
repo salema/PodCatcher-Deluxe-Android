@@ -29,8 +29,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -62,6 +60,8 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 	private ProgressBar progressView;
 	/** The error text view */
 	private TextView errorView;
+	/** The show suggestions button */
+	private Button showSuggestionsButton;
 	/** The add podcast button */
 	private Button addPodcastButton;
 	
@@ -77,42 +77,31 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 		getDialog().setTitle(R.string.add_podcast);
 		
 		podcastUrlEditText = (EditText) view.findViewById(R.id.podcast_url);
-		podcastUrlEditText.addTextChangedListener(new TextWatcher() {
-			
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				updateButtonEnablement();
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,	int after) {}
-
-			@Override
-			public void afterTextChanged(Editable s) {}
-		});
 		podcastUrlEditText.setOnEditorActionListener(new OnEditorActionListener() {
 			
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				boolean handled = false;
-		        
-				if (actionId == EditorInfo.IME_ACTION_GO) {
-		            addPodcast();
-		            handled = true;
-		        }
-		        
-		        return handled;
+				switch (actionId) {
+			        case EditorInfo.IME_ACTION_GO:
+			        	addPodcast();
+			            
+			   			return true;
+			        default:
+			            return false;
+				}
 			}
 		});
 		
 		progressView = (ProgressBar) view.findViewById(R.id.add_podcast_progress);
 		errorView = (TextView) view.findViewById(R.id.add_podcast_error);
 		
-		((Button) view.findViewById(R.id.add_suggestions_button)).setOnClickListener(new View.OnClickListener() {
+		showSuggestionsButton = (Button) view.findViewById(R.id.add_suggestions_button);
+		showSuggestionsButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				dismiss();
+				
 				if (listener != null) listener.showSuggestions();
 			}
 		});
@@ -127,7 +116,6 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 		});
 	
 		checkClipboardForPodcastUrl();
-		updateButtonEnablement();
 	}
 	
 	@Override
@@ -148,6 +136,7 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 	
 	private void addPodcast() {
 		podcastUrlEditText.setEnabled(false);
+		addPodcastButton.setEnabled(false);
 		progressView.setVisibility(View.VISIBLE);
 		errorView.setVisibility(View.GONE);
 		
@@ -156,9 +145,7 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 			spec = "http://" + spec;
 			podcastUrlEditText.setText(spec);
 		}
-		// Need to do this here because text might have changed above
-		addPodcastButton.setEnabled(false);
-		
+				
 		try {
 			loadTask = new LoadPodcastTask(this);
 			loadTask.execute(new Podcast(null, new URL(spec)));
@@ -177,7 +164,8 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 
 	@Override
 	public void onPodcastLoaded(Podcast podcast, boolean wasBackground) {
-		if (! podcast.getEpisodes().isEmpty()) {
+		if (podcast.getEpisodes().isEmpty()) onPodcastLoadFailed(podcast, wasBackground);
+		else {
 			dismiss();
 			
 			if (listener != null) listener.addPodcast(podcast);
@@ -187,8 +175,8 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 			progressView.setVisibility(View.GONE);
 			podcastUrlEditText.setText(null);
 			podcastUrlEditText.setEnabled(true);
-			updateButtonEnablement();
-		} else onPodcastLoadFailed(podcast, false);
+			addPodcastButton.setEnabled(true);
+		}
 	}
 
 	@Override
@@ -196,11 +184,7 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 		progressView.setVisibility(View.GONE);
 		errorView.setVisibility(View.VISIBLE);
 		podcastUrlEditText.setEnabled(true);
-		updateButtonEnablement();
-	}
-	
-	private void updateButtonEnablement() {
-		addPodcastButton.setEnabled(isValidPodcastUrl(podcastUrlEditText.getText()));
+		addPodcastButton.setEnabled(true);
 	}
 	
 	private void checkClipboardForPodcastUrl() {
