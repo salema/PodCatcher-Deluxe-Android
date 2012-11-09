@@ -90,6 +90,27 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	/** The send a suggestion view */
 	private TextView sendSuggestionView;
 	
+	/** Caches for filter selection */
+	private int languageFilterSelection;
+	private int genreFilterSelection;
+	private int mediaTypeFilterSelection;
+	
+	/** The listener to update the list on filter change */
+	private OnItemSelectedListener selectionListener = new OnItemSelectedListener() {
+
+		@Override
+		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+			updateList();
+			storeFilterSelection();
+		}
+
+		@Override
+		public void onNothingSelected(AdapterView<?> parent) {
+			updateList();
+			storeFilterSelection();
+		}
+	};
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -108,19 +129,6 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		getDialog().setTitle(R.string.suggested_podcasts);
 				
-		OnItemSelectedListener selectionListener = new OnItemSelectedListener() {
-
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				fillList();
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-				fillList();
-			}
-		};
-		
 		languageFilter = (Spinner) getView().findViewById(R.id.select_language);
 		languageFilter.setAdapter(new LanguageSpinnerAdapter(getActivity()));
 		languageFilter.setOnItemSelectedListener(selectionListener);
@@ -132,8 +140,6 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 		mediaTypeFilter = (Spinner) getView().findViewById(R.id.select_type);
 		mediaTypeFilter.setAdapter(new MediaTypeSpinnerAdapter(getActivity()));
 		mediaTypeFilter.setOnItemSelectedListener(selectionListener);
-		
-		setInitialFilterSelection();
 		
 		progressView = getView().findViewById(R.id.suggestion_list_progress);
 		progressBar = (ProgressBar) getView().findViewById(R.id.suggestion_list_progress_bar);
@@ -151,10 +157,14 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 		sendSuggestionView.setMovementMethod(LinkMovementMethod.getInstance());
 		
 		// Suggestion list has not been loaded before
-		if (suggestionList == null || suggestionList.isEmpty()) new LoadSuggestionsTask(this).execute((Void)null);
-		// List was loaded before
+		if (suggestionList == null || suggestionList.isEmpty()) {
+			setInitialFilterSelection();
+			
+			new LoadSuggestionsTask(this).execute((Void)null);
+		} // List was loaded before
 		else {
-			fillList();
+			restoreFilterSelection();
+			updateList();
 			
 			progressView.setVisibility(View.GONE);
 			suggestionsListView.setVisibility(View.VISIBLE);
@@ -209,7 +219,7 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	@Override
 	public void onSuggestionsLoaded(PodcastList suggestions) {
 		suggestionList = suggestions;
-		fillList();
+		updateList();
 				
 		progressView.setVisibility(View.GONE);
 		suggestionsListView.setVisibility(View.VISIBLE);
@@ -225,13 +235,27 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	
 	private void setInitialFilterSelection() {
 		Locale current = getActivity().getResources().getConfiguration().locale;
-		languageFilter.setSelection(current.getLanguage().equalsIgnoreCase("de") ? 2 : 1);
+		languageFilterSelection = current.getLanguage().equalsIgnoreCase("de") ? 2 : 1;
 		
-		genreFilter.setSelection(0);
-		mediaTypeFilter.setSelection(1);
+		genreFilterSelection = 0;
+		mediaTypeFilterSelection = 1;
+		
+		restoreFilterSelection();
+	}
+	
+	private void storeFilterSelection() {
+		languageFilterSelection = languageFilter.getSelectedItemPosition();
+		genreFilterSelection = genreFilter.getSelectedItemPosition();
+		mediaTypeFilterSelection = mediaTypeFilter.getSelectedItemPosition();
+	}
+	
+	private void restoreFilterSelection() {
+		languageFilter.setSelection(languageFilterSelection);
+		genreFilter.setSelection(genreFilterSelection);
+		mediaTypeFilter.setSelection(mediaTypeFilterSelection);
 	}
 		
-	private void fillList() {
+	private void updateList() {
 		if (suggestionList != null && !suggestionList.isEmpty()) {
 			PodcastList filteredSuggestionList = new PodcastList();
 			

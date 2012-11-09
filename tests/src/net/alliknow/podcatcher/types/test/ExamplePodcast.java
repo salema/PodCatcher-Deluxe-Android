@@ -15,7 +15,8 @@ public enum ExamplePodcast {
 	NERDIST("http://nerdist.libsyn.com/rss"),
 	INTUNE("http://downloads.bbc.co.uk/podcasts/radio3/r3intune/rss.xml"),
 	RICHEISEN("http://richeisen.libsyn.com/rss"),
-	GEO("http://www.geo.de/GEOaudio/index.xml");
+	GEO("http://www.geo.de/GEOaudio/index.xml"),
+	UHHYEAHDUDE("http://feeds.feedburner.com/UhhYeahDude/podcast");
 		
 	private String url;
 	
