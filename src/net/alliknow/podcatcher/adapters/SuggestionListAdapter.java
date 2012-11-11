@@ -62,17 +62,17 @@ public class SuggestionListAdapter extends PodcastListAdapter {
 				getResourceString(suggestion.getMediaType()));
 		setText(convertView, R.id.suggestion_description, suggestion.getDescription());
 		
-		Button addButton = (Button) convertView.findViewById(R.id.add_suggestion_button);
+		final Button addButton = (Button) convertView.findViewById(R.id.add_suggestion_button);
 		addButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View view) {
 				listener.addPodcast(suggestion);
 				
-				view.setEnabled(false);
-				view.setBackgroundDrawable(null);
-				((Button)view).setText(null);
-				((Button)view).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_checkmark_light, 0);
+				addButton.setEnabled(false);
+				addButton.setBackgroundDrawable(null);
+				addButton.setText(null);
+				addButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_checkmark_light, 0);
 			}
 		});
 		
