@@ -68,7 +68,11 @@ public class SuggestionListAdapter extends PodcastListAdapter {
 			@Override
 			public void onClick(View view) {
 				listener.addPodcast(suggestion);
+				
 				view.setEnabled(false);
+				view.setBackgroundDrawable(null);
+				((Button)view).setText(null);
+				((Button)view).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_checkmark_light, 0);
 			}
 		});
 		

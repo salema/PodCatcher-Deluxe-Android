@@ -1,4 +1,5 @@
 Register to open URL
 Use animations: http://developer.android.com/training/animation/layout.html
-Reflect add suggestion more clearly in the UI
+Reflect add suggestion more clearly in the UI (Done, test this!)
+Is a suggestions removed from the list on addition and rotation?
 Use SplitActionbar ?
