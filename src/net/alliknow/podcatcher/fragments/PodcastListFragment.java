@@ -210,6 +210,14 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	}
 	
 	/**
+	 * Check whether there is a podcast currently selected in the list.
+	 * @return <code>true</code> if so, <code>false</code> otherwise. 
+	 */
+	public boolean isPodcastSelected() {
+		return currentPodcast != null;
+	}
+	
+	/**
 	 * Removes the podcast selected in context mode.
 	 */
 	public void removeCheckedPodcasts() {
@@ -289,9 +297,5 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	
 	private void updateRemoveMenuItem() {
 		removeMenuItem.setVisible(currentPodcast != null);
-	}
-
-	public boolean isPodcastSelected() {
-		return currentPodcast != null;
 	}
 }

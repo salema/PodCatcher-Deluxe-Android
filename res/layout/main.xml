@@ -11,9 +11,9 @@
         android:layout_weight="2" />
     <View
         android:id="@+id/first_divider"
-        android:layout_width="2dp"
+        android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@android:color/darker_gray" />
+        android:background="@color/divider_off" />
     <fragment
         android:id="@+id/episode_list"
         android:name="net.alliknow.podcatcher.fragments.EpisodeListFragment"
@@ -22,9 +22,9 @@
         android:layout_weight="3" />
     <View 
         android:id="@+id/second_divider"
-        android:layout_width="2dp"
+        android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@android:color/darker_gray" />
+        android:background="@color/divider_off" />
     <fragment
         android:id="@+id/episode"
         android:name="net.alliknow.podcatcher.fragments.EpisodeFragment"

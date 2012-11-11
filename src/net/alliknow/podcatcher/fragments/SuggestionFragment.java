@@ -205,7 +205,7 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	public void onSuggestionsLoadFailed() {
 		progressBar.setVisibility(View.GONE);
 		
-		progressTextView.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+		progressTextView.setTextColor(getResources().getColor(R.color.text_error));
 		progressTextView.setText(R.string.error_suggestions_load);
 	}
 	
@@ -278,7 +278,7 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 		progressView = getView().findViewById(R.id.suggestion_list_progress);
 		progressBar = (ProgressBar) getView().findViewById(R.id.suggestion_list_progress_bar);
 		progressTextView = (TextView) getView().findViewById(R.id.suggestion_list_progress_text);
-		progressTextView.setTextColor(getResources().getColor(android.R.color.black));
+		progressTextView.setTextColor(getResources().getColor(R.color.text_default));
 		progressTextView.setText(null);
 		
 		suggestionsListView = (ListView) view.findViewById(R.id.suggested_podcasts);

@@ -10,7 +10,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="@string/no_episode_selected"
-        android:textColor="@android:color/darker_gray"
+        android:textColor="@color/text_secondary"
         android:textSize="@dimen/small_font_size" />
     <TextView
         android:id="@+id/episode_title"
@@ -49,7 +49,7 @@
         android:gravity="center"
         android:padding="3dp"
         android:text="@string/error_player"
-        android:textColor="@android:color/holo_red_dark"
+        android:textColor="@color/text_error"
         android:visibility="gone" />
     <LinearLayout
         android:id="@+id/player"
@@ -90,7 +90,7 @@
             android:gravity="center"
             android:paddingRight="32dp"
             android:text="@string/pause"
-            android:textColor="@color/button_label"
+            android:textColor="@drawable/button_label"
             android:textSize="@dimen/default_font_size" />
     </LinearLayout>
 </LinearLayout>

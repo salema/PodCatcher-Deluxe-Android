@@ -16,7 +16,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="@string/no_podcast"
-        android:textColor="@android:color/darker_gray"
+        android:textColor="@color/text_secondary"
         android:textSize="@dimen/small_font_size" />
     <ImageView
         android:layout_width="match_parent"

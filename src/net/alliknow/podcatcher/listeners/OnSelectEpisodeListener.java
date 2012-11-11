@@ -28,4 +28,9 @@ public interface OnSelectEpisodeListener {
 	 * @param selectedEpisode Episode selected by the user
 	 */
 	public void onEpisodeSelected(Episode selectedEpisode);
+
+	/**
+	 * Called on listener to reflect that no episode is selected anymore.
+	 */
+	public void onNoEpisodeSelected();
 }

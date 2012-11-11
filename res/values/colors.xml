@@ -1,0 +1,12 @@
+<resources>
+    <color name="transparent">@android:color/transparent</color>
+    <color name="theme_light">@android:color/holo_orange_light</color>
+    <color name="theme_dark">@android:color/holo_orange_dark</color>
+    <color name="button_label_enabled">@android:color/white</color>
+    <color name="button_label_disabled">@android:color/darker_gray</color>
+    <color name="text_default">@android:color/black</color>
+    <color name="text_error">@android:color/holo_red_dark</color>
+    <color name="text_secondary">@android:color/darker_gray</color>
+    <color name="divider_off">@android:color/darker_gray</color>
+    <color name="divider_on">@color/theme_dark</color>
+</resources>

@@ -66,8 +66,8 @@ public class PodcastActivity extends Activity implements
 		episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
 		episodeFragment = (EpisodeFragment) getFragmentManager().findFragmentById(R.id.episode);
 		
-		if (podcastListFragment.isPodcastSelected()) switchBackground(R.id.first_divider, true);
-		if (episodeListFragment.isEpisodeSelected()) switchBackground(R.id.second_divider, true);
+		switchBackground(R.id.first_divider, podcastListFragment.isPodcastSelected());
+		switchBackground(R.id.second_divider, episodeListFragment.isEpisodeSelected());
 	}
 	
 	@Override
@@ -117,6 +117,7 @@ public class PodcastActivity extends Activity implements
 	@Override
 	public void onNoPodcastSelected() {
 		switchBackground(R.id.first_divider, false);
+		episodeListFragment.reset();
 	}
 	
 	@Override
@@ -135,7 +136,7 @@ public class PodcastActivity extends Activity implements
 		if (! wasBackground) {
 			// Reset the episode list so the old one would not reappear of config changes
 			episodeListFragment.setEpisodeList(new ArrayList<Episode>());
-			episodeListFragment.showError(getResources().getString(R.string.error_podcast_load));
+			episodeListFragment.showLoadFailed();
 		}
 	}
 
@@ -145,10 +146,15 @@ public class PodcastActivity extends Activity implements
 		episodeFragment.setEpisode(selectedEpisode);
 	}
 	
+	@Override
+	public void onNoEpisodeSelected() {
+		switchBackground(R.id.second_divider, false);
+	}
+	
 	private void switchBackground(int viewId, boolean color) {
-		if (getWindow() == null || getWindow().findViewById(viewId) == null) return;
-		
-		View divider = getWindow().findViewById(viewId);
-		divider.setBackgroundResource(color ? android.R.color.holo_orange_dark : android.R.color.darker_gray);
+		if (getWindow() != null && getWindow().findViewById(viewId) != null) {
+			View divider = getWindow().findViewById(viewId);
+			divider.setBackgroundResource(color ? R.color.divider_on : R.color.divider_off);
+		}
 	}
 }

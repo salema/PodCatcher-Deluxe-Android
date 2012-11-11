@@ -18,6 +18,7 @@ package net.alliknow.podcatcher.fragments;
 
 import java.util.List;
 
+import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
@@ -54,7 +55,9 @@ public class EpisodeListFragment extends ListFragment {
 	/** The progress bar text */
 	private TextView progressTextView;
 	
+	/** Caches for internal state */
 	private boolean showProgress = false;
+	private boolean showLoadFailed = false;
 	
 	/** The activity we are in (listens to user selection) */ 
     private OnSelectEpisodeListener selectedListener;
@@ -83,6 +86,7 @@ public class EpisodeListFragment extends ListFragment {
 		progressTextView = (TextView) getView().findViewById(R.id.episode_list_progress_text);
 		
 		if (showProgress) clearAndSpin();
+		else if (showLoadFailed) showLoadFailed();
 	}
 	
 	@Override
@@ -92,6 +96,14 @@ public class EpisodeListFragment extends ListFragment {
 		
 		if (selectedListener != null) selectedListener.onEpisodeSelected(selectedEpisode);
 		else Log.d(getClass().getSimpleName(), "Episode selected, but no listener attached");
+	}
+	
+	/**
+	 * Check whether there is an episode currently selected in the list.
+	 * @return <code>true</code> if so, <code>false</code> otherwise. 
+	 */
+	public boolean isEpisodeSelected() {
+		return selectedEpisode != null;
 	}
 	
 	/**
@@ -108,12 +120,39 @@ public class EpisodeListFragment extends ListFragment {
 	public void setEpisodeList(List<Episode> list) {
 		progressView.setVisibility(View.GONE);
 		showProgress = false;
+		showLoadFailed = false;
 		
+		// Reset internal variables
+		selectedEpisode = null;
+		if (selectedListener != null) selectedListener.onNoEpisodeSelected();
+		// Set new list
 		episodeList = list;
 		setListAdapter(new EpisodeListAdapter(getActivity(), episodeList));
 		
-		if (list.isEmpty()) emptyView.setText(R.string.no_episodes);
+		// Update UI 
+		if (list.isEmpty()) {
+			emptyView.setText(R.string.no_episodes);
+			emptyView.setTextColor(getResources().getColor(R.color.text_secondary));
+		}
 		else listView.setVisibility(View.VISIBLE);
+	}
+	
+	/**
+	 * Reset the UI to initial state
+	 */
+	public void reset() {
+		progressView.setVisibility(View.GONE);
+		listView.setVisibility(View.GONE);
+		
+		emptyView.setText(R.string.no_podcast_selected);
+		emptyView.setTextColor(getResources().getColor(R.color.text_secondary));
+		emptyView.setVisibility(View.VISIBLE);
+		
+		showProgress = false;
+		showLoadFailed = false;
+		
+		selectedEpisode = null;
+		episodeList = null;
 	}
 
 	/**
@@ -121,11 +160,13 @@ public class EpisodeListFragment extends ListFragment {
 	 */
 	public void clearAndSpin() {
 		showProgress = true;
+		showLoadFailed = false;
+		
 		progressTextView.setText(null);
 		listView.setVisibility(View.GONE);
 		emptyView.setVisibility(View.GONE);
 				
-		//if (! Podcatcher.isInDebugMode(getActivity()))
+		if (! Podcatcher.isInDebugMode(getActivity()))
 			progressView.setVisibility(View.VISIBLE);
 	}
 	
@@ -146,19 +187,16 @@ public class EpisodeListFragment extends ListFragment {
 
 	/**
 	 * Show error view
-	 * @param string Error message to show
 	 */
-	public void showError(String message) {
+	public void showLoadFailed() {
 		showProgress = false;
+		showLoadFailed = true;
+		
 		progressView.setVisibility(View.GONE);
 		listView.setVisibility(View.GONE);
 		
-		emptyView.setText(message);
-		emptyView.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+		emptyView.setText(R.string.error_podcast_load);
+		emptyView.setTextColor(getResources().getColor(R.color.text_error));
 		emptyView.setVisibility(View.VISIBLE);	
-	}
-
-	public boolean isEpisodeSelected() {
-		return selectedEpisode != null;
 	}
 }
