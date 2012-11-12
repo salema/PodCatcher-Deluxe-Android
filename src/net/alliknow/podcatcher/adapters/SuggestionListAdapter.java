@@ -51,18 +51,18 @@ public class SuggestionListAdapter extends PodcastListAdapter {
 	}
 	
 	@Override
-	public View getView(final int position, View convertView, ViewGroup parent) {
-		convertView = findReturnView(convertView, parent, R.layout.suggestion_list_item);
+	public View getView(final int position, View itemView, ViewGroup parent) {
+		itemView = inflater.inflate(R.layout.suggestion_list_item, parent, false);
 		final Podcast suggestion = list.get(position);
 		
-		setText(convertView, R.id.suggestion_name, suggestion.getName());
-		setText(convertView, R.id.suggestion_meta,
+		setText(itemView, R.id.suggestion_name, suggestion.getName());
+		setText(itemView, R.id.suggestion_meta,
 				getResourceString(suggestion.getLanguage()) + METADATA_SEPARATOR +
 				getResourceString(suggestion.getGenre()) + METADATA_SEPARATOR +
 				getResourceString(suggestion.getMediaType()));
-		setText(convertView, R.id.suggestion_description, suggestion.getDescription());
+		setText(itemView, R.id.suggestion_description, suggestion.getDescription());
 		
-		final Button addButton = (Button) convertView.findViewById(R.id.add_suggestion_button);
+		final Button addButton = (Button) itemView.findViewById(R.id.add_suggestion_button);
 		addButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -76,6 +76,6 @@ public class SuggestionListAdapter extends PodcastListAdapter {
 			}
 		});
 		
-		return convertView;
+		return itemView;
 	}
 }

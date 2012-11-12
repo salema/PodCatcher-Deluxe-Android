@@ -91,17 +91,17 @@ public class Podcast implements Comparable<Podcast> {
 	 * @param opmlOutline The outline node
 	 */
 	public Podcast(Node opmlOutline) {
-		if (opmlOutline != null) {
+		try {
 			this.name = opmlOutline.getAttributes().getNamedItem(OPML.TEXT).getNodeValue();
 			
 			if (name.equals("null")) this.name = null;
 			else this.name = Html.fromHtml(name).toString();
 			
-			try {
-				this.url = new URL(opmlOutline.getAttributes().getNamedItem(OPML.XMLURL).getNodeValue());
-			} catch (MalformedURLException e) {
-				Log.d(getClass().getSimpleName(), "Created podcast with bad URL: " + name);
-			}
+			this.url = new URL(opmlOutline.getAttributes().getNamedItem(OPML.XMLURL).getNodeValue());
+		} catch (MalformedURLException e) {
+			Log.d(getClass().getSimpleName(), "Created podcast with bad URL: " + name);
+		} catch (RuntimeException e) {
+			// pass
 		}
 	}
 
@@ -242,11 +242,23 @@ public class Podcast implements Comparable<Podcast> {
 	/**
 	 * Create an OPML outline from this podcast.
 	 * @return The OPML XML outline as a string.
+	 * If the podcast does not at least have a valid name
+	 * and a non-<code>null</code> URL, this will return
+	 * <code>null</code> and you should skip this podcast.
 	 */
 	public String toOpmlString() {
-		return "<" + OPML.OUTLINE  + " " + OPML.TEXT + "=\"" + TextUtils.htmlEncode(name) + "\" " +
+		if (! hasNameAndUrl()) return null;
+		else return "<" + OPML.OUTLINE  + " " + OPML.TEXT + "=\"" + TextUtils.htmlEncode(name) + "\" " +
 				OPML.TYPE + "=\"" + OPML.RSS_TYPE + "\" " +
 				OPML.XMLURL + "=\"" + url + "\"/>";
+	}
+
+	/**
+	 * @return Whether this podcast has an non-empty name
+	 * and an URL.
+	 */
+	public boolean hasNameAndUrl() {
+		return name != null && name.length() > 0 && url != null;
 	}
 
 	@Override
@@ -274,7 +286,8 @@ public class Podcast implements Comparable<Podcast> {
 
 	@Override
 	public int compareTo(Podcast another) {
-		return getName().compareTo(another.getName());
+		if (name == null || another == null || another.getName() == null) return 0;
+		else return getName().compareToIgnoreCase(another.getName());
 	}
 	
 	private void loadName() {

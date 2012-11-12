@@ -119,7 +119,7 @@ public class Episode implements Comparable<Episode> {
 
 	@Override
 	public int compareTo(Episode another) {
-		if (pubDate == null || another.getPubDate() == null) return 0;
+		if (pubDate == null || another == null || another.getPubDate() == null) return 0;
 		else return pubDate.compareTo(another.getPubDate());
 	}
 	
@@ -167,7 +167,7 @@ public class Episode implements Comparable<Episode> {
 			DateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
 			return formatter.parse(attributeValue);
 		} catch (ParseException e) {
-			Log.e(getClass().getSimpleName(), "Episode has invalid publication date", e);
+			Log.d(getClass().getSimpleName(), "Episode has invalid publication date", e);
 		}
 		
 		return null;

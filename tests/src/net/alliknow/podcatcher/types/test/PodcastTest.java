@@ -130,23 +130,4 @@ public class PodcastTest {
 			assertTrue(! podcast.needsReload());
 		}
 	}
-	
-	@Test
-	public final void testOpmlString() {
-		for (ExamplePodcast ep : ExamplePodcast.values()) {
-			Podcast podcast = new Podcast(ep.getFunnyName(), ep.getURL());
-			assertTrue(podcast.toOpmlString().contains(podcast.getName()));
-			assertTrue(podcast.toOpmlString().contains(podcast.getUrl().toExternalForm()));
-		//	assertEquals(podcast, new Podcast(podcast.toOpmlString()));
-		}
-		
-//		// TODO Test for all null podcasts to be recreated correctly 
-//		//Podcast podcast = new Podcast((String)null);
-//		assertNotNull(podcast.toOpmlString());
-//		assertEquals(podcast, new Podcast(podcast.toOpmlString()));
-//				
-//		podcast = new Podcast((Node)null);
-//		assertNotNull(podcast.toOpmlString());
-//		assertEquals(podcast, new Podcast(podcast.toOpmlString()));
-	}
 }

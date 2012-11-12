@@ -69,9 +69,9 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
 		convertView = findReturnView(convertView, parent, R.layout.episode_list_item);
 		
 		setTextAndState(convertView, R.id.episode_name, list.get(position).getName(), position);
-		setTextAndState(convertView, R.id.episode_date, 
-				formatter.format(list.get(position).getPubDate()), position);	
-		
+		if (list.get(position).getPubDate() == null) setTextAndState(convertView, R.id.episode_date, "---", position);
+		else setTextAndState(convertView, R.id.episode_date, formatter.format(list.get(position).getPubDate()), position);	
+				
 		return convertView;
 	}
 }

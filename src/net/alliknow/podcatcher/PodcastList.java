@@ -52,13 +52,25 @@ public class PodcastList extends ArrayList<Podcast> {
 	/** Content of OPML file title tag */
 	private static final String OPML_TITLE = "Simple Podcatcher Podcast file";
 	
+	@Override
+	public boolean add(Podcast podcast) {
+		if (podcast.hasNameAndUrl()) super.add(podcast);
+		
+		return true;
+	}
+	
+	@Override
+	public void add(int index, Podcast podcast) {
+		if (podcast.hasNameAndUrl()) super.add(index, podcast);
+	}
+	
 	/**
 	 * Load the podcast list from its default location.
 	 * @param context Context to use for loading the podcast list.
 	 */
 	public void load(Context context) {
 		//this is just for testing
-		if (Podcatcher.isInDebugMode(context)) writeDummy(context);
+		//if (Podcatcher.isInDebugMode(context)) writeDummy(context);
 		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -92,7 +104,10 @@ public class PodcastList extends ArrayList<Podcast> {
 			writer.write("</head>");
 			writer.write("<body>");
 			
-			for (Podcast podcast : this) writer.write(podcast.toOpmlString());
+			for (Podcast podcast : this) {
+				String opmlString = podcast.toOpmlString();
+				if (opmlString != null) writer.write(opmlString);
+			}
 			
 			writer.write("</body></opml>");
 			writer.close();
@@ -114,8 +129,9 @@ public class PodcastList extends ArrayList<Podcast> {
 			writer.write("<outline text=\"Radiolab\" xmlUrl=\"http://feeds.wnyc.org/radiolab\" type=\"rss\"/>");
 			writer.write("<outline text=\"Linux' Outlaws\" xmlUrl=\"http://feeds.feedburner.com/linuxoutlaws\" type=\"rss\"/>");
 			writer.write("<outline text=\"GEO\" type=\"rss\" xmlUrl=\"http://www.geo.de/GEOaudio/index.xml\"/>");
-			writer.write("<outline text=\"Mäuse\" xmlUrl=\"http://podcast.wdr.de/maus.ml\"/>");
-			writer.write("<outline text=\"Dude\" xmlUrl=\"http://feeds.feedburner.com/UhhYeahDude\"/>");
+			writer.write("<outline text=\"Mäuse\" xmlUrl=\"http://podcast.wdr.de/maus.xml\"/>");
+			writer.write("<outline text=\"D&uuml;de\" xmlUrl=\"http://feeds.feedburner.com/UhhYeahDude\"/>");
+			writer.write("<outline text=\"null\" xmlUrl=\"http/feeds.feedburner.com/UhhYeahDude\"/>");
 			writer.write("</body></opml>");
 			writer.close();
 			
@@ -125,7 +141,7 @@ public class PodcastList extends ArrayList<Podcast> {
 		}
 	}
 	
-	private BufferedWriter getPodcastFileWriter(Context context) throws FileNotFoundException,	UnsupportedEncodingException {
+	private BufferedWriter getPodcastFileWriter(Context context) throws FileNotFoundException, UnsupportedEncodingException {
 		FileOutputStream fos = context.openFileOutput(OPML_FILENAME, Context.MODE_PRIVATE);
 		
 		return new BufferedWriter(new OutputStreamWriter(fos, OPML_FILE_ENCODING));

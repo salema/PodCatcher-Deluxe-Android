@@ -16,7 +16,8 @@ public enum ExamplePodcast {
 	INTUNE("http://downloads.bbc.co.uk/podcasts/radio3/r3intune/rss.xml"),
 	RICHEISEN("http://richeisen.libsyn.com/rss"),
 	GEO("http://www.geo.de/GEOaudio/index.xml"),
-	UHHYEAHDUDE("http://feeds.feedburner.com/UhhYeahDude/podcast");
+	UHHYEAHDUDE("http://feeds.feedburner.com/UhhYeahDude/podcast"),
+	WTF("http://www.wtfpod.com/podcast/rss");
 		
 	private String url;
 	

@@ -192,6 +192,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 					
 		// Prepare UI
 		adapter.setSelectedPosition(podcastList.indexOf(selectedPodcast));
+		scrollListView(podcastList.indexOf(selectedPodcast));
 		logoView.setImageResource(R.drawable.default_podcast_logo);
 		updateRemoveMenuItem();
 		
@@ -297,5 +298,10 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	
 	private void updateRemoveMenuItem() {
 		removeMenuItem.setVisible(currentPodcast != null);
+	}
+	
+	private void scrollListView(int position) {
+		if (getListView().getFirstVisiblePosition() > position || getListView().getLastVisiblePosition() < position)
+				getListView().setSelectionFromTop(position, 0);
 	}
 }

@@ -18,7 +18,6 @@ package net.alliknow.podcatcher.fragments;
 
 import java.util.List;
 
-import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
@@ -166,7 +165,7 @@ public class EpisodeListFragment extends ListFragment {
 		listView.setVisibility(View.GONE);
 		emptyView.setVisibility(View.GONE);
 				
-		if (! Podcatcher.isInDebugMode(getActivity()))
+		//if (! Podcatcher.isInDebugMode(getActivity()))
 			progressView.setVisibility(View.VISIBLE);
 	}
 	

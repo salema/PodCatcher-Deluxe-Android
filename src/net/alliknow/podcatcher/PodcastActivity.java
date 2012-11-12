@@ -51,8 +51,6 @@ public class PodcastActivity extends Activity implements
 	/** The episode details fragment */
 	private EpisodeFragment episodeFragment;
 	
-	private View firstDivider;
-	
 	/** The podcatcher website URL */
 	private static final String PODCATCHER_WEBSITE = "http://www.podcatcher-deluxe.com";
 	
