@@ -15,8 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
- */
--->
+ */-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -93,11 +92,10 @@
             android:singleLine="true"
             android:textSize="@dimen/default_font_size"
             android:visibility="gone" />
-        <ProgressBar
+        <SeekBar
             android:id="@+id/player_seekbar"
-            style="@android:style/Widget.ProgressBar.Horizontal"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/seekbar"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="2dp"
             android:layout_marginTop="2dp" />
         <Button

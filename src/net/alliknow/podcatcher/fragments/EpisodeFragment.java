@@ -44,7 +44,8 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
-import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 /**
@@ -52,7 +53,7 @@ import android.widget.TextView;
  * 
  * @author Kevin Hausmann
  */
-public class EpisodeFragment extends Fragment implements PlayServiceListener {
+public class EpisodeFragment extends Fragment implements PlayServiceListener, OnSeekBarChangeListener {
 
 	/** The load episode menu bar item */
 	private MenuItem loadMenuItem;
@@ -69,7 +70,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 	/** The player view */
 	private View playerView;
 	/** The player seek bar */
-	private ProgressBar playerSeekBar;
+	private SeekBar playerSeekBar;
 	/** The play/pause button */
 	private Button playerButton;
 		
@@ -77,6 +78,8 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 	private Episode episode;
 	/** Play service */
 	private PlayEpisodeService service;
+	/** Whether a seek is currently active */
+	private boolean seeking = false;
 		
 	/** Play update timer task */
 	private Timer playUpdateTimer = new Timer();
@@ -128,7 +131,8 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 		playerDividerView = getView().findViewById(R.id.player_divider);
 		playerTitleView = (TextView) getView().findViewById(R.id.player_title);
 		playerView = view.findViewById(R.id.player);
-		playerSeekBar = (ProgressBar) view.findViewById(R.id.player_seekbar);
+		playerSeekBar = (SeekBar) view.findViewById(R.id.player_seekbar);
+		playerSeekBar.setOnSeekBarChangeListener(this);
 		playerButton = (Button) view.findViewById(R.id.player_button);
 		playerButton.setOnClickListener(new OnClickListener() {
 			
@@ -253,6 +257,26 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 	public void onReadyToPlay() {
 		updatePlayer();
 		
+		if (! seeking) startPlayProgressTimer();
+	}
+	
+	@Override
+	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+		if (fromUser) {
+			service.seekTo(progress);
+			updatePlayerButton();
+		}
+	}
+
+	@Override
+	public void onStartTrackingTouch(SeekBar seekBar) {
+		seeking = true;
+		stopPlayProgressTimer();
+	}
+
+	@Override
+	public void onStopTrackingTouch(SeekBar seekBar) {
+		seeking = false;
 		startPlayProgressTimer();
 	}
 	
@@ -349,12 +373,12 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 	}
 	
 	private void updatePlayerSeekBar() {
-		playerSeekBar.setIndeterminate(service.isBuffering());
+		playerSeekBar.setEnabled(! service.isPreparing());
 		
 		if (service.isPrepared()) {
 			playerSeekBar.setMax(service.getDuration());
 			playerSeekBar.setProgress(service.getCurrentPosition());
-		}
+		} else playerSeekBar.setProgress(0);
 	}
 
 	private void updatePlayerButton() {

@@ -20,8 +20,8 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 
 import android.os.AsyncTask;
 
@@ -59,9 +59,16 @@ abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Params, Inte
 	 * @throws IOException If something goes wrong
 	 */
 	protected byte[] loadFile(URL remote) throws IOException {
-		URLConnection connection = remote.openConnection();
+		HttpURLConnection connection = (HttpURLConnection) remote.openConnection();
 		connection.setConnectTimeout(CONNECT_TIMEOUT);
 		connection.setReadTimeout(READ_TIMEOUT);
+		// We do not want gzipped data, because we want to measure progress
+		if (! background) connection.setRequestProperty("Accept-Encoding", "identity");
+		
+		// TODO allow for password protected feeds 
+		// String userpass = username + ":" + password;
+		// String basicAuth = "Basic " + DatatypeCon.encode(userpass.getBytes()));
+		// connection.setRequestProperty ("Authorization", basicAuth);
 		
 		InputStream in = null;
 		ByteArrayOutputStream result = null;
@@ -94,6 +101,8 @@ abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Params, Inte
 			// Close the streams
 			if (in != null) in.close();
 			if (result != null) result.close();
+			// Disconnect
+			connection.disconnect();
 		}
 	}
 }

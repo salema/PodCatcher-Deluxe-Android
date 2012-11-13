@@ -187,6 +187,14 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	}
 	
 	/**
+	 * Seek player to given location in media file.
+	 * @param seconds Seconds from the start to seek to.
+	 */
+	public void seekTo(int seconds) {
+		if (isPrepared()) player.seekTo(seconds * 1000);
+	}
+	
+	/**
 	 * @return Whether the service is currently preparing,
 	 * i.e. buffering data and will start playing asap
 	 */
