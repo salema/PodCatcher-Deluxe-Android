@@ -57,8 +57,6 @@ public class Podcast implements Comparable<Podcast> {
 	private Genre genre;
 	/** Podcast media type */
 	private MediaType mediaType;
-	/** XML document representing the RSS file */
-	private Document podcastRssFile;
 	/** The podcasts list of episodes */
 	private List<Episode> episodes = new ArrayList<Episode>();
 	/** The podcast's image (logo) location */
@@ -215,13 +213,12 @@ public class Podcast implements Comparable<Podcast> {
 	public void setRssFile(Document rssFile) {
 		episodes.clear();
 		
-		podcastRssFile = rssFile;
 		updated = new Date();
 		encoding = rssFile.getInputEncoding();
 		
-		if (name == null) loadName();
-		loadMetadata();
-		loadEpisodes();
+		if (name == null) loadName(rssFile);
+		loadMetadata(rssFile);
+		loadEpisodes(rssFile);
 	}
 	
 	/**
@@ -290,13 +287,13 @@ public class Podcast implements Comparable<Podcast> {
 		else return getName().compareToIgnoreCase(another.getName());
 	}
 	
-	private void loadName() {
+	private void loadName(Document podcastRssFile) {
 		NodeList titleNodes = podcastRssFile.getElementsByTagName(RSS.TITLE);
 		
 		if (titleNodes.getLength() > 0) name = titleNodes.item(0).getTextContent();
 	}
 	
-	private void loadMetadata() {
+	private void loadMetadata(Document podcastRssFile) {
 		NodeList imageNodes = podcastRssFile.getElementsByTagNameNS("*", RSS.IMAGE);
 		
 		// image tag used?
@@ -317,7 +314,7 @@ public class Podcast implements Comparable<Podcast> {
 		}
 	}
 	
-	private void loadEpisodes() {
+	private void loadEpisodes(Document podcastRssFile) {
 		NodeList episodeNodes = podcastRssFile.getElementsByTagName(RSS.ITEM);
 		
 		for (int episodeIndex = 0; episodeIndex < episodeNodes.getLength(); episodeIndex++) {
