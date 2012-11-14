@@ -16,6 +16,8 @@
  */
 package net.alliknow.podcatcher.adapters;
 
+import java.util.Locale;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
@@ -111,6 +113,6 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	 * a runtime exception if no such resource exists.
 	 */
 	protected int getStringIdentifier(String key) {
-		return resources.getIdentifier(key.toLowerCase(), STRING_DEFTYPE, packageName);
+		return resources.getIdentifier(key.toLowerCase(Locale.US), STRING_DEFTYPE, packageName);
 	}
 }

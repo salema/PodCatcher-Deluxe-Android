@@ -3,3 +3,4 @@ Use animations: http://developer.android.com/training/animation/layout.html
 Use SplitActionbar?
 Check memory limit we might reach (http://developer.android.com/training/displaying-bitmaps/index.html)
 Read specifics about Android's http url connection: http://developer.android.com/reference/java/net/HttpURLConnection.html
+Add an AppWidget: http://developer.android.com/guide/topics/appwidgets

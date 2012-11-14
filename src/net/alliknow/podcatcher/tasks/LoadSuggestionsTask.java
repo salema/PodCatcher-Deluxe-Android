@@ -18,6 +18,7 @@ package net.alliknow.podcatcher.tasks;
 
 import java.net.URL;
 import java.util.Collections;
+import java.util.Locale;
 
 import net.alliknow.podcatcher.PodcastList;
 import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
@@ -134,9 +135,9 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
 		try {
 			suggestion = new Podcast(json.getString(JSON.TITLE), new URL(json.getString(JSON.URL)));
 			suggestion.setDescription(json.getString(JSON.DESCRIPTION).trim());
-			suggestion.setLanguage(Language.valueOf(json.getString(JSON.LANGUAGE).toUpperCase().trim()));
-			suggestion.setMediaType(MediaType.valueOf(json.getString(JSON.TYPE).toUpperCase().trim()));
-			suggestion.setGenre(Genre.valueOf(json.getString(JSON.CATEGORY).toUpperCase().trim()));
+			suggestion.setLanguage(Language.valueOf(json.getString(JSON.LANGUAGE).toUpperCase(Locale.US).trim()));
+			suggestion.setMediaType(MediaType.valueOf(json.getString(JSON.TYPE).toUpperCase(Locale.US).trim()));
+			suggestion.setGenre(Genre.valueOf(json.getString(JSON.CATEGORY).toUpperCase(Locale.US).trim()));
 		} catch (Exception e) {
 			return null;
 		}
