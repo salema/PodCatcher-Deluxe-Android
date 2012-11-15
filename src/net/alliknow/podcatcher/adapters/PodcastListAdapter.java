@@ -32,6 +32,10 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 	/** The list our data resides in */
 	protected PodcastList list;
 
+	/** String resources used */
+	protected final String oneEpisode;
+	protected final String episodes;
+	
 	/**
 	 * Create new adapter
 	 * 
@@ -42,6 +46,8 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 		super(context);
 		
 		this.list = podcastList;
+		oneEpisode = context.getResources().getString(R.string.one_episode);
+		episodes = context.getResources().getString(R.string.episodes);
 	}
 	
 	@Override
@@ -74,8 +80,6 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 	}
 
 	private String getEpisodeNumberText(int numberOfEpisodes) {
-		return numberOfEpisodes == 1 ? 
-				resources.getString(R.string.one_episode) :
-				numberOfEpisodes + " " + resources.getString(R.string.episodes);
+		return numberOfEpisodes == 1 ? oneEpisode :	numberOfEpisodes + " " + episodes;
 	}
 }

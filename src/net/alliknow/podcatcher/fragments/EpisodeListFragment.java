@@ -16,6 +16,8 @@
  */
 package net.alliknow.podcatcher.fragments;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.alliknow.podcatcher.R;
@@ -117,6 +119,29 @@ public class EpisodeListFragment extends ListFragment {
 	 * @param list List of episodes to display
 	 */
 	public void setEpisodeList(List<Episode> list) {
+		episodeList = list;
+		setListAdapter(new EpisodeListAdapter(getActivity(), episodeList));
+		
+		processNewEpisodes();
+	}
+	
+	/**
+	 * Add the episode list to the currenty displayed episodes
+	 * and update the UI accordingly
+	 * @param list List of episode to add.
+	 */
+	public void addEpisodeList(List<Episode> list) {
+		if (episodeList == null) episodeList = new ArrayList<Episode>();
+		
+		// TODO decide on this: episodeList.addAll(list.subList(0, list.size() > 100 ? 100 : list.size() - 1));
+		episodeList.addAll(list);
+		Collections.sort(episodeList);
+		setListAdapter(new EpisodeListAdapter(getActivity(), episodeList, true));
+		
+		processNewEpisodes();
+	}
+	
+	private void processNewEpisodes() {
 		progressView.setVisibility(View.GONE);
 		showProgress = false;
 		showLoadFailed = false;
@@ -124,12 +149,9 @@ public class EpisodeListFragment extends ListFragment {
 		// Reset internal variables
 		selectedEpisode = null;
 		if (selectedListener != null) selectedListener.onNoEpisodeSelected();
-		// Set new list
-		episodeList = list;
-		setListAdapter(new EpisodeListAdapter(getActivity(), episodeList));
 		
 		// Update UI 
-		if (list.isEmpty()) {
+		if (episodeList.isEmpty()) {
 			emptyView.setText(R.string.no_episodes);
 			emptyView.setTextColor(getResources().getColor(R.color.text_secondary));
 		}

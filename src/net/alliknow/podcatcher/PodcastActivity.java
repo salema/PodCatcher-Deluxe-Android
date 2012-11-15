@@ -51,6 +51,8 @@ public class PodcastActivity extends Activity implements
 	/** The episode details fragment */
 	private EpisodeFragment episodeFragment;
 	
+	private boolean multiplePodcastsMode = false;
+	
 	/** The podcatcher website URL */
 	private static final String PODCATCHER_WEBSITE = "http://www.podcatcher-deluxe.com";
 	
@@ -108,12 +110,25 @@ public class PodcastActivity extends Activity implements
 
 	@Override
 	public void onPodcastSelected(Podcast podcast) {
+		multiplePodcastsMode = false;
+		
 		switchBackground(R.id.first_divider, true);
 		episodeListFragment.clearAndSpin();
 	}
 	
 	@Override
+	public void onAllPodcastsSelected() {
+		multiplePodcastsMode = true;
+		
+		switchBackground(R.id.first_divider, true);
+		episodeListFragment.reset();
+		episodeListFragment.clearAndSpin();
+	}
+	
+	@Override
 	public void onNoPodcastSelected() {
+		multiplePodcastsMode = false;
+		
 		switchBackground(R.id.first_divider, false);
 		episodeListFragment.reset();
 	}
@@ -125,8 +140,8 @@ public class PodcastActivity extends Activity implements
 	
 	@Override
 	public void onPodcastLoaded(Podcast podcast, boolean wasBackground) {
-		if (! wasBackground)
-			episodeListFragment.setEpisodeList(podcast.getEpisodes());
+		if (! wasBackground) episodeListFragment.setEpisodeList(podcast.getEpisodes());
+		else if (multiplePodcastsMode) episodeListFragment.addEpisodeList(podcast.getEpisodes());
 	}
 	
 	@Override

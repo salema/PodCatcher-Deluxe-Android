@@ -70,7 +70,7 @@ public class PodcastList extends ArrayList<Podcast> {
 	 */
 	public void load(Context context) {
 		//this is just for testing
-		//if (Podcatcher.isInDebugMode(context)) writeDummy(context);
+		if (Podcatcher.isInDebugMode(context)) writeDummy(context);
 		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -131,7 +131,7 @@ public class PodcastList extends ArrayList<Podcast> {
 			writer.write("<outline text=\"GEO\" type=\"rss\" xmlUrl=\"http://www.geo.de/GEOaudio/index.xml\"/>");
 			writer.write("<outline text=\"Mäuse\" xmlUrl=\"http://podcast.wdr.de/maus.xml\"/>");
 			writer.write("<outline text=\"D&uuml;de\" xmlUrl=\"http://feeds.feedburner.com/UhhYeahDude\"/>");
-			writer.write("<outline text=\"null\" xmlUrl=\"http/feeds.feedburner.com/UhhYeahDude\"/>");
+			writer.write("<outline text=\"neo\" xmlUrl=\"http://www.zdf.de/ZDFmediathek/podcast/1446344?view=podcast\"/>");
 			writer.write("</body></opml>");
 			writer.close();
 			

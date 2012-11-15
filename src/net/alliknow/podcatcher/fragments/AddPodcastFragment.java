@@ -49,10 +49,8 @@ import android.widget.TextView.OnEditorActionListener;
  */
 public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastListener {
 
-	/** The add podcast listener */
-	private OnAddPodcastListener listener;
 	/** The podcast load task */
-	private LoadPodcastTask loadTask;
+	protected LoadPodcastTask loadTask;
 	
 	/** The podcast URL text field */
 	private EditText podcastUrlEditText;
@@ -102,7 +100,10 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 			public void onClick(View v) {
 				dismiss();
 				
+				OnAddPodcastListener listener = (OnAddPodcastListener) getTargetFragment();
+				
 				if (listener != null) listener.showSuggestions();
+				else Log.d(getClass().getSimpleName(), "Suggestions requested, but no listener attached");
 			}
 		});
 		
@@ -123,15 +124,6 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 		super.onDismiss(dialog);
 		
 		if (loadTask != null) loadTask.cancel(true);
-	}
-	
-	/**
-	 * Add a listener to be notified if a new podcast was selected and loaded.
-	 * Overwrites any current listener.
-	 * @param listener The listener
-	 */
-	public void setAddPodcastListener(OnAddPodcastListener listener) {
-		this.listener = listener;
 	}
 	
 	private void addPodcast() {
@@ -168,14 +160,10 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 		else {
 			dismiss();
 			
+			OnAddPodcastListener listener = (OnAddPodcastListener) getTargetFragment();
+			
 			if (listener != null) listener.addPodcast(podcast);
 			else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
-			
-			errorView.setVisibility(View.GONE);
-			progressView.setVisibility(View.GONE);
-			podcastUrlEditText.setText(null);
-			podcastUrlEditText.setEnabled(true);
-			addPodcastButton.setEnabled(true);
 		}
 	}
 
@@ -193,12 +181,7 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 		if (clipboard.hasPrimaryClip()) {
 			CharSequence candidate = clipboard.getPrimaryClip().getItemAt(0).getText();
 			
-			if (isValidPodcastUrl(candidate)) podcastUrlEditText.setText(candidate);
+			if (URLUtil.isNetworkUrl(candidate.toString())) podcastUrlEditText.setText(candidate);
 		}
-	}
-	
-	private boolean isValidPodcastUrl(CharSequence candidate) {
-		return URLUtil.isNetworkUrl(candidate.toString()) ||
-				(candidate.length() > 5 && candidate.toString().contains("."));
 	}
 }

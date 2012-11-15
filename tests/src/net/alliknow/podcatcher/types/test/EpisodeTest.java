@@ -80,12 +80,12 @@ public class EpisodeTest {
 	}
 	
 	@Test
-	public final void testGetPodcast() {
+	public final void testGetPodcastName() {
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
 			podcast.setRssFile(Utils.loadRssFile(podcast));
 			for (Episode episode : podcast.getEpisodes()) {
-				assertEquals(episode.getPodcast(), podcast);
+				assertEquals(episode.getPodcastName(), podcast.getName());
 			}
 		}
 	}

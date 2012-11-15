@@ -25,7 +25,6 @@ import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
 import net.alliknow.podcatcher.types.Episode;
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
@@ -169,17 +168,11 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 		
 		// Make sure the service runs as long as this fragment exists
     	getActivity().startService(new Intent(getActivity(), PlayEpisodeService.class));
+    	// Attach to play service via this fragment's activity
+    	Intent intent = new Intent(getActivity(), PlayEpisodeService.class);
+    	getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);  
 	}
-	
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
 		
-		// Attach to play service via this fragment's activity
-		Intent intent = new Intent(getActivity(), PlayEpisodeService.class);
-    	activity.bindService(intent, connection, Context.BIND_AUTO_CREATE);    	
-	}
-	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -241,7 +234,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 			
 			episodeTitleView.setVisibility(View.VISIBLE);
 			episodeTitleView.setText(episode.getName());
-			podcastTitleView.setText(episode.getPodcast().getName());
+			podcastTitleView.setText(episode.getPodcastName());
 			podcastTitleView.setVisibility(View.VISIBLE);
 			getView().findViewById(R.id.episode_divider).setVisibility(View.VISIBLE);
 							
@@ -350,6 +343,8 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 	}
 	
 	private void updateLoadMenuItem() {
+		if (loadMenuItem == null) return;
+		
 		loadMenuItem.setVisible(episode != null && service != null);
 		
 		if (loadMenuItem.isVisible()) {
@@ -375,10 +370,15 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 	private void updatePlayerSeekBar() {
 		playerSeekBar.setEnabled(! service.isPreparing());
 		
+		// We are running and might advance progress
 		if (service.isPrepared()) {
 			playerSeekBar.setMax(service.getDuration());
 			playerSeekBar.setProgress(service.getCurrentPosition());
-		} else playerSeekBar.setProgress(0);
+		} // Reset progress
+		else {
+			playerSeekBar.setProgress(0);
+			playerSeekBar.setSecondaryProgress(0);
+		}
 	}
 
 	private void updatePlayerButton() {

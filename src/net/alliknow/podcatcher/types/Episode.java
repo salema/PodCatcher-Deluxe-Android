@@ -42,8 +42,8 @@ public class Episode implements Comparable<Episode> {
 	private String name;
 	/** The episode's online location */
 	private URL mediaUrl;
-	/** The podcast this episode is part of */
-	private Podcast podcast;
+	/** The podcast's name */
+	private String podcastName;
 	/** The episode's release date */
 	private Date pubDate;
 	/** The episode's description */
@@ -54,7 +54,7 @@ public class Episode implements Comparable<Episode> {
 	 * @param episodeNodes XML document nodes representing this episode
 	 */
 	public Episode(Podcast podcast, NodeList episodeNodes) {
-		this.podcast = podcast;
+		this.podcastName = podcast.getName();
 		
 		if (episodeNodes != null && episodeNodes.getLength() > 0)
 			readData(episodeNodes);
@@ -75,10 +75,10 @@ public class Episode implements Comparable<Episode> {
 	}
 	
 	/**
-	 * @return The owning podcast
+	 * @return The owning podcast's name
 	 */
-	public Podcast getPodcast() {
-		return podcast;
+	public String getPodcastName() {
+		return podcastName;
 	}
 	
 	/**
@@ -120,7 +120,7 @@ public class Episode implements Comparable<Episode> {
 	@Override
 	public int compareTo(Episode another) {
 		if (pubDate == null || another == null || another.getPubDate() == null) return 0;
-		else return pubDate.compareTo(another.getPubDate());
+		else return -1 * pubDate.compareTo(another.getPubDate());
 	}
 	
 	private void readData(NodeList episodeNodes) {

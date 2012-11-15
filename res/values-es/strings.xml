@@ -64,6 +64,7 @@
     <string name="add_podcast_button">Añadir</string>
     <string name="remove">Eliminar</string>
     <string name="remove_podcast">Eliminar podcast</string>
+    <string name="select_all_podcasts">Seleccionar todos podcasts</string>
     <string name="enter_podcast_url_here">Insertar URL del podcast</string>
     <string name="error_podcast_add">El podcast no se pudo cargar.</string>
     <string name="error_podcast_load">El podcast no se pudo cargar. Comprueba la URL y asegúrate de que estás conectado.</string>

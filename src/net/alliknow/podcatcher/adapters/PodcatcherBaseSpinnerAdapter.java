@@ -43,7 +43,7 @@ public abstract class PodcatcherBaseSpinnerAdapter extends PodcatcherBaseAdapter
 	public View getView(int position, View convertView, ViewGroup parent) {
 		TextView result = (TextView) findReturnView(convertView, parent, android.R.layout.simple_spinner_item);
 		
-		result.setText(getResourceString(position));
+		result.setText(getResourceString(result.getResources(), position));
 		return result;
 	}
 

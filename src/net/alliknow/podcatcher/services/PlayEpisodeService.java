@@ -241,7 +241,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	 */
 	public String getCurrentEpisodePodcastName() {
 		if (currentEpisode == null) return null;
-		else return currentEpisode.getPodcast().getName();
+		else return currentEpisode.getPodcastName();
 	}
 	
 	/**
@@ -377,7 +377,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 			.setTicker(currentEpisode.getName())
 			.setSmallIcon(R.drawable.launcher)
 			.setContentTitle(currentEpisode.getName())
-			.setContentText(currentEpisode.getPodcast().getName())
+			.setContentText(currentEpisode.getPodcastName())
 			.setContentInfo(getResources().getString(R.string.app_name))
 			.setOngoing(true).getNotification();
 			

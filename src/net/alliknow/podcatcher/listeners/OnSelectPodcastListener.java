@@ -30,6 +30,8 @@ public interface OnSelectPodcastListener {
 	 */
 	public void onPodcastSelected(Podcast selectedPodcast);
 	
+	public void onAllPodcastsSelected();
+	
 	/**
 	 * Called on listener to reflect that no podcast is selected anymore.
 	 */

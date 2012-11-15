@@ -21,6 +21,7 @@ import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
 import net.alliknow.podcatcher.types.Podcast;
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -33,7 +34,7 @@ import android.widget.Button;
 public class SuggestionListAdapter extends PodcastListAdapter {
 	
 	/** Owner for button call backs */
-	protected OnAddPodcastListener listener;
+	protected final OnAddPodcastListener listener;
 	/** Separator for meta data in the UI */
 	private static final String METADATA_SEPARATOR = " ● ";
 	
@@ -52,14 +53,14 @@ public class SuggestionListAdapter extends PodcastListAdapter {
 	
 	@Override
 	public View getView(final int position, View itemView, ViewGroup parent) {
-		itemView = inflater.inflate(R.layout.suggestion_list_item, parent, false);
+		itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.suggestion_list_item, parent, false);
 		final Podcast suggestion = list.get(position);
 		
 		setText(itemView, R.id.suggestion_name, suggestion.getName());
 		setText(itemView, R.id.suggestion_meta,
-				getResourceString(suggestion.getLanguage()) + METADATA_SEPARATOR +
-				getResourceString(suggestion.getGenre()) + METADATA_SEPARATOR +
-				getResourceString(suggestion.getMediaType()));
+				getResourceString(itemView.getResources(), suggestion.getLanguage()) + METADATA_SEPARATOR +
+				getResourceString(itemView.getResources(), suggestion.getGenre()) + METADATA_SEPARATOR +
+				getResourceString(itemView.getResources(), suggestion.getMediaType()));
 		setText(itemView, R.id.suggestion_description, suggestion.getDescription());
 		
 		final Button addButton = (Button) itemView.findViewById(R.id.add_suggestion_button);

@@ -24,6 +24,10 @@
         android:showAsAction="always|withText"
         android:title="@string/add_podcast"/>
     <item
+        android:id="@+id/select_all_podcasts_button"
+        android:showAsAction="never|withText"
+        android:title="@string/select_all_podcasts"/>
+    <item
         android:id="@+id/remove_podcast_button"
         android:icon="@drawable/ic_menu_delete"
         android:showAsAction="never|withText"

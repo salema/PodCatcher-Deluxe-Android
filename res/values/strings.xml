@@ -64,6 +64,7 @@
     <string name="add_podcast_button">Add</string>
     <string name="remove">Remove</string>
     <string name="remove_podcast">Remove podcast</string>
+    <string name="select_all_podcasts">Select all podcasts</string>
     <string name="enter_podcast_url_here">Copy podcast address here</string>
     <string name="error_podcast_add">New podcast failed to load.</string>
     <string name="error_podcast_load">Cannot load podcast, please make sure you are online!</string>

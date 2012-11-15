@@ -33,13 +33,20 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 	/** Owner */
 	private final OnLoadPodcastLogoListener loader;
 	
+	/** Dimensions we decode the logo image file to (saves memory in places) */
+	protected final int requestedWidth;
+	protected final int requestedHeight;
+	
 	/**
 	 * Create new task
 	 * @param fragment Owner fragment
 	 */
-	public LoadPodcastLogoTask(OnLoadPodcastLogoListener fragment) {
+	public LoadPodcastLogoTask(OnLoadPodcastLogoListener fragment, int requestedWidth, int requestedHeight) {
 		this.loader = fragment;
 		this.background = true;
+		
+		this.requestedWidth = requestedWidth;
+		this.requestedHeight = requestedHeight;
 	}
 	
 	@Override
@@ -49,7 +56,7 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 			
 			byte[] logo = loadFile(podcasts[0].getLogoUrl());
 			
-			if (! isCancelled()) return BitmapFactory.decodeByteArray(logo, 0, logo.length);
+			if (! isCancelled()) return decodeAndSampleBitmap(logo);
 		} catch (Exception e) {
 			failed = true;
 			Log.w(getClass().getSimpleName(), "Logo failed to load for podcast \"" + podcasts[0] + "\" with " +
@@ -70,5 +77,35 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 			if (loader != null) loader.onPodcastLogoLoaded(result);
 			else Log.d(getClass().getSimpleName(), "Podcast logo loaded, but no listener attached");
 		}
+	}
+	
+	protected Bitmap decodeAndSampleBitmap(byte[] data) {
+	    // First decode with inJustDecodeBounds=true to check dimensions
+	    final BitmapFactory.Options options = new BitmapFactory.Options();
+	    options.inJustDecodeBounds = true;
+	    BitmapFactory.decodeByteArray(data, 0, data.length, options);
+
+	    // Calculate inSampleSize
+	    options.inSampleSize = calculateInSampleSize(options);
+
+	    // Decode bitmap with inSampleSize set
+	    options.inJustDecodeBounds = false;
+	    return BitmapFactory.decodeByteArray(data, 0, data.length, options);
+	}
+	
+	protected int calculateInSampleSize(BitmapFactory.Options options) {
+	    // Raw height and width of image
+	    final int height = options.outHeight;
+	    final int width = options.outWidth;
+	    int inSampleSize = 1;
+	
+	    if (height > requestedHeight || width > requestedWidth) {
+	        if (width > height) {
+	            inSampleSize = Math.round((float)height / (float)requestedHeight);
+	        } else {
+	            inSampleSize = Math.round((float)width / (float)requestedWidth);
+	        }
+	    }
+	    return inSampleSize;
 	}
 }

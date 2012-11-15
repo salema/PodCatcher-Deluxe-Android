@@ -34,6 +34,8 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
 
 	/** The list our data resides in */
 	protected List<Episode> list;
+	/** Whether the podcast name should be shown */
+	protected boolean showPodcastName = false;
 	/** Formatter to use for the episode date */
 	protected final DateFormat formatter = DateFormat.getDateInstance(DateFormat.LONG);
 	
@@ -44,9 +46,21 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
 	 * @param episodeList The list of episodes to show in list
 	 */
 	public EpisodeListAdapter(Context context, List<Episode> episodeList) {
+		this(context, episodeList, false);
+	}
+	
+	/**
+	 * Create new adapter
+	 * 
+	 * @param context The activity
+	 * @param episodeList The list of episodes to show in list
+	 * @param showPodcastName Whether the podcast name should be shown next to the date
+	 */
+	public EpisodeListAdapter(Context context, List<Episode> episodeList, boolean showPodcastName) {
 		super(context);
 		
 		this.list = episodeList;
+		this.showPodcastName = showPodcastName;
 	}
 	
 	@Override
@@ -69,9 +83,15 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
 		convertView = findReturnView(convertView, parent, R.layout.episode_list_item);
 		
 		setTextAndState(convertView, R.id.episode_name, list.get(position).getName(), position);
-		if (list.get(position).getPubDate() == null) setTextAndState(convertView, R.id.episode_date, "---", position);
-		else setTextAndState(convertView, R.id.episode_date, formatter.format(list.get(position).getPubDate()), position);	
+		setTextAndState(convertView, R.id.episode_date, createDateText(list.get(position)), position);
 				
 		return convertView;
+	}
+
+	private String createDateText(Episode episode) {
+		if (episode.getPubDate() == null && !showPodcastName) return "---";
+		else if (episode.getPubDate() == null && showPodcastName) return episode.getPodcastName();
+		else if (showPodcastName) return formatter.format(episode.getPubDate()) + " - " + episode.getPodcastName();
+		else return formatter.format(episode.getPubDate());
 	}
 }

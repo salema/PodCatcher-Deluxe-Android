@@ -34,9 +34,9 @@ import android.widget.BaseAdapter;
 public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	
 	/** Our context's resources */
-	protected Resources resources;
+	//protected Resources resources;
 	/** Inflater for new views */
-	protected LayoutInflater inflater;
+	//protected LayoutInflater inflater;
 	/** We need to know our package name to retrieve identifiers */
 	protected String packageName;
 
@@ -48,8 +48,8 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	 * @param context The current context
 	 */
 	public PodcatcherBaseAdapter(Context context) {
-		this.resources = context.getResources();
-		this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		//this.resources = context.getResources();
+		//this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.packageName = context.getPackageName();
 	}
 	
@@ -69,50 +69,54 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	protected View findReturnView(View convertView, ViewGroup parent, int inflateId) {
 		// Can we recycle the convert view?
 		// No:
-		if (convertView == null) return inflater.inflate(inflateId, parent, false);
+		if (convertView == null) return LayoutInflater.from(parent.getContext()).inflate(inflateId, parent, false);
 		// Yes:
 		else return convertView;
 	}
 	
 	/**
 	 * Get the resource (language-specific) string for an item.
+	 * @param resources Resources to use.
 	 * @param item Item which <code>toString</code> method result
 	 * in lower case is a string resource key.
 	 * @return The string in the correct language. Throws
 	 * a runtime exception if no such resource exists.
 	 */
-	protected String getResourceString(Object item) {
-		return getResourceString(item.toString());
+	protected String getResourceString(Resources resources, Object item) {
+		return getResourceString(resources, item.toString());
 	}
 	
 	/**
 	 * Get the resource (language-specific) string for the given key.
+	 * @param resources Resources to use.
 	 * @param key Key to look up. Will be changed to lower case.
 	 * @return The string in the correct language. Throws
 	 * a runtime exception if no such resource exists.
 	 */
-	protected String getResourceString(String key) {
-		return resources.getString(getStringIdentifier(key));
+	protected String getResourceString(Resources resources, String key) {
+		return resources.getString(getStringIdentifier(resources, key));
 	}
 	
 	/**
 	 * Get the resource (language-specific) string for
 	 * item at the given position.
+	 * @param resources Resources to use.
 	 * @param position Index to the item to get string for.
 	 * @return The string in the correct language. Throws
 	 * a runtime exception if no such resource exists.
 	 */
-	protected String getResourceString(int position) {
-		return getResourceString(getItem(position));
+	protected String getResourceString(Resources resources, int position) {
+		return getResourceString(resources, getItem(position));
 	}
 
 	/**
 	 * Get the resource key (identifier) from the given string key.
+	 * @param resources Resources to use.
 	 * @param key Key as a string (will be changed to lower case).
 	 * @return The resource identifier for this key. Throws
 	 * a runtime exception if no such resource exists.
 	 */
-	protected int getStringIdentifier(String key) {
+	protected int getStringIdentifier(Resources resources, String key) {
 		return resources.getIdentifier(key.toLowerCase(Locale.US), STRING_DEFTYPE, packageName);
 	}
 }

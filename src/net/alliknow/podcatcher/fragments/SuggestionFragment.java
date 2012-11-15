@@ -62,15 +62,11 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	/** Subject for mail with new suggestions */
 	private static final String SUGGESTION_MAIL_SUBJECT = "A proposal for a podcast suggestion in the PodCatcher apps";
 	
-	/** The add podcast listener */
-	private OnAddPodcastListener listener;
 	/** The suggestions load task */
 	private LoadSuggestionsTask loadTask;
 	/** The list of suggestions */
 	private PodcastList suggestionList;
-	/** The list of podcasts already added */
-	private PodcastList podcastList;
-	
+		
 	/** The language filter */
 	private Spinner languageFilter;
 	/** The genre filter */
@@ -112,13 +108,6 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	};
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		setRetainInstance(true);
-	}
-	
-	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
@@ -128,6 +117,9 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		initUi(view);
+		
+		PodcastListFragment podcastListFragment = (PodcastListFragment) getTargetFragment();
+		suggestionList = podcastListFragment.getPodcastSuggestions();
 		
 		// Suggestion list has not been loaded before
 		if (suggestionList == null || suggestionList.isEmpty()) {
@@ -153,34 +145,6 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	}
 	
 	@Override
-	public void onDestroyView() {
-		// This is a work around to prevent to dialog
-		// from being dismissed on configuration change
-		if (getDialog() != null && getRetainInstance())
-			getDialog().setDismissMessage(null);
-		
-		super.onDestroyView();
-	}
-	
-	/**
-	 * Add a listener to be notified if a new podcast was selected and loaded.
-	 * Overwrites any current listener.
-	 * @param listener The listener
-	 */
-	public void setAddPodcastListener(OnAddPodcastListener listener) {
-		this.listener = listener;
-	}
-	
-	/**
-	 * Set the list of currently already listed podcasts.
-	 * These will be filtered from the suggestions.
-	 * @param currentList The list of podcasts.
-	 */
-	public void setCurrentPodcasts(PodcastList currentList) {
-		this.podcastList = currentList;
-	}
-	
-	@Override
 	public void onSuggestionsLoadProgress(int progress) {
 		if (progress == LoadPodcastTask.PROGRESS_CONNECT) 
 			progressTextView.setText(getResources().getString(R.string.connect));
@@ -195,6 +159,11 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	@Override
 	public void onSuggestionsLoaded(PodcastList suggestions) {
 		suggestionList = suggestions;
+		
+		// Cache the suggestions list in the podcast list fragment which will be retained
+		PodcastListFragment podcastListFragment = (PodcastListFragment) getTargetFragment();
+		podcastListFragment.setPodcastSuggestions(suggestions);
+		// Filter list and update UI
 		updateList();
 				
 		progressView.setVisibility(View.GONE);
@@ -220,6 +189,9 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	}
 	
 	private void updateList() {
+		PodcastListFragment podcastListFragment = (PodcastListFragment) getTargetFragment();
+		PodcastList podcastList = podcastListFragment.getPodcastList();
+		
 		if (suggestionList != null && !suggestionList.isEmpty()) {
 			PodcastList filteredSuggestionList = new PodcastList();
 			
@@ -227,6 +199,7 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 				if (podcastList == null || !podcastList.contains(suggestion) &&
 						matchesFilter(suggestion)) filteredSuggestionList.add(suggestion);
 			
+			OnAddPodcastListener listener = (OnAddPodcastListener) getTargetFragment();
 			suggestionsListView.setAdapter(new SuggestionListAdapter(getActivity(), filteredSuggestionList, listener));
 			
 			if (filteredSuggestionList.isEmpty()) {

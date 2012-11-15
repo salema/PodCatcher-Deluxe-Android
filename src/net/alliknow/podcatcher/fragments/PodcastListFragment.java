@@ -52,10 +52,6 @@ import android.widget.ListView;
  */
 public class PodcastListFragment extends ListFragment implements OnAddPodcastListener, OnLoadPodcastListener, OnLoadPodcastLogoListener {
 	
-	/** The add podcast fragment to use */
-	private AddPodcastFragment addPodcastFragment = new AddPodcastFragment();
-	/** The show suggestions fragment to use */
-	private SuggestionFragment suggestionFragment = new SuggestionFragment();
 	/** The activity we are in (listens to user selection) */ 
     private OnSelectPodcastListener selectedListener;
     /** The activity we are in (listens to loading events) */ 
@@ -63,6 +59,8 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
     
 	/** The list of podcasts we know */
 	private PodcastList podcastList = new PodcastList();
+	/** The list of podcast suggestions */
+	private PodcastList podcastSuggestions;
 	/** Currently selected podcast */
 	private Podcast currentPodcast;
 	/** Currently show podcast logo */
@@ -91,11 +89,8 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		// Maps the podcast list items to the list UI
 		adapter = new PodcastListAdapter(getActivity(), podcastList);
 		setListAdapter(adapter);
-		// Make sure we are alerted if a new podcast is added
-		addPodcastFragment.setAddPodcastListener(this);
-		suggestionFragment.setAddPodcastListener(this);
 		// If podcast list is empty we show dialog on startup
-		if (getListAdapter().isEmpty()) addPodcastFragment.show(getFragmentManager(), "add_podcast");
+		if (getListAdapter().isEmpty()) showAddPodcastDialog();
 	}
 	
 	@Override
@@ -133,7 +128,11 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 	    	case R.id.add_podcast_button:
-	    		addPodcastFragment.show(getFragmentManager(), "add_podcast");
+	    		showAddPodcastDialog();
+	   
+	    		return true;
+	    	case R.id.select_all_podcasts_button:
+	    		selectAll();
 	    		
 	    		return true;
 	    	case R.id.remove_podcast_button:
@@ -177,18 +176,47 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		selectPodcast(newPodcast);
 	}
 	
+	/**
+	 * @return The list of podcast currently listed.
+	 */
+	public PodcastList getPodcastList() {
+		return this.podcastList;
+	}
+	
+	private void showAddPodcastDialog() {
+		AddPodcastFragment addPodcastFragment = new AddPodcastFragment();
+		addPodcastFragment.setTargetFragment(this, 0);
+		
+		addPodcastFragment.show(getFragmentManager(), null);
+	}
+	
 	@Override
 	public void showSuggestions() {
-		suggestionFragment.setCurrentPodcasts(podcastList);
+		SuggestionFragment suggestionFragment = new SuggestionFragment();
+		suggestionFragment.setTargetFragment(this, 0);
+		
 		suggestionFragment.show(getFragmentManager(), "suggest_podcast");
 	}
 	
+	/**
+	 * @return The list of podcast suggestions cached here
+	 */
+	public PodcastList getPodcastSuggestions() {
+		return podcastSuggestions;
+	}
+
+	/**
+	 * @param podcastSuggestions The list of podcast suggestions to cache here
+	 */
+	public void setPodcastSuggestions(PodcastList podcastSuggestions) {
+		this.podcastSuggestions = podcastSuggestions;
+	}
+
 	private void selectPodcast(Podcast selectedPodcast) {
 		this.currentPodcast = selectedPodcast;
 			
 		// Stop loading previous tasks
-		if (loadPodcastTask != null) loadPodcastTask.cancel(true);
-		if (loadPodcastLogoTask != null) loadPodcastLogoTask.cancel(true);
+		cancelCurrentLoadTasks();
 					
 		// Prepare UI
 		adapter.setSelectedPosition(podcastList.indexOf(selectedPodcast));
@@ -208,6 +236,31 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		}
 		// Use buffered content
 		else onPodcastLoaded(selectedPodcast, false);
+	}
+
+	private void selectAll() {
+		this.currentPodcast = null;
+		
+		// Stop loading previous tasks
+		cancelCurrentLoadTasks();
+		
+		// Prepare UI
+		adapter.setSelectedPosition(-1);
+		logoView.setImageResource(R.drawable.default_podcast_logo);
+		updateRemoveMenuItem();
+		
+		// Alert parent activity
+		if (selectedListener != null) selectedListener.onAllPodcastsSelected();
+		else Log.d(getClass().getSimpleName(), "All podcasts selected, but no listener attached");
+		
+		for (Podcast podcast : podcastList)
+			if (podcast.needsReload()) new LoadPodcastTask(this, true).execute(podcast);
+			else onPodcastLoaded(podcast, true);
+	}
+	
+	private void cancelCurrentLoadTasks() {
+		if (loadPodcastTask != null) loadPodcastTask.cancel(true);
+		if (loadPodcastLogoTask != null) loadPodcastLogoTask.cancel(true);
 	}
 	
 	/**
@@ -236,6 +289,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		// Update UI
 		if (currentPodcast == null) {
 			adapter.setSelectedPosition(-1);
+			logoView.setImageResource(R.drawable.default_podcast_logo);
 			if (selectedListener != null) selectedListener.onNoPodcastSelected();
 		}
 		else adapter.setSelectedPosition(podcastList.indexOf(currentPodcast));
@@ -260,14 +314,14 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		// This will display the number of episodes
 		adapter.notifyDataSetChanged();
 		
+		if (loadListener != null) loadListener.onPodcastLoaded(podcast, wasBackground);
+		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
+		
 		if (! wasBackground) {
 			loadPodcastTask = null;
-						
-			if (loadListener != null) loadListener.onPodcastLoaded(podcast, false);
-			else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
 			
 			// Download podcast logo
-			loadPodcastLogoTask = new LoadPodcastLogoTask(this);
+			loadPodcastLogoTask = new LoadPodcastLogoTask(this, logoView.getWidth(), logoView.getHeight());
 			loadPodcastLogoTask.execute(podcast);
 		}
 	}

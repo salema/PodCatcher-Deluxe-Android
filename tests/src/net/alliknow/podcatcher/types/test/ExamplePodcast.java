@@ -17,7 +17,7 @@ public enum ExamplePodcast {
 	RICHEISEN("http://richeisen.libsyn.com/rss"),
 	GEO("http://www.geo.de/GEOaudio/index.xml"),
 	UHHYEAHDUDE("http://feeds.feedburner.com/UhhYeahDude/podcast"),
-	WTF("http://www.wtfpod.com/podcast/rss");
+	NEO("http://www.zdf.de/ZDFmediathek/podcast/1446344?view=podcast");
 		
 	private String url;
 	
