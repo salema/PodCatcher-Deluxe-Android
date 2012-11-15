@@ -37,6 +37,9 @@ import android.util.Log;
  */
 public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 	
+	/** Maximum byte size for the logo to load */
+	public static final int MAX_RSS_FILE_SIZE = 500000;
+	
 	/** Owner */
 	private final OnLoadPodcastListener listener;
 
@@ -77,7 +80,7 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 			
 			// Load the file from the internets
 			if (! background) publishProgress(PROGRESS_CONNECT);
-			byte[] podcastRssFile = loadFile(podcast.getUrl());
+			byte[] podcastRssFile = loadFile(podcast.getUrl(), MAX_RSS_FILE_SIZE);
 			
 			// Get result as a document
 			if (isCancelled()) return null;

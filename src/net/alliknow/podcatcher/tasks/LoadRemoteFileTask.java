@@ -49,6 +49,7 @@ abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Params, Inte
 	/** Store whether loading failed */
 	protected boolean failed = false;
 	
+	
 	/**
 	 * Download the file and return it as a byte array.
 	 * Will feed <code>publishProgress</code> unless background
@@ -59,6 +60,20 @@ abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Params, Inte
 	 * @throws IOException If something goes wrong
 	 */
 	protected byte[] loadFile(URL remote) throws IOException {
+		return loadFile(remote, -1);
+	}
+	
+	/**
+	 * Download the file and return it as a byte array.
+	 * Will feed <code>publishProgress</code> unless background
+	 * is set.
+	 * 
+	 * @param remote URL connection to load from.
+	 * @param limit Maximum size (in bytes) for the file to load.
+	 * @return The file content.
+	 * @throws IOException If something goes wrong
+	 */
+	protected byte[] loadFile(URL remote, int limit) throws IOException {
 		HttpURLConnection connection = (HttpURLConnection) remote.openConnection();
 		connection.setConnectTimeout(CONNECT_TIMEOUT);
 		connection.setReadTimeout(READ_TIMEOUT);
@@ -88,9 +103,12 @@ abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Params, Inte
 			// Read stream and report progress (if possible)
 			while((bytesRead = in.read(buffer)) > 0) {
 				if (isCancelled()) return null;
-				result.write(buffer, 0, bytesRead);
+				
 				totalBytes += bytesRead;
-			  
+				if (limit > 0 && totalBytes > limit) return null;
+				
+				result.write(buffer, 0, bytesRead);
+							  
 				if (sendLoadProgress && !background)
 					publishProgress((int)((float)totalBytes / (float)connection.getContentLength() * 100));
 			}
