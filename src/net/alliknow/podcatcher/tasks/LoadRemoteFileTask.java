@@ -77,8 +77,8 @@ abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Params, Inte
 		HttpURLConnection connection = (HttpURLConnection) remote.openConnection();
 		connection.setConnectTimeout(CONNECT_TIMEOUT);
 		connection.setReadTimeout(READ_TIMEOUT);
-		// We do not want gzipped data, because we want to measure progress
-		if (! background) connection.setRequestProperty("Accept-Encoding", "identity");
+		// TODO Decide: We do not want gzipped data, because we want to measure progress
+		// if (! background) connection.setRequestProperty("Accept-Encoding", "identity");
 		
 		// TODO allow for password protected feeds 
 		// String userpass = username + ":" + password;
