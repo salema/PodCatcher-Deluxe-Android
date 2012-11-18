@@ -33,6 +33,8 @@ import net.alliknow.podcatcher.types.MediaType;
 import net.alliknow.podcatcher.types.Podcast;
 import net.alliknow.podcatcher.views.ProgressView;
 import android.app.DialogFragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Html;
@@ -62,6 +64,8 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	/** Subject for mail with new suggestions */
 	private static final String SUGGESTION_MAIL_SUBJECT = "A proposal for a podcast suggestion in the Podcatcher apps";
 	
+	/** The call back we work on */
+	private OnShowSuggestionsListener listener;
 	/** The suggestions load task */
 	private LoadSuggestionsTask loadTask;
 	
@@ -95,6 +99,17 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	};
 	
 	@Override
+	public void show(FragmentManager manager, String tag) {
+		if (assureListenerPresent()) super.show(manager, tag);
+	};
+	
+	@Override
+	public int show(FragmentTransaction transaction, String tag) {
+		if (assureListenerPresent()) return super.show(transaction, tag);
+		else return -1;
+	}
+	
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
@@ -105,12 +120,8 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		initUi(view);
 		
-		OnShowSuggestionsListener listener = (OnShowSuggestionsListener) getTargetFragment();
-		// We need the target fragment to provide the required interface 
-		if (listener == null || !(listener instanceof OnShowSuggestionsListener))
-			Log.w(getClass().getSimpleName(), "Suggestions requested, but target fragment does not implement OnShowSuggestionsListener");
 		// Suggestion list has not been loaded before
-		else if (listener.getPodcastSuggestions() == null) {
+		if (listener.getPodcastSuggestions() == null) {
 			setInitialFilterSelection();
 			
 			loadTask = new LoadSuggestionsTask(this);
@@ -134,10 +145,7 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	@Override
 	public void onSuggestionsLoaded(PodcastList suggestions) {
 		// Cache the suggestions list in the podcast list fragment which will be retained
-		OnShowSuggestionsListener listener = (OnShowSuggestionsListener) getTargetFragment();
-		if (listener == null || !(listener instanceof OnShowSuggestionsListener))
-			Log.w(getClass().getSimpleName(), "Suggestions loaded but not cached, target fragment does not implement OnShowSuggestionsListener");
-		else listener.setPodcastSuggestions(suggestions);
+		listener.setPodcastSuggestions(suggestions);
 		
 		// Filter list and update UI
 		updateList();
@@ -146,6 +154,19 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	@Override
 	public void onSuggestionsLoadFailed() {
 		progressView.showError(R.string.error_suggestions_load);
+	}
+	
+	/**
+	 * Make sure we have a traget fragment that implement the right call back.
+	 * @return <code>true</code> if so.
+	 */
+	private boolean assureListenerPresent() {
+		this.listener = (OnShowSuggestionsListener) getTargetFragment();
+		// We need the target fragment to provide the required interface 
+		if (listener == null || !(listener instanceof OnShowSuggestionsListener)) {
+			Log.w(getClass().getSimpleName(), "Suggestion dialog cannot open, target fragment is null or does not implement OnShowSuggestionsListener");
+			return false;
+		} else return true;		
 	}
 	
 	private void setInitialFilterSelection() {
@@ -159,37 +180,30 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	}
 	
 	private void updateList() {
-		// Get the listener call back to get all the data from
-		OnShowSuggestionsListener listener = (OnShowSuggestionsListener) getTargetFragment();
-		if (listener == null || !(listener instanceof OnShowSuggestionsListener))
-			Log.w(getClass().getSimpleName(), "Target fragment not set or does not implement OnShowSuggestionsListener");
-		// Listener available
-		else {
-			PodcastList suggestionList = listener.getPodcastSuggestions();
-			// Filter the suggestion list
-			if (suggestionList != null) {
-				// Currently already  existing podcasts (to be filtered out)
-				PodcastList podcastList = listener.getPodcastList();
-				// Resulting list
-				PodcastList filteredSuggestionList = new PodcastList();
-				// Do filter!
-				for (Podcast suggestion : suggestionList)
-					if (podcastList == null || !podcastList.contains(suggestion) &&
-							matchesFilter(suggestion)) filteredSuggestionList.add(suggestion);
-				
-				// Set filtered list
-				suggestionsListView.setAdapter(new SuggestionListAdapter(getActivity(), filteredSuggestionList, listener));
-				// Update UI
-				if (filteredSuggestionList.isEmpty()) {
-					suggestionsListView.setVisibility(View.GONE);
-					noSuggestionsView.setVisibility(View.VISIBLE);
-				} else {
-					noSuggestionsView.setVisibility(View.GONE);
-					suggestionsListView.setVisibility(View.VISIBLE);
-				}
-				
-				progressView.setVisibility(View.GONE);
+		PodcastList suggestionList = listener.getPodcastSuggestions();
+		// Filter the suggestion list
+		if (suggestionList != null) {
+			// Currently already  existing podcasts (to be filtered out)
+			PodcastList podcastList = listener.getPodcastList();
+			// Resulting list
+			PodcastList filteredSuggestionList = new PodcastList();
+			// Do filter!
+			for (Podcast suggestion : suggestionList)
+				if (podcastList == null || !podcastList.contains(suggestion) &&
+						matchesFilter(suggestion)) filteredSuggestionList.add(suggestion);
+			
+			// Set filtered list
+			suggestionsListView.setAdapter(new SuggestionListAdapter(getActivity(), filteredSuggestionList, listener));
+			// Update UI
+			if (filteredSuggestionList.isEmpty()) {
+				suggestionsListView.setVisibility(View.GONE);
+				noSuggestionsView.setVisibility(View.VISIBLE);
+			} else {
+				noSuggestionsView.setVisibility(View.GONE);
+				suggestionsListView.setVisibility(View.VISIBLE);
 			}
+			
+			progressView.setVisibility(View.GONE);
 		}
 	}
 
@@ -206,7 +220,7 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 			(mediaTypeFilter.getSelectedItemPosition() == 0 || 
 			((MediaType)mediaTypeFilter.getSelectedItem()).equals(suggestion.getMediaType()));
 	}
-		
+	
 	private void initUi(View view) {
 		getDialog().setTitle(R.string.suggested_podcasts);
 				
