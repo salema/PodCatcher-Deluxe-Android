@@ -30,7 +30,7 @@ import android.os.AsyncTask;
  * 
  * @author Kevin Hausmann
  */
-abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Params, Integer, Result> {
+public abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Params, Integer, Result> {
 
 	/** Flag given by progress callback for connecting */
 	public static final int PROGRESS_CONNECT = -3;

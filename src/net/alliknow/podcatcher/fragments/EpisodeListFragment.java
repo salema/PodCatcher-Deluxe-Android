@@ -23,8 +23,8 @@ import java.util.List;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
-import net.alliknow.podcatcher.tasks.LoadPodcastTask;
 import net.alliknow.podcatcher.types.Episode;
+import net.alliknow.podcatcher.views.ProgressView;
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -52,9 +52,7 @@ public class EpisodeListFragment extends ListFragment {
 	/** The empty view */
 	private TextView emptyView;
 	/** The progress bar */
-	private View progressView;
-	/** The progress bar text */
-	private TextView progressTextView;
+	private ProgressView progressView;
 	
 	/** Caches for internal state */
 	private boolean showProgress = false;
@@ -83,8 +81,7 @@ public class EpisodeListFragment extends ListFragment {
 		
 		listView = getListView();
 		emptyView = (TextView) getView().findViewById(android.R.id.empty);
-		progressView = getView().findViewById(R.id.episode_list_progress);
-		progressTextView = (TextView) getView().findViewById(R.id.episode_list_progress_text);
+		progressView = (ProgressView) getView().findViewById(R.id.episode_list_progress);
 		
 		if (showProgress) clearAndSpin();
 		else if (showLoadFailed) showLoadFailed();
@@ -166,7 +163,6 @@ public class EpisodeListFragment extends ListFragment {
 		listView.setVisibility(View.GONE);
 		
 		emptyView.setText(R.string.no_podcast_selected);
-		emptyView.setTextColor(getResources().getColor(R.color.text_secondary));
 		emptyView.setVisibility(View.VISIBLE);
 		
 		showProgress = false;
@@ -183,7 +179,7 @@ public class EpisodeListFragment extends ListFragment {
 		showProgress = true;
 		showLoadFailed = false;
 		
-		progressTextView.setText(null);
+		progressView.reset();
 		listView.setVisibility(View.GONE);
 		emptyView.setVisibility(View.GONE);
 				
@@ -196,14 +192,7 @@ public class EpisodeListFragment extends ListFragment {
 	 * @param progress Amount loaded or flag from load task
 	 */
 	public void showProgress(int progress) {
-		if (progress == LoadPodcastTask.PROGRESS_CONNECT) 
-			progressTextView.setText(getResources().getString(R.string.connect));
-		else if (progress == LoadPodcastTask.PROGRESS_LOAD)
-			progressTextView.setText(getResources().getString(R.string.load));
-		else if (progress >= 0 && progress <= 100) progressTextView.setText(progress + "%");
-		else if (progress == LoadPodcastTask.PROGRESS_PARSE)
-			progressTextView.setText(getResources().getString(R.string.parse));
-		else progressTextView.setText(getResources().getString(R.string.load));
+		progressView.publishProgress(progress);
 	}
 
 	/**
@@ -213,11 +202,6 @@ public class EpisodeListFragment extends ListFragment {
 		showProgress = false;
 		showLoadFailed = true;
 		
-		progressView.setVisibility(View.GONE);
-		listView.setVisibility(View.GONE);
-		
-		emptyView.setText(R.string.error_podcast_load);
-		emptyView.setTextColor(getResources().getColor(R.color.text_error));
-		emptyView.setVisibility(View.VISIBLE);	
+		progressView.showError(R.string.error_podcast_load);	
 	}
 }

@@ -17,7 +17,7 @@
 package net.alliknow.podcatcher.views;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.tasks.LoadPodcastTask;
+import net.alliknow.podcatcher.tasks.LoadRemoteFileTask;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -26,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 /**
+ * A sophisticated progress view.
  *
  * @author Kevin Hausmann
  */
@@ -45,28 +46,50 @@ public class ProgressView extends LinearLayout {
 	}
 
 	public ProgressView(Context context, AttributeSet attrs) {
-		this(context, null, 0);
+		this(context, attrs, 0);
 	}
 
 	public ProgressView(Context context) {
 		this(context, null);
 	}
 	
+	/**
+	 * Show a textual progress information. Beyond actual
+	 * percentages this also works with flags from load tasks.
+	 * @param progress Progress to visualize.
+	 * @see <code>LoadRemoteFileTask</code>
+	 */
 	public void publishProgress(int progress) {
-		if (progress == LoadPodcastTask.PROGRESS_CONNECT) 
+		progressBar.setVisibility(View.VISIBLE);
+		progressTextView.setTextColor(getResources().getColor(R.color.text_secondary));
+		
+		if (progress == LoadRemoteFileTask.PROGRESS_CONNECT) 
 			progressTextView.setText(getResources().getString(R.string.connect));
-		else if (progress == LoadPodcastTask.PROGRESS_LOAD)
+		else if (progress == LoadRemoteFileTask.PROGRESS_LOAD)
 			progressTextView.setText(getResources().getString(R.string.load));
 		else if (progress >= 0 && progress <= 100) progressTextView.setText(progress + "%");
-		else if (progress == LoadPodcastTask.PROGRESS_PARSE)
+		else if (progress == LoadRemoteFileTask.PROGRESS_PARSE)
 			progressTextView.setText(getResources().getString(R.string.parse));
 		else progressTextView.setText(getResources().getString(R.string.load));
 	}
 	
+	/**
+	 * Show an error and abort progress.
+	 * @param errorId Resource id for error message.
+	 */
 	public void showError(int errorId) {
 		progressBar.setVisibility(View.GONE);
 		
 		progressTextView.setTextColor(getResources().getColor(R.color.text_error));
 		progressTextView.setText(errorId);
+	}
+
+	/**
+	 * Reset to initial UI state.
+	 */
+	public void reset() {
+		progressBar.setVisibility(View.VISIBLE);
+		progressTextView.setText(null);
+		progressTextView.setTextColor(getResources().getColor(R.color.text_secondary));
 	}
 }

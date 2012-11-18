@@ -36,27 +36,9 @@
         android:text="@string/no_podcast_selected"
         android:textColor="@color/text_secondary"
         android:textSize="@dimen/small_font_size" />
-    <LinearLayout
+    <net.alliknow.podcatcher.views.ProgressView
         android:id="@+id/episode_list_progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone">
-        <View 
-            android:layout_width="wrap_content"
-	        android:layout_height="0dp"
-	        android:layout_weight="4"/>
-	    <ProgressBar
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_gravity="center_horizontal"
-	        android:indeterminate="true"/>
-	    <TextView
-	        android:id="@+id/episode_list_progress_text"
-	        android:layout_width="wrap_content"
-	        android:layout_height="0dp"
-	        android:layout_weight="4"
-	        android:layout_gravity="top|center_horizontal"
-	        android:textSize="@dimen/small_font_size" />
-    </LinearLayout>
+        android:visibility="gone" />
 </LinearLayout>
