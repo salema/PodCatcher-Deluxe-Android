@@ -25,6 +25,7 @@ import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
+import net.alliknow.podcatcher.listeners.OnShowSuggestionsListener;
 import net.alliknow.podcatcher.listeners.PodcastListContextListener;
 import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
@@ -50,7 +51,8 @@ import android.widget.ListView;
  * 
  * @author Kevin Hausmann
  */
-public class PodcastListFragment extends ListFragment implements OnAddPodcastListener, OnLoadPodcastListener, OnLoadPodcastLogoListener {
+public class PodcastListFragment extends ListFragment implements OnAddPodcastListener, 
+	OnShowSuggestionsListener, OnLoadPodcastListener, OnLoadPodcastLogoListener {
 	
 	/** The activity we are in (listens to user selection) */ 
     private OnSelectPodcastListener selectedListener;
@@ -118,7 +120,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.podcast_list_menu, menu);
+		inflater.inflate(R.menu.podcast_list, menu);
 		
 		removeMenuItem = (MenuItem) menu.findItem(R.id.remove_podcast_button);
 		updateRemoveMenuItem();

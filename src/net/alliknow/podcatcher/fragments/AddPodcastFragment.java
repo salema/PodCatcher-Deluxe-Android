@@ -102,8 +102,12 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 				
 				OnAddPodcastListener listener = (OnAddPodcastListener) getTargetFragment();
 				
-				if (listener != null) listener.showSuggestions();
-				else Log.d(getClass().getSimpleName(), "Suggestions requested, but no listener attached");
+				// We need the listener to exist
+				if (listener == null) Log.w(getClass().getSimpleName(), "Suggestions requested, but no listener attached");
+				// We need the listener to provide the required interface
+				else if (! (listener instanceof OnAddPodcastListener))
+					Log.w(getClass().getSimpleName(), "Suggestions requested, but target fragment does not implement OnAddPodcastListener");
+				else listener.showSuggestions();
 			}
 		});
 		
@@ -115,7 +119,9 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 				addPodcast();
 			}
 		});
-	
+
+		// This checks for a potential podcast URL in the clipboard
+		// and presets the text field if available
 		checkClipboardForPodcastUrl();
 	}
 	
@@ -127,17 +133,20 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 	}
 	
 	private void addPodcast() {
+		// Prepare UI
 		podcastUrlEditText.setEnabled(false);
 		addPodcastButton.setEnabled(false);
 		progressView.setVisibility(View.VISIBLE);
 		errorView.setVisibility(View.GONE);
 		
+		// Try to make the input work as a online resource
 		String spec = podcastUrlEditText.getText().toString();
-		if (! URLUtil.isNetworkUrl(spec.toString())) {
+		if (! URLUtil.isNetworkUrl(spec)) {
 			spec = "http://" + spec;
 			podcastUrlEditText.setText(spec);
 		}
-				
+		
+		// Try to load the given online resource
 		try {
 			loadTask = new LoadPodcastTask(this);
 			loadTask.execute(new Podcast(null, new URL(spec)));
@@ -156,19 +165,26 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 
 	@Override
 	public void onPodcastLoaded(Podcast podcast, boolean wasBackground) {
+		// Get call back
+		OnAddPodcastListener listener = (OnAddPodcastListener) getTargetFragment();
+		
+		// We do not allow empty podcast to be added (TODO Does this make sense?)
 		if (podcast.getEpisodes().isEmpty()) onPodcastLoadFailed(podcast, wasBackground);
+		// We need the target fragment to function as our call back
+		else if (listener == null || !(listener instanceof OnAddPodcastListener)) {
+			Log.w(getClass().getSimpleName(), "Podcast okay, but target fragment is absent or does not implement OnAddPodcastListener");
+			onPodcastLoadFailed(podcast, wasBackground);
+		} // This is an actual podcast, add it
 		else {
 			dismiss();
-			
-			OnAddPodcastListener listener = (OnAddPodcastListener) getTargetFragment();
-			
-			if (listener != null) listener.addPodcast(podcast);
-			else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
+						
+			listener.addPodcast(podcast);
 		}
 	}
 
 	@Override
 	public void onPodcastLoadFailed(Podcast podcast, boolean wasBackground) {
+		// Show error in the UI
 		progressView.setVisibility(View.GONE);
 		errorView.setVisibility(View.VISIBLE);
 		podcastUrlEditText.setEnabled(true);
@@ -178,9 +194,11 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 	private void checkClipboardForPodcastUrl() {
 		ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
 		
-		if (clipboard.hasPrimaryClip()) {
+		// Get the value to paste (make this failsafe)
+		if (clipboard != null && clipboard.hasPrimaryClip() && clipboard.getPrimaryClip().getItemCount() > 0) {
 			CharSequence candidate = clipboard.getPrimaryClip().getItemAt(0).getText();
 			
+			// Check whether this might be a podcast RSS online resource, if so set text field
 			if (URLUtil.isNetworkUrl(candidate.toString())) podcastUrlEditText.setText(candidate);
 		}
 	}

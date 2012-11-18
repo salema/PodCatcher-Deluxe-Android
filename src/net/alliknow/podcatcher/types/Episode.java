@@ -54,7 +54,7 @@ public class Episode implements Comparable<Episode> {
 	 * @param episodeNodes XML document nodes representing this episode
 	 */
 	public Episode(Podcast podcast, NodeList episodeNodes) {
-		this.podcastName = podcast.getName();
+		if (podcast != null) this.podcastName = podcast.getName();
 		
 		if (episodeNodes != null && episodeNodes.getLength() > 0)
 			readData(episodeNodes);

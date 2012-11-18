@@ -156,7 +156,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 	
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.episode_menu, menu);
+		inflater.inflate(R.menu.episode, menu);
 		
 		loadMenuItem = menu.findItem(R.id.load);
 		updateLoadMenuItem();

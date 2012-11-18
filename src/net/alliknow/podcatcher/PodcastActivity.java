@@ -81,7 +81,7 @@ public class PodcastActivity extends Activity implements
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.podcatcher_menu, menu);
+		getMenuInflater().inflate(R.menu.podcatcher, menu);
 		
 		return true;
 	}
