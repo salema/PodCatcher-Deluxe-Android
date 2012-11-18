@@ -326,6 +326,8 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener {
 	}
 	
 	private void updateLoadMenuItem() {
+		if (loadMenuItem == null) return;
+		
 		loadMenuItem.setVisible(episode != null && service != null);
 		
 		if (loadMenuItem.isVisible()) {
