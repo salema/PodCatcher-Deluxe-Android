@@ -35,7 +35,9 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
 	protected SparseBooleanArray selectedPositions = new SparseBooleanArray();
 	/** Also, there might be checked items */
 	protected SparseBooleanArray checkedPositions = new SparseBooleanArray();
-		
+	/** Flag for whether we are in select all mode */
+	protected boolean selectAll = false;
+	
 	/**
 	 * Create new adapter
 	 * @param context The current context
@@ -50,16 +52,22 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
 	 * @param position Position selected.
 	 */
 	public void setSelectedPosition(int position) {
-		// Only act if selection actually changed
-		if (! (selectedPositions.get(position) && selectedPositions.size() == 1)) {
-			selectedPositions.clear();
-			
-			// If position is reset, exit silently
-			if (position >= 0) {
-				selectedPositions.put(position, true);
-				notifyDataSetChanged();
-			}
-		}
+		selectAll = false;
+		selectedPositions.clear();
+		selectedPositions.put(position, true);
+		notifyDataSetChanged();
+	}
+	
+	public void setSelectAll() {
+		selectAll = true;
+		selectedPositions.clear();
+		notifyDataSetChanged();
+	}
+	
+	public void setSelectNone() {
+		selectAll = false;
+		selectedPositions.clear();
+		notifyDataSetChanged();
 	}
 	
 	/**

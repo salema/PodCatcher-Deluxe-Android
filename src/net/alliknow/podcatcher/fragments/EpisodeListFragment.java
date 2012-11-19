@@ -182,9 +182,7 @@ public class EpisodeListFragment extends ListFragment {
 		progressView.reset();
 		listView.setVisibility(View.GONE);
 		emptyView.setVisibility(View.GONE);
-				
-		//if (! Podcatcher.isInDebugMode(getActivity()))
-			progressView.setVisibility(View.VISIBLE);
+		progressView.setVisibility(View.VISIBLE);
 	}
 	
 	/**

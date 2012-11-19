@@ -73,8 +73,13 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 		setTextAndState(convertView, R.id.podcast_name, list.get(position).getName(), position);
 		setTextAndState(convertView, R.id.podcast_episode_number, getEpisodeNumberText(numberOfEpisodes), position);
 		
-		convertView.findViewById(R.id.podcast_episode_number)
-			.setVisibility(numberOfEpisodes != 0 ? View.VISIBLE : View.GONE);
+		if (numberOfEpisodes == 0 && selectAll) {
+			convertView.findViewById(R.id.load_podcast_progress).setVisibility(View.VISIBLE);
+		} else {
+			convertView.findViewById(R.id.podcast_episode_number)
+				.setVisibility(numberOfEpisodes != 0 ? View.VISIBLE : View.GONE);
+			convertView.findViewById(R.id.load_podcast_progress).setVisibility(View.GONE);
+		}
 		
 		return convertView;
 	}

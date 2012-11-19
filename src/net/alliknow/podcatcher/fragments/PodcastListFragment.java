@@ -247,7 +247,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		cancelCurrentLoadTasks();
 		
 		// Prepare UI
-		adapter.setSelectedPosition(-1);
+		adapter.setSelectAll();
 		logoView.setImageResource(R.drawable.default_podcast_logo);
 		updateRemoveMenuItem();
 		
@@ -290,7 +290,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		
 		// Update UI
 		if (currentPodcast == null) {
-			adapter.setSelectedPosition(-1);
+			adapter.setSelectNone();
 			logoView.setImageResource(R.drawable.default_podcast_logo);
 			if (selectedListener != null) selectedListener.onNoPodcastSelected();
 		}
