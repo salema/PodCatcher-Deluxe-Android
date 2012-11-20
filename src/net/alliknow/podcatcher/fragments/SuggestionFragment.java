@@ -33,8 +33,6 @@ import net.alliknow.podcatcher.types.MediaType;
 import net.alliknow.podcatcher.types.Podcast;
 import net.alliknow.podcatcher.views.ProgressView;
 import android.app.DialogFragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Html;
@@ -99,17 +97,6 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	};
 	
 	@Override
-	public void show(FragmentManager manager, String tag) {
-		if (assureListenerPresent()) super.show(manager, tag);
-	};
-	
-	@Override
-	public int show(FragmentTransaction transaction, String tag) {
-		if (assureListenerPresent()) return super.show(transaction, tag);
-		else return -1;
-	}
-	
-	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
@@ -119,15 +106,28 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		initUi(view);
+		setInitialFilterSelection();
 		
+		// No listener
+		if (! assureListenerPresent()) onSuggestionsLoadFailed();
 		// Suggestion list has not been loaded before
-		if (listener.getPodcastSuggestions() == null) {
-			setInitialFilterSelection();
-			
+		else if (listener.getPodcastSuggestions() == null) {
 			loadTask = new LoadSuggestionsTask(this);
 			loadTask.execute((Void)null);
 		} // List was loaded before
-		else updateList();
+		else {
+			restoreFilters(savedInstanceState);
+			updateList();
+		}
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		
+		outState.putInt(Language.class.getSimpleName(), languageFilter.getSelectedItemPosition());
+		outState.putInt(Genre.class.getSimpleName(), genreFilter.getSelectedItemPosition());
+		outState.putInt(MediaType.class.getSimpleName(), mediaTypeFilter.getSelectedItemPosition());
 	}
 	
 	@Override
@@ -179,6 +179,14 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 		mediaTypeFilter.setSelection(1);
 	}
 	
+	private void restoreFilters(Bundle savedInstanceState) {
+		if (savedInstanceState != null) {
+			languageFilter.setSelection(savedInstanceState.getInt(Language.class.getSimpleName()));
+			genreFilter.setSelection(savedInstanceState.getInt(Genre.class.getSimpleName()));
+			mediaTypeFilter.setSelection(savedInstanceState.getInt(MediaType.class.getSimpleName()));
+		}
+	}
+
 	private void updateList() {
 		PodcastList suggestionList = listener.getPodcastSuggestions();
 		// Filter the suggestion list
@@ -198,13 +206,15 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 			if (filteredSuggestionList.isEmpty()) {
 				suggestionsListView.setVisibility(View.GONE);
 				noSuggestionsView.setVisibility(View.VISIBLE);
-			} else {
+			}
+			else {
 				noSuggestionsView.setVisibility(View.GONE);
 				suggestionsListView.setVisibility(View.VISIBLE);
 			}
 			
 			progressView.setVisibility(View.GONE);
-		}
+		// Just in case the suggestion list has not been cached...
+		} // else onSuggestionsLoadFailed();
 	}
 
 	/**

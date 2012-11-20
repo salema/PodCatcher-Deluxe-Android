@@ -51,6 +51,7 @@ public class PodcastActivity extends Activity implements
 	/** The episode details fragment */
 	private EpisodeFragment episodeFragment;
 	
+	/** Flag to indicate whether we are in multiple podcast mode */ 
 	private boolean multiplePodcastsMode = false;
 	
 	/** The podcatcher website URL */

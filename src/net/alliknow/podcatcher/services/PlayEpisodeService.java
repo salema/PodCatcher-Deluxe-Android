@@ -191,7 +191,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	 * @param seconds Seconds from the start to seek to.
 	 */
 	public void seekTo(int seconds) {
-		if (isPrepared()) player.seekTo(seconds * 1000);
+		if (isPrepared() && seconds >= 0 && seconds <= getDuration())
+			player.seekTo(seconds * 1000); // multiply to get millis
 	}
 	
 	/**
@@ -245,8 +246,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	}
 	
 	/**
-	 * @return Current position of playback in seconds from media start
-	 * Does not throw any exception but returns at least zero 
+	 * @return Current position of playback in seconds from media start.
+	 * Does not throw any exception but returns at least zero.
 	 */
 	public int getCurrentPosition() {
 		if (player == null || !prepared) return 0;
@@ -254,8 +255,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	}
 	
 	/**
-	 * @return Duration of media element in seconds
-	 * Does not throw any exception but returns at least zero 
+	 * @return Duration of media element in seconds.
+	 * Does not throw any exception but returns at least zero. 
 	 */
 	public int getDuration() {
 		if (player == null || !prepared) return 0;
