@@ -67,9 +67,13 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	private Podcast currentPodcast;
 	/** Currently show podcast logo */
 	private Bitmap currentLogo;
+	/** Flag indicating whether we are in select all mode */
+	private boolean selectAll = false;
 	
 	/** The list adapter */
 	private PodcastListAdapter adapter;
+	/** Remove podcast menu item */
+	private MenuItem selectAllMenuItem;
 	/** Remove podcast menu item */
 	private MenuItem removeMenuItem;
 	/** The logo view */
@@ -123,7 +127,9 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		inflater.inflate(R.menu.podcast_list, menu);
 		
 		removeMenuItem = (MenuItem) menu.findItem(R.id.remove_podcast_button);
-		updateRemoveMenuItem();
+		selectAllMenuItem = (MenuItem) menu.findItem(R.id.select_all_podcasts_button);
+		
+		updateMenuItems();
 	}
 
 	@Override
@@ -216,6 +222,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 
 	private void selectPodcast(Podcast selectedPodcast) {
 		this.currentPodcast = selectedPodcast;
+		this.selectAll = false;
 			
 		// Stop loading previous tasks
 		cancelCurrentLoadTasks();
@@ -224,7 +231,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		adapter.setSelectedPosition(podcastList.indexOf(selectedPodcast));
 		scrollListView(podcastList.indexOf(selectedPodcast));
 		logoView.setImageResource(R.drawable.default_podcast_logo);
-		updateRemoveMenuItem();
+		updateMenuItems();
 		
 		// Alert parent activity
 		if (selectedListener != null) selectedListener.onPodcastSelected(currentPodcast);
@@ -243,6 +250,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	private void selectAll() {
 		this.currentPodcast = null;
 		this.currentLogo = null;
+		this.selectAll = true;
 		
 		// Stop loading previous tasks
 		cancelCurrentLoadTasks();
@@ -250,7 +258,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		// Prepare UI
 		adapter.setSelectAll();
 		logoView.setImageResource(R.drawable.default_podcast_logo);
-		updateRemoveMenuItem();
+		updateMenuItems();
 		
 		// Alert parent activity
 		if (selectedListener != null) selectedListener.onAllPodcastsSelected();
@@ -296,7 +304,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 			if (selectedListener != null) selectedListener.onNoPodcastSelected();
 		}
 		else adapter.setSelectedPosition(podcastList.indexOf(currentPodcast));
-		updateRemoveMenuItem();
+		updateMenuItems();
 		
 		// Store changed list
 		podcastList.store(getActivity());
@@ -353,7 +361,8 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	@Override
 	public void onPodcastLogoLoadFailed() { /* Just stick with the default logo... */ }
 	
-	private void updateRemoveMenuItem() {
+	private void updateMenuItems() {
+		selectAllMenuItem.setVisible(! selectAll);
 		removeMenuItem.setVisible(currentPodcast != null);
 	}
 	

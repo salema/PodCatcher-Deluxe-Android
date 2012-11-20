@@ -109,4 +109,9 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
 		textView.setSelected(selectedPositions.get(position));
 		textView.setSingleLine(! selectedPositions.get(position));
 	}
+	
+	@Override
+	public void notifyDataSetChanged() {
+		if (getCount() > 0) super.notifyDataSetChanged();
+	}
 }
