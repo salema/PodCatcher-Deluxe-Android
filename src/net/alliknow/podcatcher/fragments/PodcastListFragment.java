@@ -302,8 +302,9 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 			adapter.setSelectNone();
 			logoView.setImageResource(R.drawable.default_podcast_logo);
 			if (selectedListener != null) selectedListener.onNoPodcastSelected();
-		}
-		else adapter.setSelectedPosition(podcastList.indexOf(currentPodcast));
+		} else adapter.setSelectedPosition(podcastList.indexOf(currentPodcast));
+		
+		if (podcastList.isEmpty()) getView().findViewById(android.R.id.empty).setVisibility(View.VISIBLE);
 		updateMenuItems();
 		
 		// Store changed list
