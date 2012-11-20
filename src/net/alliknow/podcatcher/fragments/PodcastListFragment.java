@@ -242,6 +242,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 
 	private void selectAll() {
 		this.currentPodcast = null;
+		this.currentLogo = null;
 		
 		// Stop loading previous tasks
 		cancelCurrentLoadTasks();

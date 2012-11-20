@@ -180,7 +180,6 @@ public class EpisodeListFragment extends ListFragment {
 		showLoadFailed = false;
 		
 		progressView.reset();
-		listView.setVisibility(View.GONE);
 		emptyView.setVisibility(View.GONE);
 		progressView.setVisibility(View.VISIBLE);
 	}
@@ -200,6 +199,9 @@ public class EpisodeListFragment extends ListFragment {
 		showProgress = false;
 		showLoadFailed = true;
 		
+		listView.setVisibility(View.GONE);
+		emptyView.setVisibility(View.GONE);
+		progressView.setVisibility(View.VISIBLE);
 		progressView.showError(R.string.error_podcast_load);	
 	}
 }

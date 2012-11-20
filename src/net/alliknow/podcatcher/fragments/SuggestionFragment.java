@@ -106,7 +106,7 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		initUi(view);
-		setInitialFilterSelection();
+		restoreFilters(savedInstanceState);
 		
 		// No listener
 		if (! assureListenerPresent()) onSuggestionsLoadFailed();
@@ -116,7 +116,6 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 			loadTask.execute((Void)null);
 		} // List was loaded before
 		else {
-			restoreFilters(savedInstanceState);
 			updateList();
 		}
 	}
@@ -184,7 +183,7 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 			languageFilter.setSelection(savedInstanceState.getInt(Language.class.getSimpleName()));
 			genreFilter.setSelection(savedInstanceState.getInt(Genre.class.getSimpleName()));
 			mediaTypeFilter.setSelection(savedInstanceState.getInt(MediaType.class.getSimpleName()));
-		}
+		} else setInitialFilterSelection();
 	}
 
 	private void updateList() {
