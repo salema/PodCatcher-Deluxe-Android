@@ -180,6 +180,7 @@ public class EpisodeListFragment extends ListFragment {
 		showLoadFailed = false;
 		
 		progressView.reset();
+		listView.setVisibility(View.GONE);
 		emptyView.setVisibility(View.GONE);
 		progressView.setVisibility(View.VISIBLE);
 	}
