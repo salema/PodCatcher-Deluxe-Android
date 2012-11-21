@@ -304,21 +304,21 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	
 	@Override
 	public boolean onInfo(MediaPlayer mp, int what, int extra) {
-		if (serviceListener != null) {
-			switch (what) {
-				case MediaPlayer.MEDIA_INFO_BUFFERING_START:
-					buffering = true;
-					serviceListener.onStopForBuffering();
-					break;
-					
-				case MediaPlayer.MEDIA_INFO_BUFFERING_END:
-					buffering = false;
-					serviceListener.onResumeFromBuffering();
-					break;				
-			}
-		} else Log.d(getClass().getSimpleName(), "Media player send info, but no listener attached");
+	 	switch (what) {
+			case MediaPlayer.MEDIA_INFO_BUFFERING_START:
+				buffering = true;
+				if (serviceListener != null) serviceListener.onStopForBuffering();
+				break;
+				
+			case MediaPlayer.MEDIA_INFO_BUFFERING_END:
+				buffering = false;
+				if (serviceListener != null) serviceListener.onResumeFromBuffering();
+				break;				
+	 	}
+	 	
+		if (serviceListener == null) Log.d(getClass().getSimpleName(), "Media player send info, but no listener attached");
 		
-		return serviceListener != null;
+		return serviceListener != null && (what == MediaPlayer.MEDIA_INFO_BUFFERING_START || what == MediaPlayer.MEDIA_INFO_BUFFERING_END);
 	}
 	
 	@Override

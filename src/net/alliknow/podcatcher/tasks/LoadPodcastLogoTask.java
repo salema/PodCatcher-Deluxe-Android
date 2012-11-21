@@ -31,7 +31,7 @@ import android.util.Log;
 public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 
 	/** Maximum byte size for the logo to load */
-	public static final int MAX_LOGO_SIZE = 100000;
+	public static final int MAX_LOGO_SIZE = 250000;
 
 	/** Owner */
 	private final OnLoadPodcastLogoListener loader;

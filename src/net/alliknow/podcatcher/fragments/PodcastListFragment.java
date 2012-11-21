@@ -297,20 +297,32 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 				podcastList.remove(index);
 			}
 		
-		// Update UI
+		// Update UI (current podcast was deleted)
 		if (currentPodcast == null) {
 			adapter.setSelectNone();
 			logoView.setImageResource(R.drawable.default_podcast_logo);
+			currentLogo = null;
+			
 			if (selectedListener != null) selectedListener.onNoPodcastSelected();
-		} else adapter.setSelectedPosition(podcastList.indexOf(currentPodcast));
+		} // Current podcast has new position
+		else adapter.setSelectedPosition(podcastList.indexOf(currentPodcast));
 		
-		if (podcastList.isEmpty()) getView().findViewById(android.R.id.empty).setVisibility(View.VISIBLE);
+		updateListVisibility();
 		updateMenuItems();
 		
 		// Store changed list
 		podcastList.store(getActivity());
 	}
 	
+	/**
+	 * 
+	 */
+	private void updateListVisibility() {
+		getView().findViewById(android.R.id.empty)
+		.setVisibility(podcastList.isEmpty() ? View.VISIBLE : View.GONE);
+		getListView().setVisibility(podcastList.isEmpty() ? View.GONE : View.VISIBLE);
+	}
+
 	@Override
 	public void onPodcastLoadProgress(int progress) {
 		if (loadListener != null) loadListener.onPodcastLoadProgress(progress);

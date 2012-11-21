@@ -148,10 +148,7 @@ public class EpisodeListFragment extends ListFragment {
 		if (selectedListener != null) selectedListener.onNoEpisodeSelected();
 		
 		// Update UI 
-		if (episodeList.isEmpty()) {
-			emptyView.setText(R.string.no_episodes);
-			emptyView.setTextColor(getResources().getColor(R.color.text_secondary));
-		}
+		if (episodeList.isEmpty()) emptyView.setText(R.string.no_episodes);
 		else listView.setVisibility(View.VISIBLE);
 	}
 	
@@ -170,6 +167,7 @@ public class EpisodeListFragment extends ListFragment {
 		
 		selectedEpisode = null;
 		episodeList = null;
+		setListAdapter(null);
 	}
 
 	/**

@@ -249,8 +249,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 	@Override
 	public void onReadyToPlay() {
 		updatePlayer();
-		
-		if (! seeking) startPlayProgressTimer();
+		startPlayProgressTimer();
 	}
 	
 	@Override
@@ -276,7 +275,6 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 	@Override
 	public void onStopForBuffering() {
 		stopPlayProgressTimer();
-		
 		updatePlayer();
 	}
 
@@ -405,12 +403,19 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 	}
 	
 	private void startPlayProgressTimer() {
-		playUpdateTimerTask = new PlayProgressTask();
-		playUpdateTimer.schedule(playUpdateTimerTask, 0, 1000);
+		// Only start task if it isn't already running and
+		// there is acutally some progress to monitor 
+		if (playUpdateTimerTask == null && !seeking && service.isPlaying()) {
+			playUpdateTimerTask = new PlayProgressTask();
+			playUpdateTimer.schedule(playUpdateTimerTask, 0, 1000);
+		}
 	}
 	
 	private void stopPlayProgressTimer() {
-		if (playUpdateTimerTask != null) playUpdateTimerTask.cancel();
+		if (playUpdateTimerTask != null) {
+			playUpdateTimerTask.cancel();
+			playUpdateTimerTask = null;
+		}
 	}
 
 	/** Defines callbacks for service binding, passed to bindService() */
@@ -429,7 +434,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
             updateLoadMenuItem();
             updatePlayer();
             // Restart play progress timer task if service is playing
-            if (service.isPlaying()) startPlayProgressTimer();
+            startPlayProgressTimer();
         }
 
         @Override
