@@ -59,16 +59,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:visibility="gone" />
-    <TextView
-        android:id="@+id/player_error"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="3dp"
-        android:text="@string/error_player"
-        android:textColor="@color/text_error"
-        android:visibility="gone" />
-    <LinearLayout
+    <net.alliknow.podcatcher.views.Player
         android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -76,37 +67,5 @@
         android:orientation="vertical"
         android:paddingLeft="@dimen/episode_view_padding"
         android:paddingRight="@dimen/play_button_right_padding"
-        android:visibility="gone" >
-        <ImageView
-            android:id="@+id/player_divider"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="2dp"
-            android:scaleType="fitXY"
-            android:src="@android:drawable/divider_horizontal_bright"
-            android:visibility="gone" />
-        <TextView
-            android:id="@+id/player_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:textSize="@dimen/default_font_size"
-            android:visibility="gone" />
-        <SeekBar
-            android:id="@+id/player_seekbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="2dp"
-            android:layout_marginTop="2dp" />
-        <Button
-            android:id="@+id/player_button"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/list_item"
-            android:drawableStart="@drawable/ic_media_pause"
-            android:gravity="center"
-            android:paddingRight="32dp"
-            android:text="@string/pause"
-            android:textColor="@drawable/button_label"
-            android:textSize="@dimen/default_font_size" />
-    </LinearLayout>
+        android:visibility="gone" />
 </LinearLayout>

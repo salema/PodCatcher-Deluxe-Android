@@ -19,12 +19,12 @@ package net.alliknow.podcatcher.fragments;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
 import net.alliknow.podcatcher.types.Episode;
+import net.alliknow.podcatcher.views.Player;
 import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
@@ -42,7 +42,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -56,22 +55,18 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 
 	/** The load episode menu bar item */
 	private MenuItem loadMenuItem;
+	/** The empty view */
+	private View emptyView;
 	/** The episode title view */
 	private TextView episodeTitleView;
 	/** The podcast title view */
 	private TextView podcastTitleView;
+	/** The divider view between title and description */
+	private View dividerView;
 	/** The episode description web view */
 	private WebView episodeDetailView;
-	/** The player title view */
-	private View playerDividerView;
-	/** The player title view */
-	private TextView playerTitleView;
 	/** The player view */
-	private View playerView;
-	/** The player seek bar */
-	private SeekBar playerSeekBar;
-	/** The play/pause button */
-	private Button playerButton;
+	private Player playerView;
 		
 	/** Current episode */
 	private Episode episode;
@@ -97,8 +92,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 				
 				@Override
 				public void run() {
-					updatePlayerSeekBar();
-					updatePlayerButton();
+					playerView.update(service, episode);
 				}
 			});
 		}
@@ -123,24 +117,22 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		
+		emptyView = getView().findViewById(android.R.id.empty);
 		episodeTitleView = (TextView) getView().findViewById(R.id.episode_title);
 		podcastTitleView = (TextView) getView().findViewById(R.id.podcast_title);
 		episodeDetailView = (WebView) getView().findViewById(R.id.episode_description);
+		dividerView = getView().findViewById(R.id.episode_divider);
 		
-		playerDividerView = getView().findViewById(R.id.player_divider);
-		playerTitleView = (TextView) getView().findViewById(R.id.player_title);
-		playerView = view.findViewById(R.id.player);
-		playerSeekBar = (SeekBar) view.findViewById(R.id.player_seekbar);
-		playerSeekBar.setOnSeekBarChangeListener(this);
-		playerButton = (Button) view.findViewById(R.id.player_button);
-		playerButton.setOnClickListener(new OnClickListener() {
+		playerView = (Player) view.findViewById(R.id.player);
+		playerView.setOnSeekBarChangeListener(this);
+		playerView.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				togglePlay();
 			}
 		});
-		playerButton.setOnLongClickListener(new OnLongClickListener() {
+		playerView.setOnLongClickListener(new OnLongClickListener() {
 			
 			@Override
 			public boolean onLongClick(View v) {
@@ -230,25 +222,25 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 		if (selectedEpisode != null) {
 			this.episode = selectedEpisode;
 			
-			getView().findViewById(android.R.id.empty).setVisibility(View.GONE);
+			emptyView.setVisibility(View.GONE);
 			
 			episodeTitleView.setVisibility(View.VISIBLE);
 			episodeTitleView.setText(episode.getName());
 			podcastTitleView.setText(episode.getPodcastName());
 			podcastTitleView.setVisibility(View.VISIBLE);
-			getView().findViewById(R.id.episode_divider).setVisibility(View.VISIBLE);
+			dividerView.setVisibility(View.VISIBLE);
 							
 			episodeDetailView.loadDataWithBaseURL(null, episode.getDescription(), "text/html", "utf-8", null);
 			episodeDetailView.setVisibility(View.VISIBLE);
 			
 			updateLoadMenuItem();
-			updatePlayer();
+			playerView.update(service, episode);
 		}
 	}
 		
 	@Override
 	public void onReadyToPlay() {
-		updatePlayer();
+		playerView.update(service, episode);
 		startPlayProgressTimer();
 	}
 	
@@ -256,7 +248,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 		if (fromUser) {
 			service.seekTo(progress);
-			updatePlayerButton();
+			playerView.update(service, episode);
 		}
 	}
 
@@ -275,7 +267,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 	@Override
 	public void onStopForBuffering() {
 		stopPlayProgressTimer();
-		updatePlayer();
+		playerView.update(service, episode);
 	}
 
 	@Override
@@ -285,7 +277,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 	
 	@Override
 	public void onBufferUpdate(int seconds) {
-		playerSeekBar.setSecondaryProgress(seconds);
+		playerView.setSecondaryProgress(seconds);
 	}
 
 	@Override
@@ -295,7 +287,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 		service.reset();
 		
 		updateLoadMenuItem();
-		updatePlayer();
+		playerView.update(service, episode);
 	}
 	
 	@Override
@@ -303,9 +295,9 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 		service.reset();
 		
 		updateLoadMenuItem();
-		updatePlayer();
+		playerView.update(service, episode);
 		
-		getView().findViewById(R.id.player_error).setVisibility(View.VISIBLE);
+		playerView.showError();
 		
 		Log.w(getClass().getSimpleName(), "Play service send an error");
 	}
@@ -319,7 +311,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 				service.playEpisode(episode);
 								
 				updateLoadMenuItem();
-				updatePlayer();
+				playerView.update(service, episode);
 			}
 		} else Log.d(getClass().getSimpleName(), "Cannot load episode (episode or service are null)");
 	}
@@ -336,68 +328,17 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 				startPlayProgressTimer();
 			}
 			
-			updatePlayer();
+			playerView.update(service, episode);
 		} else Log.d(getClass().getSimpleName(), "Cannot play/pause episode (service null or unprepared)");
 	}
 	
 	private void updateLoadMenuItem() {
-		if (loadMenuItem == null) return;
-		
-		loadMenuItem.setVisible(episode != null && service != null);
-		
-		if (loadMenuItem.isVisible()) {
-			loadMenuItem.setTitle(service.isWorkingWith(episode) ? R.string.stop : R.string.play );
-			loadMenuItem.setIcon(service.isWorkingWith(episode) ? R.drawable.ic_media_stop : R.drawable.ic_media_play);
-		}
-	}
-	
-	private void updatePlayer() {
-		getView().findViewById(R.id.player_error).setVisibility(View.GONE);
-		
-		playerDividerView.setVisibility(service.isWorkingWith(episode) ? View.GONE : View.VISIBLE);
-		playerTitleView.setVisibility(service.isWorkingWith(episode) ? View.GONE : View.VISIBLE);
-		playerTitleView.setText(service.getCurrentEpisodeName() + " - " 
-					+ service.getCurrentEpisodePodcastName());
+		if (loadMenuItem != null) {		
+			loadMenuItem.setVisible(episode != null && service != null);
 			
-		updatePlayerSeekBar();
-		updatePlayerButton();
-				
-		playerView.setVisibility(service.isPrepared() || service.isPreparing() ? View.VISIBLE : View.GONE);
-	}
-	
-	private void updatePlayerSeekBar() {
-		playerSeekBar.setEnabled(! service.isPreparing());
-		
-		// We are running and might advance progress
-		if (service.isPrepared()) {
-			playerSeekBar.setMax(service.getDuration());
-			playerSeekBar.setProgress(service.getCurrentPosition());
-		} // Reset progress
-		else {
-			playerSeekBar.setProgress(0);
-			playerSeekBar.setSecondaryProgress(0);
-		}
-	}
-
-	private void updatePlayerButton() {
-		playerButton.setEnabled(! service.isBuffering());
-		playerButton.setBackgroundResource(service.isPlaying() ? R.drawable.button_red : R.drawable.button_green);
-		playerButton.setCompoundDrawablesWithIntrinsicBounds(
-				service.isPlaying() ? R.drawable.ic_media_pause : R.drawable.ic_media_play, 0, 0, 0);
-		
-		if (service.isBuffering()) {
-			playerButton.setText(R.string.buffering);
-			playerButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_rotate, 0, 0, 0);
-		}
-		else {
-			playerButton.setText(service.isPlaying() ? R.string.pause : R.string.resume);
-			// Resources are only available when fragment is added...
-			if (isAdded() && service.isPrepared()) {
-				final String position = Podcatcher.formatTime(service.getCurrentPosition());
-				final String duration = Podcatcher.formatTime(service.getDuration());
-				
-				playerButton.setText(playerButton.getText() + " " + getResources().getString(R.string.at) +
-						" " + position + " " + getResources().getString(R.string.of) + " " + duration);
+			if (loadMenuItem.isVisible()) {
+				loadMenuItem.setTitle(service.isWorkingWith(episode) ? R.string.stop : R.string.play );
+				loadMenuItem.setIcon(service.isWorkingWith(episode) ? R.drawable.ic_media_stop : R.drawable.ic_media_play);
 			}
 		}
 	}
@@ -432,7 +373,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
             
             // Update UI to reflect service status
             updateLoadMenuItem();
-            updatePlayer();
+            playerView.update(service, episode);
             // Restart play progress timer task if service is playing
             startPlayProgressTimer();
         }
