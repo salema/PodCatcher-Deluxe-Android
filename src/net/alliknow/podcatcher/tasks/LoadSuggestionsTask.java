@@ -63,11 +63,11 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
 		
 		try {
 			// Load the file from the internets
-			if (! background) publishProgress(PROGRESS_CONNECT);
+			publishProgress(PROGRESS_CONNECT);
 			byte[] suggestionsFile = loadFile(new URL(SOURCE));
 			
 			// Get result as a document
-			if (! background) publishProgress(PROGRESS_PARSE);
+			publishProgress(PROGRESS_PARSE);
 			JSONObject completeJson = new JSONObject(new String(suggestionsFile, SUGGESTIONS_FILE_ENCODING));
 			if (isCancelled()) return null;
 			

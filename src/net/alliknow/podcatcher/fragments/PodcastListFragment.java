@@ -324,8 +324,8 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	}
 
 	@Override
-	public void onPodcastLoadProgress(int progress) {
-		if (loadListener != null) loadListener.onPodcastLoadProgress(progress);
+	public void onPodcastLoadProgress(Podcast podcast, int progress, boolean isBackground) {
+		if (loadListener != null) loadListener.onPodcastLoadProgress(podcast, progress, isBackground);
 	}
 	
 	/**

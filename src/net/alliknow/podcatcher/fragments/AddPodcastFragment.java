@@ -156,10 +156,10 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 	}
 	
 	@Override
-	public void onPodcastLoadProgress(int percent) {
-		if (percent >= 0 && percent <= 100) {
+	public void onPodcastLoadProgress(Podcast podcast, int progress, boolean isBackground) {
+		if (progress >= 0 && progress <= 100) {
 			progressView.setIndeterminate(false);
-			progressView.setProgress(percent);
+			progressView.setProgress(progress);
 		} else progressView.setIndeterminate(true);
 	}
 

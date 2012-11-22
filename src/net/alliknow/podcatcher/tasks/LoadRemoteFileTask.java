@@ -95,7 +95,7 @@ public abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Param
 			
 			// Create the byte buffer to write to
 			result = new ByteArrayOutputStream();
-			if (! background) publishProgress(PROGRESS_LOAD);
+			publishProgress(PROGRESS_LOAD);
 			
 			byte[] buffer = new byte[1024];
 			int bytesRead = 0;
@@ -109,7 +109,7 @@ public abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Param
 				
 				result.write(buffer, 0, bytesRead);
 							  
-				if (sendLoadProgress && !background)
+				if (sendLoadProgress)
 					publishProgress((int)((float)totalBytes / (float)connection.getContentLength() * 100));
 			}
 			

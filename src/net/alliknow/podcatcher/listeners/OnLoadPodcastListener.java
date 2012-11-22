@@ -32,7 +32,7 @@ public interface OnLoadPodcastListener {
 	 * reports its content length correctly. Otherwise 
 	 * (and this happens in the wild out there) percent might be >100.
 	 */
-	public void onPodcastLoadProgress(int progress);
+	public void onPodcastLoadProgress(Podcast podcast, int progress, boolean isBackground);
 	
 	/**
 	 * Called on completion.
