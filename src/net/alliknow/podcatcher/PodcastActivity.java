@@ -67,8 +67,8 @@ public class PodcastActivity extends Activity implements
 		episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
 		episodeFragment = (EpisodeFragment) getFragmentManager().findFragmentById(R.id.episode);
 		
-		switchBackground(R.id.first_divider, podcastListFragment.isPodcastSelected());
-		switchBackground(R.id.second_divider, episodeListFragment.isEpisodeSelected());
+		switchBackground(R.id.divider_first, podcastListFragment.isPodcastSelected());
+		switchBackground(R.id.divider_second, episodeListFragment.isEpisodeSelected());
 	}
 	
 	@Override
@@ -90,7 +90,7 @@ public class PodcastActivity extends Activity implements
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-	        case R.id.about_menu:
+	        case R.id.about_menuitem:
 	        	Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_WEBSITE));
 	   			startActivity(intent);
 	            
@@ -113,7 +113,7 @@ public class PodcastActivity extends Activity implements
 	public void onPodcastSelected(Podcast podcast) {
 		multiplePodcastsMode = false;
 		
-		switchBackground(R.id.first_divider, true);
+		switchBackground(R.id.divider_first, true);
 		episodeListFragment.clearAndSpin();
 	}
 	
@@ -121,7 +121,7 @@ public class PodcastActivity extends Activity implements
 	public void onAllPodcastsSelected() {
 		multiplePodcastsMode = true;
 		
-		switchBackground(R.id.first_divider, true);
+		switchBackground(R.id.divider_first, true);
 		episodeListFragment.reset();
 		episodeListFragment.clearAndSpin();
 	}
@@ -130,7 +130,7 @@ public class PodcastActivity extends Activity implements
 	public void onNoPodcastSelected() {
 		multiplePodcastsMode = false;
 		
-		switchBackground(R.id.first_divider, false);
+		switchBackground(R.id.divider_first, false);
 		episodeListFragment.reset();
 	}
 	
@@ -156,13 +156,13 @@ public class PodcastActivity extends Activity implements
 
 	@Override
 	public void onEpisodeSelected(Episode selectedEpisode) {
-		switchBackground(R.id.second_divider, true);
+		switchBackground(R.id.divider_second, true);
 		episodeFragment.setEpisode(selectedEpisode);
 	}
 	
 	@Override
 	public void onNoEpisodeSelected() {
-		switchBackground(R.id.second_divider, false);
+		switchBackground(R.id.divider_second, false);
 	}
 	
 	private void switchBackground(int viewId, boolean color) {

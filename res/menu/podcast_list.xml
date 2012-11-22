@@ -19,16 +19,16 @@
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
-        android:id="@+id/add_podcast_button"
+        android:id="@+id/podcast_add_menuitem"
         android:icon="@drawable/ic_menu_add"
         android:showAsAction="always|withText"
         android:title="@string/add_podcast"/>
     <item
-        android:id="@+id/select_all_podcasts_button"
+        android:id="@+id/podcast_select_all_menuitem"
         android:showAsAction="never|withText"
         android:title="@string/select_all_podcasts"/>
     <item
-        android:id="@+id/remove_podcast_button"
+        android:id="@+id/podcast_remove_menuitem"
         android:icon="@drawable/ic_menu_delete"
         android:showAsAction="never|withText"
         android:title="@string/remove_podcast"

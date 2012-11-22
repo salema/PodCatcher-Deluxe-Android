@@ -233,24 +233,24 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	private void initUi(View view) {
 		getDialog().setTitle(R.string.suggested_podcasts);
 				
-		languageFilter = (Spinner) view.findViewById(R.id.select_language);
+		languageFilter = (Spinner) view.findViewById(R.id.suggestion_language_select);
 		languageFilter.setAdapter(new LanguageSpinnerAdapter(getActivity()));
 		languageFilter.setOnItemSelectedListener(selectionListener);
 		
-		genreFilter = (Spinner) view.findViewById(R.id.select_genre);
+		genreFilter = (Spinner) view.findViewById(R.id.suggestion_genre_select);
 		genreFilter.setAdapter(new GenreSpinnerAdapter(getActivity()));
 		genreFilter.setOnItemSelectedListener(selectionListener);
 		
-		mediaTypeFilter = (Spinner) view.findViewById(R.id.select_type);
+		mediaTypeFilter = (Spinner) view.findViewById(R.id.suggestion_type_select);
 		mediaTypeFilter.setAdapter(new MediaTypeSpinnerAdapter(getActivity()));
 		mediaTypeFilter.setOnItemSelectedListener(selectionListener);
 		
 		progressView = (ProgressView) view.findViewById(R.id.suggestion_list_progress);
 		
-		suggestionsListView = (ListView) view.findViewById(R.id.suggested_podcasts);
-		noSuggestionsView = (TextView) view.findViewById(R.id.no_suggestions);
+		suggestionsListView = (ListView) view.findViewById(R.id.suggestion_podcasts);
+		noSuggestionsView = (TextView) view.findViewById(R.id.suggestion_none);
 		
-		sendSuggestionView = (TextView) view.findViewById(R.id.send_suggestion);
+		sendSuggestionView = (TextView) view.findViewById(R.id.suggestion_send);
 		sendSuggestionView.setText(Html.fromHtml("<a href=\"mailto:" + SUGGESTION_MAIL_ADDRESS +
 				"?subject=" + SUGGESTION_MAIL_SUBJECT + "\">" +
 				getResources().getString(R.string.send_suggestion) + "</a>"));

@@ -44,7 +44,7 @@
         android:textSize="@dimen/small_font_size"
         android:visibility="gone" />
     <ProgressBar
-        android:id="@+id/load_podcast_progress"
+        android:id="@+id/podcast_load_progress"
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="5dp"

@@ -47,7 +47,7 @@
                 android:textSize="@dimen/default_font_size" />
         </LinearLayout>
         <Button
-            android:id="@+id/add_suggestion_button"
+            android:id="@+id/suggestion_add_button"
             android:layout_width="0dp"
             android:layout_height="@dimen/list_item"
             android:layout_margin="3dp"
