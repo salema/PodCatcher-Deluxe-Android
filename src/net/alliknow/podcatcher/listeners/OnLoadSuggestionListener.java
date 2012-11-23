@@ -26,8 +26,8 @@ public interface OnLoadSuggestionListener {
 	
 	/**
 	 * Called on progress update.
-	 * @param progress Percent of suggestions JSON file loaded 
-	 * or flag from <code>LoadRemoteFileTask</code>.
+	 * @param progress Progress of suggestions JSON file loaded 
+	 * or flag from <code>Progress</code>.
 	 * Note that this only works if the http connection
 	 * reports its content length correctly. Otherwise 
 	 * (and this happens in the wild out there) percent might be >100.

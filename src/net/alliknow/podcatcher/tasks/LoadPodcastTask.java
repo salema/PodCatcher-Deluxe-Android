@@ -62,8 +62,7 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 	/**
 	 * Create new task
 	 * @param fragment Owner fragment
-	 * @param background Whether this task should run in the background, i.e.
-	 * no progress update will be given
+	 * @param background Whether this task should run in the background
 	 */
 	public LoadPodcastTask(OnLoadPodcastListener listener, boolean background) {
 		this(listener);

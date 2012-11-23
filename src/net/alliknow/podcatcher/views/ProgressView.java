@@ -62,7 +62,7 @@ public class ProgressView extends LinearLayout {
 	 * Show a textual progress information. Beyond actual
 	 * percentages this also works with flags from load tasks.
 	 * @param progress Progress to visualize.
-	 * @see <code>LoadRemoteFileTask</code>
+	 * @see <code>Progress</code>
 	 */
 	public void publishProgress(Progress progress) {
 		progressBar.setVisibility(View.VISIBLE);

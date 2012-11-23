@@ -25,6 +25,7 @@ import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
 import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.types.Podcast;
+import net.alliknow.podcatcher.views.HorizontalProgressView;
 import android.app.DialogFragment;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -39,7 +40,6 @@ import android.view.inputmethod.EditorInfo;
 import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
@@ -56,9 +56,7 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 	/** The podcast URL text field */
 	private EditText podcastUrlEditText;
 	/** The progress view */
-	private ProgressBar progressView;
-	/** The error text view */
-	private TextView errorView;
+	private HorizontalProgressView progressView;
 	/** The show suggestions button */
 	private Button showSuggestionsButton;
 	/** The add podcast button */
@@ -91,8 +89,7 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 			}
 		});
 		
-		progressView = (ProgressBar) view.findViewById(R.id.add_podcast_progress);
-		errorView = (TextView) view.findViewById(R.id.add_podcast_error);
+		progressView = (HorizontalProgressView) view.findViewById(R.id.add_podcast_progress);
 		
 		showSuggestionsButton = (Button) view.findViewById(R.id.add_suggestions_button);
 		showSuggestionsButton.setOnClickListener(new View.OnClickListener() {
@@ -138,7 +135,6 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 		podcastUrlEditText.setEnabled(false);
 		addPodcastButton.setEnabled(false);
 		progressView.setVisibility(View.VISIBLE);
-		errorView.setVisibility(View.GONE);
 		
 		// Try to make the input work as a online resource
 		String spec = podcastUrlEditText.getText().toString();
@@ -158,10 +154,7 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 	
 	@Override
 	public void onPodcastLoadProgress(Podcast podcast, Progress progress, boolean isBackground) {
-		if (progress.getPercentDone() >= 0 && progress.getPercentDone() <= 100) {
-			progressView.setIndeterminate(false);
-			progressView.setProgress(progress.getPercentDone());
-		} else progressView.setIndeterminate(true);
+		progressView.publishProgress(progress);
 	}
 
 	@Override
@@ -186,8 +179,7 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 	@Override
 	public void onPodcastLoadFailed(Podcast podcast, boolean wasBackground) {
 		// Show error in the UI
-		progressView.setVisibility(View.GONE);
-		errorView.setVisibility(View.VISIBLE);
+		progressView.showError(R.string.error_podcast_add);
 		podcastUrlEditText.setEnabled(true);
 		addPodcastButton.setEnabled(true);
 	}

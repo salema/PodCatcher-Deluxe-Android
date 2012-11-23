@@ -25,13 +25,15 @@ import net.alliknow.podcatcher.types.Podcast;
 public interface OnLoadPodcastListener {
 	
 	/**
-	 * Called on progress update. This will only be called
-	 * if the task was not created with <code>background == true</code>.
+	 * Called on progress update.
+	 * @param podcast Podcast loading.
 	 * @param progress Percent of podcast RSS file loaded 
-	 * or flag from <code>LoadRemoteFileTask</code>.
+	 * or flag from <code>Progress</code>.
 	 * Note that this only works if the http connection
 	 * reports its content length correctly. Otherwise 
 	 * (and this happens in the wild out there) percent might be >100.
+	 * @param isBackground Whether is task is running with
+	 * <code>background == true</code>.
 	 */
 	public void onPodcastLoadProgress(Podcast podcast, Progress progress, boolean isBackground);
 	

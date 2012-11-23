@@ -24,7 +24,7 @@ import android.util.Log;
 
 /**
  * An async task to load a podcast logo.
- * Implement PodcastLogoLoader to be alerted on completion or failure
+ * Implement PodcastLogoLoader to be alerted on completion or failure.
  * 
  * @author Kevin Hausmann
  */
@@ -41,8 +41,10 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 	protected final int requestedHeight;
 	
 	/**
-	 * Create new task
-	 * @param fragment Owner fragment
+	 * Create new task.
+	 * @param fragment Owner fragment.
+	 * @param requestedWidth Width to sample result image to.
+	 * @param requestedHeight Height to sample result image to.
 	 */
 	public LoadPodcastLogoTask(OnLoadPodcastLogoListener fragment, int requestedWidth, int requestedHeight) {
 		this.loader = fragment;
