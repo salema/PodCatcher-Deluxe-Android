@@ -39,5 +39,5 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:layout_gravity="top|center_horizontal"
-        android:textSize="@dimen/small_font_size" />
+        android:textSize="@dimen/font_size_small" />
 </LinearLayout>
