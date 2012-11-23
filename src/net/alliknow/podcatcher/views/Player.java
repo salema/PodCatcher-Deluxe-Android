@@ -46,8 +46,8 @@ public class Player extends LinearLayout {
 	private SeekBar playerSeekBar;
 	private TextView playerErrorView;
 	
-	public Player(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
+	public Player(Context context, AttributeSet attrs) {
+		super(context, attrs);
 		
 		at = getResources().getString(R.string.at);
 		of = getResources().getString(R.string.of);
@@ -60,14 +60,6 @@ public class Player extends LinearLayout {
 		playerErrorView = (TextView) view.findViewById(R.id.player_error);
 	}
 
-	public Player(Context context, AttributeSet attrs) {
-		this(context, attrs, 0);
-	}
-
-	public Player(Context context) {
-		this(context, null);
-	}
-	
 	@Override
 	public void setOnClickListener(OnClickListener listener) {
 		playerButton.setOnClickListener(listener);
