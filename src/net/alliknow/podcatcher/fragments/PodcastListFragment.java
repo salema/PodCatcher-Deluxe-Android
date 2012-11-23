@@ -314,9 +314,6 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		podcastList.store(getActivity());
 	}
 	
-	/**
-	 * 
-	 */
 	private void updateListVisibility() {
 		getView().findViewById(android.R.id.empty)
 		.setVisibility(podcastList.isEmpty() ? View.VISIBLE : View.GONE);
@@ -381,6 +378,6 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	
 	private void scrollListView(int position) {
 		if (getListView().getFirstVisiblePosition() > position || getListView().getLastVisiblePosition() < position)
-				getListView().setSelectionFromTop(position, 0);
+				getListView().smoothScrollToPosition(position);
 	}
 }
