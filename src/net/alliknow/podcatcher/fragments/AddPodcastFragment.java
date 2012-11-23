@@ -19,11 +19,14 @@ package net.alliknow.podcatcher.fragments;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
+import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.types.Podcast;
+import net.alliknow.podcatcher.views.HorizontalProgressView;
 import android.app.DialogFragment;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -38,7 +41,6 @@ import android.view.inputmethod.EditorInfo;
 import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
@@ -55,9 +57,7 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 	/** The podcast URL text field */
 	private EditText podcastUrlEditText;
 	/** The progress view */
-	private ProgressBar progressView;
-	/** The error text view */
-	private TextView errorView;
+	private HorizontalProgressView progressView;
 	/** The show suggestions button */
 	private Button showSuggestionsButton;
 	/** The add podcast button */
@@ -89,9 +89,10 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 				}
 			}
 		});
+		if (Podcatcher.isInDebugMode(getActivity()))
+			podcastUrlEditText.setText("richeisen.libsyn.com/rss");
 		
-		progressView = (ProgressBar) view.findViewById(R.id.add_podcast_progress);
-		errorView = (TextView) view.findViewById(R.id.add_podcast_error);
+		progressView = (HorizontalProgressView) view.findViewById(R.id.add_podcast_progress);
 		
 		showSuggestionsButton = (Button) view.findViewById(R.id.add_suggestions_button);
 		showSuggestionsButton.setOnClickListener(new View.OnClickListener() {
@@ -137,7 +138,6 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 		podcastUrlEditText.setEnabled(false);
 		addPodcastButton.setEnabled(false);
 		progressView.setVisibility(View.VISIBLE);
-		errorView.setVisibility(View.GONE);
 		
 		// Try to make the input work as a online resource
 		String spec = podcastUrlEditText.getText().toString();
@@ -149,31 +149,29 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 		// Try to load the given online resource
 		try {
 			loadTask = new LoadPodcastTask(this);
+			loadTask.preventZippedTranfer(true);
 			loadTask.execute(new Podcast(null, new URL(spec)));
 		} catch (MalformedURLException e) {
-			onPodcastLoadFailed(null, false);
+			onPodcastLoadFailed(null);
 		}	
 	}
 	
 	@Override
-	public void onPodcastLoadProgress(int percent) {
-		if (percent >= 0 && percent <= 100) {
-			progressView.setIndeterminate(false);
-			progressView.setProgress(percent);
-		} else progressView.setIndeterminate(true);
+	public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
+		progressView.publishProgress(progress);
 	}
 
 	@Override
-	public void onPodcastLoaded(Podcast podcast, boolean wasBackground) {
+	public void onPodcastLoaded(Podcast podcast) {
 		// Get call back
 		OnAddPodcastListener listener = (OnAddPodcastListener) getTargetFragment();
 		
 		// We do not allow empty podcast to be added (TODO Does this make sense?)
-		if (podcast.getEpisodes().isEmpty()) onPodcastLoadFailed(podcast, wasBackground);
+		if (podcast.getEpisodes().isEmpty()) onPodcastLoadFailed(podcast);
 		// We need the target fragment to function as our call back
 		else if (listener == null || !(listener instanceof OnAddPodcastListener)) {
 			Log.w(getClass().getSimpleName(), "Podcast okay, but target fragment is absent or does not implement OnAddPodcastListener");
-			onPodcastLoadFailed(podcast, wasBackground);
+			onPodcastLoadFailed(podcast);
 		} // This is an actual podcast, add it
 		else {
 			dismiss();
@@ -183,10 +181,9 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 	}
 
 	@Override
-	public void onPodcastLoadFailed(Podcast podcast, boolean wasBackground) {
+	public void onPodcastLoadFailed(Podcast podcast) {
 		// Show error in the UI
-		progressView.setVisibility(View.GONE);
-		errorView.setVisibility(View.VISIBLE);
+		progressView.showError(R.string.error_podcast_add);
 		podcastUrlEditText.setEnabled(true);
 		addPodcastButton.setEnabled(true);
 	}

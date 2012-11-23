@@ -29,7 +29,9 @@ import net.alliknow.podcatcher.listeners.OnShowSuggestionsListener;
 import net.alliknow.podcatcher.listeners.PodcastListContextListener;
 import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
+import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.types.Podcast;
+import net.alliknow.podcatcher.views.HorizontalProgressView;
 import android.app.ListFragment;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -187,6 +189,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	/**
 	 * @return The list of podcast currently listed.
 	 */
+	@Override
 	public PodcastList getPodcastList() {
 		return this.podcastList;
 	}
@@ -206,16 +209,12 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		suggestionFragment.show(getFragmentManager(), "suggest_podcast");
 	}
 	
-	/**
-	 * @return The list of podcast suggestions cached here
-	 */
+	@Override
 	public PodcastList getPodcastSuggestions() {
 		return podcastSuggestions;
 	}
 
-	/**
-	 * @param podcastSuggestions The list of podcast suggestions to cache here
-	 */
+	@Override
 	public void setPodcastSuggestions(PodcastList podcastSuggestions) {
 		this.podcastSuggestions = podcastSuggestions;
 	}
@@ -241,10 +240,11 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		if (selectedPodcast.needsReload()) {
 			// Download podcast RSS feed (async)
 			loadPodcastTask = new LoadPodcastTask(this);
+			loadPodcastTask.preventZippedTranfer(true);
 			loadPodcastTask.execute(selectedPodcast);
 		}
 		// Use buffered content
-		else onPodcastLoaded(selectedPodcast, false);
+		else onPodcastLoaded(selectedPodcast);
 	}
 
 	private void selectAll() {
@@ -265,8 +265,8 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		else Log.d(getClass().getSimpleName(), "All podcasts selected, but no listener attached");
 		
 		for (Podcast podcast : podcastList)
-			if (podcast.needsReload()) new LoadPodcastTask(this, true).execute(podcast);
-			else onPodcastLoaded(podcast, true);
+			if (podcast.needsReload()) new LoadPodcastTask(this).execute(podcast);
+			else onPodcastLoaded(podcast);
 	}
 	
 	private void cancelCurrentLoadTasks() {
@@ -298,14 +298,14 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 			}
 		
 		// Update UI (current podcast was deleted)
-		if (currentPodcast == null) {
+		if (!selectAll && currentPodcast == null) {
 			adapter.setSelectNone();
 			logoView.setImageResource(R.drawable.default_podcast_logo);
 			currentLogo = null;
 			
 			if (selectedListener != null) selectedListener.onNoPodcastSelected();
 		} // Current podcast has new position
-		else adapter.setSelectedPosition(podcastList.indexOf(currentPodcast));
+		else if (!selectAll) adapter.setSelectedPosition(podcastList.indexOf(currentPodcast));
 		
 		updateListVisibility();
 		updateMenuItems();
@@ -321,8 +321,14 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	}
 
 	@Override
-	public void onPodcastLoadProgress(int progress) {
-		if (loadListener != null) loadListener.onPodcastLoadProgress(progress);
+	public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
+		if (loadListener != null && podcast.equals(currentPodcast)) 
+			loadListener.onPodcastLoadProgress(podcast, progress);
+		
+		View listItemView = getListView().getChildAt(podcastList.indexOf(podcast));
+		if (listItemView != null)
+			((HorizontalProgressView)listItemView.findViewById(R.id.load_podcast_progress))
+				.publishProgress(progress);
 	}
 	
 	/**
@@ -331,14 +337,16 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	 * @param podcast Podcast RSS feed loaded for
 	 */
 	@Override
-	public void onPodcastLoaded(Podcast podcast, boolean wasBackground) {
+	public void onPodcastLoaded(Podcast podcast) {
 		// This will display the number of episodes
 		adapter.notifyDataSetChanged();
 		
-		if (loadListener != null) loadListener.onPodcastLoaded(podcast, wasBackground);
+		// Only show if it had not been deleted meanwhile
+		if (loadListener != null && podcastList.contains(podcast))
+			loadListener.onPodcastLoaded(podcast);
 		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
 		
-		if (! wasBackground) {
+		if (podcast.equals(currentPodcast)) {
 			loadPodcastTask = null;
 			
 			// Download podcast logo
@@ -348,12 +356,12 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	}
 	
 	@Override
-	public void onPodcastLoadFailed(Podcast podcast, boolean wasBackground) {
+	public void onPodcastLoadFailed(Podcast podcast) {
 		// Only react if the podcast failed to load that we are actually waiting for
-		if (! wasBackground) {
+		if (podcast.equals(currentPodcast)) {
 			loadPodcastTask = null;
 			
-			if (loadListener != null) loadListener.onPodcastLoadFailed(podcast, false);
+			if (loadListener != null) loadListener.onPodcastLoadFailed(podcast);
 			else Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
 		}
 			

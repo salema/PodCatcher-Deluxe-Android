@@ -59,18 +59,6 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 		factory.setNamespaceAware(true);
 	}
 	
-	/**
-	 * Create new task
-	 * @param fragment Owner fragment
-	 * @param background Whether this task should run in the background, i.e.
-	 * no progress update will be given
-	 */
-	public LoadPodcastTask(OnLoadPodcastListener listener, boolean background) {
-		this(listener);
-		
-		this.background = background;
-	}
-	
 	@Override
 	protected Void doInBackground(Podcast... podcasts) {
 		this.podcast = podcasts[0];
@@ -79,12 +67,12 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 			if (podcast == null || podcast.getUrl() == null) throw new Exception("Podcast and/or URL cannot be null!");
 			
 			// Load the file from the internets
-			if (! background) publishProgress(PROGRESS_CONNECT);
+			publishProgress(Progress.CONNECT);
 			byte[] podcastRssFile = loadFile(podcast.getUrl(), MAX_RSS_FILE_SIZE);
 			
 			// Get result as a document
 			if (isCancelled()) return null;
-			else if (! background) publishProgress(PROGRESS_PARSE);
+			else publishProgress(Progress.PARSE);
 			Document rssDocument = factory.newDocumentBuilder().parse(new ByteArrayInputStream(podcastRssFile));
 			
 			// Set as podcast content
@@ -98,8 +86,8 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 	}
 	
 	@Override
-	protected void onProgressUpdate(Integer... values) {
-		if (listener != null) listener.onPodcastLoadProgress(values[0]);
+	protected void onProgressUpdate(Progress... progress) {
+		if (listener != null) listener.onPodcastLoadProgress(podcast, progress[0]);
 		else if (listener == null) Log.d(getClass().getSimpleName(), "Podcast progress update, but no listener attached");
 	}
 	
@@ -107,10 +95,10 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 	protected void onPostExecute(Void nothing) {
 		// Background task failed to complete
 		if (failed) {
-			if (listener != null) listener.onPodcastLoadFailed(podcast, background);
+			if (listener != null) listener.onPodcastLoadFailed(podcast);
 			else Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
 		} // Podcast was loaded
-		else if (listener != null) listener.onPodcastLoaded(podcast, background);
+		else if (listener != null) listener.onPodcastLoaded(podcast);
 		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
 	}
 }

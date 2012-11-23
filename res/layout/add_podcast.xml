@@ -21,7 +21,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:orientation="vertical" >
+    android:orientation="vertical">
     <EditText
         android:id="@+id/podcast_url"
         android:layout_width="match_parent"
@@ -29,28 +29,15 @@
         android:hint="@string/enter_podcast_url_here"
         android:imeOptions="actionGo"
         android:inputType="textUri|textNoSuggestions" />
-    <TextView
-        android:id="@+id/add_podcast_error"
+    <net.alliknow.podcatcher.views.HorizontalProgressView
+        android:id="@+id/add_podcast_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:text="@string/error_podcast_add"
-        android:textColor="@color/text_error"
-        android:visibility="gone" />
-    <ProgressBar
-        android:id="@+id/add_podcast_progress"
-        style="@android:style/Widget.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="8dp"
-        android:layout_margin="3dp"
-        android:indeterminate="true"
         android:visibility="gone" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
         <Button
             android:id="@+id/add_suggestions_button"
             android:layout_width="0dp"

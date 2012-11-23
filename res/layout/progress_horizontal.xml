@@ -18,27 +18,26 @@
  */
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/progress_view"
     android:layout_width="match_parent"
-  	android:layout_height="match_parent"
-  	android:orientation="vertical">
-    <View 
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="4"/>
+  	android:layout_height="wrap_content"
+  	android:orientation="horizontal">
     <ProgressBar
         android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="6dp"
+        android:layout_weight="4"
+        android:layout_margin="3dp"
+        android:layout_gravity="center_vertical"
         android:indeterminate="true"/>
     <TextView
         android:id="@+id/progress_text"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="4"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:layout_gravity="top|center_horizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:singleLine="true"
+        android:gravity="center"
         android:textSize="@dimen/small_font_size" />
 </LinearLayout>

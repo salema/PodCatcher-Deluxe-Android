@@ -43,12 +43,10 @@
         android:singleLine="true"
         android:textSize="@dimen/small_font_size"
         android:visibility="gone" />
-    <ProgressBar
+    <net.alliknow.podcatcher.views.HorizontalProgressView
         android:id="@+id/load_podcast_progress"
-        style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:layout_margin="3dp"
+        android:layout_height="wrap_content"
         android:indeterminate="true"
         android:visibility="gone" />
 </LinearLayout>

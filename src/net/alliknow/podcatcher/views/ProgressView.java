@@ -17,7 +17,7 @@
 package net.alliknow.podcatcher.views;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.tasks.LoadRemoteFileTask;
+import net.alliknow.podcatcher.tasks.Progress;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -33,43 +33,45 @@ import android.widget.TextView;
 public class ProgressView extends LinearLayout {
 	
 	/** The progress bar */
-	private ProgressBar progressBar;
+	protected ProgressBar progressBar;
 	/** The progress bar text */
-	private TextView progressTextView;
+	protected TextView progressTextView;
 	
-	public ProgressView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
+	public ProgressView(Context context, AttributeSet attrs) {
+		super(context, attrs);
 		
-		View view = View.inflate(context, R.layout.progress_view, this);
+		inflate(context);
+	}
+	
+	/**
+	 * Inflate the view's layout, override to change in subclass.
+	 * @param context Context view lives in.
+	 */
+	protected void inflate(Context context) {
+		View view = View.inflate(context, R.layout.progress, this);
+		
 		progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
 		progressTextView = (TextView) view.findViewById(R.id.progress_text);
 	}
-
-	public ProgressView(Context context, AttributeSet attrs) {
-		this(context, attrs, 0);
-	}
-
-	public ProgressView(Context context) {
-		this(context, null);
-	}
-	
+		
 	/**
 	 * Show a textual progress information. Beyond actual
 	 * percentages this also works with flags from load tasks.
 	 * @param progress Progress to visualize.
-	 * @see <code>LoadRemoteFileTask</code>
+	 * @see <code>Progress</code>
 	 */
-	public void publishProgress(int progress) {
+	public void publishProgress(Progress progress) {
 		progressBar.setVisibility(View.VISIBLE);
 		progressTextView.setTextColor(getResources().getColor(R.color.text_secondary));
 		
-		if (progress == LoadRemoteFileTask.PROGRESS_CONNECT) 
+		if (progress.equals(Progress.CONNECT))
 			progressTextView.setText(getResources().getString(R.string.connect));
-		else if (progress == LoadRemoteFileTask.PROGRESS_LOAD)
+		else if (progress.equals(Progress.LOAD))
 			progressTextView.setText(getResources().getString(R.string.load));
-		else if (progress >= 0 && progress <= 100) progressTextView.setText(progress + "%");
-		else if (progress == LoadRemoteFileTask.PROGRESS_PARSE)
+		else if (progress.equals(Progress.PARSE))
 			progressTextView.setText(getResources().getString(R.string.parse));
+		else if (progress.getPercentDone() >= 0 && progress.getPercentDone() <= 100) 
+			progressTextView.setText(progress.getPercentDone() + "%");
 		else progressTextView.setText(getResources().getString(R.string.load));
 	}
 	

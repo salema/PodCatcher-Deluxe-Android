@@ -26,38 +26,38 @@ import java.net.URL;
 import android.os.AsyncTask;
 
 /**
- * Protected super class for file download tasks.
+ * Abstract super class for file download tasks.
  * 
  * @author Kevin Hausmann
  */
-public abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Params, Integer, Result> {
-
-	/** Flag given by progress callback for connecting */
-	public static final int PROGRESS_CONNECT = -3;
-	/** Flag given by progress callback for loading */
-	public static final int PROGRESS_LOAD = -2;
-	/** Flag given by progress callback for parsing */
-	public static final int PROGRESS_PARSE = -1;
+public abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Params, Progress, Result> {
 	
 	/** The connection timeout */
 	protected static final int CONNECT_TIMEOUT = 8000;
 	/** The read timeout */
 	protected static final int READ_TIMEOUT = 60000;
 	
-	/** Whether we run in the background */
-	protected boolean background = false;
+	/** Whether we prevent gzipping on server side */
+	protected boolean preventZippedTranfer = false;
 	/** Store whether loading failed */
 	protected boolean failed = false;
 	
+	/**
+	 * Whether the load task should prevent server side
+	 * zipping of transfered file (improves progress information).
+	 * @param prevent The flag (default is <code>false</code>).
+	 */
+	public void preventZippedTranfer(boolean prevent) {
+		this.preventZippedTranfer = prevent;
+	}
 	
 	/**
 	 * Download the file and return it as a byte array.
-	 * Will feed <code>publishProgress</code> unless background
-	 * is set.
+	 * Will feed <code>publishProgress</code>.
 	 * 
 	 * @param remote URL connection to load from.
 	 * @return The file content.
-	 * @throws IOException If something goes wrong
+	 * @throws IOException If something goes wrong.
 	 */
 	protected byte[] loadFile(URL remote) throws IOException {
 		return loadFile(remote, -1);
@@ -65,59 +65,57 @@ public abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Param
 	
 	/**
 	 * Download the file and return it as a byte array.
-	 * Will feed <code>publishProgress</code> unless background
-	 * is set.
+	 * Will feed <code>publishProgress</code>.
 	 * 
 	 * @param remote URL connection to load from.
 	 * @param limit Maximum size (in bytes) for the file to load.
 	 * @return The file content.
-	 * @throws IOException If something goes wrong
+	 * @throws IOException If something goes wrong.
 	 */
 	protected byte[] loadFile(URL remote, int limit) throws IOException {
 		HttpURLConnection connection = (HttpURLConnection) remote.openConnection();
 		connection.setConnectTimeout(CONNECT_TIMEOUT);
 		connection.setReadTimeout(READ_TIMEOUT);
-		// TODO Decide: We do not want gzipped data, because we want to measure progress
-		// if (! background) connection.setRequestProperty("Accept-Encoding", "identity");
+		if (preventZippedTranfer) connection.setRequestProperty("Accept-Encoding", "identity");
 		
 		// TODO allow for password protected feeds 
 		// String userpass = username + ":" + password;
 		// String basicAuth = "Basic " + DatatypeCon.encode(userpass.getBytes()));
 		// connection.setRequestProperty ("Authorization", basicAuth);
 		
-		InputStream in = null;
+		InputStream remoteStream = null;
 		ByteArrayOutputStream result = null;
 		
 		try {
 			// Open stream and check whether we know its length
-			in = new BufferedInputStream(connection.getInputStream());
+			remoteStream = new BufferedInputStream(connection.getInputStream());
 			boolean sendLoadProgress = connection.getContentLength() > 0;
 			
 			// Create the byte buffer to write to
 			result = new ByteArrayOutputStream();
-			if (! background) publishProgress(PROGRESS_LOAD);
+			publishProgress(Progress.LOAD);
 			
 			byte[] buffer = new byte[1024];
 			int bytesRead = 0;
 			int totalBytes = 0;
 			// Read stream and report progress (if possible)
-			while((bytesRead = in.read(buffer)) > 0) {
+			while((bytesRead = remoteStream.read(buffer)) > 0) {
 				if (isCancelled()) return null;
 				
 				totalBytes += bytesRead;
-				if (limit > 0 && totalBytes > limit) return null;
+				if (limit >= 0 && totalBytes > limit) return null;
 				
 				result.write(buffer, 0, bytesRead);
 							  
-				if (sendLoadProgress && !background)
-					publishProgress((int)((float)totalBytes / (float)connection.getContentLength() * 100));
+				if (sendLoadProgress)
+					publishProgress(new Progress(totalBytes, connection.getContentLength()));
 			}
 			
 			// Return result as a byte array
 			return result.toByteArray();
 		} finally {
 			// Close the streams
-			if (in != null) in.close();
+			if (remoteStream != null) remoteStream.close();
 			if (result != null) result.close();
 			// Disconnect
 			connection.disconnect();

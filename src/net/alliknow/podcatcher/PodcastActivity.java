@@ -24,6 +24,7 @@ import net.alliknow.podcatcher.fragments.PodcastListFragment;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
+import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.types.Episode;
 import net.alliknow.podcatcher.types.Podcast;
 import android.app.Activity;
@@ -135,23 +136,22 @@ public class PodcastActivity extends Activity implements
 	}
 	
 	@Override
-	public void onPodcastLoadProgress(int progress) {
+	public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
 		episodeListFragment.showProgress(progress);
 	}
 	
 	@Override
-	public void onPodcastLoaded(Podcast podcast, boolean wasBackground) {
-		if (! wasBackground) episodeListFragment.setEpisodeList(podcast.getEpisodes());
-		else if (multiplePodcastsMode) episodeListFragment.addEpisodeList(podcast.getEpisodes());
+	public void onPodcastLoaded(Podcast podcast) {
+		if (multiplePodcastsMode && !podcast.getEpisodes().isEmpty()) 
+			episodeListFragment.addEpisodeList(podcast.getEpisodes());
+		else episodeListFragment.setEpisodeList(podcast.getEpisodes());
 	}
 	
 	@Override
-	public void onPodcastLoadFailed(Podcast failedPodcast, boolean wasBackground) {
-		if (! wasBackground) {
-			// Reset the episode list so the old one would not reappear of config changes
-			episodeListFragment.setEpisodeList(new ArrayList<Episode>());
-			episodeListFragment.showLoadFailed();
-		}
+	public void onPodcastLoadFailed(Podcast failedPodcast) {
+		// Reset the episode list so the old one would not reappear of config changes
+		episodeListFragment.setEpisodeList(new ArrayList<Episode>());
+		episodeListFragment.showLoadFailed();
 	}
 
 	@Override

@@ -23,6 +23,7 @@ import java.util.List;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
+import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.types.Episode;
 import net.alliknow.podcatcher.views.ProgressView;
 import android.app.ListFragment;
@@ -187,7 +188,7 @@ public class EpisodeListFragment extends ListFragment {
 	 * Update UI with load progress
 	 * @param progress Amount loaded or flag from load task
 	 */
-	public void showProgress(int progress) {
+	public void showProgress(Progress progress) {
 		progressView.publishProgress(progress);
 	}
 

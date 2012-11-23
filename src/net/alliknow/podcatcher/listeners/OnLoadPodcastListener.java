@@ -16,6 +16,7 @@
  */
 package net.alliknow.podcatcher.listeners;
 
+import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.types.Podcast;
 
 /**
@@ -24,27 +25,25 @@ import net.alliknow.podcatcher.types.Podcast;
 public interface OnLoadPodcastListener {
 	
 	/**
-	 * Called on progress update. This will only be called
-	 * if the task was not created with <code>background == true</code>.
+	 * Called on progress update.
+	 * @param podcast Podcast loading.
 	 * @param progress Percent of podcast RSS file loaded 
-	 * or flag from <code>LoadRemoteFileTask</code>.
+	 * or flag from <code>Progress</code>.
 	 * Note that this only works if the http connection
 	 * reports its content length correctly. Otherwise 
 	 * (and this happens in the wild out there) percent might be >100.
 	 */
-	public void onPodcastLoadProgress(int progress);
+	public void onPodcastLoadProgress(Podcast podcast, Progress progress);
 	
 	/**
 	 * Called on completion.
 	 * @param podcast Podcast loaded.
-	 * @param wasBackground Whether the task was running in the background
 	 */
-	public void onPodcastLoaded(Podcast podcast, boolean wasBackground);
+	public void onPodcastLoaded(Podcast podcast);
 	
 	/**
 	 * Called when loading the podcast failed.
 	 * @param podcast Podcast failing to load.
-	 * @param wasBackground Whether the task was running in the background
 	 */
-	public void onPodcastLoadFailed(Podcast podcast, boolean wasBackground);
+	public void onPodcastLoadFailed(Podcast podcast);
 }
