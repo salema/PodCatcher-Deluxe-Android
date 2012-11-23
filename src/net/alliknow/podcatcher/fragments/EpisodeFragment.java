@@ -158,7 +158,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.episode, menu);
 		
-		loadMenuItem = menu.findItem(R.id.load);
+		loadMenuItem = menu.findItem(R.id.episode_load_menuitem);
 		updateLoadMenuItem();
 	}
 	
@@ -176,7 +176,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-	    	case R.id.load:
+	    	case R.id.episode_load_menuitem:
 	    		if (service.isWorkingWith(episode)) onPlaybackComplete();
 				else loadEpisode();
 	    		

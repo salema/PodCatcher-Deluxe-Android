@@ -35,7 +35,7 @@
         android:gravity="center"
         android:text="@string/no_podcast_selected"
         android:textColor="@color/text_secondary"
-        android:textSize="@dimen/small_font_size" />
+        android:textSize="@dimen/font_size_small" />
     <net.alliknow.podcatcher.views.ProgressView
         android:id="@+id/episode_list_progress"
         android:layout_width="match_parent"

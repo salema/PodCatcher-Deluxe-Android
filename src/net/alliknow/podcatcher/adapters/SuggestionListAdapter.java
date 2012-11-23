@@ -63,7 +63,7 @@ public class SuggestionListAdapter extends PodcastListAdapter {
 				getResourceString(itemView.getResources(), suggestion.getMediaType()));
 		setText(itemView, R.id.suggestion_description, suggestion.getDescription());
 		
-		final Button addButton = (Button) itemView.findViewById(R.id.add_suggestion_button);
+		final Button addButton = (Button) itemView.findViewById(R.id.suggestion_add_button);
 		addButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override

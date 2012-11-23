@@ -28,7 +28,7 @@
         android:layout_height="match_parent"
         android:layout_weight="2" />
     <View
-        android:id="@+id/first_divider"
+        android:id="@+id/divider_first"
         android:layout_width="@dimen/divider_width"
         android:layout_height="match_parent"
         android:background="@color/divider_off" />
@@ -38,8 +38,8 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="3" />
-    <View 
-        android:id="@+id/second_divider"
+    <View
+        android:id="@+id/divider_second"
         android:layout_width="@dimen/divider_width"
         android:layout_height="match_parent"
         android:background="@color/divider_off" />

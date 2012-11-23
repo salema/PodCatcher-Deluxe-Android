@@ -19,9 +19,9 @@
 -->
 <resources>
     <dimen name="divider_width">2dp</dimen>
-    <dimen name="default_font_size">18sp</dimen>
-    <dimen name="small_font_size">14sp</dimen>
-    <dimen name="large_font_size">24sp</dimen>
+    <dimen name="font_size_default">18sp</dimen>
+    <dimen name="font_size_small">14sp</dimen>
+    <dimen name="font_size_large">24sp</dimen>
     <dimen name="list_item">48dp</dimen>
     <dimen name="list_item_padding">5dp</dimen>
     <dimen name="episode_view_padding">10dp</dimen>

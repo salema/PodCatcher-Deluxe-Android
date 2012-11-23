@@ -59,7 +59,7 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
 	@Override
 	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 		switch (item.getItemId()) {
-        	case R.id.remove_podcast:
+        	case R.id.podcast_remove_contextmenuitem:
         		fragment.removeCheckedPodcasts();
         		mode.finish(); // Action picked, so close the CAB
         		return true;

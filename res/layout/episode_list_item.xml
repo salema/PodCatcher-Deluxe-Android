@@ -31,7 +31,7 @@
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/list_item_padding"
         android:singleLine="true"
-        android:textSize="@dimen/default_font_size" />
+        android:textSize="@dimen/font_size_default" />
     <CheckedTextView
         android:id="@+id/episode_date"
         android:layout_width="match_parent"
@@ -41,5 +41,5 @@
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/list_item_padding"
         android:singleLine="true"
-        android:textSize="@dimen/small_font_size" />
+        android:textSize="@dimen/font_size_small" />
 </LinearLayout>

@@ -94,7 +94,7 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 		
 		progressView = (HorizontalProgressView) view.findViewById(R.id.add_podcast_progress);
 		
-		showSuggestionsButton = (Button) view.findViewById(R.id.add_suggestions_button);
+		showSuggestionsButton = (Button) view.findViewById(R.id.suggestion_add_button);
 		showSuggestionsButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -112,7 +112,7 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 			}
 		});
 		
-		addPodcastButton = (Button) view.findViewById(R.id.add_podcast_button);
+		addPodcastButton = (Button) view.findViewById(R.id.podcast_add_button);
 		addPodcastButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override

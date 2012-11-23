@@ -128,8 +128,8 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.podcast_list, menu);
 		
-		removeMenuItem = (MenuItem) menu.findItem(R.id.remove_podcast_button);
-		selectAllMenuItem = (MenuItem) menu.findItem(R.id.select_all_podcasts_button);
+		removeMenuItem = (MenuItem) menu.findItem(R.id.podcast_remove_menuitem);
+		selectAllMenuItem = (MenuItem) menu.findItem(R.id.podcast_select_all_menuitem);
 		
 		updateMenuItems();
 	}
@@ -137,15 +137,15 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-	    	case R.id.add_podcast_button:
+	    	case R.id.podcast_add_menuitem:
 	    		showAddPodcastDialog();
 	   
 	    		return true;
-	    	case R.id.select_all_podcasts_button:
+	    	case R.id.podcast_select_all_menuitem:
 	    		selectAll();
 	    		
 	    		return true;
-	    	case R.id.remove_podcast_button:
+	    	case R.id.podcast_remove_menuitem:
 	    		getListView().setItemChecked(podcastList.indexOf(currentPodcast), true);
 	    		
 	    		return true;

@@ -33,10 +33,10 @@
             android:layout_height="match_parent"
             android:layout_weight="2" />
         <View
-            android:id="@+id/first_divider"
-        	android:layout_width="@dimen/divider_width"
-        	android:layout_height="match_parent"
-        	android:background="@color/divider_off" />
+            android:id="@+id/divider_first"
+            android:layout_width="@dimen/divider_width"
+            android:layout_height="match_parent"
+            android:background="@color/divider_off" />
         <fragment
             android:id="@+id/episode_list"
             android:name="net.alliknow.podcatcher.fragments.EpisodeListFragment"
@@ -45,7 +45,7 @@
             android:layout_weight="3" />
     </LinearLayout>
     <View
-        android:id="@+id/second_divider"
+        android:id="@+id/divider_second"
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider_width"
         android:background="@color/divider_off" />

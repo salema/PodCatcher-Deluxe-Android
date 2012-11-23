@@ -31,7 +31,7 @@
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/list_item_padding"
         android:singleLine="true"
-        android:textSize="@dimen/large_font_size" />
+        android:textSize="@dimen/font_size_large" />
     <CheckedTextView
         android:id="@+id/podcast_episode_number"
         android:layout_width="match_parent"
@@ -41,7 +41,7 @@
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/list_item_padding"
         android:singleLine="true"
-        android:textSize="@dimen/small_font_size"
+        android:textSize="@dimen/font_size_small"
         android:visibility="gone" />
     <net.alliknow.podcatcher.views.HorizontalProgressView
         android:id="@+id/load_podcast_progress"
