@@ -327,7 +327,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		
 		View listItemView = getListView().getChildAt(podcastList.indexOf(podcast));
 		if (listItemView != null)
-			((HorizontalProgressView)listItemView.findViewById(R.id.load_podcast_progress))
+			((HorizontalProgressView)listItemView.findViewById(R.id.list_item_progress))
 				.publishProgress(progress);
 	}
 	

@@ -68,17 +68,17 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		convertView = findReturnView(convertView, parent, R.layout.podcast_list_item);
+		convertView = findReturnView(convertView, parent, R.layout.list_item);
 		
 		int numberOfEpisodes = list.get(position).getEpisodes().size();
-		setTextAndState(convertView, R.id.podcast_name, list.get(position).getName(), position);
-		setTextAndState(convertView, R.id.podcast_episode_number, getEpisodeNumberText(numberOfEpisodes), position);
+		setTextAndState(convertView, R.id.list_item_title, list.get(position).getName(), position);
+		setTextAndState(convertView, R.id.list_item_caption, getEpisodeNumberText(numberOfEpisodes), position);
 		
-		HorizontalProgressView progressView = (HorizontalProgressView)convertView.findViewById(R.id.load_podcast_progress);
+		HorizontalProgressView progressView = (HorizontalProgressView)convertView.findViewById(R.id.list_item_progress);
 		progressView.showTextProgress(false);
 		progressView.setVisibility(numberOfEpisodes == 0 && selectAll ? View.VISIBLE : View.GONE);
 		
-		View episodeNumberView = convertView.findViewById(R.id.podcast_episode_number);
+		View episodeNumberView = convertView.findViewById(R.id.list_item_caption);
 		episodeNumberView.setVisibility(numberOfEpisodes != 0 ? View.VISIBLE : View.GONE);
 		
 		return convertView;
