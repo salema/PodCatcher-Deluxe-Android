@@ -31,18 +31,10 @@ import android.widget.TextView;
  */
 public class HorizontalProgressView extends ProgressView {
 	
-	public HorizontalProgressView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-	}
-
 	public HorizontalProgressView(Context context, AttributeSet attrs) {
-		this(context, attrs, 0);
+		super(context, attrs);
 	}
 
-	public HorizontalProgressView(Context context) {
-		this(context, null);
-	}
-	
 	@Override
 	protected void inflate(Context context) {
 		View view = View.inflate(context, R.layout.progress_horizontal, this);
@@ -59,5 +51,13 @@ public class HorizontalProgressView extends ProgressView {
 			progressBar.setIndeterminate(false);
 			progressBar.setProgress(progress.getPercentDone());
 		} else progressBar.setIndeterminate(true);
+	}
+	
+	/**
+	 * Whether to show the textual progress representation.
+	 * @param show The flag (default is <code>true</code>).
+	 */
+	public void showTextProgress(boolean show) {
+		progressTextView.setVisibility(show ? View.VISIBLE : View.GONE);
 	}
 }

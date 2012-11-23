@@ -46,7 +46,7 @@
     <net.alliknow.podcatcher.views.HorizontalProgressView
         android:id="@+id/load_podcast_progress"
         android:layout_width="match_parent"
-        android:layout_height="15dp"
+        android:layout_height="wrap_content"
         android:indeterminate="true"
         android:visibility="gone" />
 </LinearLayout>

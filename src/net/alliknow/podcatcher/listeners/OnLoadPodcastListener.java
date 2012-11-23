@@ -32,22 +32,18 @@ public interface OnLoadPodcastListener {
 	 * Note that this only works if the http connection
 	 * reports its content length correctly. Otherwise 
 	 * (and this happens in the wild out there) percent might be >100.
-	 * @param isBackground Whether is task is running with
-	 * <code>background == true</code>.
 	 */
-	public void onPodcastLoadProgress(Podcast podcast, Progress progress, boolean isBackground);
+	public void onPodcastLoadProgress(Podcast podcast, Progress progress);
 	
 	/**
 	 * Called on completion.
 	 * @param podcast Podcast loaded.
-	 * @param wasBackground Whether the task was running in the background
 	 */
-	public void onPodcastLoaded(Podcast podcast, boolean wasBackground);
+	public void onPodcastLoaded(Podcast podcast);
 	
 	/**
 	 * Called when loading the podcast failed.
 	 * @param podcast Podcast failing to load.
-	 * @param wasBackground Whether the task was running in the background
 	 */
-	public void onPodcastLoadFailed(Podcast podcast, boolean wasBackground);
+	public void onPodcastLoadFailed(Podcast podcast);
 }

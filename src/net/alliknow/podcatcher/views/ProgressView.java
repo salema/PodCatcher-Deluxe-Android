@@ -37,20 +37,16 @@ public class ProgressView extends LinearLayout {
 	/** The progress bar text */
 	protected TextView progressTextView;
 	
-	public ProgressView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
+	public ProgressView(Context context, AttributeSet attrs) {
+		super(context, attrs);
 		
 		inflate(context);
 	}
-
-	public ProgressView(Context context, AttributeSet attrs) {
-		this(context, attrs, 0);
-	}
-
-	public ProgressView(Context context) {
-		this(context, null);
-	}
 	
+	/**
+	 * Inflate the view's layout, override to change in subclass.
+	 * @param context Context view lives in.
+	 */
 	protected void inflate(Context context) {
 		View view = View.inflate(context, R.layout.progress, this);
 		

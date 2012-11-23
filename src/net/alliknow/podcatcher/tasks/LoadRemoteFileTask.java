@@ -37,10 +37,19 @@ public abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Param
 	/** The read timeout */
 	protected static final int READ_TIMEOUT = 60000;
 	
-	/** Whether we run in the background */
-	protected boolean background = false;
+	/** Whether we prevent gzipping on server side */
+	protected boolean preventZippedTranfer = false;
 	/** Store whether loading failed */
 	protected boolean failed = false;
+	
+	/**
+	 * Whether the load task should prevent server side
+	 * zipping of transfered file (improves progress information).
+	 * @param prevent The flag (default is <code>false</code>).
+	 */
+	public void preventZippedTranfer(boolean prevent) {
+		this.preventZippedTranfer = prevent;
+	}
 	
 	/**
 	 * Download the file and return it as a byte array.
@@ -67,8 +76,7 @@ public abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Param
 		HttpURLConnection connection = (HttpURLConnection) remote.openConnection();
 		connection.setConnectTimeout(CONNECT_TIMEOUT);
 		connection.setReadTimeout(READ_TIMEOUT);
-		// TODO Decide: We do not want gzipped data, because we want to measure progress
-		// if (! background) connection.setRequestProperty("Accept-Encoding", "identity");
+		if (preventZippedTranfer) connection.setRequestProperty("Accept-Encoding", "identity");
 		
 		// TODO allow for password protected feeds 
 		// String userpass = username + ":" + password;

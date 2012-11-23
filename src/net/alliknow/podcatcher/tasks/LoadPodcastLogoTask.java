@@ -48,7 +48,6 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 	 */
 	public LoadPodcastLogoTask(OnLoadPodcastLogoListener fragment, int requestedWidth, int requestedHeight) {
 		this.loader = fragment;
-		this.background = true;
 		
 		this.requestedWidth = requestedWidth;
 		this.requestedHeight = requestedHeight;

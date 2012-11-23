@@ -59,17 +59,6 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 		factory.setNamespaceAware(true);
 	}
 	
-	/**
-	 * Create new task
-	 * @param fragment Owner fragment
-	 * @param background Whether this task should run in the background
-	 */
-	public LoadPodcastTask(OnLoadPodcastListener listener, boolean background) {
-		this(listener);
-		
-		this.background = background;
-	}
-	
 	@Override
 	protected Void doInBackground(Podcast... podcasts) {
 		this.podcast = podcasts[0];
@@ -98,7 +87,7 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 	
 	@Override
 	protected void onProgressUpdate(Progress... progress) {
-		if (listener != null) listener.onPodcastLoadProgress(podcast, progress[0], background);
+		if (listener != null) listener.onPodcastLoadProgress(podcast, progress[0]);
 		else if (listener == null) Log.d(getClass().getSimpleName(), "Podcast progress update, but no listener attached");
 	}
 	
@@ -106,10 +95,10 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 	protected void onPostExecute(Void nothing) {
 		// Background task failed to complete
 		if (failed) {
-			if (listener != null) listener.onPodcastLoadFailed(podcast, background);
+			if (listener != null) listener.onPodcastLoadFailed(podcast);
 			else Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
 		} // Podcast was loaded
-		else if (listener != null) listener.onPodcastLoaded(podcast, background);
+		else if (listener != null) listener.onPodcastLoaded(podcast);
 		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
 	}
 }
