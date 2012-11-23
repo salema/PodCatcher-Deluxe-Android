@@ -23,6 +23,7 @@ import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
+import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.types.Podcast;
 import android.app.DialogFragment;
 import android.content.ClipboardManager;
@@ -156,10 +157,10 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 	}
 	
 	@Override
-	public void onPodcastLoadProgress(Podcast podcast, int progress, boolean isBackground) {
-		if (progress >= 0 && progress <= 100) {
+	public void onPodcastLoadProgress(Podcast podcast, Progress progress, boolean isBackground) {
+		if (progress.getPercentDone() >= 0 && progress.getPercentDone() <= 100) {
 			progressView.setIndeterminate(false);
-			progressView.setProgress(progress);
+			progressView.setProgress(progress.getPercentDone());
 		} else progressView.setIndeterminate(true);
 	}
 

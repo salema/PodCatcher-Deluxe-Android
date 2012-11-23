@@ -27,6 +27,7 @@ import net.alliknow.podcatcher.adapters.SuggestionListAdapter;
 import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
 import net.alliknow.podcatcher.listeners.OnShowSuggestionsListener;
 import net.alliknow.podcatcher.tasks.LoadSuggestionsTask;
+import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.types.Genre;
 import net.alliknow.podcatcher.types.Language;
 import net.alliknow.podcatcher.types.MediaType;
@@ -137,7 +138,7 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	}
 	
 	@Override
-	public void onSuggestionsLoadProgress(int progress) {
+	public void onSuggestionsLoadProgress(Progress progress) {
 		progressView.publishProgress(progress);
 	}
 

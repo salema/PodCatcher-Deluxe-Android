@@ -30,14 +30,7 @@ import android.os.AsyncTask;
  * 
  * @author Kevin Hausmann
  */
-public abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Params, Integer, Result> {
-
-	/** Flag given by progress callback for connecting */
-	public static final int PROGRESS_CONNECT = -3;
-	/** Flag given by progress callback for loading */
-	public static final int PROGRESS_LOAD = -2;
-	/** Flag given by progress callback for parsing */
-	public static final int PROGRESS_PARSE = -1;
+public abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Params, Progress, Result> {
 	
 	/** The connection timeout */
 	protected static final int CONNECT_TIMEOUT = 8000;
@@ -95,7 +88,7 @@ public abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Param
 			
 			// Create the byte buffer to write to
 			result = new ByteArrayOutputStream();
-			publishProgress(PROGRESS_LOAD);
+			publishProgress(Progress.LOAD);
 			
 			byte[] buffer = new byte[1024];
 			int bytesRead = 0;
@@ -110,7 +103,7 @@ public abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Param
 				result.write(buffer, 0, bytesRead);
 							  
 				if (sendLoadProgress)
-					publishProgress((int)((float)totalBytes / (float)connection.getContentLength() * 100));
+					publishProgress(new Progress(totalBytes, connection.getContentLength()));
 			}
 			
 			// Return result as a byte array

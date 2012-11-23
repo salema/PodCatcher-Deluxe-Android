@@ -63,11 +63,11 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
 		
 		try {
 			// Load the file from the internets
-			publishProgress(PROGRESS_CONNECT);
+			publishProgress(Progress.CONNECT);
 			byte[] suggestionsFile = loadFile(new URL(SOURCE));
 			
 			// Get result as a document
-			publishProgress(PROGRESS_PARSE);
+			publishProgress(Progress.PARSE);
 			JSONObject completeJson = new JSONObject(new String(suggestionsFile, SUGGESTIONS_FILE_ENCODING));
 			if (isCancelled()) return null;
 			
@@ -88,8 +88,8 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
 	}
 	
 	@Override
-	protected void onProgressUpdate(Integer... values) {
-		if (listener != null) listener.onSuggestionsLoadProgress(values[0]);
+	protected void onProgressUpdate(Progress... progress) {
+		if (listener != null) listener.onSuggestionsLoadProgress(progress[0]);
 		else if (listener == null) Log.d(getClass().getSimpleName(), "Suggestions progress update, but no listener attached");
 	}
 	

@@ -18,6 +18,7 @@ package net.alliknow.podcatcher.views;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.tasks.LoadRemoteFileTask;
+import net.alliknow.podcatcher.tasks.Progress;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -59,16 +60,16 @@ public class ProgressView extends LinearLayout {
 	 * @param progress Progress to visualize.
 	 * @see <code>LoadRemoteFileTask</code>
 	 */
-	public void publishProgress(int progress) {
+	public void publishProgress(Progress progress) {
 		progressBar.setVisibility(View.VISIBLE);
 		progressTextView.setTextColor(getResources().getColor(R.color.text_secondary));
 		
-		if (progress == LoadRemoteFileTask.PROGRESS_CONNECT) 
+		if (progress.equals(Progress.CONNECT))
 			progressTextView.setText(getResources().getString(R.string.connect));
-		else if (progress == LoadRemoteFileTask.PROGRESS_LOAD)
+		else if (progress.equals(Progress.LOAD))
 			progressTextView.setText(getResources().getString(R.string.load));
-		else if (progress >= 0 && progress <= 100) progressTextView.setText(progress + "%");
-		else if (progress == LoadRemoteFileTask.PROGRESS_PARSE)
+		else if (progress.getPercentDone() >= 0 && progress.getPercentDone() <= 100) progressTextView.setText(progress + "%");
+		else if (progress.equals(Progress.PARSE))
 			progressTextView.setText(getResources().getString(R.string.parse));
 		else progressTextView.setText(getResources().getString(R.string.load));
 	}

@@ -24,6 +24,7 @@ import net.alliknow.podcatcher.fragments.PodcastListFragment;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
+import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.types.Episode;
 import net.alliknow.podcatcher.types.Podcast;
 import android.app.Activity;
@@ -135,7 +136,7 @@ public class PodcastActivity extends Activity implements
 	}
 	
 	@Override
-	public void onPodcastLoadProgress(Podcast podcast, int progress, boolean isBackground) {
+	public void onPodcastLoadProgress(Podcast podcast, Progress progress, boolean isBackground) {
 		if (isBackground) episodeListFragment.showProgress(progress);
 	}
 	

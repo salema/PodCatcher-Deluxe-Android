@@ -79,12 +79,12 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 			if (podcast == null || podcast.getUrl() == null) throw new Exception("Podcast and/or URL cannot be null!");
 			
 			// Load the file from the internets
-			publishProgress(PROGRESS_CONNECT);
+			publishProgress(Progress.CONNECT);
 			byte[] podcastRssFile = loadFile(podcast.getUrl(), MAX_RSS_FILE_SIZE);
 			
 			// Get result as a document
 			if (isCancelled()) return null;
-			else publishProgress(PROGRESS_PARSE);
+			else publishProgress(Progress.PARSE);
 			Document rssDocument = factory.newDocumentBuilder().parse(new ByteArrayInputStream(podcastRssFile));
 			
 			// Set as podcast content
@@ -98,8 +98,8 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 	}
 	
 	@Override
-	protected void onProgressUpdate(Integer... values) {
-		if (listener != null) listener.onPodcastLoadProgress(podcast, values[0], background);
+	protected void onProgressUpdate(Progress... progress) {
+		if (listener != null) listener.onPodcastLoadProgress(podcast, progress[0], background);
 		else if (listener == null) Log.d(getClass().getSimpleName(), "Podcast progress update, but no listener attached");
 	}
 	

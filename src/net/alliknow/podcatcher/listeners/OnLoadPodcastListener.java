@@ -16,6 +16,7 @@
  */
 package net.alliknow.podcatcher.listeners;
 
+import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.types.Podcast;
 
 /**
@@ -32,7 +33,7 @@ public interface OnLoadPodcastListener {
 	 * reports its content length correctly. Otherwise 
 	 * (and this happens in the wild out there) percent might be >100.
 	 */
-	public void onPodcastLoadProgress(Podcast podcast, int progress, boolean isBackground);
+	public void onPodcastLoadProgress(Podcast podcast, Progress progress, boolean isBackground);
 	
 	/**
 	 * Called on completion.

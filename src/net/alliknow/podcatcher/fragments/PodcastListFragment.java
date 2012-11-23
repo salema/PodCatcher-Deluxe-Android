@@ -29,6 +29,7 @@ import net.alliknow.podcatcher.listeners.OnShowSuggestionsListener;
 import net.alliknow.podcatcher.listeners.PodcastListContextListener;
 import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
+import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.types.Podcast;
 import android.app.ListFragment;
 import android.graphics.Bitmap;
@@ -324,8 +325,10 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	}
 
 	@Override
-	public void onPodcastLoadProgress(Podcast podcast, int progress, boolean isBackground) {
+	public void onPodcastLoadProgress(Podcast podcast, Progress progress, boolean isBackground) {
 		if (loadListener != null) loadListener.onPodcastLoadProgress(podcast, progress, isBackground);
+		
+		//getListView().getChildAt(podcastList.indexOf(podcast)).findViewById(R.id.)
 	}
 	
 	/**
@@ -381,6 +384,6 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	
 	private void scrollListView(int position) {
 		if (getListView().getFirstVisiblePosition() > position || getListView().getLastVisiblePosition() < position)
-				getListView().setSelectionFromTop(position, 0);
+				getListView().smoothScrollToPosition(position);
 	}
 }
