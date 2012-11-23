@@ -137,7 +137,7 @@ public class PodcastActivity extends Activity implements
 	
 	@Override
 	public void onPodcastLoadProgress(Podcast podcast, Progress progress, boolean isBackground) {
-		if (isBackground) episodeListFragment.showProgress(progress);
+		if (! isBackground) episodeListFragment.showProgress(progress);
 	}
 	
 	@Override

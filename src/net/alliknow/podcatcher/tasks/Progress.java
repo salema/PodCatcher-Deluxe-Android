@@ -69,9 +69,15 @@ public class Progress {
 	
 	/**
 	 * @return The amount of work done in percent of total.
+	 * Returns -1 if no valid percentage could be calculated.
 	 */
 	public int getPercentDone() {
-		if (total == 0) return 0;
+		if (total <= 0) return -1;
 		else return (int)((float)progress / (float)total * 100);
+	}
+	
+	@Override
+	public String toString() {
+		return progress + "/" + total;
 	}
 }

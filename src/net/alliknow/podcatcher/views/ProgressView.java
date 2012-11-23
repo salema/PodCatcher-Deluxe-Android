@@ -17,7 +17,6 @@
 package net.alliknow.podcatcher.views;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.tasks.LoadRemoteFileTask;
 import net.alliknow.podcatcher.tasks.Progress;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -34,16 +33,14 @@ import android.widget.TextView;
 public class ProgressView extends LinearLayout {
 	
 	/** The progress bar */
-	private ProgressBar progressBar;
+	protected ProgressBar progressBar;
 	/** The progress bar text */
-	private TextView progressTextView;
+	protected TextView progressTextView;
 	
 	public ProgressView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		
-		View view = View.inflate(context, R.layout.progress_view, this);
-		progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
-		progressTextView = (TextView) view.findViewById(R.id.progress_text);
+		inflate(context);
 	}
 
 	public ProgressView(Context context, AttributeSet attrs) {
@@ -54,6 +51,13 @@ public class ProgressView extends LinearLayout {
 		this(context, null);
 	}
 	
+	protected void inflate(Context context) {
+		View view = View.inflate(context, R.layout.progress, this);
+		
+		progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+		progressTextView = (TextView) view.findViewById(R.id.progress_text);
+	}
+		
 	/**
 	 * Show a textual progress information. Beyond actual
 	 * percentages this also works with flags from load tasks.
@@ -68,9 +72,10 @@ public class ProgressView extends LinearLayout {
 			progressTextView.setText(getResources().getString(R.string.connect));
 		else if (progress.equals(Progress.LOAD))
 			progressTextView.setText(getResources().getString(R.string.load));
-		else if (progress.getPercentDone() >= 0 && progress.getPercentDone() <= 100) progressTextView.setText(progress + "%");
 		else if (progress.equals(Progress.PARSE))
 			progressTextView.setText(getResources().getString(R.string.parse));
+		else if (progress.getPercentDone() >= 0 && progress.getPercentDone() <= 100) 
+			progressTextView.setText(progress.getPercentDone() + "%");
 		else progressTextView.setText(getResources().getString(R.string.load));
 	}
 	

@@ -31,6 +31,7 @@ import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask;
 import net.alliknow.podcatcher.tasks.LoadPodcastTask;
 import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.types.Podcast;
+import net.alliknow.podcatcher.views.HorizontalProgressView;
 import android.app.ListFragment;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -328,7 +329,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	public void onPodcastLoadProgress(Podcast podcast, Progress progress, boolean isBackground) {
 		if (loadListener != null) loadListener.onPodcastLoadProgress(podcast, progress, isBackground);
 		
-		//getListView().getChildAt(podcastList.indexOf(podcast)).findViewById(R.id.)
+		((HorizontalProgressView)getListView().getChildAt(podcastList.indexOf(podcast)).findViewById(R.id.load_podcast_progress)).publishProgress(progress);
 	}
 	
 	/**
