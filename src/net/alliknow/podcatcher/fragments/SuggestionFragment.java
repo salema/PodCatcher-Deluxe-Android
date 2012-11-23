@@ -163,7 +163,7 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	private boolean assureListenerPresent() {
 		this.listener = (OnShowSuggestionsListener) getTargetFragment();
 		// We need the target fragment to provide the required interface 
-		if (listener == null || !(listener instanceof OnShowSuggestionsListener)) {
+		if (listener == null) {
 			Log.w(getClass().getSimpleName(), "Suggestion dialog cannot open, target fragment is null or does not implement OnShowSuggestionsListener");
 			return false;
 		} else return true;		

@@ -105,9 +105,6 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 				
 				// We need the listener to exist
 				if (listener == null) Log.w(getClass().getSimpleName(), "Suggestions requested, but no listener attached");
-				// We need the listener to provide the required interface
-				else if (! (listener instanceof OnAddPodcastListener))
-					Log.w(getClass().getSimpleName(), "Suggestions requested, but target fragment does not implement OnAddPodcastListener");
 				else listener.showSuggestions();
 			}
 		});
@@ -169,7 +166,7 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 		// We do not allow empty podcast to be added (TODO Does this make sense?)
 		if (podcast.getEpisodes().isEmpty()) onPodcastLoadFailed(podcast);
 		// We need the target fragment to function as our call back
-		else if (listener == null || !(listener instanceof OnAddPodcastListener)) {
+		else if (listener == null) {
 			Log.w(getClass().getSimpleName(), "Podcast okay, but target fragment is absent or does not implement OnAddPodcastListener");
 			onPodcastLoadFailed(podcast);
 		} // This is an actual podcast, add it
