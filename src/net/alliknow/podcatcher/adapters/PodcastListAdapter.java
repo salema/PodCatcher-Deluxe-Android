@@ -75,7 +75,7 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 		setTextAndState(convertView, R.id.list_item_caption, getEpisodeNumberText(numberOfEpisodes), position);
 		
 		HorizontalProgressView progressView = (HorizontalProgressView)convertView.findViewById(R.id.list_item_progress);
-		progressView.showTextProgress(false);
+		//progressView.showTextProgress(false);
 		progressView.setVisibility(numberOfEpisodes == 0 && selectAll ? View.VISIBLE : View.GONE);
 		
 		View episodeNumberView = convertView.findViewById(R.id.list_item_caption);

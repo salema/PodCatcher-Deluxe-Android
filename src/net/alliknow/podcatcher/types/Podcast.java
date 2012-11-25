@@ -104,70 +104,70 @@ public class Podcast implements Comparable<Podcast> {
 	}
 
 	/**
-	 * @return the podcast's name
+	 * @return The podcast's name
 	 */
 	public String getName() {
 		return name;
 	}
 	
 	/**
-	 * @return the podcast's online location
+	 * @return The podcast's online location
 	 */
 	public URL getUrl() {
 		return url;
 	}
 	
 	/**
-	 * @return the description
+	 * @return The description
 	 */
 	public String getDescription() {
 		return description;
 	}
 
 	/**
-	 * @param description the description to set
+	 * @param description The description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
 	/**
-	 * @return the language
+	 * @return The language
 	 */
 	public Language getLanguage() {
 		return language;
 	}
 
 	/**
-	 * @param language the language to set
+	 * @param language The language to set
 	 */
 	public void setLanguage(Language language) {
 		this.language = language;
 	}
 
 	/**
-	 * @return the genre
+	 * @return The genre
 	 */
 	public Genre getGenre() {
 		return genre;
 	}
 
 	/**
-	 * @param genre the genre to set
+	 * @param genre The genre to set
 	 */
 	public void setGenre(Genre genre) {
 		this.genre = genre;
 	}
 
 	/**
-	 * @return the mediaType
+	 * @return The mediaType
 	 */
 	public MediaType getMediaType() {
 		return mediaType;
 	}
 
 	/**
-	 * @param mediaType the mediaType to set
+	 * @param mediaType The mediaType to set
 	 */
 	public void setMediaType(MediaType mediaType) {
 		this.mediaType = mediaType;
@@ -182,6 +182,13 @@ public class Podcast implements Comparable<Podcast> {
 	 */
 	public List<Episode> getEpisodes() {
 		return episodes;
+	}
+	
+	/**
+	 * Replace current episode list with an empty one.
+	 */
+	public void resetEpisodes() {
+		episodes = new ArrayList<Episode>();
 	}
 	
 	/**

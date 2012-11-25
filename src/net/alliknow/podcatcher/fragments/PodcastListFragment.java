@@ -267,7 +267,11 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		else Log.d(getClass().getSimpleName(), "All podcasts selected, but no listener attached");
 		
 		for (Podcast podcast : podcastList)
-			if (podcast.needsReload()) new LoadPodcastTask(this).execute(podcast);
+			if (podcast.needsReload()) {
+				// Otherwise progress will not show
+				podcast.resetEpisodes();
+				new LoadPodcastTask(this).execute(podcast);
+			}
 			else onPodcastLoaded(podcast);
 	}
 	
