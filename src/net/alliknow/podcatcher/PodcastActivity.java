@@ -57,6 +57,8 @@ public class PodcastActivity extends Activity implements
 	
 	/** The podcatcher website URL */
 	private static final String PODCATCHER_WEBSITE = "http://www.podcatcher-deluxe.com";
+	/** The podcatcher help website URL */
+	private static final String PODCATCHER_HELPSITE = "http://www.podcatcher-deluxe.com/help";
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -92,9 +94,12 @@ public class PodcastActivity extends Activity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 	        case R.id.about_menuitem:
-	        	Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_WEBSITE));
-	   			startActivity(intent);
+	        	startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_WEBSITE)));
 	            
+	   			return true;
+	        case R.id.help_menuitem:
+	        	startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_HELPSITE)));
+	        	
 	   			return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
