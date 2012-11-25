@@ -16,7 +16,7 @@
  */
 package net.alliknow.podcatcher.views;
 
-import net.alliknow.podcatcher.Podcatcher;
+import static net.alliknow.podcatcher.Podcatcher.formatTime;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.types.Episode;
@@ -37,13 +37,20 @@ import android.widget.TextView;
  */
 public class Player extends LinearLayout {
 	
+	/** String resource needed for button label */
 	final private String at;
+	/** String resource needed for button label */
 	final private String of;
 	
+	/** The player divider used when title is shown */
 	private ImageView playerDividerView;
+	/** Title view showing current episode title */
 	private TextView playerTitleView;
-	private Button playerButton;
+	/** The player's seek bar */
 	private SeekBar playerSeekBar;
+	/** The player main button */
+	private Button playerButton;
+	/** The error view */
 	private TextView playerErrorView;
 	
 	public Player(Context context, AttributeSet attrs) {
@@ -70,28 +77,48 @@ public class Player extends LinearLayout {
 		playerButton.setOnLongClickListener(listener);
 	}
 	
+	/**
+	 * Set a seek bar listener to the players seek bar.
+	 * @param listener The listener.
+	 */
 	public void setOnSeekBarChangeListener(OnSeekBarChangeListener listener) {
 		playerSeekBar.setOnSeekBarChangeListener(listener);
 	}
 	
+	/**
+	 * Update the player's UI according to the current
+	 * state of play. 
+	 * @param service The play episode service (should not be <code>null</code>
+	 * but will fail gracefully).
+	 * @param currentEpisode The episode currently selected (may be <code>null</code>).
+	 */
 	public void update(PlayEpisodeService service, Episode currentEpisode) {
-		playerErrorView.setVisibility(View.GONE);
-		
-		playerDividerView.setVisibility(service.isWorkingWith(currentEpisode) ? View.GONE : View.VISIBLE);
-		playerTitleView.setVisibility(service.isWorkingWith(currentEpisode) ? View.GONE : View.VISIBLE);
-		playerTitleView.setText(service.getCurrentEpisodeName() + " - " 
-					+ service.getCurrentEpisodePodcastName());
+		if (service != null) {
+			playerErrorView.setVisibility(View.GONE);
 			
-		updateSeekBar(service);
-		updateButton(service);
+			playerDividerView.setVisibility(service.isWorkingWith(currentEpisode) ? View.GONE : View.VISIBLE);
+			playerTitleView.setVisibility(service.isWorkingWith(currentEpisode) ? View.GONE : View.VISIBLE);
+			playerTitleView.setText(service.getCurrentEpisodeName() + " - " 
+						+ service.getCurrentEpisodePodcastName());
 				
-		setVisibility(service.isPrepared() || service.isPreparing() ? View.VISIBLE : View.GONE);
+			updateSeekBar(service);
+			updateButton(service);
+					
+			setVisibility(service.isPrepared() || service.isPreparing() ? View.VISIBLE : View.GONE);
+		}
 	}
 
+	/**
+	 * Set the secondary progress shown in seek bar.
+	 * @param seconds The progress in seconds.
+	 */
 	public void setSecondaryProgress(int seconds) {
 		playerSeekBar.setSecondaryProgress(seconds);
 	}
 
+	/**
+	 * Show the player's error view
+	 */
 	public void showError() {
 		playerErrorView.setVisibility(View.VISIBLE);
 	}
@@ -111,21 +138,24 @@ public class Player extends LinearLayout {
 	}
 
 	private void updateButton(PlayEpisodeService service) {
+		// Update button appearance
 		playerButton.setEnabled(! service.isBuffering());
 		playerButton.setBackgroundResource(service.isPlaying() ? R.drawable.button_red : R.drawable.button_green);
 		playerButton.setCompoundDrawablesWithIntrinsicBounds(
 				service.isPlaying() ? R.drawable.ic_media_pause : R.drawable.ic_media_play, 0, 0, 0);
 		
+		// Update button label
+		// Buffering...
 		if (service.isBuffering()) {
 			playerButton.setText(R.string.buffering);
 			playerButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_rotate, 0, 0, 0);
-		}
+		} // Playing or paused
 		else {
 			playerButton.setText(service.isPlaying() ? R.string.pause : R.string.resume);
 			
 			if (service.isPrepared()) {
-				final String position = Podcatcher.formatTime(service.getCurrentPosition());
-				final String duration = Podcatcher.formatTime(service.getDuration());
+				final String position = formatTime(service.getCurrentPosition());
+				final String duration = formatTime(service.getDuration());
 				
 				playerButton.setText(playerButton.getText() + " " + at + " " + position + " " + of + " " + duration);
 			}

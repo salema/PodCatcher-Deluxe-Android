@@ -345,7 +345,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 	
 	private void startPlayProgressTimer() {
 		// Only start task if it isn't already running and
-		// there is acutally some progress to monitor 
+		// there is actually some progress to monitor 
 		if (playUpdateTimerTask == null && !seeking && service.isPlaying()) {
 			playUpdateTimerTask = new PlayProgressTask();
 			playUpdateTimer.schedule(playUpdateTimerTask, 0, 1000);
