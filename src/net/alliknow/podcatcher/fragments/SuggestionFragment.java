@@ -16,6 +16,8 @@
  */
 package net.alliknow.podcatcher.fragments;
 
+import static net.alliknow.podcatcher.Podcatcher.isOnFastConnection;
+
 import java.util.Locale;
 
 import net.alliknow.podcatcher.PodcastList;
@@ -114,6 +116,7 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 		// Suggestion list has not been loaded before
 		else if (listener.getPodcastSuggestions() == null) {
 			loadTask = new LoadSuggestionsTask(this);
+			loadTask.preventZippedTransfer(isOnFastConnection(getActivity()));
 			loadTask.execute((Void)null);
 		} // List was loaded before
 		else {

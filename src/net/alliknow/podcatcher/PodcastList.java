@@ -16,6 +16,8 @@
  */
 package net.alliknow.podcatcher;
 
+import static net.alliknow.podcatcher.Podcatcher.isInDebugMode;
+
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -70,7 +72,7 @@ public class PodcastList extends ArrayList<Podcast> {
 	 */
 	public void load(Context context) {
 		//this is just for testing
-		if (Podcatcher.isInDebugMode(context)) writeDummy(context);
+		if (isInDebugMode(context)) writeDummy(context);
 		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

@@ -37,18 +37,31 @@ public abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Param
 	/** The read timeout */
 	protected static final int READ_TIMEOUT = 60000;
 	
+	/** A file size limit in bytes for the download */
+	protected int loadLimit = -1;
 	/** Whether we prevent gzipping on server side */
-	protected boolean preventZippedTranfer = false;
+	protected boolean preventZippedTransfer = false;
 	/** Store whether loading failed */
 	protected boolean failed = false;
+	
+	/**
+	 * Set a load limit for the actual download of the file.
+	 * The default is a negative number, turning off the limit
+	 * evaluation. If positive and reached <code>loadFile</code>
+	 * below will return <code>null</code> immediately.
+	 * @param limit The limit to set in bytes.
+	 */
+	public void setLoadLimit(int limit) {
+		this.loadLimit = limit;
+	}
 	
 	/**
 	 * Whether the load task should prevent server side
 	 * zipping of transfered file (improves progress information).
 	 * @param prevent The flag (default is <code>false</code>).
 	 */
-	public void preventZippedTranfer(boolean prevent) {
-		this.preventZippedTranfer = prevent;
+	public void preventZippedTransfer(boolean prevent) {
+		this.preventZippedTransfer = prevent;
 	}
 	
 	/**
@@ -60,23 +73,10 @@ public abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Param
 	 * @throws IOException If something goes wrong.
 	 */
 	protected byte[] loadFile(URL remote) throws IOException {
-		return loadFile(remote, -1);
-	}
-	
-	/**
-	 * Download the file and return it as a byte array.
-	 * Will feed <code>publishProgress</code>.
-	 * 
-	 * @param remote URL connection to load from.
-	 * @param limit Maximum size (in bytes) for the file to load.
-	 * @return The file content.
-	 * @throws IOException If something goes wrong.
-	 */
-	protected byte[] loadFile(URL remote, int limit) throws IOException {
 		HttpURLConnection connection = (HttpURLConnection) remote.openConnection();
 		connection.setConnectTimeout(CONNECT_TIMEOUT);
 		connection.setReadTimeout(READ_TIMEOUT);
-		if (preventZippedTranfer) connection.setRequestProperty("Accept-Encoding", "identity");
+		if (preventZippedTransfer) connection.setRequestProperty("Accept-Encoding", "identity");
 		
 		// TODO allow for password protected feeds 
 		// String userpass = username + ":" + password;
@@ -103,7 +103,7 @@ public abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Param
 				if (isCancelled()) return null;
 				
 				totalBytes += bytesRead;
-				if (limit >= 0 && totalBytes > limit) return null;
+				if (loadLimit >= 0 && totalBytes > loadLimit) return null;
 				
 				result.write(buffer, 0, bytesRead);
 							  

@@ -55,7 +55,6 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
 	 */
 	public LoadSuggestionsTask(OnLoadSuggestionListener listener) {
 		this.listener = listener;
-		this.preventZippedTranfer = true;
 	}
 	
 	@Override

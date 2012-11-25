@@ -30,8 +30,10 @@ import android.util.Log;
  */
 public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 
-	/** Maximum byte size for the logo to load */
-	public static final int MAX_LOGO_SIZE = 250000;
+	/** Maximum byte size for the logo to load on wifi */
+	public static final int MAX_LOGO_SIZE_WIFI = 250000;
+	/** Maximum byte size for the logo to load on mobile connection */
+	public static final int MAX_LOGO_SIZE_MOBILE = 100000;
 
 	/** Owner */
 	private final OnLoadPodcastLogoListener loader;
@@ -58,7 +60,7 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 		try {
 			if (podcasts[0] == null || podcasts[0].getLogoUrl() == null) throw new Exception("Podcast and/or logo URL cannot be null!");
 			
-			byte[] logo = loadFile(podcasts[0].getLogoUrl(), MAX_LOGO_SIZE);
+			byte[] logo = loadFile(podcasts[0].getLogoUrl());
 			
 			if (! isCancelled()) return decodeAndSampleBitmap(logo);
 		} catch (Exception e) {

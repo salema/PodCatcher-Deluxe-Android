@@ -16,9 +16,12 @@
  */
 package net.alliknow.podcatcher;
 
+import static android.content.Context.CONNECTIVITY_SERVICE;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 /**
  * Defines some util methods
@@ -26,6 +29,29 @@ import android.content.pm.PackageManager;
  * @author Kevin Hausmann
  */
 public class Podcatcher {
+	
+	/**
+	 * Checks whether the device is currently on a fast
+	 * network (such as wifi) as opposed to a mobile network. 
+	 * @return <code>true</code> iff we have fast
+	 * (and potentially free) Internet access.
+	 * @param Context to check in.
+	 */
+	public static boolean isOnFastConnection(Context context) {
+		if (context == null) return false;
+		
+		ConnectivityManager manager = (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetwork = manager.getActiveNetworkInfo();
+		
+		if (activeNetwork == null) return false;
+		else switch (activeNetwork.getType()) {
+			case ConnectivityManager.TYPE_ETHERNET:
+			case ConnectivityManager.TYPE_WIFI:
+			case ConnectivityManager.TYPE_WIMAX:
+				return true;
+			default: return false;
+		}
+	}
 	
 	/**
 	 * Checks whether the app is in debug mode

@@ -16,6 +16,8 @@
  */
 package net.alliknow.podcatcher.fragments;
 
+import static net.alliknow.podcatcher.Podcatcher.isOnFastConnection;
+
 import java.util.Collections;
 
 import net.alliknow.podcatcher.PodcastList;
@@ -240,7 +242,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		if (selectedPodcast.needsReload()) {
 			// Download podcast RSS feed (async)
 			loadPodcastTask = new LoadPodcastTask(this);
-			loadPodcastTask.preventZippedTranfer(true);
+			loadPodcastTask.preventZippedTransfer(isOnFastConnection(getActivity()));
 			loadPodcastTask.execute(selectedPodcast);
 		}
 		// Use buffered content
@@ -351,6 +353,8 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 			
 			// Download podcast logo
 			loadPodcastLogoTask = new LoadPodcastLogoTask(this, logoView.getWidth(), logoView.getHeight());
+			loadPodcastLogoTask.setLoadLimit(isOnFastConnection(getActivity()) ? 
+					LoadPodcastLogoTask.MAX_LOGO_SIZE_WIFI : LoadPodcastLogoTask.MAX_LOGO_SIZE_MOBILE);
 			loadPodcastLogoTask.execute(podcast);
 		}
 	}

@@ -28,7 +28,7 @@ import org.w3c.dom.Document;
 import android.util.Log;
 
 /**
- * Loads podcast RSS file asynchroniously.
+ * Loads podcast RSS file asynchronously.
  * Implement to PodcastLoader interface to be alerted on completion or failure.
  * The downloaded file will be used as the podcast's content via <code>setRssFile()</code>,
  * use the podcast object given (and returned via callbacks) to access it.
@@ -54,6 +54,7 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 	 */
 	public LoadPodcastTask(OnLoadPodcastListener listener) {
 		this.listener = listener;
+		this.loadLimit = MAX_RSS_FILE_SIZE;
 		
 		factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
@@ -68,7 +69,7 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 			
 			// Load the file from the internets
 			publishProgress(Progress.CONNECT);
-			byte[] podcastRssFile = loadFile(podcast.getUrl(), MAX_RSS_FILE_SIZE);
+			byte[] podcastRssFile = loadFile(podcast.getUrl());
 			
 			// Get result as a document
 			if (isCancelled()) return null;
