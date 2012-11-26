@@ -19,5 +19,5 @@
 -->
 <resources>
     <dimen name="episode_view_padding">3dp</dimen>
-    <dimen name="play_button_right_padding">3dp</dimen>
+    <dimen name="player_right_padding">3dp</dimen>
 </resources>

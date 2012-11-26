@@ -25,6 +25,6 @@
     <dimen name="list_item">32dp</dimen>
     <dimen name="list_item_padding">3dp</dimen>
     <dimen name="episode_view_padding">5dp</dimen>
-    <dimen name="play_button_right_padding">2dp</dimen>
+    <dimen name="player_right_padding">2dp</dimen>
     <integer name="progress_bar_horizontal_weight">3</integer>
 </resources>

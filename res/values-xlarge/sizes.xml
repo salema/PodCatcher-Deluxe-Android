@@ -24,7 +24,7 @@
     <dimen name="font_size_large">24sp</dimen>
     <dimen name="list_item">48dp</dimen>
     <dimen name="list_item_padding">5dp</dimen>
-    <dimen name="episode_view_padding">10dp</dimen>
-    <dimen name="play_button_right_padding">2dp</dimen>
+    <dimen name="episode_view_padding">8dp</dimen>
+    <dimen name="player_right_padding">2dp</dimen>
     <integer name="progress_bar_horizontal_weight">4</integer>
 </resources>

@@ -19,11 +19,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginRight="@dimen/player_right_padding"
     android:orientation="vertical">
     <ImageView
         android:id="@+id/player_divider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
         android:layout_marginBottom="2dp"
         android:scaleType="fitXY"
         android:src="@android:drawable/divider_horizontal_bright"
@@ -32,8 +34,8 @@
         android:id="@+id/player_error"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="3dp"
         android:gravity="center"
-        android:padding="3dp"
         android:text="@string/error_player"
         android:textColor="@color/text_error"
         android:visibility="gone" />
@@ -41,6 +43,7 @@
         android:id="@+id/player_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/episode_view_padding"
         android:singleLine="true"
         android:textSize="@dimen/font_size_default"
         android:visibility="gone" />
@@ -48,12 +51,15 @@
         android:id="@+id/player_seekbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/episode_view_padding"
         android:layout_marginBottom="2dp"
         android:layout_marginTop="2dp" />
     <Button
         android:id="@+id/player_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/list_item"
+        android:layout_marginLeft="@dimen/episode_view_padding"
+        android:layout_marginBottom="2dp"
         android:drawableStart="@drawable/ic_media_pause"
         android:gravity="center"
         android:paddingRight="32dp"
