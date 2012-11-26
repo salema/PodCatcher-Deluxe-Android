@@ -285,7 +285,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	 * @return <code>true</code> if so, <code>false</code> otherwise. 
 	 */
 	public boolean isPodcastSelected() {
-		return currentPodcast != null;
+		return currentPodcast != null || selectAll;
 	}
 	
 	/**

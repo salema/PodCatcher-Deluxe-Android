@@ -70,8 +70,8 @@ public class PodcastActivity extends Activity implements
 		episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
 		episodeFragment = (EpisodeFragment) getFragmentManager().findFragmentById(R.id.episode);
 		
-		switchBackground(R.id.divider_first, podcastListFragment.isPodcastSelected());
-		switchBackground(R.id.divider_second, episodeListFragment.isEpisodeSelected());
+		colorDivider(R.id.divider_first, podcastListFragment.isPodcastSelected());
+		colorDivider(R.id.divider_second, episodeListFragment.isEpisodeSelected());
 	}
 	
 	@Override
@@ -119,7 +119,7 @@ public class PodcastActivity extends Activity implements
 	public void onPodcastSelected(Podcast podcast) {
 		multiplePodcastsMode = false;
 		
-		switchBackground(R.id.divider_first, true);
+		colorDivider(R.id.divider_first, true);
 		episodeListFragment.clearAndSpin();
 	}
 	
@@ -127,7 +127,7 @@ public class PodcastActivity extends Activity implements
 	public void onAllPodcastsSelected() {
 		multiplePodcastsMode = true;
 		
-		switchBackground(R.id.divider_first, true);
+		colorDivider(R.id.divider_first, true);
 		episodeListFragment.reset();
 		episodeListFragment.clearAndSpin();
 	}
@@ -136,7 +136,8 @@ public class PodcastActivity extends Activity implements
 	public void onNoPodcastSelected() {
 		multiplePodcastsMode = false;
 		
-		switchBackground(R.id.divider_first, false);
+		colorDivider(R.id.divider_first, false);
+		colorDivider(R.id.divider_second, false);
 		episodeListFragment.reset();
 	}
 	
@@ -161,16 +162,16 @@ public class PodcastActivity extends Activity implements
 
 	@Override
 	public void onEpisodeSelected(Episode selectedEpisode) {
-		switchBackground(R.id.divider_second, true);
+		colorDivider(R.id.divider_second, true);
 		episodeFragment.setEpisode(selectedEpisode);
 	}
 	
 	@Override
 	public void onNoEpisodeSelected() {
-		switchBackground(R.id.divider_second, false);
+		colorDivider(R.id.divider_second, false);
 	}
 	
-	private void switchBackground(int viewId, boolean color) {
+	private void colorDivider(int viewId, boolean color) {
 		if (getWindow() != null && getWindow().findViewById(viewId) != null) {
 			View divider = getWindow().findViewById(viewId);
 			divider.setBackgroundResource(color ? R.color.divider_on : R.color.divider_off);
