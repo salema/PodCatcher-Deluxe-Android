@@ -64,8 +64,6 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	private PodcastList podcastSuggestions;
 	/** Currently selected podcast */
 	private Podcast currentPodcast;
-	/** Currently show podcast logo */
-	private Bitmap currentLogo;
 	/** Flag indicating whether we are in select all mode */
 	private boolean selectAll = false;
 	
@@ -75,6 +73,8 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	private MenuItem selectAllMenuItem;
 	/** Remove podcast menu item */
 	private MenuItem removeMenuItem;
+	/** The empty view */
+	private View emptyView;
 	/** The logo view */
 	private ImageView logoView;
 	
@@ -113,12 +113,13 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		//for (Podcast podcast : podcastList)
 		//	if (podcast.needsReload()) new LoadPodcastTask(this, true).execute(podcast);
 		
+		emptyView = view.findViewById(android.R.id.empty);
 		logoView = (ImageView) view.findViewById(R.id.podcast_image);
 		
 		getListView().setMultiChoiceModeListener(new PodcastListContextListener(this));
 		getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
 		
-		if (currentLogo != null) logoView.setImageBitmap(currentLogo);
+		if (currentPodcast != null) logoView.setImageBitmap(currentPodcast.getLogo());
 	}
 	
 	@Override
@@ -245,7 +246,6 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 
 	private void selectAll() {
 		this.currentPodcast = null;
-		this.currentLogo = null;
 		this.selectAll = true;
 		
 		// Stop loading previous tasks
@@ -301,8 +301,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		if (!selectAll && currentPodcast == null) {
 			adapter.setSelectNone();
 			logoView.setImageResource(R.drawable.default_podcast_logo);
-			currentLogo = null;
-			
+						
 			if (selectedListener != null) selectedListener.onNoPodcastSelected();
 		} // Current podcast has new position
 		else if (!selectAll) adapter.setSelectedPosition(podcastList.indexOf(currentPodcast));
@@ -315,8 +314,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	}
 	
 	private void updateListVisibility() {
-		getView().findViewById(android.R.id.empty)
-		.setVisibility(podcastList.isEmpty() ? View.VISIBLE : View.GONE);
+		emptyView.setVisibility(podcastList.isEmpty() ? View.VISIBLE : View.GONE);
 		getListView().setVisibility(podcastList.isEmpty() ? View.GONE : View.VISIBLE);
 	}
 
@@ -350,10 +348,12 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 			loadPodcastTask = null;
 			
 			// Download podcast logo
-			loadPodcastLogoTask = new LoadPodcastLogoTask(this, logoView.getWidth(), logoView.getHeight());
-			loadPodcastLogoTask.setLoadLimit(isOnFastConnection(getActivity()) ? 
-					LoadPodcastLogoTask.MAX_LOGO_SIZE_WIFI : LoadPodcastLogoTask.MAX_LOGO_SIZE_MOBILE);
-			loadPodcastLogoTask.execute(podcast);
+			if (currentPodcast.getLogo() == null) {
+				loadPodcastLogoTask = new LoadPodcastLogoTask(this, logoView.getWidth(), logoView.getHeight());
+				loadPodcastLogoTask.setLoadLimit(isOnFastConnection(getActivity()) ? 
+						LoadPodcastLogoTask.MAX_LOGO_SIZE_WIFI : LoadPodcastLogoTask.MAX_LOGO_SIZE_MOBILE);
+				loadPodcastLogoTask.execute(podcast);
+			} else logoView.setImageBitmap(currentPodcast.getLogo());
 		}
 	}
 	
@@ -371,15 +371,17 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	}
 	
 	@Override
-	public void onPodcastLogoLoaded(Bitmap logo) {
+	public void onPodcastLogoLoaded(Podcast podcast, Bitmap logo) {
 		loadPodcastLogoTask = null;
-		currentLogo = logo;
+		
+		// Cache the result in podcast object
+		if (podcast.equals(currentPodcast))	currentPodcast.setLogo(logo);
 		
 		logoView.setImageBitmap(logo);
 	}
 	
 	@Override
-	public void onPodcastLogoLoadFailed() { /* Just stick with the default logo... */ }
+	public void onPodcastLogoLoadFailed(Podcast podcast) { /* Just stick with the default logo... */ }
 	
 	private void updateMenuItems() {
 		selectAllMenuItem.setVisible(! selectAll);

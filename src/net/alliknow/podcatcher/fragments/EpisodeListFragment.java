@@ -115,10 +115,12 @@ public class EpisodeListFragment extends ListFragment {
 	 * @param list List of episodes to display.
 	 */
 	public void setEpisodeList(List<Episode> list) {
-		episodeList = list;
-		setListAdapter(new EpisodeListAdapter(getActivity(), episodeList));
-		
-		processNewEpisodes();
+		if (list != null) {
+			episodeList = list;
+			setListAdapter(new EpisodeListAdapter(getActivity(), episodeList));
+			
+			processNewEpisodes();
+		}
 	}
 	
 	/**
@@ -127,18 +129,19 @@ public class EpisodeListFragment extends ListFragment {
 	 * @param list List of episode to add.
 	 */
 	public void addEpisodeList(List<Episode> list) {
-		if (episodeList == null) episodeList = new ArrayList<Episode>();
-		
-		// TODO decide on this: episodeList.addAll(list.subList(0, list.size() > 100 ? 100 : list.size() - 1));
-		episodeList.addAll(list);
-		Collections.sort(episodeList);
-		setListAdapter(new EpisodeListAdapter(getActivity(), episodeList, true));
-		
-		processNewEpisodes();
+		if (list != null && !list.isEmpty()) {
+			if (episodeList == null) episodeList = new ArrayList<Episode>();
+			
+			// TODO decide on this: episodeList.addAll(list.subList(0, list.size() > 100 ? 100 : list.size() - 1));
+			episodeList.addAll(list);
+			Collections.sort(episodeList);
+			setListAdapter(new EpisodeListAdapter(getActivity(), episodeList, true));
+			
+			processNewEpisodes();
+		}
 	}
 	
 	private void processNewEpisodes() {
-		progressView.setVisibility(View.GONE);
 		showProgress = false;
 		showLoadFailed = false;
 		
@@ -148,25 +151,22 @@ public class EpisodeListFragment extends ListFragment {
 		
 		// Update UI 
 		if (episodeList.isEmpty()) emptyView.setText(R.string.no_episodes);
-		else listView.setVisibility(View.VISIBLE);
+		updateUiElementVisibility();
 	}
 	
 	/**
 	 * Reset the UI to initial state.
 	 */
 	public void reset() {
-		progressView.setVisibility(View.GONE);
-		listView.setVisibility(View.GONE);
-		
-		emptyView.setText(R.string.no_podcast_selected);
-		emptyView.setVisibility(View.VISIBLE);
-		
 		showProgress = false;
 		showLoadFailed = false;
 		
 		selectedEpisode = null;
 		episodeList = null;
 		setListAdapter(null);
+		
+		emptyView.setText(R.string.no_podcast_selected);
+		updateUiElementVisibility();
 	}
 
 	/**
@@ -177,9 +177,7 @@ public class EpisodeListFragment extends ListFragment {
 		showLoadFailed = false;
 		
 		progressView.reset();
-		listView.setVisibility(View.GONE);
-		emptyView.setVisibility(View.GONE);
-		progressView.setVisibility(View.VISIBLE);
+		updateUiElementVisibility();
 	}
 	
 	/**
@@ -197,9 +195,23 @@ public class EpisodeListFragment extends ListFragment {
 		showProgress = false;
 		showLoadFailed = true;
 		
-		listView.setVisibility(View.GONE);
-		emptyView.setVisibility(View.GONE);
-		progressView.setVisibility(View.VISIBLE);
-		progressView.showError(R.string.error_podcast_load);	
+		progressView.showError(R.string.error_podcast_load);
+		updateUiElementVisibility();
+	}
+	
+	private void updateUiElementVisibility() {
+		// Progress view is displaying information
+		if (showProgress || showLoadFailed) {
+			emptyView.setVisibility(View.GONE);
+			listView.setVisibility(View.GONE);
+			progressView.setVisibility(View.VISIBLE);
+		} // Show the episode list or the empty view
+		else {
+			boolean episodesAvailable = episodeList != null && !episodeList.isEmpty();
+			
+			emptyView.setVisibility(episodesAvailable ? View.GONE : View.VISIBLE);
+			listView.setVisibility(episodesAvailable ? View.VISIBLE : View.GONE);
+			progressView.setVisibility(View.GONE);
+		}
 	}
 }

@@ -30,6 +30,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import android.graphics.Bitmap;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
@@ -59,6 +60,8 @@ public class Podcast implements Comparable<Podcast> {
 	private List<Episode> episodes = new ArrayList<Episode>();
 	/** The podcast's image (logo) location */
 	private URL logoUrl;
+	/** The cached logo bitmap */
+	private Bitmap logo;
 	/** The point in time when the RSS file as last been set */
 	private Date updated;
 	/** The encoding of the loaded file */
@@ -197,6 +200,23 @@ public class Podcast implements Comparable<Podcast> {
 	 */
 	public URL getLogoUrl() {
 		return logoUrl;
+	}
+	
+	/**
+	 * Get a cached logo for this podcast.
+	 * @return The cached logo if it was previously set using
+	 * <code>setLogo()</code>, <code>null</code> otherwise.
+	 */
+	public Bitmap getLogo() {
+		return logo;
+	}
+	
+	/**
+	 * Cache the podcast given.
+	 * @param logo Logo to use for this podcast.
+	 */
+	public void setLogo(Bitmap logo) {
+		this.logo = logo;
 	}
 	
 	/**

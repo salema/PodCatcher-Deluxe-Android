@@ -16,6 +16,7 @@
  */
 package net.alliknow.podcatcher.listeners;
 
+import net.alliknow.podcatcher.types.Podcast;
 import android.graphics.Bitmap;
 
 /**
@@ -25,12 +26,14 @@ public interface OnLoadPodcastLogoListener {
 	
 	/**
 	 * Called on completion.
+	 * @param podcast The podcast we are loading the logo for.
 	 * @param logo Podcast logo loaded.
 	 */
-	public void onPodcastLogoLoaded(Bitmap logo);
+	public void onPodcastLogoLoaded(Podcast podcast, Bitmap logo);
 	
 	/**
 	 * Called when loading the podcast logo failed.
+	 * @param podcast Podcast logo could not be loaded for.
 	 */
-	public void onPodcastLogoLoadFailed();
+	public void onPodcastLogoLoadFailed(Podcast podcast);
 }

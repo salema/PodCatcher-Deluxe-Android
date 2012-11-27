@@ -4,5 +4,3 @@ Use SplitActionbar?
 Read specifics about Android's http url connection: http://developer.android.com/reference/java/net/HttpURLConnection.html
 Add an AppWidget: http://developer.android.com/guide/topics/appwidgets
 Care for memory leaks (http://knowledge.lapasa.net/?p=772)
-Cache podcast logos?
-Introduce method "updateUiElementVisibility()" to all fragments?

@@ -35,6 +35,8 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 
 	/** Owner */
 	private final OnLoadPodcastLogoListener loader;
+	/** Podcast currently loading */
+	private Podcast podcast;
 	
 	/** Dimensions we decode the logo image file to (saves memory in places) */
 	protected final int requestedWidth;
@@ -55,8 +57,10 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 	
 	@Override
 	protected Bitmap doInBackground(Podcast... podcasts) {
+		this.podcast = podcasts[0];
+		
 		try {
-			if (podcasts[0] == null || podcasts[0].getLogoUrl() == null) throw new Exception("Podcast and/or logo URL cannot be null!");
+			if (podcast == null || podcast.getLogoUrl() == null) throw new Exception("Podcast and/or logo URL cannot be null!");
 			
 			byte[] logo = loadFile(podcasts[0].getLogoUrl());
 			
@@ -74,11 +78,11 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 	protected void onPostExecute(Bitmap result) {
 		// Background task failed to complete
 		if (failed || result == null) {
-			if (loader != null) loader.onPodcastLogoLoadFailed();
+			if (loader != null) loader.onPodcastLogoLoadFailed(podcast);
 			else Log.d(getClass().getSimpleName(), "Podcast logo loading failed, but no listener attached");
 		} // Podcast logo was loaded
 		else {
-			if (loader != null) loader.onPodcastLogoLoaded(result);
+			if (loader != null) loader.onPodcastLogoLoaded(podcast, result);
 			else Log.d(getClass().getSimpleName(), "Podcast logo loaded, but no listener attached");
 		}
 	}
