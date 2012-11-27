@@ -231,7 +231,9 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		// Prepare UI
 		adapter.setSelectedPosition(podcastList.indexOf(selectedPodcast));
 		scrollListView(podcastList.indexOf(selectedPodcast));
-		logoView.setImageResource(R.drawable.default_podcast_logo);
+		if (currentPodcast.getLogo() == null)
+			logoView.setImageResource(R.drawable.default_podcast_logo);
+		else logoView.setImageBitmap(currentPodcast.getLogo());
 		updateMenuItems();
 		
 		// Alert parent activity
@@ -352,13 +354,13 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		if (podcast.equals(currentPodcast)) {
 			loadPodcastTask = null;
 			
-			// Download podcast logo
+			// Download podcast logo if not cached
 			if (currentPodcast.getLogo() == null) {
 				loadPodcastLogoTask = new LoadPodcastLogoTask(this, logoView.getWidth(), logoView.getHeight());
 				loadPodcastLogoTask.setLoadLimit(isOnFastConnection(getActivity()) ? 
 						LoadPodcastLogoTask.MAX_LOGO_SIZE_WIFI : LoadPodcastLogoTask.MAX_LOGO_SIZE_MOBILE);
 				loadPodcastLogoTask.execute(podcast);
-			} else logoView.setImageBitmap(currentPodcast.getLogo());
+			}
 		}
 	}
 	
