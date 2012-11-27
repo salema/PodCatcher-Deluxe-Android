@@ -40,15 +40,15 @@ public class Player extends LinearLayout {
 	final private String of;
 	
 	/** The player divider used when title is shown */
-	private ImageView playerDividerView;
+	private ImageView dividerView;
 	/** Title view showing current episode title */
-	private TextView playerTitleView;
+	private TextView titleView;
 	/** The player's seek bar */
-	private SeekBar playerSeekBar;
+	private SeekBar seekBar;
 	/** The player main button */
-	private Button playerButton;
+	private Button button;
 	/** The error view */
-	private TextView playerErrorView;
+	private TextView errorView;
 	
 	public Player(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -57,21 +57,21 @@ public class Player extends LinearLayout {
 		of = getResources().getString(R.string.of);
 		
 		View view = View.inflate(context, R.layout.player, this);
-		playerDividerView = (ImageView) view.findViewById(R.id.player_divider);
-		playerTitleView = (TextView) view.findViewById(R.id.player_title);
-		playerSeekBar = (SeekBar) view.findViewById(R.id.player_seekbar);
-		playerButton = (Button) view.findViewById(R.id.player_button);
-		playerErrorView = (TextView) view.findViewById(R.id.player_error);
+		dividerView = (ImageView) view.findViewById(R.id.player_divider);
+		titleView = (TextView) view.findViewById(R.id.player_title);
+		seekBar = (SeekBar) view.findViewById(R.id.player_seekbar);
+		button = (Button) view.findViewById(R.id.player_button);
+		errorView = (TextView) view.findViewById(R.id.player_error);
 	}
 
 	@Override
 	public void setOnClickListener(OnClickListener listener) {
-		playerButton.setOnClickListener(listener);
+		button.setOnClickListener(listener);
 	}
 	
 	@Override
 	public void setOnLongClickListener(OnLongClickListener listener) {
-		playerButton.setOnLongClickListener(listener);
+		button.setOnLongClickListener(listener);
 	}
 	
 	/**
@@ -79,7 +79,7 @@ public class Player extends LinearLayout {
 	 * @param listener The listener.
 	 */
 	public void setOnSeekBarChangeListener(OnSeekBarChangeListener listener) {
-		playerSeekBar.setOnSeekBarChangeListener(listener);
+		seekBar.setOnSeekBarChangeListener(listener);
 	}
 	
 	/**
@@ -91,11 +91,11 @@ public class Player extends LinearLayout {
 	 */
 	public void update(PlayEpisodeService service, Episode currentEpisode) {
 		if (service != null) {
-			playerErrorView.setVisibility(GONE);
+			errorView.setVisibility(GONE);
 			
-			playerDividerView.setVisibility(service.isWorkingWith(currentEpisode) ? GONE : VISIBLE);
-			playerTitleView.setVisibility(service.isWorkingWith(currentEpisode) ? GONE : VISIBLE);
-			playerTitleView.setText(service.getCurrentEpisodeName() + " - " 
+			dividerView.setVisibility(service.isWorkingWith(currentEpisode) ? GONE : VISIBLE);
+			titleView.setVisibility(service.isWorkingWith(currentEpisode) ? GONE : VISIBLE);
+			titleView.setText(service.getCurrentEpisodeName() + " - " 
 						+ service.getCurrentEpisodePodcastName());
 				
 			updateSeekBar(service);
@@ -110,7 +110,7 @@ public class Player extends LinearLayout {
 	 * @param seconds The progress in seconds.
 	 */
 	public void setSecondaryProgress(int seconds) {
-		playerSeekBar.setSecondaryProgress(seconds);
+		seekBar.setSecondaryProgress(seconds);
 	}
 
 	/**
@@ -119,47 +119,47 @@ public class Player extends LinearLayout {
 	public void showError() {
 		setVisibility(VISIBLE);
 		
-		playerTitleView.setVisibility(GONE);
-		playerButton.setVisibility(GONE);
-		playerSeekBar.setVisibility(GONE);
-		playerErrorView.setVisibility(VISIBLE);
+		titleView.setVisibility(GONE);
+		button.setVisibility(GONE);
+		seekBar.setVisibility(GONE);
+		errorView.setVisibility(VISIBLE);
 	}
 	
 	private void updateSeekBar(PlayEpisodeService service) {
-		playerSeekBar.setEnabled(! service.isPreparing());
+		seekBar.setEnabled(! service.isPreparing());
 		
 		// We are running and might advance progress
 		if (service.isPrepared()) {
-			playerSeekBar.setMax(service.getDuration());
-			playerSeekBar.setProgress(service.getCurrentPosition());
+			seekBar.setMax(service.getDuration());
+			seekBar.setProgress(service.getCurrentPosition());
 		} // Reset progress
 		else {
-			playerSeekBar.setProgress(0);
-			playerSeekBar.setSecondaryProgress(0);
+			seekBar.setProgress(0);
+			seekBar.setSecondaryProgress(0);
 		}
 	}
 
 	private void updateButton(PlayEpisodeService service) {
 		// Update button appearance
-		playerButton.setEnabled(! service.isBuffering());
-		playerButton.setBackgroundResource(service.isPlaying() ? R.drawable.button_red : R.drawable.button_green);
-		playerButton.setCompoundDrawablesWithIntrinsicBounds(
+		button.setEnabled(! service.isBuffering());
+		button.setBackgroundResource(service.isPlaying() ? R.drawable.button_red : R.drawable.button_green);
+		button.setCompoundDrawablesWithIntrinsicBounds(
 				service.isPlaying() ? R.drawable.ic_media_pause : R.drawable.ic_media_play, 0, 0, 0);
 		
 		// Update button label
 		// Buffering...
 		if (service.isBuffering()) {
-			playerButton.setText(R.string.buffering);
-			playerButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_rotate, 0, 0, 0);
+			button.setText(R.string.buffering);
+			button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_rotate, 0, 0, 0);
 		} // Playing or paused
 		else {
-			playerButton.setText(service.isPlaying() ? R.string.pause : R.string.resume);
+			button.setText(service.isPlaying() ? R.string.pause : R.string.resume);
 			
 			if (service.isPrepared()) {
 				final String position = formatTime(service.getCurrentPosition());
 				final String duration = formatTime(service.getDuration());
 				
-				playerButton.setText(playerButton.getText() + " " + at + " " + position + " " + of + " " + duration);
+				button.setText(button.getText() + " " + at + " " + position + " " + of + " " + duration);
 			}
 		}
 	}
