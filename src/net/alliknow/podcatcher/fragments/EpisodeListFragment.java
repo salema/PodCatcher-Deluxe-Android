@@ -38,8 +38,6 @@ import android.widget.TextView;
 /**
  * List fragment to display the list of episodes as part of the
  * podcast activity.
- * 
- * @author Kevin Hausmann
  */
 public class EpisodeListFragment extends ListFragment {
 
@@ -106,15 +104,15 @@ public class EpisodeListFragment extends ListFragment {
 	}
 	
 	/**
-	 * @param listener Listener to be alerted on episode selection
+	 * @param listener Listener to be alerted on episode selection.
 	 */
 	public void setEpisodeSelectedListener(OnSelectEpisodeListener listener) {
 		this.selectedListener = listener;
 	}
 	
 	/**
-	 * Set the episode list to display and update the UI accordingly
-	 * @param list List of episodes to display
+	 * Set the episode list to display and update the UI accordingly.
+	 * @param list List of episodes to display.
 	 */
 	public void setEpisodeList(List<Episode> list) {
 		episodeList = list;
@@ -125,7 +123,7 @@ public class EpisodeListFragment extends ListFragment {
 	
 	/**
 	 * Add the episode list to the currenty displayed episodes
-	 * and update the UI accordingly
+	 * and update the UI accordingly.
 	 * @param list List of episode to add.
 	 */
 	public void addEpisodeList(List<Episode> list) {
@@ -154,7 +152,7 @@ public class EpisodeListFragment extends ListFragment {
 	}
 	
 	/**
-	 * Reset the UI to initial state
+	 * Reset the UI to initial state.
 	 */
 	public void reset() {
 		progressView.setVisibility(View.GONE);
@@ -172,7 +170,7 @@ public class EpisodeListFragment extends ListFragment {
 	}
 
 	/**
-	 * Show the UI to be working
+	 * Show the UI to be working.
 	 */
 	public void clearAndSpin() {
 		showProgress = true;
@@ -185,15 +183,15 @@ public class EpisodeListFragment extends ListFragment {
 	}
 	
 	/**
-	 * Update UI with load progress
-	 * @param progress Amount loaded or flag from load task
+	 * Update UI with load progress.
+	 * @param progress Amount loaded or flag from load task.
 	 */
 	public void showProgress(Progress progress) {
 		progressView.publishProgress(progress);
 	}
 
 	/**
-	 * Show error view
+	 * Show error view.
 	 */
 	public void showLoadFailed() {
 		showProgress = false;

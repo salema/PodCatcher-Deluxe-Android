@@ -18,8 +18,6 @@ package net.alliknow.podcatcher.tags;
 
 /**
  * Defines some constants used in JSON-files.
- * 
- * @author Kevin Hausmann
  */
 public class JSON {
 

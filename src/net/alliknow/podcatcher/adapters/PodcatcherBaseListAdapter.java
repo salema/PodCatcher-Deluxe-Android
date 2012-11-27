@@ -24,10 +24,8 @@ import android.widget.TextView;
 
 /**
  * Abstract super class for this app's list adapters.
- * Handles the selection/choice parts. All lists are single choice and
- * have a background changed for the selected item.
- * 
- * @author Kevin Hausmann
+ * Handles the selection/choice parts. All lists are single choice
+ * or select all and have their background changed for the selected item.
  */
 public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
 
@@ -39,8 +37,8 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
 	protected boolean selectAll = false;
 	
 	/**
-	 * Create new adapter
-	 * @param context The current context
+	 * Create new adapter.
+	 * @param context The current context.
 	 */
 	public PodcatcherBaseListAdapter(Context context) {
 		super(context);
@@ -85,9 +83,9 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
 	/**
 	 * Set text for a list item view element.
 	 * 
-	 * @param listItem The view representing the whole list item
-	 * @param viewId View id of the child view, has to be (a subclass of) <code>TextView</code>
-	 * @param text Text to display
+	 * @param listItem The view representing the whole list item.
+	 * @param viewId View id of the child view, has to be (a subclass of) <code>TextView</code>.
+	 * @param text Text to display.
 	 */
 	protected void setText(View listItem, int viewId, String text) {
 		((TextView) listItem.findViewById(viewId)).setText(text);
@@ -96,10 +94,10 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
 	/**
 	 * Set text and selection/choice state for a list item view element.
 	 * 
-	 * @param listItem The view representing the whole list item
-	 * @param viewId View id of the child view, has to be (a subclass of) <code>CheckedTextView</code>
-	 * @param text Text to display
-	 * @param position Position in list
+	 * @param listItem The view representing the whole list item.
+	 * @param viewId View id of the child view, has to be (a subclass of) <code>CheckedTextView</code>.
+	 * @param text Text to display.
+	 * @param position Position in list.
 	 */
 	protected void setTextAndState(View listItem, int viewId, String text, int position) {
 		CheckedTextView textView = (CheckedTextView) listItem.findViewById(viewId);
@@ -112,6 +110,7 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
 	
 	@Override
 	public void notifyDataSetChanged() {
+		// This prevents an excpetion when the last podcast is deleted...
 		if (getCount() > 0) super.notifyDataSetChanged();
 	}
 }

@@ -16,7 +16,6 @@
  */
 package net.alliknow.podcatcher.views;
 
-import static net.alliknow.podcatcher.Podcatcher.formatTime;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.types.Episode;
@@ -32,8 +31,6 @@ import android.widget.TextView;
 
 /**
  * A sophisticated player view.
- *
- * @author Kevin Hausmann
  */
 public class Player extends LinearLayout {
 	
@@ -117,7 +114,7 @@ public class Player extends LinearLayout {
 	}
 
 	/**
-	 * Show the player's error view
+	 * Show the player's error view.
 	 */
 	public void showError() {
 		playerErrorView.setVisibility(View.VISIBLE);
@@ -160,5 +157,28 @@ public class Player extends LinearLayout {
 				playerButton.setText(playerButton.getText() + " " + at + " " + position + " " + of + " " + duration);
 			}
 		}
+	}
+
+	/**
+	 * Format an amount of time.
+	 * @param time Amount in seconds to format.
+	 * @return The time span as hh:mm:ss with appropriate omissions.
+	 */
+	private String formatTime(int time) {
+		int hours = time / 3600;
+		
+		int minutes = (time / 60) - 60 * hours;
+		int seconds = time % 60;
+		
+		String minutesString = Player.formatNumber(minutes, hours > 0);
+		String secondsString = Player.formatNumber(seconds, true);
+		
+		if (hours > 0) return hours + ":" + minutesString + ":" + secondsString;
+		else return minutesString + ":" + secondsString; 
+	}
+	
+	private static String formatNumber(int number, boolean makeTwoDigits) {
+		if (number < 10 && makeTwoDigits) return "0" + number;
+		else return number + "";
 	}
 }

@@ -28,8 +28,6 @@ import android.widget.Button;
 
 /**
  * Adapter for suggestion list.
- * 
- * @author Kevin Hausmann
  */
 public class SuggestionListAdapter extends PodcastListAdapter {
 	
@@ -39,11 +37,11 @@ public class SuggestionListAdapter extends PodcastListAdapter {
 	private static final String METADATA_SEPARATOR = " ● ";
 	
 	/**
-	 * Create new adapter
+	 * Create new adapter.
 	 * 
-	 * @param context The current context
-	 * @param podcastList List of podcasts (suggestions) to wrap
-	 * @param listener Call back for the add button to attach
+	 * @param context The current context.
+	 * @param podcastList List of podcasts (suggestions) to wrap.
+	 * @param listener Call back for the add button to attach.
 	 */
 	public SuggestionListAdapter(Context context, PodcastList podcastList, OnAddPodcastListener listener) {
 		super(context, podcastList);
@@ -52,7 +50,7 @@ public class SuggestionListAdapter extends PodcastListAdapter {
 	}
 	
 	@Override
-	public View getView(final int position, View itemView, ViewGroup parent) {
+	public View getView(int position, View itemView, ViewGroup parent) {
 		itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.suggestion_list_item, parent, false);
 		final Podcast suggestion = list.get(position);
 		

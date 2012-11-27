@@ -22,14 +22,12 @@ import android.content.Context;
 
 /**
  * Adapter for the genre spinner in the suggestion dialog.
- * 
- * @author Kevin Hausmann
  */
 public class GenreSpinnerAdapter extends PodcatcherBaseSpinnerAdapter {
 	
 	/**
-	 * Create new adapter
-	 * @param context The current context
+	 * Create new adapter.
+	 * @param context The current context.
 	 */
 	public GenreSpinnerAdapter(Context context) {
 		super(context);

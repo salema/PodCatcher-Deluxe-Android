@@ -36,8 +36,6 @@ import android.util.Log;
 
 /**
  * The podcast type.
- * 
- * @author Kevin Hausmann
  */
 public class Podcast implements Comparable<Podcast> {
 

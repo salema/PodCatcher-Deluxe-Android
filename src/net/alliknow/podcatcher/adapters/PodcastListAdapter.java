@@ -25,8 +25,6 @@ import android.view.ViewGroup;
 
 /**
  * Adapter class used for the list of podcasts.
- * 
- * @author Kevin Hausmann
  */
 public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 
@@ -38,10 +36,10 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 	protected final String episodes;
 	
 	/**
-	 * Create new adapter
+	 * Create new adapter.
 	 * 
-	 * @param context The current context
-	 * @param podcastList List of podcasts to wrap (not <code>null</code>)
+	 * @param context The current context.
+	 * @param podcastList List of podcasts to wrap (not <code>null</code>).
 	 */
 	public PodcastListAdapter(Context context, PodcastList podcastList) {
 		super(context);
@@ -72,19 +70,19 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 		
 		int numberOfEpisodes = list.get(position).getEpisodes().size();
 		setTextAndState(convertView, R.id.list_item_title, list.get(position).getName(), position);
-		setTextAndState(convertView, R.id.list_item_caption, getEpisodeNumberText(numberOfEpisodes), position);
+		setTextAndState(convertView, R.id.list_item_caption, createCaption(numberOfEpisodes), position);
 		
+		// Show progress on select all podcasts?
 		HorizontalProgressView progressView = (HorizontalProgressView)convertView.findViewById(R.id.list_item_progress);
-		//progressView.showTextProgress(false);
 		progressView.setVisibility(numberOfEpisodes == 0 && selectAll ? View.VISIBLE : View.GONE);
-		
+		// Not if episodes are already available...
 		View episodeNumberView = convertView.findViewById(R.id.list_item_caption);
 		episodeNumberView.setVisibility(numberOfEpisodes != 0 ? View.VISIBLE : View.GONE);
 		
 		return convertView;
 	}
 
-	private String getEpisodeNumberText(int numberOfEpisodes) {
+	private String createCaption(int numberOfEpisodes) {
 		return numberOfEpisodes == 1 ? oneEpisode :	numberOfEpisodes + " " + episodes;
 	}
 }

@@ -26,8 +26,6 @@ import android.widget.TextView;
 
 /**
  * A sophisticated horizontal progress view.
- *
- * @author Kevin Hausmann
  */
 public class HorizontalProgressView extends ProgressView {
 	

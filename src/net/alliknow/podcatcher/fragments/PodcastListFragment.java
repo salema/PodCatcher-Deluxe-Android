@@ -17,9 +17,6 @@
 package net.alliknow.podcatcher.fragments;
 
 import static net.alliknow.podcatcher.Podcatcher.isOnFastConnection;
-
-import java.util.Collections;
-
 import net.alliknow.podcatcher.PodcastList;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.PodcastListAdapter;
@@ -52,8 +49,6 @@ import android.widget.ListView;
 /**
  * List fragment to display the list of podcasts as part of the
  * podcast activity.
- * 
- * @author Kevin Hausmann
  */
 public class PodcastListFragment extends ListFragment implements OnAddPodcastListener, 
 	OnShowSuggestionsListener, OnLoadPodcastListener, OnLoadPodcastLogoListener {
@@ -163,14 +158,14 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	}
 	
 	/**
-	 * @param listener Listener to be alerted on podcast selection
+	 * @param listener Listener to be alerted on podcast selection.
 	 */
 	public void setPodcastSelectedListener(OnSelectPodcastListener listener) {
 		this.selectedListener = listener;
 	}
 
 	/**
-	 * @param listener Listener to be alerted on podcast load completion
+	 * @param listener Listener to be alerted on podcast load completion.
 	 */
 	public void setPodcastLoadedListener(OnLoadPodcastListener listener) {
 		this.loadListener = listener;
@@ -180,8 +175,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	public void addPodcast(Podcast newPodcast) {
 		if (! podcastList.contains(newPodcast)) {
 			podcastList.add(newPodcast);
-			Collections.sort(podcastList);
-			
+			podcastList.sort();			
 			podcastList.store(getActivity());
 		} else Log.d(getClass().getSimpleName(), "Podcast \"" + newPodcast.getName() + "\" is already in list.");
 		

@@ -26,8 +26,6 @@ import android.widget.TextView;
  * The default implementation will use simple text views and string
  * resources named ("keyed") <code>item.toString().toLowerCase()</code>.
  * (This will fail if these resources do not exist!)
- *
- * @author Kevin Hausmann
  */
 public abstract class PodcatcherBaseSpinnerAdapter extends PodcatcherBaseAdapter {
 

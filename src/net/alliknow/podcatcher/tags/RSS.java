@@ -19,7 +19,6 @@ package net.alliknow.podcatcher.tags;
 /**
  * Defines some constants used in RSS.
  * 
- * @author Kevin Hausmann
  * @see http://cyber.law.harvard.edu/rss/rss.html
  */
 public class RSS {

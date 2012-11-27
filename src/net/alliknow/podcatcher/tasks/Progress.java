@@ -18,8 +18,6 @@ package net.alliknow.podcatcher.tasks;
 
 /**
  * Class to indicate load progress.
- *
- * @author Kevin Hausmann
  */
 public class Progress {
 

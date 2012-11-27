@@ -22,14 +22,12 @@ import android.content.Context;
 
 /**
  * Adapter for the language spinner in the suggestion dialog.
- * 
- * @author Kevin Hausmann
  */
 public class LanguageSpinnerAdapter extends PodcatcherBaseSpinnerAdapter {
 	
 	/**
-	 * Create new adapter
-	 * @param context The current context
+	 * Create new adapter.
+	 * @param context The current context.
 	 */
 	public LanguageSpinnerAdapter(Context context) {
 		super(context);

@@ -48,8 +48,6 @@ import android.widget.TextView.OnEditorActionListener;
 
 /**
  * A dialog to let the user add a podcast.
- * 
- * @author Kevin Hausmann
  */
 public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastListener {
 

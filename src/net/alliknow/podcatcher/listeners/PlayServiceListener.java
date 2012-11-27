@@ -19,8 +19,6 @@ package net.alliknow.podcatcher.listeners;
 /**
  * Listener interface to implement if you are interested to be alerted
  * by the play episode service on a couple of important events.
- *  
- * @author Kevin Hausmann
  */
 public interface PlayServiceListener {
 

@@ -17,9 +17,7 @@
 package net.alliknow.podcatcher.types;
 
 /**
- * Language a podcast is broadcasted in. 
- *
- * @author Kevin Hausmann
+ * Language a podcast is broadcasted in.
  */
 public enum Language {
 	ENGLISH, GERMAN

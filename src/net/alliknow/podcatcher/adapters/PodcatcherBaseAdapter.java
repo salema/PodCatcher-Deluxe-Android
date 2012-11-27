@@ -27,16 +27,10 @@ import android.widget.BaseAdapter;
 
 /**
  * Abstract super class for this app's adapters.
- * Allows access to inflater and resources.
- * 
- * @author Kevin Hausmann
+ * Allows access to resources.
  */
 public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	
-	/** Our context's resources */
-	//protected Resources resources;
-	/** Inflater for new views */
-	//protected LayoutInflater inflater;
 	/** We need to know our package name to retrieve identifiers */
 	protected String packageName;
 
@@ -44,12 +38,10 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	private static final String STRING_DEFTYPE = "string";
 	
 	/**
-	 * Create new adapter
-	 * @param context The current context
+	 * Create new adapter.
+	 * @param context The current context.
 	 */
 	public PodcatcherBaseAdapter(Context context) {
-		//this.resources = context.getResources();
-		//this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.packageName = context.getPackageName();
 	}
 	
@@ -59,12 +51,12 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 	}
 	
 	/**
-	 * Check whether a view can be recycled and inflate new one if not
+	 * Check whether a view can be recycled and inflate new one if not.
 	 * 
-	 * @param convertView View to check
-	 * @param parent View group to attach to
-	 * @param inflateId Id of view to inflate if recycling is not possible
-	 * @return A view to use (not <code>null</code>)
+	 * @param convertView View to check.
+	 * @param parent View group to attach to.
+	 * @param inflateId Id of view to inflate if recycling is not possible.
+	 * @return A view to use (not <code>null</code>).
 	 */
 	protected View findReturnView(View convertView, ViewGroup parent, int inflateId) {
 		// Can we recycle the convert view?

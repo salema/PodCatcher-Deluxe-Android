@@ -52,8 +52,6 @@ import android.widget.TextView;
 
 /**
  * Fragment to show podcast suggestions.
- * 
- * @author Kevin Hausmann
  */
 public class SuggestionFragment extends DialogFragment implements OnLoadSuggestionListener {
 
@@ -221,9 +219,9 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	}
 
 	/**
-	 * Checks whether the given podcast matches the filter selection
-	 * @param suggestion Podcast to check
-	 * @return <code>true</code> if the podcast fits
+	 * Checks whether the given podcast matches the filter selection.
+	 * @param suggestion Podcast to check.
+	 * @return <code>true</code> if the podcast fits.
 	 */
 	private boolean matchesFilter(Podcast suggestion) {
 		return (languageFilter.getSelectedItemPosition() == 0 || 

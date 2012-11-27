@@ -47,9 +47,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 /**
- * Fragment showing episode details
- * 
- * @author Kevin Hausmann
+ * Fragment showing episode details.
  */
 public class EpisodeFragment extends Fragment implements PlayServiceListener, OnSeekBarChangeListener {
 
@@ -215,8 +213,8 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 	}
 	
 	/**
-	 * Set the displayed episode, all UI will be updated
-	 * @param selectedEpisode Episode to show (cannot be null)
+	 * Set the displayed episode, all UI will be updated.
+	 * @param selectedEpisode Episode to show (cannot be null).
 	 */
 	public void setEpisode(Episode selectedEpisode) {
 		if (selectedEpisode != null) {

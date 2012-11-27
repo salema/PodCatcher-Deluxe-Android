@@ -18,8 +18,6 @@ package net.alliknow.podcatcher.types;
 
 /**
  * Genre (category) of the podcast.
- *
- * @author Kevin Hausmann
  */
 public enum Genre {
 	COMEDY, EDUCATION, ENTERTAINMENT, MOBILITY, MUSIC, NEWS, POLITICS, SCIENCE, SPORTS, TECHNOLOGY

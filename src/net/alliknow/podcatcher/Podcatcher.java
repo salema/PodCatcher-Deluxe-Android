@@ -24,9 +24,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 /**
- * Defines some util methods
- * 
- * @author Kevin Hausmann
+ * Defines some util methods.
  */
 public class Podcatcher {
 	
@@ -35,7 +33,7 @@ public class Podcatcher {
 	 * network (such as wifi) as opposed to a mobile network. 
 	 * @return <code>true</code> iff we have fast
 	 * (and potentially free) Internet access.
-	 * @param Context to check in.
+	 * @param context Context to check.
 	 */
 	public static boolean isOnFastConnection(Context context) {
 		if (context == null) return false;
@@ -49,14 +47,15 @@ public class Podcatcher {
 			case ConnectivityManager.TYPE_WIFI:
 			case ConnectivityManager.TYPE_WIMAX:
 				return true;
-			default: return false;
+			default: 
+				return false;
 		}
 	}
 	
 	/**
-	 * Checks whether the app is in debug mode
-	 * @param context Activity context
-	 * @return true when in debug
+	 * Checks whether the app is in debug mode.
+	 * @param context Activity context to check.
+	 * @return <code>true</code> iff in debug.
 	 */
 	public static boolean isInDebugMode(Context context) {
 		boolean debug = false;
@@ -70,28 +69,5 @@ public class Podcatcher {
 	    catch(Exception e) {}
 	     
 	    return debug;
-	}
-	
-	/**
-	 * Format an amount of time.
-	 * @param time Amount in seconds to format
-	 * @return The time span as hh:mm:ss with appropriate omissions
-	 */
-	public static String formatTime(int time) {
-		int hours = time / 3600;
-		
-		int minutes = (time / 60) - 60 * hours;
-		int seconds = time % 60;
-		
-		String minutesString = formatNumber(minutes, hours > 0);
-		String secondsString = formatNumber(seconds, true);
-		
-		if (hours > 0) return hours + ":" + minutesString + ":" + secondsString;
-		else return minutesString + ":" + secondsString; 
-	}
-	
-	private static String formatNumber(int number, boolean makeTwoDigits) {
-		if (number < 10 && makeTwoDigits) return "0" + number;
-		else return number + "";
 	}
 }

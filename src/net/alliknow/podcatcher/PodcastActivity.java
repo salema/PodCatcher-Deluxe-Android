@@ -39,8 +39,6 @@ import android.view.View;
  * Our main activity class. Handles configuration changes.
  * All the heavy lifting is done in fragments, that will be
  * retained on activity restarts.
- * 
- * @author Kevin Hausmann
  */
 public class PodcastActivity extends Activity implements 
 	OnSelectPodcastListener, OnLoadPodcastListener, OnSelectEpisodeListener {
@@ -148,8 +146,10 @@ public class PodcastActivity extends Activity implements
 	
 	@Override
 	public void onPodcastLoaded(Podcast podcast) {
+		// We do not add empty lists because this would stop the progress UI
 		if (multiplePodcastsMode && !podcast.getEpisodes().isEmpty()) 
 			episodeListFragment.addEpisodeList(podcast.getEpisodes());
+		// Here we set empty lists because we want empty UI to show
 		else episodeListFragment.setEpisodeList(podcast.getEpisodes());
 	}
 	
@@ -171,9 +171,9 @@ public class PodcastActivity extends Activity implements
 		colorDivider(R.id.divider_second, false);
 	}
 	
-	private void colorDivider(int viewId, boolean color) {
-		if (getWindow() != null && getWindow().findViewById(viewId) != null) {
-			View divider = getWindow().findViewById(viewId);
+	private void colorDivider(int dividerViewId, boolean color) {
+		if (getWindow() != null && getWindow().findViewById(dividerViewId) != null) {
+			View divider = getWindow().findViewById(dividerViewId);
 			divider.setBackgroundResource(color ? R.color.divider_on : R.color.divider_off);
 		}
 	}

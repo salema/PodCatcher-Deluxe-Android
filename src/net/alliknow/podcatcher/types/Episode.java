@@ -33,8 +33,6 @@ import android.util.Log;
 
 /**
  * The episode type.
- * 
- * @author Kevin Hausmann
  */
 public class Episode implements Comparable<Episode> {
 
@@ -50,8 +48,8 @@ public class Episode implements Comparable<Episode> {
 	private String description;
 	
 	/**
-	 * Create a new episode
-	 * @param episodeNodes XML document nodes representing this episode
+	 * Create a new episode.
+	 * @param episodeNodes XML document nodes representing this episode.
 	 */
 	public Episode(Podcast podcast, NodeList episodeNodes) {
 		if (podcast != null) this.podcastName = podcast.getName();
@@ -61,28 +59,28 @@ public class Episode implements Comparable<Episode> {
 	}
 
 	/**
-	 * @return The episode's title
+	 * @return The episode's title.
 	 */
 	public String getName() {
 		return name;
 	}
 	
 	/**
-	 * @return The media content online location
+	 * @return The media content online location.
 	 */
 	public URL getMediaUrl() {
 		return mediaUrl;
 	}
 	
 	/**
-	 * @return The owning podcast's name
+	 * @return The owning podcast's name.
 	 */
 	public String getPodcastName() {
 		return podcastName;
 	}
 	
 	/**
-	 * @return The publication date for this episode
+	 * @return The publication date for this episode.
 	 */
 	public Date getPubDate() {
 		if (pubDate == null) return null;
@@ -90,7 +88,7 @@ public class Episode implements Comparable<Episode> {
 	}
 	
 	/**
-	 * @return The description for this episode (if any). Might be null.
+	 * @return The description for this episode (if any). Might be <code>null</code>.
 	 */
 	public String getDescription() {
 		return description;

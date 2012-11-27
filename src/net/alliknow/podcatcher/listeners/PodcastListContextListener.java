@@ -27,8 +27,6 @@ import android.widget.AbsListView.MultiChoiceModeListener;
 
 /**
  * Listener for the podcast list context mode.
- * 
- * @author Kevin Hausmann
  */
 public class PodcastListContextListener implements MultiChoiceModeListener {
 

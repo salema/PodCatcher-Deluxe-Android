@@ -20,8 +20,6 @@ import net.alliknow.podcatcher.PodcastList;
 
 /**
  * Interface definition for a callback to be invoked when podcast suggestions are requested.
- *
- * @author Kevin Hausmann
  */
 public interface OnShowSuggestionsListener extends OnAddPodcastListener {
 
@@ -45,7 +43,7 @@ public interface OnShowSuggestionsListener extends OnAddPodcastListener {
 	/**
 	 * Get the list of currently already added podcast
 	 * to be excluded from suggestions.
-	 * @return The list of podcasts already subscribed to.
+	 * @return The (possibly empty) list of podcasts already subscribed to.
 	 */
 	public PodcastList getPodcastList();
 }

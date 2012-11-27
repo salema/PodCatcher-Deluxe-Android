@@ -32,8 +32,6 @@ import android.util.Log;
  * Implement to PodcastLoader interface to be alerted on completion or failure.
  * The downloaded file will be used as the podcast's content via <code>setRssFile()</code>,
  * use the podcast object given (and returned via callbacks) to access it.
- * 
- * @author Kevin Hausmann
  */
 public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 	

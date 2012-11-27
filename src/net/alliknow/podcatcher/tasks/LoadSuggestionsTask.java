@@ -17,7 +17,6 @@
 package net.alliknow.podcatcher.tasks;
 
 import java.net.URL;
-import java.util.Collections;
 import java.util.Locale;
 
 import net.alliknow.podcatcher.PodcastList;
@@ -35,9 +34,7 @@ import org.json.JSONObject;
 import android.util.Log;
 
 /**
- * A task that loads and reads suggested podcasts
- * 
- * @author Kevin Hausmann
+ * A task that loads and reads suggested podcasts.
  */
 public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
 
@@ -78,7 +75,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
 			addSuggestionsFromJsonArray(completeJson.getJSONArray(JSON.SUGGESTION), result);
 			if (isCancelled()) return null;
 			
-			Collections.sort(result);
+			result.sort();
 		} catch (Exception e) {
 			failed = true;
 			Log.w(getClass().getSimpleName(), "Load failed for podcast suggestions file", e);

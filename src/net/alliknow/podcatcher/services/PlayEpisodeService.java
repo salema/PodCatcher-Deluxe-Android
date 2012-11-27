@@ -50,8 +50,6 @@ import android.util.Log;
  * 
  * Connect to the service from your activity/fragment to use it. Also
  * implement <code>PlayServiceListener</code> for interaction.
- * 
- * @author Kevin Hausmann
  */
 public class PlayEpisodeService extends Service implements OnPreparedListener, 
 	OnCompletionListener, OnErrorListener, OnBufferingUpdateListener,
@@ -127,7 +125,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	}
 	
 	/**
-	 * @return Whether the player is currently playing
+	 * @return Whether the player is currently playing.
 	 */
 	public boolean isPlaying() {
 		return player != null && player.isPlaying();
@@ -142,7 +140,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	
 	/**
 	 * Load and start playback for given episode. Will end any current playback.
-	 * @param episode Episode to play (not null)
+	 * @param episode Episode to play (not <code>null</code>).
 	 */
 	public void playEpisode(Episode episode) {
 		if (episode != null) {
@@ -170,7 +168,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	}
 	
 	/**
-	 * Pause current playback
+	 * Pause current playback.
 	 */
 	public void pause() {
 		if (currentEpisode == null) Log.d(getClass().getSimpleName(), "Called pause without setting episode");
@@ -178,7 +176,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	}
 	
 	/**
-	 * Resume to play current episode
+	 * Resume to play current episode.
 	 */
 	public void resume() {
 		if (currentEpisode == null) Log.d(getClass().getSimpleName(), "Called resume without setting episode");
@@ -197,7 +195,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	
 	/**
 	 * @return Whether the service is currently preparing,
-	 * i.e. buffering data and will start playing asap
+	 * i.e. buffering data and will start playing asap.
 	 */
 	public boolean isPreparing() {
 		return currentEpisode != null && !prepared;
@@ -205,14 +203,14 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	
 	/**
 	 * @return Whether the service is prepared, i.e.
-	 * any episode is loaded;
+	 * any episode is loaded.
 	 */
 	public boolean isPrepared() {
 		return prepared;
 	}
 	
 	/**
-	 * @return Whether the service is currently buffering data
+	 * @return Whether the service is currently buffering data.
 	 */
 	public boolean isBuffering() {
 		return buffering || isPreparing();
@@ -222,15 +220,15 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	 * Checks whether the currently loaded episode is equal to the one given.
 	 * The check we be true regardless of whether the episode has been actually
 	 * prepared or not.
-	 * @param episode Episode to check for
-	 * @return true iff given episode is loaded (or loading), false otherwise
+	 * @param episode Episode to check for.
+	 * @return true iff given episode is loaded (or loading), false otherwise.
 	 */
 	public boolean isWorkingWith(Episode episode) {
 		return currentEpisode != null && currentEpisode.equals(episode);
 	}
 	
 	/**
-	 * @return The title of the currently loaded episode (if any, might be <code>null</code>)
+	 * @return The title of the currently loaded episode (if any, might be <code>null</code>).
 	 */
 	public String getCurrentEpisodeName() {
 		if (currentEpisode == null) return null;
@@ -238,7 +236,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	}
 	
 	/**
-	 * @return The title of the currently loaded episode's podcast (if any, might be <code>null</code>)
+	 * @return The title of the currently loaded episode's podcast (if any, might be <code>null</code>).
 	 */
 	public String getCurrentEpisodePodcastName() {
 		if (currentEpisode == null) return null;
@@ -264,7 +262,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	}
 	
 	/**
-	 * @param show Whether to show a notification for the running service
+	 * @param show Whether to show a notification for the running service.
 	 */
 	public void showNotification(boolean show) {
 		if (prepared) putForeground(show);
@@ -333,7 +331,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	}
 		
 	/**
-	 * Reset the service to creation state
+	 * Reset the service to creation state.
 	 */
 	public void reset() {
 		// Stop current playback if any

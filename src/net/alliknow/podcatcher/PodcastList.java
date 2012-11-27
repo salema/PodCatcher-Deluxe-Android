@@ -40,13 +40,12 @@ import android.util.Log;
 
 /**
  * Custom list type for podcasts.
- * 
- * @author Kevin Hausmann
  */
 public class PodcastList extends ArrayList<Podcast> {
 	
 	/** The id */
 	private static final long serialVersionUID = 7226640001395545556L;
+	
 	/** The name of the file we store our saved podcasts in (as OPML) */
 	private static final String OPML_FILENAME = "podcasts.opml";
 	/** The OPML file encoding */
@@ -67,6 +66,14 @@ public class PodcastList extends ArrayList<Podcast> {
 	}
 	
 	/**
+	 * Sort the podcast list using the <code>compareTo</code>
+	 * method of the podcast type.
+	 */
+	public void sort() {
+		Collections.sort(this);
+	}
+	
+	/**
 	 * Load the podcast list from its default location.
 	 * @param context Context to use for loading the podcast list.
 	 */
@@ -84,7 +91,7 @@ public class PodcastList extends ArrayList<Podcast> {
 			for (int index = 0; index < podcasts.getLength(); index++) 
 				add(new Podcast(podcasts.item(index)));
 			
-			Collections.sort(this); 
+			sort();
 		} catch (Exception e) {
 			Log.e(getClass().getSimpleName(), "Cannot load OPML file", e);
 		}

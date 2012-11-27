@@ -19,7 +19,6 @@ package net.alliknow.podcatcher.tags;
 /**
  * Defines some constants used in OPML.
  * 
- * @author Kevin Hausmann
  * @see http://dev.opml.org/spec2.html
  */
 public abstract class OPML {

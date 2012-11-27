@@ -22,14 +22,12 @@ import android.content.Context;
 
 /**
  * Adapter for the media type spinner in the suggestion dialog.
- * 
- * @author Kevin Hausmann
  */
 public class MediaTypeSpinnerAdapter extends PodcatcherBaseSpinnerAdapter {
 	
 	/**
-	 * Create new adapter
-	 * @param context The current context
+	 * Create new adapter.
+	 * @param context The current context.
 	 */
 	public MediaTypeSpinnerAdapter(Context context) {
 		super(context);

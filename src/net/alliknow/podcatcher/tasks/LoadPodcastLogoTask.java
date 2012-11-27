@@ -25,8 +25,6 @@ import android.util.Log;
 /**
  * An async task to load a podcast logo.
  * Implement PodcastLogoLoader to be alerted on completion or failure.
- * 
- * @author Kevin Hausmann
  */
 public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 

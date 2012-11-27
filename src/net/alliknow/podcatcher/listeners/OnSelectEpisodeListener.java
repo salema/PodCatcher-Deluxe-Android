@@ -25,7 +25,7 @@ public interface OnSelectEpisodeListener {
 	
 	/**
 	 * Called on listener to reflect that an episode has been selected.
-	 * @param selectedEpisode Episode selected by the user
+	 * @param selectedEpisode Episode selected by the user.
 	 */
 	public void onEpisodeSelected(Episode selectedEpisode);
 

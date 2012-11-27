@@ -18,8 +18,6 @@ package net.alliknow.podcatcher.types;
 
 /**
  * Podcast media type.
- *
- * @author Kevin Hausmann
  */
 public enum MediaType {
 	AUDIO, VIDEO

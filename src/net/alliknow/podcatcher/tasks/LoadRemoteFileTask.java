@@ -27,8 +27,6 @@ import android.os.AsyncTask;
 
 /**
  * Abstract super class for file download tasks.
- * 
- * @author Kevin Hausmann
  */
 public abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Params, Progress, Result> {
 	

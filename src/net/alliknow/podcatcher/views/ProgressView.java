@@ -27,8 +27,6 @@ import android.widget.TextView;
 
 /**
  * A sophisticated progress view.
- *
- * @author Kevin Hausmann
  */
 public class ProgressView extends LinearLayout {
 	
