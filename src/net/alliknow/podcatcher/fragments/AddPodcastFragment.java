@@ -16,6 +16,7 @@
  */
 package net.alliknow.podcatcher.fragments;
 
+import static android.view.View.VISIBLE;
 import static net.alliknow.podcatcher.Podcatcher.isInDebugMode;
 import static net.alliknow.podcatcher.Podcatcher.isOnFastConnection;
 
@@ -134,7 +135,7 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 		// Prepare UI
 		podcastUrlEditText.setEnabled(false);
 		addPodcastButton.setEnabled(false);
-		progressView.setVisibility(View.VISIBLE);
+		progressView.setVisibility(VISIBLE);
 		
 		// Try to make the input work as a online resource
 		String spec = podcastUrlEditText.getText().toString();

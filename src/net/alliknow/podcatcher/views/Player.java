@@ -91,17 +91,17 @@ public class Player extends LinearLayout {
 	 */
 	public void update(PlayEpisodeService service, Episode currentEpisode) {
 		if (service != null) {
-			playerErrorView.setVisibility(View.GONE);
+			playerErrorView.setVisibility(GONE);
 			
-			playerDividerView.setVisibility(service.isWorkingWith(currentEpisode) ? View.GONE : View.VISIBLE);
-			playerTitleView.setVisibility(service.isWorkingWith(currentEpisode) ? View.GONE : View.VISIBLE);
+			playerDividerView.setVisibility(service.isWorkingWith(currentEpisode) ? GONE : VISIBLE);
+			playerTitleView.setVisibility(service.isWorkingWith(currentEpisode) ? GONE : VISIBLE);
 			playerTitleView.setText(service.getCurrentEpisodeName() + " - " 
 						+ service.getCurrentEpisodePodcastName());
 				
 			updateSeekBar(service);
 			updateButton(service);
 					
-			setVisibility(service.isPrepared() || service.isPreparing() ? View.VISIBLE : View.GONE);
+			setVisibility(service.isPrepared() || service.isPreparing() ? VISIBLE : GONE);
 		}
 	}
 
@@ -117,7 +117,12 @@ public class Player extends LinearLayout {
 	 * Show the player's error view.
 	 */
 	public void showError() {
-		playerErrorView.setVisibility(View.VISIBLE);
+		setVisibility(VISIBLE);
+		
+		playerTitleView.setVisibility(GONE);
+		playerButton.setVisibility(GONE);
+		playerSeekBar.setVisibility(GONE);
+		playerErrorView.setVisibility(VISIBLE);
 	}
 	
 	private void updateSeekBar(PlayEpisodeService service) {

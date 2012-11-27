@@ -16,6 +16,9 @@
  */
 package net.alliknow.podcatcher.fragments;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -220,16 +223,16 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 		if (selectedEpisode != null) {
 			this.episode = selectedEpisode;
 			
-			emptyView.setVisibility(View.GONE);
+			emptyView.setVisibility(GONE);
 			
-			episodeTitleView.setVisibility(View.VISIBLE);
+			episodeTitleView.setVisibility(VISIBLE);
 			episodeTitleView.setText(episode.getName());
 			podcastTitleView.setText(episode.getPodcastName());
-			podcastTitleView.setVisibility(View.VISIBLE);
-			dividerView.setVisibility(View.VISIBLE);
+			podcastTitleView.setVisibility(VISIBLE);
+			dividerView.setVisibility(VISIBLE);
 							
 			episodeDetailView.loadDataWithBaseURL(null, episode.getDescription(), "text/html", "utf-8", null);
-			episodeDetailView.setVisibility(View.VISIBLE);
+			episodeDetailView.setVisibility(VISIBLE);
 			
 			updateLoadMenuItem();
 			playerView.update(service, episode);

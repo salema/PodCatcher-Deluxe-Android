@@ -16,6 +16,8 @@
  */
 package net.alliknow.podcatcher.adapters;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import net.alliknow.podcatcher.PodcastList;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.views.HorizontalProgressView;
@@ -74,10 +76,10 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 		
 		// Show progress on select all podcasts?
 		HorizontalProgressView progressView = (HorizontalProgressView)convertView.findViewById(R.id.list_item_progress);
-		progressView.setVisibility(numberOfEpisodes == 0 && selectAll ? View.VISIBLE : View.GONE);
+		progressView.setVisibility(numberOfEpisodes == 0 && selectAll ? VISIBLE : GONE);
 		// Not if episodes are already available...
 		View episodeNumberView = convertView.findViewById(R.id.list_item_caption);
-		episodeNumberView.setVisibility(numberOfEpisodes != 0 ? View.VISIBLE : View.GONE);
+		episodeNumberView.setVisibility(numberOfEpisodes != 0 ? VISIBLE : GONE);
 		
 		return convertView;
 	}

@@ -16,6 +16,8 @@
  */
 package net.alliknow.podcatcher.fragments;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static net.alliknow.podcatcher.Podcatcher.isOnFastConnection;
 
 import java.util.Locale;
@@ -205,17 +207,16 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 			suggestionsListView.setAdapter(new SuggestionListAdapter(getActivity(), filteredSuggestionList, listener));
 			// Update UI
 			if (filteredSuggestionList.isEmpty()) {
-				suggestionsListView.setVisibility(View.GONE);
-				noSuggestionsView.setVisibility(View.VISIBLE);
+				suggestionsListView.setVisibility(GONE);
+				noSuggestionsView.setVisibility(VISIBLE);
 			}
 			else {
-				noSuggestionsView.setVisibility(View.GONE);
-				suggestionsListView.setVisibility(View.VISIBLE);
+				noSuggestionsView.setVisibility(GONE);
+				suggestionsListView.setVisibility(VISIBLE);
 			}
 			
-			progressView.setVisibility(View.GONE);
-		// Just in case the suggestion list has not been cached...
-		} // else onSuggestionsLoadFailed();
+			progressView.setVisibility(GONE);
+		}
 	}
 
 	/**

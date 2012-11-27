@@ -16,6 +16,9 @@
  */
 package net.alliknow.podcatcher.fragments;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -200,16 +203,16 @@ public class EpisodeListFragment extends ListFragment {
 	private void updateUiElementVisibility() {
 		// Progress view is displaying information
 		if (showProgress || showLoadFailed) {
-			emptyView.setVisibility(View.GONE);
-			listView.setVisibility(View.GONE);
-			progressView.setVisibility(View.VISIBLE);
+			emptyView.setVisibility(GONE);
+			listView.setVisibility(GONE);
+			progressView.setVisibility(VISIBLE);
 		} // Show the episode list or the empty view
 		else {
 			boolean episodesAvailable = episodeList != null && !episodeList.isEmpty();
 			
-			emptyView.setVisibility(episodesAvailable ? View.GONE : View.VISIBLE);
-			listView.setVisibility(episodesAvailable ? View.VISIBLE : View.GONE);
-			progressView.setVisibility(View.GONE);
+			emptyView.setVisibility(episodesAvailable ? GONE : VISIBLE);
+			listView.setVisibility(episodesAvailable ? VISIBLE : GONE);
+			progressView.setVisibility(GONE);
 		}
 	}
 }

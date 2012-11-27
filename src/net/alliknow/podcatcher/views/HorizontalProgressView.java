@@ -56,6 +56,6 @@ public class HorizontalProgressView extends ProgressView {
 	 * @param show The flag (default is <code>true</code>).
 	 */
 	public void showTextProgress(boolean show) {
-		progressTextView.setVisibility(show ? View.VISIBLE : View.GONE);
+		progressTextView.setVisibility(show ? VISIBLE : GONE);
 	}
 }

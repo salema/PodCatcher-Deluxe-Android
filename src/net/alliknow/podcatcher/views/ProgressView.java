@@ -59,7 +59,7 @@ public class ProgressView extends LinearLayout {
 	 * @see <code>Progress</code>
 	 */
 	public void publishProgress(Progress progress) {
-		progressBar.setVisibility(View.VISIBLE);
+		progressBar.setVisibility(VISIBLE);
 		progressTextView.setTextColor(getResources().getColor(R.color.text_secondary));
 		
 		if (progress.equals(Progress.CONNECT))
@@ -78,7 +78,7 @@ public class ProgressView extends LinearLayout {
 	 * @param errorId Resource id for error message.
 	 */
 	public void showError(int errorId) {
-		progressBar.setVisibility(View.GONE);
+		progressBar.setVisibility(GONE);
 		
 		progressTextView.setTextColor(getResources().getColor(R.color.text_error));
 		progressTextView.setText(errorId);
@@ -88,7 +88,7 @@ public class ProgressView extends LinearLayout {
 	 * Reset to initial UI state.
 	 */
 	public void reset() {
-		progressBar.setVisibility(View.VISIBLE);
+		progressBar.setVisibility(VISIBLE);
 		progressTextView.setText(null);
 		progressTextView.setTextColor(getResources().getColor(R.color.text_secondary));
 	}

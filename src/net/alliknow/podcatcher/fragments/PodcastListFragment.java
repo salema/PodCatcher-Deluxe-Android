@@ -16,6 +16,8 @@
  */
 package net.alliknow.podcatcher.fragments;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static net.alliknow.podcatcher.Podcatcher.isOnFastConnection;
 import net.alliknow.podcatcher.PodcastList;
 import net.alliknow.podcatcher.R;
@@ -317,8 +319,8 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	}
 	
 	private void updateListVisibility() {
-		emptyView.setVisibility(podcastList.isEmpty() ? View.VISIBLE : View.GONE);
-		getListView().setVisibility(podcastList.isEmpty() ? View.GONE : View.VISIBLE);
+		emptyView.setVisibility(podcastList.isEmpty() ? VISIBLE : GONE);
+		getListView().setVisibility(podcastList.isEmpty() ? GONE : VISIBLE);
 	}
 
 	@Override
