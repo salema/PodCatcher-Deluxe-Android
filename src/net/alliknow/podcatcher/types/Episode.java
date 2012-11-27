@@ -146,13 +146,7 @@ public class Episode implements Comparable<Episode> {
 	
 	private URL createMediaUrl(String url, String type) {
 		try {
-			URL result = new URL(url);
-			
-			// TODO make this more generic!
-			if (type.equals("audio/mpeg") && !result.getFile().endsWith(".mp3"))
-				result = new URL(url + ".mp3");
-			
-			return result;
+			return new URL(url);
 		} catch (MalformedURLException e) {
 			Log.e(getClass().getSimpleName(), "Episode has invalid URL", e);
 		}

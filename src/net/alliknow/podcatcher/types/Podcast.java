@@ -42,7 +42,7 @@ public class Podcast implements Comparable<Podcast> {
 
 	/** The minimum time podcast content is buffered (in milliseconds). 
 	 * If older, we need to reload. */
-	public static final int TIME_TO_LIFE = 15 * 60 * 1000;
+	public static final int TIME_TO_LIFE = 30 * 60 * 1000;
 	
 	/** Name of the podcast */
 	private String name;
@@ -72,10 +72,10 @@ public class Podcast implements Comparable<Podcast> {
 	 * The name will not be read from the file, but remains as given
 	 * (unless you give <code>null</code> as the name). 
 	 * All other data on the podcast will only be available after
-	 * <code>setRssFile</code> was called.
+	 * <code>setRssFile()</code> was called.
 	 * @param name The podcast's name, if you give <code>null</code> the name
-	 * will be read from the RSS file (if available)
-	 * @param url The location of the podcast's RSS file
+	 * will be read from the RSS file (if set afterwards).
+	 * @param url The location of the podcast's RSS file.
 	 * @see setRssFile
 	 */
 	public Podcast(String name, URL url) {
@@ -87,7 +87,7 @@ public class Podcast implements Comparable<Podcast> {
 	 * Create a new podcast from an OPML outline node.
 	 * The constructor will try to work around a couple of
 	 * corner-cases, but there are limits to this...
-	 * @param opmlOutline The outline node
+	 * @param opmlOutline The outline node.
 	 */
 	public Podcast(Node opmlOutline) {
 		try {
@@ -195,7 +195,7 @@ public class Podcast implements Comparable<Podcast> {
 	/**
 	 * Find and return the podcast's image location (logo).
 	 * Only works after RSS file is set.
-	 * @return URL pointing at the logo location
+	 * @return URL pointing at the logo location.
 	 * @see setRssFile
 	 */
 	public URL getLogoUrl() {
@@ -233,7 +233,7 @@ public class Podcast implements Comparable<Podcast> {
 	 * gets its information from. Many of its methods will not return valid results
 	 * unless this method was called. Calling this method also resets all
 	 * information read earlier.
-	 * @param rssFile XML document representing the podcast
+	 * @param rssFile XML document representing the podcast.
 	 */
 	public void setRssFile(Document rssFile) {
 		episodes.clear();
@@ -251,8 +251,7 @@ public class Podcast implements Comparable<Podcast> {
 	 * to the time that <code>setRssFile</code> has last been
 	 * called on this object and has nothing to do with the updating
 	 * of the podcast RSS file on the provider's server.
-	 * 
-	 * @return True if time to life expired or the podcast has never been loaded.
+	 * @return <code>true</code> iff time to live expired or the podcast has never been loaded.
 	 */
 	public boolean needsReload() {
 		// Has never been loaded
