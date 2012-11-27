@@ -52,8 +52,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/episode_view_padding"
-        android:layout_marginBottom="2dp"
-        android:layout_marginTop="2dp" />
+        android:layout_marginBottom="2dp" />
     <Button
         android:id="@+id/player_button"
         android:layout_width="match_parent"
