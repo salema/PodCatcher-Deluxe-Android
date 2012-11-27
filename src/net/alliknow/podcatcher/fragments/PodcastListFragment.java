@@ -58,6 +58,9 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
     /** The activity we are in (listens to loading events) */ 
     private OnLoadPodcastListener loadListener;
     
+    /** The context mode listener */
+    private PodcastListContextListener contextListener = new PodcastListContextListener(this);
+    
 	/** The list of podcasts we know */
 	private PodcastList podcastList = new PodcastList();
 	/** The list of podcast suggestions */
@@ -111,12 +114,12 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		
 		// Load all podcasts? TODO Make this a preference
 		//for (Podcast podcast : podcastList)
-		//	if (podcast.needsReload()) new LoadPodcastTask(this, true).execute(podcast);
+		//	if (podcast.needsReload()) new LoadPodcastTask(this).execute(podcast);
 		
 		emptyView = view.findViewById(android.R.id.empty);
 		logoView = (ImageView) view.findViewById(R.id.podcast_image);
 		
-		getListView().setMultiChoiceModeListener(new PodcastListContextListener(this));
+		getListView().setMultiChoiceModeListener(contextListener);
 		getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
 		
 		if (currentPodcast != null) logoView.setImageBitmap(currentPodcast.getLogo());
@@ -332,7 +335,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	/**
 	 * Notified by async RSS file loader on completion.
 	 * Updates UI to display the podcast's episodes.
-	 * @param podcast Podcast RSS feed loaded for
+	 * @param podcast Podcast RSS feed was loaded for.
 	 */
 	@Override
 	public void onPodcastLoaded(Podcast podcast) {

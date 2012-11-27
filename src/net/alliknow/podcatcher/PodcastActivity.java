@@ -146,10 +146,7 @@ public class PodcastActivity extends Activity implements
 	
 	@Override
 	public void onPodcastLoaded(Podcast podcast) {
-		// We do not add empty lists because this would stop the progress UI
-		if (multiplePodcastsMode && !podcast.getEpisodes().isEmpty()) 
-			episodeListFragment.addEpisodeList(podcast.getEpisodes());
-		// Here we set empty lists because we want empty UI to show
+		if (multiplePodcastsMode) episodeListFragment.addEpisodeList(podcast.getEpisodes());
 		else episodeListFragment.setEpisodeList(podcast.getEpisodes());
 	}
 	

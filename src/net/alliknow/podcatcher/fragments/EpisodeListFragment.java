@@ -129,16 +129,14 @@ public class EpisodeListFragment extends ListFragment {
 	 * @param list List of episode to add.
 	 */
 	public void addEpisodeList(List<Episode> list) {
-		if (list != null && !list.isEmpty()) {
-			if (episodeList == null) episodeList = new ArrayList<Episode>();
+		if (episodeList == null) episodeList = new ArrayList<Episode>();
 			
-			// TODO decide on this: episodeList.addAll(list.subList(0, list.size() > 100 ? 100 : list.size() - 1));
-			episodeList.addAll(list);
-			Collections.sort(episodeList);
-			setListAdapter(new EpisodeListAdapter(getActivity(), episodeList, true));
-			
-			processNewEpisodes();
-		}
+		// TODO decide on this: episodeList.addAll(list.subList(0, list.size() > 100 ? 100 : list.size() - 1));
+		episodeList.addAll(list);
+		Collections.sort(episodeList);
+		setListAdapter(new EpisodeListAdapter(getActivity(), episodeList, true));
+		
+		processNewEpisodes();
 	}
 	
 	private void processNewEpisodes() {
