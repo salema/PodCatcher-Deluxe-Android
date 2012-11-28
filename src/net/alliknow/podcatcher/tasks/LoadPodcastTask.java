@@ -93,7 +93,7 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 	
 	@Override
 	protected void onPostExecute(Void nothing) {
-		podcast.setLoading(false);
+		if (podcast != null) podcast.setLoading(false);
 		
 		// Background task failed to complete
 		if (failed) {
