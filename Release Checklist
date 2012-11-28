@@ -1,4 +1,2 @@
-Clear and Spin in Episode Fragement?
-Write dummy OPML-file?
-Disabled spinners?
-Rename package?
+Comment out all uses of isInDebugMode
+Rename package
