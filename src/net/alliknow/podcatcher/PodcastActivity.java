@@ -118,6 +118,7 @@ public class PodcastActivity extends Activity implements
 		multiplePodcastsMode = false;
 		
 		colorDivider(R.id.divider_first, true);
+		colorDivider(R.id.divider_second, false);
 		episodeListFragment.clearAndSpin();
 	}
 	
@@ -126,6 +127,7 @@ public class PodcastActivity extends Activity implements
 		multiplePodcastsMode = true;
 		
 		colorDivider(R.id.divider_first, true);
+		colorDivider(R.id.divider_second, false);
 		episodeListFragment.reset();
 		episodeListFragment.clearAndSpin();
 	}

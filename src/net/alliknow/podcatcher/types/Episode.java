@@ -29,6 +29,7 @@ import net.alliknow.podcatcher.tags.RSS;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 /**
@@ -36,12 +37,13 @@ import android.util.Log;
  */
 public class Episode implements Comparable<Episode> {
 
+	/** The podcast this episode is part of */
+	private Podcast podcast;
+	
 	/** This episode title */
 	private String name;
 	/** The episode's online location */
 	private URL mediaUrl;
-	/** The podcast's name */
-	private String podcastName;
 	/** The episode's release date */
 	private Date pubDate;
 	/** The episode's description */
@@ -49,10 +51,11 @@ public class Episode implements Comparable<Episode> {
 	
 	/**
 	 * Create a new episode.
+	 * @param podcast Podcast this episode belongs to.
 	 * @param episodeNodes XML document nodes representing this episode.
 	 */
 	public Episode(Podcast podcast, NodeList episodeNodes) {
-		if (podcast != null) this.podcastName = podcast.getName();
+		this.podcast = podcast;
 		
 		if (episodeNodes != null && episodeNodes.getLength() > 0)
 			readData(episodeNodes);
@@ -76,7 +79,17 @@ public class Episode implements Comparable<Episode> {
 	 * @return The owning podcast's name.
 	 */
 	public String getPodcastName() {
-		return podcastName;
+		if (podcast == null) return null;
+		else return podcast.getName();
+	}
+	
+	/**
+	 * Get the podcast logo if available.
+	 * @return The logo bitmap or <code>null</code> if unavailable.
+	 */
+	public Bitmap getPodcastLogo() {
+		if (podcast == null) return null;
+		else return podcast.getLogo();
 	}
 	
 	/**

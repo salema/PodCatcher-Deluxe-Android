@@ -134,7 +134,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		removeMenuItem = (MenuItem) menu.findItem(R.id.podcast_remove_menuitem);
 		selectAllMenuItem = (MenuItem) menu.findItem(R.id.podcast_select_all_menuitem);
 		
-		updateMenuItems();
+		updateUiElementVisibility();
 	}
 
 	@Override
@@ -234,7 +234,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		if (currentPodcast.getLogo() == null)
 			logoView.setImageResource(R.drawable.default_podcast_logo);
 		else logoView.setImageBitmap(currentPodcast.getLogo());
-		updateMenuItems();
+		updateUiElementVisibility();
 		
 		// Alert parent activity
 		if (selectedListener != null) selectedListener.onPodcastSelected(currentPodcast);
@@ -258,15 +258,16 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		// Stop loading previous tasks
 		cancelCurrentLoadTasks();
 		
-		// Prepare UI
-		adapter.setSelectAll();
-		logoView.setImageResource(R.drawable.default_podcast_logo);
-		updateMenuItems();
-		
 		// Alert parent activity
 		if (selectedListener != null) selectedListener.onAllPodcastsSelected();
 		else Log.d(getClass().getSimpleName(), "All podcasts selected, but no listener attached");
-		
+				
+		// Prepare UI
+		adapter.setSelectAll();
+		updateUiElementVisibility();
+		logoView.setImageResource(R.drawable.default_podcast_logo);
+				
+		// Load all podcasts
 		for (Podcast podcast : podcastList)
 			if (podcast.needsReload()) {
 				// Otherwise progress will not show
@@ -313,18 +314,12 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		} // Current podcast has new position
 		else if (!selectAll) adapter.setSelectedPosition(podcastList.indexOf(currentPodcast));
 		
-		updateListVisibility();
-		updateMenuItems();
+		updateUiElementVisibility();
 		
 		// Store changed list
 		podcastList.store(getActivity());
 	}
 	
-	private void updateListVisibility() {
-		emptyView.setVisibility(podcastList.isEmpty() ? VISIBLE : GONE);
-		getListView().setVisibility(podcastList.isEmpty() ? GONE : VISIBLE);
-	}
-
 	@Override
 	public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
 		if (loadListener != null && podcast.equals(currentPodcast)) 
@@ -366,6 +361,9 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	
 	@Override
 	public void onPodcastLoadFailed(Podcast podcast) {
+		// This will update the list view
+		adapter.notifyDataSetChanged();
+				
 		// Only react if the podcast failed to load that we are actually waiting for
 		if (podcast.equals(currentPodcast)) {
 			loadPodcastTask = null;
@@ -390,7 +388,11 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	@Override
 	public void onPodcastLogoLoadFailed(Podcast podcast) { /* Just stick with the default logo... */ }
 	
-	private void updateMenuItems() {
+	private void updateUiElementVisibility() {
+		emptyView.setVisibility(podcastList.isEmpty() ? VISIBLE : GONE);
+		getListView().setVisibility(podcastList.isEmpty() ? GONE : VISIBLE);
+		logoView.setVisibility(selectAll ? GONE : VISIBLE);
+		
 		selectAllMenuItem.setVisible(! selectAll);
 		removeMenuItem.setVisible(currentPodcast != null);
 	}

@@ -64,6 +64,7 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 
 		try {
 			if (podcast == null || podcast.getUrl() == null) throw new Exception("Podcast and/or URL cannot be null!");
+			podcast.setLoading(true);
 			
 			// Load the file from the internets
 			publishProgress(Progress.CONNECT);
@@ -92,6 +93,8 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 	
 	@Override
 	protected void onPostExecute(Void nothing) {
+		podcast.setLoading(false);
+		
 		// Background task failed to complete
 		if (failed) {
 			if (listener != null) listener.onPodcastLoadFailed(podcast);

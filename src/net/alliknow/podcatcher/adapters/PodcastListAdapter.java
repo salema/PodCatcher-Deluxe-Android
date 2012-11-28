@@ -76,7 +76,7 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 		
 		// Show progress on select all podcasts?
 		HorizontalProgressView progressView = (HorizontalProgressView)convertView.findViewById(R.id.list_item_progress);
-		progressView.setVisibility(numberOfEpisodes == 0 && selectAll ? VISIBLE : GONE);
+		progressView.setVisibility(list.get(position).isLoading() && selectAll ? VISIBLE : GONE);
 		// Not if episodes are already available...
 		View episodeNumberView = convertView.findViewById(R.id.list_item_caption);
 		episodeNumberView.setVisibility(numberOfEpisodes != 0 ? VISIBLE : GONE);

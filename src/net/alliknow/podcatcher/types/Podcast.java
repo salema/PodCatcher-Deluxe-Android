@@ -66,6 +66,8 @@ public class Podcast implements Comparable<Podcast> {
 	private Date updated;
 	/** The encoding of the loaded file */
 	private String encoding;
+	/** Whether this podcast is currently loading */
+	private boolean loading;
 	
 	/**
 	 * Create a new podcast by name and RSS file location.
@@ -258,6 +260,24 @@ public class Podcast implements Comparable<Podcast> {
 		if (updated == null) return true;
 		// Check age
 		else return new Date().getTime() - updated.getTime() > TIME_TO_LIFE;
+	}
+	
+	/**
+	 * Check whether the podcast is currently in the loading state.
+	 * This only works if somebody set the flag via
+	 * <code>setLoading()</code>.
+	 * @return The flag.
+	 */
+	public boolean isLoading() {
+		return loading;
+	}
+
+	/**
+	 * Set the loading flag.
+	 * @param loading The flag to set.
+	 */
+	public void setLoading(boolean loading) {
+		this.loading = loading;
 	}
 	
 	/**
