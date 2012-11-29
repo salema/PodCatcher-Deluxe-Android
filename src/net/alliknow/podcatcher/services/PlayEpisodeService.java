@@ -392,11 +392,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	        case AudioManager.AUDIOFOCUS_GAIN:
 	        	hasFocus = true;
 	        	
-	            // resume playback
-	            if (prepared) {
-	            	resume();
-	            	player.setVolume(1.0f, 1.0f);
-	            }
+	            resume();
+	            player.setVolume(1.0f, 1.0f);
 	            break;
 	
 	        case AudioManager.AUDIOFOCUS_LOSS:

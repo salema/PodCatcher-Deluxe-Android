@@ -152,7 +152,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 		inflater.inflate(R.menu.episode, menu);
 		
 		loadMenuItem = menu.findItem(R.id.episode_load_menuitem);
-		updateLoadMenuItem();
+		updateUiElementVisibility();
 	}
 	
 	@Override
@@ -198,10 +198,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 	public void onDetach() {
 		super.onDetach();
 		
-		// Detach from service callbacks
-		if (service != null) service.setPlayServiceListener(null);
-		
-		// Detach from play service via this fragment's activity
+		// Detach from play service via this fragment's activity (prevents leaking)
 		getActivity().unbindService(connection);
 				
 		// Stop progress update task if existing
@@ -211,6 +208,9 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		
+		// This would prevent strange service behaviour
+		if (! service.isPlaying()) service.reset();		
 		
 		playUpdateTimer.cancel();
 	}
@@ -223,18 +223,11 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 		if (selectedEpisode != null) {
 			this.episode = selectedEpisode;
 			
-			emptyView.setVisibility(GONE);
-			
-			episodeTitleView.setVisibility(VISIBLE);
 			episodeTitleView.setText(episode.getName());
 			podcastTitleView.setText(episode.getPodcastName());
-			podcastTitleView.setVisibility(VISIBLE);
-			dividerView.setVisibility(VISIBLE);
-							
 			episodeDetailView.loadDataWithBaseURL(null, episode.getDescription(), "text/html", "utf-8", null);
-			episodeDetailView.setVisibility(VISIBLE);
 			
-			updateLoadMenuItem();
+			updateUiElementVisibility();
 			playerView.update(service, episode);
 		}
 	}
@@ -287,7 +280,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 		
 		service.reset();
 		
-		updateLoadMenuItem();
+		updateUiElementVisibility();
 		playerView.update(service, episode);
 	}
 	
@@ -295,7 +288,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 	public void onError() {
 		service.reset();
 		
-		updateLoadMenuItem();
+		updateUiElementVisibility();
 		playerView.update(service, episode);
 		
 		playerView.showError();
@@ -311,7 +304,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 				
 				service.playEpisode(episode);
 								
-				updateLoadMenuItem();
+				updateUiElementVisibility();
 				playerView.update(service, episode);
 			}
 		} else Log.d(getClass().getSimpleName(), "Cannot load episode (episode or service are null)");
@@ -333,7 +326,15 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 		} else Log.d(getClass().getSimpleName(), "Cannot play/pause episode (service null or unprepared)");
 	}
 	
-	private void updateLoadMenuItem() {
+	private void updateUiElementVisibility() {
+		emptyView.setVisibility(episode == null ? VISIBLE : GONE);
+		
+		episodeTitleView.setVisibility(episode == null ? GONE : VISIBLE);
+		podcastTitleView.setVisibility(episode == null ? GONE : VISIBLE);
+		dividerView.setVisibility(episode == null ? GONE : VISIBLE);
+		episodeDetailView.setVisibility(episode == null ? GONE : VISIBLE);
+		
+		// This might be called before the menu is inflated...
 		if (loadMenuItem != null) {		
 			loadMenuItem.setVisible(episode != null && service != null);
 			
@@ -373,7 +374,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
             service.showNotification(false);
             
             // Update UI to reflect service status
-            updateLoadMenuItem();
+            updateUiElementVisibility();
             playerView.update(service, episode);
             // Restart play progress timer task if service is playing
             startPlayProgressTimer();

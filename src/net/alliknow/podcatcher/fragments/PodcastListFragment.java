@@ -124,6 +124,8 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		getListView().setMultiChoiceModeListener(contextListener);
 		getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
 		
+		updateUiElementVisibility();
+		
 		if (currentPodcast != null) logoView.setImageBitmap(currentPodcast.getLogo());
 	}
 	
@@ -393,8 +395,9 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		getListView().setVisibility(podcastList.isEmpty() ? GONE : VISIBLE);
 		logoView.setVisibility(selectAll ? GONE : VISIBLE);
 		
-		selectAllMenuItem.setVisible(! selectAll);
-		removeMenuItem.setVisible(currentPodcast != null);
+		// This might be called before the menu is inflated...
+		if (selectAllMenuItem != null) selectAllMenuItem.setVisible(! selectAll);
+		if (removeMenuItem != null) removeMenuItem.setVisible(currentPodcast != null);
 	}
 	
 	private void scrollListView(int position) {
