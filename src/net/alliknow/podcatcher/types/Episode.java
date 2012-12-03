@@ -140,8 +140,11 @@ public class Episode implements Comparable<Episode> {
 	void parse(XmlPullParser xpp) throws XmlPullParserException, IOException {
 		int eventType = xpp.next();
 		
-		while (eventType != XmlPullParser.END_TAG &&  xpp.getName() != null && !xpp.getName().equalsIgnoreCase(RSS.ITEM)) {
-			if (eventType != XmlPullParser.START_TAG) continue;
+		while (!(eventType == XmlPullParser.END_TAG && xpp.getName() != null && xpp.getName().equalsIgnoreCase(RSS.ITEM))) {
+			if (eventType != XmlPullParser.START_TAG) {
+				eventType = xpp.next();
+				continue;
+			}
 			
 			// Episode title
 			if (xpp.getName().equalsIgnoreCase(RSS.TITLE)) name = getNextText(xpp);
