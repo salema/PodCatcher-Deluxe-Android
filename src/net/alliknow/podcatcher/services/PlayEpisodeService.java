@@ -65,6 +65,9 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	private boolean buffering = false;
 	/** Do we have audio focus ? */
 	private boolean hasFocus = false;
+	/** Flag to indicate whether it is okay to resume playback
+	 * on audio focus gain */
+	private boolean resumeOnAudioFocusGain = false;
 	
 	/** Binder given to clients */
     private final IBinder binder = new PlayServiceBinder();
@@ -225,6 +228,13 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	 */
 	public boolean isWorkingWith(Episode episode) {
 		return currentEpisode != null && currentEpisode.equals(episode);
+	}
+	
+	/**
+	 * @return The episode currently loaded.
+	 */
+	public Episode getCurrentEpisode() {
+		return currentEpisode;
 	}
 	
 	/**
@@ -392,8 +402,13 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	        case AudioManager.AUDIOFOCUS_GAIN:
 	        	hasFocus = true;
 	        	
-	            resume();
-	            player.setVolume(1.0f, 1.0f);
+	        	if (resumeOnAudioFocusGain) {
+		            resume();
+		            player.setVolume(1.0f, 1.0f);
+	        	
+		            resumeOnAudioFocusGain = false;
+	        	}
+	        	
 	            break;
 	
 	        case AudioManager.AUDIOFOCUS_LOSS:
@@ -409,6 +424,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 	            // playback. We don't release the media player because playback
 	            // is likely to resume
 	        	hasFocus = false;
+	        	resumeOnAudioFocusGain = true;
 	        	
 	        	if (isPlaying()) pause();
 	            break;

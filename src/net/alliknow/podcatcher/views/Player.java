@@ -17,6 +17,7 @@
 package net.alliknow.podcatcher.views;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.listeners.OnReturnToPlayingEpisodeListener;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.types.Episode;
 import android.content.Context;
@@ -38,6 +39,9 @@ public class Player extends LinearLayout {
 	final private String at;
 	/** String resource needed for button label */
 	final private String of;
+	
+	/** The listener for the title click */
+	private OnReturnToPlayingEpisodeListener returnListener;
 	
 	/** The player divider used when title is shown */
 	private ImageView dividerView;
@@ -62,6 +66,14 @@ public class Player extends LinearLayout {
 		seekBar = (SeekBar) view.findViewById(R.id.player_seekbar);
 		button = (Button) view.findViewById(R.id.player_button);
 		errorView = (TextView) view.findViewById(R.id.player_error);
+		
+		titleView.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				returnListener.returnToPlayingEpisode();
+			}
+		});
 	}
 
 	@Override
@@ -80,6 +92,10 @@ public class Player extends LinearLayout {
 	 */
 	public void setOnSeekBarChangeListener(OnSeekBarChangeListener listener) {
 		seekBar.setOnSeekBarChangeListener(listener);
+	}
+	
+	public void setOnReturnToPlayingEpisodeListener(OnReturnToPlayingEpisodeListener listener) {
+		this.returnListener = listener;
 	}
 	
 	/**

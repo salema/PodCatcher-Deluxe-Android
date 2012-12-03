@@ -23,6 +23,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.listeners.OnReturnToPlayingEpisodeListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
@@ -52,7 +53,8 @@ import android.widget.TextView;
 /**
  * Fragment showing episode details.
  */
-public class EpisodeFragment extends Fragment implements PlayServiceListener, OnSeekBarChangeListener {
+public class EpisodeFragment extends Fragment implements PlayServiceListener, 
+		OnSeekBarChangeListener, OnReturnToPlayingEpisodeListener {
 
 	/** The load episode menu bar item */
 	private MenuItem loadMenuItem;
@@ -126,6 +128,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 		
 		playerView = (Player) view.findViewById(R.id.player);
 		playerView.setOnSeekBarChangeListener(this);
+		playerView.setOnReturnToPlayingEpisodeListener(this);
 		playerView.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -209,8 +212,8 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 	public void onDestroy() {
 		super.onDestroy();
 		
-		// This would prevent strange service behaviour
-		if (! service.isPlaying()) service.reset();		
+		// This would prevent strange service behavior
+		if (! service.isPlaying()) service.stopSelf();		
 		
 		playUpdateTimer.cancel();
 	}
@@ -231,7 +234,13 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
 			playerView.update(service, episode);
 		}
 	}
-		
+	
+	@Override
+	public void returnToPlayingEpisode() {
+		if (service != null && service.getCurrentEpisode() != null) 
+			setEpisode(service.getCurrentEpisode());
+	}
+	
 	@Override
 	public void onReadyToPlay() {
 		playerView.update(service, episode);
@@ -374,6 +383,8 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener, On
             service.showNotification(false);
             
             // Update UI to reflect service status
+            if (episode == null && service.getCurrentEpisode() != null) 
+    			setEpisode(service.getCurrentEpisode());
             updateUiElementVisibility();
             playerView.update(service, episode);
             // Restart play progress timer task if service is playing
