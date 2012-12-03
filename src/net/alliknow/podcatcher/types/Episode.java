@@ -147,33 +147,21 @@ public class Episode implements Comparable<Episode> {
 			}
 			
 			// Episode title
-			if (xpp.getName().equalsIgnoreCase(RSS.TITLE)) name = getNextText(xpp);
+			if (xpp.getName().equalsIgnoreCase(RSS.TITLE)) name = xpp.nextText();
 			// Episode media URL
 			else if (xpp.getName().equalsIgnoreCase(RSS.ENCLOSURE))
 				mediaUrl = createMediaUrl(xpp.getAttributeValue("", RSS.URL));
 			// Episode publication date (2 options)
 			else if (xpp.getName().equalsIgnoreCase(RSS.DATE))
-				pubDate = parsePubDate(getNextText(xpp));
+				pubDate = parsePubDate(xpp.nextText());
 			else if (xpp.getName().equalsIgnoreCase(RSS.PUBDATE))
-				pubDate = parsePubDate(getNextText(xpp));
+				pubDate = parsePubDate(xpp.nextText());
 			// Episode description
 			else if (xpp.getName().equalsIgnoreCase(RSS.DESCRIPTION))
-				description = getNextText(xpp);
+				description = xpp.nextText();
 			
 			eventType = xpp.next();
 		}
-	}
-	
-	private String getNextText(XmlPullParser xpp) throws XmlPullParserException, IOException {
-		String text;
-		int eventType;
-		
-		do {
-			eventType = xpp.next();
-			text = xpp.getText();
-		} while (eventType != XmlPullParser.TEXT);
-		
-		return text;
 	}
 
 	private void readData(NodeList episodeNodes) {
