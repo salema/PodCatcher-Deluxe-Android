@@ -18,12 +18,12 @@ package net.alliknow.podcatcher.tasks;
 
 import java.io.ByteArrayInputStream;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.types.Podcast;
 
-import org.w3c.dom.Document;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.util.Log;
 
@@ -44,7 +44,7 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 	/** Podcast currently loading */
 	private Podcast podcast;
 	/** Document builder to use */
-	private DocumentBuilderFactory factory;
+	private XmlPullParserFactory factory;
 	
 	/**
 	 * Create new task
@@ -54,8 +54,13 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 		this.listener = listener;
 		this.loadLimit = MAX_RSS_FILE_SIZE;
 		
-		factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(true);
+		try {
+			factory = XmlPullParserFactory.newInstance();
+		} catch (XmlPullParserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        factory.setNamespaceAware(true);
 	}
 	
 	@Override
@@ -73,10 +78,12 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 			// Get result as a document
 			if (isCancelled()) return null;
 			else publishProgress(Progress.PARSE);
-			Document rssDocument = factory.newDocumentBuilder().parse(new ByteArrayInputStream(podcastRssFile));
+			
+			XmlPullParser xpp = factory.newPullParser();
+			xpp.setInput(new ByteArrayInputStream(podcastRssFile), null);
 			
 			// Set as podcast content
-			if (! isCancelled()) podcast.setRssFile(rssDocument);
+			if (! isCancelled()) podcast.parse(xpp);
 		} catch (Exception e) {
 			failed = true;
 			Log.w(getClass().getSimpleName(), "Load failed for podcast \"" + podcasts[0] + "\"", e);

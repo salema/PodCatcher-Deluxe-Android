@@ -16,6 +16,7 @@
  */
 package net.alliknow.podcatcher.types;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -28,6 +29,8 @@ import net.alliknow.podcatcher.tags.RSS;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -134,6 +137,42 @@ public class Episode implements Comparable<Episode> {
 		else return -1 * pubDate.compareTo(another.getPubDate());
 	}
 	
+	void parse(XmlPullParser xpp) throws XmlPullParserException, IOException {
+		int eventType = xpp.next();
+		
+		while (eventType != XmlPullParser.END_TAG &&  xpp.getName() != null && !xpp.getName().equalsIgnoreCase(RSS.ITEM)) {
+			if (eventType != XmlPullParser.START_TAG) continue;
+			
+			// Episode title
+			if (xpp.getName().equalsIgnoreCase(RSS.TITLE)) name = getNextText(xpp);
+			// Episode media URL
+			else if (xpp.getName().equalsIgnoreCase(RSS.ENCLOSURE))
+				mediaUrl = createMediaUrl(xpp.getAttributeValue("", RSS.URL));
+			// Episode publication date (2 options)
+			else if (xpp.getName().equalsIgnoreCase(RSS.DATE))
+				pubDate = parsePubDate(getNextText(xpp));
+			else if (xpp.getName().equalsIgnoreCase(RSS.PUBDATE))
+				pubDate = parsePubDate(getNextText(xpp));
+			// Episode description
+			else if (xpp.getName().equalsIgnoreCase(RSS.DESCRIPTION))
+				description = getNextText(xpp);
+			
+			eventType = xpp.next();
+		}
+	}
+	
+	private String getNextText(XmlPullParser xpp) throws XmlPullParserException, IOException {
+		String text;
+		int eventType;
+		
+		do {
+			eventType = xpp.next();
+			text = xpp.getText();
+		} while (eventType != XmlPullParser.TEXT);
+		
+		return text;
+	}
+
 	private void readData(NodeList episodeNodes) {
 		// Go through all nodes and find the relevant information
 		for (int index = 0; index < episodeNodes.getLength(); index++) {
@@ -144,8 +183,7 @@ public class Episode implements Comparable<Episode> {
 				name = currentNode.getTextContent().trim();
 			// Episode media URL
 			else if (currentNode.getNodeName().equals(RSS.ENCLOSURE))
-				mediaUrl = createMediaUrl(currentNode.getAttributes().getNamedItem(RSS.URL).getNodeValue(),
-						currentNode.getAttributes().getNamedItem(RSS.TYPE).getNodeValue());
+				mediaUrl = createMediaUrl(currentNode.getAttributes().getNamedItem(RSS.URL).getNodeValue());
 			// Episode publication date (2 options)
 			else if (currentNode.getNodeName().equals(RSS.DATE))
 				pubDate = parsePubDate(currentNode.getTextContent());
@@ -157,7 +195,7 @@ public class Episode implements Comparable<Episode> {
 		}
 	}
 	
-	private URL createMediaUrl(String url, String type) {
+	private URL createMediaUrl(String url) {
 		try {
 			return new URL(url);
 		} catch (MalformedURLException e) {

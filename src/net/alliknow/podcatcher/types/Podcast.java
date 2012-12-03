@@ -16,6 +16,7 @@
  */
 package net.alliknow.podcatcher.types;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -29,6 +30,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 import android.graphics.Bitmap;
 import android.text.Html;
@@ -249,6 +252,28 @@ public class Podcast implements Comparable<Podcast> {
 	}
 	
 	/**
+	 * @param xpp
+	 * @throws IOException 
+	 * @throws XmlPullParserException 
+	 */
+	public void parse(XmlPullParser xpp) throws XmlPullParserException, IOException {
+		episodes.clear();
+		updated = new Date();
+		
+		int eventType = xpp.next();
+		encoding = xpp.getInputEncoding();
+		
+		while (eventType != XmlPullParser.END_DOCUMENT) {
+			if (eventType == XmlPullParser.START_TAG && xpp.getName().equalsIgnoreCase(RSS.TITLE))
+				loadName(xpp);
+			else if (eventType == XmlPullParser.START_TAG && xpp.getName().equalsIgnoreCase(RSS.ITEM))
+				loadEpisode(xpp);
+			
+			eventType = xpp.next();
+		}
+	}
+
+	/**
 	 * Whether the podcast content is old enough to need reloading. This relates
 	 * to the time that <code>setRssFile</code> has last been
 	 * called on this object and has nothing to do with the updating
@@ -337,6 +362,11 @@ public class Podcast implements Comparable<Podcast> {
 		if (titleNodes.getLength() > 0) name = titleNodes.item(0).getTextContent();
 	}
 	
+	private void loadName(XmlPullParser xpp) throws XmlPullParserException, IOException {
+		if (name == null && xpp.next() == XmlPullParser.TEXT)
+			name = xpp.getText();
+	}
+	
 	private void loadMetadata(Document podcastRssFile) {
 		NodeList imageNodes = podcastRssFile.getElementsByTagNameNS("*", RSS.IMAGE);
 		
@@ -356,6 +386,15 @@ public class Podcast implements Comparable<Podcast> {
 			if (thumbnailNodes.getLength() > 0)
 				logoUrl = createLogoUrl(thumbnailNodes.item(0).getAttributes().getNamedItem(RSS.URL).getTextContent());
 		}
+	}
+	
+	private void loadEpisode(XmlPullParser xpp) throws XmlPullParserException, IOException {
+		Episode newEpisode = new Episode(this, null);
+		
+		newEpisode.parse(xpp);
+		
+		// Only add if there is some actual content to play
+		if (newEpisode.getMediaUrl() != null) episodes.add(newEpisode);
 	}
 	
 	private void loadEpisodes(Document podcastRssFile) {
