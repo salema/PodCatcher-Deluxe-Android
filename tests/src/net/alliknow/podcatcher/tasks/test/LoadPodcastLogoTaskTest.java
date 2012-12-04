@@ -27,10 +27,6 @@ import net.alliknow.podcatcher.types.test.ExamplePodcast;
 import android.graphics.Bitmap;
 import android.test.InstrumentationTestCase;
 
-/**
- * @author Kevin Hausmann
- *
- */
 public class LoadPodcastLogoTaskTest extends InstrumentationTestCase {
 	
 	private CountDownLatch signal = null;
@@ -62,7 +58,7 @@ public class LoadPodcastLogoTaskTest extends InstrumentationTestCase {
 		// Actual example Podcast
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
-			podcast.setRssFile(Utils.loadRssFile(podcast));
+			podcast.parse(Utils.getParser(podcast));
 			
 			LoadPodcastLogoTask task = loadAndWait(mockLoader, podcast);
 			

@@ -35,7 +35,7 @@ import android.util.Log;
  */
 public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 	
-	/** Maximum byte size for the logo to load */
+	/** Maximum byte size for the RSS file to load */
 	public static final int MAX_RSS_FILE_SIZE = 1000000;
 	
 	/** Owner */
@@ -43,12 +43,12 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 
 	/** Podcast currently loading */
 	private Podcast podcast;
-	/** Document builder to use */
+	/** XML pull parser factory to use */
 	private XmlPullParserFactory factory;
 	
 	/**
-	 * Create new task
-	 * @param listener Owner fragment
+	 * Create new task.
+	 * @param listener Owner fragment, receives call-backs.
 	 */
 	public LoadPodcastTask(OnLoadPodcastListener listener) {
 		this.listener = listener;
@@ -57,8 +57,7 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 		try {
 			factory = XmlPullParserFactory.newInstance();
 		} catch (XmlPullParserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e(getClass().getSimpleName(), "Cannot get parser factory!", e);
 		}
         factory.setNamespaceAware(true);
 	}
@@ -79,11 +78,12 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 			if (isCancelled()) return null;
 			else publishProgress(Progress.PARSE);
 			
-			XmlPullParser xpp = factory.newPullParser();
-			xpp.setInput(new ByteArrayInputStream(podcastRssFile), null);
+			// Create the parser to use
+			XmlPullParser parser = factory.newPullParser();
+			parser.setInput(new ByteArrayInputStream(podcastRssFile), null);
 			
 			// Set as podcast content
-			if (! isCancelled()) podcast.parse(xpp);
+			if (! isCancelled()) podcast.parse(parser);
 		} catch (Exception e) {
 			failed = true;
 			Log.w(getClass().getSimpleName(), "Load failed for podcast \"" + podcasts[0] + "\"", e);

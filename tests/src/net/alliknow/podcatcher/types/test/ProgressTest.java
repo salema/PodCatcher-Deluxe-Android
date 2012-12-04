@@ -1,13 +1,10 @@
 package net.alliknow.podcatcher.types.test;
 
-import static org.junit.Assert.assertEquals;
+import junit.framework.TestCase;
 import net.alliknow.podcatcher.tasks.Progress;
 
-import org.junit.Test;
+public class ProgressTest extends TestCase {
 
-public class ProgressTest {
-
-	@Test
 	public void testPercentageDone() {
 		Progress p = new Progress(-1, -1);
 		assertEquals(p.getPercentDone(), -1);

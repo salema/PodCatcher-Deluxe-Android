@@ -27,10 +27,6 @@ import net.alliknow.podcatcher.types.Podcast;
 import net.alliknow.podcatcher.types.test.ExamplePodcast;
 import android.test.InstrumentationTestCase;
 
-/**
- * @author Kevin Hausmann
- *
- */
 public class LoadPodcastTaskTest extends InstrumentationTestCase {
 
 	private CountDownLatch signal = null;
@@ -79,16 +75,16 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
 		}
 		
 		// null
-		LoadPodcastTask task = loadAndWait(mockLoader, (Podcast)null);
+		loadAndWait(mockLoader, (Podcast)null);
 		assertTrue(mockLoader.failed);
 		
 		// null URL
-		task = loadAndWait(mockLoader, new Podcast(null, null));
+		loadAndWait(mockLoader, new Podcast(null, null));
 		assertTrue(mockLoader.failed);
 		assertTrue(mockLoader.result.needsReload());
 		
 		// bad URL
-		task = loadAndWait(mockLoader, new Podcast("Mist", new URL("http://bla")));
+		loadAndWait(mockLoader, new Podcast("Mist", new URL("http://bla")));
 		assertTrue(mockLoader.failed);
 		assertTrue(mockLoader.result.needsReload());
 	}

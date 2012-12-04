@@ -16,28 +16,29 @@
  */
 package net.alliknow.podcatcher.test;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import net.alliknow.podcatcher.types.Podcast;
 
-import org.w3c.dom.Document;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 /**
- * Defines some util methods for tests
- * @author Kevin Hausmann
+ * Defines some util methods for tests.
  */
 public class Utils {
 
-	public static Document loadRssFile(Podcast podcast) {
+	public static XmlPullParser getParser(Podcast podcast) {
 		try {
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			dbf.setNamespaceAware(true);
+			XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+			factory.setNamespaceAware(true);
 			
-			return dbf.newDocumentBuilder().parse(podcast.getUrl().openStream());
+			XmlPullParser parser = factory.newPullParser();
+			parser.setInput(podcast.getUrl().openStream(), null);
+			
+			return parser;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+        
 		return null;
 	}
 }

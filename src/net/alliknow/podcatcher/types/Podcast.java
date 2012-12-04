@@ -26,10 +26,7 @@ import java.util.List;
 import net.alliknow.podcatcher.tags.OPML;
 import net.alliknow.podcatcher.tags.RSS;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -194,7 +191,7 @@ public class Podcast implements Comparable<Podcast> {
 	 * Replace current episode list with an empty one.
 	 */
 	public void resetEpisodes() {
-		episodes = new ArrayList<Episode>();
+		episodes.clear();
 	}
 	
 	/**
@@ -234,42 +231,41 @@ public class Podcast implements Comparable<Podcast> {
 	}
 	
 	/**
-	 * Set the RSS file representing this podcast. This is were the object
+	 * Set the RSS file parser representing this podcast. This is were the object
 	 * gets its information from. Many of its methods will not return valid results
 	 * unless this method was called. Calling this method also resets all
 	 * information read earlier.
-	 * @param rssFile XML document representing the podcast.
+	 * @param parser Parser used to read the RSS/XML file.
+	 * @throws IOException If we encounter problems read the file.
+	 * @throws XmlPullParserException On parsing errors.
 	 */
-	public void setRssFile(Document rssFile) {
-		episodes.clear();
-		
-		updated = new Date();
-		encoding = rssFile.getInputEncoding();
-		
-		if (name == null) loadName(rssFile);
-		loadMetadata(rssFile);
-		loadEpisodes(rssFile);
-	}
-	
-	/**
-	 * @param xpp
-	 * @throws IOException 
-	 * @throws XmlPullParserException 
-	 */
-	public void parse(XmlPullParser xpp) throws XmlPullParserException, IOException {
-		episodes.clear();
+	public void parse(XmlPullParser parser) throws XmlPullParserException, IOException {
+		// Reset state 
+		resetEpisodes();
 		updated = new Date();
 		
-		int eventType = xpp.next();
-		encoding = xpp.getInputEncoding();
+		// Start parsing
+		int eventType = parser.next();
+		encoding = parser.getInputEncoding();
 		
+		// Read complete document
 		while (eventType != XmlPullParser.END_DOCUMENT) {
-			if (eventType == XmlPullParser.START_TAG && xpp.getName().equalsIgnoreCase(RSS.TITLE))
-				loadName(xpp);
-			else if (eventType == XmlPullParser.START_TAG && xpp.getName().equalsIgnoreCase(RSS.ITEM))
-				loadEpisode(xpp);
+			// We only need start tags here
+			if (eventType == XmlPullParser.START_TAG) {
+				String tagName = parser.getName();
+				
+				// Podcast name found
+				if (tagName.equalsIgnoreCase(RSS.TITLE)) loadName(parser);
+				// Image found
+				else if (tagName.equalsIgnoreCase(RSS.IMAGE)) loadImage(parser);
+				// Thumbnail found
+				else if (tagName.equalsIgnoreCase(RSS.THUMBNAIL)) loadThumbnail(parser);
+				// Episode found
+				else if (tagName.equalsIgnoreCase(RSS.ITEM)) loadEpisode(parser);
+			}
 			
-			eventType = xpp.next();
+			// Done, get next parsing event
+			eventType = parser.next();
 		}
 	}
 
@@ -356,58 +352,31 @@ public class Podcast implements Comparable<Podcast> {
 		else return getName().compareToIgnoreCase(another.getName());
 	}
 	
-	private void loadName(Document podcastRssFile) {
-		NodeList titleNodes = podcastRssFile.getElementsByTagName(RSS.TITLE);
-		
-		if (titleNodes.getLength() > 0) name = titleNodes.item(0).getTextContent();
+	private void loadName(XmlPullParser parser) throws XmlPullParserException, IOException {
+		if (name == null) name = parser.nextText();
 	}
 	
-	private void loadName(XmlPullParser xpp) throws XmlPullParserException, IOException {
-		if (name == null && xpp.next() == XmlPullParser.TEXT)
-			name = xpp.getText();
-	}
-	
-	private void loadMetadata(Document podcastRssFile) {
-		NodeList imageNodes = podcastRssFile.getElementsByTagNameNS("*", RSS.IMAGE);
-		
-		// image tag used?
-		if (imageNodes.getLength() > 0) {
-			Node imageNode = imageNodes.item(0);
-			
-			if (imageNode.getChildNodes().getLength() > 0) {
-				logoUrl = createLogoUrl(((Element) imageNode).getElementsByTagName(RSS.URL).item(0).getTextContent());
-			}
-			else logoUrl = createLogoUrl(imageNode.getAttributes().getNamedItem(RSS.HREF).getTextContent());
-		}
-		// image in thumbnail tag
+	private void loadImage(XmlPullParser parser) throws XmlPullParserException, IOException {
+		// HREF attribute used?
+		if (parser.getAttributeValue("", RSS.HREF) != null) 
+			logoUrl = createLogoUrl(parser.getAttributeValue("", RSS.HREF));
+		// URL tag used!
 		else {
-			NodeList thumbnailNodes = podcastRssFile.getElementsByTagName(RSS.THUMBNAIL);
+			int eventType = parser.next();
 			
-			if (thumbnailNodes.getLength() > 0)
-				logoUrl = createLogoUrl(thumbnailNodes.item(0).getAttributes().getNamedItem(RSS.URL).getTextContent());
+			while (!(eventType == XmlPullParser.END_TAG && parser.getName() != null && parser.getName().equalsIgnoreCase(RSS.IMAGE))) {
+				if (eventType == XmlPullParser.START_TAG && parser.getName().equalsIgnoreCase(RSS.URL))
+					logoUrl = createLogoUrl(parser.nextText());
+				
+				eventType = parser.next();
+			}			
 		}
 	}
 	
-	private void loadEpisode(XmlPullParser xpp) throws XmlPullParserException, IOException {
-		Episode newEpisode = new Episode(this, null);
-		
-		newEpisode.parse(xpp);
-		
-		// Only add if there is some actual content to play
-		if (newEpisode.getMediaUrl() != null) episodes.add(newEpisode);
+	private void loadThumbnail(XmlPullParser parser) {
+		logoUrl = createLogoUrl(parser.getAttributeValue("", RSS.URL));
 	}
-	
-	private void loadEpisodes(Document podcastRssFile) {
-		NodeList episodeNodes = podcastRssFile.getElementsByTagName(RSS.ITEM);
-		
-		for (int episodeIndex = 0; episodeIndex < episodeNodes.getLength(); episodeIndex++) {
-			Episode newEpisode = new Episode(this, episodeNodes.item(episodeIndex).getChildNodes());
-			
-			// Only add if there is some actual content to play
-			if (newEpisode.getMediaUrl() != null) episodes.add(newEpisode);
-		}
-	}
-	
+
 	private URL createLogoUrl(String nodeValue) {
 		try {
 			return new URL(nodeValue);
@@ -416,5 +385,14 @@ public class Podcast implements Comparable<Podcast> {
 		}
 		
 		return null;
+	}
+	
+	private void loadEpisode(XmlPullParser xpp) throws XmlPullParserException, IOException {
+		Episode newEpisode = new Episode(this);
+		
+		newEpisode.parse(xpp);
+		
+		// Only add if there is some actual content to play
+		if (newEpisode.getMediaUrl() != null) episodes.add(newEpisode);
 	}
 }
