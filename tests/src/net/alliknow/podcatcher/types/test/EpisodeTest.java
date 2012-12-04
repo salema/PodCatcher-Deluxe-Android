@@ -53,7 +53,6 @@ public class EpisodeTest extends TestCase {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
 			podcast.parse(Utils.getParser(podcast));
 			for (Episode episode : podcast.getEpisodes()) {
-				System.out.println(podcast + "/" + episode);
 				assertNotNull(episode.getName());
 				assertTrue(episode.getName().length() > 0);
 				assertFalse(episode.getName().contains("\n"));
@@ -88,7 +87,6 @@ public class EpisodeTest extends TestCase {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
 			podcast.parse(Utils.getParser(podcast));
 			for (Episode episode : podcast.getEpisodes()) {
-				System.out.println(podcast + "/" + episode);
 				assertNotNull(episode.getPubDate());
 				assertTrue(episode.getPubDate().after(new Date(0)));
 				assertTrue(episode.getPubDate().before(new Date()));

@@ -104,7 +104,6 @@ public class PodcastTest extends TestCase {
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
 			podcast.parse(Utils.getParser(podcast));
-			if (podcast.getLogoUrl() == null) System.out.println(podcast.getName());
 			assertNotNull(podcast.getLogoUrl());
 		}
 	}
