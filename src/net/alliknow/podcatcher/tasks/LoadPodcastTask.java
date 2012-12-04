@@ -18,12 +18,12 @@ package net.alliknow.podcatcher.tasks;
 
 import java.io.ByteArrayInputStream;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.types.Podcast;
 
-import org.w3c.dom.Document;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.util.Log;
 
@@ -35,7 +35,7 @@ import android.util.Log;
  */
 public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 	
-	/** Maximum byte size for the logo to load */
+	/** Maximum byte size for the RSS file to load */
 	public static final int MAX_RSS_FILE_SIZE = 1000000;
 	
 	/** Owner */
@@ -43,19 +43,23 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 
 	/** Podcast currently loading */
 	private Podcast podcast;
-	/** Document builder to use */
-	private DocumentBuilderFactory factory;
+	/** XML pull parser factory to use */
+	private XmlPullParserFactory factory;
 	
 	/**
-	 * Create new task
-	 * @param listener Owner fragment
+	 * Create new task.
+	 * @param listener Owner fragment, receives call-backs.
 	 */
 	public LoadPodcastTask(OnLoadPodcastListener listener) {
 		this.listener = listener;
 		this.loadLimit = MAX_RSS_FILE_SIZE;
 		
-		factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(true);
+		try {
+			factory = XmlPullParserFactory.newInstance();
+		} catch (XmlPullParserException e) {
+			Log.e(getClass().getSimpleName(), "Cannot get parser factory!", e);
+		}
+        factory.setNamespaceAware(true);
 	}
 	
 	@Override
@@ -73,10 +77,13 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 			// Get result as a document
 			if (isCancelled()) return null;
 			else publishProgress(Progress.PARSE);
-			Document rssDocument = factory.newDocumentBuilder().parse(new ByteArrayInputStream(podcastRssFile));
+			
+			// Create the parser to use
+			XmlPullParser parser = factory.newPullParser();
+			parser.setInput(new ByteArrayInputStream(podcastRssFile), null);
 			
 			// Set as podcast content
-			if (! isCancelled()) podcast.setRssFile(rssDocument);
+			if (! isCancelled()) podcast.parse(parser);
 		} catch (Exception e) {
 			failed = true;
 			Log.w(getClass().getSimpleName(), "Load failed for podcast \"" + podcasts[0] + "\"", e);

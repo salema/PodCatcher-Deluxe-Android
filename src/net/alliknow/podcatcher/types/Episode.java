@@ -16,6 +16,7 @@
  */
 package net.alliknow.podcatcher.types;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -26,8 +27,8 @@ import java.util.Locale;
 
 import net.alliknow.podcatcher.tags.RSS;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -52,13 +53,9 @@ public class Episode implements Comparable<Episode> {
 	/**
 	 * Create a new episode.
 	 * @param podcast Podcast this episode belongs to.
-	 * @param episodeNodes XML document nodes representing this episode.
 	 */
-	public Episode(Podcast podcast, NodeList episodeNodes) {
+	public Episode(Podcast podcast) {
 		this.podcast = podcast;
-		
-		if (episodeNodes != null && episodeNodes.getLength() > 0)
-			readData(episodeNodes);
 	}
 
 	/**
@@ -134,30 +131,36 @@ public class Episode implements Comparable<Episode> {
 		else return -1 * pubDate.compareTo(another.getPubDate());
 	}
 	
-	private void readData(NodeList episodeNodes) {
-		// Go through all nodes and find the relevant information
-		for (int index = 0; index < episodeNodes.getLength(); index++) {
-			Node currentNode = episodeNodes.item(index);
+	void parse(XmlPullParser parser) throws XmlPullParserException, IOException {
+		int eventType = parser.next();
+		
+		// Parse until end tag for item is reached
+		while (!(eventType == XmlPullParser.END_TAG && parser.getName() != null && parser.getName().equalsIgnoreCase(RSS.ITEM))) {
+			// We only need start tags here
+			if (eventType == XmlPullParser.START_TAG) {
+				final String tagName = parser.getName();
+				
+				// Episode title
+				if (tagName.equalsIgnoreCase(RSS.TITLE)) name = parser.nextText().trim();
+				// Episode media URL
+				else if (tagName.equalsIgnoreCase(RSS.ENCLOSURE))
+					mediaUrl = createMediaUrl(parser.getAttributeValue("", RSS.URL));
+				// Episode publication date (2 options)
+				else if (tagName.equalsIgnoreCase(RSS.DATE))
+					pubDate = parsePubDate(parser.nextText());
+				else if (tagName.equalsIgnoreCase(RSS.PUBDATE))
+					pubDate = parsePubDate(parser.nextText());
+				// Episode description
+				else if (tagName.equalsIgnoreCase(RSS.DESCRIPTION))
+					description = parser.nextText();
+			}
 			
-			// Episode title
-			if (currentNode.getNodeName().equals(RSS.TITLE)) 
-				name = currentNode.getTextContent().trim();
-			// Episode media URL
-			else if (currentNode.getNodeName().equals(RSS.ENCLOSURE))
-				mediaUrl = createMediaUrl(currentNode.getAttributes().getNamedItem(RSS.URL).getNodeValue(),
-						currentNode.getAttributes().getNamedItem(RSS.TYPE).getNodeValue());
-			// Episode publication date (2 options)
-			else if (currentNode.getNodeName().equals(RSS.DATE))
-				pubDate = parsePubDate(currentNode.getTextContent());
-			else if (currentNode.getNodeName().equals(RSS.PUBDATE))
-				pubDate = parsePubDate(currentNode.getTextContent());
-			// Episode description
-			else if (currentNode.getNodeName().equals(RSS.DESCRIPTION))
-				description = currentNode.getTextContent();
+			// Get next event
+			eventType = parser.next();
 		}
 	}
-	
-	private URL createMediaUrl(String url, String type) {
+
+	private URL createMediaUrl(String url) {
 		try {
 			return new URL(url);
 		} catch (MalformedURLException e) {

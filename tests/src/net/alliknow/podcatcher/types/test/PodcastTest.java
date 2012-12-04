@@ -1,18 +1,16 @@
 package net.alliknow.podcatcher.types.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import java.io.IOException;
+
+import junit.framework.TestCase;
 import net.alliknow.podcatcher.test.Utils;
 import net.alliknow.podcatcher.types.Episode;
 import net.alliknow.podcatcher.types.Podcast;
 
-import org.junit.Test;
+import org.xmlpull.v1.XmlPullParserException;
 
-public class PodcastTest {
+public class PodcastTest extends TestCase {
 
-	@Test
 	public final void testEquals() {
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
@@ -20,7 +18,7 @@ public class PodcastTest {
 			assertFalse(podcast.equals(null));
 			assertTrue(podcast.equals(podcast));
 			assertFalse(podcast.equals(new Object()));
-			assertFalse(podcast.equals(new Episode(null, null)));
+			assertFalse(podcast.equals(new Episode(null)));
 			assertFalse(podcast.equals(ep));
 			assertFalse(podcast.equals(new Podcast(null, null)));
 				
@@ -33,7 +31,6 @@ public class PodcastTest {
 		}	
 	}
 	
-	@Test
 	public final void testHashCode() {
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
@@ -48,8 +45,7 @@ public class PodcastTest {
 		}	
 	}
 	
-	@Test
-	public final void testGetName() {
+	public final void testGetName() throws XmlPullParserException, IOException {
 		String name = null;
 		Podcast podcast = new Podcast(name, null);
 		assertEquals(name, podcast.getName());
@@ -64,21 +60,19 @@ public class PodcastTest {
 		
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			podcast = new Podcast(null, ep.getURL());
-			podcast.setRssFile(Utils.loadRssFile(podcast));
+			podcast.parse(Utils.getParser(podcast));
 			assertNotNull(podcast.getName());
 		}
 	}
 	
-	@Test
-	public final void testGetEncoding() {
+	public final void testGetEncoding() throws XmlPullParserException, IOException {
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
-			podcast.setRssFile(Utils.loadRssFile(podcast));
+			podcast.parse(Utils.getParser(podcast));
 			assertNotNull(podcast.getEncoding());
 		}
 	}
 
-	@Test
 	public final void testToString() {
 		String name = null;
 		Podcast podcast = new Podcast(name, null);
@@ -93,32 +87,29 @@ public class PodcastTest {
 		assertEquals(name, podcast.toString());
 	}
 	
-	@Test
-	public final void testGetEpisodes() {
+	public final void testGetEpisodes() throws XmlPullParserException, IOException {
 		Podcast podcast = new Podcast(null, null);
 		assertNotNull(podcast.getEpisodes());
 		assertEquals(0, podcast.getEpisodes().size());
 		
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			podcast = new Podcast(ep.name(), ep.getURL());
-			podcast.setRssFile(Utils.loadRssFile(podcast));
+			podcast.parse(Utils.getParser(podcast));
 			assertNotNull(podcast.getEpisodes());
 			assertTrue(podcast.getEpisodes().size() > 0);
 		}
 	}
 	
-	@Test
-	public final void testGetLogoUrl() {
+	public final void testGetLogoUrl() throws XmlPullParserException, IOException {
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
-			podcast.setRssFile(Utils.loadRssFile(podcast));
+			podcast.parse(Utils.getParser(podcast));
 			if (podcast.getLogoUrl() == null) System.out.println(podcast.getName());
 			assertNotNull(podcast.getLogoUrl());
 		}
 	}
 	
-	@Test
-	public final void testNeedsReload() {
+	public final void testNeedsReload() throws XmlPullParserException, IOException {
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
 			assertTrue(podcast.needsReload());
@@ -126,7 +117,7 @@ public class PodcastTest {
 		
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
-			podcast.setRssFile(Utils.loadRssFile(podcast));
+			podcast.parse(Utils.getParser(podcast));
 			assertTrue(! podcast.needsReload());
 		}
 	}
