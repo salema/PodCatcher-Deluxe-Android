@@ -16,6 +16,8 @@
  */
 package net.alliknow.podcatcher.types;
 
+import static net.alliknow.podcatcher.Podcatcher.skipSubTree;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -371,7 +373,7 @@ public class Podcast implements Comparable<Podcast> {
 				// URL tag found
 				if (parser.getName().equalsIgnoreCase(RSS.URL)) logoUrl = createLogoUrl(parser.nextText());
 				// Unneeded node, skip...
-				else parser.nextText();
+				else skipSubTree(parser);
 			}
 			
 			// Make sure we end at image tag
