@@ -1,6 +1,7 @@
 package net.alliknow.podcatcher.types.test;
 
 import java.io.IOException;
+import java.util.Date;
 
 import junit.framework.TestCase;
 import net.alliknow.podcatcher.test.Utils;
@@ -11,7 +12,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 public class EpisodeTest extends TestCase {
 
-	/*public final void testEquals() throws XmlPullParserException, IOException {
+	public final void testEquals() throws XmlPullParserException, IOException {
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
 			podcast.parse(Utils.getParser(podcast));
@@ -46,7 +47,7 @@ public class EpisodeTest extends TestCase {
 			}
 		}	
 	}
-	*/
+	
 	public final void testGetName() throws XmlPullParserException, IOException {
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
@@ -61,7 +62,7 @@ public class EpisodeTest extends TestCase {
 			}
 		}	
 	}
-/*
+
 	public final void testGetMediaUrl() throws XmlPullParserException, IOException {
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
@@ -93,5 +94,5 @@ public class EpisodeTest extends TestCase {
 				assertTrue(episode.getPubDate().before(new Date()));
 			}
 		}
-	}*/
+	}
 }
