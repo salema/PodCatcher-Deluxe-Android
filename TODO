@@ -4,5 +4,4 @@ Use SplitActionbar?
 Add an AppWidget: http://developer.android.com/guide/topics/appwidgets
 Check performance tips: http://developer.android.com/training/articles/perf-tips.html
 Add more tests
-Refactor disk reads/writes to tasks
 Refactor notification
