@@ -29,8 +29,8 @@ import android.util.Log;
 
 /**
  * Loads podcast RSS file asynchronously.
- * Implement to PodcastLoader interface to be alerted on completion or failure.
- * The downloaded file will be used as the podcast's content via <code>setRssFile()</code>,
+ * Implement the PodcastLoader interface to be alerted on completion or failure.
+ * The downloaded file will be used as the podcast's content via <code>parse()</code>,
  * use the podcast object given (and returned via callbacks) to access it.
  */
 public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {

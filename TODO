@@ -6,4 +6,3 @@ Check performance tips: http://developer.android.com/training/articles/perf-tips
 Add more tests
 Refactor disk reads/writes to tasks
 Refactor notification
-Switch to STaX parsing

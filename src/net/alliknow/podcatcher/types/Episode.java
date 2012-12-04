@@ -131,6 +131,14 @@ public class Episode implements Comparable<Episode> {
 		else return -1 * pubDate.compareTo(another.getPubDate());
 	}
 	
+	/**
+	 * Read data from an item node in the RSS/XML podcast file
+	 * and use it to set this episode's fields.
+	 * @param parser Podcast file parser, set to the start tag of the
+	 * item to read.
+	 * @throws XmlPullParserException On parsing problems.
+	 * @throws IOException On I/O problems.
+	 */
 	void parse(XmlPullParser parser) throws XmlPullParserException, IOException {
 		int eventType = parser.next();
 		

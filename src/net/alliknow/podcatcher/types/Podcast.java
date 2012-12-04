@@ -74,11 +74,11 @@ public class Podcast implements Comparable<Podcast> {
 	 * The name will not be read from the file, but remains as given
 	 * (unless you give <code>null</code> as the name). 
 	 * All other data on the podcast will only be available after
-	 * <code>setRssFile()</code> was called.
+	 * <code>parse()</code> was called.
 	 * @param name The podcast's name, if you give <code>null</code> the name
 	 * will be read from the RSS file (if set afterwards).
 	 * @param url The location of the podcast's RSS file.
-	 * @see setRssFile
+	 * @see parse
 	 */
 	public Podcast(String name, URL url) {
 		this.name = name;
@@ -107,70 +107,70 @@ public class Podcast implements Comparable<Podcast> {
 	}
 
 	/**
-	 * @return The podcast's name
+	 * @return The podcast's name.
 	 */
 	public String getName() {
 		return name;
 	}
 	
 	/**
-	 * @return The podcast's online location
+	 * @return The podcast's online location.
 	 */
 	public URL getUrl() {
 		return url;
 	}
 	
 	/**
-	 * @return The description
+	 * @return The description.
 	 */
 	public String getDescription() {
 		return description;
 	}
 
 	/**
-	 * @param description The description to set
+	 * @param description The description to set.
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
 	/**
-	 * @return The language
+	 * @return The language.
 	 */
 	public Language getLanguage() {
 		return language;
 	}
 
 	/**
-	 * @param language The language to set
+	 * @param language The language to set.
 	 */
 	public void setLanguage(Language language) {
 		this.language = language;
 	}
 
 	/**
-	 * @return The genre
+	 * @return The genre.
 	 */
 	public Genre getGenre() {
 		return genre;
 	}
 
 	/**
-	 * @param genre The genre to set
+	 * @param genre The genre to set.
 	 */
 	public void setGenre(Genre genre) {
 		this.genre = genre;
 	}
 
 	/**
-	 * @return The mediaType
+	 * @return The mediaType.
 	 */
 	public MediaType getMediaType() {
 		return mediaType;
 	}
 
 	/**
-	 * @param mediaType The mediaType to set
+	 * @param mediaType The mediaType to set.
 	 */
 	public void setMediaType(MediaType mediaType) {
 		this.mediaType = mediaType;
@@ -181,7 +181,7 @@ public class Podcast implements Comparable<Podcast> {
 	 * but an empty list when encountering problems. Set the RSS file before
 	 * expecting any results. 
 	 * @return The list of episodes as listed in the feed.
-	 * @see setRssFile
+	 * @see parse
 	 */
 	public List<Episode> getEpisodes() {
 		return episodes;
@@ -198,7 +198,7 @@ public class Podcast implements Comparable<Podcast> {
 	 * Find and return the podcast's image location (logo).
 	 * Only works after RSS file is set.
 	 * @return URL pointing at the logo location.
-	 * @see setRssFile
+	 * @see parse
 	 */
 	public URL getLogoUrl() {
 		return logoUrl;
@@ -271,7 +271,7 @@ public class Podcast implements Comparable<Podcast> {
 
 	/**
 	 * Whether the podcast content is old enough to need reloading. This relates
-	 * to the time that <code>setRssFile</code> has last been
+	 * to the time that <code>parse</code> has last been
 	 * called on this object and has nothing to do with the updating
 	 * of the podcast RSS file on the provider's server.
 	 * @return <code>true</code> iff time to live expired or the podcast has never been loaded.
@@ -353,6 +353,7 @@ public class Podcast implements Comparable<Podcast> {
 	}
 	
 	private void loadName(XmlPullParser parser) throws XmlPullParserException, IOException {
+		// Only update the name if not set
 		if (name == null) name = parser.nextText();
 	}
 	
@@ -364,6 +365,7 @@ public class Podcast implements Comparable<Podcast> {
 		else {
 			int eventType = parser.next();
 			
+			// Unless the ent tag for image is reached, find url tag
 			while (!(eventType == XmlPullParser.END_TAG && parser.getName() != null && parser.getName().equalsIgnoreCase(RSS.IMAGE))) {
 				if (eventType == XmlPullParser.START_TAG && parser.getName().equalsIgnoreCase(RSS.URL))
 					logoUrl = createLogoUrl(parser.nextText());
@@ -374,6 +376,7 @@ public class Podcast implements Comparable<Podcast> {
 	}
 	
 	private void loadThumbnail(XmlPullParser parser) {
+		// Some podcasts use thumbnails instead of images
 		logoUrl = createLogoUrl(parser.getAttributeValue("", RSS.URL));
 	}
 
@@ -388,8 +391,8 @@ public class Podcast implements Comparable<Podcast> {
 	}
 	
 	private void loadEpisode(XmlPullParser xpp) throws XmlPullParserException, IOException {
+		// Create episode and parse the data
 		Episode newEpisode = new Episode(this);
-		
 		newEpisode.parse(xpp);
 		
 		// Only add if there is some actual content to play
