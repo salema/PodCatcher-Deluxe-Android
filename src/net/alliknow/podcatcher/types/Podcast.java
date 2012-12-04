@@ -243,11 +243,11 @@ public class Podcast implements Comparable<Podcast> {
 		// Reset state 
 		resetEpisodes();
 		updated = new Date();
+		encoding = parser.getInputEncoding();
 		
 		// Start parsing
 		int eventType = parser.next();
-		encoding = parser.getInputEncoding();
-		
+				
 		// Read complete document
 		while (eventType != XmlPullParser.END_DOCUMENT) {
 			// We only need start tags here
@@ -363,15 +363,19 @@ public class Podcast implements Comparable<Podcast> {
 			logoUrl = createLogoUrl(parser.getAttributeValue("", RSS.HREF));
 		// URL tag used!
 		else {
-			int eventType = parser.next();
+			// Make sure we start at image tag
+			parser.require(XmlPullParser.START_TAG, "", RSS.IMAGE);
 			
-			// Unless the ent tag for image is reached, find url tag
-			while (!(eventType == XmlPullParser.END_TAG && parser.getName() != null && parser.getName().equalsIgnoreCase(RSS.IMAGE))) {
-				if (eventType == XmlPullParser.START_TAG && parser.getName().equalsIgnoreCase(RSS.URL))
-					logoUrl = createLogoUrl(parser.nextText());
-				
-				eventType = parser.next();
-			}			
+			// Look at all start tags of this image
+			while (parser.nextTag() == XmlPullParser.START_TAG) {
+				// URL tag found
+				if (parser.getName().equalsIgnoreCase(RSS.URL)) logoUrl = createLogoUrl(parser.nextText());
+				// Unneeded node, skip...
+				else parser.nextText();
+			}
+			
+			// Make sure we end at image tag
+			parser.require(XmlPullParser.END_TAG, "", RSS.IMAGE);	
 		}
 	}
 	
@@ -390,10 +394,10 @@ public class Podcast implements Comparable<Podcast> {
 		return null;
 	}
 	
-	private void loadEpisode(XmlPullParser xpp) throws XmlPullParserException, IOException {
+	private void loadEpisode(XmlPullParser parser) throws XmlPullParserException, IOException {
 		// Create episode and parse the data
 		Episode newEpisode = new Episode(this);
-		newEpisode.parse(xpp);
+		newEpisode.parse(parser);
 		
 		// Only add if there is some actual content to play
 		if (newEpisode.getMediaUrl() != null) episodes.add(newEpisode);

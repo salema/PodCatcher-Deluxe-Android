@@ -140,32 +140,34 @@ public class Episode implements Comparable<Episode> {
 	 * @throws IOException On I/O problems.
 	 */
 	void parse(XmlPullParser parser) throws XmlPullParserException, IOException {
-		int eventType = parser.next();
+		// Make sure we start at item tag
+		parser.require(XmlPullParser.START_TAG, "", RSS.ITEM);
 		
-		// Parse until end tag for item is reached
-		while (!(eventType == XmlPullParser.END_TAG && parser.getName() != null && parser.getName().equalsIgnoreCase(RSS.ITEM))) {
-			// We only need start tags here
-			if (eventType == XmlPullParser.START_TAG) {
-				final String tagName = parser.getName();
-				
-				// Episode title
-				if (tagName.equalsIgnoreCase(RSS.TITLE)) name = parser.nextText().trim();
-				// Episode media URL
-				else if (tagName.equalsIgnoreCase(RSS.ENCLOSURE))
-					mediaUrl = createMediaUrl(parser.getAttributeValue("", RSS.URL));
-				// Episode publication date (2 options)
-				else if (tagName.equalsIgnoreCase(RSS.DATE))
-					pubDate = parsePubDate(parser.nextText());
-				else if (tagName.equalsIgnoreCase(RSS.PUBDATE))
-					pubDate = parsePubDate(parser.nextText());
-				// Episode description
-				else if (tagName.equalsIgnoreCase(RSS.DESCRIPTION))
-					description = parser.nextText();
-			}
+		// Look at all start tags of this item
+		while (parser.nextTag() == XmlPullParser.START_TAG) {
+			final String tagName = parser.getName();
 			
-			// Get next event
-			eventType = parser.next();
+			// Episode title
+			if (tagName.equalsIgnoreCase(RSS.TITLE)) name = parser.nextText().trim();
+			// Episode media URL
+			else if (tagName.equalsIgnoreCase(RSS.ENCLOSURE)) {
+				mediaUrl = createMediaUrl(parser.getAttributeValue("", RSS.URL));
+				parser.nextText();
+			}
+			// Episode publication date (2 options)
+			else if (tagName.equalsIgnoreCase(RSS.DATE) && pubDate == null)
+				pubDate = parsePubDate(parser.nextText());
+			else if (tagName.equalsIgnoreCase(RSS.PUBDATE) && pubDate == null)
+				pubDate = parsePubDate(parser.nextText());
+			// Episode description
+			else if (tagName.equalsIgnoreCase(RSS.DESCRIPTION))
+				description = parser.nextText();
+			// Unneeded node, skip...
+			else parser.nextText();
 		}
+		
+		// Make sure we end at item tag
+		parser.require(XmlPullParser.END_TAG, "", RSS.ITEM);
 	}
 
 	private URL createMediaUrl(String url) {
@@ -178,10 +180,10 @@ public class Episode implements Comparable<Episode> {
 		return null;
 	}
 	
-	private Date parsePubDate(String attributeValue) {
+	private Date parsePubDate(String value) {
 		try {
 			DateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
-			return formatter.parse(attributeValue);
+			return formatter.parse(value);
 		} catch (ParseException e) {
 			Log.d(getClass().getSimpleName(), "Episode has invalid publication date", e);
 		}
