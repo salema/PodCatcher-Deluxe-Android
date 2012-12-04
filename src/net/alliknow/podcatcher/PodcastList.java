@@ -16,26 +16,12 @@
  */
 package net.alliknow.podcatcher;
 
-import static net.alliknow.podcatcher.Podcatcher.isInDebugMode;
-
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import net.alliknow.podcatcher.tags.OPML;
 import net.alliknow.podcatcher.types.Podcast;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-
-import android.content.Context;
 import android.util.Log;
 
 /**
@@ -45,14 +31,7 @@ public class PodcastList extends ArrayList<Podcast> {
 	
 	/** The id */
 	private static final long serialVersionUID = 7226640001395545556L;
-	
-	/** The name of the file we store our saved podcasts in (as OPML) */
-	private static final String OPML_FILENAME = "podcasts.opml";
-	/** The OPML file encoding */
-	private static final String OPML_FILE_ENCODING = "utf8";
-	/** Content of OPML file title tag */
-	private static final String OPML_TITLE = "Simple Podcatcher Podcast file";
-	
+		
 	@Override
 	public boolean add(Podcast podcast) {
 		if (podcast.hasNameAndUrl()) super.add(podcast);
@@ -74,85 +53,22 @@ public class PodcastList extends ArrayList<Podcast> {
 	}
 	
 	/**
-	 * Load the podcast list from its default location.
-	 * @param context Context to use for loading the podcast list.
+	 * Add a small number of sample podcast to the list for testing.
 	 */
-	public void load(Context context) {
-		//this is just for testing
-		if (isInDebugMode(context)) writeDummy(context);
-		
+	public void addSamplePodcasts() {
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			factory.setNamespaceAware(true);
-			
-			Document podcastFile = factory.newDocumentBuilder().parse(context.openFileInput(OPML_FILENAME));
-			NodeList podcasts = podcastFile.getElementsByTagName(OPML.OUTLINE);
-			
-			for (int index = 0; index < podcasts.getLength(); index++) 
-				add(new Podcast(podcasts.item(index)));
+			add(new Podcast("This American Life", new URL("http://feeds.thisamericanlife.org/talpodcast")));
+			add(new Podcast("Radiolab", new URL("http://feeds.wnyc.org/radiolab")));
+			add(new Podcast("Linux' Outlaws", new URL("http://feeds.feedburner.com/linuxoutlaws")));
+			add(new Podcast("GEO", new URL("http://www.geo.de/GEOaudio/index.xml")));
+			add(new Podcast("Mäuse", new URL("http://podcast.wdr.de/maus.xml")));
+			add(new Podcast("D&uuml;de", new URL("http://feeds.feedburner.com/UhhYeahDude")));
+			add(new Podcast("neo", new URL("http://www.zdf.de/ZDFmediathek/podcast/1446344?view=podcast")));
 			
 			sort();
-		} catch (Exception e) {
-			Log.e(getClass().getSimpleName(), "Cannot load OPML file", e);
+		} catch (MalformedURLException e) {
+			Log.e(getClass().getSimpleName(), "Cannot add sample podcasts!", e);
 		}
 	}
 	
-	/**
-	 * Store the podcast list to its default location.
-	 * @param context Context to use for storing the podcast list.
-	 */
-	public void store(Context context) {
-		try {			
-			BufferedWriter writer = getPodcastFileWriter(context);
-			
-			writer.write("<?xml version=\"1.0\" encoding=\"" + OPML_FILE_ENCODING + "\"?>");
-			writer.write("<opml version=\"2.0\">");
-			writer.write("<head>");
-			writer.write("<title>" + OPML_TITLE + "</title>");
-			writer.write("<dateModified>" + new Date().toString() + "</dateModified>");
-			writer.write("</head>");
-			writer.write("<body>");
-			
-			for (Podcast podcast : this) {
-				String opmlString = podcast.toOpmlString();
-				if (opmlString != null) writer.write(opmlString);
-			}
-			
-			writer.write("</body></opml>");
-			writer.close();
-			
-			Log.d(getClass().getSimpleName(), "OPML podcast file written");
-		} catch (Exception e) {
-			Log.e(getClass().getSimpleName(), "Cannot store podcast OPML file", e);
-		}
-	}
-
-	private void writeDummy(Context context) {
-		try {
-			BufferedWriter writer = getPodcastFileWriter(context);
-			
-			writer.write("<?xml version=\"1.0\" encoding=\"" + OPML_FILE_ENCODING + "\"?>");
-			writer.write("<opml version=\"2.0\">");
-			writer.write("<body>");
-			writer.write("<outline text=\"This American Life\" type=\"rss\" xmlUrl=\"http://feeds.thisamericanlife.org/talpodcast\"/>");
-			writer.write("<outline text=\"Radiolab\" xmlUrl=\"http://feeds.wnyc.org/radiolab\" type=\"rss\"/>");
-			writer.write("<outline text=\"Linux' Outlaws\" xmlUrl=\"http://feeds.feedburner.com/linuxoutlaws\" type=\"rss\"/>");
-			writer.write("<outline text=\"GEO\" type=\"rss\" xmlUrl=\"http://www.geo.de/GEOaudio/index.xml\"/>");
-			writer.write("<outline text=\"Mäuse\" xmlUrl=\"http://podcast.wdr.de/maus.xml\"/>");
-			writer.write("<outline text=\"D&uuml;de\" xmlUrl=\"http://feeds.feedburner.com/UhhYeahDude\"/>");
-			writer.write("<outline text=\"neo\" xmlUrl=\"http://www.zdf.de/ZDFmediathek/podcast/1446344?view=podcast\"/>");
-			writer.write("</body></opml>");
-			writer.close();
-			
-			Log.d(getClass().getSimpleName(), "Dummy OPML written");
-		} catch (Exception e) {
-			Log.e(getClass().getSimpleName(), "Cannot write dummy OPML file", e);
-		}
-	}
-	
-	private BufferedWriter getPodcastFileWriter(Context context) throws FileNotFoundException, UnsupportedEncodingException {
-		FileOutputStream fos = context.openFileOutput(OPML_FILENAME, Context.MODE_PRIVATE);
-		
-		return new BufferedWriter(new OutputStreamWriter(fos, OPML_FILE_ENCODING));
-	}
 }

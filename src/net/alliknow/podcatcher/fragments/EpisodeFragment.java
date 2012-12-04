@@ -24,6 +24,7 @@ import java.util.TimerTask;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnReturnToPlayingEpisodeListener;
+import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
@@ -56,6 +57,9 @@ import android.widget.TextView;
 public class EpisodeFragment extends Fragment implements PlayServiceListener, 
 		OnSeekBarChangeListener, OnReturnToPlayingEpisodeListener {
 
+	/** The activity we are in (listens to user selection) */ 
+    private OnSelectEpisodeListener selectedListener;
+    
 	/** The load episode menu bar item */
 	private MenuItem loadMenuItem;
 	/** The empty view */
@@ -219,6 +223,13 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener,
 	}
 	
 	/**
+	 * @param listener Listener to be alerted on episode selection.
+	 */
+	public void setEpisodeSelectedListener(OnSelectEpisodeListener listener) {
+		this.selectedListener = listener;
+	}
+	
+	/**
 	 * Set the displayed episode, all UI will be updated.
 	 * @param selectedEpisode Episode to show (cannot be null).
 	 */
@@ -237,8 +248,10 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener,
 	
 	@Override
 	public void returnToPlayingEpisode() {
-		if (service != null && service.getCurrentEpisode() != null) 
+		if (service != null && service.getCurrentEpisode() != null) {
 			setEpisode(service.getCurrentEpisode());
+			if (selectedListener != null) selectedListener.onNoEpisodeSelected();
+		}
 	}
 	
 	@Override
