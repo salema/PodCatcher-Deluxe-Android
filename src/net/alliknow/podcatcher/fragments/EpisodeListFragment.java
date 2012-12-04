@@ -156,6 +156,15 @@ public class EpisodeListFragment extends ListFragment {
 	}
 	
 	/**
+	 * Unselect selected episode (if any).
+	 */
+	public void selectNone() {
+		selectedEpisode = null;
+		if (getListAdapter() != null && !showProgress)
+			((EpisodeListAdapter) getListAdapter()).setSelectNone();
+	}
+	
+	/**
 	 * Reset the UI to initial state.
 	 */
 	public void reset() {

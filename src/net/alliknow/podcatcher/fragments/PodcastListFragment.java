@@ -23,14 +23,17 @@ import net.alliknow.podcatcher.PodcastList;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.PodcastListAdapter;
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
+import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.listeners.OnShowSuggestionsListener;
 import net.alliknow.podcatcher.listeners.PodcastListContextListener;
-import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask;
-import net.alliknow.podcatcher.tasks.LoadPodcastTask;
+import net.alliknow.podcatcher.tasks.LoadPodcastListTask;
 import net.alliknow.podcatcher.tasks.Progress;
+import net.alliknow.podcatcher.tasks.StorePodcastListTask;
+import net.alliknow.podcatcher.tasks.remote.LoadPodcastLogoTask;
+import net.alliknow.podcatcher.tasks.remote.LoadPodcastTask;
 import net.alliknow.podcatcher.types.Podcast;
 import net.alliknow.podcatcher.views.HorizontalProgressView;
 import android.app.ListFragment;
@@ -53,7 +56,7 @@ import android.widget.ListView;
  * podcast activity.
  */
 public class PodcastListFragment extends ListFragment implements OnAddPodcastListener, 
-	OnShowSuggestionsListener, OnLoadPodcastListener, OnLoadPodcastLogoListener {
+	OnShowSuggestionsListener, OnLoadPodcastListener, OnLoadPodcastLogoListener, OnLoadPodcastListListener {
 	
 	/** The activity we are in (listens to user selection) */ 
     private OnSelectPodcastListener selectedListener;
@@ -94,8 +97,21 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 
 		setRetainInstance(true);
 		setHasOptionsMenu(true);
-		// Loads podcasts from stored file to this.podcastList
-		podcastList.load(getActivity());
+		
+		// Load podcasts from stored file
+		LoadPodcastListTask loadListTask = new LoadPodcastListTask(getActivity(), this);
+		loadListTask.execute((Void)null);
+	}
+	
+	@Override
+	public void onPodcastListLoaded(PodcastList podcastList) {
+		this.podcastList = podcastList;
+		
+//		if (Podcatcher.isInDebugMode(getActivity())) {
+//			podcastList.clear();
+//			podcastList.addSamplePodcasts();
+//		}
+		
 		// Maps the podcast list items to the list UI
 		adapter = new PodcastListAdapter(getActivity(), podcastList);
 		setListAdapter(adapter);
@@ -184,7 +200,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		if (! podcastList.contains(newPodcast)) {
 			podcastList.add(newPodcast);
 			podcastList.sort();			
-			podcastList.store(getActivity());
+			new StorePodcastListTask(getActivity()).execute(podcastList);
 		} else Log.d(getClass().getSimpleName(), "Podcast \"" + newPodcast.getName() + "\" is already in list.");
 		
 		selectPodcast(newPodcast);
@@ -319,7 +335,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		updateUiElementVisibility();
 		
 		// Store changed list
-		podcastList.store(getActivity());
+		new StorePodcastListTask(getActivity()).execute(podcastList);
 	}
 	
 	@Override

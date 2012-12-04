@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.alliknow.podcatcher.tasks;
+package net.alliknow.podcatcher.tasks.remote;
 
 import java.io.ByteArrayInputStream;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
+import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.types.Podcast;
 
 import org.xmlpull.v1.XmlPullParser;

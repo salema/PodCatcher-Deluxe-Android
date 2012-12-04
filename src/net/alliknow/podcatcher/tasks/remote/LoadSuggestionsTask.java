@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.alliknow.podcatcher.tasks;
+package net.alliknow.podcatcher.tasks.remote;
 
 import java.net.URL;
 import java.util.Locale;
@@ -22,6 +22,7 @@ import java.util.Locale;
 import net.alliknow.podcatcher.PodcastList;
 import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
 import net.alliknow.podcatcher.tags.JSON;
+import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.types.Genre;
 import net.alliknow.podcatcher.types.Language;
 import net.alliknow.podcatcher.types.MediaType;

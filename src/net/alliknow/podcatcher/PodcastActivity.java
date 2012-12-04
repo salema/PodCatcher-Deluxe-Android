@@ -82,6 +82,7 @@ public class PodcastActivity extends Activity implements
 		podcastListFragment.setPodcastSelectedListener(this);
 		podcastListFragment.setPodcastLoadedListener(this);
 		episodeListFragment.setEpisodeSelectedListener(this);
+		episodeFragment.setEpisodeSelectedListener(this);
 	}
 	
 	@Override
@@ -114,6 +115,7 @@ public class PodcastActivity extends Activity implements
 		podcastListFragment.setPodcastSelectedListener(null);
 		podcastListFragment.setPodcastLoadedListener(null);
 		episodeListFragment.setEpisodeSelectedListener(null);
+		episodeFragment.setEpisodeSelectedListener(null);
 	}
 
 	@Override
@@ -171,6 +173,7 @@ public class PodcastActivity extends Activity implements
 	@Override
 	public void onNoEpisodeSelected() {
 		colorDivider(R.id.divider_second, false);
+		episodeListFragment.selectNone();
 	}
 	
 	private void colorDivider(int dividerViewId, boolean color) {
