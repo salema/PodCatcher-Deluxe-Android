@@ -29,12 +29,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 
 /**
  * Loads the default podcast list from the filesystem asynchronously.
  */
-public class LoadPodcastListTask extends PodcastListTask<Void, PodcastList> {
+public class LoadPodcastListTask extends AsyncTask<Void, Progress, PodcastList> {
 
 	/** The listener callback */
 	private final OnLoadPodcastListListener listener;
@@ -60,7 +61,7 @@ public class LoadPodcastListTask extends PodcastListTask<Void, PodcastList> {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(true);
 			// Open default podcast file
-			fileStream = context.openFileInput(OPML_FILENAME);
+			fileStream = context.openFileInput(PodcastList.OPML_FILENAME);
 			Document podcastFile = factory.newDocumentBuilder().parse(fileStream);
 			NodeList podcasts = podcastFile.getElementsByTagName(OPML.OUTLINE);
 			

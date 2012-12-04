@@ -68,6 +68,7 @@ public class PodcastTest extends TestCase {
 	public final void testGetEncoding() throws XmlPullParserException, IOException {
 		for (ExamplePodcast ep : ExamplePodcast.values()) {
 			Podcast podcast = new Podcast(ep.name(), ep.getURL());
+			System.out.println(podcast);
 			podcast.parse(Utils.getParser(podcast));
 			assertNotNull(podcast.getEncoding());
 		}

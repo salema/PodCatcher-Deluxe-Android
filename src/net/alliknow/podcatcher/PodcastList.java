@@ -31,6 +31,11 @@ public class PodcastList extends ArrayList<Podcast> {
 	
 	/** The id */
 	private static final long serialVersionUID = 7226640001395545556L;
+	
+	/** The name of the file we store our saved podcasts in (as OPML) */
+	public static final String OPML_FILENAME = "podcasts.opml";
+	/** The OPML file encoding */
+	public static final String OPML_FILE_ENCODING = "utf8";
 		
 	@Override
 	public boolean add(Podcast podcast) {

@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.alliknow.podcatcher.tasks.test;
+package net.alliknow.podcatcher.tasks.remote.test;
 
 import java.net.URL;
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
-import net.alliknow.podcatcher.tasks.LoadPodcastTask;
 import net.alliknow.podcatcher.tasks.Progress;
+import net.alliknow.podcatcher.tasks.remote.LoadPodcastTask;
 import net.alliknow.podcatcher.types.Podcast;
 import net.alliknow.podcatcher.types.test.ExamplePodcast;
 import android.test.InstrumentationTestCase;

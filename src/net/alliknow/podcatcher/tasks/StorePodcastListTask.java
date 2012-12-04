@@ -24,13 +24,17 @@ import java.util.Date;
 import net.alliknow.podcatcher.PodcastList;
 import net.alliknow.podcatcher.types.Podcast;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 
 /**
  * Stores the default podcast list to the filesystem asynchronously.
  */
-public class StorePodcastListTask extends PodcastListTask<PodcastList, Void> {
+public class StorePodcastListTask extends AsyncTask<PodcastList, Progress, Void> {
 
+	/** Content of OPML file title tag */
+	protected static final String OPML_TITLE = "Simple Podcatcher Podcast file";
+	
 	/** Our context */
 	private final Context context;
 	
@@ -50,10 +54,10 @@ public class StorePodcastListTask extends PodcastListTask<PodcastList, Void> {
 		try {
 			if (list == null) throw new Exception("Podcast list cannot be null!");
 			
-			fileStream = context.openFileOutput(OPML_FILENAME, Context.MODE_PRIVATE);
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fileStream, OPML_FILE_ENCODING));
+			fileStream = context.openFileOutput(PodcastList.OPML_FILENAME, Context.MODE_PRIVATE);
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fileStream, PodcastList.OPML_FILE_ENCODING));
 			
-			writer.write("<?xml version=\"1.0\" encoding=\"" + OPML_FILE_ENCODING + "\"?>");
+			writer.write("<?xml version=\"1.0\" encoding=\"" + PodcastList.OPML_FILE_ENCODING + "\"?>");
 			writer.write("<opml version=\"2.0\">");
 			writer.write("<head>");
 			writer.write("<title>" + OPML_TITLE + "</title>");

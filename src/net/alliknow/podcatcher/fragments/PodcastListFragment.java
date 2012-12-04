@@ -20,7 +20,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static net.alliknow.podcatcher.Podcatcher.isOnFastConnection;
 import net.alliknow.podcatcher.PodcastList;
-import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.PodcastListAdapter;
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
@@ -31,10 +30,10 @@ import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.listeners.OnShowSuggestionsListener;
 import net.alliknow.podcatcher.listeners.PodcastListContextListener;
 import net.alliknow.podcatcher.tasks.LoadPodcastListTask;
-import net.alliknow.podcatcher.tasks.LoadPodcastLogoTask;
-import net.alliknow.podcatcher.tasks.LoadPodcastTask;
 import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.tasks.StorePodcastListTask;
+import net.alliknow.podcatcher.tasks.remote.LoadPodcastLogoTask;
+import net.alliknow.podcatcher.tasks.remote.LoadPodcastTask;
 import net.alliknow.podcatcher.types.Podcast;
 import net.alliknow.podcatcher.views.HorizontalProgressView;
 import android.app.ListFragment;
@@ -108,10 +107,10 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	public void onPodcastListLoaded(PodcastList podcastList) {
 		this.podcastList = podcastList;
 		
-		if (Podcatcher.isInDebugMode(getActivity())) {
-			podcastList.clear();
-			podcastList.addSamplePodcasts();
-		}
+//		if (Podcatcher.isInDebugMode(getActivity())) {
+//			podcastList.clear();
+//			podcastList.addSamplePodcasts();
+//		}
 		
 		// Maps the podcast list items to the list UI
 		adapter = new PodcastListAdapter(getActivity(), podcastList);
