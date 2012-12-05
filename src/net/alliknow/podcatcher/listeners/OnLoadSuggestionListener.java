@@ -16,8 +16,10 @@
  */
 package net.alliknow.podcatcher.listeners;
 
-import net.alliknow.podcatcher.PodcastList;
+import java.util.List;
+
 import net.alliknow.podcatcher.tasks.Progress;
+import net.alliknow.podcatcher.types.Podcast;
 
 /**
  * Interface definition for a callback to be invoked when podcast suggestions are loaded.
@@ -38,7 +40,7 @@ public interface OnLoadSuggestionListener {
 	 * Called on completion.
 	 * @param suggestions Podcast suggestions loaded.
 	 */
-	public void onSuggestionsLoaded(PodcastList suggestions);
+	public void onSuggestionsLoaded(List<Podcast> suggestions);
 	
 	/**
 	 * Called when loading the suggestions failed.

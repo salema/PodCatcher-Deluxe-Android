@@ -16,7 +16,9 @@
  */
 package net.alliknow.podcatcher.listeners;
 
-import net.alliknow.podcatcher.PodcastList;
+import java.util.List;
+
+import net.alliknow.podcatcher.types.Podcast;
 
 /**
  * Interface definition for a callback to be invoked when a podcast list is loaded.
@@ -27,5 +29,5 @@ public interface OnLoadPodcastListListener {
 	 * Called on completion.
 	 * @param podcastList Podcast list loaded.
 	 */
-	public void onPodcastListLoaded(PodcastList podcastList);
+	public void onPodcastListLoaded(List<Podcast> podcastList);
 }

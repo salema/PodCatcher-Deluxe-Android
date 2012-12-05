@@ -20,9 +20,10 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static net.alliknow.podcatcher.Podcatcher.isOnFastConnection;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
-import net.alliknow.podcatcher.PodcastList;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.GenreSpinnerAdapter;
 import net.alliknow.podcatcher.adapters.LanguageSpinnerAdapter;
@@ -146,7 +147,7 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	}
 
 	@Override
-	public void onSuggestionsLoaded(PodcastList suggestions) {
+	public void onSuggestionsLoaded(List<Podcast> suggestions) {
 		// Cache the suggestions list in the podcast list fragment which will be retained
 		listener.setPodcastSuggestions(suggestions);
 		
@@ -191,13 +192,13 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 	}
 
 	private void updateList() {
-		PodcastList suggestionList = listener.getPodcastSuggestions();
+		List<Podcast> suggestionList = listener.getPodcastSuggestions();
 		// Filter the suggestion list
 		if (suggestionList != null) {
 			// Currently already  existing podcasts (to be filtered out)
-			PodcastList podcastList = listener.getPodcastList();
+			List<Podcast> podcastList = listener.getPodcastList();
 			// Resulting list
-			PodcastList filteredSuggestionList = new PodcastList();
+			List<Podcast> filteredSuggestionList = new ArrayList<Podcast>();
 			// Do filter!
 			for (Podcast suggestion : suggestionList)
 				if (podcastList == null || !podcastList.contains(suggestion) &&

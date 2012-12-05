@@ -19,7 +19,13 @@ package net.alliknow.podcatcher.fragments;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static net.alliknow.podcatcher.Podcatcher.isOnFastConnection;
-import net.alliknow.podcatcher.PodcastList;
+import static net.alliknow.podcatcher.Podcatcher.putSamplePodcasts;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.PodcastListAdapter;
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
@@ -67,9 +73,9 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
     private PodcastListContextListener contextListener = new PodcastListContextListener(this);
     
 	/** The list of podcasts we know */
-	private PodcastList podcastList = new PodcastList();
+	private List<Podcast> podcastList = new ArrayList<Podcast>();
 	/** The list of podcast suggestions */
-	private PodcastList podcastSuggestions;
+	private List<Podcast> podcastSuggestions;
 	/** Currently selected podcast */
 	private Podcast currentPodcast;
 	/** Flag indicating whether we are in select all mode */
@@ -104,13 +110,10 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	}
 	
 	@Override
-	public void onPodcastListLoaded(PodcastList podcastList) {
+	public void onPodcastListLoaded(List<Podcast> podcastList) {
 		this.podcastList = podcastList;
 		
-//		if (Podcatcher.isInDebugMode(getActivity())) {
-//			podcastList.clear();
-//			podcastList.addSamplePodcasts();
-//		}
+		if (Podcatcher.isInDebugMode(getActivity())) putSamplePodcasts(podcastList);
 		
 		// Maps the podcast list items to the list UI
 		adapter = new PodcastListAdapter(getActivity(), podcastList);
@@ -199,7 +202,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	public void addPodcast(Podcast newPodcast) {
 		if (! podcastList.contains(newPodcast)) {
 			podcastList.add(newPodcast);
-			podcastList.sort();			
+			Collections.sort(podcastList);			
 			new StorePodcastListTask(getActivity()).execute(podcastList);
 		} else Log.d(getClass().getSimpleName(), "Podcast \"" + newPodcast.getName() + "\" is already in list.");
 		
@@ -210,7 +213,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	 * @return The list of podcast currently listed.
 	 */
 	@Override
-	public PodcastList getPodcastList() {
+	public List<Podcast> getPodcastList() {
 		return this.podcastList;
 	}
 	
@@ -230,12 +233,12 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	}
 	
 	@Override
-	public PodcastList getPodcastSuggestions() {
+	public List<Podcast> getPodcastSuggestions() {
 		return podcastSuggestions;
 	}
 
 	@Override
-	public void setPodcastSuggestions(PodcastList podcastSuggestions) {
+	public void setPodcastSuggestions(List<Podcast> podcastSuggestions) {
 		this.podcastSuggestions = podcastSuggestions;
 	}
 
