@@ -29,7 +29,6 @@ import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.types.Episode;
 import net.alliknow.podcatcher.views.ProgressView;
-import android.app.ListFragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,7 +41,7 @@ import android.widget.TextView;
  * List fragment to display the list of episodes as part of the
  * podcast activity.
  */
-public class EpisodeListFragment extends ListFragment {
+public class EpisodeListFragment extends PodcatcherListFragment {
 
 	/** The list of episode showing */
 	private List<Episode> episodeList;
@@ -104,8 +103,10 @@ public class EpisodeListFragment extends ListFragment {
 		this.selectedEpisode = selectedEpisode;
 		
 		// Episode is available
-		if (episodeList != null && episodeList.contains(selectedEpisode))
+		if (episodeList != null && episodeList.contains(selectedEpisode)) {
 			((EpisodeListAdapter) getListAdapter()).setSelectedPosition(episodeList.indexOf(selectedEpisode));
+			scrollListView(episodeList.indexOf(selectedEpisode));
+		}
 		// Episode is not in the current episode list
 		else selectNone();
 	}

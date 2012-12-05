@@ -40,7 +40,6 @@ import net.alliknow.podcatcher.tasks.remote.LoadPodcastLogoTask;
 import net.alliknow.podcatcher.tasks.remote.LoadPodcastTask;
 import net.alliknow.podcatcher.types.Podcast;
 import net.alliknow.podcatcher.views.HorizontalProgressView;
-import android.app.ListFragment;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -59,7 +58,7 @@ import android.widget.ListView;
  * List fragment to display the list of podcasts as part of the
  * podcast activity.
  */
-public class PodcastListFragment extends ListFragment implements OnAddPodcastListener, 
+public class PodcastListFragment extends PodcatcherListFragment implements OnAddPodcastListener, 
 	OnShowSuggestionsListener, OnLoadPodcastListener, OnLoadPodcastLogoListener, OnLoadPodcastListListener {
 	
 	/** The activity we are in (listens to user selection) */ 
@@ -419,10 +418,5 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		// This might be called before the menu is inflated...
 		if (selectAllMenuItem != null) selectAllMenuItem.setVisible(! selectAll);
 		if (removeMenuItem != null) removeMenuItem.setVisible(currentPodcast != null);
-	}
-	
-	private void scrollListView(int position) {
-		if (getListView().getFirstVisiblePosition() > position || getListView().getLastVisiblePosition() < position)
-				getListView().smoothScrollToPosition(position);
 	}
 }
