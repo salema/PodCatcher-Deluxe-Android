@@ -5,4 +5,3 @@ Add an AppWidget: http://developer.android.com/guide/topics/appwidgets
 Check performance tips: http://developer.android.com/training/articles/perf-tips.html
 Add more tests
 Refactor notification
-Switch to STaX parsing for load podcast list

@@ -20,14 +20,19 @@ import static net.alliknow.podcatcher.Podcatcher.OPML_FILENAME;
 import static net.alliknow.podcatcher.Podcatcher.OPML_FILE_ENCODING;
 
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Date;
 import java.util.List;
 
+import net.alliknow.podcatcher.Podcatcher;
+import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.tags.OPML;
 import net.alliknow.podcatcher.types.Podcast;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
 
 /**
@@ -35,50 +40,89 @@ import android.util.Log;
  */
 public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Void> {
 
-	/** Content of OPML file title tag */
-	protected static final String OPML_TITLE = "Simple Podcatcher Podcast file";
-	
 	/** Our context */
-	private final Context context;
+	protected Context context;
+	
+	/** Content of OPML file title tag */
+	protected String opmlFileTitle = "podcast file";
+	/** The indent char */
+	private static final char INDENT = ' ';	
 	
 	/**
 	 * Create new task.
-	 * @param context Context to read file from.
-	 * @param listener Callback to be alerted on completion.
+	 * @param context Context to get file handle from. This will not be
+	 * leaked if you keep a handle on this task, but set to <code>null</code>
+	 * after execution.
+	 * @see Podcatcher.OPML_FILENAME
 	 */
 	public StorePodcastListTask(Context context) {
 		this.context = context;
+		
+		opmlFileTitle = context.getResources().getString(R.string.app_name) + " " + opmlFileTitle;
 	}
 	
 	@Override
 	protected Void doInBackground(List<Podcast>... params) {
 		List<Podcast> list = params[0];
-		OutputStream fileStream = null; 
+		
+		OutputStream fileStream = null;
+		
 		try {
 			if (list == null) throw new Exception("Podcast list cannot be null!");
-			
+			// Open the file and get a writer
 			fileStream = context.openFileOutput(OPML_FILENAME, Context.MODE_PRIVATE);
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fileStream, OPML_FILE_ENCODING));
-			
-			writer.write("<?xml version=\"1.0\" encoding=\"" + OPML_FILE_ENCODING + "\"?>");
-			writer.write("<opml version=\"2.0\">");
-			writer.write("<head>");
-			writer.write("<title>" + OPML_TITLE + "</title>");
-			writer.write("<dateModified>" + new Date().toString() + "</dateModified>");
-			writer.write("</head>");
-			writer.write("<body>");
-			
-			for (Podcast podcast : list) {
-				String opmlString = podcast.toOpmlString();
-				if (opmlString != null) writer.write(opmlString);
-			}
-			
-			writer.write("</body></opml>");
+			// Write new file content
+			writeHeader(writer);
+			for (Podcast podcast : list) writePodcast(writer, podcast);
+			writeFooter(writer);
+			// Tidy up
 			writer.close();
 		} catch (Exception e) {
 			Log.e(getClass().getSimpleName(), "Cannot store podcast OPML file", e);
+		} finally {
+			// Make sure we do not leak the context
+			this.context = null;
+			// Make sure we close the file stream
+			if (fileStream != null)
+				try {
+					fileStream.close();
+				} catch (IOException e) { /* pass... */ }
 		}
 		
 		return null;
+	}
+
+	private void writePodcast(BufferedWriter writer, Podcast podcast) throws IOException {
+		if (podcast.hasNameAndUrl()) {
+			String opmlString = "<" + OPML.OUTLINE  + " " + OPML.TEXT + "=\"" + 
+					TextUtils.htmlEncode(podcast.getName()) + "\" " +
+					OPML.TYPE + "=\"" + OPML.RSS_TYPE + "\" " +
+					OPML.XMLURL + "=\"" + podcast.getUrl() + "\"/>";
+			
+			writeLine(writer, 2, opmlString);
+		}
+	}
+
+	private void writeHeader(BufferedWriter writer) throws IOException {
+		writeLine(writer, 0, "<?xml version=\"1.0\" encoding=\"" + OPML_FILE_ENCODING + "\"?>");
+		writeLine(writer, 0, "<opml version=\"2.0\">");
+		writeLine(writer, 1, "<head>");
+		writeLine(writer, 2, "<title>" + opmlFileTitle + "</title>");
+		writeLine(writer, 2, "<dateModified>" + new Date().toString() + "</dateModified>");
+		writeLine(writer, 1, "</head>");
+		writeLine(writer, 1, "<body>");
+	}
+	
+	private void writeFooter(BufferedWriter writer) throws IOException {
+		writeLine(writer, 1, "</body>");
+		writeLine(writer, 0, "</opml>");
+	}
+	
+	private void writeLine(BufferedWriter writer, int level, String line) throws IOException {
+		for (int i = 0; i < level * 2; i++) writer.write(INDENT);
+		
+		writer.write(line);
+		writer.newLine();
 	}
 }

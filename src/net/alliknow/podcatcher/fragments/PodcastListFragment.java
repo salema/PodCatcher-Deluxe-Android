@@ -19,13 +19,11 @@ package net.alliknow.podcatcher.fragments;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static net.alliknow.podcatcher.Podcatcher.isOnFastConnection;
-import static net.alliknow.podcatcher.Podcatcher.putSamplePodcasts;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.PodcastListAdapter;
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
@@ -113,7 +111,7 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 	public void onPodcastListLoaded(List<Podcast> podcastList) {
 		this.podcastList = podcastList;
 		
-		if (Podcatcher.isInDebugMode(getActivity())) putSamplePodcasts(podcastList);
+		//if (Podcatcher.isInDebugMode(getActivity())) putSamplePodcasts(podcastList);
 		
 		// Maps the podcast list items to the list UI
 		adapter = new PodcastListAdapter(getActivity(), podcastList);

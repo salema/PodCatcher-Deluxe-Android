@@ -17,23 +17,27 @@
 package net.alliknow.podcatcher.tasks;
 
 import static net.alliknow.podcatcher.Podcatcher.OPML_FILENAME;
+import static net.alliknow.podcatcher.Podcatcher.OPML_FILE_ENCODING;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
 import net.alliknow.podcatcher.tags.OPML;
 import net.alliknow.podcatcher.types.Podcast;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.Html;
 import android.util.Log;
 
 /**
@@ -41,14 +45,16 @@ import android.util.Log;
  */
 public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>> {
 
-	/** The listener callback */
-	private final OnLoadPodcastListListener listener;
 	/** Our context */
-	private final Context context;
-	
+	private Context context;
+	/** The listener callback */
+	private OnLoadPodcastListListener listener;
+		
 	/**
 	 * Create new task.
-	 * @param context Context to read file from.
+	 * @param context Context to read file from. This will not be
+	 * leaked if you keep a handle on this task, but set to <code>null</code>
+	 * after execution.
 	 * @param listener Callback to be alerted on completion.
 	 */
 	public LoadPodcastListTask(Context context, OnLoadPodcastListListener listener) {
@@ -62,27 +68,75 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
 		
 		try {
 			// Build parser
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
 			factory.setNamespaceAware(true);
+			// Create the parser to use
+			XmlPullParser parser = factory.newPullParser();
 			// Open default podcast file
 			fileStream = context.openFileInput(OPML_FILENAME);
-			Document podcastFile = factory.newDocumentBuilder().parse(fileStream);
-			NodeList podcasts = podcastFile.getElementsByTagName(OPML.OUTLINE);
-			
-			// Create and fill list
+			parser.setInput(fileStream, OPML_FILE_ENCODING);
+			// Create list
 			List<Podcast> result = new ArrayList<Podcast>();
-			for (int index = 0; index < podcasts.getLength(); index++) 
-				result.add(new Podcast(podcasts.item(index)));
-			
+						
+			// Start parsing
+			int eventType = parser.next();
+					
+			// Read complete document
+			while (eventType != XmlPullParser.END_DOCUMENT) {
+				// We only need start tags here
+				if (eventType == XmlPullParser.START_TAG) {
+					String tagName = parser.getName();
+					
+					// Podcast found
+					if (tagName.equalsIgnoreCase(OPML.OUTLINE)) 
+						result.add(createPodcast(parser));
+				}
+				
+				// Done, get next parsing event
+				eventType = parser.next();
+			}
+					
 			// Sort and tidy up!
+			while (result.remove(null));
 			Collections.sort(result);
-			fileStream.close();
-			
+						
 			return result;
 		} catch (Exception e) {
 			Log.e(getClass().getSimpleName(), "Load failed for podcast list!", e);
-			return null;
-		} 		
+			
+			// Return empty list as a fall-back
+			return new ArrayList<Podcast>();
+		} finally {
+			// Make sure we do not leak the context
+			this.context = null;
+			// Make sure we close the file stream
+			if (fileStream != null)
+				try {
+					fileStream.close();
+				} catch (IOException e) { /* pass... */ }
+		}
+	}
+
+	private Podcast createPodcast(XmlPullParser parser) {
+		try {
+			// Make sure we start at item tag
+			parser.require(XmlPullParser.START_TAG, "", OPML.OUTLINE);
+			// Get the podcast name
+			String name = parser.getAttributeValue("", OPML.TEXT);
+			// Make sure podcast name looks good
+			if (name.equals("null")) name = null;
+			else name = Html.fromHtml(name).toString();
+			// Get and parse podcast url
+			URL url = new URL(parser.getAttributeValue("", OPML.XMLURL));
+			// Create the podcast
+			return new Podcast(name, url);
+		} catch (MalformedURLException e) {
+			Log.d(getClass().getSimpleName(), "OPML outline has bad URL!", e);
+		} catch (XmlPullParserException e) {
+			Log.d(getClass().getSimpleName(), "OPML outline not parsable!", e);
+		} catch (IOException e) { /* pass */ }
+		
+		return null;
 	}
 
 	@Override

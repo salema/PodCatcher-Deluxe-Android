@@ -25,16 +25,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import net.alliknow.podcatcher.tags.OPML;
 import net.alliknow.podcatcher.tags.RSS;
 
-import org.w3c.dom.Node;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.graphics.Bitmap;
-import android.text.Html;
-import android.text.TextUtils;
 import android.util.Log;
 
 /**
@@ -87,27 +83,6 @@ public class Podcast implements Comparable<Podcast> {
 		this.url = url;
 	}
 	
-	/** 
-	 * Create a new podcast from an OPML outline node.
-	 * The constructor will try to work around a couple of
-	 * corner-cases, but there are limits to this...
-	 * @param opmlOutline The outline node.
-	 */
-	public Podcast(Node opmlOutline) {
-		try {
-			this.name = opmlOutline.getAttributes().getNamedItem(OPML.TEXT).getNodeValue();
-			
-			if (name.equals("null")) this.name = null;
-			else this.name = Html.fromHtml(name).toString();
-			
-			this.url = new URL(opmlOutline.getAttributes().getNamedItem(OPML.XMLURL).getNodeValue());
-		} catch (MalformedURLException e) {
-			Log.d(getClass().getSimpleName(), "Created podcast with bad URL: " + name);
-		} catch (RuntimeException e) {
-			// pass
-		}
-	}
-
 	/**
 	 * @return The podcast's name.
 	 */
@@ -303,20 +278,6 @@ public class Podcast implements Comparable<Podcast> {
 		this.loading = loading;
 	}
 	
-	/**
-	 * Create an OPML outline from this podcast.
-	 * @return The OPML XML outline as a string.
-	 * If the podcast does not at least have a valid name
-	 * and a non-<code>null</code> URL, this will return
-	 * <code>null</code> and you should skip this podcast.
-	 */
-	public String toOpmlString() {
-		if (! hasNameAndUrl()) return null;
-		else return "<" + OPML.OUTLINE  + " " + OPML.TEXT + "=\"" + TextUtils.htmlEncode(name) + "\" " +
-				OPML.TYPE + "=\"" + OPML.RSS_TYPE + "\" " +
-				OPML.XMLURL + "=\"" + url + "\"/>";
-	}
-
 	/**
 	 * @return Whether this podcast has an non-empty name
 	 * and an URL.

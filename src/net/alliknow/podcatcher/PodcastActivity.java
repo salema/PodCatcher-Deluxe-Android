@@ -151,6 +151,12 @@ public class PodcastActivity extends Activity implements
 	public void onPodcastLoaded(Podcast podcast) {
 		if (multiplePodcastsMode) episodeListFragment.addEpisodeList(podcast.getEpisodes());
 		else episodeListFragment.setEpisodeList(podcast.getEpisodes());
+
+//		TODO This might actually be a nice thing to have...?!		
+//		if (episodeListFragment.getEpisodeList().contains(episodeFragment.getEpisode()))
+//			episodeListFragment.selectEpisode(episodeFragment.getEpisode());
+		
+		updateDivider();
 	}
 	
 	@Override

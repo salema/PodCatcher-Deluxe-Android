@@ -34,6 +34,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.text.Html;
 import android.util.Log;
 
 /**
@@ -53,20 +54,28 @@ public class Podcatcher {
 	 * @param list List to fill.
 	 */
 	public static void putSamplePodcasts(List<Podcast> list) {
+		list.clear();
+		
+		list.add(createPodcast("This American Life", "http://feeds.thisamericanlife.org/talpodcast"));
+		list.add(createPodcast("Radiolab", "http://feeds.wnyc.org/radiolab"));
+		list.add(createPodcast("Linux' Outlaws", "http://feeds.feedburner.com/linuxoutlaws"));
+		list.add(createPodcast("GEO", "http://www.geo.de/GEOaudio/index.xml"));
+		list.add(createPodcast("Mäuse", "http://podcast.wdr.de/maus.xml"));
+		list.add(createPodcast("D&uuml;de", "http://feeds.feedburner.com/UhhYeahDude"));
+		list.add(createPodcast("neo", "http://www.zdf.de/ZDFmediathek/podcast/1446344?view=podcast"));
+		
+		// Remove null elements if accidentially create and added above
+		while (list.remove(null));
+		
+		Collections.sort(list);
+	}
+	
+	private static Podcast createPodcast(String name, String url) {
 		try {
-			list.clear();
-			
-			list.add(new Podcast("This American Life", new URL("http://feeds.thisamericanlife.org/talpodcast")));
-			list.add(new Podcast("Radiolab", new URL("http://feeds.wnyc.org/radiolab")));
-			list.add(new Podcast("Linux' Outlaws", new URL("http://feeds.feedburner.com/linuxoutlaws")));
-			list.add(new Podcast("GEO", new URL("http://www.geo.de/GEOaudio/index.xml")));
-			list.add(new Podcast("Mäuse", new URL("http://podcast.wdr.de/maus.xml")));
-			list.add(new Podcast("D&uuml;de", new URL("http://feeds.feedburner.com/UhhYeahDude")));
-			list.add(new Podcast("neo", new URL("http://www.zdf.de/ZDFmediathek/podcast/1446344?view=podcast")));
-			
-			Collections.sort(list);
+			return new Podcast(Html.fromHtml(name).toString(), new URL(url));
 		} catch (MalformedURLException e) {
-			Log.e("Podcatcher", "Cannot add sample podcasts!", e);
+			Log.e("Podcatcher", "Cannot add sample podcast: " + name, e);
+			return null;
 		}
 	}
 	
