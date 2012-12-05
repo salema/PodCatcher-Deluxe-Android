@@ -17,9 +17,11 @@
 package net.alliknow.podcatcher.tasks.remote;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
-import net.alliknow.podcatcher.PodcastList;
 import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
 import net.alliknow.podcatcher.tags.JSON;
 import net.alliknow.podcatcher.tasks.Progress;
@@ -37,7 +39,7 @@ import android.util.Log;
 /**
  * A task that loads and reads suggested podcasts.
  */
-public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
+public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>> {
 
 	/** Owner */
 	private final OnLoadSuggestionListener listener;
@@ -56,8 +58,8 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
 	}
 	
 	@Override
-	protected PodcastList doInBackground(Void... params) {
-		PodcastList result = new PodcastList();
+	protected List<Podcast> doInBackground(Void... params) {
+		List<Podcast> result = new ArrayList<Podcast>();
 		
 		try {
 			// Load the file from the internets
@@ -76,7 +78,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
 			addSuggestionsFromJsonArray(completeJson.getJSONArray(JSON.SUGGESTION), result);
 			if (isCancelled()) return null;
 			
-			result.sort();
+			Collections.sort(result);
 		} catch (Exception e) {
 			failed = true;
 			Log.w(getClass().getSimpleName(), "Load failed for podcast suggestions file", e);
@@ -92,7 +94,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
 	}
 	
 	@Override
-	protected void onPostExecute(PodcastList suggestions) {
+	protected void onPostExecute(List<Podcast> suggestions) {
 		// Background task failed to complete
 		if (failed) {
 			if (listener != null) listener.onSuggestionsLoadFailed();
@@ -107,7 +109,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, PodcastList> {
 	 * @param array JSON array to scan.
 	 * @param list List to add suggestions to.
 	 */
-	private void addSuggestionsFromJsonArray(JSONArray array, PodcastList list) {
+	private void addSuggestionsFromJsonArray(JSONArray array, List<Podcast> list) {
 		for (int index = 0; index < array.length(); index++) {
 			JSONObject object;
 			

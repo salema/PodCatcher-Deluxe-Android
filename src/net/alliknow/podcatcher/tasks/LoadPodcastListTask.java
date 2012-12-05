@@ -16,11 +16,15 @@
  */
 package net.alliknow.podcatcher.tasks;
 
+import static net.alliknow.podcatcher.Podcatcher.OPML_FILENAME;
+
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import net.alliknow.podcatcher.PodcastList;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
 import net.alliknow.podcatcher.tags.OPML;
 import net.alliknow.podcatcher.types.Podcast;
@@ -35,7 +39,7 @@ import android.util.Log;
 /**
  * Loads the default podcast list from the filesystem asynchronously.
  */
-public class LoadPodcastListTask extends AsyncTask<Void, Progress, PodcastList> {
+public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>> {
 
 	/** The listener callback */
 	private final OnLoadPodcastListListener listener;
@@ -53,7 +57,7 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, PodcastList> 
 	}
 	
 	@Override
-	protected PodcastList doInBackground(Void... params) {
+	protected List<Podcast> doInBackground(Void... params) {
 		InputStream fileStream = null;
 		
 		try {
@@ -61,17 +65,17 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, PodcastList> 
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(true);
 			// Open default podcast file
-			fileStream = context.openFileInput(PodcastList.OPML_FILENAME);
+			fileStream = context.openFileInput(OPML_FILENAME);
 			Document podcastFile = factory.newDocumentBuilder().parse(fileStream);
 			NodeList podcasts = podcastFile.getElementsByTagName(OPML.OUTLINE);
 			
 			// Create and fill list
-			PodcastList result = new PodcastList();
+			List<Podcast> result = new ArrayList<Podcast>();
 			for (int index = 0; index < podcasts.getLength(); index++) 
 				result.add(new Podcast(podcasts.item(index)));
 			
 			// Sort and tidy up!
-			result.sort();
+			Collections.sort(result);
 			fileStream.close();
 			
 			return result;
@@ -82,7 +86,7 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, PodcastList> 
 	}
 
 	@Override
-	protected void onPostExecute(PodcastList result) {
+	protected void onPostExecute(List<Podcast> result) {
 		if (listener != null) listener.onPodcastListLoaded(result);
 		else Log.d(getClass().getSimpleName(), "Podcast list loaded, but no listener attached");
 	}

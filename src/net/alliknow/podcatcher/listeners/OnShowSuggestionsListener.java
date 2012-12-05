@@ -16,7 +16,9 @@
  */
 package net.alliknow.podcatcher.listeners;
 
-import net.alliknow.podcatcher.PodcastList;
+import java.util.List;
+
+import net.alliknow.podcatcher.types.Podcast;
 
 /**
  * Interface definition for a callback to be invoked when podcast suggestions are requested.
@@ -30,7 +32,7 @@ public interface OnShowSuggestionsListener extends OnAddPodcastListener {
 	 * @return A cached list of podcast suggestions.
 	 * @see <code>setPodcastSuggestions</code>
 	 */
-	public PodcastList getPodcastSuggestions();
+	public List<Podcast> getPodcastSuggestions();
 
 	/**
 	 * Writes the loaded podcast suggestions to a cache you might
@@ -38,12 +40,12 @@ public interface OnShowSuggestionsListener extends OnAddPodcastListener {
 	 * @param suggestions Podcast suggestions to cache.
 	 * @see <code>getPodcastSuggestions</code>
 	 */
-	public void setPodcastSuggestions(PodcastList suggestions);
+	public void setPodcastSuggestions(List<Podcast> suggestions);
 
 	/**
 	 * Get the list of currently already added podcast
 	 * to be excluded from suggestions.
 	 * @return The (possibly empty) list of podcasts already subscribed to.
 	 */
-	public PodcastList getPodcastList();
+	public List<Podcast> getPodcastList();
 }

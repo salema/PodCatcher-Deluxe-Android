@@ -16,12 +16,15 @@
  */
 package net.alliknow.podcatcher.tasks;
 
+import static net.alliknow.podcatcher.Podcatcher.OPML_FILENAME;
+import static net.alliknow.podcatcher.Podcatcher.OPML_FILE_ENCODING;
+
 import java.io.BufferedWriter;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Date;
+import java.util.List;
 
-import net.alliknow.podcatcher.PodcastList;
 import net.alliknow.podcatcher.types.Podcast;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -30,7 +33,7 @@ import android.util.Log;
 /**
  * Stores the default podcast list to the filesystem asynchronously.
  */
-public class StorePodcastListTask extends AsyncTask<PodcastList, Progress, Void> {
+public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Void> {
 
 	/** Content of OPML file title tag */
 	protected static final String OPML_TITLE = "Simple Podcatcher Podcast file";
@@ -48,16 +51,16 @@ public class StorePodcastListTask extends AsyncTask<PodcastList, Progress, Void>
 	}
 	
 	@Override
-	protected Void doInBackground(PodcastList... params) {
-		PodcastList list = params[0];
+	protected Void doInBackground(List<Podcast>... params) {
+		List<Podcast> list = params[0];
 		OutputStream fileStream = null; 
 		try {
 			if (list == null) throw new Exception("Podcast list cannot be null!");
 			
-			fileStream = context.openFileOutput(PodcastList.OPML_FILENAME, Context.MODE_PRIVATE);
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fileStream, PodcastList.OPML_FILE_ENCODING));
+			fileStream = context.openFileOutput(OPML_FILENAME, Context.MODE_PRIVATE);
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fileStream, OPML_FILE_ENCODING));
 			
-			writer.write("<?xml version=\"1.0\" encoding=\"" + PodcastList.OPML_FILE_ENCODING + "\"?>");
+			writer.write("<?xml version=\"1.0\" encoding=\"" + OPML_FILE_ENCODING + "\"?>");
 			writer.write("<opml version=\"2.0\">");
 			writer.write("<head>");
 			writer.write("<title>" + OPML_TITLE + "</title>");

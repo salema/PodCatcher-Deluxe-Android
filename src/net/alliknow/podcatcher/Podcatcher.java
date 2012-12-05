@@ -19,6 +19,12 @@ package net.alliknow.podcatcher;
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+
+import net.alliknow.podcatcher.types.Podcast;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -28,11 +34,41 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 /**
  * Defines some util methods.
  */
 public class Podcatcher {
+	
+	/** The name of the file we store our saved podcasts in (as OPML) */
+	public static final String OPML_FILENAME = "podcasts.opml";
+	/** The OPML file encoding */
+	public static final String OPML_FILE_ENCODING = "utf8";
+	
+	/**
+	 * Clear list.
+	 * Add a small number of sample podcast to the list for testing.
+	 * Sort list.
+	 * @param list List to fill.
+	 */
+	public static void putSamplePodcasts(List<Podcast> list) {
+		try {
+			list.clear();
+			
+			list.add(new Podcast("This American Life", new URL("http://feeds.thisamericanlife.org/talpodcast")));
+			list.add(new Podcast("Radiolab", new URL("http://feeds.wnyc.org/radiolab")));
+			list.add(new Podcast("Linux' Outlaws", new URL("http://feeds.feedburner.com/linuxoutlaws")));
+			list.add(new Podcast("GEO", new URL("http://www.geo.de/GEOaudio/index.xml")));
+			list.add(new Podcast("Mäuse", new URL("http://podcast.wdr.de/maus.xml")));
+			list.add(new Podcast("D&uuml;de", new URL("http://feeds.feedburner.com/UhhYeahDude")));
+			list.add(new Podcast("neo", new URL("http://www.zdf.de/ZDFmediathek/podcast/1446344?view=podcast")));
+			
+			Collections.sort(list);
+		} catch (MalformedURLException e) {
+			Log.e("Podcatcher", "Cannot add sample podcasts!", e);
+		}
+	}
 	
 	/**
 	 * Checks whether the device is currently on a fast

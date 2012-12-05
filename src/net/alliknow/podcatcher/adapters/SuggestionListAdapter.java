@@ -16,7 +16,8 @@
  */
 package net.alliknow.podcatcher.adapters;
 
-import net.alliknow.podcatcher.PodcastList;
+import java.util.List;
+
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
 import net.alliknow.podcatcher.types.Podcast;
@@ -43,7 +44,7 @@ public class SuggestionListAdapter extends PodcastListAdapter {
 	 * @param podcastList List of podcasts (suggestions) to wrap.
 	 * @param listener Call back for the add button to attach.
 	 */
-	public SuggestionListAdapter(Context context, PodcastList podcastList, OnAddPodcastListener listener) {
+	public SuggestionListAdapter(Context context, List<Podcast> podcastList, OnAddPodcastListener listener) {
 		super(context, podcastList);
 		
 		this.listener = listener;

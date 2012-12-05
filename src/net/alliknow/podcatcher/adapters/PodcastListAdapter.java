@@ -18,8 +18,11 @@ package net.alliknow.podcatcher.adapters;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import net.alliknow.podcatcher.PodcastList;
+
+import java.util.List;
+
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.types.Podcast;
 import net.alliknow.podcatcher.views.HorizontalProgressView;
 import android.content.Context;
 import android.view.View;
@@ -31,7 +34,7 @@ import android.view.ViewGroup;
 public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 
 	/** The list our data resides in */
-	protected PodcastList list;
+	protected List<Podcast> list;
 
 	/** String resources used */
 	protected final String oneEpisode;
@@ -43,7 +46,7 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 	 * @param context The current context.
 	 * @param podcastList List of podcasts to wrap (not <code>null</code>).
 	 */
-	public PodcastListAdapter(Context context, PodcastList podcastList) {
+	public PodcastListAdapter(Context context, List<Podcast> podcastList) {
 		super(context);
 		
 		this.list = podcastList;
