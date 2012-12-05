@@ -118,6 +118,13 @@ public class PodcastActivity extends Activity implements
 	}
 
 	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		// This will provide the wanted behaviour for the service notfication:
+		// Only show it if the app is not visible (and there is an episode loaded).
+		if (episodeFragment != null) episodeFragment.showServiceNotification(! hasFocus);
+	}
+	
+	@Override
 	public void onPodcastSelected(Podcast podcast) {
 		multiplePodcastsMode = false;
 		

@@ -187,21 +187,6 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener,
 	}
 	
 	@Override
-	public void onPause() {
-		super.onPause();
-		
-		if (service != null && service.isPrepared()) service.showNotification(true);
-	}
-	
-	@Override
-	public void onResume() {
-		super.onResume();
-		
-		if (service != null) service.showNotification(false);
-		
-	}
-	
-	@Override
 	public void onDetach() {
 		super.onDetach();
 		
@@ -220,6 +205,15 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener,
 		if (! service.isPlaying()) service.stopSelf();		
 		
 		playUpdateTimer.cancel();
+	}
+	
+	/**
+	 * Set whether the episode play service should show its
+	 * notification and run in the foreground. 
+	 * @param show The flag.
+	 */
+	public void showServiceNotification(boolean show) {
+		service.runInForeground(show);
 	}
 	
 	/**
@@ -380,7 +374,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener,
 			playUpdateTimerTask = null;
 		}
 	}
-
+	
 	/** Defines callbacks for service binding, passed to bindService() */
     private ServiceConnection connection = new ServiceConnection() {
 
@@ -391,8 +385,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener,
             
             // Register listener and notification
             service.setPlayServiceListener(EpisodeFragment.this);
-            service.showNotification(false);
-            
+                       
             // Update UI to reflect service status
             if (episode == null && service.getCurrentEpisode() != null) 
     			setEpisode(service.getCurrentEpisode());

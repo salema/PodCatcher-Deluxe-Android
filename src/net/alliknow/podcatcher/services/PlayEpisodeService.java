@@ -77,7 +77,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     /** Our wifi lock */ 
     private WifiLock wifiLock;
     /** Our notification id */
-    private static final int NOTIFICATION_ID = 123;
+    private static final int NOTIFICATION_ID = 1;
 	    
     /**
      * The binder to return to client. 
@@ -160,8 +160,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 				player.setDataSource(episode.getMediaUrl().toExternalForm());
 				player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
 				wifiLock.acquire();
-				
-				putForeground(false);
 				
 				player.prepareAsync(); // might take long! (for buffering, etc)
 			} catch (Exception e) {
@@ -271,13 +269,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 		else return player.getDuration() / 1000;
 	}
 	
-	/**
-	 * @param show Whether to show a notification for the running service.
-	 */
-	public void showNotification(boolean show) {
-		if (prepared) putForeground(show);
-	}
-	
 	@Override
 	public void onPrepared(MediaPlayer mp) {
 		prepared = true;
@@ -339,6 +330,21 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 		
 		return true;
 	}
+	
+	/**
+	 * Whether to run this service in the foreground
+	 * where it is less likely to be killed on low memory.
+	 * Setting this service to the foreground will make a 
+	 * notification appear. Hence, this will only work if
+	 * an episode is set for this service. 
+	 * @param foreground <code>true</code> iff you want this service
+	 * to run in the foreground, <code>false</code> will remove the
+	 * notification and get the service back to the background.
+	 */
+	public void runInForeground(boolean foreground) {
+		if (foreground && currentEpisode != null) putForeground();
+		else if (! foreground) stopForeground(true);
+	}
 		
 	/**
 	 * Reset the service to creation state.
@@ -374,7 +380,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 		player.setOnBufferingUpdateListener(this);
 	}
 	
-	private void putForeground(boolean showNotification) {
+	private void putForeground() {
 		// This will bring back to app (activity in single mode!)
 		PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
 				new Intent(getApplicationContext(), PodcastActivity.class),
@@ -390,13 +396,12 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 			.setContentInfo(getResources().getString(R.string.app_name))
 			.setOngoing(true).getNotification();
 			
-		// Providing zero as the id hides the notification
-		startForeground(showNotification ? NOTIFICATION_ID : 0, notification);
+		startForeground(NOTIFICATION_ID, notification);
 	}
 
 	@Override
 	public void onAudioFocusChange(int focusChange) {
-		Log.d(getClass().getSimpleName(), "Audio focus changed to: " + focusChange);		
+		Log.d(getClass().getSimpleName(), "Audio focus changed to: " + focusChange);
 
 		switch (focusChange) {
 	        case AudioManager.AUDIOFOCUS_GAIN:
