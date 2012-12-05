@@ -344,10 +344,14 @@ public class PodcastListFragment extends ListFragment implements OnAddPodcastLis
 		if (loadListener != null && podcast.equals(currentPodcast)) 
 			loadListener.onPodcastLoadProgress(podcast, progress);
 		
-		View listItemView = getListView().getChildAt(podcastList.indexOf(podcast));
-		if (listItemView != null)
-			((HorizontalProgressView)listItemView.findViewById(R.id.list_item_progress))
-				.publishProgress(progress);
+		// To prevent this if we are not ready to handle progress update
+		// e.g. on app termination
+		if (isAdded()) {
+			View listItemView = getListView().getChildAt(podcastList.indexOf(podcast));
+			if (listItemView != null)
+				((HorizontalProgressView)listItemView.findViewById(R.id.list_item_progress))
+					.publishProgress(progress);
+		}
 	}
 	
 	/**
