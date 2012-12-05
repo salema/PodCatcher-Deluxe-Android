@@ -22,5 +22,8 @@ package net.alliknow.podcatcher.listeners;
  */
 public interface OnReturnToPlayingEpisodeListener {
 
-	public void returnToPlayingEpisode();
+	/**
+	 * Alert the listener that it should return to the currently played episode. 
+	 */
+	public void onReturnToPlayingEpisode();
 }

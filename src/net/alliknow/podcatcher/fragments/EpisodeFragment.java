@@ -247,11 +247,9 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener,
 	}
 	
 	@Override
-	public void returnToPlayingEpisode() {
-		if (service != null && service.getCurrentEpisode() != null) {
-			setEpisode(service.getCurrentEpisode());
-			if (selectedListener != null) selectedListener.onNoEpisodeSelected();
-		}
+	public void onReturnToPlayingEpisode() {
+		if (service != null && service.getCurrentEpisode() != null && selectedListener != null) 
+			selectedListener.onEpisodeSelected(service.getCurrentEpisode());
 	}
 	
 	@Override

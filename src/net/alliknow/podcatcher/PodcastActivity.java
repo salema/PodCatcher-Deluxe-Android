@@ -71,8 +71,7 @@ public class PodcastActivity extends Activity implements
 		episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
 		episodeFragment = (EpisodeFragment) getFragmentManager().findFragmentById(R.id.episode);
 		
-		colorDivider(R.id.divider_first, podcastListFragment.isPodcastSelected());
-		colorDivider(R.id.divider_second, episodeListFragment.isEpisodeSelected());
+		updateDivider();
 	}
 	
 	@Override
@@ -122,28 +121,25 @@ public class PodcastActivity extends Activity implements
 	public void onPodcastSelected(Podcast podcast) {
 		multiplePodcastsMode = false;
 		
-		colorDivider(R.id.divider_first, true);
-		colorDivider(R.id.divider_second, false);
 		episodeListFragment.clearAndSpin();
+		updateDivider();
 	}
 	
 	@Override
 	public void onAllPodcastsSelected() {
 		multiplePodcastsMode = true;
 		
-		colorDivider(R.id.divider_first, true);
-		colorDivider(R.id.divider_second, false);
 		episodeListFragment.reset();
 		episodeListFragment.clearAndSpin();
+		updateDivider();
 	}
 	
 	@Override
 	public void onNoPodcastSelected() {
 		multiplePodcastsMode = false;
 		
-		colorDivider(R.id.divider_first, false);
-		colorDivider(R.id.divider_second, false);
 		episodeListFragment.reset();
+		updateDivider();
 	}
 	
 	@Override
@@ -166,14 +162,22 @@ public class PodcastActivity extends Activity implements
 
 	@Override
 	public void onEpisodeSelected(Episode selectedEpisode) {
-		colorDivider(R.id.divider_second, true);
+		episodeListFragment.selectEpisode(selectedEpisode);
 		episodeFragment.setEpisode(selectedEpisode);
+		
+		updateDivider();
 	}
 	
 	@Override
 	public void onNoEpisodeSelected() {
-		colorDivider(R.id.divider_second, false);
 		episodeListFragment.selectNone();
+		
+		updateDivider();
+	}
+	
+	private void updateDivider() {
+		colorDivider(R.id.divider_first, podcastListFragment.isPodcastSelected());
+		colorDivider(R.id.divider_second, episodeListFragment.isEpisodeSelected());
 	}
 	
 	private void colorDivider(int dividerViewId, boolean color) {

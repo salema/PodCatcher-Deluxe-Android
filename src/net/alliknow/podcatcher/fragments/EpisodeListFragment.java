@@ -91,11 +91,23 @@ public class EpisodeListFragment extends ListFragment {
 	
 	@Override
 	public void onListItemClick(ListView list, View view, int position, long id) {
-		selectedEpisode = episodeList.get(position);
-		((EpisodeListAdapter) getListAdapter()).setSelectedPosition(position);
-		
-		if (selectedListener != null) selectedListener.onEpisodeSelected(selectedEpisode);
+		if (selectedListener != null) selectedListener.onEpisodeSelected(episodeList.get(position));
 		else Log.d(getClass().getSimpleName(), "Episode selected, but no listener attached");
+	}
+	
+	/**
+	 * Select given episode, iff available in current episode list.
+	 * If the episode is not available the list will go to "no-selection-state".
+	 * @param selectedEpisode Episode to select.
+	 */
+	public void selectEpisode(Episode selectedEpisode) {
+		this.selectedEpisode = selectedEpisode;
+		
+		// Episode is available
+		if (episodeList != null && episodeList.contains(selectedEpisode))
+			((EpisodeListAdapter) getListAdapter()).setSelectedPosition(episodeList.indexOf(selectedEpisode));
+		// Episode is not in the current episode list
+		else selectNone();
 	}
 	
 	/**

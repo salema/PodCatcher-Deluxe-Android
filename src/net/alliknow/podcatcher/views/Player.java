@@ -21,6 +21,7 @@ import net.alliknow.podcatcher.listeners.OnReturnToPlayingEpisodeListener;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.types.Episode;
 import android.content.Context;
+import android.text.Html;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
@@ -71,7 +72,7 @@ public class Player extends LinearLayout {
 			
 			@Override
 			public void onClick(View v) {
-				returnListener.returnToPlayingEpisode();
+				returnListener.onReturnToPlayingEpisode();
 			}
 		});
 	}
@@ -111,8 +112,8 @@ public class Player extends LinearLayout {
 			
 			dividerView.setVisibility(service.isWorkingWith(currentEpisode) ? GONE : VISIBLE);
 			titleView.setVisibility(service.isWorkingWith(currentEpisode) ? GONE : VISIBLE);
-			titleView.setText(service.getCurrentEpisodeName() + " - " 
-						+ service.getCurrentEpisodePodcastName());
+			titleView.setText(Html.fromHtml("<a href=\"\">" + service.getCurrentEpisodeName() + " - " 
+						+ service.getCurrentEpisodePodcastName() + "</a>"));
 				
 			updateSeekBar(service);
 			updateButton(service);
