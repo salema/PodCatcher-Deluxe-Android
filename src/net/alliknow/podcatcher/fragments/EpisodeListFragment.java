@@ -104,7 +104,8 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 	public void setEpisodeList(List<Episode> list) {
 		if (list != null) {
 			episodeList = list;
-			setListAdapter(new EpisodeListAdapter(getActivity(), episodeList));
+			setListAdapter(new EpisodeListAdapter(getActivity(), 
+					new ArrayList<Episode>(episodeList)));
 			
 			processNewEpisodes();
 		}
@@ -121,7 +122,8 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 		// TODO decide on this: episodeList.addAll(list.subList(0, list.size() > 100 ? 100 : list.size() - 1));
 		episodeList.addAll(list);
 		Collections.sort(episodeList);
-		setListAdapter(new EpisodeListAdapter(getActivity(), episodeList, true));
+		setListAdapter(new EpisodeListAdapter(getActivity(), 
+				new ArrayList<Episode>(episodeList), true));
 		
 		processNewEpisodes();
 	}

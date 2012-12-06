@@ -154,9 +154,9 @@ public class Podcast implements Comparable<Podcast> {
 	}
 
 	/**
-	 * Find and return all episodes for this podcast. Will never return null
-	 * but an empty list when encountering problems. Set the RSS file before
-	 * expecting any results. 
+	 * Find and return all episodes for this podcast. Will never return 
+	 * <code>null</code> but an empty list when encountering problems.
+	 * Set the RSS file before expecting any results. 
 	 * @return The list of episodes as listed in the feed.
 	 * @see parse
 	 */
