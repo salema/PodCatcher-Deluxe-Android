@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.PodcastListAdapter;
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
@@ -61,62 +62,63 @@ import android.widget.ListView;
 public class PodcastListFragment extends PodcatcherListFragment implements OnAddPodcastListener, 
 	OnShowSuggestionsListener, OnLoadPodcastListener, OnLoadPodcastLogoListener, OnLoadPodcastListListener {
 	
-	/** The activity we are in (listens to user selection) */ 
-    private OnSelectPodcastListener selectedListener;
-    /** The activity we are in (listens to loading events) */ 
-    private OnLoadPodcastListener loadListener;
-    
-    /** The context mode listener */
-    private PodcastListContextListener contextListener = new PodcastListContextListener(this);
-    
 	/** The list of podcasts we know */
 	private List<Podcast> podcastList = new ArrayList<Podcast>();
 	/** The list of podcast suggestions */
 	private List<Podcast> podcastSuggestions;
 	/** Currently selected podcast */
 	private Podcast currentPodcast;
-	/** Flag indicating whether we are in select all mode */
-	private boolean selectAll = false;
 	
-	/** The list adapter */
-	private PodcastListAdapter adapter;
+	/** The activity we are in (listens to user selection) */ 
+    private OnSelectPodcastListener selectedListener;
+    /** The activity we are in (listens to loading events) */ 
+    private OnLoadPodcastListener loadListener;
+    
+    /** The current podcast load task */
+	private LoadPodcastTask loadPodcastTask;
+	/** The current podcast logo load task */
+	private LoadPodcastLogoTask loadPodcastLogoTask;
+	
+    /** The context mode listener */
+    private PodcastListContextListener contextListener = new PodcastListContextListener(this);
+    
 	/** Remove podcast menu item */
 	private MenuItem selectAllMenuItem;
 	/** Remove podcast menu item */
 	private MenuItem removeMenuItem;
-	/** The empty view */
-	private View emptyView;
 	/** The logo view */
 	private ImageView logoView;
-	
-	/** The current podcast load task */
-	private LoadPodcastTask loadPodcastTask;
-	/** The current podcast logo load task */
-	private LoadPodcastLogoTask loadPodcastLogoTask;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setRetainInstance(true);
 		setHasOptionsMenu(true);
 		
 		// Load podcasts from stored file
 		LoadPodcastListTask loadListTask = new LoadPodcastListTask(getActivity(), this);
 		loadListTask.execute((Void)null);
+		
+		this.showProgress = true;
 	}
 	
 	@Override
 	public void onPodcastListLoaded(List<Podcast> podcastList) {
 		this.podcastList = podcastList;
+		this.showProgress = false;
 		
-		//if (Podcatcher.isInDebugMode(getActivity())) putSamplePodcasts(podcastList);
+		if (Podcatcher.isInDebugMode(getActivity())) Podcatcher.putSamplePodcasts(podcastList);
 		
 		// Maps the podcast list items to the list UI
-		adapter = new PodcastListAdapter(getActivity(), podcastList);
-		setListAdapter(adapter);
-		// If podcast list is empty we show dialog on startup
-		if (getListAdapter().isEmpty()) showAddPodcastDialog();
+		setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
+		
+		// Only update the UI if it has been inflated
+		if (progressView != null) {
+			updateUiElementVisibility();
+			
+			// If podcast list is empty we show dialog on startup
+			if (podcastList.isEmpty()) showAddPodcastDialog();
+		}
 	}
 	
 	@Override
@@ -128,21 +130,18 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 	
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		
 		// Load all podcasts? TODO Make this a preference
 		//for (Podcast podcast : podcastList)
 		//	if (podcast.needsReload()) new LoadPodcastTask(this).execute(podcast);
 		
-		emptyView = view.findViewById(android.R.id.empty);
 		logoView = (ImageView) view.findViewById(R.id.podcast_image);
 		
 		getListView().setMultiChoiceModeListener(contextListener);
 		getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
-		
-		updateUiElementVisibility();
-		
+				
 		if (currentPodcast != null) logoView.setImageBitmap(currentPodcast.getLogo());
+		
+		super.onViewCreated(view, savedInstanceState);
 	}
 	
 	@Override
@@ -240,15 +239,13 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 	}
 
 	private void selectPodcast(Podcast selectedPodcast) {
+		super.selectItem(podcastList.indexOf(selectedPodcast));
 		this.currentPodcast = selectedPodcast;
-		this.selectAll = false;
-			
+					
 		// Stop loading previous tasks
 		cancelCurrentLoadTasks();
 					
 		// Prepare UI
-		adapter.setSelectedPosition(podcastList.indexOf(selectedPodcast));
-		scrollListView(podcastList.indexOf(selectedPodcast));
 		if (currentPodcast.getLogo() == null)
 			logoView.setImageResource(R.drawable.default_podcast_logo);
 		else logoView.setImageBitmap(currentPodcast.getLogo());
@@ -269,9 +266,10 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		else onPodcastLoaded(selectedPodcast);
 	}
 
-	private void selectAll() {
+	@Override
+	public void selectAll() {
+		super.selectAll();
 		this.currentPodcast = null;
-		this.selectAll = true;
 		
 		// Stop loading previous tasks
 		cancelCurrentLoadTasks();
@@ -281,9 +279,8 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		else Log.d(getClass().getSimpleName(), "All podcasts selected, but no listener attached");
 				
 		// Prepare UI
-		adapter.setSelectAll();
-		updateUiElementVisibility();
 		logoView.setImageResource(R.drawable.default_podcast_logo);
+		updateUiElementVisibility();
 				
 		// Load all podcasts
 		for (Podcast podcast : podcastList)
@@ -293,6 +290,15 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 				new LoadPodcastTask(this).execute(podcast);
 			}
 			else onPodcastLoaded(podcast);
+	}
+	
+	@Override
+	public void selectNone() {
+		super.selectNone();
+		
+		logoView.setImageResource(R.drawable.default_podcast_logo);
+		
+		if (selectedListener != null) selectedListener.onNoPodcastSelected();
 	}
 	
 	private void cancelCurrentLoadTasks() {
@@ -324,12 +330,8 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 			}
 		
 		// Update UI (current podcast was deleted)
-		if (!selectAll && currentPodcast == null) {
-			adapter.setSelectNone();
-			logoView.setImageResource(R.drawable.default_podcast_logo);
-						
-			if (selectedListener != null) selectedListener.onNoPodcastSelected();
-		} // Current podcast has new position
+		if (!selectAll && currentPodcast == null) selectNone();	
+		// Current podcast has new position
 		else if (!selectAll) adapter.setSelectedPosition(podcastList.indexOf(currentPodcast));
 		
 		updateUiElementVisibility();
@@ -368,6 +370,7 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 			loadListener.onPodcastLoaded(podcast);
 		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
 		
+		// Load logo if this is the podcast we are waiting for
 		if (podcast.equals(currentPodcast)) {
 			loadPodcastTask = null;
 			
@@ -410,13 +413,14 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 	@Override
 	public void onPodcastLogoLoadFailed(Podcast podcast) { /* Just stick with the default logo... */ }
 	
-	private void updateUiElementVisibility() {
-		emptyView.setVisibility(podcastList.isEmpty() ? VISIBLE : GONE);
-		getListView().setVisibility(podcastList.isEmpty() ? GONE : VISIBLE);
+	@Override
+	protected void updateUiElementVisibility() {
+		super.updateUiElementVisibility();
 		logoView.setVisibility(selectAll ? GONE : VISIBLE);
 		
 		// This might be called before the menu is inflated...
-		if (selectAllMenuItem != null) selectAllMenuItem.setVisible(! selectAll);
+		if (selectAllMenuItem != null) selectAllMenuItem
+			.setVisible(podcastList != null && podcastList.size() > 1 && !selectAll);
 		if (removeMenuItem != null) removeMenuItem.setVisible(currentPodcast != null);
 	}
 }

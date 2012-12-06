@@ -37,7 +37,7 @@
         android:textColor="@color/text_secondary"
         android:textSize="@dimen/font_size_small" />
     <net.alliknow.podcatcher.views.ProgressView
-        android:id="@+id/episode_list_progress"
+        android:id="@+id/progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />

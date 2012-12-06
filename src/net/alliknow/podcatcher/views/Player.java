@@ -76,7 +76,7 @@ public class Player extends LinearLayout {
 			}
 		});
 	}
-
+	
 	@Override
 	public void setOnClickListener(OnClickListener listener) {
 		button.setOnClickListener(listener);
@@ -95,6 +95,11 @@ public class Player extends LinearLayout {
 		seekBar.setOnSeekBarChangeListener(listener);
 	}
 	
+	/**
+	 * Set a call-back to be alerted if the user wants to return to the 
+	 * currently playing episode.
+	 * @param listener The listener.
+	 */
 	public void setOnReturnToPlayingEpisodeListener(OnReturnToPlayingEpisodeListener listener) {
 		this.returnListener = listener;
 	}

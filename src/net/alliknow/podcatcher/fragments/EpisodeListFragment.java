@@ -16,9 +16,6 @@
  */
 package net.alliknow.podcatcher.fragments;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,16 +23,13 @@ import java.util.List;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
-import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.types.Episode;
-import net.alliknow.podcatcher.views.ProgressView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
 
 /**
  * List fragment to display the list of episodes as part of the
@@ -48,44 +42,14 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 	/** The selected episode */
 	private Episode selectedEpisode;
 	
-	/** The list view */
-	private ListView listView;
-	/** The empty view */
-	private TextView emptyView;
-	/** The progress bar */
-	private ProgressView progressView;
-	
-	/** Caches for internal state */
-	private boolean showProgress = false;
-	private boolean showLoadFailed = false;
-	
 	/** The activity we are in (listens to user selection) */ 
     private OnSelectEpisodeListener selectedListener;
     
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-    	super.onCreate(savedInstanceState);
-    	
-    	setRetainInstance(true);
-    }
-    
-	@Override
+   	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
 		return inflater.inflate(R.layout.episode_list, container, false);
-	}
-	
-	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		
-		listView = getListView();
-		emptyView = (TextView) getView().findViewById(android.R.id.empty);
-		progressView = (ProgressView) getView().findViewById(R.id.episode_list_progress);
-		
-		if (showProgress) clearAndSpin();
-		else if (showLoadFailed) showLoadFailed();
 	}
 	
 	@Override
@@ -103,10 +67,8 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 		this.selectedEpisode = selectedEpisode;
 		
 		// Episode is available
-		if (episodeList != null && episodeList.contains(selectedEpisode)) {
-			((EpisodeListAdapter) getListAdapter()).setSelectedPosition(episodeList.indexOf(selectedEpisode));
-			scrollListView(episodeList.indexOf(selectedEpisode));
-		}
+		if (episodeList != null && episodeList.contains(selectedEpisode)) 
+			selectItem(episodeList.indexOf(selectedEpisode));
 		// Episode is not in the current episode list
 		else selectNone();
 	}
@@ -173,68 +135,27 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 	 */
 	public void selectNone() {
 		selectedEpisode = null;
-		if (getListAdapter() != null && !showProgress)
-			((EpisodeListAdapter) getListAdapter()).setSelectNone();
+		super.selectNone();
 	}
 	
 	/**
 	 * Reset the UI to initial state.
 	 */
+	@Override
 	public void reset() {
-		showProgress = false;
-		showLoadFailed = false;
-		
 		selectedEpisode = null;
 		episodeList = null;
-		setListAdapter(null);
 		
 		emptyView.setText(R.string.no_podcast_selected);
-		updateUiElementVisibility();
-	}
-
-	/**
-	 * Show the UI to be working.
-	 */
-	public void clearAndSpin() {
-		showProgress = true;
-		showLoadFailed = false;
-		
-		progressView.reset();
-		updateUiElementVisibility();
-	}
-	
-	/**
-	 * Update UI with load progress.
-	 * @param progress Amount loaded or flag from load task.
-	 */
-	public void showProgress(Progress progress) {
-		progressView.publishProgress(progress);
+		super.reset();
 	}
 
 	/**
 	 * Show error view.
 	 */
+	@Override
 	public void showLoadFailed() {
-		showProgress = false;
-		showLoadFailed = true;
-		
 		progressView.showError(R.string.error_podcast_load);
-		updateUiElementVisibility();
-	}
-	
-	private void updateUiElementVisibility() {
-		// Progress view is displaying information
-		if (showProgress || showLoadFailed) {
-			emptyView.setVisibility(GONE);
-			listView.setVisibility(GONE);
-			progressView.setVisibility(VISIBLE);
-		} // Show the episode list or the empty view
-		else {
-			boolean episodesAvailable = episodeList != null && !episodeList.isEmpty();
-			
-			emptyView.setVisibility(episodesAvailable ? GONE : VISIBLE);
-			listView.setVisibility(episodesAvailable ? VISIBLE : GONE);
-			progressView.setVisibility(GONE);
-		}
+		super.showLoadFailed();
 	}
 }

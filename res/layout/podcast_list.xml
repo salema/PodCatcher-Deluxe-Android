@@ -36,6 +36,11 @@
         android:text="@string/no_podcast"
         android:textColor="@color/text_secondary"
         android:textSize="@dimen/font_size_small" />
+    <net.alliknow.podcatcher.views.ProgressView
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
