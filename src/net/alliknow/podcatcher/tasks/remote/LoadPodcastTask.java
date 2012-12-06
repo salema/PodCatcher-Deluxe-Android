@@ -111,4 +111,9 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 		else if (listener != null) listener.onPodcastLoaded(podcast);
 		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
 	}
+	
+	@Override
+	protected void onCancelled(Void result) {
+		if (podcast != null) podcast.setLoading(false);
+	}
 }

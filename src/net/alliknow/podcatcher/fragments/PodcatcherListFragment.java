@@ -65,7 +65,7 @@ public abstract class PodcatcherListFragment extends ListFragment {
 		emptyView = (TextView) getView().findViewById(android.R.id.empty);
 		progressView = (ProgressView) getView().findViewById(R.id.progress);
 		
-		if (showProgress) clearAndSpin();
+		if (showProgress) resetAndSpin();
 		else if (showLoadFailed) showLoadFailed();
 		else updateUiElementVisibility();
 	}
@@ -107,12 +107,8 @@ public abstract class PodcatcherListFragment extends ListFragment {
 	/**
 	 * Reset the UI to initial state.
 	 */
-	public void reset() {
-		showProgress = false;
-		showLoadFailed = false;
-		selectAll = false;
-		
-		setListAdapter(null);
+	public void resetUi() {
+		reset();
 		
 		updateUiElementVisibility();
 	}
@@ -120,13 +116,26 @@ public abstract class PodcatcherListFragment extends ListFragment {
 	/**
 	 * Show the UI to be working.
 	 */
-	public void clearAndSpin() {
+	public void resetAndSpin() {
+		reset();
 		showProgress = true;
+				
+		updateUiElementVisibility();
+	}
+	
+	/**
+	 * Reset the fragments state. Sub-classes should extends this.
+	 * Will be called on public reset.
+	 * @see resetUi
+	 * @see resetAndSpin
+	 */
+	protected void reset() {
+		showProgress = false;
 		showLoadFailed = false;
 		selectAll = false;
 		
+		setListAdapter(null);
 		progressView.reset();
-		updateUiElementVisibility();
 	}
 	
 	/**

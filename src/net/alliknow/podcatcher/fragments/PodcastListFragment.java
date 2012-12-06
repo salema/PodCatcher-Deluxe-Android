@@ -22,7 +22,9 @@ import static net.alliknow.podcatcher.Podcatcher.isOnFastConnection;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
@@ -74,10 +76,10 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
     /** The activity we are in (listens to loading events) */ 
     private OnLoadPodcastListener loadListener;
     
-    /** The current podcast load task */
-	private LoadPodcastTask loadPodcastTask;
-	/** The current podcast logo load task */
-	private LoadPodcastLogoTask loadPodcastLogoTask;
+    /** The current podcast load tasks */
+	private Map<Podcast, LoadPodcastTask> loadPodcastTasks = new HashMap<Podcast, LoadPodcastTask>();
+	/** The current podcast logo load taska */
+	private Map<Podcast, LoadPodcastLogoTask> loadPodcastLogoTasks = new HashMap<Podcast, LoadPodcastLogoTask>();;
 	
     /** The context mode listener */
     private PodcastListContextListener contextListener = new PodcastListContextListener(this);
@@ -243,7 +245,7 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		this.currentPodcast = selectedPodcast;
 					
 		// Stop loading previous tasks
-		cancelCurrentLoadTasks();
+		cancelAllLoadTasks();
 					
 		// Prepare UI
 		if (currentPodcast.getLogo() == null)
@@ -258,9 +260,10 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		// Load if too old, otherwise just use previously loaded version
 		if (selectedPodcast.needsReload()) {
 			// Download podcast RSS feed (async)
-			loadPodcastTask = new LoadPodcastTask(this);
+			LoadPodcastTask loadPodcastTask = new LoadPodcastTask(this);
 			loadPodcastTask.preventZippedTransfer(isOnFastConnection(getActivity()));
 			loadPodcastTask.execute(selectedPodcast);
+			loadPodcastTasks.put(selectedPodcast, loadPodcastTask);
 		}
 		// Use buffered content
 		else onPodcastLoaded(selectedPodcast);
@@ -272,7 +275,7 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		this.currentPodcast = null;
 		
 		// Stop loading previous tasks
-		cancelCurrentLoadTasks();
+		cancelAllLoadTasks();
 		
 		// Alert parent activity
 		if (selectedListener != null) selectedListener.onAllPodcastsSelected();
@@ -287,7 +290,10 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 			if (podcast.needsReload()) {
 				// Otherwise progress will not show
 				podcast.resetEpisodes();
-				new LoadPodcastTask(this).execute(podcast);
+				
+				LoadPodcastTask loadPodcastTask = new LoadPodcastTask(this);
+				loadPodcastTask.execute(podcast);
+				loadPodcastTasks.put(podcast, loadPodcastTask);
 			}
 			else onPodcastLoaded(podcast);
 	}
@@ -301,9 +307,12 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		if (selectedListener != null) selectedListener.onNoPodcastSelected();
 	}
 	
-	private void cancelCurrentLoadTasks() {
-		if (loadPodcastTask != null) loadPodcastTask.cancel(true);
-		if (loadPodcastLogoTask != null) loadPodcastLogoTask.cancel(true);
+	private void cancelAllLoadTasks() {
+		for (LoadPodcastTask task : loadPodcastTasks.values()) task.cancel(true);
+		for (LoadPodcastLogoTask task : loadPodcastLogoTasks.values()) task.cancel(true);
+		
+		loadPodcastTasks.clear();
+		loadPodcastLogoTasks.clear();
 	}
 	
 	/**
@@ -362,6 +371,8 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 	 */
 	@Override
 	public void onPodcastLoaded(Podcast podcast) {
+		// Remove from the map of loading task
+		loadPodcastTasks.remove(podcast);
 		// This will display the number of episodes
 		adapter.notifyDataSetChanged();
 		
@@ -372,27 +383,26 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		
 		// Load logo if this is the podcast we are waiting for
 		if (podcast.equals(currentPodcast)) {
-			loadPodcastTask = null;
-			
 			// Download podcast logo if not cached
 			if (currentPodcast.getLogo() == null) {
-				loadPodcastLogoTask = new LoadPodcastLogoTask(this, logoView.getWidth(), logoView.getHeight());
+				LoadPodcastLogoTask loadPodcastLogoTask = new LoadPodcastLogoTask(this, logoView.getWidth(), logoView.getHeight());
 				loadPodcastLogoTask.setLoadLimit(isOnFastConnection(getActivity()) ? 
 						LoadPodcastLogoTask.MAX_LOGO_SIZE_WIFI : LoadPodcastLogoTask.MAX_LOGO_SIZE_MOBILE);
 				loadPodcastLogoTask.execute(podcast);
+				loadPodcastLogoTasks.put(podcast, loadPodcastLogoTask);
 			}
 		}
 	}
 	
 	@Override
 	public void onPodcastLoadFailed(Podcast podcast) {
+		// Remove from the map of loading task
+		loadPodcastTasks.remove(podcast);
 		// This will update the list view
 		adapter.notifyDataSetChanged();
 				
 		// Only react if the podcast failed to load that we are actually waiting for
 		if (podcast.equals(currentPodcast)) {
-			loadPodcastTask = null;
-			
 			if (loadListener != null) loadListener.onPodcastLoadFailed(podcast);
 			else Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
 		}
@@ -402,7 +412,7 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 	
 	@Override
 	public void onPodcastLogoLoaded(Podcast podcast, Bitmap logo) {
-		loadPodcastLogoTask = null;
+		loadPodcastLogoTasks.remove(podcast);
 		
 		// Cache the result in podcast object
 		if (podcast.equals(currentPodcast))	currentPodcast.setLogo(logo);
@@ -411,7 +421,9 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 	}
 	
 	@Override
-	public void onPodcastLogoLoadFailed(Podcast podcast) { /* Just stick with the default logo... */ }
+	public void onPodcastLogoLoadFailed(Podcast podcast) { 
+		loadPodcastLogoTasks.remove(podcast);
+	}
 	
 	@Override
 	protected void updateUiElementVisibility() {

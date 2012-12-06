@@ -128,7 +128,7 @@ public class PodcastActivity extends Activity implements
 	public void onPodcastSelected(Podcast podcast) {
 		multiplePodcastsMode = false;
 		
-		episodeListFragment.clearAndSpin();
+		episodeListFragment.resetAndSpin();
 		updateDivider();
 	}
 	
@@ -136,8 +136,7 @@ public class PodcastActivity extends Activity implements
 	public void onAllPodcastsSelected() {
 		multiplePodcastsMode = true;
 		
-		episodeListFragment.reset();
-		episodeListFragment.clearAndSpin();
+		episodeListFragment.resetAndSpin();
 		updateDivider();
 	}
 	
@@ -145,7 +144,7 @@ public class PodcastActivity extends Activity implements
 	public void onNoPodcastSelected() {
 		multiplePodcastsMode = false;
 		
-		episodeListFragment.reset();
+		episodeListFragment.resetUi();
 		updateDivider();
 	}
 	
@@ -159,9 +158,8 @@ public class PodcastActivity extends Activity implements
 		if (multiplePodcastsMode) episodeListFragment.addEpisodeList(podcast.getEpisodes());
 		else episodeListFragment.setEpisodeList(podcast.getEpisodes());
 
-//		TODO This might actually be a nice thing to have...?!		
-//		if (episodeListFragment.getEpisodeList().contains(episodeFragment.getEpisode()))
-//			episodeListFragment.selectEpisode(episodeFragment.getEpisode());
+		if (episodeListFragment.containsEpisode(episodeFragment.getEpisode()))
+			episodeListFragment.selectEpisode(episodeFragment.getEpisode());
 		
 		updateDivider();
 	}

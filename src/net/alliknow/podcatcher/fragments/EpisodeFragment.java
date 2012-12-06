@@ -240,6 +240,13 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener,
 		}
 	}
 	
+	/**
+	 * @return The episode currently displayed (may be <code>null</code>).
+	 */
+	public Episode getEpisode() {
+		return episode;
+	}
+	
 	@Override
 	public void onReturnToPlayingEpisode() {
 		if (service != null && service.getCurrentEpisode() != null && selectedListener != null) 

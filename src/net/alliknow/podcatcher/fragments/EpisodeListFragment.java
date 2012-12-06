@@ -89,6 +89,15 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 	}
 	
 	/**
+	 * Check whether the fragments list contains given episode.
+	 * @param episode Episode to check for.
+	 * @return <code>true</code> iff the current episode list contains given episode.
+	 */
+	public boolean containsEpisode(Episode episode) {
+		return episodeList != null && episodeList.contains(episode);
+	}
+	
+	/**
 	 * Set the episode list to display and update the UI accordingly.
 	 * @param list List of episodes to display.
 	 */
@@ -138,11 +147,8 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 		super.selectNone();
 	}
 	
-	/**
-	 * Reset the UI to initial state.
-	 */
 	@Override
-	public void reset() {
+	protected void reset() {
 		selectedEpisode = null;
 		episodeList = null;
 		
