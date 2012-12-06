@@ -208,15 +208,6 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener,
 	}
 	
 	/**
-	 * Set whether the episode play service should show its
-	 * notification and run in the foreground. 
-	 * @param show The flag.
-	 */
-	public void showServiceNotification(boolean show) {
-		service.runInForeground(show);
-	}
-	
-	/**
 	 * @param listener Listener to be alerted on episode selection.
 	 */
 	public void setEpisodeSelectedListener(OnSelectEpisodeListener listener) {

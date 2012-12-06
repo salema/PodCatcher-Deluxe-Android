@@ -160,6 +160,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 				player.setDataSource(episode.getMediaUrl().toExternalForm());
 				player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
 				wifiLock.acquire();
+				putForeground();
 				
 				player.prepareAsync(); // might take long! (for buffering, etc)
 			} catch (Exception e) {
@@ -329,21 +330,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 		}
 		
 		return true;
-	}
-	
-	/**
-	 * Whether to run this service in the foreground
-	 * where it is less likely to be killed on low memory.
-	 * Setting this service to the foreground will make a 
-	 * notification appear. Hence, this will only work if
-	 * an episode is set for this service. 
-	 * @param foreground <code>true</code> iff you want this service
-	 * to run in the foreground, <code>false</code> will remove the
-	 * notification and get the service back to the background.
-	 */
-	public void runInForeground(boolean foreground) {
-		if (foreground && currentEpisode != null) putForeground();
-		else if (! foreground) stopForeground(true);
 	}
 		
 	/**
