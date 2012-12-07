@@ -24,6 +24,7 @@ import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.views.ProgressView;
 import android.app.ListFragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -183,7 +184,14 @@ public abstract class PodcatcherListFragment extends ListFragment {
 	 * @param position Position to scroll to.
 	 */
 	protected void scrollListView(int position) {
-		if (getListView().getFirstVisiblePosition() > position || getListView().getLastVisiblePosition() < position)
+		// This happens at times and we do not want to react in this case.
+		if (getListView().getFirstVisiblePosition() < 0 ||
+				getListView().getLastVisiblePosition() < 0) 
+			Log.d(getClass().getSimpleName(), "Scroll list failed (first: " + 
+				getListView().getFirstVisiblePosition() + ", last: " +
+				getListView().getLastVisiblePosition() + ")!");
+		// Scroll if necessary
+		else if (getListView().getFirstVisiblePosition() > position || getListView().getLastVisiblePosition() < position)
 				getListView().smoothScrollToPosition(position);
 	}
 }

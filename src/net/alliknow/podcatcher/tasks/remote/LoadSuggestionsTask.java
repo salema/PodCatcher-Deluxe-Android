@@ -16,6 +16,7 @@
  */
 package net.alliknow.podcatcher.tasks.remote;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -130,7 +131,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
 	 * @return The podcast suggestion or <code>null</code> if any problem occurs.
 	 */
 	private Podcast createSuggestion(JSONObject json) {
-		Podcast suggestion;
+		Podcast suggestion = null;
 		
 		try {
 			suggestion = new Podcast(json.getString(JSON.TITLE), new URL(json.getString(JSON.URL)));
@@ -138,7 +139,14 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
 			suggestion.setLanguage(Language.valueOf(json.getString(JSON.LANGUAGE).toUpperCase(Locale.US).trim()));
 			suggestion.setMediaType(MediaType.valueOf(json.getString(JSON.TYPE).toUpperCase(Locale.US).trim()));
 			suggestion.setGenre(Genre.valueOf(json.getString(JSON.CATEGORY).toUpperCase(Locale.US).trim()));
-		} catch (Exception e) {
+		} catch (JSONException e) {
+			Log.d(getClass().getSimpleName(), "Problem parsing JSON for suggestion: " + suggestion, e);
+			return null;
+		} catch (IllegalArgumentException e) {
+			Log.d(getClass().getSimpleName(), "Enum value missing for suggestion: " + suggestion, e);
+			return null;
+		} catch (MalformedURLException e) {
+			Log.d(getClass().getSimpleName(), "Bad URL for suggestion: " + suggestion, e);
 			return null;
 		}
 		
