@@ -24,7 +24,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import net.alliknow.podcatcher.tasks.Progress;
-
 import android.os.AsyncTask;
 
 /**
@@ -103,7 +102,9 @@ public abstract class LoadRemoteFileTask<Params, Result> extends AsyncTask<Param
 				if (isCancelled()) return null;
 				
 				totalBytes += bytesRead;
-				if (loadLimit >= 0 && totalBytes > loadLimit) return null;
+				if (loadLimit >= 0 && totalBytes > loadLimit) throw 
+					new IOException("Load limit exceeded (read " + totalBytes + 
+							" bytes, limit was " + loadLimit + " bytes)!");
 				
 				result.write(buffer, 0, bytesRead);
 							  
