@@ -53,6 +53,9 @@ public class PodcastActivity extends Activity implements
 	
 	/** Flag to indicate whether we are in multiple podcast mode */ 
 	private boolean multiplePodcastsMode = false;
+	/** Key used to save the current setting for 
+	 * <code>multiplePodcastsMode</code> in bundle */
+	private static final String MODE_KEY = "MODE_KEY";
 	
 	/** The podcatcher website URL */
 	private static final String PODCATCHER_WEBSITE = "http://www.podcatcher-deluxe.com";
@@ -72,6 +75,14 @@ public class PodcastActivity extends Activity implements
 		episodeFragment = (EpisodeFragment) getFragmentManager().findFragmentById(R.id.episode);
 		
 		updateDivider();
+	}
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		
+		if (savedInstanceState != null)
+			multiplePodcastsMode = savedInstanceState.getBoolean(MODE_KEY);
 	}
 	
 	@Override
@@ -105,6 +116,13 @@ public class PodcastActivity extends Activity implements
 	        default:
 	            return super.onOptionsItemSelected(item);
 		}
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		
+		outState.putBoolean(MODE_KEY, multiplePodcastsMode);
 	}
 	
 	@Override
