@@ -17,7 +17,6 @@
 package net.alliknow.podcatcher.fragments;
 
 import static android.view.View.VISIBLE;
-import static net.alliknow.podcatcher.Podcatcher.isInDebugMode;
 import static net.alliknow.podcatcher.Podcatcher.isOnFastConnection;
 
 import java.net.MalformedURLException;
@@ -90,8 +89,7 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 				}
 			}
 		});
-		if (isInDebugMode(getActivity()))
-			podcastUrlEditText.setText("richeisen.libsyn.com/rss");
+		//if (isInDebugMode(getActivity()))	podcastUrlEditText.setText("richeisen.libsyn.com/rss");
 		
 		progressView = (HorizontalProgressView) view.findViewById(R.id.add_podcast_progress);
 		
