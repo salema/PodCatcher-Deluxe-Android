@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.PodcastListAdapter;
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
@@ -108,7 +109,7 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		this.podcastList = podcastList;
 		this.showProgress = false;
 		
-		//if (Podcatcher.isInDebugMode(getActivity())) Podcatcher.putSamplePodcasts(podcastList);
+		if (Podcatcher.isInDebugMode(getActivity())) Podcatcher.putSamplePodcasts(podcastList);
 		
 		// Maps the podcast list items to the list UI
 		setListAdapter(new PodcastListAdapter(getActivity(), podcastList));

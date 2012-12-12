@@ -22,6 +22,7 @@ import static net.alliknow.podcatcher.Podcatcher.isOnFastConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
@@ -89,7 +90,8 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 				}
 			}
 		});
-		//if (isInDebugMode(getActivity()))	podcastUrlEditText.setText("richeisen.libsyn.com/rss");
+		
+		if (Podcatcher.isInDebugMode(getActivity())) podcastUrlEditText.setText("richeisen.libsyn.com/rss");
 		
 		progressView = (HorizontalProgressView) view.findViewById(R.id.add_podcast_progress);
 		
