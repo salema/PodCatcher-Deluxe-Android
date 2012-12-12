@@ -47,7 +47,8 @@
         android:paddingLeft="3dp"
         android:paddingRight="3dp"
         android:scaleType="fitXY"
-        android:src="@android:drawable/divider_horizontal_bright" />
+        android:src="@android:drawable/divider_horizontal_bright"
+        android:contentDescription="@string/divider" />
     <ImageView
         android:id="@+id/podcast_image"
         android:layout_width="match_parent"

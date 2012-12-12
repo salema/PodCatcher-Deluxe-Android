@@ -70,7 +70,8 @@
         android:paddingLeft="2dp"
         android:paddingRight="2dp"
         android:scaleType="fitXY"
-        android:src="@android:drawable/divider_horizontal_bright" />
+        android:src="@android:drawable/divider_horizontal_bright"
+        android:contentDescription="@string/divider" />
     <TextView
         android:id="@+id/suggestion_send"
         android:layout_width="match_parent"

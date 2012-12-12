@@ -19,6 +19,7 @@
 -->
 <resources>
     <string name="app_name">Simple Podcatcher</string>
+    <string name="divider" translatable="false">Divider</string>
     <string name="about">About Simple Podcatcher</string>
     <string name="help">Help</string>
     <string name="connect">Connect</string>

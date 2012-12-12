@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/episode_view_padding"
-        android:textSize="@dimen/font_size_default"
+        android:textSize="@dimen/font_size_small"
         android:visibility="gone" />
     <ImageView
         android:id="@+id/episode_divider"
@@ -52,7 +52,8 @@
         android:paddingTop="2dp"
         android:scaleType="fitXY"
         android:src="@android:drawable/divider_horizontal_bright"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:contentDescription="@string/divider" />
     <WebView
         android:id="@+id/episode_description"
         android:layout_width="match_parent"
