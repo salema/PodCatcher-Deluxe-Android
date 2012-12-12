@@ -18,6 +18,6 @@
  */
 -->
 <resources>
-    <dimen name="episode_view_padding">3dp</dimen>
-    <dimen name="player_right_padding">3dp</dimen>
+    <dimen name="episode_view_padding">2dp</dimen>
+    <dimen name="player_right_padding">2dp</dimen>
 </resources>
