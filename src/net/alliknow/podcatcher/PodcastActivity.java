@@ -28,9 +28,11 @@ import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.types.Episode;
 import net.alliknow.podcatcher.types.Podcast;
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,13 +44,6 @@ import android.view.View;
  */
 public class PodcastActivity extends Activity implements 
 	OnSelectPodcastListener, OnLoadPodcastListener, OnSelectEpisodeListener {
-	
-	/** The podcast list fragment */
-	private PodcastListFragment podcastListFragment;
-	/** The episode list fragment */
-	private EpisodeListFragment episodeListFragment;
-	/** The episode details fragment */
-	private EpisodeFragment episodeFragment;
 	
 	/** Flag to indicate whether we are in multiple podcast mode */ 
 	private boolean multiplePodcastsMode = false;
@@ -65,14 +60,10 @@ public class PodcastActivity extends Activity implements
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    
-	    //if (Podcatcher.isInDebugMode(this)) StrictMode.enableDefaults();
+	    if (Podcatcher.isInDebugMode(this)) StrictMode.enableDefaults();
 	    
 	    setContentView(R.layout.main);
 	    
-	    podcastListFragment = (PodcastListFragment) getFragmentManager().findFragmentById(R.id.podcast_list);
-		episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
-		episodeFragment = (EpisodeFragment) getFragmentManager().findFragmentById(R.id.episode);
-		
 		updateDivider();
 	}
 	
@@ -82,16 +73,6 @@ public class PodcastActivity extends Activity implements
 		
 		if (savedInstanceState != null)
 			multiplePodcastsMode = savedInstanceState.getBoolean(MODE_KEY);
-	}
-	
-	@Override
-	protected void onStart() {
-		super.onStart();
-		
-		podcastListFragment.setPodcastSelectedListener(this);
-		podcastListFragment.setPodcastLoadedListener(this);
-		episodeListFragment.setEpisodeSelectedListener(this);
-		episodeFragment.setEpisodeSelectedListener(this);
 	}
 	
 	@Override
@@ -123,28 +104,24 @@ public class PodcastActivity extends Activity implements
 		
 		outState.putBoolean(MODE_KEY, multiplePodcastsMode);
 	}
-	
-	@Override
-	protected void onStop() {
-		super.onStop();
-		
-		podcastListFragment.setPodcastSelectedListener(null);
-		podcastListFragment.setPodcastLoadedListener(null);
-		episodeListFragment.setEpisodeSelectedListener(null);
-		episodeFragment.setEpisodeSelectedListener(null);
-	}
 
 	@Override
 	public void onPodcastSelected(Podcast podcast) {
 		multiplePodcastsMode = false;
 		
-		episodeListFragment.resetAndSpin();
+		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
+		
+		if (episodeListFragment != null) episodeListFragment.resetAndSpin();
+		// else make podcastListFragment show inline progress
+		
 		updateDivider();
 	}
 	
 	@Override
 	public void onAllPodcastsSelected() {
 		multiplePodcastsMode = true;
+		
+		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
 		
 		episodeListFragment.resetAndSpin();
 		updateDivider();
@@ -154,28 +131,46 @@ public class PodcastActivity extends Activity implements
 	public void onNoPodcastSelected() {
 		multiplePodcastsMode = false;
 		
+		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
+		
 		episodeListFragment.resetUi();
 		updateDivider();
 	}
 	
 	@Override
 	public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
-		episodeListFragment.showProgress(progress);
+		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
+		
+		if (episodeListFragment != null) episodeListFragment.showProgress(progress);
 	}
 	
 	@Override
 	public void onPodcastLoaded(Podcast podcast) {
-		if (multiplePodcastsMode) episodeListFragment.addEpisodeList(podcast.getEpisodes());
-		else episodeListFragment.setEpisodeList(podcast.getEpisodes());
-
-		if (episodeListFragment.containsEpisode(episodeFragment.getEpisode()))
-			episodeListFragment.selectEpisode(episodeFragment.getEpisode());
+//		if (multiplePodcastsMode) episodeListFragment.addEpisodeList(podcast.getEpisodes());
+//		else episodeListFragment.setEpisodeList(podcast.getEpisodes());
+		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
 		
-		updateDivider();
+		if (episodeListFragment == null){
+			episodeListFragment = new EpisodeListFragment();
+			
+			FragmentTransaction transaction = getFragmentManager().beginTransaction();
+			transaction.replace(R.id.podcast_list, episodeListFragment);
+			transaction.addToBackStack(null);
+			transaction.commit();
+		}
+		
+		episodeListFragment.setEpisodeList(podcast.getEpisodes());
+
+//		if (episodeListFragment.containsEpisode(episodeFragment.getEpisode()))
+//			episodeListFragment.selectEpisode(episodeFragment.getEpisode());
+//		
+//		updateDivider();
 	}
 	
 	@Override
 	public void onPodcastLoadFailed(Podcast failedPodcast) {
+		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
+		
 		// Reset the episode list so the old one would not reappear of config changes
 		episodeListFragment.setEpisodeList(new ArrayList<Episode>());
 		episodeListFragment.showLoadFailed();
@@ -183,6 +178,9 @@ public class PodcastActivity extends Activity implements
 
 	@Override
 	public void onEpisodeSelected(Episode selectedEpisode) {
+		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
+		EpisodeFragment episodeFragment = (EpisodeFragment) getFragmentManager().findFragmentById(R.id.episode);
+		
 		episodeListFragment.selectEpisode(selectedEpisode);
 		episodeFragment.setEpisode(selectedEpisode);
 		
@@ -191,14 +189,21 @@ public class PodcastActivity extends Activity implements
 	
 	@Override
 	public void onNoEpisodeSelected() {
+		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
+		
 		episodeListFragment.selectNone();
 		
 		updateDivider();
 	}
 	
 	private void updateDivider() {
-		colorDivider(R.id.divider_first, podcastListFragment.isPodcastSelected());
-		colorDivider(R.id.divider_second, episodeListFragment.isEpisodeSelected());
+		PodcastListFragment podcastListFragment = (PodcastListFragment) getFragmentManager().findFragmentById(R.id.podcast_list);
+		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
+		
+		if (podcastListFragment != null) 
+			colorDivider(R.id.divider_first, podcastListFragment.isPodcastSelected());
+		if (episodeListFragment != null)
+			colorDivider(R.id.divider_second, episodeListFragment.isEpisodeSelected());
 	}
 	
 	private void colorDivider(int dividerViewId, boolean color) {

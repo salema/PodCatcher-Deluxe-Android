@@ -17,42 +17,12 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal" >
-        <fragment
-            android:id="@+id/podcast_list"
-            android:name="net.alliknow.podcatcher.fragments.PodcastListFragment"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2" />
-        <View
-            android:id="@+id/divider_first"
-            android:layout_width="@dimen/divider_width"
-            android:layout_height="match_parent"
-            android:background="@color/divider_off" />
-        <fragment
-            android:id="@+id/episode_list"
-            android:name="net.alliknow.podcatcher.fragments.EpisodeListFragment"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3" />
-    </LinearLayout>
-    <View
-        android:id="@+id/divider_second"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/divider_width"
-        android:background="@color/divider_off" />
+    android:layout_height="match_parent">
     <fragment
-        android:id="@+id/episode"
-        android:name="net.alliknow.podcatcher.fragments.EpisodeFragment"
+        android:id="@+id/podcast_list"
+        android:name="net.alliknow.podcatcher.fragments.PodcastListFragment"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-</LinearLayout>
+        android:layout_height="match_parent" />
+</FrameLayout>

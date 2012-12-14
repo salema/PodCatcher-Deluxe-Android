@@ -52,13 +52,6 @@ public abstract class PodcatcherListFragment extends ListFragment {
 	protected boolean selectAll = false;
 	
 	@Override
-    public void onCreate(Bundle savedInstanceState) {
-    	super.onCreate(savedInstanceState);
-    	
-    	setRetainInstance(true);
-    }
-	
-	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		

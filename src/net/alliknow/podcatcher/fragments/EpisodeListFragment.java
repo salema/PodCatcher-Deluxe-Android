@@ -51,6 +51,19 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 		
 		return inflater.inflate(R.layout.episode_list, container, false);
 	}
+   	
+   	@Override
+   	public void onStart() {
+   		super.onStart();
+   		
+   		// Show episode list if available
+   		if (episodeList != null) {
+			setListAdapter(new EpisodeListAdapter(getActivity(), 
+					new ArrayList<Episode>(episodeList)));
+			
+			processNewEpisodes();
+		}
+   	}
 	
 	@Override
 	public void onListItemClick(ListView list, View view, int position, long id) {
@@ -104,10 +117,14 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 	public void setEpisodeList(List<Episode> list) {
 		if (list != null) {
 			episodeList = list;
-			setListAdapter(new EpisodeListAdapter(getActivity(), 
-					new ArrayList<Episode>(episodeList)));
 			
-			processNewEpisodes();
+			// This might be called before we are actually attached
+			if (getActivity() != null) {
+				setListAdapter(new EpisodeListAdapter(getActivity(), 
+						new ArrayList<Episode>(episodeList)));
+				
+				processNewEpisodes();
+			}
 		}
 	}
 	

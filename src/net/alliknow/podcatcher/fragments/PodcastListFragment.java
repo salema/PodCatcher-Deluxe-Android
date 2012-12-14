@@ -18,15 +18,9 @@ package net.alliknow.podcatcher.fragments;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static net.alliknow.podcatcher.Podcatcher.isOnFastConnection;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.PodcastListAdapter;
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
@@ -36,13 +30,10 @@ import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.listeners.OnShowSuggestionsListener;
 import net.alliknow.podcatcher.listeners.PodcastListContextListener;
-import net.alliknow.podcatcher.tasks.LoadPodcastListTask;
 import net.alliknow.podcatcher.tasks.Progress;
-import net.alliknow.podcatcher.tasks.StorePodcastListTask;
-import net.alliknow.podcatcher.tasks.remote.LoadPodcastLogoTask;
-import net.alliknow.podcatcher.tasks.remote.LoadPodcastTask;
 import net.alliknow.podcatcher.types.Podcast;
 import net.alliknow.podcatcher.views.HorizontalProgressView;
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -63,11 +54,9 @@ import android.widget.ListView;
  */
 public class PodcastListFragment extends PodcatcherListFragment implements OnAddPodcastListener, 
 	OnShowSuggestionsListener, OnLoadPodcastListener, OnLoadPodcastLogoListener, OnLoadPodcastListListener {
-	
-	/** The list of podcasts we know */
-	private List<Podcast> podcastList = new ArrayList<Podcast>();
-	/** The list of podcast suggestions */
-	private List<Podcast> podcastSuggestions;
+
+	/** The data fragment (retained) */
+	private PodcastDataFragment dataFragment;
 	/** Currently selected podcast */
 	private Podcast currentPodcast;
 	
@@ -75,11 +64,6 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
     private OnSelectPodcastListener selectedListener;
     /** The activity we are in (listens to loading events) */ 
     private OnLoadPodcastListener loadListener;
-    
-    /** The current podcast load tasks */
-	private Map<Podcast, LoadPodcastTask> loadPodcastTasks = new HashMap<Podcast, LoadPodcastTask>();
-	/** The current podcast logo load taska */
-	private Map<Podcast, LoadPodcastLogoTask> loadPodcastLogoTasks = new HashMap<Podcast, LoadPodcastLogoTask>();;
 	
     /** The context mode listener */
     private PodcastListContextListener contextListener = new PodcastListContextListener(this);
@@ -92,24 +76,48 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 	private ImageView logoView;
 	
 	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		
+		selectedListener = (OnSelectPodcastListener) activity;
+		loadListener =(OnLoadPodcastListener) activity;
+	}
+	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setHasOptionsMenu(true);
-		
-		// Load podcasts from stored file
-		LoadPodcastListTask loadListTask = new LoadPodcastListTask(getActivity(), this);
-		loadListTask.execute((Void)null);
-		
+				
 		this.showProgress = true;
 	}
 	
 	@Override
-	public void onPodcastListLoaded(List<Podcast> podcastList) {
-		this.podcastList = podcastList;
-		this.showProgress = false;
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
 		
-		if (Podcatcher.isInDebugMode(getActivity())) Podcatcher.putSamplePodcasts(podcastList);
+		return inflater.inflate(R.layout.podcast_list, container, false);
+	}
+	
+	@Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // Check to see if we have retained the data fragment.
+        dataFragment = (PodcastDataFragment) getFragmentManager().findFragmentByTag("data");
+
+        // If not retained (or first time running), we need to create it.
+        if (dataFragment == null) {
+        	dataFragment = new PodcastDataFragment();
+            // Tell it who it is working with.
+            dataFragment.setTargetFragment(this, 0);
+            getFragmentManager().beginTransaction().add(dataFragment, "data").commit();
+        } else onPodcastListLoaded(dataFragment.getPodcastList());
+    }
+	
+	@Override
+	public void onPodcastListLoaded(List<Podcast> podcastList) {
+		this.showProgress = false;
 		
 		// Maps the podcast list items to the list UI
 		setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
@@ -121,13 +129,6 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 			// If podcast list is empty we show dialog on startup
 			if (podcastList.isEmpty()) showAddPodcastDialog();
 		}
-	}
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		
-		return inflater.inflate(R.layout.podcast_list, container, false);
 	}
 	
 	@Override
@@ -168,7 +169,7 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 	    		
 	    		return true;
 	    	case R.id.podcast_remove_menuitem:
-	    		getListView().setItemChecked(podcastList.indexOf(currentPodcast), true);
+	    		getListView().setItemChecked(dataFragment.indexOf(currentPodcast), true);
 	    		
 	    		return true;
 	    	default:
@@ -178,8 +179,16 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 	
 	@Override
 	public void onListItemClick(ListView list, View view, int position, long id) {
-		Podcast selectedPodcast = podcastList.get(position);
+		Podcast selectedPodcast = dataFragment.get(position);
 		selectPodcast(selectedPodcast);
+	}
+	
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		
+		selectedListener = null;
+		loadListener = null;
 	}
 	
 	/**
@@ -198,13 +207,9 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 	
 	@Override
 	public void addPodcast(Podcast newPodcast) {
-		if (! podcastList.contains(newPodcast)) {
-			podcastList.add(newPodcast);
-			Collections.sort(podcastList);			
-			new StorePodcastListTask(getActivity()).execute(podcastList);
-		} else Log.d(getClass().getSimpleName(), "Podcast \"" + newPodcast.getName() + "\" is already in list.");
+		dataFragment.addPodcast(newPodcast);
 		
-		selectPodcast(newPodcast);
+		// Only if in tablet mode... selectPodcast(newPodcast);
 	}
 	
 	/**
@@ -212,7 +217,7 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 	 */
 	@Override
 	public List<Podcast> getPodcastList() {
-		return this.podcastList;
+		return dataFragment.getPodcastList();
 	}
 	
 	private void showAddPodcastDialog() {
@@ -232,20 +237,20 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 	
 	@Override
 	public List<Podcast> getPodcastSuggestions() {
-		return podcastSuggestions;
+		return dataFragment.getPodcastSuggestions();
 	}
 
 	@Override
 	public void setPodcastSuggestions(List<Podcast> podcastSuggestions) {
-		this.podcastSuggestions = podcastSuggestions;
+		dataFragment.setPodcastSuggestions(podcastSuggestions);
 	}
 
 	private void selectPodcast(Podcast selectedPodcast) {
-		super.selectItem(podcastList.indexOf(selectedPodcast));
+		super.selectItem(dataFragment.indexOf(selectedPodcast));
 		this.currentPodcast = selectedPodcast;
 					
 		// Stop loading previous tasks
-		cancelAllLoadTasks();
+		dataFragment.cancelAllLoadTasks();
 					
 		// Prepare UI
 		if (currentPodcast.getLogo() == null)
@@ -257,14 +262,8 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		if (selectedListener != null) selectedListener.onPodcastSelected(currentPodcast);
 		else Log.d(getClass().getSimpleName(), "Podcast selected, but no listener attached");
 		
-		// Load if too old, otherwise just use previously loaded version
-		if (selectedPodcast.needsReload()) {
-			// Download podcast RSS feed (async)
-			LoadPodcastTask loadPodcastTask = new LoadPodcastTask(this);
-			loadPodcastTask.preventZippedTransfer(isOnFastConnection(getActivity()));
-			loadPodcastTask.execute(selectedPodcast);
-			loadPodcastTasks.put(selectedPodcast, loadPodcastTask);
-		}
+		// Load if too old, load podcast
+		if (currentPodcast.needsReload()) dataFragment.load(currentPodcast);
 		// Use buffered content
 		else onPodcastLoaded(selectedPodcast);
 	}
@@ -275,7 +274,7 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		this.currentPodcast = null;
 		
 		// Stop loading previous tasks
-		cancelAllLoadTasks();
+		dataFragment.cancelAllLoadTasks();
 		
 		// Alert parent activity
 		if (selectedListener != null) selectedListener.onAllPodcastsSelected();
@@ -286,16 +285,13 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		updateUiElementVisibility();
 				
 		// Load all podcasts
-		for (Podcast podcast : podcastList)
+		for (Podcast podcast : dataFragment.getPodcastList())
 			if (podcast.needsReload()) {
 				// Otherwise progress will not show
 				podcast.resetEpisodes();
 				
-				LoadPodcastTask loadPodcastTask = new LoadPodcastTask(this);
-				loadPodcastTask.execute(podcast);
-				loadPodcastTasks.put(podcast, loadPodcastTask);
-			}
-			else onPodcastLoaded(podcast);
+				dataFragment.load(podcast);
+			} else onPodcastLoaded(podcast);
 	}
 	
 	@Override
@@ -305,15 +301,7 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		logoView.setImageResource(R.drawable.default_podcast_logo);
 		
 		if (selectedListener != null) selectedListener.onNoPodcastSelected();
-	}
-	
-	private void cancelAllLoadTasks() {
-		for (LoadPodcastTask task : loadPodcastTasks.values()) task.cancel(true);
-		for (LoadPodcastLogoTask task : loadPodcastLogoTasks.values()) task.cancel(true);
-		
-		loadPodcastTasks.clear();
-		loadPodcastLogoTasks.clear();
-	}
+	}	
 	
 	/**
 	 * Check whether there is a podcast currently selected in the list.
@@ -330,23 +318,20 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
 		
 		// Remove checked podcasts
-		for (int index = podcastList.size() - 1; index >= 0; index--)
+		for (int index = dataFragment.size() - 1; index >= 0; index--)
 			if (checkedItems.get(index)) {
 				// Reset internal variable if necessary
-				if (podcastList.get(index).equals(currentPodcast)) currentPodcast = null;
+				if (dataFragment.get(index).equals(currentPodcast)) currentPodcast = null;
 				// Remove podcast from list
-				podcastList.remove(index);
+				dataFragment.remove(index);
 			}
 		
 		// Update UI (current podcast was deleted)
 		if (!selectAll && currentPodcast == null) selectNone();	
 		// Current podcast has new position
-		else if (!selectAll) adapter.setSelectedPosition(podcastList.indexOf(currentPodcast));
+		else if (!selectAll) adapter.setSelectedPosition(dataFragment.indexOf(currentPodcast));
 		
 		updateUiElementVisibility();
-		
-		// Store changed list
-		new StorePodcastListTask(getActivity()).execute(podcastList);
 	}
 	
 	@Override
@@ -357,7 +342,7 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		// To prevent this if we are not ready to handle progress update
 		// e.g. on app termination
 		if (isAdded()) {
-			View listItemView = getListView().getChildAt(podcastList.indexOf(podcast));
+			View listItemView = getListView().getChildAt(dataFragment.indexOf(podcast));
 			if (listItemView != null)
 				((HorizontalProgressView)listItemView.findViewById(R.id.list_item_progress))
 					.publishProgress(progress);
@@ -371,33 +356,21 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 	 */
 	@Override
 	public void onPodcastLoaded(Podcast podcast) {
-		// Remove from the map of loading task
-		loadPodcastTasks.remove(podcast);
 		// This will display the number of episodes
 		adapter.notifyDataSetChanged();
 		
 		// Only show if it had not been deleted meanwhile
-		if (loadListener != null && podcastList.contains(podcast))
+		if (loadListener != null && dataFragment.contains(podcast))
 			loadListener.onPodcastLoaded(podcast);
 		else Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
 		
-		// Load logo if this is the podcast we are waiting for
-		if (podcast.equals(currentPodcast)) {
-			// Download podcast logo if not cached
-			if (currentPodcast.getLogo() == null) {
-				LoadPodcastLogoTask loadPodcastLogoTask = new LoadPodcastLogoTask(this, logoView.getWidth(), logoView.getHeight());
-				loadPodcastLogoTask.setLoadLimit(isOnFastConnection(getActivity()) ? 
-						LoadPodcastLogoTask.MAX_LOGO_SIZE_WIFI : LoadPodcastLogoTask.MAX_LOGO_SIZE_MOBILE);
-				loadPodcastLogoTask.execute(podcast);
-				loadPodcastLogoTasks.put(podcast, loadPodcastLogoTask);
-			}
-		}
+		// Load logo if this is the podcast we are waiting for and not cached
+		if (podcast.equals(currentPodcast) && currentPodcast.getLogo() == null) 
+			dataFragment.loadLogo(currentPodcast, logoView.getWidth(), logoView.getHeight());
 	}
 	
 	@Override
 	public void onPodcastLoadFailed(Podcast podcast) {
-		// Remove from the map of loading task
-		loadPodcastTasks.remove(podcast);
 		// This will update the list view
 		adapter.notifyDataSetChanged();
 				
@@ -412,8 +385,6 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 	
 	@Override
 	public void onPodcastLogoLoaded(Podcast podcast, Bitmap logo) {
-		loadPodcastLogoTasks.remove(podcast);
-		
 		// Cache the result in podcast object
 		if (podcast.equals(currentPodcast))	currentPodcast.setLogo(logo);
 		
@@ -422,7 +393,7 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 	
 	@Override
 	public void onPodcastLogoLoadFailed(Podcast podcast) { 
-		loadPodcastLogoTasks.remove(podcast);
+		// pass
 	}
 	
 	@Override
@@ -432,7 +403,7 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		
 		// This might be called before the menu is inflated...
 		if (selectAllMenuItem != null) selectAllMenuItem
-			.setVisible(podcastList != null && podcastList.size() > 1 && !selectAll);
+			.setVisible(dataFragment.getPodcastList() != null && dataFragment.size() > 1 && !selectAll);
 		if (removeMenuItem != null) removeMenuItem.setVisible(currentPodcast != null);
 	}
 }
