@@ -65,6 +65,13 @@ public abstract class PodcatcherListFragment extends ListFragment {
 	}
 	
 	@Override
+	public void onResume() {
+		super.onResume();
+		
+		updateUiElementVisibility();
+	}
+	
+	@Override
 	public void setListAdapter(ListAdapter adapter) {
 		this.adapter = (PodcatcherBaseListAdapter) adapter;
 		
@@ -106,14 +113,17 @@ public abstract class PodcatcherListFragment extends ListFragment {
 		
 		updateUiElementVisibility();
 	}
-
+	
 	/**
 	 * Show the UI to be working.
 	 */
 	public void resetAndSpin() {
-		reset();
+		// Reset only if we are actually visible
+		if (isResumed()) reset();
+		// Show progress should be set to make UI switch
+		// to show progress as soon as it is created
 		showProgress = true;
-				
+		
 		updateUiElementVisibility();
 	}
 	
@@ -137,7 +147,8 @@ public abstract class PodcatcherListFragment extends ListFragment {
 	 * @param progress Amount loaded or flag from load task.
 	 */
 	public void showProgress(Progress progress) {
-		progressView.publishProgress(progress);
+		// Only show this if we are visible
+		if (isResumed()) progressView.publishProgress(progress);
 	}
 
 	/**
@@ -157,18 +168,20 @@ public abstract class PodcatcherListFragment extends ListFragment {
 	 * extend this.
 	 */
 	protected void updateUiElementVisibility() {
-		// Progress view is displaying information
-		if (showProgress || showLoadFailed) {
-			emptyView.setVisibility(GONE);
-			listView.setVisibility(GONE);
-			progressView.setVisibility(VISIBLE);
-		} // Show the episode list or the empty view
-		else {
-			boolean itemsAvailable = getListAdapter() != null && !getListAdapter().isEmpty();
-			
-			emptyView.setVisibility(itemsAvailable ? GONE : VISIBLE);
-			listView.setVisibility(itemsAvailable ? VISIBLE : GONE);
-			progressView.setVisibility(GONE);
+		if (isResumed()) {
+			// Progress view is displaying information
+			if (showProgress || showLoadFailed) {
+				emptyView.setVisibility(GONE);
+				listView.setVisibility(GONE);
+				progressView.setVisibility(VISIBLE);
+			} // Show the episode list or the empty view
+			else {
+				boolean itemsAvailable = getListAdapter() != null && !getListAdapter().isEmpty();
+				
+				emptyView.setVisibility(itemsAvailable ? GONE : VISIBLE);
+				listView.setVisibility(itemsAvailable ? VISIBLE : GONE);
+				progressView.setVisibility(GONE);
+			}
 		}
 	}
 	 

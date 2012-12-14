@@ -149,9 +149,6 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener,
 				return true;
 			}
 		});
-		
-		// Restore from configuration change 
-		if (episode != null) setEpisode(episode);
 	}
 	
 	@Override
@@ -159,7 +156,6 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener,
 		inflater.inflate(R.menu.episode, menu);
 		
 		loadMenuItem = menu.findItem(R.id.episode_load_menuitem);
-		updateUiElementVisibility();
 	}
 	
 	@Override
@@ -172,7 +168,17 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener,
     	Intent intent = new Intent(getActivity(), PlayEpisodeService.class);
     	getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);  
 	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
 		
+		// Restore from configuration change 
+		if (episode != null) setEpisode(episode);
+		
+		updateUiElementVisibility();
+	}
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -222,12 +228,15 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener,
 		if (selectedEpisode != null) {
 			this.episode = selectedEpisode;
 			
-			episodeTitleView.setText(episode.getName());
-			podcastTitleView.setText(episode.getPodcastName());
-			episodeDetailView.loadDataWithBaseURL(null, episode.getDescription(), "text/html", "utf-8", null);
-			
-			updateUiElementVisibility();
-			playerView.update(service, episode);
+			// Only update the UI if we are actually showing
+			if (isResumed()) {
+				episodeTitleView.setText(episode.getName());
+				podcastTitleView.setText(episode.getPodcastName());
+				episodeDetailView.loadDataWithBaseURL(null, episode.getDescription(), "text/html", "utf-8", null);
+				
+				updateUiElementVisibility();
+				playerView.update(service, episode);
+			}
 		}
 	}
 	
@@ -339,17 +348,16 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener,
 	}
 	
 	private void updateUiElementVisibility() {
-		emptyView.setVisibility(episode == null ? VISIBLE : GONE);
-		
-		episodeTitleView.setVisibility(episode == null ? GONE : VISIBLE);
-		podcastTitleView.setVisibility(episode == null ? GONE : VISIBLE);
-		dividerView.setVisibility(episode == null ? GONE : VISIBLE);
-		episodeDetailView.setVisibility(episode == null ? GONE : VISIBLE);
-		
-		// This might be called before the menu is inflated...
-		if (loadMenuItem != null) {		
-			loadMenuItem.setVisible(episode != null && service != null);
+		if (isResumed()) {
+			emptyView.setVisibility(episode == null ? VISIBLE : GONE);
+				
+			episodeTitleView.setVisibility(episode == null ? GONE : VISIBLE);
+			podcastTitleView.setVisibility(episode == null ? GONE : VISIBLE);
+			dividerView.setVisibility(episode == null ? GONE : VISIBLE);
+			episodeDetailView.setVisibility(episode == null ? GONE : VISIBLE);
 			
+			loadMenuItem.setVisible(episode != null && service != null);
+				
 			if (loadMenuItem.isVisible()) {
 				loadMenuItem.setTitle(service.isWorkingWith(episode) ? R.string.stop : R.string.play );
 				loadMenuItem.setIcon(service.isWorkingWith(episode) ? R.drawable.ic_media_stop : R.drawable.ic_media_play);

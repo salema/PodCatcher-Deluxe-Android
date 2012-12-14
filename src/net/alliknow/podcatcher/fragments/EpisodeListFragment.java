@@ -24,6 +24,7 @@ import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.types.Episode;
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,6 +45,13 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 	
 	/** The activity we are in (listens to user selection) */ 
     private OnSelectEpisodeListener selectedListener;
+    
+    @Override
+    public void onAttach(Activity activity) {
+    	super.onAttach(activity);
+    	
+    	selectedListener = (OnSelectEpisodeListener) activity;
+    }
     
    	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,6 +77,13 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 	public void onListItemClick(ListView list, View view, int position, long id) {
 		if (selectedListener != null) selectedListener.onEpisodeSelected(episodeList.get(position));
 		else Log.d(getClass().getSimpleName(), "Episode selected, but no listener attached");
+	}
+	
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		
+		selectedListener = null;
 	}
 	
 	/**
@@ -116,6 +131,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 	 */
 	public void setEpisodeList(List<Episode> list) {
 		if (list != null) {
+			showProgress = false;
 			episodeList = list;
 			
 			// This might be called before we are actually attached

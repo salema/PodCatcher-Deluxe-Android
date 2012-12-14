@@ -56,6 +56,11 @@ public class PodcastActivity extends Activity implements
 	/** The podcatcher help website URL */
 	private static final String PODCATCHER_HELPSITE = "http://www.podcatcher-deluxe.com/help";
 	
+	/** The (current) episode list fragment, may not be available (i.e. <code>null</code>) */
+	private EpisodeListFragment episodeListFragment;
+	/** The (current) episode  fragment, may not be available (i.e. <code>null</code>) */
+	private EpisodeFragment episodeFragment;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
@@ -63,7 +68,6 @@ public class PodcastActivity extends Activity implements
 	    if (Podcatcher.isInDebugMode(this)) StrictMode.enableDefaults();
 	    
 	    setContentView(R.layout.main);
-	    
 		updateDivider();
 	}
 	
@@ -109,10 +113,20 @@ public class PodcastActivity extends Activity implements
 	public void onPodcastSelected(Podcast podcast) {
 		multiplePodcastsMode = false;
 		
-		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
+		episodeListFragment = (EpisodeListFragment) getFragmentManager()
+				.findFragmentByTag(getResources().getString(R.string.episode_list_fragment_tag));
 		
-		if (episodeListFragment != null) episodeListFragment.resetAndSpin();
-		// else make podcastListFragment show inline progress
+		if (episodeListFragment == null) episodeListFragment = new EpisodeListFragment();
+			
+		if (! episodeListFragment.isVisible()) {
+			FragmentTransaction transaction = getFragmentManager().beginTransaction();
+			transaction.replace(R.id.podcast_list, episodeListFragment,
+					getResources().getString(R.string.episode_list_fragment_tag));
+			transaction.addToBackStack(null);
+			transaction.commit();
+		}
+		
+		episodeListFragment.resetAndSpin();
 		
 		updateDivider();
 	}
@@ -139,8 +153,6 @@ public class PodcastActivity extends Activity implements
 	
 	@Override
 	public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
-		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
-		
 		if (episodeListFragment != null) episodeListFragment.showProgress(progress);
 	}
 	
@@ -148,18 +160,7 @@ public class PodcastActivity extends Activity implements
 	public void onPodcastLoaded(Podcast podcast) {
 //		if (multiplePodcastsMode) episodeListFragment.addEpisodeList(podcast.getEpisodes());
 //		else episodeListFragment.setEpisodeList(podcast.getEpisodes());
-		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
-		
-		if (episodeListFragment == null){
-			episodeListFragment = new EpisodeListFragment();
-			
-			FragmentTransaction transaction = getFragmentManager().beginTransaction();
-			transaction.replace(R.id.podcast_list, episodeListFragment);
-			transaction.addToBackStack(null);
-			transaction.commit();
-		}
-		
-		episodeListFragment.setEpisodeList(podcast.getEpisodes());
+		if (episodeListFragment != null) episodeListFragment.setEpisodeList(podcast.getEpisodes());
 
 //		if (episodeListFragment.containsEpisode(episodeFragment.getEpisode()))
 //			episodeListFragment.selectEpisode(episodeFragment.getEpisode());
@@ -178,10 +179,22 @@ public class PodcastActivity extends Activity implements
 
 	@Override
 	public void onEpisodeSelected(Episode selectedEpisode) {
-		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
-		EpisodeFragment episodeFragment = (EpisodeFragment) getFragmentManager().findFragmentById(R.id.episode);
+		// Make sure selection matches in list fragment		
+		if (episodeListFragment != null) episodeListFragment.selectEpisode(selectedEpisode);
 		
-		episodeListFragment.selectEpisode(selectedEpisode);
+		episodeFragment = (EpisodeFragment) getFragmentManager()
+				.findFragmentByTag(getResources().getString(R.string.episode_fragment_tag));
+		
+		if (episodeFragment == null){
+			episodeFragment = new EpisodeFragment();
+			
+			FragmentTransaction transaction = getFragmentManager().beginTransaction();
+			transaction.replace(R.id.podcast_list, episodeFragment,
+					getResources().getString(R.string.episode_fragment_tag));
+			transaction.addToBackStack(null);
+			transaction.commit();
+		}
+		
 		episodeFragment.setEpisode(selectedEpisode);
 		
 		updateDivider();
@@ -189,16 +202,16 @@ public class PodcastActivity extends Activity implements
 	
 	@Override
 	public void onNoEpisodeSelected() {
-		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
-		
-		episodeListFragment.selectNone();
+		if (episodeListFragment != null) episodeListFragment.selectNone();
 		
 		updateDivider();
 	}
 	
 	private void updateDivider() {
-		PodcastListFragment podcastListFragment = (PodcastListFragment) getFragmentManager().findFragmentById(R.id.podcast_list);
-		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
+		PodcastListFragment podcastListFragment = (PodcastListFragment) getFragmentManager()
+				.findFragmentByTag(getResources().getString(R.string.podcast_list_fragment_tag));
+		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager()
+				.findFragmentByTag(getResources().getString(R.string.episode_list_fragment_tag));
 		
 		if (podcastListFragment != null) 
 			colorDivider(R.id.divider_first, podcastListFragment.isPodcastSelected());

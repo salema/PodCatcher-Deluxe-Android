@@ -341,7 +341,7 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		
 		// To prevent this if we are not ready to handle progress update
 		// e.g. on app termination
-		if (isAdded()) {
+		if (isResumed()) {
 			View listItemView = getListView().getChildAt(dataFragment.indexOf(podcast));
 			if (listItemView != null)
 				((HorizontalProgressView)listItemView.findViewById(R.id.list_item_progress))
