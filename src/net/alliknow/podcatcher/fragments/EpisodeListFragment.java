@@ -187,7 +187,9 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 		selectedEpisode = null;
 		episodeList = null;
 		
-		emptyView.setText(R.string.no_podcast_selected);
+		// We can only set the text, if view is available
+		if (isResumed()) emptyView.setText(R.string.no_podcast_selected);
+		
 		super.reset();
 	}
 

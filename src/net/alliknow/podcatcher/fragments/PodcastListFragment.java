@@ -55,6 +55,8 @@ import android.widget.ListView;
 public class PodcastListFragment extends PodcatcherListFragment implements OnAddPodcastListener, 
 	OnShowSuggestionsListener, OnLoadPodcastListener, OnLoadPodcastLogoListener, OnLoadPodcastListListener {
 
+	/** Fragment tag to find our date fragment by */
+	private static final String DATA_FRAGMENT_TAG = "dataFragment";
 	/** The data fragment (retained) */
 	private PodcastDataFragment dataFragment;
 	/** Currently selected podcast */
@@ -79,6 +81,7 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		
+		// We need this to work...
 		selectedListener = (OnSelectPodcastListener) activity;
 		loadListener =(OnLoadPodcastListener) activity;
 	}
@@ -88,8 +91,6 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		super.onCreate(savedInstanceState);
 
 		setHasOptionsMenu(true);
-				
-		this.showProgress = true;
 	}
 	
 	@Override
@@ -104,14 +105,16 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
         super.onActivityCreated(savedInstanceState);
 
         // Check to see if we have retained the data fragment.
-        dataFragment = (PodcastDataFragment) getFragmentManager().findFragmentByTag("data");
+        dataFragment = (PodcastDataFragment) getFragmentManager().findFragmentByTag(DATA_FRAGMENT_TAG);
 
         // If not retained (or first time running), we need to create it.
         if (dataFragment == null) {
         	dataFragment = new PodcastDataFragment();
             // Tell it who it is working with.
             dataFragment.setTargetFragment(this, 0);
-            getFragmentManager().beginTransaction().add(dataFragment, "data").commit();
+            getFragmentManager().beginTransaction().add(dataFragment, DATA_FRAGMENT_TAG).commit();
+            // Make the UI show to be working once it is up
+            this.showProgress = true;
         } else onPodcastListLoaded(dataFragment.getPodcastList());
     }
 	
@@ -123,7 +126,7 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
 		
 		// Only update the UI if it has been inflated
-		if (progressView != null) {
+		if (isResumed()) {
 			updateUiElementVisibility();
 			
 			// If podcast list is empty we show dialog on startup
@@ -142,7 +145,7 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		getListView().setMultiChoiceModeListener(contextListener);
 		getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
 				
-		if (currentPodcast != null) logoView.setImageBitmap(currentPodcast.getLogo());
+		//if (currentPodcast != null) logoView.setImageBitmap(currentPodcast.getLogo());
 		
 		super.onViewCreated(view, savedInstanceState);
 	}
@@ -153,8 +156,6 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		
 		removeMenuItem = (MenuItem) menu.findItem(R.id.podcast_remove_menuitem);
 		selectAllMenuItem = (MenuItem) menu.findItem(R.id.podcast_select_all_menuitem);
-		
-		updateUiElementVisibility();
 	}
 
 	@Override
@@ -191,30 +192,16 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		loadListener = null;
 	}
 	
-	/**
-	 * @param listener Listener to be alerted on podcast selection.
-	 */
-	public void setPodcastSelectedListener(OnSelectPodcastListener listener) {
-		this.selectedListener = listener;
-	}
-
-	/**
-	 * @param listener Listener to be alerted on podcast load completion.
-	 */
-	public void setPodcastLoadedListener(OnLoadPodcastListener listener) {
-		this.loadListener = listener;
-	}
-	
 	@Override
 	public void addPodcast(Podcast newPodcast) {
+		// Notify data fragment
 		dataFragment.addPodcast(newPodcast);
+		// Update the list
+		setListAdapter(new PodcastListAdapter(getActivity(), dataFragment.getPodcastList()));
 		
 		// Only if in tablet mode... selectPodcast(newPodcast);
 	}
 	
-	/**
-	 * @return The list of podcast currently listed.
-	 */
 	@Override
 	public List<Podcast> getPodcastList() {
 		return dataFragment.getPodcastList();
@@ -232,7 +219,7 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		SuggestionFragment suggestionFragment = new SuggestionFragment();
 		suggestionFragment.setTargetFragment(this, 0);
 		
-		suggestionFragment.show(getFragmentManager(), "suggest_podcast");
+		suggestionFragment.show(getFragmentManager(), null);
 	}
 	
 	@Override
@@ -399,11 +386,15 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 	@Override
 	protected void updateUiElementVisibility() {
 		super.updateUiElementVisibility();
-		logoView.setVisibility(selectAll ? GONE : VISIBLE);
 		
-		// This might be called before the menu is inflated...
-		if (selectAllMenuItem != null) selectAllMenuItem
-			.setVisible(dataFragment.getPodcastList() != null && dataFragment.size() > 1 && !selectAll);
-		if (removeMenuItem != null) removeMenuItem.setVisible(currentPodcast != null);
+		if (isResumed()) {
+			logoView.setVisibility(selectAll ? GONE : VISIBLE);
+			
+			// Menu items might be late to load
+			if (selectAllMenuItem != null)
+				selectAllMenuItem.setVisible(dataFragment.getPodcastList() != null && dataFragment.size() > 1 && !selectAll);
+			if (removeMenuItem != null)
+				removeMenuItem.setVisible(currentPodcast != null);
+		}
 	}
 }

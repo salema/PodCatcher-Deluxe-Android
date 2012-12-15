@@ -356,11 +356,14 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener,
 			dividerView.setVisibility(episode == null ? GONE : VISIBLE);
 			episodeDetailView.setVisibility(episode == null ? GONE : VISIBLE);
 			
-			loadMenuItem.setVisible(episode != null && service != null);
-				
-			if (loadMenuItem.isVisible()) {
-				loadMenuItem.setTitle(service.isWorkingWith(episode) ? R.string.stop : R.string.play );
-				loadMenuItem.setIcon(service.isWorkingWith(episode) ? R.drawable.ic_media_stop : R.drawable.ic_media_play);
+			// Menu item might be late to load
+			if (loadMenuItem != null) {
+				loadMenuItem.setVisible(episode != null && service != null);
+					
+				if (loadMenuItem.isVisible()) {
+					loadMenuItem.setTitle(service.isWorkingWith(episode) ? R.string.stop : R.string.play );
+					loadMenuItem.setIcon(service.isWorkingWith(episode) ? R.drawable.ic_media_stop : R.drawable.ic_media_play);
+				}
 			}
 		}
 	}

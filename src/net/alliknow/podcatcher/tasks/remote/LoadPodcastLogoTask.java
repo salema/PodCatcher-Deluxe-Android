@@ -88,16 +88,21 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 	}
 	
 	protected Bitmap decodeAndSampleBitmap(byte[] data) {
-	    // First decode with inJustDecodeBounds=true to check dimensions
-	    final BitmapFactory.Options options = new BitmapFactory.Options();
-	    options.inJustDecodeBounds = true;
-	    BitmapFactory.decodeByteArray(data, 0, data.length, options);
-
-	    // Calculate inSampleSize
-	    options.inSampleSize = calculateInSampleSize(options);
-
-	    // Decode bitmap with inSampleSize set
-	    options.inJustDecodeBounds = false;
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+	    
+		// If requested dimensions are meaningful, calculate sample size
+		if (requestedHeight > 0 && requestedWidth > 0) {
+			// Decode with inJustDecodeBounds=true to check dimensions
+			options.inJustDecodeBounds = true;
+		    BitmapFactory.decodeByteArray(data, 0, data.length, options);
+	
+		    // Calculate inSampleSize
+		    options.inSampleSize = calculateInSampleSize(options);
+		    
+		    // Decode bitmap with inSampleSize set
+		    options.inJustDecodeBounds = false;
+		}
+		
 	    return BitmapFactory.decodeByteArray(data, 0, data.length, options);
 	}
 	

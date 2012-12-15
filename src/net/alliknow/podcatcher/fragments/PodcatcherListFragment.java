@@ -58,10 +58,6 @@ public abstract class PodcatcherListFragment extends ListFragment {
 		listView = getListView();
 		emptyView = (TextView) getView().findViewById(android.R.id.empty);
 		progressView = (ProgressView) getView().findViewById(R.id.progress);
-		
-		if (showProgress) resetAndSpin();
-		else if (showLoadFailed) showLoadFailed();
-		else updateUiElementVisibility();
 	}
 	
 	@Override
@@ -118,8 +114,7 @@ public abstract class PodcatcherListFragment extends ListFragment {
 	 * Show the UI to be working.
 	 */
 	public void resetAndSpin() {
-		// Reset only if we are actually visible
-		if (isResumed()) reset();
+		reset();
 		// Show progress should be set to make UI switch
 		// to show progress as soon as it is created
 		showProgress = true;
@@ -139,7 +134,7 @@ public abstract class PodcatcherListFragment extends ListFragment {
 		selectAll = false;
 		
 		setListAdapter(null);
-		progressView.reset();
+		if (isResumed()) progressView.reset();
 	}
 	
 	/**
