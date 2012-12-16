@@ -120,7 +120,7 @@ public class PodcastActivity extends Activity implements
 			
 		if (! episodeListFragment.isVisible()) {
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
-			transaction.replace(R.id.podcast_list, episodeListFragment,
+			transaction.replace(R.id.content, episodeListFragment,
 					getResources().getString(R.string.episode_list_fragment_tag));
 			transaction.addToBackStack(null);
 			transaction.commit();
@@ -133,11 +133,9 @@ public class PodcastActivity extends Activity implements
 	
 	@Override
 	public void onAllPodcastsSelected() {
+		onPodcastSelected(null);
+		
 		multiplePodcastsMode = true;
-		
-		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
-		
-		episodeListFragment.resetAndSpin();
 		updateDivider();
 	}
 	
@@ -145,9 +143,7 @@ public class PodcastActivity extends Activity implements
 	public void onNoPodcastSelected() {
 		multiplePodcastsMode = false;
 		
-		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
-		
-		episodeListFragment.resetUi();
+		if (episodeListFragment != null) episodeListFragment.resetUi();
 		updateDivider();
 	}
 	
@@ -158,19 +154,20 @@ public class PodcastActivity extends Activity implements
 	
 	@Override
 	public void onPodcastLoaded(Podcast podcast) {
-//		if (multiplePodcastsMode) episodeListFragment.addEpisodeList(podcast.getEpisodes());
-//		else episodeListFragment.setEpisodeList(podcast.getEpisodes());
-		if (episodeListFragment != null) episodeListFragment.setEpisodeList(podcast.getEpisodes());
+		if (multiplePodcastsMode && episodeListFragment != null) episodeListFragment.addEpisodeList(podcast.getEpisodes());
+		else if (episodeListFragment != null) episodeListFragment.setEpisodeList(podcast.getEpisodes());
 
-//		if (episodeListFragment.containsEpisode(episodeFragment.getEpisode()))
-//			episodeListFragment.selectEpisode(episodeFragment.getEpisode());
-//		
-//		updateDivider();
+		if (episodeListFragment != null && episodeFragment != null && 
+				episodeListFragment.containsEpisode(episodeFragment.getEpisode()))
+			episodeListFragment.selectEpisode(episodeFragment.getEpisode());
+		
+		updateDivider();
 	}
 	
 	@Override
 	public void onPodcastLoadFailed(Podcast failedPodcast) {
-		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
+		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager()
+				.findFragmentByTag(getResources().getString(R.string.episode_list_fragment_tag));
 		
 		// Reset the episode list so the old one would not reappear of config changes
 		episodeListFragment.setEpisodeList(new ArrayList<Episode>());
@@ -189,7 +186,7 @@ public class PodcastActivity extends Activity implements
 			episodeFragment = new EpisodeFragment();
 			
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
-			transaction.replace(R.id.podcast_list, episodeFragment,
+			transaction.replace(R.id.content, episodeFragment,
 					getResources().getString(R.string.episode_fragment_tag));
 			transaction.addToBackStack(null);
 			transaction.commit();

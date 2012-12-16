@@ -61,16 +61,11 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 	}
    	
    	@Override
-   	public void onStart() {
-   		super.onStart();
+   	public void onResume() {
+   		super.onResume();
    		
    		// Show episode list if available
-   		if (episodeList != null) {
-			setListAdapter(new EpisodeListAdapter(getActivity(), 
-					new ArrayList<Episode>(episodeList)));
-			
-			processNewEpisodes();
-		}
+   		if (episodeList != null) processNewEpisodes();
    	}
 	
 	@Override
@@ -130,48 +125,47 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 	 * @param list List of episodes to display.
 	 */
 	public void setEpisodeList(List<Episode> list) {
+		// Reset internal variables
+		if (selectedListener != null) selectedListener.onNoEpisodeSelected();
+		
 		if (list != null) {
-			showProgress = false;
 			episodeList = list;
 			
-			// This might be called before we are actually attached
-			if (getActivity() != null) {
-				setListAdapter(new EpisodeListAdapter(getActivity(), 
-						new ArrayList<Episode>(episodeList)));
-				
-				processNewEpisodes();
-			}
+			processNewEpisodes();
 		}
 	}
 	
 	/**
-	 * Add the episode list to the currenty displayed episodes
+	 * Add the episode list to the currently displayed episodes
 	 * and update the UI accordingly.
 	 * @param list List of episode to add.
 	 */
 	public void addEpisodeList(List<Episode> list) {
-		if (episodeList == null) episodeList = new ArrayList<Episode>();
+		if (episodeList == null) {
+			episodeList = new ArrayList<Episode>();
+			if (selectedListener != null) selectedListener.onNoEpisodeSelected();
+		}
 			
 		// TODO decide on this: episodeList.addAll(list.subList(0, list.size() > 100 ? 100 : list.size() - 1));
-		episodeList.addAll(list);
-		Collections.sort(episodeList);
-		setListAdapter(new EpisodeListAdapter(getActivity(), 
-				new ArrayList<Episode>(episodeList), true));
-		
-		processNewEpisodes();
+		if (list != null && list.size() > 0) { 
+			episodeList.addAll(list);
+			Collections.sort(episodeList);
+					
+			processNewEpisodes();
+		}
 	}
 	
 	private void processNewEpisodes() {
 		showProgress = false;
 		showLoadFailed = false;
 		
-		// Reset internal variables
-		selectedEpisode = null;
-		if (selectedListener != null) selectedListener.onNoEpisodeSelected();
-		
-		// Update UI 
-		if (episodeList.isEmpty()) emptyView.setText(R.string.no_episodes);
-		updateUiElementVisibility();
+		if (isResumed()) {		
+			setListAdapter(new EpisodeListAdapter(getActivity(), new ArrayList<Episode>(episodeList), selectAll));
+			
+			// Update UI
+			if (episodeList.isEmpty()) emptyView.setText(R.string.no_episodes);
+			updateUiElementVisibility();
+		}
 	}
 	
 	/**
