@@ -8,3 +8,5 @@ Check RandomMusicPlayer in Android sample and use stuff showed there
 Try layout tweaks with list item "arrows" (use RelativeLayout)
 Read up on sizes and densities again: http://developer.android.com/design/style/metrics-grids.html#48dp-rhythm
 Try to understand how list selection actually works (again!)
+Check again for memory leaks
+Do not put button into buffering state when seeking
