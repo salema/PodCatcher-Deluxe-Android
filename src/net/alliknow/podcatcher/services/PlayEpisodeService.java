@@ -27,7 +27,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
@@ -378,10 +377,11 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 			.setContentIntent(pendingIntent)
 			.setTicker(currentEpisode.getName())
 			.setSmallIcon(R.drawable.ic_stat)
-			.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.launcher))
+			//.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.launcher))
 			.setContentTitle(currentEpisode.getName())
 			.setContentText(currentEpisode.getPodcastName())
 			.setContentInfo(getResources().getString(R.string.app_name))
+			.setWhen(0)
 			.setOngoing(true).getNotification();
 			
 		startForeground(NOTIFICATION_ID, notification);
