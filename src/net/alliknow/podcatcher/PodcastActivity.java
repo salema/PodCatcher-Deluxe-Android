@@ -30,9 +30,11 @@ import net.alliknow.podcatcher.types.Podcast;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -61,6 +63,8 @@ public class PodcastActivity extends Activity implements
 	/** The (current) episode  fragment, may not be available (i.e. <code>null</code>) */
 	private EpisodeFragment episodeFragment;
 	
+	private int viewMode;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
@@ -68,7 +72,20 @@ public class PodcastActivity extends Activity implements
 	    if (Podcatcher.isInDebugMode(this)) StrictMode.enableDefaults();
 	    
 	    setContentView(R.layout.main);
+	    		
+		figureOutViewMode();
+		Log.d(getClass().getSimpleName(), "View mode detected to be: " + viewMode);
+		
+		if (viewMode == 1 && getFragmentManager().findFragmentByTag("TestA") == null)
+			getFragmentManager().beginTransaction().add(R.id.content, new EpisodeListFragment(), "TestA").commit();
+		
 		updateDivider();
+	}
+	
+	private void figureOutViewMode() {
+		if (getResources().getConfiguration().smallestScreenWidthDp >= 600) viewMode = 2;
+		else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) viewMode = 0;
+		else viewMode = 1;
 	}
 	
 	@Override
@@ -108,27 +125,26 @@ public class PodcastActivity extends Activity implements
 		
 		outState.putBoolean(MODE_KEY, multiplePodcastsMode);
 	}
-
+	
 	@Override
 	public void onPodcastSelected(Podcast podcast) {
 		multiplePodcastsMode = false;
 		
-		episodeListFragment = (EpisodeListFragment) getFragmentManager()
-				.findFragmentByTag(getResources().getString(R.string.episode_list_fragment_tag));
-		
-		if (episodeListFragment == null) episodeListFragment = new EpisodeListFragment();
-			
-		if (! episodeListFragment.isVisible()) {
-			FragmentTransaction transaction = getFragmentManager().beginTransaction();
-			transaction.replace(R.id.content, episodeListFragment,
-					getResources().getString(R.string.episode_list_fragment_tag));
-			transaction.addToBackStack(null);
-			transaction.commit();
+		if (viewMode > 1) {		
+			episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
+			episodeListFragment.resetAndSpin();
+			updateDivider();
+		} else if (viewMode > 0) {		
+			episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.content);
+			episodeListFragment.resetAndSpin();
+			updateDivider();
+		} else {
+			// Otherwise we need to launch a new activity to display the episode list
+            Intent intent = new Intent();
+            intent.setClass(this, ShowEpisodeListActivity.class);
+            //intent.putExtra("index", index);
+            startActivity(intent);
 		}
-		
-		episodeListFragment.resetAndSpin();
-		
-		updateDivider();
 	}
 	
 	@Override
@@ -149,19 +165,44 @@ public class PodcastActivity extends Activity implements
 	
 	@Override
 	public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
-		if (episodeListFragment != null) episodeListFragment.showProgress(progress);
+		if (viewMode > 1) {		
+			episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
+			episodeListFragment.showProgress(progress);
+		} else if (viewMode > 0) {		
+			episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.content);
+			episodeListFragment.showProgress(progress);
+		} else {
+			// Otherwise we need to launch a new activity to display the episode list
+            Intent intent = new Intent();
+            intent.setClass(this, ShowEpisodeListActivity.class);
+            intent.putExtra("progress", true);
+            startActivity(intent);
+		}
 	}
 	
 	@Override
 	public void onPodcastLoaded(Podcast podcast) {
-		if (multiplePodcastsMode && episodeListFragment != null) episodeListFragment.addEpisodeList(podcast.getEpisodes());
-		else if (episodeListFragment != null) episodeListFragment.setEpisodeList(podcast.getEpisodes());
+		if (viewMode > 1) {		
+			episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
 
-		if (episodeListFragment != null && episodeFragment != null && 
-				episodeListFragment.containsEpisode(episodeFragment.getEpisode()))
-			episodeListFragment.selectEpisode(episodeFragment.getEpisode());
-		
-		updateDivider();
+			if (multiplePodcastsMode) episodeListFragment.addEpisodeList(podcast.getEpisodes());
+			else episodeListFragment.setEpisodeList(podcast.getEpisodes());
+			
+			if (viewMode > 1 && episodeListFragment.containsEpisode(episodeFragment.getEpisode()))
+				//episodeListFragment.selectEpisode(episodeFragment.getEpisode());
+			
+			updateDivider();
+		} else if (viewMode > 0) {
+			episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.content);
+			
+			if (multiplePodcastsMode) episodeListFragment.addEpisodeList(podcast.getEpisodes());
+			else episodeListFragment.setEpisodeList(podcast.getEpisodes());
+		} else {
+			Intent intent = new Intent();
+            intent.setClass(this, ShowEpisodeListActivity.class);
+            intent.putExtra("select", true);
+            startActivity(intent);
+		}
 	}
 	
 	@Override
@@ -179,22 +220,25 @@ public class PodcastActivity extends Activity implements
 		// Make sure selection matches in list fragment		
 		if (episodeListFragment != null) episodeListFragment.selectEpisode(selectedEpisode);
 		
-		episodeFragment = (EpisodeFragment) getFragmentManager()
-				.findFragmentByTag(getResources().getString(R.string.episode_fragment_tag));
-		
-		if (episodeFragment == null){
-			episodeFragment = new EpisodeFragment();
-			
+		if (viewMode > 1) {
+			episodeFragment = (EpisodeFragment) getFragmentManager().findFragmentById(R.id.episode_list);
+			episodeFragment.setEpisode(selectedEpisode);
+		} else if (viewMode > 0) {
+			episodeFragment = (EpisodeFragment) getFragmentManager().findFragmentByTag("Test");
+			if (episodeFragment == null) episodeFragment = new EpisodeFragment();
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
-			transaction.replace(R.id.content, episodeFragment,
-					getResources().getString(R.string.episode_fragment_tag));
+			transaction.replace(R.id.content, episodeFragment, "Test");
 			transaction.addToBackStack(null);
 			transaction.commit();
+			episodeFragment.setEpisode(selectedEpisode);
+		} else {
+			Intent intent = new Intent();
+            intent.setClass(this, ShowEpisodeActivity.class);
+            //intent.putExtra("index", index);
+            startActivity(intent);
 		}
-		
-		episodeFragment.setEpisode(selectedEpisode);
-		
-		updateDivider();
+
+		if (viewMode > 0) updateDivider();
 	}
 	
 	@Override

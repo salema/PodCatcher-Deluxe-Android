@@ -33,7 +33,7 @@
         android:layout_height="match_parent"
         android:background="@color/divider_off" />
     <fragment
-        android:tag="@string/episode_list_fragment_tag"
+        android:id="@+id/episode_list"
         android:name="net.alliknow.podcatcher.fragments.EpisodeListFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"

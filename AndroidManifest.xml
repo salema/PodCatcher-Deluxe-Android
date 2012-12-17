@@ -39,13 +39,14 @@
         android:logo="@drawable/logo"
         android:theme="@android:style/Theme.Holo.Light.DarkActionBar" >
         <activity
-            android:name=".PodcastActivity"
-            android:launchMode="singleInstance" >
+            android:name=".PodcastActivity" android:launchMode="singleInstance" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ShowEpisodeListActivity" android:launchMode="singleInstance" />
+        <activity android:name=".ShowEpisodeActivity" android:launchMode="singleInstance" />
         <service
             android:name=".services.PlayEpisodeService"
             android:exported="false" >

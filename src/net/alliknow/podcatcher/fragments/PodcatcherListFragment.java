@@ -31,8 +31,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 /**
- * Generic list fragment subclass for podcatcher list fragments.
- * Defines some helpers.
+ * Generic list fragment sub-class for podcatcher list fragments.
+ * Defines some helpers and common functionality.
  */
 public abstract class PodcatcherListFragment extends ListFragment {
 
@@ -74,7 +74,7 @@ public abstract class PodcatcherListFragment extends ListFragment {
 		super.setListAdapter(adapter);
 	}
 	
-	public void selectItem(int position) {
+	protected void selectItem(int position) {
 		selectAll = false;
 		
 		adapter.setSelectedPosition(position);
@@ -84,7 +84,7 @@ public abstract class PodcatcherListFragment extends ListFragment {
 	/**
 	 * Select all items.
 	 */
-	public void selectAll() {
+	protected void selectAll() {
 		selectAll = true;
 		
 		if (getListAdapter() != null && !showProgress)
@@ -94,7 +94,7 @@ public abstract class PodcatcherListFragment extends ListFragment {
 	/**
 	 * Unselect selected item (if any).
 	 */
-	public void selectNone() {
+	protected void selectNone() {
 		selectAll = false;
 		
 		if (getListAdapter() != null && !showProgress)

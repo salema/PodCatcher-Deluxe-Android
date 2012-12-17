@@ -109,7 +109,6 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener,
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
     	
-    	setRetainInstance(true);
     	setHasOptionsMenu(true);
     }
 	

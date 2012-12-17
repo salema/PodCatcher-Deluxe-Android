@@ -192,6 +192,16 @@ public class PodcastListFragment extends PodcatcherListFragment implements OnAdd
 		loadListener = null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.app.Fragment#onDestroy()
+	 */
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		
+		System.out.println("Podcastlistfragment destroyed");
+	}
+	
 	@Override
 	public void addPodcast(Podcast newPodcast) {
 		// Notify data fragment
