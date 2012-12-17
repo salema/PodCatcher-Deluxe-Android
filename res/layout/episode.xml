@@ -33,6 +33,7 @@
         android:id="@+id/episode_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="28dp"
         android:paddingLeft="@dimen/episode_view_padding"
         android:textSize="@dimen/font_size_large"
         android:visibility="gone" />
@@ -40,6 +41,7 @@
         android:id="@+id/podcast_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="20dp"
         android:paddingLeft="@dimen/episode_view_padding"
         android:textSize="@dimen/font_size_small"
         android:visibility="gone" />
@@ -49,7 +51,6 @@
         android:layout_height="wrap_content"
         android:paddingLeft="2dp"
         android:paddingRight="2dp"
-        android:paddingTop="2dp"
         android:scaleType="fitXY"
         android:src="@android:drawable/divider_horizontal_bright"
         android:visibility="gone"

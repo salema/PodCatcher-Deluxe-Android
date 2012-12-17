@@ -20,15 +20,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:minHeight="@dimen/list_item"
+    android:minHeight="48dp"
     android:orientation="vertical" >
     <CheckedTextView
         android:id="@+id/list_item_title"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@drawable/list_item_background"
         android:gravity="center_vertical"
+        android:background="@drawable/list_item_background"
         android:paddingLeft="@dimen/list_item_padding"
         android:singleLine="true"
         android:textSize="@dimen/font_size_large" />
@@ -38,7 +38,6 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@drawable/list_item_background"
-        android:gravity="center_vertical"
         android:paddingLeft="@dimen/list_item_padding"
         android:singleLine="true"
         android:textSize="@dimen/font_size_small" />

@@ -49,7 +49,7 @@
         <Button
             android:id="@+id/suggestion_add_button"
             android:layout_width="0dp"
-            android:layout_height="@dimen/list_item"
+            android:layout_height="48dp"
             android:layout_margin="3dp"
             android:layout_weight="1"
             android:background="@drawable/button_green"
