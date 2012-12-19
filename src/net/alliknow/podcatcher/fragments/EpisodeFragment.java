@@ -196,7 +196,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener,
 		super.onDetach();
 		
 		// Detach from play service via this fragment's activity (prevents leaking)
-		getActivity().unbindService(connection);
+		if (service != null) getActivity().unbindService(connection);
 				
 		// Stop progress update task if existing
 		stopPlayProgressTimer();
@@ -207,7 +207,7 @@ public class EpisodeFragment extends Fragment implements PlayServiceListener,
 		super.onDestroy();
 		
 		// This would prevent strange service behavior
-		if (! service.isPlaying()) service.stopSelf();		
+		if (service != null && !service.isPlaying()) service.stopSelf();		
 		
 		playUpdateTimer.cancel();
 	}

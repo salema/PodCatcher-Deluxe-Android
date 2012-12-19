@@ -19,35 +19,24 @@ package net.alliknow.podcatcher;
 import net.alliknow.podcatcher.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.types.Episode;
-import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 
 /**
- * @author Kevin Hausmann
- *
+ * 
  */
-public class ShowEpisodeListActivity extends Activity implements OnSelectEpisodeListener {
-	private int viewMode;
+public class ShowEpisodeListActivity extends PodcatcherBaseActivity implements OnSelectEpisodeListener {
 	
-	EpisodeListFragment episodeList;
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
-	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		figureOutViewMode();
-		
-		if (viewMode > 0) {
+		// Check if we need this activity at all
+		if (viewMode != SMALL_PORTRAIT_VIEW) {
 			finish();
 		} else if (savedInstanceState == null) {
             // During initial setup, plug in the details fragment.
-            episodeList = new EpisodeListFragment();
-            // episodeList.setArguments(getIntent().getExtras());
-            getFragmentManager().beginTransaction().add(android.R.id.content, episodeList).commit();
+            getFragmentManager().beginTransaction().add(android.R.id.content, new EpisodeListFragment(), episodeListFragmentTag).commit();
             
             processIntent();
         }
@@ -62,19 +51,10 @@ public class ShowEpisodeListActivity extends Activity implements OnSelectEpisode
 	
 	private void processIntent() {
 		Intent intent = getIntent();
-		if (intent.getBooleanExtra("progress", false)) episodeList.resetAndSpin();
+		if (intent.getBooleanExtra("progress", false)) findEpisodeListFragment().resetAndSpin();
 		if (intent.getBooleanExtra("select",  false)) onEpisodeSelected(null);
 	}
 	
-	private void figureOutViewMode() {
-		if (getResources().getConfiguration().smallestScreenWidthDp >= 600) viewMode = 2;
-		else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) viewMode = 0;
-		else viewMode = 1;
-	}
-
-	/* (non-Javadoc)
-	 * @see net.alliknow.podcatcher.listeners.OnSelectEpisodeListener#onEpisodeSelected(net.alliknow.podcatcher.types.Episode)
-	 */
 	@Override
 	public void onEpisodeSelected(Episode selectedEpisode) {
 		Intent intent = new Intent();
@@ -83,12 +63,8 @@ public class ShowEpisodeListActivity extends Activity implements OnSelectEpisode
         startActivity(intent);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.alliknow.podcatcher.listeners.OnSelectEpisodeListener#onNoEpisodeSelected()
-	 */
 	@Override
 	public void onNoEpisodeSelected() {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
 	}
 }

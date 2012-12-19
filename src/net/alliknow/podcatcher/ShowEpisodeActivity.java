@@ -17,37 +17,25 @@
 package net.alliknow.podcatcher;
 
 import net.alliknow.podcatcher.fragments.EpisodeFragment;
-import android.app.Activity;
-import android.content.res.Configuration;
 import android.os.Bundle;
 
 /**
- * @author Kevin Hausmann
- *
+ * 
  */
-public class ShowEpisodeActivity extends Activity {
+public class ShowEpisodeActivity extends PodcatcherBaseActivity {
 
-	private int viewMode;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		figureOutViewMode();
-		
-		if (viewMode > 1) {
+		// Check if we need this activity at all
+		if (viewMode != SMALL_PORTRAIT_VIEW) {
 			finish();
 		} else if (savedInstanceState == null) {
             // During initial setup, plug in the details fragment.
             EpisodeFragment episode = new EpisodeFragment();
             // episodeList.setArguments(getIntent().getExtras());
-            getFragmentManager().beginTransaction().add(android.R.id.content, episode).commit();
+            getFragmentManager().beginTransaction().add(android.R.id.content, episode, episodeFragmentTag).commit();
         }
-	}
-	
-	private void figureOutViewMode() {
-		if (getResources().getConfiguration().smallestScreenWidthDp >= 600) viewMode = 2;
-		else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) viewMode = 0;
-		else viewMode = 1;
 	}
 }

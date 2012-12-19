@@ -16,8 +16,6 @@
  */
 package net.alliknow.podcatcher;
 
-import java.util.ArrayList;
-
 import net.alliknow.podcatcher.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.fragments.PodcastListFragment;
@@ -27,14 +25,11 @@ import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.types.Episode;
 import net.alliknow.podcatcher.types.Podcast;
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,7 +39,7 @@ import android.view.View;
  * All the heavy lifting is done in fragments, that will be
  * retained on activity restarts.
  */
-public class PodcastActivity extends Activity implements 
+public class PodcastActivity extends PodcatcherBaseActivity implements 
 	OnSelectPodcastListener, OnLoadPodcastListener, OnSelectEpisodeListener {
 	
 	/** Flag to indicate whether we are in multiple podcast mode */ 
@@ -58,34 +53,18 @@ public class PodcastActivity extends Activity implements
 	/** The podcatcher help website URL */
 	private static final String PODCATCHER_HELPSITE = "http://www.podcatcher-deluxe.com/help";
 	
-	/** The (current) episode list fragment, may not be available (i.e. <code>null</code>) */
-	private EpisodeListFragment episodeListFragment;
-	/** The (current) episode  fragment, may not be available (i.e. <code>null</code>) */
-	private EpisodeFragment episodeFragment;
-	
-	private int viewMode;
-	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    
 	    if (Podcatcher.isInDebugMode(this)) StrictMode.enableDefaults();
 	    
+	    // Inflate the main content view (depends on view mode)
 	    setContentView(R.layout.main);
-	    		
-		figureOutViewMode();
-		Log.d(getClass().getSimpleName(), "View mode detected to be: " + viewMode);
-		
-		if (viewMode == 1 && getFragmentManager().findFragmentByTag("TestA") == null)
-			getFragmentManager().beginTransaction().add(R.id.content, new EpisodeListFragment(), "TestA").commit();
-		
-		updateDivider();
-	}
-	
-	private void figureOutViewMode() {
-		if (getResources().getConfiguration().smallestScreenWidthDp >= 600) viewMode = 2;
-		else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) viewMode = 0;
-		else viewMode = 1;
+	    
+	    // On small screens in landscape mode we need to add the episode list fragment
+		if (viewMode == SMALL_LANDSCAPE_VIEW && getFragmentManager().findFragmentByTag(episodeListFragmentTag) == null)
+			getFragmentManager().beginTransaction().add(R.id.content, new EpisodeListFragment(), episodeListFragmentTag).commit();
 	}
 	
 	@Override
@@ -94,6 +73,14 @@ public class PodcastActivity extends Activity implements
 		
 		if (savedInstanceState != null)
 			multiplePodcastsMode = savedInstanceState.getBoolean(MODE_KEY);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		// Make sure dividers (if any) reflect selection state
+		updateDivider();
 	}
 	
 	@Override
@@ -130,23 +117,26 @@ public class PodcastActivity extends Activity implements
 	public void onPodcastSelected(Podcast podcast) {
 		multiplePodcastsMode = false;
 		
-		if (viewMode > 1) {		
-			episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
-			episodeListFragment.resetAndSpin();
-			updateDivider();
-		} else if (viewMode > 0) {		
-			episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.content);
-			episodeListFragment.resetAndSpin();
-			updateDivider();
-		} else {
-			// Otherwise we need to launch a new activity to display the episode list
-            Intent intent = new Intent();
-            intent.setClass(this, ShowEpisodeListActivity.class);
-            //intent.putExtra("index", index);
-            startActivity(intent);
+		switch (viewMode) {
+			case SMALL_LANDSCAPE_VIEW:
+				// This will go back to the list view in case we are showing episode details
+				getFragmentManager().popBackStack();
+			case LARGE_PORTRAIT_VIEW:
+			case LARGE_LANDSCAPE_VIEW:
+				// List fragment is visible, make it show progress UI
+				EpisodeListFragment episodeListFragment = findEpisodeListFragment();
+				episodeListFragment.resetAndSpin();
+				updateDivider();
+				break;
+			case SMALL_PORTRAIT_VIEW:
+				// Otherwise we need to launch a new activity to display the episode list
+	            Intent intent = new Intent();
+	            intent.setClass(this, ShowEpisodeListActivity.class);
+	            //intent.putExtra("podcast", url); // String
+	            startActivity(intent);
 		}
 	}
-	
+
 	@Override
 	public void onAllPodcastsSelected() {
 		onPodcastSelected(null);
@@ -159,105 +149,135 @@ public class PodcastActivity extends Activity implements
 	public void onNoPodcastSelected() {
 		multiplePodcastsMode = false;
 		
+		// If there is an episode list visible, reset it
+		EpisodeListFragment episodeListFragment = findEpisodeListFragment();
 		if (episodeListFragment != null) episodeListFragment.resetUi();
+		
 		updateDivider();
 	}
 	
 	@Override
 	public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
-		if (viewMode > 1) {		
-			episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
-			episodeListFragment.showProgress(progress);
-		} else if (viewMode > 0) {		
-			episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.content);
-			episodeListFragment.showProgress(progress);
-		} else {
-			// Otherwise we need to launch a new activity to display the episode list
-            Intent intent = new Intent();
-            intent.setClass(this, ShowEpisodeListActivity.class);
-            intent.putExtra("progress", true);
-            startActivity(intent);
+		switch (viewMode) {
+			case LARGE_PORTRAIT_VIEW:
+			case LARGE_LANDSCAPE_VIEW:
+			case SMALL_LANDSCAPE_VIEW:
+				// Simply update the list fragment
+				EpisodeListFragment episodeListFragment = findEpisodeListFragment();
+				episodeListFragment.showProgress(progress);
+				break;
+			case SMALL_PORTRAIT_VIEW:
+				// Otherwise we send a progress alert to the activity
+	            Intent intent = new Intent();
+	            intent.setClass(this, ShowEpisodeListActivity.class);
+	            intent.putExtra("progress", true);
+	            startActivity(intent);
 		}
 	}
 	
 	@Override
 	public void onPodcastLoaded(Podcast podcast) {
-		if (viewMode > 1) {		
-			episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.episode_list);
-
-			if (multiplePodcastsMode) episodeListFragment.addEpisodeList(podcast.getEpisodes());
-			else episodeListFragment.setEpisodeList(podcast.getEpisodes());
+		switch (viewMode) {
+			case LARGE_LANDSCAPE_VIEW:
+			case LARGE_PORTRAIT_VIEW:
+			case SMALL_LANDSCAPE_VIEW:
+				// Update list fragment to show episode list
+				EpisodeListFragment episodeListFragment = findEpisodeListFragment();
+				
+				if (multiplePodcastsMode) episodeListFragment.addEpisodeList(podcast.getEpisodes());
+				else episodeListFragment.setEpisodeList(podcast.getEpisodes());
+				
+				break;
+			case SMALL_PORTRAIT_VIEW:
+				// Send intent to activity
+				Intent intent = new Intent();
+	            intent.setClass(this, ShowEpisodeListActivity.class);
+	            intent.putExtra("select", true);
+	            startActivity(intent);
+		}
+		
+		// Additionally, if on large device, process clever selection update
+		if (viewMode == LARGE_LANDSCAPE_VIEW || viewMode == LARGE_PORTRAIT_VIEW) {
+			EpisodeListFragment episodeListFragment = findEpisodeListFragment();
+			EpisodeFragment episodeFragment = findEpisodeFragment();
 			
-			if (viewMode > 1 && episodeListFragment.containsEpisode(episodeFragment.getEpisode()))
-				//episodeListFragment.selectEpisode(episodeFragment.getEpisode());
-			
-			updateDivider();
-		} else if (viewMode > 0) {
-			episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentById(R.id.content);
-			
-			if (multiplePodcastsMode) episodeListFragment.addEpisodeList(podcast.getEpisodes());
-			else episodeListFragment.setEpisodeList(podcast.getEpisodes());
-		} else {
-			Intent intent = new Intent();
-            intent.setClass(this, ShowEpisodeListActivity.class);
-            intent.putExtra("select", true);
-            startActivity(intent);
+			if (episodeListFragment.containsEpisode(episodeFragment.getEpisode()))
+				episodeListFragment.selectEpisode(episodeFragment.getEpisode());
 		}
 	}
 	
 	@Override
 	public void onPodcastLoadFailed(Podcast failedPodcast) {
-		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager()
-				.findFragmentByTag(getResources().getString(R.string.episode_list_fragment_tag));
-		
-		// Reset the episode list so the old one would not reappear of config changes
-		episodeListFragment.setEpisodeList(new ArrayList<Episode>());
-		episodeListFragment.showLoadFailed();
+		switch (viewMode) {
+			case LARGE_LANDSCAPE_VIEW:
+			case LARGE_PORTRAIT_VIEW:
+			case SMALL_LANDSCAPE_VIEW:
+				EpisodeListFragment episodeListFragment = findEpisodeListFragment();
+				episodeListFragment.showLoadFailed();
+				break;
+			case SMALL_PORTRAIT_VIEW:
+				// Send intent to activity
+				Intent intent = new Intent();
+	            intent.setClass(this, ShowEpisodeListActivity.class);
+	            intent.putExtra("failed", true);
+	            startActivity(intent);
+		}
 	}
 
 	@Override
 	public void onEpisodeSelected(Episode selectedEpisode) {
-		// Make sure selection matches in list fragment		
-		if (episodeListFragment != null) episodeListFragment.selectEpisode(selectedEpisode);
-		
-		if (viewMode > 1) {
-			episodeFragment = (EpisodeFragment) getFragmentManager().findFragmentById(R.id.episode_list);
-			episodeFragment.setEpisode(selectedEpisode);
-		} else if (viewMode > 0) {
-			episodeFragment = (EpisodeFragment) getFragmentManager().findFragmentByTag("Test");
-			if (episodeFragment == null) episodeFragment = new EpisodeFragment();
-			FragmentTransaction transaction = getFragmentManager().beginTransaction();
-			transaction.replace(R.id.content, episodeFragment, "Test");
-			transaction.addToBackStack(null);
-			transaction.commit();
-			episodeFragment.setEpisode(selectedEpisode);
-		} else {
-			Intent intent = new Intent();
-            intent.setClass(this, ShowEpisodeActivity.class);
-            //intent.putExtra("index", index);
-            startActivity(intent);
+		switch (viewMode) {
+			case LARGE_PORTRAIT_VIEW:
+			case LARGE_LANDSCAPE_VIEW:
+				// Set episode in episode fragment
+				findEpisodeFragment().setEpisode(selectedEpisode);
+				// Make sure selection matches in list fragment
+				findEpisodeListFragment().selectEpisode(selectedEpisode);
+				break;
+			case SMALL_LANDSCAPE_VIEW:
+				// Find, and if not already done create, episode fragment
+				EpisodeFragment episodeFragment = findEpisodeFragment();
+				if (episodeFragment == null) episodeFragment = new EpisodeFragment();
+				// Add the fragment to the UI, placing the list fragment 
+				FragmentTransaction transaction = getFragmentManager().beginTransaction();
+				transaction.replace(R.id.content, episodeFragment, episodeFragmentTag);
+				transaction.addToBackStack(null);
+				transaction.commit();
+				// Set the episode
+				episodeFragment.setEpisode(selectedEpisode);
+				break;
+			case SMALL_PORTRAIT_VIEW:
+				// Send intent to open episode as a new activity
+				Intent intent = new Intent();
+	            intent.setClass(this, ShowEpisodeActivity.class);
+	            //intent.putExtra("episode", URL);
+	            startActivity(intent);
 		}
 
-		if (viewMode > 0) updateDivider();
+		if (viewMode != SMALL_PORTRAIT_VIEW) updateDivider();
 	}
 	
 	@Override
 	public void onNoEpisodeSelected() {
+		// If there is a episode fragment, reset it
+		EpisodeListFragment episodeListFragment = findEpisodeListFragment();
 		if (episodeListFragment != null) episodeListFragment.selectNone();
 		
 		updateDivider();
 	}
 	
 	private void updateDivider() {
-		PodcastListFragment podcastListFragment = (PodcastListFragment) getFragmentManager()
-				.findFragmentByTag(getResources().getString(R.string.podcast_list_fragment_tag));
-		EpisodeListFragment episodeListFragment = (EpisodeListFragment) getFragmentManager()
-				.findFragmentByTag(getResources().getString(R.string.episode_list_fragment_tag));
-		
-		if (podcastListFragment != null) 
-			colorDivider(R.id.divider_first, podcastListFragment.isPodcastSelected());
-		if (episodeListFragment != null)
-			colorDivider(R.id.divider_second, episodeListFragment.isEpisodeSelected());
+		if (viewMode != SMALL_PORTRAIT_VIEW) {
+			// Try find the fragment
+			PodcastListFragment podcastListFragment = findPodcastListFragment();
+			EpisodeListFragment episodeListFragment = findEpisodeListFragment();
+			
+			// Color dividers where possible
+			if (podcastListFragment != null) 
+				colorDivider(R.id.divider_first, podcastListFragment.isPodcastSelected());
+			if (episodeListFragment != null)
+				colorDivider(R.id.divider_second, episodeListFragment.isEpisodeSelected());
+		}
 	}
 	
 	private void colorDivider(int dividerViewId, boolean color) {
