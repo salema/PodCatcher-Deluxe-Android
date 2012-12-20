@@ -17,7 +17,6 @@
 package net.alliknow.podcatcher.fragments;
 
 import static android.view.View.VISIBLE;
-import static net.alliknow.podcatcher.Podcatcher.isOnFastConnection;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -91,7 +90,7 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 			}
 		});
 		
-		if (Podcatcher.isInDebugMode(getActivity())) podcastUrlEditText.setText("richeisen.libsyn.com/rss");
+		if (((Podcatcher) getActivity().getApplication()).isInDebugMode()) podcastUrlEditText.setText("richeisen.libsyn.com/rss");
 		
 		progressView = (HorizontalProgressView) view.findViewById(R.id.add_podcast_progress);
 		
@@ -147,7 +146,7 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
 		// Try to load the given online resource
 		try {
 			loadTask = new LoadPodcastTask(this);
-			loadTask.preventZippedTransfer(isOnFastConnection(getActivity()));
+			loadTask.preventZippedTransfer(((Podcatcher) getActivity().getApplication()).isOnFastConnection());
 			loadTask.execute(new Podcast(null, new URL(spec)));
 		} catch (MalformedURLException e) {
 			onPodcastLoadFailed(null);

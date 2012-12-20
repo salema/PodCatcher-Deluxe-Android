@@ -16,8 +16,6 @@
  */
 package net.alliknow.podcatcher.types;
 
-import static net.alliknow.podcatcher.Podcatcher.skipSubTree;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -165,7 +163,7 @@ public class Episode implements Comparable<Episode> {
 			else if (tagName.equalsIgnoreCase(RSS.DESCRIPTION))
 				description = parser.nextText();
 			// Unneeded node, skip...
-			else skipSubTree(parser);
+			else ParserUtils.skipSubTree(parser);
 		}
 		
 		// Make sure we end at item tag

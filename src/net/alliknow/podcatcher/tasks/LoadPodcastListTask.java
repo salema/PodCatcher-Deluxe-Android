@@ -16,9 +16,6 @@
  */
 package net.alliknow.podcatcher.tasks;
 
-import static net.alliknow.podcatcher.Podcatcher.OPML_FILENAME;
-import static net.alliknow.podcatcher.Podcatcher.OPML_FILE_ENCODING;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -27,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.alliknow.podcatcher.PodcastData;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
 import net.alliknow.podcatcher.tags.OPML;
 import net.alliknow.podcatcher.types.Podcast;
@@ -73,8 +71,8 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
 			// Create the parser to use
 			XmlPullParser parser = factory.newPullParser();
 			// Open default podcast file
-			fileStream = context.openFileInput(OPML_FILENAME);
-			parser.setInput(fileStream, OPML_FILE_ENCODING);
+			fileStream = context.openFileInput(PodcastData.OPML_FILENAME);
+			parser.setInput(fileStream, PodcastData.OPML_FILE_ENCODING);
 			// Create list
 			List<Podcast> result = new ArrayList<Podcast>();
 						

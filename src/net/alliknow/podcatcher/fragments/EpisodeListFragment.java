@@ -20,10 +20,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.alliknow.podcatcher.PodcastData;
+import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
+import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
+import net.alliknow.podcatcher.tasks.Progress;
 import net.alliknow.podcatcher.types.Episode;
+import net.alliknow.podcatcher.types.Podcast;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,9 +41,20 @@ import android.widget.ListView;
  * List fragment to display the list of episodes as part of the
  * podcast activity.
  */
-public class EpisodeListFragment extends PodcatcherListFragment {
+public class EpisodeListFragment extends PodcatcherListFragment 
+	implements OnLoadPodcastListener {
 
-	/** The list of episode showing */
+	/** Flag to indicate whether we are in multiple podcast mode */ 
+	private boolean multiplePodcastsMode = false;
+	/** Key used to save the current setting for 
+	 * <code>multiplePodcastsMode</code> in bundle */
+	private static final String MODE_KEY = "MODE_KEY";
+	
+	/** The podcast data container */
+	private PodcastData data;
+	/** The podcast showing */
+	private Podcast currentPodcast;
+	/** The current list of episodes */
 	private List<Episode> episodeList;
 	/** The selected episode */
 	private Episode selectedEpisode;
@@ -50,34 +66,47 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     public void onAttach(Activity activity) {
     	super.onAttach(activity);
     	
+    	// Link to podcast data singleton
+    	data = ((Podcatcher) activity.getApplication()).getModel();
+    	
+    	// Make sure we can react on data changes
+    	data.addLoadPodcastListener(this);
+    	
+    	// This has to work
     	selectedListener = (OnSelectEpisodeListener) activity;
     }
     
    	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+   		
+   		if (savedInstanceState != null)
+			multiplePodcastsMode = savedInstanceState.getBoolean(MODE_KEY);
 		
 		return inflater.inflate(R.layout.episode_list, container, false);
 	}
    	
    	@Override
-   	public void onResume() {
-   		super.onResume();
-   		
-   		// Show episode list if available
-   		if (episodeList != null) processNewEpisodes();
-   	}
+	public void onListItemClick(ListView list, View view, int position, long id) {
+		if (selectedListener != null) selectedListener.onEpisodeSelected(currentPodcast.getEpisodes().get(position));
+		else Log.d(getClass().getSimpleName(), "Episode selected, but no listener attached");
+	}
 	
 	@Override
-	public void onListItemClick(ListView list, View view, int position, long id) {
-		if (selectedListener != null) selectedListener.onEpisodeSelected(episodeList.get(position));
-		else Log.d(getClass().getSimpleName(), "Episode selected, but no listener attached");
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		
+		outState.putBoolean(MODE_KEY, multiplePodcastsMode);
 	}
 	
 	@Override
 	public void onDetach() {
 		super.onDetach();
 		
+		// Do not leak this fragment
+		data.removeLoadPodcastListener(this);
+		
+		// Do not leak activity
 		selectedListener = null;
 	}
 	
@@ -90,8 +119,8 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 		this.selectedEpisode = selectedEpisode;
 		
 		// Episode is available
-		if (episodeList != null && episodeList.contains(selectedEpisode)) 
-			selectItem(episodeList.indexOf(selectedEpisode));
+		if (currentPodcast != null && currentPodcast.getEpisodes().contains(selectedEpisode)) 
+			selectItem(currentPodcast.getEpisodes().indexOf(selectedEpisode));
 		// Episode is not in the current episode list
 		else selectNone();
 	}
@@ -117,42 +146,77 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 	 * @return <code>true</code> iff the current episode list contains given episode.
 	 */
 	public boolean containsEpisode(Episode episode) {
-		return episodeList != null && episodeList.contains(episode);
+		return currentPodcast != null && currentPodcast.getEpisodes().contains(episode);
 	}
 	
 	/**
 	 * Set the episode list to display and update the UI accordingly.
 	 * @param list List of episodes to display.
 	 */
-	public void setEpisodeList(List<Episode> list) {
+	public void prepareForPodcast(Podcast podcast) {
+		multiplePodcastsMode = false;
+		resetAndSpin();
+		
 		// Reset internal variables
 		if (selectedListener != null) selectedListener.onNoEpisodeSelected();
 		
-		if (list != null) {
-			episodeList = list;
-			
+		currentPodcast = podcast;
+		
+		if (! podcast.needsReload()) {
+			episodeList = currentPodcast.getEpisodes();
 			processNewEpisodes();
 		}
 	}
 	
-	/**
-	 * Add the episode list to the currently displayed episodes
-	 * and update the UI accordingly.
-	 * @param list List of episode to add.
-	 */
-	public void addEpisodeList(List<Episode> list) {
-		if (episodeList == null) {
-			episodeList = new ArrayList<Episode>();
-			if (selectedListener != null) selectedListener.onNoEpisodeSelected();
+	public void prepareForAllPodcasts() {
+		multiplePodcastsMode = true;
+		resetAndSpin();
+		
+		// Reset internal variables
+		if (selectedListener != null) selectedListener.onNoEpisodeSelected();
+		
+		currentPodcast = null;
+		episodeList = new ArrayList<Episode>();
+		
+		for (Podcast podcast : data.getPodcastList())
+			if (! podcast.needsReload()) {
+				episodeList.addAll(podcast.getEpisodes());
+			}
+		
+		Collections.sort(episodeList);
+	}
+	
+	@Override
+	public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
+		if (podcast.equals(currentPodcast)) showProgress(progress);
+	}
+	
+	@Override
+	public void onPodcastLoaded(Podcast podcast) {
+		if (multiplePodcastsMode) {
+			// TODO decide on this: episodeList.addAll(list.subList(0, list.size() > 100 ? 100 : list.size() - 1));
+			if (podcast.getEpisodes().size() > 0) { 
+				episodeList.addAll(podcast.getEpisodes());
+				Collections.sort(episodeList);
+			}
 		}
-			
-		// TODO decide on this: episodeList.addAll(list.subList(0, list.size() > 100 ? 100 : list.size() - 1));
-		if (list != null && list.size() > 0) { 
-			episodeList.addAll(list);
-			Collections.sort(episodeList);
-					
-			processNewEpisodes();
-		}
+		else if (podcast.equals(currentPodcast)) episodeList = podcast.getEpisodes();
+		
+		processNewEpisodes();
+		
+//		// Additionally, if on large device, process clever selection update
+//		if (viewMode == LARGE_LANDSCAPE_VIEW || viewMode == LARGE_PORTRAIT_VIEW) {
+//			EpisodeListFragment episodeListFragment = findEpisodeListFragment();
+//			EpisodeFragment episodeFragment = findEpisodeFragment();
+//			
+//			if (episodeListFragment.containsEpisode(episodeFragment.getEpisode()))
+//				episodeListFragment.selectEpisode(episodeFragment.getEpisode());
+//		}
+	}
+	
+	@Override
+	public void onPodcastLoadFailed(Podcast failedPodcast) {
+		if (failedPodcast.equals(currentPodcast)) showLoadFailed();
 	}
 	
 	private void processNewEpisodes() {
@@ -160,10 +224,11 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 		showLoadFailed = false;
 		
 		if (isResumed()) {		
-			setListAdapter(new EpisodeListAdapter(getActivity(), new ArrayList<Episode>(episodeList), selectAll));
+			setListAdapter(new EpisodeListAdapter(getActivity(), 
+				new ArrayList<Episode>(episodeList), selectAll));
 			
 			// Update UI
-			if (episodeList.isEmpty()) emptyView.setText(R.string.no_episodes);
+			if (currentPodcast.getEpisodes().isEmpty()) emptyView.setText(R.string.no_episodes);
 			updateUiElementVisibility();
 		}
 	}
@@ -178,11 +243,12 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 	
 	@Override
 	protected void reset() {
-		selectedEpisode = null;
+		currentPodcast = null;
 		episodeList = null;
-		
-		// We can only set the text, if view is available
-		if (isResumed()) emptyView.setText(R.string.no_podcast_selected);
+		selectedEpisode = null;
+				
+		if (emptyView != null) 
+			emptyView.setText(R.string.no_podcast_selected);
 		
 		super.reset();
 	}
@@ -193,6 +259,14 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 	@Override
 	public void showLoadFailed() {
 		progressView.showError(R.string.error_podcast_load);
+		
 		super.showLoadFailed();
+	}
+
+	/**
+	 * @param b
+	 */
+	public void setMultiplePodcastMode(boolean b) {
+		this.multiplePodcastsMode = b;
 	}
 }

@@ -18,12 +18,12 @@ package net.alliknow.podcatcher.fragments;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static net.alliknow.podcatcher.Podcatcher.isOnFastConnection;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.GenreSpinnerAdapter;
 import net.alliknow.podcatcher.adapters.LanguageSpinnerAdapter;
@@ -117,7 +117,7 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 		// Suggestion list has not been loaded before
 		else if (listener.getPodcastSuggestions() == null) {
 			loadTask = new LoadSuggestionsTask(this);
-			loadTask.preventZippedTransfer(isOnFastConnection(getActivity()));
+			loadTask.preventZippedTransfer(((Podcatcher) getActivity().getApplication()).isOnFastConnection());
 			loadTask.execute((Void)null);
 		} // List was loaded before
 		else {

@@ -16,9 +16,6 @@
  */
 package net.alliknow.podcatcher.tasks;
 
-import static net.alliknow.podcatcher.Podcatcher.OPML_FILENAME;
-import static net.alliknow.podcatcher.Podcatcher.OPML_FILE_ENCODING;
-
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -26,6 +23,7 @@ import java.io.OutputStreamWriter;
 import java.util.Date;
 import java.util.List;
 
+import net.alliknow.podcatcher.PodcastData;
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.tags.OPML;
@@ -70,8 +68,8 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
 		try {
 			if (list == null) throw new Exception("Podcast list cannot be null!");
 			// Open the file and get a writer
-			fileStream = context.openFileOutput(OPML_FILENAME, Context.MODE_PRIVATE);
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fileStream, OPML_FILE_ENCODING));
+			fileStream = context.openFileOutput(PodcastData.OPML_FILENAME, Context.MODE_PRIVATE);
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fileStream, PodcastData.OPML_FILE_ENCODING));
 			// Write new file content
 			writeHeader(writer);
 			for (Podcast podcast : list) writePodcast(writer, podcast);
@@ -105,7 +103,7 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
 	}
 
 	private void writeHeader(BufferedWriter writer) throws IOException {
-		writeLine(writer, 0, "<?xml version=\"1.0\" encoding=\"" + OPML_FILE_ENCODING + "\"?>");
+		writeLine(writer, 0, "<?xml version=\"1.0\" encoding=\"" + PodcastData.OPML_FILE_ENCODING + "\"?>");
 		writeLine(writer, 0, "<opml version=\"2.0\">");
 		writeLine(writer, 1, "<head>");
 		writeLine(writer, 2, "<title>" + opmlFileTitle + "</title>");

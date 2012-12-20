@@ -28,14 +28,24 @@ public class ShowEpisodeActivity extends PodcatcherBaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		// Check if we need this activity at all
-		if (viewMode != SMALL_PORTRAIT_VIEW) {
-			finish();
-		} else if (savedInstanceState == null) {
-            // During initial setup, plug in the details fragment.
-            EpisodeFragment episode = new EpisodeFragment();
-            // episodeList.setArguments(getIntent().getExtras());
-            getFragmentManager().beginTransaction().add(android.R.id.content, episode, episodeFragmentTag).commit();
-        }
+		switch (viewMode) {
+			// In large layouts we do not need this activity at all
+			case LARGE_PORTRAIT_VIEW:
+			case LARGE_LANDSCAPE_VIEW:
+				finish(); break;
+			case SMALL_LANDSCAPE_VIEW:
+			// To recover from configuration changes here, we have
+			// to send an intent to the main activity and tell it
+			// to show the episode
+			// TODO Send intent
+				finish(); break;
+			case SMALL_PORTRAIT_VIEW:
+				if (savedInstanceState == null) {
+					// During initial setup, plug in the details fragment.
+		            EpisodeFragment episode = new EpisodeFragment();
+		            // Set episode with URL from intent (getIntent().getExtras());
+		            getFragmentManager().beginTransaction().add(android.R.id.content, episode, episodeFragmentTag).commit();
+				}
+		}
 	}
 }

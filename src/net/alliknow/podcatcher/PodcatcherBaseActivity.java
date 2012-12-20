@@ -20,15 +20,24 @@ import net.alliknow.podcatcher.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.fragments.PodcastListFragment;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 /**
  * Podcatcher base activity.
  * Defines some common functionality useful for all activites.
  */
 public abstract class PodcatcherBaseActivity extends Activity {
-
+	
+	/** The podcatcher website URL */
+	private static final String PODCATCHER_WEBSITE = "http://www.podcatcher-deluxe.com";
+	/** The podcatcher help website URL */
+	private static final String PODCATCHER_HELPSITE = "http://www.podcatcher-deluxe.com/help";
+	
 	/** These are the four view modes we want adapt to. */
 	/** Small and normal screens (smallest width < 600dp) in portrait orientation */
 	public static final int SMALL_PORTRAIT_VIEW = 0;
@@ -62,6 +71,29 @@ public abstract class PodcatcherBaseActivity extends Activity {
 		podcastListFragmentTag = getResources().getString(R.string.podcast_list_fragment_tag);
 		episodeListFragmentTag = getResources().getString(R.string.episode_list_fragment_tag);
 		episodeFragmentTag = getResources().getString(R.string.episode_fragment_tag);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.podcatcher, menu);
+		
+		return true;
+	}
+		
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+	        case R.id.about_menuitem:
+	        	startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_WEBSITE)));
+	            
+	   			return true;
+	        case R.id.help_menuitem:
+	        	startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_HELPSITE)));
+	        	
+	   			return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+		}
 	}
 	
 	/**
