@@ -17,8 +17,8 @@
 package net.alliknow.podcatcher.listeners;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.adapters.PodcastListAdapter;
-import net.alliknow.podcatcher.fragments.PodcastListFragment;
+import net.alliknow.podcatcher.view.adapters.PodcastListAdapter;
+import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;

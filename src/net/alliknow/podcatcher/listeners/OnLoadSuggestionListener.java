@@ -18,8 +18,8 @@ package net.alliknow.podcatcher.listeners;
 
 import java.util.List;
 
-import net.alliknow.podcatcher.tasks.Progress;
-import net.alliknow.podcatcher.types.Podcast;
+import net.alliknow.podcatcher.model.tasks.Progress;
+import net.alliknow.podcatcher.model.types.Podcast;
 
 /**
  * Interface definition for a callback to be invoked when podcast suggestions are loaded.

@@ -14,20 +14,33 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.alliknow.podcatcher.listeners;
+package net.alliknow.podcatcher.view.adapters;
 
-import java.util.List;
-
-import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.MediaType;
+import net.alliknow.podcatcher.view.fragments.SuggestionFragment;
+import android.content.Context;
 
 /**
- * Interface definition for a callback to be invoked when a podcast list is loaded.
+ * Adapter for the media type spinner in the suggestion dialog.
  */
-public interface OnLoadPodcastListListener {
-
+public class MediaTypeSpinnerAdapter extends PodcatcherBaseSpinnerAdapter {
+	
 	/**
-	 * Called on completion.
-	 * @param podcastList Podcast list loaded.
+	 * Create new adapter.
+	 * @param context The current context.
 	 */
-	public void onPodcastListLoaded(List<Podcast> podcastList);
+	public MediaTypeSpinnerAdapter(Context context) {
+		super(context);
+	}
+	
+	@Override
+	public Object getItem(int position) {
+		if (position == 0) return SuggestionFragment.FILTER_WILDCARD;
+		else return MediaType.values()[position - 1];
+	}
+	
+	@Override
+	public int getCount() {
+		return MediaType.values().length + 1;
+	}
 }

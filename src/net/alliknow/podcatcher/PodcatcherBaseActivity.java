@@ -16,9 +16,9 @@
  */
 package net.alliknow.podcatcher;
 
-import net.alliknow.podcatcher.fragments.EpisodeFragment;
-import net.alliknow.podcatcher.fragments.EpisodeListFragment;
-import net.alliknow.podcatcher.fragments.PodcastListFragment;
+import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
+import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
+import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;

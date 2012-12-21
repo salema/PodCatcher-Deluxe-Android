@@ -14,23 +14,31 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.alliknow.podcatcher.listeners;
+package net.alliknow.podcatcher.model.test;
 
-import net.alliknow.podcatcher.model.types.Episode;
+import net.alliknow.podcatcher.model.types.Podcast;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 /**
- * Interface definition for a callback to be invoked when an episode is selected.
+ * Defines some util methods for tests.
  */
-public interface OnSelectEpisodeListener {
-	
-	/**
-	 * Called on listener to reflect that an episode has been selected.
-	 * @param selectedEpisode Episode selected by the user.
-	 */
-	public void onEpisodeSelected(Episode selectedEpisode);
+public class Utils {
 
-	/**
-	 * Called on listener to reflect that no episode is selected anymore.
-	 */
-	public void onNoEpisodeSelected();
+	public static XmlPullParser getParser(Podcast podcast) {
+		try {
+			XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+			factory.setNamespaceAware(true);
+			
+			XmlPullParser parser = factory.newPullParser();
+			parser.setInput(podcast.getUrl().openStream(), null);
+			
+			return parser;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+        
+		return null;
+	}
 }

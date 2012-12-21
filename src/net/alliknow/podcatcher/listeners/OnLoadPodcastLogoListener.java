@@ -16,7 +16,7 @@
  */
 package net.alliknow.podcatcher.listeners;
 
-import net.alliknow.podcatcher.types.Podcast;
+import net.alliknow.podcatcher.model.types.Podcast;
 import android.graphics.Bitmap;
 
 /**

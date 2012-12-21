@@ -16,9 +16,9 @@
  */
 package net.alliknow.podcatcher;
 
-import net.alliknow.podcatcher.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
-import net.alliknow.podcatcher.types.Episode;
+import net.alliknow.podcatcher.model.types.Episode;
+import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 import android.content.Intent;
 import android.os.Bundle;
 

@@ -14,20 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.alliknow.podcatcher.listeners;
-
-import java.util.List;
-
-import net.alliknow.podcatcher.model.types.Podcast;
+package net.alliknow.podcatcher.model.tags;
 
 /**
- * Interface definition for a callback to be invoked when a podcast list is loaded.
+ * Defines some constants used in RSS.
+ * 
+ * @see http://cyber.law.harvard.edu/rss/rss.html
  */
-public interface OnLoadPodcastListListener {
+public class RSS {
 
-	/**
-	 * Called on completion.
-	 * @param podcastList Podcast list loaded.
-	 */
-	public void onPodcastListLoaded(List<Podcast> podcastList);
+	public static final String ITEM = "item";
+	public static final String IMAGE = "image";
+	public static final String TITLE = "title";
+	public static final String ENCLOSURE = "enclosure";
+	public static final String URL = "url";
+	public static final String TYPE = "type";
+	public static final String HREF = "href";
+	public static final String DATE = "date";
+	public static final String PUBDATE = "pubDate";
+	public static final String THUMBNAIL = "thumbnail";
+	public static final String DESCRIPTION = "description";
+		
 }

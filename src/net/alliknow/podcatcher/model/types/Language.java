@@ -14,23 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.alliknow.podcatcher.listeners;
-
-import net.alliknow.podcatcher.model.types.Episode;
+package net.alliknow.podcatcher.model.types;
 
 /**
- * Interface definition for a callback to be invoked when an episode is selected.
+ * Language a podcast is broadcasted in.
  */
-public interface OnSelectEpisodeListener {
-	
-	/**
-	 * Called on listener to reflect that an episode has been selected.
-	 * @param selectedEpisode Episode selected by the user.
-	 */
-	public void onEpisodeSelected(Episode selectedEpisode);
-
-	/**
-	 * Called on listener to reflect that no episode is selected anymore.
-	 */
-	public void onNoEpisodeSelected();
+public enum Language {
+	ENGLISH, GERMAN
 }

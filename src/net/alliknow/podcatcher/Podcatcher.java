@@ -16,6 +16,7 @@
  */
 package net.alliknow.podcatcher;
 
+import net.alliknow.podcatcher.model.PodcastManager;
 import android.app.Application;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -29,7 +30,7 @@ import android.net.NetworkInfo;
 public class Podcatcher extends Application {
 	
 	/** Podcast data object to be used across all the app's components */
-	private PodcastData model;
+	private PodcastManager model;
 	
 	@Override
 	public void onCreate() {
@@ -37,14 +38,14 @@ public class Podcatcher extends Application {
 		
 		// This will only run once in the lifetime of the app
 		// since the application is an implicit singleton.
-		model = new PodcastData(this);
+		model = PodcastManager.getInstance(this);
 	}
 	
 	/**
 	 * Grant access to the global podcast data model.
 	 * @return The model handle.
 	 */
-	public PodcastData getModel() {
+	public PodcastManager getModel() {
 		return model;
 	}
 	

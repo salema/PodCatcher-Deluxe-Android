@@ -19,7 +19,7 @@ package net.alliknow.podcatcher.services;
 import net.alliknow.podcatcher.PodcastActivity;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
-import net.alliknow.podcatcher.types.Episode;
+import net.alliknow.podcatcher.model.types.Episode;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;

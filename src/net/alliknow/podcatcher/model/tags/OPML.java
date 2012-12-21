@@ -14,20 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.alliknow.podcatcher.listeners;
-
-import java.util.List;
-
-import net.alliknow.podcatcher.model.types.Podcast;
+package net.alliknow.podcatcher.model.tags;
 
 /**
- * Interface definition for a callback to be invoked when a podcast list is loaded.
+ * Defines some constants used in OPML.
+ * 
+ * @see http://dev.opml.org/spec2.html
  */
-public interface OnLoadPodcastListListener {
-
-	/**
-	 * Called on completion.
-	 * @param podcastList Podcast list loaded.
-	 */
-	public void onPodcastListLoaded(List<Podcast> podcastList);
+public abstract class OPML {
+	
+	public static final String OUTLINE = "outline";
+	public static final String TEXT = "text";
+	public static final String TYPE = "type";
+	public static final String RSS_TYPE = "rss";
+	public static final String XMLURL = "xmlUrl";
+	
 }

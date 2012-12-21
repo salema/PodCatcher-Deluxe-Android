@@ -16,7 +16,7 @@
  */
 package net.alliknow.podcatcher;
 
-import net.alliknow.podcatcher.fragments.EpisodeFragment;
+import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
 import android.os.Bundle;
 
 /**

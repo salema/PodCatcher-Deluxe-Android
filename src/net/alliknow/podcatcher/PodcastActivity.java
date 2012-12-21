@@ -16,13 +16,13 @@
  */
 package net.alliknow.podcatcher;
 
-import net.alliknow.podcatcher.fragments.EpisodeFragment;
-import net.alliknow.podcatcher.fragments.EpisodeListFragment;
-import net.alliknow.podcatcher.fragments.PodcastListFragment;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
-import net.alliknow.podcatcher.types.Episode;
-import net.alliknow.podcatcher.types.Podcast;
+import net.alliknow.podcatcher.model.types.Episode;
+import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
+import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
+import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
