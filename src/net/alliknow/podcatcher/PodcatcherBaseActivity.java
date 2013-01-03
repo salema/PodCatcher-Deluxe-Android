@@ -16,6 +16,7 @@
  */
 package net.alliknow.podcatcher;
 
+import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
@@ -29,9 +30,12 @@ import android.view.MenuItem;
 
 /**
  * Podcatcher base activity.
- * Defines some common functionality useful for all activites.
+ * Defines some common functionality useful for all activities.
  */
 public abstract class PodcatcherBaseActivity extends Activity {
+	
+	/** The podcast manager handle */
+	protected PodcastManager dataManager;
 	
 	/** The podcatcher website URL */
 	private static final String PODCATCHER_WEBSITE = "http://www.podcatcher-deluxe.com";
@@ -63,6 +67,9 @@ public abstract class PodcatcherBaseActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// Set the data manager
+		this.dataManager = ((Podcatcher) getApplication()).getModel();
 		
 		// Set the view mode member
 		this.viewMode = determineViewMode();

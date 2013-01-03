@@ -16,8 +16,14 @@
  */
 package net.alliknow.podcatcher;
 
+import java.util.List;
+
+import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
+import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
+import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
+import net.alliknow.podcatcher.model.tasks.Progress;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
@@ -25,22 +31,36 @@ import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 
 /**
- * Our main activity class. Handles configuration changes.
- * All the heavy lifting is done in fragments, that will be
- * retained on activity restarts.
+ * Our main activity class.
+ * Works as the main controller. Depending on the view state,
+ * other activities cooperate.
  */
-public class PodcastActivity extends PodcatcherBaseActivity implements OnSelectPodcastListener, OnSelectEpisodeListener {
+public class PodcastActivity extends PodcatcherBaseActivity 
+		implements OnLoadPodcastListListener, OnSelectPodcastListener, OnLoadPodcastListener,
+			OnLoadPodcastLogoListener, OnSelectEpisodeListener {
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    
+	    // Enable strict mode when on debug
 	    if (((Podcatcher) getApplication()).isInDebugMode()) StrictMode.enableDefaults();
+	    
+	    // Register as listener to the podcast data manager
+	    dataManager.addLoadPodcastListListener(this);
+	    dataManager.addLoadPodcastListener(this);
+	    //dataManager.addLoadPodcastLogoListener(this);
+	    
+	    // Check if podcast list is already available - if so, set it
+	    List<Podcast> podcastList = dataManager.getPodcastList();
+		if (podcastList != null) onPodcastListLoaded(podcastList);
 	    
 	    // Inflate the main content view (depends on view mode)
 	    setContentView(R.layout.main);
@@ -59,7 +79,21 @@ public class PodcastActivity extends PodcatcherBaseActivity implements OnSelectP
 	}
 	
 	@Override
+	public void onPodcastListLoaded(List<Podcast> podcastList) {
+		findPodcastListFragment().setPodcastList(podcastList);
+		
+		// If podcast list is empty we show dialog on startup
+		//if (podcastList.isEmpty()) showAddPodcastDialog();
+	}
+	
+	@Override
 	public void onPodcastSelected(Podcast podcast) {
+		// Stop loading previous tasks
+		dataManager.cancelAllLoadTasks();
+		
+		// Load podcast
+		dataManager.load(podcast);
+		
 		switch (viewMode) {
 			case SMALL_LANDSCAPE_VIEW:
 				// This will go back to the list view in case we are showing episode details
@@ -67,6 +101,8 @@ public class PodcastActivity extends PodcatcherBaseActivity implements OnSelectP
 				// There is no break here on purpose, we need to run the code below as well
 			case LARGE_PORTRAIT_VIEW:
 			case LARGE_LANDSCAPE_VIEW:
+				// Select in podcast list
+				findPodcastListFragment().select(podcast);
 				// List fragment is visible, make it show progress UI
 				EpisodeListFragment episodeListFragment = findEpisodeListFragment();
 				episodeListFragment.prepareForPodcast(podcast);
@@ -83,6 +119,18 @@ public class PodcastActivity extends PodcatcherBaseActivity implements OnSelectP
 
 	@Override
 	public void onAllPodcastsSelected() {
+		// Stop loading previous tasks
+		dataManager.cancelAllLoadTasks();
+		
+		// Load all podcasts
+//				for (Podcast podcast : data.getPodcastList())
+//					if (podcast.needsReload()) {
+//						// Otherwise progress will not show
+//						podcast.resetEpisodes();
+//						
+//						data.load(podcast);
+//					} else onPodcastLoaded(podcast);
+		
 		switch (viewMode) {
 			case SMALL_LANDSCAPE_VIEW:
 				// This will go back to the list view in case we are showing episode details
@@ -90,6 +138,7 @@ public class PodcastActivity extends PodcatcherBaseActivity implements OnSelectP
 				// There is no break here on purpose, we need to run the code below as well
 			case LARGE_PORTRAIT_VIEW:
 			case LARGE_LANDSCAPE_VIEW:
+				findPodcastListFragment().selectAll();
 				// List fragment is visible, make it show progress UI
 				EpisodeListFragment episodeListFragment = findEpisodeListFragment();
 				episodeListFragment.prepareForAllPodcasts();
@@ -107,12 +156,142 @@ public class PodcastActivity extends PodcatcherBaseActivity implements OnSelectP
 	@Override
 	public void onNoPodcastSelected() {
 		//multiplePodcastsMode = false;
+		findPodcastListFragment().selectNone();
 		
 		// If there is an episode list visible, reset it
 		EpisodeListFragment episodeListFragment = findEpisodeListFragment();
 		if (episodeListFragment != null) episodeListFragment.resetUi();
 		
 		updateDivider();
+	}
+	
+	/**
+	 * Removes the podcast selected in context mode.
+	 */
+//	public void removeCheckedPodcasts() {
+//		SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
+//		
+//		// Remove checked podcasts
+//		for (int index = data.size() - 1; index >= 0; index--)
+//			if (checkedItems.get(index)) {
+//				// Reset internal variable if necessary
+//				if (data.get(index).equals(currentPodcast)) currentPodcast = null;
+//				// Remove podcast from list
+//				data.remove(index);
+//			}
+//		
+//		// Update UI (current podcast was deleted)
+//		if (!selectAll && currentPodcast == null) selectedListener.onNoPodcastSelected();
+//		// Current podcast has new position
+//		else if (!selectAll) adapter.setSelectedPosition(data.indexOf(currentPodcast));
+//		
+//		updateUiElementVisibility();
+//	}
+	
+	/**
+	 * Notified by async RSS file loader on completion.
+	 * Updates UI to display the podcast's episodes.
+	 * @param podcast Podcast RSS feed was loaded for.
+	 */
+	@Override
+	public void onPodcastLoaded(Podcast podcast) {
+		// This will display the number of episodes
+		adapter.notifyDataSetChanged();
+		
+		// Load logo if this is the podcast we are waiting for and not cached
+		if (podcast.equals(currentPodcast) && currentPodcast.getLogo() == null) 
+			data.loadLogo(currentPodcast, logoView.getWidth(), logoView.getHeight());
+	}
+	
+	@Override
+	public void onPodcastLoadFailed(Podcast podcast) {
+		// This will update the list view
+		adapter.notifyDataSetChanged();
+				
+		Log.w(getClass().getSimpleName(), "Podcast failed to load " + podcast);
+	}
+	
+	
+	
+	@Override
+	public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
+		switch (viewMode) {
+			case LARGE_PORTRAIT_VIEW:
+			case LARGE_LANDSCAPE_VIEW:
+			case SMALL_LANDSCAPE_VIEW:
+				// Simply update the list fragment
+				EpisodeListFragment episodeListFragment = findEpisodeListFragment();
+				episodeListFragment.showProgress(progress);
+				break;
+			case SMALL_PORTRAIT_VIEW:
+				// Otherwise we send a progress alert to the activity
+	            Intent intent = new Intent();
+	            intent.setClass(this, ShowEpisodeListActivity.class);
+	            intent.putExtra("progress", true);
+	            startActivity(intent);
+		}
+	}
+	
+	@Override
+	public void onPodcastLoaded(Podcast podcast) {
+		switch (viewMode) {
+			case LARGE_LANDSCAPE_VIEW:
+			case LARGE_PORTRAIT_VIEW:
+			case SMALL_LANDSCAPE_VIEW:
+				// Update list fragment to show episode list
+				EpisodeListFragment episodeListFragment = findEpisodeListFragment();
+				
+				//if (multiplePodcastsMode) episodeListFragment.addEpisodeList(podcast.getEpisodes());
+				//else episodeListFragment.setEpisodeList(podcast.getEpisodes());
+				
+				break;
+			case SMALL_PORTRAIT_VIEW:
+				// Send intent to activity
+				Intent intent = new Intent();
+	            intent.setClass(this, ShowEpisodeListActivity.class);
+	            intent.putExtra("select", true);
+	            startActivity(intent);
+		}
+		
+		// Additionally, if on large device, process clever selection update
+		if (viewMode == LARGE_LANDSCAPE_VIEW || viewMode == LARGE_PORTRAIT_VIEW) {
+			EpisodeListFragment episodeListFragment = findEpisodeListFragment();
+			EpisodeFragment episodeFragment = findEpisodeFragment();
+			
+			if (episodeListFragment.containsEpisode(episodeFragment.getEpisode()))
+				episodeListFragment.selectEpisode(episodeFragment.getEpisode());
+		}
+	}
+	
+	@Override
+	public void onPodcastLoadFailed(Podcast failedPodcast) {
+		switch (viewMode) {
+			case LARGE_LANDSCAPE_VIEW:
+			case LARGE_PORTRAIT_VIEW:
+		rat	case SMALL_LANDSCAPE_VIEW:
+				EpisodeListFragment episodeListFragment = findEpisodeListFragment();
+				episodeListFragment.showLoadFailed();
+				break;
+			case SMALL_PORTRAIT_VIEW:
+				// Send intent to activity
+				Intent intent = new Intent();
+	            intent.setClass(this, ShowEpisodeListActivity.class);
+	            intent.putExtra("failed", true);
+	            startActivity(intent);
+		}
+	}
+	
+	@Override
+	public void onPodcastLogoLoaded(Podcast podcast, Bitmap logo) {
+		// Cache the result in podcast object
+		if (podcast.equals(currentPodcast))	currentPodcast.setLogo(logo);
+		
+		logoView.setImageBitmap(logo);
+	}
+	
+	@Override
+	public void onPodcastLogoLoadFailed(Podcast podcast) {
+		// pass
 	}
 	
 	@Override

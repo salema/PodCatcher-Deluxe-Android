@@ -118,8 +118,10 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
 	 * @param podcast Podcast to load.
 	 */
 	public void load(Podcast podcast) {
+		// Only load podcast if not too old
+		if (! podcast.needsReload()) onPodcastLoaded(podcast);
 		// Only start the load task if it is not already active
-		if (! loadPodcastTasks.containsKey(podcast)) {
+		else if (! loadPodcastTasks.containsKey(podcast)) {
 			// Download podcast RSS feed (async)
 			LoadPodcastTask loadPodcastTask = new LoadPodcastTask(this);
 			loadPodcastTask.preventZippedTransfer(podcatcher.isOnFastConnection());
@@ -180,6 +182,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
 	@Override
 	public void onPodcastLogoLoaded(Podcast podcast, Bitmap logo) {
 		loadPodcastLogoTasks.remove(podcast);
+		
+		podcast.setLogo(logo);
 		
 		if (loadPodcastLogoListeners.isEmpty()) Log.d(getClass().getSimpleName(), "Podcast logo loaded, but no listener set.");
 		else for (OnLoadPodcastLogoListener listener : loadPodcastLogoListeners)
