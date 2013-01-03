@@ -392,43 +392,43 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 		Log.d(getClass().getSimpleName(), "Audio focus changed to: " + focusChange);
 
 		switch (focusChange) {
-	        case AudioManager.AUDIOFOCUS_GAIN:
-	        	hasFocus = true;
-	        	
-	        	if (resumeOnAudioFocusGain) {
-		            resume();
-		            player.setVolume(1.0f, 1.0f);
-	        	
-		            resumeOnAudioFocusGain = false;
-	        	}
-	        	
-	            break;
+			case AudioManager.AUDIOFOCUS_GAIN:
+				hasFocus = true;
+				player.setVolume(1.0f, 1.0f);
+				
+				if (resumeOnAudioFocusGain) {
+					resume();
+					
+					resumeOnAudioFocusGain = false;
+				}
+				
+				break;
 	
-	        case AudioManager.AUDIOFOCUS_LOSS:
-	            // Lost focus for an unbounded amount of time: stop playback and release media player
-	        	hasFocus = false;
-	        	
-	            if (isPlaying()) player.stop();
-	            onCompletion(player);
-	            break;
+			case AudioManager.AUDIOFOCUS_LOSS:
+				// Lost focus for an unbounded amount of time: stop playback and release media player
+				hasFocus = false;
+				
+				if (isPlaying()) player.stop();
+				onCompletion(player);
+				break;
 	
-	        case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-	            // Lost focus for a short time, but we have to stop
-	            // playback. We don't release the media player because playback
-	            // is likely to resume
-	        	hasFocus = false;
-	        	resumeOnAudioFocusGain = true;
-	        	
-	        	if (isPlaying()) pause();
-	            break;
+			case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+				// Lost focus for a short time, but we have to stop
+				// playback. We don't release the media player because playback
+				// is likely to resume
+				hasFocus = false;
+				resumeOnAudioFocusGain = true;
+				
+				if (isPlaying()) pause();
+				break;
 	
-	        case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-	            // Lost focus for a short time, but it's ok to keep playing
-	            // at an attenuated level
-	        	hasFocus = false;
-	        	
-	        	if (isPlaying()) player.setVolume(0.1f, 0.1f);
-	            break;	
+			case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+				// Lost focus for a short time, but it's ok to keep playing
+				// at an attenuated level
+				hasFocus = false;
+				
+				if (isPlaying()) player.setVolume(0.1f, 0.1f);
+				break;	
 		}
 	}
 }
