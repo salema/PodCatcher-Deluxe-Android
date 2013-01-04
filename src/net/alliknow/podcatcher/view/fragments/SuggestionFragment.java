@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.alliknow.podcatcher.view.fragments;
 
 import static android.view.View.GONE;
@@ -58,206 +59,218 @@ import android.widget.TextView;
  */
 public class SuggestionFragment extends DialogFragment implements OnLoadSuggestionListener {
 
-	/** The filter wildcard */
-	public static final String FILTER_WILDCARD = "ALL";
-	
-	/** Mail address to send new suggestions to */
-	private static final String SUGGESTION_MAIL_ADDRESS = "suggestion@podcatcher-deluxe.com";
-	/** Subject for mail with new suggestions */
-	private static final String SUGGESTION_MAIL_SUBJECT = "A proposal for a podcast suggestion in the Podcatcher apps";
-	
-	/** The call back we work on */
-	private OnShowSuggestionsListener listener;
-	/** The suggestions load task */
-	private LoadSuggestionsTask loadTask;
-	
-	/** The language filter */
-	private Spinner languageFilter;
-	/** The genre filter */
-	private Spinner genreFilter;
-	/** The media type filter */
-	private Spinner mediaTypeFilter;
-	/** The progress view */
-	private ProgressView progressView;
-	/** The suggestions list view */
-	private ListView suggestionsListView;
-	/** The no suggestions view */
-	private TextView noSuggestionsView;
-	/** The send a suggestion view */
-	private TextView sendSuggestionView;
-		
-	/** The listener to update the list on filter change */
-	private final OnItemSelectedListener selectionListener = new OnItemSelectedListener() {
+    /** The filter wildcard */
+    public static final String FILTER_WILDCARD = "ALL";
 
-		@Override
-		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-			updateList();
-		}
+    /** Mail address to send new suggestions to */
+    private static final String SUGGESTION_MAIL_ADDRESS = "suggestion@podcatcher-deluxe.com";
+    /** Subject for mail with new suggestions */
+    private static final String SUGGESTION_MAIL_SUBJECT = "A proposal for a podcast suggestion in the Podcatcher apps";
 
-		@Override
-		public void onNothingSelected(AdapterView<?> parent) {
-			updateList();
-		}
-	};
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		
-		return inflater.inflate(R.layout.suggestions, container, false);
-	}
-	
-	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		initUi(view);
-		restoreFilters(savedInstanceState);
-		
-		// No listener
-		if (! assureListenerPresent()) onSuggestionsLoadFailed();
-		// Suggestion list has not been loaded before
-		else if (listener.getPodcastSuggestions() == null) {
-			loadTask = new LoadSuggestionsTask(this);
-			loadTask.preventZippedTransfer(((Podcatcher) getActivity().getApplication()).isOnFastConnection());
-			loadTask.execute((Void)null);
-		} // List was loaded before
-		else {
-			updateList();
-		}
-	}
-	
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		
-		outState.putInt(Language.class.getSimpleName(), languageFilter.getSelectedItemPosition());
-		outState.putInt(Genre.class.getSimpleName(), genreFilter.getSelectedItemPosition());
-		outState.putInt(MediaType.class.getSimpleName(), mediaTypeFilter.getSelectedItemPosition());
-	}
-	
-	@Override
-	public void onDismiss(DialogInterface dialog) {
-		super.onDismiss(dialog);
-		
-		if (loadTask != null) loadTask.cancel(true);
-	}
-	
-	@Override
-	public void onSuggestionsLoadProgress(Progress progress) {
-		progressView.publishProgress(progress);
-	}
+    /** The call back we work on */
+    private OnShowSuggestionsListener listener;
+    /** The suggestions load task */
+    private LoadSuggestionsTask loadTask;
 
-	@Override
-	public void onSuggestionsLoaded(List<Podcast> suggestions) {
-		// Cache the suggestions list in the podcast list fragment which will be retained
-		listener.setPodcastSuggestions(suggestions);
-		
-		// Filter list and update UI
-		updateList();
-	}
+    /** The language filter */
+    private Spinner languageFilter;
+    /** The genre filter */
+    private Spinner genreFilter;
+    /** The media type filter */
+    private Spinner mediaTypeFilter;
+    /** The progress view */
+    private ProgressView progressView;
+    /** The suggestions list view */
+    private ListView suggestionsListView;
+    /** The no suggestions view */
+    private TextView noSuggestionsView;
+    /** The send a suggestion view */
+    private TextView sendSuggestionView;
 
-	@Override
-	public void onSuggestionsLoadFailed() {
-		progressView.showError(R.string.error_suggestions_load);
-	}
-	
-	/**
-	 * Make sure we have a traget fragment that implement the right call back.
-	 * @return <code>true</code> if so.
-	 */
-	private boolean assureListenerPresent() {
-		this.listener = (OnShowSuggestionsListener) getTargetFragment();
-		// We need the target fragment to provide the required interface 
-		if (listener == null) {
-			Log.w(getClass().getSimpleName(), "Suggestion dialog cannot open, target fragment is null or does not implement OnShowSuggestionsListener");
-			return false;
-		} else return true;		
-	}
-	
-	private void setInitialFilterSelection() {
-		// Set according to locale
-		Locale current = getActivity().getResources().getConfiguration().locale;
-		languageFilter.setSelection(current.getLanguage().equalsIgnoreCase("de") ? 2 : 1);
-		// Set to "all"
-		genreFilter.setSelection(0);
-		// Set to audio, since this is an audio version
-		mediaTypeFilter.setSelection(1);
-	}
-	
-	private void restoreFilters(Bundle savedInstanceState) {
-		if (savedInstanceState != null) {
-			languageFilter.setSelection(savedInstanceState.getInt(Language.class.getSimpleName()));
-			genreFilter.setSelection(savedInstanceState.getInt(Genre.class.getSimpleName()));
-			mediaTypeFilter.setSelection(savedInstanceState.getInt(MediaType.class.getSimpleName()));
-		} else setInitialFilterSelection();
-	}
+    /** The listener to update the list on filter change */
+    private final OnItemSelectedListener selectionListener = new OnItemSelectedListener() {
 
-	private void updateList() {
-		List<Podcast> suggestionList = listener.getPodcastSuggestions();
-		// Filter the suggestion list
-		if (suggestionList != null) {
-			// Currently already  existing podcasts (to be filtered out)
-			List<Podcast> podcastList = listener.getPodcastList();
-			// Resulting list
-			List<Podcast> filteredSuggestionList = new ArrayList<Podcast>();
-			// Do filter!
-			for (Podcast suggestion : suggestionList)
-				if (podcastList == null || !podcastList.contains(suggestion) &&
-						matchesFilter(suggestion)) filteredSuggestionList.add(suggestion);
-			
-			// Set filtered list
-			suggestionsListView.setAdapter(new SuggestionListAdapter(getActivity(), filteredSuggestionList, listener));
-			// Update UI
-			if (filteredSuggestionList.isEmpty()) {
-				suggestionsListView.setVisibility(GONE);
-				noSuggestionsView.setVisibility(VISIBLE);
-			}
-			else {
-				noSuggestionsView.setVisibility(GONE);
-				suggestionsListView.setVisibility(VISIBLE);
-			}
-			
-			progressView.setVisibility(GONE);
-		}
-	}
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            updateList();
+        }
 
-	/**
-	 * Checks whether the given podcast matches the filter selection.
-	 * @param suggestion Podcast to check.
-	 * @return <code>true</code> if the podcast fits.
-	 */
-	private boolean matchesFilter(Podcast suggestion) {
-		return (languageFilter.getSelectedItemPosition() == 0 || 
-			((Language)languageFilter.getSelectedItem()).equals(suggestion.getLanguage())) &&
-			(genreFilter.getSelectedItemPosition() == 0 || 
-			((Genre)genreFilter.getSelectedItem()).equals(suggestion.getGenre())) &&
-			(mediaTypeFilter.getSelectedItemPosition() == 0 || 
-			((MediaType)mediaTypeFilter.getSelectedItem()).equals(suggestion.getMediaType()));
-	}
-	
-	private void initUi(View view) {
-		getDialog().setTitle(R.string.suggested_podcasts);
-				
-		languageFilter = (Spinner) view.findViewById(R.id.suggestion_language_select);
-		languageFilter.setAdapter(new LanguageSpinnerAdapter(getActivity()));
-		languageFilter.setOnItemSelectedListener(selectionListener);
-		
-		genreFilter = (Spinner) view.findViewById(R.id.suggestion_genre_select);
-		genreFilter.setAdapter(new GenreSpinnerAdapter(getActivity()));
-		genreFilter.setOnItemSelectedListener(selectionListener);
-		
-		mediaTypeFilter = (Spinner) view.findViewById(R.id.suggestion_type_select);
-		mediaTypeFilter.setAdapter(new MediaTypeSpinnerAdapter(getActivity()));
-		mediaTypeFilter.setOnItemSelectedListener(selectionListener);
-		
-		progressView = (ProgressView) view.findViewById(R.id.suggestion_list_progress);
-		
-		suggestionsListView = (ListView) view.findViewById(R.id.suggestion_podcasts);
-		noSuggestionsView = (TextView) view.findViewById(R.id.suggestion_none);
-		
-		sendSuggestionView = (TextView) view.findViewById(R.id.suggestion_send);
-		sendSuggestionView.setText(Html.fromHtml("<a href=\"mailto:" + SUGGESTION_MAIL_ADDRESS +
-				"?subject=" + SUGGESTION_MAIL_SUBJECT + "\">" +
-				getResources().getString(R.string.send_suggestion) + "</a>"));
-		sendSuggestionView.setMovementMethod(LinkMovementMethod.getInstance());
-	}
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            updateList();
+        }
+    };
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+
+        return inflater.inflate(R.layout.suggestions, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        initUi(view);
+        restoreFilters(savedInstanceState);
+
+        // No listener
+        if (!assureListenerPresent())
+            onSuggestionsLoadFailed();
+        // Suggestion list has not been loaded before
+        else if (listener.getPodcastSuggestions() == null) {
+            loadTask = new LoadSuggestionsTask(this);
+            loadTask.preventZippedTransfer(((Podcatcher) getActivity().getApplication())
+                    .isOnFastConnection());
+            loadTask.execute((Void) null);
+        } // List was loaded before
+        else {
+            updateList();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(Language.class.getSimpleName(), languageFilter.getSelectedItemPosition());
+        outState.putInt(Genre.class.getSimpleName(), genreFilter.getSelectedItemPosition());
+        outState.putInt(MediaType.class.getSimpleName(), mediaTypeFilter.getSelectedItemPosition());
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+
+        if (loadTask != null)
+            loadTask.cancel(true);
+    }
+
+    @Override
+    public void onSuggestionsLoadProgress(Progress progress) {
+        progressView.publishProgress(progress);
+    }
+
+    @Override
+    public void onSuggestionsLoaded(List<Podcast> suggestions) {
+        // Cache the suggestions list in the podcast list fragment which will be
+        // retained
+        listener.setPodcastSuggestions(suggestions);
+
+        // Filter list and update UI
+        updateList();
+    }
+
+    @Override
+    public void onSuggestionsLoadFailed() {
+        progressView.showError(R.string.error_suggestions_load);
+    }
+
+    /**
+     * Make sure we have a traget fragment that implement the right call back.
+     * 
+     * @return <code>true</code> if so.
+     */
+    private boolean assureListenerPresent() {
+        this.listener = (OnShowSuggestionsListener) getTargetFragment();
+        // We need the target fragment to provide the required interface
+        if (listener == null) {
+            Log.w(getClass().getSimpleName(),
+                    "Suggestion dialog cannot open, target fragment is null or does not implement OnShowSuggestionsListener");
+            return false;
+        } else
+            return true;
+    }
+
+    private void setInitialFilterSelection() {
+        // Set according to locale
+        Locale current = getActivity().getResources().getConfiguration().locale;
+        languageFilter.setSelection(current.getLanguage().equalsIgnoreCase("de") ? 2 : 1);
+        // Set to "all"
+        genreFilter.setSelection(0);
+        // Set to audio, since this is an audio version
+        mediaTypeFilter.setSelection(1);
+    }
+
+    private void restoreFilters(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            languageFilter.setSelection(savedInstanceState.getInt(Language.class.getSimpleName()));
+            genreFilter.setSelection(savedInstanceState.getInt(Genre.class.getSimpleName()));
+            mediaTypeFilter
+                    .setSelection(savedInstanceState.getInt(MediaType.class.getSimpleName()));
+        } else
+            setInitialFilterSelection();
+    }
+
+    private void updateList() {
+        List<Podcast> suggestionList = listener.getPodcastSuggestions();
+        // Filter the suggestion list
+        if (suggestionList != null) {
+            // Currently already existing podcasts (to be filtered out)
+            List<Podcast> podcastList = listener.getPodcastList();
+            // Resulting list
+            List<Podcast> filteredSuggestionList = new ArrayList<Podcast>();
+            // Do filter!
+            for (Podcast suggestion : suggestionList)
+                if (podcastList == null || !podcastList.contains(suggestion) &&
+                        matchesFilter(suggestion))
+                    filteredSuggestionList.add(suggestion);
+
+            // Set filtered list
+            suggestionsListView.setAdapter(new SuggestionListAdapter(getActivity(),
+                    filteredSuggestionList, listener));
+            // Update UI
+            if (filteredSuggestionList.isEmpty()) {
+                suggestionsListView.setVisibility(GONE);
+                noSuggestionsView.setVisibility(VISIBLE);
+            }
+            else {
+                noSuggestionsView.setVisibility(GONE);
+                suggestionsListView.setVisibility(VISIBLE);
+            }
+
+            progressView.setVisibility(GONE);
+        }
+    }
+
+    /**
+     * Checks whether the given podcast matches the filter selection.
+     * 
+     * @param suggestion Podcast to check.
+     * @return <code>true</code> if the podcast fits.
+     */
+    private boolean matchesFilter(Podcast suggestion) {
+        return (languageFilter.getSelectedItemPosition() == 0 ||
+                ((Language) languageFilter.getSelectedItem()).equals(suggestion.getLanguage())) &&
+                (genreFilter.getSelectedItemPosition() == 0 ||
+                ((Genre) genreFilter.getSelectedItem()).equals(suggestion.getGenre())) &&
+                (mediaTypeFilter.getSelectedItemPosition() == 0 ||
+                ((MediaType) mediaTypeFilter.getSelectedItem()).equals(suggestion.getMediaType()));
+    }
+
+    private void initUi(View view) {
+        getDialog().setTitle(R.string.suggested_podcasts);
+
+        languageFilter = (Spinner) view.findViewById(R.id.suggestion_language_select);
+        languageFilter.setAdapter(new LanguageSpinnerAdapter(getActivity()));
+        languageFilter.setOnItemSelectedListener(selectionListener);
+
+        genreFilter = (Spinner) view.findViewById(R.id.suggestion_genre_select);
+        genreFilter.setAdapter(new GenreSpinnerAdapter(getActivity()));
+        genreFilter.setOnItemSelectedListener(selectionListener);
+
+        mediaTypeFilter = (Spinner) view.findViewById(R.id.suggestion_type_select);
+        mediaTypeFilter.setAdapter(new MediaTypeSpinnerAdapter(getActivity()));
+        mediaTypeFilter.setOnItemSelectedListener(selectionListener);
+
+        progressView = (ProgressView) view.findViewById(R.id.suggestion_list_progress);
+
+        suggestionsListView = (ListView) view.findViewById(R.id.suggestion_podcasts);
+        noSuggestionsView = (TextView) view.findViewById(R.id.suggestion_none);
+
+        sendSuggestionView = (TextView) view.findViewById(R.id.suggestion_send);
+        sendSuggestionView.setText(Html.fromHtml("<a href=\"mailto:" + SUGGESTION_MAIL_ADDRESS +
+                "?subject=" + SUGGESTION_MAIL_SUBJECT + "\">" +
+                getResources().getString(R.string.send_suggestion) + "</a>"));
+        sendSuggestionView.setMovementMethod(LinkMovementMethod.getInstance());
+    }
 }

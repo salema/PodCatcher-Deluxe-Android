@@ -42,7 +42,7 @@
         android:paddingLeft="@dimen/list_item_padding"
         android:singleLine="true"
         android:textSize="@dimen/font_size_small" />
-    <net.alliknow.podcatcher.views.HorizontalProgressView
+    <net.alliknow.podcatcher.view.HorizontalProgressView
         android:id="@+id/list_item_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

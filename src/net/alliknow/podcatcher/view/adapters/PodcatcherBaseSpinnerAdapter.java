@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.alliknow.podcatcher.view.adapters;
 
 import android.content.Context;
@@ -22,31 +23,33 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 /**
- * Abstract base for spinner adapters.
- * The default implementation will use simple text views and string
- * resources named ("keyed") <code>item.toString().toLowerCase()</code>.
- * (This will fail if these resources do not exist!)
+ * Abstract base for spinner adapters. The default implementation will use
+ * simple text views and string resources named ("keyed")
+ * <code>item.toString().toLowerCase()</code>. (This will fail if these
+ * resources do not exist!)
  */
 public abstract class PodcatcherBaseSpinnerAdapter extends PodcatcherBaseAdapter {
 
-	/**
-	 * Create the adapter.
-	 * @param context Context we live in.
-	 */
-	public PodcatcherBaseSpinnerAdapter(Context context) {
-		super(context);
-	}
-	
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		TextView result = (TextView) findReturnView(convertView, parent, android.R.layout.simple_spinner_item);
-		
-		result.setText(getResourceString(result.getResources(), position));
-		return result;
-	}
+    /**
+     * Create the adapter.
+     * 
+     * @param context Context we live in.
+     */
+    public PodcatcherBaseSpinnerAdapter(Context context) {
+        super(context);
+    }
 
-	@Override
-	public long getItemId(int position) {
-		return getItem(position).hashCode();
-	}
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        TextView result = (TextView) findReturnView(convertView, parent,
+                android.R.layout.simple_spinner_item);
+
+        result.setText(getResourceString(result.getResources(), position));
+        return result;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return getItem(position).hashCode();
+    }
 }

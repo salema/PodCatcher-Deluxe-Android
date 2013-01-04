@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.alliknow.podcatcher.view.adapters;
 
 import static android.view.View.GONE;
@@ -33,61 +34,63 @@ import android.view.ViewGroup;
  */
 public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 
-	/** The list our data resides in */
-	protected List<Podcast> list;
+    /** The list our data resides in */
+    protected List<Podcast> list;
 
-	/** String resources used */
-	protected final String oneEpisode;
-	protected final String episodes;
-	
-	/**
-	 * Create new adapter.
-	 * 
-	 * @param context The current context.
-	 * @param podcastList List of podcasts to wrap (not <code>null</code>).
-	 */
-	public PodcastListAdapter(Context context, List<Podcast> podcastList) {
-		super(context);
-		
-		this.list = podcastList;
-		oneEpisode = context.getResources().getString(R.string.one_episode);
-		episodes = context.getResources().getString(R.string.episodes);
-	}
-	
-	@Override
-	public int getCount() {
-		return list.size();
-	}
+    /** String resources used */
+    protected final String oneEpisode;
+    protected final String episodes;
 
-	@Override
-	public Object getItem(int position) {
-		return list.get(position);
-	}
-	
-	@Override
-	public long getItemId(int position) {
-		return list.get(position).hashCode();
-	}
-	
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		convertView = findReturnView(convertView, parent, R.layout.list_item);
-		
-		int numberOfEpisodes = list.get(position).getEpisodes().size();
-		setTextAndState(convertView, R.id.list_item_title, list.get(position).getName(), position);
-		setTextAndState(convertView, R.id.list_item_caption, createCaption(numberOfEpisodes), position);
-		
-		// Show progress on select all podcasts?
-		HorizontalProgressView progressView = (HorizontalProgressView)convertView.findViewById(R.id.list_item_progress);
-		progressView.setVisibility(list.get(position).isLoading() && selectAll ? VISIBLE : GONE);
-		// Not if episodes are already available...
-		View episodeNumberView = convertView.findViewById(R.id.list_item_caption);
-		episodeNumberView.setVisibility(numberOfEpisodes != 0 ? VISIBLE : GONE);
-		
-		return convertView;
-	}
+    /**
+     * Create new adapter.
+     * 
+     * @param context The current context.
+     * @param podcastList List of podcasts to wrap (not <code>null</code>).
+     */
+    public PodcastListAdapter(Context context, List<Podcast> podcastList) {
+        super(context);
 
-	private String createCaption(int numberOfEpisodes) {
-		return numberOfEpisodes == 1 ? oneEpisode :	numberOfEpisodes + " " + episodes;
-	}
+        this.list = podcastList;
+        oneEpisode = context.getResources().getString(R.string.one_episode);
+        episodes = context.getResources().getString(R.string.episodes);
+    }
+
+    @Override
+    public int getCount() {
+        return list.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return list.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return list.get(position).hashCode();
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        convertView = findReturnView(convertView, parent, R.layout.list_item);
+
+        int numberOfEpisodes = list.get(position).getEpisodes().size();
+        setTextAndState(convertView, R.id.list_item_title, list.get(position).getName(), position);
+        setTextAndState(convertView, R.id.list_item_caption, createCaption(numberOfEpisodes),
+                position);
+
+        // Show progress on select all podcasts?
+        HorizontalProgressView progressView = (HorizontalProgressView) convertView
+                .findViewById(R.id.list_item_progress);
+        progressView.setVisibility(list.get(position).isLoading() && selectAll ? VISIBLE : GONE);
+        // Not if episodes are already available...
+        View episodeNumberView = convertView.findViewById(R.id.list_item_caption);
+        episodeNumberView.setVisibility(numberOfEpisodes != 0 ? VISIBLE : GONE);
+
+        return convertView;
+    }
+
+    private String createCaption(int numberOfEpisodes) {
+        return numberOfEpisodes == 1 ? oneEpisode : numberOfEpisodes + " " + episodes;
+    }
 }

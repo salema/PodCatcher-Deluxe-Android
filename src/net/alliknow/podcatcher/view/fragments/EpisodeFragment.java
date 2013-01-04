@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.alliknow.podcatcher.view.fragments;
 
 import static android.view.View.GONE;
@@ -54,349 +55,364 @@ import android.widget.TextView;
 /**
  * Fragment showing episode details.
  */
-public class EpisodeFragment extends Fragment implements PlayServiceListener, 
-		OnSeekBarChangeListener, OnReturnToPlayingEpisodeListener {
+public class EpisodeFragment extends Fragment implements PlayServiceListener,
+        OnSeekBarChangeListener, OnReturnToPlayingEpisodeListener {
 
-	/** The activity we are in (listens to user selection) */ 
+    /** The activity we are in (listens to user selection) */
     private OnSelectEpisodeListener selectedListener;
-    
-	/** The load episode menu bar item */
-	private MenuItem loadMenuItem;
-	/** The empty view */
-	private View emptyView;
-	/** The episode title view */
-	private TextView episodeTitleView;
-	/** The podcast title view */
-	private TextView podcastTitleView;
-	/** The divider view between title and description */
-	private View dividerView;
-	/** The episode description web view */
-	private WebView episodeDetailView;
-	/** The player view */
-	private Player playerView;
-		
-	/** Current episode */
-	private Episode episode;
-	/** Play service */
-	private PlayEpisodeService service;
-	/** Whether a seek is currently active */
-	private boolean seeking = false;
-		
-	/** Play update timer task */
-	private Timer playUpdateTimer = new Timer();
-	/** Play update timer task */
-	private TimerTask playUpdateTimerTask;
-	/** The actual task to regularly update the UI on playback */
-	private class PlayProgressTask extends TimerTask {
 
-		@Override
-		public void run() {
-			// This will only work, if our callback actually exists
-			if (EpisodeFragment.this == null || EpisodeFragment.this.getActivity() == null) return;
-			
-			// Need to run on UI thread, since we want to update the play button
-			EpisodeFragment.this.getActivity().runOnUiThread(new Runnable() {
-				
-				@Override
-				public void run() {
-					playerView.update(service, episode);
-				}
-			});
-		}
-	}
-	
-	@Override
-    public void onCreate(Bundle savedInstanceState) {
-    	super.onCreate(savedInstanceState);
-    	
-    	setHasOptionsMenu(true);
+    /** The load episode menu bar item */
+    private MenuItem loadMenuItem;
+    /** The empty view */
+    private View emptyView;
+    /** The episode title view */
+    private TextView episodeTitleView;
+    /** The podcast title view */
+    private TextView podcastTitleView;
+    /** The divider view between title and description */
+    private View dividerView;
+    /** The episode description web view */
+    private WebView episodeDetailView;
+    /** The player view */
+    private Player playerView;
+
+    /** Current episode */
+    private Episode episode;
+    /** Play service */
+    private PlayEpisodeService service;
+    /** Whether a seek is currently active */
+    private boolean seeking = false;
+
+    /** Play update timer task */
+    private Timer playUpdateTimer = new Timer();
+    /** Play update timer task */
+    private TimerTask playUpdateTimerTask;
+
+    /** The actual task to regularly update the UI on playback */
+    private class PlayProgressTask extends TimerTask {
+
+        @Override
+        public void run() {
+            // This will only work, if our callback actually exists
+            if (EpisodeFragment.this == null || EpisodeFragment.this.getActivity() == null)
+                return;
+
+            // Need to run on UI thread, since we want to update the play button
+            EpisodeFragment.this.getActivity().runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    playerView.update(service, episode);
+                }
+            });
+        }
     }
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		
-		return inflater.inflate(R.layout.episode, container, false);
-	}
-	
-	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		
-		emptyView = getView().findViewById(android.R.id.empty);
-		episodeTitleView = (TextView) getView().findViewById(R.id.episode_title);
-		podcastTitleView = (TextView) getView().findViewById(R.id.podcast_title);
-		episodeDetailView = (WebView) getView().findViewById(R.id.episode_description);
-		dividerView = getView().findViewById(R.id.episode_divider);
-		
-		playerView = (Player) view.findViewById(R.id.player);
-		playerView.setOnSeekBarChangeListener(this);
-		playerView.setOnReturnToPlayingEpisodeListener(this);
-		playerView.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				togglePlay();
-			}
-		});
-		playerView.setOnLongClickListener(new OnLongClickListener() {
-			
-			@Override
-			public boolean onLongClick(View v) {
-				onPlaybackComplete();
-				
-				return true;
-			}
-		});
-	}
-	
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.episode, menu);
-		
-		loadMenuItem = menu.findItem(R.id.episode_load_menuitem);
-	}
-	
-	@Override
-	public void onStart() {
-		super.onStart();
-		
-		// Make sure the service runs as long as this fragment exists
-    	getActivity().startService(new Intent(getActivity(), PlayEpisodeService.class));
-    	// Attach to play service via this fragment's activity
-    	Intent intent = new Intent(getActivity(), PlayEpisodeService.class);
-    	getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);  
-	}
-	
-	@Override
-	public void onResume() {
-		super.onResume();
-		
-		// Restore from configuration change 
-		if (episode != null) setEpisode(episode);
-		
-		updateUiElementVisibility();
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-	    	case R.id.episode_load_menuitem:
-	    		if (service.isWorkingWith(episode)) onPlaybackComplete();
-				else loadEpisode();
-	    		
-	    		return true;
-	    	default:
-	    		return super.onOptionsItemSelected(item);
-		}
-	}
-	
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		
-		// Detach from play service via this fragment's activity (prevents leaking)
-		if (service != null) getActivity().unbindService(connection);
-				
-		// Stop progress update task if existing
-		stopPlayProgressTimer();
-	}
-		
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		
-		// This would prevent strange service behavior
-		if (service != null && !service.isPlaying()) service.stopSelf();		
-		
-		playUpdateTimer.cancel();
-	}
-	
-	/**
-	 * @param listener Listener to be alerted on episode selection.
-	 */
-	public void setEpisodeSelectedListener(OnSelectEpisodeListener listener) {
-		this.selectedListener = listener;
-	}
-	
-	/**
-	 * Set the displayed episode, all UI will be updated.
-	 * @param selectedEpisode Episode to show (cannot be null).
-	 */
-	public void setEpisode(Episode selectedEpisode) {
-		if (selectedEpisode != null) {
-			this.episode = selectedEpisode;
-			
-			// Only update the UI if we are actually showing
-			if (isResumed()) {
-				episodeTitleView.setText(episode.getName());
-				podcastTitleView.setText(episode.getPodcastName());
-				episodeDetailView.loadDataWithBaseURL(null, episode.getDescription(), "text/html", "utf-8", null);
-				
-				updateUiElementVisibility();
-				playerView.update(service, episode);
-			}
-		}
-	}
-	
-	/**
-	 * @return The episode currently displayed (may be <code>null</code>).
-	 */
-	public Episode getEpisode() {
-		return episode;
-	}
-	
-	@Override
-	public void onReturnToPlayingEpisode() {
-		if (service != null && service.getCurrentEpisode() != null && selectedListener != null) 
-			selectedListener.onEpisodeSelected(service.getCurrentEpisode());
-	}
-	
-	@Override
-	public void onReadyToPlay() {
-		playerView.update(service, episode);
-		startPlayProgressTimer();
-	}
-	
-	@Override
-	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-		if (fromUser) {
-			service.seekTo(progress);
-			playerView.update(service, episode);
-		}
-	}
 
-	@Override
-	public void onStartTrackingTouch(SeekBar seekBar) {
-		seeking = true;
-		stopPlayProgressTimer();
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-	@Override
-	public void onStopTrackingTouch(SeekBar seekBar) {
-		seeking = false;
-		startPlayProgressTimer();
-	}
-	
-	@Override
-	public void onStopForBuffering() {
-		stopPlayProgressTimer();
-		playerView.update(service, episode);
-	}
+        setHasOptionsMenu(true);
+    }
 
-	@Override
-	public void onResumeFromBuffering() {
-		onReadyToPlay();
-	}
-	
-	@Override
-	public void onBufferUpdate(int seconds) {
-		playerView.setSecondaryProgress(seconds);
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
 
-	@Override
-	public void onPlaybackComplete() {
-		stopPlayProgressTimer();
-		
-		service.reset();
-		
-		updateUiElementVisibility();
-		playerView.update(service, episode);
-	}
-	
-	@Override
-	public void onError() {
-		service.reset();
-		
-		updateUiElementVisibility();
-		playerView.update(service, episode);
-		
-		playerView.showError();
-		
-		Log.w(getClass().getSimpleName(), "Play service send an error");
-	}
-	
-	private void loadEpisode() {
-		if (episode != null && service != null) {		
-			// Episode should not be loaded
-			if (! service.isWorkingWith(episode)) {
-				stopPlayProgressTimer();
-				
-				service.playEpisode(episode);
-								
-				updateUiElementVisibility();
-				playerView.update(service, episode);
-			}
-		} else Log.d(getClass().getSimpleName(), "Cannot load episode (episode or service are null)");
-	}
-	
-	private void togglePlay() {
-		if (service != null && service.isPrepared()) {		
-			// Player is playing
-			if (service.isPlaying()) {
-				service.pause();
-				stopPlayProgressTimer();
-			} // Player in pause
-			else {
-				service.resume();
-				startPlayProgressTimer();
-			}
-			
-			playerView.update(service, episode);
-		} else Log.d(getClass().getSimpleName(), "Cannot play/pause episode (service null or unprepared)");
-	}
-	
-	private void updateUiElementVisibility() {
-		if (isResumed()) {
-			emptyView.setVisibility(episode == null ? VISIBLE : GONE);
-				
-			episodeTitleView.setVisibility(episode == null ? GONE : VISIBLE);
-			podcastTitleView.setVisibility(episode == null ? GONE : VISIBLE);
-			dividerView.setVisibility(episode == null ? GONE : VISIBLE);
-			episodeDetailView.setVisibility(episode == null ? GONE : VISIBLE);
-			
-			// Menu item might be late to load
-			if (loadMenuItem != null) {
-				loadMenuItem.setVisible(episode != null && service != null);
-					
-				if (loadMenuItem.isVisible()) {
-					loadMenuItem.setTitle(service.isWorkingWith(episode) ? R.string.stop : R.string.play );
-					loadMenuItem.setIcon(service.isWorkingWith(episode) ? R.drawable.ic_media_stop : R.drawable.ic_media_play);
-				}
-			}
-		}
-	}
-	
-	private void startPlayProgressTimer() {
-		// Only start task if it isn't already running and
-		// there is actually some progress to monitor 
-		if (playUpdateTimerTask == null && !seeking && service.isPlaying()) {
-			playUpdateTimerTask = new PlayProgressTask();
-			playUpdateTimer.schedule(playUpdateTimerTask, 0, 1000);
-		}
-	}
-	
-	private void stopPlayProgressTimer() {
-		if (playUpdateTimerTask != null) {
-			playUpdateTimerTask.cancel();
-			playUpdateTimerTask = null;
-		}
-	}
-	
-	/** Defines callbacks for service binding, passed to bindService() */
+        return inflater.inflate(R.layout.episode, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        emptyView = getView().findViewById(android.R.id.empty);
+        episodeTitleView = (TextView) getView().findViewById(R.id.episode_title);
+        podcastTitleView = (TextView) getView().findViewById(R.id.podcast_title);
+        episodeDetailView = (WebView) getView().findViewById(R.id.episode_description);
+        dividerView = getView().findViewById(R.id.episode_divider);
+
+        playerView = (Player) view.findViewById(R.id.player);
+        playerView.setOnSeekBarChangeListener(this);
+        playerView.setOnReturnToPlayingEpisodeListener(this);
+        playerView.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                togglePlay();
+            }
+        });
+        playerView.setOnLongClickListener(new OnLongClickListener() {
+
+            @Override
+            public boolean onLongClick(View v) {
+                onPlaybackComplete();
+
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.episode, menu);
+
+        loadMenuItem = menu.findItem(R.id.episode_load_menuitem);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // Make sure the service runs as long as this fragment exists
+        getActivity().startService(new Intent(getActivity(), PlayEpisodeService.class));
+        // Attach to play service via this fragment's activity
+        Intent intent = new Intent(getActivity(), PlayEpisodeService.class);
+        getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Restore from configuration change
+        if (episode != null)
+            setEpisode(episode);
+
+        updateUiElementVisibility();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.episode_load_menuitem:
+                if (service.isWorkingWith(episode))
+                    onPlaybackComplete();
+                else
+                    loadEpisode();
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        // Detach from play service via this fragment's activity (prevents
+        // leaking)
+        if (service != null)
+            getActivity().unbindService(connection);
+
+        // Stop progress update task if existing
+        stopPlayProgressTimer();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        // This would prevent strange service behavior
+        if (service != null && !service.isPlaying())
+            service.stopSelf();
+
+        playUpdateTimer.cancel();
+    }
+
+    /**
+     * @param listener Listener to be alerted on episode selection.
+     */
+    public void setEpisodeSelectedListener(OnSelectEpisodeListener listener) {
+        this.selectedListener = listener;
+    }
+
+    /**
+     * Set the displayed episode, all UI will be updated.
+     * 
+     * @param selectedEpisode Episode to show (cannot be null).
+     */
+    public void setEpisode(Episode selectedEpisode) {
+        if (selectedEpisode != null) {
+            this.episode = selectedEpisode;
+
+            // Only update the UI if we are actually showing
+            if (isResumed()) {
+                episodeTitleView.setText(episode.getName());
+                podcastTitleView.setText(episode.getPodcastName());
+                episodeDetailView.loadDataWithBaseURL(null, episode.getDescription(), "text/html",
+                        "utf-8", null);
+
+                updateUiElementVisibility();
+                playerView.update(service, episode);
+            }
+        }
+    }
+
+    /**
+     * @return The episode currently displayed (may be <code>null</code>).
+     */
+    public Episode getEpisode() {
+        return episode;
+    }
+
+    @Override
+    public void onReturnToPlayingEpisode() {
+        if (service != null && service.getCurrentEpisode() != null && selectedListener != null)
+            selectedListener.onEpisodeSelected(service.getCurrentEpisode());
+    }
+
+    @Override
+    public void onReadyToPlay() {
+        playerView.update(service, episode);
+        startPlayProgressTimer();
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (fromUser) {
+            service.seekTo(progress);
+            playerView.update(service, episode);
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        seeking = true;
+        stopPlayProgressTimer();
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        seeking = false;
+        startPlayProgressTimer();
+    }
+
+    @Override
+    public void onStopForBuffering() {
+        stopPlayProgressTimer();
+        playerView.update(service, episode);
+    }
+
+    @Override
+    public void onResumeFromBuffering() {
+        onReadyToPlay();
+    }
+
+    @Override
+    public void onBufferUpdate(int seconds) {
+        playerView.setSecondaryProgress(seconds);
+    }
+
+    @Override
+    public void onPlaybackComplete() {
+        stopPlayProgressTimer();
+
+        service.reset();
+
+        updateUiElementVisibility();
+        playerView.update(service, episode);
+    }
+
+    @Override
+    public void onError() {
+        service.reset();
+
+        updateUiElementVisibility();
+        playerView.update(service, episode);
+
+        playerView.showError();
+
+        Log.w(getClass().getSimpleName(), "Play service send an error");
+    }
+
+    private void loadEpisode() {
+        if (episode != null && service != null) {
+            // Episode should not be loaded
+            if (!service.isWorkingWith(episode)) {
+                stopPlayProgressTimer();
+
+                service.playEpisode(episode);
+
+                updateUiElementVisibility();
+                playerView.update(service, episode);
+            }
+        } else
+            Log.d(getClass().getSimpleName(), "Cannot load episode (episode or service are null)");
+    }
+
+    private void togglePlay() {
+        if (service != null && service.isPrepared()) {
+            // Player is playing
+            if (service.isPlaying()) {
+                service.pause();
+                stopPlayProgressTimer();
+            } // Player in pause
+            else {
+                service.resume();
+                startPlayProgressTimer();
+            }
+
+            playerView.update(service, episode);
+        } else
+            Log.d(getClass().getSimpleName(),
+                    "Cannot play/pause episode (service null or unprepared)");
+    }
+
+    private void updateUiElementVisibility() {
+        if (isResumed()) {
+            emptyView.setVisibility(episode == null ? VISIBLE : GONE);
+
+            episodeTitleView.setVisibility(episode == null ? GONE : VISIBLE);
+            podcastTitleView.setVisibility(episode == null ? GONE : VISIBLE);
+            dividerView.setVisibility(episode == null ? GONE : VISIBLE);
+            episodeDetailView.setVisibility(episode == null ? GONE : VISIBLE);
+
+            // Menu item might be late to load
+            if (loadMenuItem != null) {
+                loadMenuItem.setVisible(episode != null && service != null);
+
+                if (loadMenuItem.isVisible()) {
+                    loadMenuItem.setTitle(service.isWorkingWith(episode) ? R.string.stop
+                            : R.string.play);
+                    loadMenuItem.setIcon(service.isWorkingWith(episode) ? R.drawable.ic_media_stop
+                            : R.drawable.ic_media_play);
+                }
+            }
+        }
+    }
+
+    private void startPlayProgressTimer() {
+        // Only start task if it isn't already running and
+        // there is actually some progress to monitor
+        if (playUpdateTimerTask == null && !seeking && service.isPlaying()) {
+            playUpdateTimerTask = new PlayProgressTask();
+            playUpdateTimer.schedule(playUpdateTimerTask, 0, 1000);
+        }
+    }
+
+    private void stopPlayProgressTimer() {
+        if (playUpdateTimerTask != null) {
+            playUpdateTimerTask.cancel();
+            playUpdateTimerTask = null;
+        }
+    }
+
+    /** Defines callbacks for service binding, passed to bindService() */
     private ServiceConnection connection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
-        	service = ((PlayServiceBinder) serviceBinder).getService();
+            service = ((PlayServiceBinder) serviceBinder).getService();
             Log.d(EpisodeFragment.this.getClass().getSimpleName(), "Bound to playback service");
-            
+
             // Register listener and notification
             service.setPlayServiceListener(EpisodeFragment.this);
-                       
+
             // Update UI to reflect service status
-            if (episode == null && service.getCurrentEpisode() != null) 
-    			setEpisode(service.getCurrentEpisode());
+            if (episode == null && service.getCurrentEpisode() != null)
+                setEpisode(service.getCurrentEpisode());
             updateUiElementVisibility();
             playerView.update(service, episode);
             // Restart play progress timer task if service is playing

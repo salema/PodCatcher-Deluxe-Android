@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.alliknow.podcatcher.model.types;
 
 /**
  * Genre (category) of the podcast.
  */
 public enum Genre {
-	COMEDY, EDUCATION, ENTERTAINMENT, MOBILITY, MUSIC, NEWS, POLITICS, SCIENCE, SPORTS, TECHNOLOGY
+    COMEDY, EDUCATION, ENTERTAINMENT, MOBILITY, MUSIC, NEWS, POLITICS, SCIENCE, SPORTS, TECHNOLOGY
 }

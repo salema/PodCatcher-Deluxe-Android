@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.alliknow.podcatcher.model.tasks;
 
 import java.io.IOException;
@@ -43,103 +44,111 @@ import android.util.Log;
  */
 public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>> {
 
-	/** Our context */
-	private Context context;
-	/** The listener callback */
-	private OnLoadPodcastListListener listener;
-		
-	/**
-	 * Create new task.
-	 * @param context Context to read file from. This will not be
-	 * leaked if you keep a handle on this task, but set to <code>null</code>
-	 * after execution.
-	 * @param listener Callback to be alerted on completion.
-	 */
-	public LoadPodcastListTask(Context context, OnLoadPodcastListListener listener) {
-		this.listener = listener;
-		this.context = context;
-	}
-	
-	@Override
-	protected List<Podcast> doInBackground(Void... params) {
-		InputStream fileStream = null;
-		
-		try {
-			// Build parser
-			XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-			factory.setNamespaceAware(true);
-			// Create the parser to use
-			XmlPullParser parser = factory.newPullParser();
-			// Open default podcast file
-			fileStream = context.openFileInput(PodcastManager.OPML_FILENAME);
-			parser.setInput(fileStream, PodcastManager.OPML_FILE_ENCODING);
-			// Create list
-			List<Podcast> result = new ArrayList<Podcast>();
-						
-			// Start parsing
-			int eventType = parser.next();
-					
-			// Read complete document
-			while (eventType != XmlPullParser.END_DOCUMENT) {
-				// We only need start tags here
-				if (eventType == XmlPullParser.START_TAG) {
-					String tagName = parser.getName();
-					
-					// Podcast found
-					if (tagName.equalsIgnoreCase(OPML.OUTLINE)) 
-						result.add(createPodcast(parser));
-				}
-				
-				// Done, get next parsing event
-				eventType = parser.next();
-			}
-					
-			// Sort and tidy up!
-			while (result.remove(null));
-			Collections.sort(result);
-						
-			return result;
-		} catch (Exception e) {
-			Log.e(getClass().getSimpleName(), "Load failed for podcast list!", e);
-			
-			// Return empty list as a fall-back
-			return new ArrayList<Podcast>();
-		} finally {
-			// Make sure we do not leak the context
-			this.context = null;
-			// Make sure we close the file stream
-			if (fileStream != null)
-				try {
-					fileStream.close();
-				} catch (IOException e) { /* pass... */ }
-		}
-	}
+    /** Our context */
+    private Context context;
+    /** The listener callback */
+    private OnLoadPodcastListListener listener;
 
-	private Podcast createPodcast(XmlPullParser parser) {
-		try {
-			// Make sure we start at item tag
-			parser.require(XmlPullParser.START_TAG, "", OPML.OUTLINE);
-			// Get the podcast name
-			String name = parser.getAttributeValue("", OPML.TEXT);
-			// Make sure podcast name looks good
-			if (name.equals("null")) name = null;
-			else name = Html.fromHtml(name).toString();
-			// Get and parse podcast url
-			URL url = new URL(parser.getAttributeValue("", OPML.XMLURL));
-			// Create the podcast
-			return new Podcast(name, url);
-		} catch (MalformedURLException e) {
-			Log.d(getClass().getSimpleName(), "OPML outline has bad URL!", e);
-		} catch (XmlPullParserException e) {
-			Log.d(getClass().getSimpleName(), "OPML outline not parsable!", e);
-		} catch (IOException e) { /* pass */ }
-		
-		return null;
-	}
+    /**
+     * Create new task.
+     * 
+     * @param context Context to read file from. This will not be leaked if you
+     *            keep a handle on this task, but set to <code>null</code> after
+     *            execution.
+     * @param listener Callback to be alerted on completion.
+     */
+    public LoadPodcastListTask(Context context, OnLoadPodcastListListener listener) {
+        this.listener = listener;
+        this.context = context;
+    }
 
-	@Override
-	protected void onPostExecute(List<Podcast> result) {
-		if (listener != null) listener.onPodcastListLoaded(result);
-		else Log.d(getClass().getSimpleName(), "Podcast list loaded, but no listener attached");
-	}
+    @Override
+    protected List<Podcast> doInBackground(Void... params) {
+        InputStream fileStream = null;
+
+        try {
+            // Build parser
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            // Create the parser to use
+            XmlPullParser parser = factory.newPullParser();
+            // Open default podcast file
+            fileStream = context.openFileInput(PodcastManager.OPML_FILENAME);
+            parser.setInput(fileStream, PodcastManager.OPML_FILE_ENCODING);
+            // Create list
+            List<Podcast> result = new ArrayList<Podcast>();
+
+            // Start parsing
+            int eventType = parser.next();
+
+            // Read complete document
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                // We only need start tags here
+                if (eventType == XmlPullParser.START_TAG) {
+                    String tagName = parser.getName();
+
+                    // Podcast found
+                    if (tagName.equalsIgnoreCase(OPML.OUTLINE))
+                        result.add(createPodcast(parser));
+                }
+
+                // Done, get next parsing event
+                eventType = parser.next();
+            }
+
+            // Sort and tidy up!
+            while (result.remove(null))
+                ;
+            Collections.sort(result);
+
+            return result;
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "Load failed for podcast list!", e);
+
+            // Return empty list as a fall-back
+            return new ArrayList<Podcast>();
+        } finally {
+            // Make sure we do not leak the context
+            this.context = null;
+            // Make sure we close the file stream
+            if (fileStream != null)
+                try {
+                    fileStream.close();
+                } catch (IOException e) { /* pass... */
+                }
+        }
+    }
+
+    private Podcast createPodcast(XmlPullParser parser) {
+        try {
+            // Make sure we start at item tag
+            parser.require(XmlPullParser.START_TAG, "", OPML.OUTLINE);
+            // Get the podcast name
+            String name = parser.getAttributeValue("", OPML.TEXT);
+            // Make sure podcast name looks good
+            if (name.equals("null"))
+                name = null;
+            else
+                name = Html.fromHtml(name).toString();
+            // Get and parse podcast url
+            URL url = new URL(parser.getAttributeValue("", OPML.XMLURL));
+            // Create the podcast
+            return new Podcast(name, url);
+        } catch (MalformedURLException e) {
+            Log.d(getClass().getSimpleName(), "OPML outline has bad URL!", e);
+        } catch (XmlPullParserException e) {
+            Log.d(getClass().getSimpleName(), "OPML outline not parsable!", e);
+        } catch (IOException e) { /* pass */
+        }
+
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(List<Podcast> result) {
+        if (listener != null)
+            listener.onPodcastListLoaded(result);
+        else
+            Log.d(getClass().getSimpleName(), "Podcast list loaded, but no listener attached");
+    }
 }

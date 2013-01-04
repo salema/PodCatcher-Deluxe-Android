@@ -14,16 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.alliknow.podcatcher.listeners;
 
 /**
- * Interface definition for a callback to be invoked when 
- * the UI should return to the currently playing episode.
+ * Interface definition for a callback to be invoked when the UI should return
+ * to the currently playing episode.
  */
 public interface OnReturnToPlayingEpisodeListener {
 
-	/**
-	 * Alert the listener that it should return to the currently played episode. 
-	 */
-	public void onReturnToPlayingEpisode();
+    /**
+     * Alert the listener that it should return to the currently played episode.
+     */
+    public void onReturnToPlayingEpisode();
 }

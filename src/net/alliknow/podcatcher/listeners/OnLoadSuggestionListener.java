@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.alliknow.podcatcher.listeners;
 
 import java.util.List;
@@ -22,28 +23,31 @@ import net.alliknow.podcatcher.model.tasks.Progress;
 import net.alliknow.podcatcher.model.types.Podcast;
 
 /**
- * Interface definition for a callback to be invoked when podcast suggestions are loaded.
+ * Interface definition for a callback to be invoked when podcast suggestions
+ * are loaded.
  */
 public interface OnLoadSuggestionListener {
-	
-	/**
-	 * Called on progress update.
-	 * @param progress Progress of suggestions JSON file loaded 
-	 * or flag from <code>Progress</code>.
-	 * Note that this only works if the http connection
-	 * reports its content length correctly. Otherwise 
-	 * (and this happens in the wild out there) percent might be >100.
-	 */
-	public void onSuggestionsLoadProgress(Progress progress);
-	
-	/**
-	 * Called on completion.
-	 * @param suggestions Podcast suggestions loaded.
-	 */
-	public void onSuggestionsLoaded(List<Podcast> suggestions);
-	
-	/**
-	 * Called when loading the suggestions failed.
-	 */
-	public void onSuggestionsLoadFailed();
+
+    /**
+     * Called on progress update.
+     * 
+     * @param progress Progress of suggestions JSON file loaded or flag from
+     *            <code>Progress</code>. Note that this only works if the http
+     *            connection reports its content length correctly. Otherwise
+     *            (and this happens in the wild out there) percent might be
+     *            >100.
+     */
+    public void onSuggestionsLoadProgress(Progress progress);
+
+    /**
+     * Called on completion.
+     * 
+     * @param suggestions Podcast suggestions loaded.
+     */
+    public void onSuggestionsLoaded(List<Podcast> suggestions);
+
+    /**
+     * Called when loading the suggestions failed.
+     */
+    public void onSuggestionsLoadFailed();
 }

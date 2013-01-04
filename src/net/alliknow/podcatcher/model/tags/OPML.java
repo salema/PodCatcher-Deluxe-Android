@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.alliknow.podcatcher.model.tags;
 
 /**
@@ -22,11 +23,11 @@ package net.alliknow.podcatcher.model.tags;
  * @see http://dev.opml.org/spec2.html
  */
 public abstract class OPML {
-	
-	public static final String OUTLINE = "outline";
-	public static final String TEXT = "text";
-	public static final String TYPE = "type";
-	public static final String RSS_TYPE = "rss";
-	public static final String XMLURL = "xmlUrl";
-	
+
+    public static final String OUTLINE = "outline";
+    public static final String TEXT = "text";
+    public static final String TYPE = "type";
+    public static final String RSS_TYPE = "rss";
+    public static final String XMLURL = "xmlUrl";
+
 }

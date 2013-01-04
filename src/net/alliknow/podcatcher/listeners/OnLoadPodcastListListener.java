@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.alliknow.podcatcher.listeners;
 
 import java.util.List;
@@ -21,13 +22,15 @@ import java.util.List;
 import net.alliknow.podcatcher.model.types.Podcast;
 
 /**
- * Interface definition for a callback to be invoked when a podcast list is loaded.
+ * Interface definition for a callback to be invoked when a podcast list is
+ * loaded.
  */
 public interface OnLoadPodcastListListener {
 
-	/**
-	 * Called on completion.
-	 * @param podcastList Podcast list loaded.
-	 */
-	public void onPodcastListLoaded(List<Podcast> podcastList);
+    /**
+     * Called on completion.
+     * 
+     * @param podcastList Podcast list loaded.
+     */
+    public void onPodcastListLoaded(List<Podcast> podcastList);
 }

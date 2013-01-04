@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.alliknow.podcatcher;
 
 import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
@@ -24,28 +25,32 @@ import android.os.Bundle;
  */
 public class ShowEpisodeActivity extends PodcatcherBaseActivity {
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		switch (viewMode) {
-			// In large layouts we do not need this activity at all
-			case LARGE_PORTRAIT_VIEW:
-			case LARGE_LANDSCAPE_VIEW:
-				finish(); break;
-			case SMALL_LANDSCAPE_VIEW:
-			// To recover from configuration changes here, we have
-			// to send an intent to the main activity and tell it
-			// to show the episode
-			// TODO Send intent
-				finish(); break;
-			case SMALL_PORTRAIT_VIEW:
-				if (savedInstanceState == null) {
-					// During initial setup, plug in the details fragment.
-		            EpisodeFragment episode = new EpisodeFragment();
-		            // Set episode with URL from intent (getIntent().getExtras());
-		            getFragmentManager().beginTransaction().add(android.R.id.content, episode, episodeFragmentTag).commit();
-				}
-		}
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        switch (viewMode) {
+        // In large layouts we do not need this activity at all
+            case LARGE_PORTRAIT_VIEW:
+            case LARGE_LANDSCAPE_VIEW:
+                finish();
+                break;
+            case SMALL_LANDSCAPE_VIEW:
+                // To recover from configuration changes here, we have
+                // to send an intent to the main activity and tell it
+                // to show the episode
+                // TODO Send intent
+                finish();
+                break;
+            case SMALL_PORTRAIT_VIEW:
+                if (savedInstanceState == null) {
+                    // During initial setup, plug in the details fragment.
+                    EpisodeFragment episode = new EpisodeFragment();
+                    // Set episode with URL from intent
+                    // (getIntent().getExtras());
+                    getFragmentManager().beginTransaction()
+                            .add(android.R.id.content, episode, episodeFragmentTag).commit();
+                }
+        }
+    }
 }

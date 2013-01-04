@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.alliknow.podcatcher.model.types;
 
 import java.io.IOException;
@@ -23,29 +24,28 @@ import org.xmlpull.v1.XmlPullParserException;
 
 /**
  * @author Kevin Hausmann
- *
  */
 public class ParserUtils {
 
-	/**
-	 * Skip the entire sub tree the given parser is
-	 * currently pointing at.
-	 * @param parser Parser to advance.
-	 * @throws XmlPullParserException On parsing problems.
-	 * @throws IOException On I/O trouble.
-	 */
-	public static void skipSubTree(XmlPullParser parser) throws XmlPullParserException, IOException {
-	    parser.require(XmlPullParser.START_TAG, null, null);
-	    
-	    int level = 1;
-	    while (level > 0) {
-	        int eventType = parser.next();
-	        if (eventType == XmlPullParser.END_TAG) {
-	            --level;
-	        } else if (eventType == XmlPullParser.START_TAG) {
-	            ++level;
-	        }
-	    }
-	}
+    /**
+     * Skip the entire sub tree the given parser is currently pointing at.
+     * 
+     * @param parser Parser to advance.
+     * @throws XmlPullParserException On parsing problems.
+     * @throws IOException On I/O trouble.
+     */
+    public static void skipSubTree(XmlPullParser parser) throws XmlPullParserException, IOException {
+        parser.require(XmlPullParser.START_TAG, null, null);
+
+        int level = 1;
+        while (level > 0) {
+            int eventType = parser.next();
+            if (eventType == XmlPullParser.END_TAG) {
+                --level;
+            } else if (eventType == XmlPullParser.START_TAG) {
+                ++level;
+            }
+        }
+    }
 
 }

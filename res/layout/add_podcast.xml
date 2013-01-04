@@ -29,7 +29,7 @@
         android:hint="@string/enter_podcast_url_here"
         android:imeOptions="actionGo"
         android:inputType="textUri|textNoSuggestions" />
-    <net.alliknow.podcatcher.views.HorizontalProgressView
+    <net.alliknow.podcatcher.view.HorizontalProgressView
         android:id="@+id/add_podcast_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

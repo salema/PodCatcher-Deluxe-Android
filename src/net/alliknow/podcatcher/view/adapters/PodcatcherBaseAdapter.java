@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.alliknow.podcatcher.view.adapters;
 
 import java.util.Locale;
@@ -26,89 +27,95 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 /**
- * Abstract super class for this app's adapters.
- * Allows access to resources.
+ * Abstract super class for this app's adapters. Allows access to resources.
  */
 public abstract class PodcatcherBaseAdapter extends BaseAdapter {
-	
-	/** We need to know our package name to retrieve identifiers */
-	protected String packageName;
 
-	/** The def type for string resources */
-	private static final String STRING_DEFTYPE = "string";
-	
-	/**
-	 * Create new adapter.
-	 * @param context The current context.
-	 */
-	public PodcatcherBaseAdapter(Context context) {
-		this.packageName = context.getPackageName();
-	}
-	
-	@Override
-	public boolean hasStableIds() {
-		return true;
-	}
-	
-	/**
-	 * Check whether a view can be recycled and inflate new one if not.
-	 * 
-	 * @param convertView View to check.
-	 * @param parent View group to attach to.
-	 * @param inflateId Id of view to inflate if recycling is not possible.
-	 * @return A view to use (not <code>null</code>).
-	 */
-	protected View findReturnView(View convertView, ViewGroup parent, int inflateId) {
-		// Can we recycle the convert view?
-		// No:
-		if (convertView == null) return LayoutInflater.from(parent.getContext()).inflate(inflateId, parent, false);
-		// Yes:
-		else return convertView;
-	}
-	
-	/**
-	 * Get the resource (language-specific) string for an item.
-	 * @param resources Resources to use.
-	 * @param item Item which <code>toString</code> method result
-	 * in lower case is a string resource key.
-	 * @return The string in the correct language. Throws
-	 * a runtime exception if no such resource exists.
-	 */
-	protected String getResourceString(Resources resources, Object item) {
-		return getResourceString(resources, item.toString());
-	}
-	
-	/**
-	 * Get the resource (language-specific) string for the given key.
-	 * @param resources Resources to use.
-	 * @param key Key to look up. Will be changed to lower case.
-	 * @return The string in the correct language. Throws
-	 * a runtime exception if no such resource exists.
-	 */
-	protected String getResourceString(Resources resources, String key) {
-		return resources.getString(getStringIdentifier(resources, key));
-	}
-	
-	/**
-	 * Get the resource (language-specific) string for
-	 * item at the given position.
-	 * @param resources Resources to use.
-	 * @param position Index to the item to get string for.
-	 * @return The string in the correct language. Throws
-	 * a runtime exception if no such resource exists.
-	 */
-	protected String getResourceString(Resources resources, int position) {
-		return getResourceString(resources, getItem(position));
-	}
+    /** We need to know our package name to retrieve identifiers */
+    protected String packageName;
 
-	/**
-	 * Get the resource key (identifier) from the given string key.
-	 * @param resources Resources to use.
-	 * @param key Key as a string (will be changed to lower case).
-	 * @return The resource identifier for this key. Throws
-	 * a runtime exception if no such resource exists.
-	 */
-	protected int getStringIdentifier(Resources resources, String key) {
-		return resources.getIdentifier(key.toLowerCase(Locale.US), STRING_DEFTYPE, packageName);
-	}
+    /** The def type for string resources */
+    private static final String STRING_DEFTYPE = "string";
+
+    /**
+     * Create new adapter.
+     * 
+     * @param context The current context.
+     */
+    public PodcatcherBaseAdapter(Context context) {
+        this.packageName = context.getPackageName();
+    }
+
+    @Override
+    public boolean hasStableIds() {
+        return true;
+    }
+
+    /**
+     * Check whether a view can be recycled and inflate new one if not.
+     * 
+     * @param convertView View to check.
+     * @param parent View group to attach to.
+     * @param inflateId Id of view to inflate if recycling is not possible.
+     * @return A view to use (not <code>null</code>).
+     */
+    protected View findReturnView(View convertView, ViewGroup parent, int inflateId) {
+        // Can we recycle the convert view?
+        // No:
+        if (convertView == null)
+            return LayoutInflater.from(parent.getContext()).inflate(inflateId, parent, false);
+        // Yes:
+        else
+            return convertView;
+    }
+
+    /**
+     * Get the resource (language-specific) string for an item.
+     * 
+     * @param resources Resources to use.
+     * @param item Item which <code>toString</code> method result in lower case
+     *            is a string resource key.
+     * @return The string in the correct language. Throws a runtime exception if
+     *         no such resource exists.
+     */
+    protected String getResourceString(Resources resources, Object item) {
+        return getResourceString(resources, item.toString());
+    }
+
+    /**
+     * Get the resource (language-specific) string for the given key.
+     * 
+     * @param resources Resources to use.
+     * @param key Key to look up. Will be changed to lower case.
+     * @return The string in the correct language. Throws a runtime exception if
+     *         no such resource exists.
+     */
+    protected String getResourceString(Resources resources, String key) {
+        return resources.getString(getStringIdentifier(resources, key));
+    }
+
+    /**
+     * Get the resource (language-specific) string for item at the given
+     * position.
+     * 
+     * @param resources Resources to use.
+     * @param position Index to the item to get string for.
+     * @return The string in the correct language. Throws a runtime exception if
+     *         no such resource exists.
+     */
+    protected String getResourceString(Resources resources, int position) {
+        return getResourceString(resources, getItem(position));
+    }
+
+    /**
+     * Get the resource key (identifier) from the given string key.
+     * 
+     * @param resources Resources to use.
+     * @param key Key as a string (will be changed to lower case).
+     * @return The resource identifier for this key. Throws a runtime exception
+     *         if no such resource exists.
+     */
+    protected int getStringIdentifier(Resources resources, String key) {
+        return resources.getIdentifier(key.toLowerCase(Locale.US), STRING_DEFTYPE, packageName);
+    }
 }

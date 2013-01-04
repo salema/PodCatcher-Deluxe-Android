@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.alliknow.podcatcher.model.types;
 
 /**
  * Podcast media type.
  */
 public enum MediaType {
-	AUDIO, VIDEO
+    AUDIO, VIDEO
 }

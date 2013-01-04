@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.alliknow.podcatcher.model.tags;
 
 /**
@@ -21,13 +22,13 @@ package net.alliknow.podcatcher.model.tags;
  */
 public class JSON {
 
-	public static final String FEATURED = "featured";
-	public static final String SUGGESTION = "suggestions";
-	
-	public static final String TITLE = "title";
-	public static final String URL = "url";
-	public static final String DESCRIPTION = "description";
-	public static final String LANGUAGE = "language";
-	public static final String TYPE = "type";
-	public static final String CATEGORY = "category";
+    public static final String FEATURED = "featured";
+    public static final String SUGGESTION = "suggestions";
+
+    public static final String TITLE = "title";
+    public static final String URL = "url";
+    public static final String DESCRIPTION = "description";
+    public static final String LANGUAGE = "language";
+    public static final String TYPE = "type";
+    public static final String CATEGORY = "category";
 }

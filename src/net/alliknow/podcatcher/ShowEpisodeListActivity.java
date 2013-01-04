@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.alliknow.podcatcher;
 
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
@@ -25,46 +26,51 @@ import android.os.Bundle;
 /**
  * 
  */
-public class ShowEpisodeListActivity extends PodcatcherBaseActivity implements OnSelectEpisodeListener {
-	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		// Check if we need this activity at all
-		if (viewMode != SMALL_PORTRAIT_VIEW) {
-			finish();
-		} else if (savedInstanceState == null) {
+public class ShowEpisodeListActivity extends PodcatcherBaseActivity implements
+        OnSelectEpisodeListener {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Check if we need this activity at all
+        if (viewMode != SMALL_PORTRAIT_VIEW) {
+            finish();
+        } else if (savedInstanceState == null) {
             // During initial setup, plug in the details fragment.
-            getFragmentManager().beginTransaction().add(android.R.id.content, new EpisodeListFragment(), episodeListFragmentTag).commit();
-            
+            getFragmentManager().beginTransaction()
+                    .add(android.R.id.content, new EpisodeListFragment(), episodeListFragmentTag)
+                    .commit();
+
             processIntent();
         }
-	}
-	
-	@Override
-	protected void onNewIntent(Intent intent) {
-		super.onNewIntent(intent);
-		setIntent(intent);
-		processIntent();
-	}
-	
-	private void processIntent() {
-		Intent intent = getIntent();
-		if (intent.getBooleanExtra("progress", false)) findEpisodeListFragment().resetAndSpin();
-		if (intent.getBooleanExtra("select",  false)) onEpisodeSelected(null);
-	}
-	
-	@Override
-	public void onEpisodeSelected(Episode selectedEpisode) {
-		Intent intent = new Intent();
-        intent.setClass(this, ShowEpisodeActivity.class);
-        //intent.putExtra("index", index);
-        startActivity(intent);
-	}
+    }
 
-	@Override
-	public void onNoEpisodeSelected() {
-		// TODO Auto-generated method stub	
-	}
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        processIntent();
+    }
+
+    private void processIntent() {
+        Intent intent = getIntent();
+        if (intent.getBooleanExtra("progress", false))
+            findEpisodeListFragment().resetAndSpin();
+        if (intent.getBooleanExtra("select", false))
+            onEpisodeSelected(null);
+    }
+
+    @Override
+    public void onEpisodeSelected(Episode selectedEpisode) {
+        Intent intent = new Intent();
+        intent.setClass(this, ShowEpisodeActivity.class);
+        // intent.putExtra("index", index);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onNoEpisodeSelected() {
+        // TODO Auto-generated method stub
+    }
 }

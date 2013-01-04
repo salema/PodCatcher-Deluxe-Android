@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.alliknow.podcatcher.model.types;
 
 /**
  * Language a podcast is broadcasted in.
  */
 public enum Language {
-	ENGLISH, GERMAN
+    ENGLISH, GERMAN
 }
