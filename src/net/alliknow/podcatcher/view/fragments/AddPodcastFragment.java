@@ -19,17 +19,7 @@ package net.alliknow.podcatcher.view.fragments;
 
 import static android.view.View.VISIBLE;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import net.alliknow.podcatcher.Podcatcher;
-import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
-import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
-import net.alliknow.podcatcher.model.tasks.Progress;
-import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask;
-import net.alliknow.podcatcher.model.types.Podcast;
-import net.alliknow.podcatcher.view.HorizontalProgressView;
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -47,13 +37,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
+import net.alliknow.podcatcher.Podcatcher;
+import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
+import net.alliknow.podcatcher.model.tasks.Progress;
+import net.alliknow.podcatcher.view.HorizontalProgressView;
+
 /**
  * A dialog to let the user add a podcast.
  */
-public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastListener {
+public class AddPodcastFragment extends DialogFragment {
 
-    /** The podcast load task */
-    protected LoadPodcastTask loadTask;
+    private OnAddPodcastListener listener;
 
     /** The podcast URL text field */
     private EditText podcastUrlEditText;
@@ -63,6 +58,13 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
     private Button showSuggestionsButton;
     /** The add podcast button */
     private Button addPodcastButton;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        this.listener = (OnAddPodcastListener) activity;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -132,8 +134,8 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
 
-        if (loadTask != null)
-            loadTask.cancel(true);
+        // Alert activity
+        this.listener.dismiss();
     }
 
     private void addPodcast() {
@@ -149,46 +151,14 @@ public class AddPodcastFragment extends DialogFragment implements OnLoadPodcastL
             podcastUrlEditText.setText(spec);
         }
 
-        // Try to load the given online resource
-        try {
-            loadTask = new LoadPodcastTask(this);
-            loadTask.preventZippedTransfer(((Podcatcher) getActivity().getApplication())
-                    .isOnFastConnection());
-            loadTask.execute(new Podcast(null, new URL(spec)));
-        } catch (MalformedURLException e) {
-            onPodcastLoadFailed(null);
-        }
+        listener.addPodcast(spec);
     }
 
-    @Override
-    public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
+    public void showProgress(Progress progress) {
         progressView.publishProgress(progress);
     }
 
-    @Override
-    public void onPodcastLoaded(Podcast podcast) {
-        // Get call back
-        OnAddPodcastListener listener = (OnAddPodcastListener) getTargetFragment();
-
-        // We do not allow empty podcast to be added (TODO Does this make
-        // sense?)
-        if (podcast.getEpisodes().isEmpty())
-            onPodcastLoadFailed(podcast);
-        // We need the target fragment to function as our call back
-        else if (listener == null) {
-            Log.w(getClass().getSimpleName(),
-                    "Podcast okay, but target fragment is absent or does not implement OnAddPodcastListener");
-            onPodcastLoadFailed(podcast);
-        } // This is an actual podcast, add it
-        else {
-            dismiss();
-
-            listener.addPodcast(podcast);
-        }
-    }
-
-    @Override
-    public void onPodcastLoadFailed(Podcast podcast) {
+    public void showPodcastLoadFailed() {
         // Show error in the UI
         progressView.showError(R.string.error_podcast_add);
         podcastUrlEditText.setEnabled(true);

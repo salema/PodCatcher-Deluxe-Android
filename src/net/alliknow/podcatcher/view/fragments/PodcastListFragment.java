@@ -21,6 +21,8 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,15 +31,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import net.alliknow.podcatcher.AddPodcastActivity;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.listeners.PodcastListContextListener;
 import net.alliknow.podcatcher.model.tasks.Progress;
 import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.view.HorizontalProgressView;
 import net.alliknow.podcatcher.view.adapters.PodcastListAdapter;
 
 import java.util.List;
@@ -103,10 +106,6 @@ public class PodcastListFragment extends PodcatcherListFragment {
         logoView = (ImageView) view.findViewById(R.id.podcast_image);
 
         getListView().setMultiChoiceModeListener(contextListener);
-        getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
-
-        // if (currentPodcast != null)
-        // logoView.setImageBitmap(currentPodcast.getLogo());
 
         super.onViewCreated(view, savedInstanceState);
     }
@@ -123,7 +122,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.podcast_add_menuitem:
-                // showAddPodcastDialog();
+                startActivity(new Intent().setClass(getActivity(), AddPodcastActivity.class));
 
                 return true;
             case R.id.podcast_select_all_menuitem:
@@ -135,8 +134,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
                 return true;
             case R.id.podcast_remove_menuitem:
-                // getListView().setItemChecked(podcastList.indexOf(currentPodcast),
-                // true);
+                getListView().setItemChecked(adapter.getSelectedPosition(), true);
 
                 return true;
             default:
@@ -186,26 +184,34 @@ public class PodcastListFragment extends PodcatcherListFragment {
         logoView.setImageResource(R.drawable.default_podcast_logo);
     }
 
-    /**
-     * Check whether there is a podcast currently selected in the list.
-     * 
-     * @return <code>true</code> if so, <code>false</code> otherwise.
-     */
-    public boolean isPodcastSelected() {
-        return getListView().getSelectedItem() != null || selectAll;
+    public void removeCheckedPodcasts() {
+        // SparseBooleanArray checkedItems =
+        // getListView().getCheckedItemPositions();
+
+        // alert activity via listener
     }
 
-    public void showProgress(Podcast podcast, Progress progress) {
+    public void showProgress(int position, Progress progress) {
         // To prevent this if we are not ready to handle progress update
         // e.g. on app termination
-        // if (isResumed()) {
-        // View listItemView =
-        // getListView().getChildAt(podcastList.indexOf(podcast));
-        // if (listItemView != null)
-        // ((HorizontalProgressView) listItemView
-        // .findViewById(R.id.list_item_progress))
-        // .publishProgress(progress);
-        // }
+        if (isResumed()) {
+            View listItemView = getListView().getChildAt(position);
+            if (listItemView != null)
+                ((HorizontalProgressView) listItemView.findViewById(R.id.list_item_progress))
+                        .publishProgress(progress);
+        }
+    }
+
+    public void showLogo(Bitmap logo) {
+        logoView.setImageBitmap(logo);
+    }
+
+    public int getLogoViewWidth() {
+        return logoView.getWidth();
+    }
+
+    public int getLogoViewHeight() {
+        return logoView.getHeight();
     }
 
     @Override
@@ -219,7 +225,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
             if (selectAllMenuItem != null)
                 selectAllMenuItem.setVisible(adapter.getCount() > 1 && !selectAll);
             if (removeMenuItem != null)
-                removeMenuItem.setVisible(getListView().getSelectedItem() != null);
+                removeMenuItem.setVisible(adapter.getSelectedPosition() > 0);
         }
     }
 }

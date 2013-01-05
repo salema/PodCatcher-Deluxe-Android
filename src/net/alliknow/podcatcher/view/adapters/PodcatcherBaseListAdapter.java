@@ -71,6 +71,13 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
         notifyDataSetChanged();
     }
 
+    public int getSelectedPosition() {
+        if (selectAll || selectedPositions.size() != 1)
+            return -1;
+        else
+            return selectedPositions.keyAt(0);
+    }
+
     /**
      * Set the chosen items in the list.
      * 

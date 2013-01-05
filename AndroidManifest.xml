@@ -46,8 +46,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ShowEpisodeListActivity" android:launchMode="singleInstance" />
-        <activity android:name=".ShowEpisodeActivity" android:launchMode="singleInstance" />
+        <activity android:name=".ShowEpisodeListActivity" />
+        <activity android:name=".ShowEpisodeActivity" />
+        <activity android:name=".AddPodcastActivity" android:theme="@android:style/Theme.Holo.Light.Dialog" />
         <service
             android:name=".services.PlayEpisodeService"
             android:exported="false" >

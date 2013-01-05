@@ -63,7 +63,7 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         switch (item.getItemId()) {
             case R.id.podcast_remove_contextmenuitem:
-                // fragment.removeCheckedPodcasts();
+                fragment.removeCheckedPodcasts();
                 mode.finish(); // Action picked, so close the CAB
                 return true;
             default:
@@ -87,8 +87,8 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
 
     private void setTitle(ActionMode mode) {
         int checkedItemCount = fragment.getListView().getCheckedItemCount();
-        mode.setTitle(checkedItemCount == 1 ? fragment.getResources().getString(
-                R.string.one_podcast_selected) :
+        mode.setTitle(checkedItemCount == 1 ?
+                fragment.getResources().getString(R.string.one_podcast_selected) :
                 checkedItemCount + " "
                         + fragment.getResources().getString(R.string.podcasts_selected));
     }

@@ -34,7 +34,9 @@ import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
+import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -71,11 +73,6 @@ public class PodcastActivity extends PodcatcherBaseActivity
         dataManager.addLoadPodcastListener(this);
         dataManager.addLoadPodcastLogoListener(this);
 
-        // Check if podcast list is already available - if so, set it
-        List<Podcast> podcastList = dataManager.getPodcastList();
-        if (podcastList != null)
-            onPodcastListLoaded(podcastList);
-
         // Inflate the main content view (depends on view mode)
         setContentView(R.layout.main);
 
@@ -101,6 +98,16 @@ public class PodcastActivity extends PodcatcherBaseActivity
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Check if podcast list is already available - if so, set it
+        List<Podcast> podcastList = dataManager.getPodcastList();
+        if (podcastList != null)
+            onPodcastListLoaded(podcastList);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
@@ -120,12 +127,15 @@ public class PodcastActivity extends PodcatcherBaseActivity
         findPodcastListFragment().setPodcastList(podcastList);
 
         // If podcast list is empty we show dialog on startup
-        // if (podcastList.isEmpty()) showAddPodcastDialog();
+        if (podcastList.isEmpty())
+            startActivity(new Intent().setClass(this, AddPodcastActivity.class));
     }
 
     @Override
     public void onPodcastSelected(Podcast podcast) {
         this.selectedPodcast = podcast;
+        this.selectedEpisode = null;
+        this.currentEpisodeList = null;
         this.multiplePodcastsMode = false;
 
         // Stop loading previous tasks
@@ -149,6 +159,7 @@ public class PodcastActivity extends PodcatcherBaseActivity
 
                 // Load podcast
                 dataManager.load(podcast);
+
                 break;
             case SMALL_PORTRAIT_VIEW:
                 // Otherwise we need to launch a new activity to display the
@@ -163,6 +174,8 @@ public class PodcastActivity extends PodcatcherBaseActivity
     @Override
     public void onAllPodcastsSelected() {
         this.selectedPodcast = null;
+        this.selectedEpisode = null;
+        this.currentEpisodeList = new ArrayList<Episode>();
         this.multiplePodcastsMode = true;
 
         // Stop loading previous tasks
@@ -191,6 +204,10 @@ public class PodcastActivity extends PodcatcherBaseActivity
                 EpisodeListFragment episodeListFragment = findEpisodeListFragment();
                 episodeListFragment.resetAndSpin();
                 updateDivider();
+
+                for (Podcast podcast : dataManager.getPodcastList())
+                    dataManager.load(podcast);
+
                 break;
             case SMALL_PORTRAIT_VIEW:
                 // Otherwise we need to launch a new activity to display the
@@ -205,6 +222,8 @@ public class PodcastActivity extends PodcatcherBaseActivity
     @Override
     public void onNoPodcastSelected() {
         this.selectedPodcast = null;
+        this.selectedEpisode = null;
+        this.currentEpisodeList = null;
         this.multiplePodcastsMode = false;
 
         findPodcastListFragment().selectNone();
@@ -249,8 +268,11 @@ public class PodcastActivity extends PodcatcherBaseActivity
             case LARGE_PORTRAIT_VIEW:
             case LARGE_LANDSCAPE_VIEW:
             case SMALL_LANDSCAPE_VIEW:
-                // Simply update the list fragment
-                findEpisodeListFragment().showProgress(progress);
+                if (multiplePodcastsMode)
+                    findPodcastListFragment().showProgress(dataManager.indexOf(podcast), progress);
+                else
+                    findEpisodeListFragment().showProgress(progress);
+
                 break;
             case SMALL_PORTRAIT_VIEW:
                 // Otherwise we send a progress alert to the activity
@@ -268,7 +290,9 @@ public class PodcastActivity extends PodcatcherBaseActivity
             case LARGE_PORTRAIT_VIEW:
             case SMALL_LANDSCAPE_VIEW:
                 // This will display the number of episodes
-                findPodcastListFragment().refresh();
+                PodcastListFragment podcastListFragment = findPodcastListFragment();
+                podcastListFragment.refresh();
+
                 // Update list fragment to show episode list
                 EpisodeListFragment episodeListFragment = findEpisodeListFragment();
 
@@ -284,6 +308,10 @@ public class PodcastActivity extends PodcatcherBaseActivity
                 else if (podcast.equals(selectedPodcast)) {
                     currentEpisodeList = podcast.getEpisodes();
                     episodeListFragment.setEpisodes(currentEpisodeList);
+
+                    dataManager.loadLogo(podcast,
+                            podcastListFragment.getLogoViewWidth(),
+                            podcastListFragment.getLogoViewHeight());
                 }
 
                 break;
@@ -329,7 +357,7 @@ public class PodcastActivity extends PodcatcherBaseActivity
     @Override
     public void onPodcastLogoLoaded(Podcast podcast, Bitmap logo) {
         if (podcast.equals(selectedPodcast))
-            findPodcastListFragment().refresh();
+            findPodcastListFragment().showLogo(logo);
     }
 
     @Override

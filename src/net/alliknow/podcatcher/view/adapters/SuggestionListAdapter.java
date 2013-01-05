@@ -17,16 +17,17 @@
 
 package net.alliknow.podcatcher.view.adapters;
 
-import java.util.List;
-
-import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
-import net.alliknow.podcatcher.model.types.Podcast;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
+import net.alliknow.podcatcher.model.types.Podcast;
+
+import java.util.List;
 
 /**
  * Adapter for suggestion list.
@@ -78,7 +79,7 @@ public class SuggestionListAdapter extends PodcastListAdapter {
                 addButton.setCompoundDrawablesWithIntrinsicBounds(0, 0,
                         R.drawable.ic_checkmark_light, 0);
 
-                listener.addPodcast(suggestion);
+                // listener.addPodcast(suggestion);
             }
         });
 
