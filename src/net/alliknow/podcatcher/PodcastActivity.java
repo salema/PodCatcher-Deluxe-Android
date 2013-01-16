@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
 
+import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
@@ -45,8 +46,8 @@ import java.util.List;
  * state, other activities cooperate.
  */
 public class PodcastActivity extends PodcatcherBaseActivity
-        implements OnLoadPodcastListListener, OnSelectPodcastListener, OnLoadPodcastListener,
-        OnLoadPodcastLogoListener, OnSelectEpisodeListener {
+        implements OnLoadPodcastListListener, OnChangePodcastListListener, OnSelectPodcastListener,
+        OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectEpisodeListener {
 
     /** Flag to indicate whether we are in multiple podcast mode */
     private boolean multiplePodcastsMode = false;
@@ -70,6 +71,7 @@ public class PodcastActivity extends PodcatcherBaseActivity
 
         // Register as listener to the podcast data manager
         dataManager.addLoadPodcastListListener(this);
+        dataManager.addChangePodcastListListener(this);
         dataManager.addLoadPodcastListener(this);
         dataManager.addLoadPodcastLogoListener(this);
 
@@ -98,18 +100,16 @@ public class PodcastActivity extends PodcatcherBaseActivity
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
 
-        // Check if podcast list is already available - if so, set it
+        // Check if podcast list is available - if so, set it
         List<Podcast> podcastList = dataManager.getPodcastList();
         if (podcastList != null)
             onPodcastListLoaded(podcastList);
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+        if (selectedPodcast != null && viewMode != SMALL_PORTRAIT_VIEW)
+            onPodcastSelected(selectedPodcast);
 
         // Make sure dividers (if any) reflect selection state
         updateDivider();
@@ -123,12 +123,27 @@ public class PodcastActivity extends PodcatcherBaseActivity
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        dataManager.removeLoadPodcastListListener(this);
+        dataManager.removeChangePodcastListListener(this);
+        dataManager.removeLoadPodcastListener(this);
+        dataManager.removeLoadPodcastLogoListener(this);
+    }
+
+    @Override
     public void onPodcastListLoaded(List<Podcast> podcastList) {
         findPodcastListFragment().setPodcastList(podcastList);
 
         // If podcast list is empty we show dialog on startup
         if (podcastList.isEmpty())
             startActivity(new Intent().setClass(this, AddPodcastActivity.class));
+    }
+
+    @Override
+    public void podcastAdded(Podcast podcast) {
+        this.selectedPodcast = podcast;
     }
 
     @Override

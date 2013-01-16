@@ -29,8 +29,6 @@ public interface OnAddPodcastListener {
      */
     public void addPodcast(String podcastUrl);
 
-    public void dismiss();
-
     /**
      * Called on listener if the user wants to see suggestions for podcasts to
      * add.

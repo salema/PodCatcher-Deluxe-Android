@@ -17,17 +17,12 @@
 
 package net.alliknow.podcatcher.model;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import android.graphics.Bitmap;
+import android.text.Html;
+import android.util.Log;
 
 import net.alliknow.podcatcher.Podcatcher;
+import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
@@ -37,9 +32,16 @@ import net.alliknow.podcatcher.model.tasks.StorePodcastListTask;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastLogoTask;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask;
 import net.alliknow.podcatcher.model.types.Podcast;
-import android.graphics.Bitmap;
-import android.text.Html;
-import android.util.Log;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Our model class. Holds all the podcast and episode model data and offers
@@ -71,11 +73,13 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     /** The current podcast logo load tasks */
     private Map<Podcast, LoadPodcastLogoTask> loadPodcastLogoTasks = new HashMap<Podcast, LoadPodcastLogoTask>();
 
-    /** The call-back set for the podcast list load */
+    /** The call-back set for the podcast list load listeners */
     private Set<OnLoadPodcastListListener> loadPodcastListListeners = new HashSet<OnLoadPodcastListListener>();
-    /** The call-back set for the podcast load */
+    /** The call-back set for the podcast list changed listeners */
+    private Set<OnChangePodcastListListener> changePodcastListListeners = new HashSet<OnChangePodcastListListener>();
+    /** The call-back set for the podcast load listeners */
     private Set<OnLoadPodcastListener> loadPodcastListeners = new HashSet<OnLoadPodcastListener>();
-    /** The call-back set for the podcast logo load */
+    /** The call-back set for the podcast logo load listeners */
     private Set<OnLoadPodcastLogoListener> loadPodcastLogoListeners = new HashSet<OnLoadPodcastLogoListener>();
 
     /**
@@ -221,6 +225,14 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         return loadPodcastListListeners.remove(listener);
     }
 
+    public boolean addChangePodcastListListener(OnChangePodcastListListener listener) {
+        return changePodcastListListeners.add(listener);
+    }
+
+    public boolean removeChangePodcastListListener(OnChangePodcastListListener listener) {
+        return changePodcastListListeners.remove(listener);
+    }
+
     public boolean addLoadPodcastListener(OnLoadPodcastListener listener) {
         return loadPodcastListeners.add(listener);
     }
@@ -264,6 +276,10 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         if (!podcastList.contains(newPodcast)) {
             podcastList.add(newPodcast);
             Collections.sort(podcastList);
+
+            // Alert listeners of new podcast
+            for (OnChangePodcastListListener listener : changePodcastListListeners)
+                listener.podcastAdded(newPodcast);
 
             // Store changed list
             new StorePodcastListTask(podcatcher.getApplicationContext()).execute(podcastList);

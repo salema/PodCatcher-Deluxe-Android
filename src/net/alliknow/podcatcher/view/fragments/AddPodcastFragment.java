@@ -24,8 +24,8 @@ import android.app.DialogFragment;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,10 +44,12 @@ import net.alliknow.podcatcher.model.tasks.Progress;
 import net.alliknow.podcatcher.view.HorizontalProgressView;
 
 /**
- * A dialog to let the user add a podcast.
+ * A dialog to let the user add a podcast. The activity that shows this need to
+ * implement the {@link OnAddPodcastListener}.
  */
 public class AddPodcastFragment extends DialogFragment {
 
+    /** The listener we report back to */
     private OnAddPodcastListener listener;
 
     /** The podcast URL text field */
@@ -63,7 +65,13 @@ public class AddPodcastFragment extends DialogFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        this.listener = (OnAddPodcastListener) activity;
+        // Make sure our listener is present
+        try {
+            this.listener = (OnAddPodcastListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnAddPodcastListener");
+        }
     }
 
     @Override
@@ -93,6 +101,7 @@ public class AddPodcastFragment extends DialogFragment {
             }
         });
 
+        // This is for testing only
         if (((Podcatcher) getActivity().getApplication()).isInDebugMode())
             podcastUrlEditText.setText("richeisen.libsyn.com/rss");
 
@@ -103,16 +112,7 @@ public class AddPodcastFragment extends DialogFragment {
 
             @Override
             public void onClick(View v) {
-                dismiss();
-
-                OnAddPodcastListener listener = (OnAddPodcastListener) getTargetFragment();
-
-                // We need the listener to exist
-                if (listener == null)
-                    Log.w(getClass().getSimpleName(),
-                            "Suggestions requested, but no listener attached");
-                else
-                    listener.showSuggestions();
+                listener.showSuggestions();
             }
         });
 
@@ -131,11 +131,29 @@ public class AddPodcastFragment extends DialogFragment {
     }
 
     @Override
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
+    public void onCancel(DialogInterface dialog) {
+        // Make sure the parent activity knows when we are closing
+        if (listener instanceof OnCancelListener)
+            ((OnCancelListener) listener).onCancel(dialog);
+    }
 
-        // Alert activity
-        this.listener.dismiss();
+    /**
+     * Show progress in the dialog.
+     * 
+     * @param progress Progress information to show.
+     */
+    public void showProgress(Progress progress) {
+        progressView.publishProgress(progress);
+    }
+
+    /**
+     * Show load failure in the dialog UI.
+     */
+    public void showPodcastLoadFailed() {
+        // Show error in the UI
+        progressView.showError(R.string.error_podcast_add);
+        podcastUrlEditText.setEnabled(true);
+        addPodcastButton.setEnabled(true);
     }
 
     private void addPodcast() {
@@ -152,17 +170,6 @@ public class AddPodcastFragment extends DialogFragment {
         }
 
         listener.addPodcast(spec);
-    }
-
-    public void showProgress(Progress progress) {
-        progressView.publishProgress(progress);
-    }
-
-    public void showPodcastLoadFailed() {
-        // Show error in the UI
-        progressView.showError(R.string.error_podcast_add);
-        podcastUrlEditText.setEnabled(true);
-        addPodcastButton.setEnabled(true);
     }
 
     private void checkClipboardForPodcastUrl() {
