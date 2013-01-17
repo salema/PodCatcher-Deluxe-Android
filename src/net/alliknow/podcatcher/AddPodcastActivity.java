@@ -1,4 +1,4 @@
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -19,6 +19,7 @@ package net.alliknow.podcatcher;
 
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.os.Bundle;
 
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
@@ -38,8 +39,6 @@ public class AddPodcastActivity extends PodcatcherBaseActivity
 
     /** The tag we identify our add podcast fragment with */
     private static final String ADD_PODCAST_FRAGMENT_TAG = "add_podcast";
-    /** The tag we identify our show suggestions fragment with */
-    private static final String SHOW_SUGGESTIONS_FRAGMENT_TAG = "show_suggestions";
 
     /** The fragment containing the add URL UI */
     private AddPodcastFragment addPodcastFragment;
@@ -53,13 +52,11 @@ public class AddPodcastActivity extends PodcatcherBaseActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        dataManager.addLoadPodcastListener(this);
-    }
+        // Listen to podcast load events to update UI
+        podcastManager.addLoadPodcastListener(this);
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
+        // If we are coming from a config change, we need to know whether there
+        // is currently a podcast loading.
         if (savedInstanceState != null)
             currentLoadUrl = savedInstanceState.getString(LOADING_URL_KEY);
     }
@@ -68,12 +65,15 @@ public class AddPodcastActivity extends PodcatcherBaseActivity
     protected void onStart() {
         super.onStart();
 
+        // Try to find existing fragment
         addPodcastFragment = (AddPodcastFragment) getFragmentManager().findFragmentByTag(
                 ADD_PODCAST_FRAGMENT_TAG);
 
+        // No fragment found, create it
         if (addPodcastFragment == null)
             addPodcastFragment = new AddPodcastFragment();
 
+        // Show the fragment
         addPodcastFragment.show(getFragmentManager(), ADD_PODCAST_FRAGMENT_TAG);
     }
 
@@ -81,6 +81,7 @@ public class AddPodcastActivity extends PodcatcherBaseActivity
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        // Make sure we know which podcast we are loading (if any)
         outState.putString(LOADING_URL_KEY, currentLoadUrl);
     }
 
@@ -88,17 +89,17 @@ public class AddPodcastActivity extends PodcatcherBaseActivity
     protected void onDestroy() {
         super.onDestroy();
 
-        dataManager.removeLoadPodcastListener(this);
+        // Unregister from data manager
+        podcastManager.removeLoadPodcastListener(this);
     }
 
     @Override
     public void addPodcast(String podcastUrl) {
         // Try to load the given online resource
         try {
-            // TODO make sure we keep the podcast url and only react on its
-            // progress updates!
+            // TODO Handle the case were given podcast is already added
             currentLoadUrl = podcastUrl;
-            dataManager.load(new Podcast(null, new URL(podcastUrl)));
+            podcastManager.load(new Podcast(null, new URL(podcastUrl)));
         } catch (MalformedURLException e) {
             onPodcastLoadFailed(null);
         }
@@ -106,13 +107,13 @@ public class AddPodcastActivity extends PodcatcherBaseActivity
 
     @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
-        if (podcast.getUrl().toExternalForm().equals(currentLoadUrl))
+        if (isCurrentlyLoadingPodcast(podcast))
             addPodcastFragment.showProgress(progress);
     }
 
     @Override
     public void onPodcastLoaded(Podcast podcast) {
-        if (podcast.getUrl().toExternalForm().equals(currentLoadUrl)) {
+        if (isCurrentlyLoadingPodcast(podcast)) {
             // Reset current load url
             currentLoadUrl = null;
 
@@ -122,7 +123,7 @@ public class AddPodcastActivity extends PodcatcherBaseActivity
                 onPodcastLoadFailed(podcast);
             // This is an actual podcast, add it
             else {
-                dataManager.addPodcast(podcast);
+                podcastManager.addPodcast(podcast);
                 finish();
             }
         }
@@ -130,8 +131,11 @@ public class AddPodcastActivity extends PodcatcherBaseActivity
 
     @Override
     public void onPodcastLoadFailed(Podcast podcast) {
-        if (podcast.getUrl().toExternalForm().equals(currentLoadUrl)) {
+        if (isCurrentlyLoadingPodcast(podcast)) {
+            // Reset current load url
             currentLoadUrl = null;
+
+            // Show failed UI
             addPodcastFragment.showPodcastLoadFailed();
         }
     }
@@ -139,11 +143,19 @@ public class AddPodcastActivity extends PodcatcherBaseActivity
     @Override
     public void showSuggestions() {
         addPodcastFragment.dismiss();
-        System.out.println("Show Suggestions fragment here...");
+        finish();
+
+        // TODO what happens if we are currently loading?
+        startActivity(new Intent(this, AddSuggestionActivity.class));
     }
 
     @Override
     public void onCancel(DialogInterface dialog) {
+        // TODO Cancel the load task in podcast manager if running
         finish();
+    }
+
+    private boolean isCurrentlyLoadingPodcast(Podcast podcast) {
+        return podcast.getUrl().toExternalForm().equalsIgnoreCase(currentLoadUrl);
     }
 }

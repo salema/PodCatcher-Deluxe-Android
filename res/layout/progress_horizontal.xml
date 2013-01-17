@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -39,5 +39,6 @@
         android:paddingRight="3dp"
         android:singleLine="true"
         android:gravity="center"
-        android:textSize="@dimen/font_size_small" />
+        android:textSize="@dimen/font_size_small"
+        android:text="@string/wait" />
 </LinearLayout>

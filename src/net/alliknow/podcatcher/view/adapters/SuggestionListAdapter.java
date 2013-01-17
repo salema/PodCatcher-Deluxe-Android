@@ -1,4 +1,4 @@
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -24,7 +24,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
+import net.alliknow.podcatcher.listeners.OnAddSuggestionListener;
 import net.alliknow.podcatcher.model.types.Podcast;
 
 import java.util.List;
@@ -35,7 +35,7 @@ import java.util.List;
 public class SuggestionListAdapter extends PodcastListAdapter {
 
     /** Owner for button call backs */
-    protected final OnAddPodcastListener listener;
+    protected final OnAddSuggestionListener listener;
     /** Separator for meta data in the UI */
     private static final String METADATA_SEPARATOR = " ● ";
 
@@ -47,7 +47,7 @@ public class SuggestionListAdapter extends PodcastListAdapter {
      * @param listener Call back for the add button to attach.
      */
     public SuggestionListAdapter(Context context, List<Podcast> podcastList,
-            OnAddPodcastListener listener) {
+            OnAddSuggestionListener listener) {
         super(context, podcastList);
 
         this.listener = listener;
@@ -79,7 +79,7 @@ public class SuggestionListAdapter extends PodcastListAdapter {
                 addButton.setCompoundDrawablesWithIntrinsicBounds(0, 0,
                         R.drawable.ic_checkmark_light, 0);
 
-                // listener.addPodcast(suggestion);
+                listener.addPodcast(suggestion);
             }
         });
 

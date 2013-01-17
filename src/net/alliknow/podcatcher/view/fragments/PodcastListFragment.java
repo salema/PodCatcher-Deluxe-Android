@@ -1,4 +1,4 @@
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -122,7 +122,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.podcast_add_menuitem:
-                startActivity(new Intent().setClass(getActivity(), AddPodcastActivity.class));
+                startActivity(new Intent(getActivity(), AddPodcastActivity.class));
 
                 return true;
             case R.id.podcast_select_all_menuitem:

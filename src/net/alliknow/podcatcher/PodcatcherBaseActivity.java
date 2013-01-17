@@ -1,4 +1,4 @@
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -36,7 +36,7 @@ import android.view.MenuItem;
 public abstract class PodcatcherBaseActivity extends Activity {
 
     /** The podcast manager handle */
-    protected PodcastManager dataManager;
+    protected PodcastManager podcastManager;
 
     /** The podcatcher website URL */
     private static final String PODCATCHER_WEBSITE = "http://www.podcatcher-deluxe.com";
@@ -84,7 +84,7 @@ public abstract class PodcatcherBaseActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         // Set the data manager
-        this.dataManager = ((Podcatcher) getApplication()).getModel();
+        this.podcastManager = ((Podcatcher) getApplication()).getPodcastManager();
 
         // Set the view mode member
         this.viewMode = determineViewMode();

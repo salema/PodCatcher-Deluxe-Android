@@ -1,4 +1,4 @@
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -65,8 +65,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
 
     /** The list of podcasts we know */
     private List<Podcast> podcastList;
-    /** The list of podcast suggestions */
-    private List<Podcast> podcastSuggestions;
 
     /** The current podcast load tasks */
     private Map<Podcast, LoadPodcastTask> loadPodcastTasks = new HashMap<Podcast, LoadPodcastTask>();
@@ -256,19 +254,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         // nobody changes this list on us.
         else
             return new ArrayList<Podcast>(podcastList);
-    }
-
-    public List<Podcast> getPodcastSuggestions() {
-        if (podcastSuggestions == null)
-            return null;
-        // return copy in order to make sure
-        // nobody changes this list on us.
-        else
-            return new ArrayList<Podcast>(podcastSuggestions);
-    }
-
-    public void setPodcastSuggestions(List<Podcast> suggestions) {
-        this.podcastSuggestions = suggestions;
     }
 
     @SuppressWarnings("unchecked")

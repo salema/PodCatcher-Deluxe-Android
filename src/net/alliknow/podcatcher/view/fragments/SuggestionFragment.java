@@ -1,4 +1,4 @@
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -20,31 +20,13 @@ package net.alliknow.podcatcher.view.fragments;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import net.alliknow.podcatcher.Podcatcher;
-import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
-import net.alliknow.podcatcher.listeners.OnShowSuggestionsListener;
-import net.alliknow.podcatcher.model.tasks.Progress;
-import net.alliknow.podcatcher.model.tasks.remote.LoadSuggestionsTask;
-import net.alliknow.podcatcher.model.types.Genre;
-import net.alliknow.podcatcher.model.types.Language;
-import net.alliknow.podcatcher.model.types.MediaType;
-import net.alliknow.podcatcher.model.types.Podcast;
-import net.alliknow.podcatcher.view.ProgressView;
-import net.alliknow.podcatcher.view.adapters.GenreSpinnerAdapter;
-import net.alliknow.podcatcher.view.adapters.LanguageSpinnerAdapter;
-import net.alliknow.podcatcher.view.adapters.MediaTypeSpinnerAdapter;
-import net.alliknow.podcatcher.view.adapters.SuggestionListAdapter;
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,10 +36,27 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.listeners.OnAddSuggestionListener;
+import net.alliknow.podcatcher.model.tasks.Progress;
+import net.alliknow.podcatcher.model.types.Genre;
+import net.alliknow.podcatcher.model.types.Language;
+import net.alliknow.podcatcher.model.types.MediaType;
+import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.view.ProgressView;
+import net.alliknow.podcatcher.view.adapters.GenreSpinnerAdapter;
+import net.alliknow.podcatcher.view.adapters.LanguageSpinnerAdapter;
+import net.alliknow.podcatcher.view.adapters.MediaTypeSpinnerAdapter;
+import net.alliknow.podcatcher.view.adapters.SuggestionListAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 /**
  * Fragment to show podcast suggestions.
  */
-public class SuggestionFragment extends DialogFragment implements OnLoadSuggestionListener {
+public class SuggestionFragment extends DialogFragment {
 
     /** The filter wildcard */
     public static final String FILTER_WILDCARD = "ALL";
@@ -68,9 +67,9 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
     private static final String SUGGESTION_MAIL_SUBJECT = "A proposal for a podcast suggestion in the Podcatcher apps";
 
     /** The call back we work on */
-    private OnShowSuggestionsListener listener;
-    /** The suggestions load task */
-    private LoadSuggestionsTask loadTask;
+    private OnAddSuggestionListener listener;
+    /** The list of suggestions to show */
+    private List<Podcast> suggestionList;
 
     /** The language filter */
     private Spinner languageFilter;
@@ -102,6 +101,19 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
     };
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // Make sure our listener is present
+        try {
+            this.listener = (OnAddSuggestionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnAddSuggestionListener");
+        }
+    };
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
@@ -110,22 +122,40 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        initUi(view);
-        restoreFilters(savedInstanceState);
+        getDialog().setTitle(R.string.suggested_podcasts);
 
-        // No listener
-        if (!assureListenerPresent())
-            onSuggestionsLoadFailed();
-        // Suggestion list has not been loaded before
-        else if (listener.getPodcastSuggestions() == null) {
-            loadTask = new LoadSuggestionsTask(this);
-            loadTask.preventZippedTransfer(((Podcatcher) getActivity().getApplication())
-                    .isOnFastConnection());
-            loadTask.execute((Void) null);
-        } // List was loaded before
-        else {
-            updateList();
-        }
+        languageFilter = (Spinner) view.findViewById(R.id.suggestion_language_select);
+        languageFilter.setAdapter(new LanguageSpinnerAdapter(getActivity()));
+        languageFilter.setOnItemSelectedListener(selectionListener);
+
+        genreFilter = (Spinner) view.findViewById(R.id.suggestion_genre_select);
+        genreFilter.setAdapter(new GenreSpinnerAdapter(getActivity()));
+        genreFilter.setOnItemSelectedListener(selectionListener);
+
+        mediaTypeFilter = (Spinner) view.findViewById(R.id.suggestion_type_select);
+        mediaTypeFilter.setAdapter(new MediaTypeSpinnerAdapter(getActivity()));
+        mediaTypeFilter.setOnItemSelectedListener(selectionListener);
+
+        progressView = (ProgressView) view.findViewById(R.id.suggestion_list_progress);
+
+        suggestionsListView = (ListView) view.findViewById(R.id.suggestion_podcasts);
+        noSuggestionsView = (TextView) view.findViewById(R.id.suggestion_none);
+
+        sendSuggestionView = (TextView) view.findViewById(R.id.suggestion_send);
+        sendSuggestionView.setText(Html.fromHtml("<a href=\"mailto:" + SUGGESTION_MAIL_ADDRESS +
+                "?subject=" + SUGGESTION_MAIL_SUBJECT + "\">" +
+                getResources().getString(R.string.send_suggestion) + "</a>"));
+        sendSuggestionView.setMovementMethod(LinkMovementMethod.getInstance());
+
+        restoreFilters(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // The list might have changed while we were paused
+        updateList();
     }
 
     @Override
@@ -138,47 +168,52 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
     }
 
     @Override
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
-
-        if (loadTask != null)
-            loadTask.cancel(true);
-    }
-
-    @Override
-    public void onSuggestionsLoadProgress(Progress progress) {
-        progressView.publishProgress(progress);
-    }
-
-    @Override
-    public void onSuggestionsLoaded(List<Podcast> suggestions) {
-        // Cache the suggestions list in the podcast list fragment which will be
-        // retained
-        listener.setPodcastSuggestions(suggestions);
-
-        // Filter list and update UI
-        updateList();
-    }
-
-    @Override
-    public void onSuggestionsLoadFailed() {
-        progressView.showError(R.string.error_suggestions_load);
+    public void onCancel(DialogInterface dialog) {
+        // Make sure the parent activity knows when we are closing
+        if (listener instanceof OnCancelListener)
+            ((OnCancelListener) listener).onCancel(dialog);
     }
 
     /**
-     * Make sure we have a traget fragment that implement the right call back.
+     * Set list of suggestions to show and update the UI.
      * 
-     * @return <code>true</code> if so.
+     * @param suggestions Podcasts to show.
      */
-    private boolean assureListenerPresent() {
-        this.listener = (OnShowSuggestionsListener) getTargetFragment();
-        // We need the target fragment to provide the required interface
-        if (listener == null) {
-            Log.w(getClass().getSimpleName(),
-                    "Suggestion dialog cannot open, target fragment is null or does not implement OnShowSuggestionsListener");
-            return false;
-        } else
-            return true;
+    public void setList(List<Podcast> suggestions) {
+        // Set the list to show
+        this.suggestionList = suggestions;
+
+        // Filter list and update UI (if ready)
+        if (isResumed())
+            updateList();
+    }
+
+    /**
+     * Show load suggestions progress.
+     * 
+     * @param progress Progress information to give.
+     */
+    public void showLoadProgress(Progress progress) {
+        progressView.publishProgress(progress);
+    }
+
+    /**
+     * Show load failed for podcast suggestions.
+     */
+    public void showLoadFailed() {
+        progressView.showError(R.string.error_suggestions_load);
+    }
+
+    private void restoreFilters(Bundle savedInstanceState) {
+        // Coming from configuration change
+        if (savedInstanceState != null) {
+            languageFilter.setSelection(savedInstanceState.getInt(Language.class.getSimpleName()));
+            genreFilter.setSelection(savedInstanceState.getInt(Genre.class.getSimpleName()));
+            mediaTypeFilter
+                    .setSelection(savedInstanceState.getInt(MediaType.class.getSimpleName()));
+        } // Initial opening of the dialog
+        else
+            setInitialFilterSelection();
     }
 
     private void setInitialFilterSelection() {
@@ -191,28 +226,14 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
         mediaTypeFilter.setSelection(1);
     }
 
-    private void restoreFilters(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            languageFilter.setSelection(savedInstanceState.getInt(Language.class.getSimpleName()));
-            genreFilter.setSelection(savedInstanceState.getInt(Genre.class.getSimpleName()));
-            mediaTypeFilter
-                    .setSelection(savedInstanceState.getInt(MediaType.class.getSimpleName()));
-        } else
-            setInitialFilterSelection();
-    }
-
     private void updateList() {
-        List<Podcast> suggestionList = listener.getPodcastSuggestions();
         // Filter the suggestion list
         if (suggestionList != null) {
-            // Currently already existing podcasts (to be filtered out)
-            List<Podcast> podcastList = listener.getPodcastList();
             // Resulting list
             List<Podcast> filteredSuggestionList = new ArrayList<Podcast>();
             // Do filter!
             for (Podcast suggestion : suggestionList)
-                if (podcastList == null || !podcastList.contains(suggestion) &&
-                        matchesFilter(suggestion))
+                if (matchesFilter(suggestion))
                     filteredSuggestionList.add(suggestion);
 
             // Set filtered list
@@ -245,32 +266,5 @@ public class SuggestionFragment extends DialogFragment implements OnLoadSuggesti
                 ((Genre) genreFilter.getSelectedItem()).equals(suggestion.getGenre())) &&
                 (mediaTypeFilter.getSelectedItemPosition() == 0 ||
                 ((MediaType) mediaTypeFilter.getSelectedItem()).equals(suggestion.getMediaType()));
-    }
-
-    private void initUi(View view) {
-        getDialog().setTitle(R.string.suggested_podcasts);
-
-        languageFilter = (Spinner) view.findViewById(R.id.suggestion_language_select);
-        languageFilter.setAdapter(new LanguageSpinnerAdapter(getActivity()));
-        languageFilter.setOnItemSelectedListener(selectionListener);
-
-        genreFilter = (Spinner) view.findViewById(R.id.suggestion_genre_select);
-        genreFilter.setAdapter(new GenreSpinnerAdapter(getActivity()));
-        genreFilter.setOnItemSelectedListener(selectionListener);
-
-        mediaTypeFilter = (Spinner) view.findViewById(R.id.suggestion_type_select);
-        mediaTypeFilter.setAdapter(new MediaTypeSpinnerAdapter(getActivity()));
-        mediaTypeFilter.setOnItemSelectedListener(selectionListener);
-
-        progressView = (ProgressView) view.findViewById(R.id.suggestion_list_progress);
-
-        suggestionsListView = (ListView) view.findViewById(R.id.suggestion_podcasts);
-        noSuggestionsView = (TextView) view.findViewById(R.id.suggestion_none);
-
-        sendSuggestionView = (TextView) view.findViewById(R.id.suggestion_send);
-        sendSuggestionView.setText(Html.fromHtml("<a href=\"mailto:" + SUGGESTION_MAIL_ADDRESS +
-                "?subject=" + SUGGESTION_MAIL_SUBJECT + "\">" +
-                getResources().getString(R.string.send_suggestion) + "</a>"));
-        sendSuggestionView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }

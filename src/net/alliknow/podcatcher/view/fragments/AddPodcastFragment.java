@@ -1,4 +1,4 @@
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -143,6 +143,12 @@ public class AddPodcastFragment extends DialogFragment {
      * @param progress Progress information to show.
      */
     public void showProgress(Progress progress) {
+        // Prepare UI
+        podcastUrlEditText.setEnabled(false);
+        addPodcastButton.setEnabled(false);
+        progressView.setVisibility(VISIBLE);
+
+        // Show progress
         progressView.publishProgress(progress);
     }
 
@@ -150,17 +156,23 @@ public class AddPodcastFragment extends DialogFragment {
      * Show load failure in the dialog UI.
      */
     public void showPodcastLoadFailed() {
+        showPodcastLoadFailed(R.string.error_podcast_add);
+    }
+
+    /**
+     * Show load failure in the dialog UI.
+     * 
+     * @param messageId String to show as error message.
+     */
+    public void showPodcastLoadFailed(int messageId) {
         // Show error in the UI
-        progressView.showError(R.string.error_podcast_add);
+        progressView.showError(messageId);
         podcastUrlEditText.setEnabled(true);
         addPodcastButton.setEnabled(true);
     }
 
     private void addPodcast() {
-        // Prepare UI
-        podcastUrlEditText.setEnabled(false);
-        addPodcastButton.setEnabled(false);
-        progressView.setVisibility(VISIBLE);
+        showProgress(Progress.WAIT);
 
         // Try to make the input work as a online resource
         String spec = podcastUrlEditText.getText().toString();

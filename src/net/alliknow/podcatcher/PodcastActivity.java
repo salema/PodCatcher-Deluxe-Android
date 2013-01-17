@@ -1,4 +1,4 @@
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -70,10 +70,10 @@ public class PodcastActivity extends PodcatcherBaseActivity
             StrictMode.enableDefaults();
 
         // Register as listener to the podcast data manager
-        dataManager.addLoadPodcastListListener(this);
-        dataManager.addChangePodcastListListener(this);
-        dataManager.addLoadPodcastListener(this);
-        dataManager.addLoadPodcastLogoListener(this);
+        podcastManager.addLoadPodcastListListener(this);
+        podcastManager.addChangePodcastListListener(this);
+        podcastManager.addLoadPodcastListener(this);
+        podcastManager.addLoadPodcastLogoListener(this);
 
         // Inflate the main content view (depends on view mode)
         setContentView(R.layout.main);
@@ -104,7 +104,7 @@ public class PodcastActivity extends PodcatcherBaseActivity
         super.onResume();
 
         // Check if podcast list is available - if so, set it
-        List<Podcast> podcastList = dataManager.getPodcastList();
+        List<Podcast> podcastList = podcastManager.getPodcastList();
         if (podcastList != null)
             onPodcastListLoaded(podcastList);
 
@@ -126,10 +126,10 @@ public class PodcastActivity extends PodcatcherBaseActivity
     protected void onDestroy() {
         super.onDestroy();
 
-        dataManager.removeLoadPodcastListListener(this);
-        dataManager.removeChangePodcastListListener(this);
-        dataManager.removeLoadPodcastListener(this);
-        dataManager.removeLoadPodcastLogoListener(this);
+        podcastManager.removeLoadPodcastListListener(this);
+        podcastManager.removeChangePodcastListListener(this);
+        podcastManager.removeLoadPodcastListener(this);
+        podcastManager.removeLoadPodcastLogoListener(this);
     }
 
     @Override
@@ -143,6 +143,8 @@ public class PodcastActivity extends PodcatcherBaseActivity
 
     @Override
     public void podcastAdded(Podcast podcast) {
+        // There is nothing more to do here since we are paused
+        // the selection will be picked up on resume.
         this.selectedPodcast = podcast;
     }
 
@@ -154,7 +156,7 @@ public class PodcastActivity extends PodcatcherBaseActivity
         this.multiplePodcastsMode = false;
 
         // Stop loading previous tasks
-        dataManager.cancelAllLoadTasks();
+        podcastManager.cancelAllLoadTasks();
 
         switch (viewMode) {
             case SMALL_LANDSCAPE_VIEW:
@@ -166,14 +168,14 @@ public class PodcastActivity extends PodcatcherBaseActivity
             case LARGE_PORTRAIT_VIEW:
             case LARGE_LANDSCAPE_VIEW:
                 // Select in podcast list
-                findPodcastListFragment().select(dataManager.indexOf(podcast));
+                findPodcastListFragment().select(podcastManager.indexOf(podcast));
                 // List fragment is visible, make it show progress UI
                 EpisodeListFragment episodeListFragment = findEpisodeListFragment();
                 episodeListFragment.resetAndSpin();
                 updateDivider();
 
                 // Load podcast
-                dataManager.load(podcast);
+                podcastManager.load(podcast);
 
                 break;
             case SMALL_PORTRAIT_VIEW:
@@ -194,7 +196,7 @@ public class PodcastActivity extends PodcatcherBaseActivity
         this.multiplePodcastsMode = true;
 
         // Stop loading previous tasks
-        dataManager.cancelAllLoadTasks();
+        podcastManager.cancelAllLoadTasks();
 
         // Load all podcasts
         // for (Podcast podcast : data.getPodcastList())
@@ -220,8 +222,8 @@ public class PodcastActivity extends PodcatcherBaseActivity
                 episodeListFragment.resetAndSpin();
                 updateDivider();
 
-                for (Podcast podcast : dataManager.getPodcastList())
-                    dataManager.load(podcast);
+                for (Podcast podcast : podcastManager.getPodcastList())
+                    podcastManager.load(podcast);
 
                 break;
             case SMALL_PORTRAIT_VIEW:
@@ -284,17 +286,14 @@ public class PodcastActivity extends PodcatcherBaseActivity
             case LARGE_LANDSCAPE_VIEW:
             case SMALL_LANDSCAPE_VIEW:
                 if (multiplePodcastsMode)
-                    findPodcastListFragment().showProgress(dataManager.indexOf(podcast), progress);
+                    findPodcastListFragment().showProgress(podcastManager.indexOf(podcast), progress);
                 else
                     findEpisodeListFragment().showProgress(progress);
 
                 break;
             case SMALL_PORTRAIT_VIEW:
-                // Otherwise we send a progress alert to the activity
-                Intent intent = new Intent();
-                intent.setClass(this, ShowEpisodeListActivity.class);
-                intent.putExtra("progress", true);
-                startActivity(intent);
+                // Pass, this should be handled by top activity
+                break;
         }
     }
 
@@ -324,18 +323,15 @@ public class PodcastActivity extends PodcatcherBaseActivity
                     currentEpisodeList = podcast.getEpisodes();
                     episodeListFragment.setEpisodes(currentEpisodeList);
 
-                    dataManager.loadLogo(podcast,
+                    podcastManager.loadLogo(podcast,
                             podcastListFragment.getLogoViewWidth(),
                             podcastListFragment.getLogoViewHeight());
                 }
 
                 break;
             case SMALL_PORTRAIT_VIEW:
-                // Send intent to activity
-                Intent intent = new Intent();
-                intent.setClass(this, ShowEpisodeListActivity.class);
-                intent.putExtra("select", true);
-                startActivity(intent);
+                // Pass, this should be handled by top activity
+                break;
         }
 
         // Additionally, if on large device, process clever selection update
@@ -361,11 +357,8 @@ public class PodcastActivity extends PodcatcherBaseActivity
                 episodeListFragment.showLoadFailed();
                 break;
             case SMALL_PORTRAIT_VIEW:
-                // Send intent to activity
-                Intent intent = new Intent();
-                intent.setClass(this, ShowEpisodeListActivity.class);
-                intent.putExtra("failed", true);
-                startActivity(intent);
+                // Pass, this should be handled by top activity
+                break;
         }
     }
 

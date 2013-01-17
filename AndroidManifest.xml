@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -49,6 +49,7 @@
         <activity android:name=".ShowEpisodeListActivity" />
         <activity android:name=".ShowEpisodeActivity" />
         <activity android:name=".AddPodcastActivity" android:theme="@android:style/Theme.Holo.Light.Dialog" />
+        <activity android:name=".AddSuggestionActivity" android:theme="@android:style/Theme.Holo.Light.Dialog" />
         <service
             android:name=".services.PlayEpisodeService"
             android:exported="false" >

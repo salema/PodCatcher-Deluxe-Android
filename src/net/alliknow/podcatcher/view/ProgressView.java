@@ -1,4 +1,4 @@
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -17,14 +17,15 @@
 
 package net.alliknow.podcatcher.view;
 
-import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.model.tasks.Progress;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.model.tasks.Progress;
 
 /**
  * A sophisticated progress view.
@@ -65,7 +66,9 @@ public class ProgressView extends LinearLayout {
         progressBar.setVisibility(VISIBLE);
         progressTextView.setTextColor(getResources().getColor(R.color.text_secondary));
 
-        if (progress.equals(Progress.CONNECT))
+        if (progress.equals(Progress.WAIT))
+            progressTextView.setText(getResources().getString(R.string.wait));
+        else if (progress.equals(Progress.CONNECT))
             progressTextView.setText(getResources().getString(R.string.connect));
         else if (progress.equals(Progress.LOAD))
             progressTextView.setText(getResources().getString(R.string.load));

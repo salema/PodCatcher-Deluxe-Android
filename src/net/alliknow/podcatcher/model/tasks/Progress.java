@@ -1,4 +1,4 @@
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -22,6 +22,8 @@ package net.alliknow.podcatcher.model.tasks;
  */
 public class Progress {
 
+    /** Flag indicating waiting state */
+    private static final int PROGRESS_WAIT = -4;
     /** Flag indicating connection state */
     private static final int PROGRESS_CONNECT = -3;
     /** Flag indicating loading state */
@@ -29,6 +31,8 @@ public class Progress {
     /** Flag indicating parsing state */
     private static final int PROGRESS_PARSE = -1;
 
+    /** Waiting state */
+    public static final Progress WAIT = new Progress(PROGRESS_WAIT, -1);
     /** Connecting state */
     public static final Progress CONNECT = new Progress(PROGRESS_CONNECT, -1);
     /** Loading state */

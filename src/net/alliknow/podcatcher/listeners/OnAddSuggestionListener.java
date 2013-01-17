@@ -17,21 +17,18 @@
 
 package net.alliknow.podcatcher.listeners;
 
+import net.alliknow.podcatcher.model.types.Podcast;
+
 /**
- * Interface definition for a callback to be invoked when a podcast is added.
+ * Interface definition for a callback to be invoked when a podcast suggestions
+ * is added.
  */
-public interface OnAddPodcastListener {
+public interface OnAddSuggestionListener {
 
     /**
-     * Called on listener when podcast url is given.
+     * Called on listener when podcast suggestion is selected.
      * 
-     * @param podcastUrl Podcast URL spec to add.
+     * @param suggestion Podcast to add.
      */
-    public void addPodcast(String podcastUrl);
-
-    /**
-     * Called on listener if the user wants to see suggestions for podcasts to
-     * add.
-     */
-    public void showSuggestions();
+    public void addPodcast(Podcast suggestion);
 }

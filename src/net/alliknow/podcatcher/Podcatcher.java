@@ -1,4 +1,4 @@
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -17,20 +17,24 @@
 
 package net.alliknow.podcatcher;
 
-import net.alliknow.podcatcher.model.PodcastManager;
 import android.app.Application;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import net.alliknow.podcatcher.model.PodcastManager;
+import net.alliknow.podcatcher.model.SuggestionManager;
+
 /**
  * Our application subclass. Holds global state and model.
  */
 public class Podcatcher extends Application {
 
-    /** Podcast data object to be used across all the app's components */
-    private PodcastManager model;
+    /** Podcast data manager to be used across all the app's components */
+    private PodcastManager podcastManager;
+    /** Suggestion data manager, persistent and global */
+    private SuggestionManager suggestionManager;
 
     @Override
     public void onCreate() {
@@ -38,16 +42,27 @@ public class Podcatcher extends Application {
 
         // This will only run once in the lifetime of the app
         // since the application is an implicit singleton.
-        model = PodcastManager.getInstance(this);
+        podcastManager = PodcastManager.getInstance(this);
+        // dito
+        suggestionManager = SuggestionManager.getInstance(this);
     }
 
     /**
      * Grant access to the global podcast data model.
      * 
-     * @return The model handle.
+     * @return The manager handle.
      */
-    public PodcastManager getModel() {
-        return model;
+    public PodcastManager getPodcastManager() {
+        return podcastManager;
+    }
+
+    /**
+     * Grant access to the global suggestion data model.
+     * 
+     * @return The manager handle.
+     */
+    public SuggestionManager getSuggestionManager() {
+        return suggestionManager;
     }
 
     /**
