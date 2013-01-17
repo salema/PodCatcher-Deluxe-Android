@@ -64,11 +64,12 @@ public class AddSuggestionActivity extends PodcatcherBaseActivity implements
                 SHOW_SUGGESTIONS_FRAGMENT_TAG);
 
         // No fragment found, create it
-        if (suggestionFragment == null)
+        if (suggestionFragment == null) {
             suggestionFragment = new SuggestionFragment();
 
-        // Show the fragment
-        suggestionFragment.show(getFragmentManager(), SHOW_SUGGESTIONS_FRAGMENT_TAG);
+            // Show the fragment
+            suggestionFragment.show(getFragmentManager(), SHOW_SUGGESTIONS_FRAGMENT_TAG);
+        }
 
         // Load suggestions (this has to be called after UI fragment is created)
         suggestionManager.load();

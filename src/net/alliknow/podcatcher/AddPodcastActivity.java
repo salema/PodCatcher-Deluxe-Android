@@ -70,11 +70,12 @@ public class AddPodcastActivity extends PodcatcherBaseActivity
                 ADD_PODCAST_FRAGMENT_TAG);
 
         // No fragment found, create it
-        if (addPodcastFragment == null)
+        if (addPodcastFragment == null) {
             addPodcastFragment = new AddPodcastFragment();
 
-        // Show the fragment
-        addPodcastFragment.show(getFragmentManager(), ADD_PODCAST_FRAGMENT_TAG);
+            // Show the fragment
+            addPodcastFragment.show(getFragmentManager(), ADD_PODCAST_FRAGMENT_TAG);
+        }
     }
 
     @Override
