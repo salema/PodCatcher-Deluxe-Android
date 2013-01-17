@@ -17,17 +17,35 @@
 
 package net.alliknow.podcatcher;
 
-import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
-import net.alliknow.podcatcher.model.types.Episode;
-import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 import android.content.Intent;
 import android.os.Bundle;
+
+import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
+import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
+import net.alliknow.podcatcher.model.tasks.Progress;
+import net.alliknow.podcatcher.model.types.Episode;
+import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 
  */
 public class ShowEpisodeListActivity extends PodcatcherBaseActivity implements
-        OnSelectEpisodeListener {
+        OnLoadPodcastListener, OnSelectEpisodeListener {
+
+    /** Key to give wanted podcast url in intent */
+    public static final String PODCAST_URL_KEY = "podcast_url";
+
+    /** Flag to indicate whether we are in multiple podcast mode */
+    private boolean multiplePodcastsMode = false;
+
+    /** The podcast we are showing episodes for */
+    private Podcast selectedPodcast;
+    private List<Episode> currentEpisodeList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,29 +54,87 @@ public class ShowEpisodeListActivity extends PodcatcherBaseActivity implements
         // Check if we need this activity at all
         if (viewMode != SMALL_PORTRAIT_VIEW) {
             finish();
-        } else if (savedInstanceState == null) {
-            // During initial setup, plug in the details fragment.
-            getFragmentManager().beginTransaction()
-                    .add(android.R.id.content, new EpisodeListFragment(), episodeListFragmentTag)
-                    .commit();
+        } else {
+            podcastManager.addLoadPodcastListener(this);
 
-            processIntent();
+            if (savedInstanceState == null)
+                // During initial setup, plug in the episode list fragment.
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(android.R.id.content, new EpisodeListFragment(),
+                                episodeListFragmentTag)
+                        .commit();
         }
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-        processIntent();
+    protected void onStart() {
+        super.onStart();
+
+        // Prepare UI
+        findEpisodeListFragment().resetAndSpin();
+
+        // Get the load mode
+        multiplePodcastsMode = getIntent().getExtras().getBoolean(PodcastActivity.MODE_KEY);
+
+        // We are in select all mode
+        if (multiplePodcastsMode) {
+            currentEpisodeList = new ArrayList<Episode>();
+
+            for (Podcast podcast : podcastManager.getPodcastList())
+                podcastManager.load(podcast);
+        } // Single podcast to load
+        else {
+            // Get URL of podcast to load
+            String podcastUrl = getIntent().getExtras().getString(PODCAST_URL_KEY);
+
+            // Find the podcast object
+            for (Podcast podcast : podcastManager.getPodcastList())
+                if (podcast.getUrl().toString().equals(podcastUrl))
+                    this.selectedPodcast = podcast;
+
+            // Go load it if found
+            if (selectedPodcast != null)
+                podcastManager.load(selectedPodcast);
+        }
     }
 
-    private void processIntent() {
-        Intent intent = getIntent();
-        if (intent.getBooleanExtra("progress", false))
-            findEpisodeListFragment().resetAndSpin();
-        if (intent.getBooleanExtra("select", false))
-            onEpisodeSelected(null);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        podcastManager.removeLoadPodcastListener(this);
+    }
+
+    @Override
+    public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
+        if (!multiplePodcastsMode && podcast.equals(selectedPodcast))
+            findEpisodeListFragment().showProgress(progress);
+    }
+
+    @Override
+    public void onPodcastLoaded(Podcast podcast) {
+        if (multiplePodcastsMode) {
+            // TODO decide on this: episodeList.addAll(list.subList(0,
+            // list.size() > 100 ? 100 : list.size() - 1));
+            if (podcast.getEpisodes().size() > 0) {
+                currentEpisodeList.addAll(podcast.getEpisodes());
+                Collections.sort(currentEpisodeList);
+
+                findEpisodeListFragment().setEpisodes(currentEpisodeList);
+            }
+        }
+        else if (podcast.equals(selectedPodcast)) {
+            currentEpisodeList = podcast.getEpisodes();
+            findEpisodeListFragment().setEpisodes(currentEpisodeList);
+        }
+    }
+
+    @Override
+    public void onPodcastLoadFailed(Podcast podcast) {
+        // TODO What happens in multiple podcast mode?
+        if (!multiplePodcastsMode)
+            findEpisodeListFragment().showLoadFailed();
     }
 
     @Override

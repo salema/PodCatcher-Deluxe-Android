@@ -49,13 +49,14 @@ public class PodcastActivity extends PodcatcherBaseActivity
         implements OnLoadPodcastListListener, OnChangePodcastListListener, OnSelectPodcastListener,
         OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectEpisodeListener {
 
-    /** Flag to indicate whether we are in multiple podcast mode */
-    private boolean multiplePodcastsMode = false;
     /**
      * Key used to save the current setting for
      * <code>multiplePodcastsMode</code> in bundle
      */
-    private static final String MODE_KEY = "MODE_KEY";
+    public static final String MODE_KEY = "MODE_KEY";
+
+    /** Flag to indicate whether we are in multiple podcast mode */
+    private boolean multiplePodcastsMode = false;
 
     private Podcast selectedPodcast;
     private Episode selectedEpisode;
@@ -80,8 +81,7 @@ public class PodcastActivity extends PodcatcherBaseActivity
 
         // On small screens in landscape mode we need to add the episode list
         // fragment
-        if (viewMode == SMALL_LANDSCAPE_VIEW
-                && getFragmentManager().findFragmentByTag(episodeListFragmentTag) == null)
+        if (viewMode == SMALL_LANDSCAPE_VIEW && findEpisodeListFragment() == null)
             getFragmentManager().beginTransaction()
                     .add(R.id.content, new EpisodeListFragment(), episodeListFragmentTag).commit();
 
@@ -108,8 +108,13 @@ public class PodcastActivity extends PodcatcherBaseActivity
         if (podcastList != null)
             onPodcastListLoaded(podcastList);
 
+        // Re-select previously selected podcast
         if (selectedPodcast != null && viewMode != SMALL_PORTRAIT_VIEW)
             onPodcastSelected(selectedPodcast);
+
+        // Hide logo in small portrait
+        if (viewMode == SMALL_PORTRAIT_VIEW)
+            findPodcastListFragment().showLogo(false);
 
         // Make sure dividers (if any) reflect selection state
         updateDivider();
@@ -119,6 +124,8 @@ public class PodcastActivity extends PodcatcherBaseActivity
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        // outState.putString(ShowEpisodeListActivity.PODCAST_URL_KEY,
+        // selectedPodcast.getUrl().toString());
         outState.putBoolean(MODE_KEY, multiplePodcastsMode);
     }
 
@@ -138,7 +145,7 @@ public class PodcastActivity extends PodcatcherBaseActivity
 
         // If podcast list is empty we show dialog on startup
         if (podcastList.isEmpty())
-            startActivity(new Intent().setClass(this, AddPodcastActivity.class));
+            startActivity(new Intent(this, AddPodcastActivity.class));
     }
 
     @Override
@@ -176,14 +183,14 @@ public class PodcastActivity extends PodcatcherBaseActivity
 
                 // Load podcast
                 podcastManager.load(podcast);
-
                 break;
             case SMALL_PORTRAIT_VIEW:
-                // Otherwise we need to launch a new activity to display the
-                // episode list
-                Intent intent = new Intent();
-                intent.setClass(this, ShowEpisodeListActivity.class);
-                // intent.putExtra("podcast", url); // String
+                // We need to launch a new activity to display the episode list
+                Intent intent = new Intent(this, ShowEpisodeListActivity.class);
+                intent.putExtra(ShowEpisodeListActivity.PODCAST_URL_KEY, podcast.getUrl()
+                        .toString());
+                intent.putExtra(MODE_KEY, false);
+
                 startActivity(intent);
         }
     }
@@ -197,15 +204,6 @@ public class PodcastActivity extends PodcatcherBaseActivity
 
         // Stop loading previous tasks
         podcastManager.cancelAllLoadTasks();
-
-        // Load all podcasts
-        // for (Podcast podcast : data.getPodcastList())
-        // if (podcast.needsReload()) {
-        // // Otherwise progress will not show
-        // podcast.resetEpisodes();
-        //
-        // data.load(podcast);
-        // } else onPodcastLoaded(podcast);
 
         switch (viewMode) {
             case SMALL_LANDSCAPE_VIEW:
@@ -227,11 +225,10 @@ public class PodcastActivity extends PodcatcherBaseActivity
 
                 break;
             case SMALL_PORTRAIT_VIEW:
-                // Otherwise we need to launch a new activity to display the
-                // episode list
-                Intent intent = new Intent();
-                intent.setClass(this, ShowEpisodeListActivity.class);
-                // intent.putExtra("multiple", true);
+                // We need to launch a new activity to display the episode list
+                Intent intent = new Intent(this, ShowEpisodeListActivity.class);
+                intent.putExtra(MODE_KEY, true);
+
                 startActivity(intent);
         }
     }
@@ -286,7 +283,8 @@ public class PodcastActivity extends PodcatcherBaseActivity
             case LARGE_LANDSCAPE_VIEW:
             case SMALL_LANDSCAPE_VIEW:
                 if (multiplePodcastsMode)
-                    findPodcastListFragment().showProgress(podcastManager.indexOf(podcast), progress);
+                    findPodcastListFragment().showProgress(podcastManager.indexOf(podcast),
+                            progress);
                 else
                     findEpisodeListFragment().showProgress(progress);
 
@@ -346,6 +344,7 @@ public class PodcastActivity extends PodcatcherBaseActivity
 
     @Override
     public void onPodcastLoadFailed(Podcast failedPodcast) {
+        // TODO handle multiple podcast mode!
         switch (viewMode) {
             case LARGE_LANDSCAPE_VIEW:
             case LARGE_PORTRAIT_VIEW:

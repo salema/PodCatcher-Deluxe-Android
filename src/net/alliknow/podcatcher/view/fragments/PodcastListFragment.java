@@ -202,6 +202,11 @@ public class PodcastListFragment extends PodcatcherListFragment {
         }
     }
 
+    public void showLogo(boolean b) {
+        if (logoView != null)
+            logoView.setVisibility(b ? VISIBLE : GONE);
+    }
+
     public void showLogo(Bitmap logo) {
         logoView.setImageBitmap(logo);
     }
