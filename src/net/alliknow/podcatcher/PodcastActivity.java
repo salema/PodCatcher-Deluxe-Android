@@ -43,6 +43,10 @@ public class PodcastActivity extends EpisodeListActivity implements
         if (((Podcatcher) getApplication()).isInDebugMode())
             StrictMode.enableDefaults();
 
+        // Register as listener to the podcast data manager
+        podcastManager.addLoadPodcastListListener(this);
+        podcastManager.addChangePodcastListListener(this);
+
         // Inflate the main content view (depends on view mode)
         setContentView(R.layout.main);
 
@@ -56,34 +60,17 @@ public class PodcastActivity extends EpisodeListActivity implements
 
     @Override
     protected void onResume() {
-        super.onResume();
-
-        // Register as listener to the podcast data manager
-        podcastManager.addLoadPodcastListListener(this);
-        podcastManager.addChangePodcastListListener(this);
-
         // Check if podcast list is available - if so, set it
         List<Podcast> podcastList = podcastManager.getPodcastList();
         if (podcastList != null)
             onPodcastListLoaded(podcastList);
 
-        // Re-select previously selected podcast
-        if (currentPodcast != null && viewMode != SMALL_PORTRAIT_VIEW)
-            onPodcastSelected(currentPodcast);
-        else if (currentPodcast == null)
-            onNoPodcastSelected();
-
-        // Hide logo in small portrait
-        if (viewMode == SMALL_PORTRAIT_VIEW)
-            findPodcastListFragment().showLogo(false);
-
-        // Make sure dividers (if any) reflect selection state
-        updateDivider();
+        super.onResume();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onDestroy() {
+        super.onDestroy();
 
         // Unregister the listeners
         podcastManager.removeLoadPodcastListListener(this);
@@ -105,6 +92,9 @@ public class PodcastActivity extends EpisodeListActivity implements
         // There is nothing more to do here since we are paused
         // the selection will be picked up on resume.
         this.currentPodcast = podcast;
+
+        // Update podcast list
+        findPodcastListFragment().setPodcastList(podcastManager.getPodcastList());
     }
 
     @Override

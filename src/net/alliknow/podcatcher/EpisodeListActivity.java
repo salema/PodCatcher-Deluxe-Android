@@ -70,6 +70,19 @@ public class EpisodeListActivity extends EpisodeActivity implements
 
         podcastManager.addLoadPodcastListener(this);
         podcastManager.addLoadPodcastLogoListener(this);
+
+        // Re-select previously selected podcast
+        if (currentPodcast != null && viewMode != SMALL_PORTRAIT_VIEW)
+            onPodcastSelected(currentPodcast);
+        else if (currentPodcast == null)
+            onNoPodcastSelected();
+
+        // Hide logo in small portrait
+        if (viewMode == SMALL_PORTRAIT_VIEW)
+            findPodcastListFragment().showLogo(false);
+
+        // Make sure dividers (if any) reflect selection state
+        updateDivider();
     }
 
     @Override
