@@ -111,6 +111,8 @@ public class PodcastActivity extends PodcatcherBaseActivity
         // Re-select previously selected podcast
         if (selectedPodcast != null && viewMode != SMALL_PORTRAIT_VIEW)
             onPodcastSelected(selectedPodcast);
+        else if (selectedPodcast == null)
+            onNoPodcastSelected();
 
         // Hide logo in small portrait
         if (viewMode == SMALL_PORTRAIT_VIEW)
@@ -141,6 +143,7 @@ public class PodcastActivity extends PodcatcherBaseActivity
 
     @Override
     public void onPodcastListLoaded(List<Podcast> podcastList) {
+        // Make podcast list show
         findPodcastListFragment().setPodcastList(podcastList);
 
         // If podcast list is empty we show dialog on startup
@@ -149,10 +152,16 @@ public class PodcastActivity extends PodcatcherBaseActivity
     }
 
     @Override
-    public void podcastAdded(Podcast podcast) {
+    public void onPodcastAdded(Podcast podcast) {
         // There is nothing more to do here since we are paused
         // the selection will be picked up on resume.
         this.selectedPodcast = podcast;
+    }
+
+    @Override
+    public void onPodcastRemoved(Podcast podcast) {
+        if (podcast.equals(selectedPodcast))
+            this.selectedPodcast = null;
     }
 
     @Override
@@ -250,32 +259,6 @@ public class PodcastActivity extends PodcatcherBaseActivity
         updateDivider();
     }
 
-    /**
-     * Removes the podcast selected in context mode.
-     */
-    // public void removeCheckedPodcasts() {
-    // SparseBooleanArray checkedItems =
-    // getListView().getCheckedItemPositions();
-    //
-    // // Remove checked podcasts
-    // for (int index = data.size() - 1; index >= 0; index--)
-    // if (checkedItems.get(index)) {
-    // // Reset internal variable if necessary
-    // if (data.get(index).equals(currentPodcast)) currentPodcast = null;
-    // // Remove podcast from list
-    // data.remove(index);
-    // }
-    //
-    // // Update UI (current podcast was deleted)
-    // if (!selectAll && currentPodcast == null)
-    // selectedListener.onNoPodcastSelected();
-    // // Current podcast has new position
-    // else if (!selectAll)
-    // adapter.setSelectedPosition(data.indexOf(currentPodcast));
-    //
-    // updateUiElementVisibility();
-    // }
-
     @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
         switch (viewMode) {
@@ -337,7 +320,7 @@ public class PodcastActivity extends PodcatcherBaseActivity
             EpisodeListFragment episodeListFragment = findEpisodeListFragment();
             EpisodeFragment episodeFragment = findEpisodeFragment();
 
-            if (currentEpisodeList.contains(selectedEpisode))
+            if (currentEpisodeList != null && currentEpisodeList.contains(selectedEpisode))
                 episodeListFragment.select(currentEpisodeList.indexOf(selectedEpisode));
         }
     }

@@ -50,6 +50,7 @@
         <activity android:name=".ShowEpisodeActivity" />
         <activity android:name=".AddPodcastActivity" android:theme="@android:style/Theme.Holo.Light.Dialog" />
         <activity android:name=".AddSuggestionActivity" android:theme="@android:style/Theme.Holo.Light.Dialog" />
+        <activity android:name=".RemovePodcastActivity" android:theme="@android:style/Theme.NoDisplay" />
         <service
             android:name=".services.PlayEpisodeService"
             android:exported="false" >

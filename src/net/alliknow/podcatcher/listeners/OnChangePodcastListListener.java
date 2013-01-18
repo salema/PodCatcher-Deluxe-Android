@@ -25,5 +25,18 @@ import net.alliknow.podcatcher.model.types.Podcast;
  */
 public interface OnChangePodcastListListener {
 
-    public void podcastAdded(Podcast podcast);
+    /**
+     * Called when the podcast manager adds a new podcast.
+     * 
+     * @param podcast Podcast added to list.
+     */
+    public void onPodcastAdded(Podcast podcast);
+
+    /**
+     * Called on listener when the podcast manager removed a podcast from its
+     * list.
+     * 
+     * @param podcast Podcast being removed.
+     */
+    public void onPodcastRemoved(Podcast podcast);
 }
