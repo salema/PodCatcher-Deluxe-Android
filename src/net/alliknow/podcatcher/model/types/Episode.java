@@ -17,6 +17,14 @@
 
 package net.alliknow.podcatcher.model.types;
 
+import android.graphics.Bitmap;
+import android.util.Log;
+
+import net.alliknow.podcatcher.model.tags.RSS;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,14 +33,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
-import net.alliknow.podcatcher.model.tags.RSS;
-
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
-import android.graphics.Bitmap;
-import android.util.Log;
 
 /**
  * The episode type.
@@ -82,6 +82,16 @@ public class Episode implements Comparable<Episode> {
             return null;
         else
             return podcast.getName();
+    }
+
+    /**
+     * @return The owning podcast's URL.
+     */
+    public String getPodcastUrl() {
+        if (podcast == null)
+            return null;
+        else
+            return podcast.getUrl().toExternalForm();
     }
 
     /**

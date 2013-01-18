@@ -25,7 +25,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,7 +36,6 @@ import android.widget.ListView;
 
 import net.alliknow.podcatcher.AddPodcastActivity;
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.RemovePodcastActivity;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.listeners.PodcastListContextListener;
 import net.alliknow.podcatcher.model.tasks.Progress;
@@ -45,7 +43,6 @@ import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.HorizontalProgressView;
 import net.alliknow.podcatcher.view.adapters.PodcastListAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -56,9 +53,6 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
     /** The activity we are in (listens to user selection) */
     private OnSelectPodcastListener selectedListener;
-
-    /** The context mode listener */
-    private PodcastListContextListener contextListener = new PodcastListContextListener(this);
 
     /** Remove podcast menu item */
     private MenuItem selectAllMenuItem;
@@ -93,22 +87,11 @@ public class PodcastListFragment extends PodcatcherListFragment {
         return inflater.inflate(R.layout.podcast_list, container, false);
     }
 
-    public void setPodcastList(List<Podcast> podcastList) {
-        this.showProgress = false;
-
-        // Maps the podcast list items to the list UI
-        setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
-
-        // Only update the UI if it has been inflated
-        if (isResumed())
-            updateUiElementVisibility();
-    }
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         logoView = (ImageView) view.findViewById(R.id.podcast_image);
 
-        getListView().setMultiChoiceModeListener(contextListener);
+        getListView().setMultiChoiceModeListener(new PodcastListContextListener(this));
 
         super.onViewCreated(view, savedInstanceState);
     }
@@ -157,6 +140,24 @@ public class PodcastListFragment extends PodcatcherListFragment {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        getActivity().startActionMode(null);
+    }
+
+    public void setPodcastList(List<Podcast> podcastList) {
+        this.showProgress = false;
+
+        // Maps the podcast list items to the list UI
+        setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
+
+        // Only update the UI if it has been inflated
+        if (isResumed())
+            updateUiElementVisibility();
+    }
+
+    @Override
     public void select(int position) {
         super.select(position);
 
@@ -185,20 +186,6 @@ public class PodcastListFragment extends PodcatcherListFragment {
         super.selectNone();
 
         logoView.setImageResource(R.drawable.default_podcast_logo);
-    }
-
-    public void removeCheckedPodcasts() {
-        SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
-        ArrayList<Integer> positions = new ArrayList<Integer>();
-
-        for (int index = 0; index < getListView().getCount(); index++)
-            if (checkedItems.get(index))
-                positions.add(index);
-
-        Intent intent = new Intent(getActivity(), RemovePodcastActivity.class);
-        intent.putIntegerArrayListExtra(RemovePodcastActivity.PODCAST_POSITION_LIST_KEY, positions);
-
-        startActivity(intent);
     }
 
     public void showProgress(int position, Progress progress) {

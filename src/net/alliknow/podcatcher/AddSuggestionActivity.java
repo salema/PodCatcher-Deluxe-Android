@@ -17,6 +17,7 @@
 
 package net.alliknow.podcatcher;
 
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
@@ -34,7 +35,7 @@ import java.util.List;
 /**
  * Add podcast from suggestions activity.
  */
-public class AddSuggestionActivity extends PodcatcherBaseActivity implements
+public class AddSuggestionActivity extends BaseActivity implements
         OnLoadSuggestionListener, OnAddSuggestionListener, OnCancelListener {
 
     /** The tag we identify our show suggestions fragment with */
@@ -66,6 +67,8 @@ public class AddSuggestionActivity extends PodcatcherBaseActivity implements
         // No fragment found, create it
         if (suggestionFragment == null) {
             suggestionFragment = new SuggestionFragment();
+            suggestionFragment.setStyle(DialogFragment.STYLE_NORMAL,
+                    android.R.style.Theme_Holo_Light_Dialog);
 
             // Show the fragment
             suggestionFragment.show(getFragmentManager(), SHOW_SUGGESTIONS_FRAGMENT_TAG);

@@ -33,7 +33,7 @@ import android.view.MenuItem;
  * Podcatcher base activity. Defines some common functionality useful for all
  * activities.
  */
-public abstract class PodcatcherBaseActivity extends Activity {
+public abstract class BaseActivity extends Activity {
 
     /** The podcast manager handle */
     protected PodcastManager podcastManager;

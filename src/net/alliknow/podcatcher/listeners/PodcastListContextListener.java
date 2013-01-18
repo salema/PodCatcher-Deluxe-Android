@@ -17,6 +17,8 @@
 
 package net.alliknow.podcatcher.listeners;
 
+import android.content.Intent;
+import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,8 +26,11 @@ import android.view.MenuItem;
 import android.widget.AbsListView.MultiChoiceModeListener;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.RemovePodcastActivity;
 import net.alliknow.podcatcher.view.adapters.PodcastListAdapter;
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
+
+import java.util.ArrayList;
 
 /**
  * Listener for the podcast list context mode.
@@ -63,8 +68,25 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         switch (item.getItemId()) {
             case R.id.podcast_remove_contextmenuitem:
-                fragment.removeCheckedPodcasts();
-                mode.finish(); // Action picked, so close the CAB
+                // Get the checked positions
+                SparseBooleanArray checkedItems = fragment.getListView().getCheckedItemPositions();
+                ArrayList<Integer> positions = new ArrayList<Integer>();
+
+                // Prepare list of podcast positions to remove
+                for (int index = 0; index < fragment.getListView().getCount(); index++)
+                    if (checkedItems.get(index))
+                        positions.add(index);
+
+                // Prepare deletion activity
+                Intent intent = new Intent(fragment.getActivity(), RemovePodcastActivity.class);
+                intent.putIntegerArrayListExtra(RemovePodcastActivity.PODCAST_POSITION_LIST_KEY,
+                        positions);
+
+                // Go remove podcasts
+                fragment.startActivity(intent);
+
+                // Action picked, so close the CAB
+                mode.finish();
                 return true;
             default:
                 return false;

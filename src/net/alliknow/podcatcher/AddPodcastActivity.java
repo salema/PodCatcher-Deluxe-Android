@@ -17,6 +17,7 @@
 
 package net.alliknow.podcatcher;
 
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
@@ -34,7 +35,7 @@ import java.net.URL;
 /**
  * Add new podcast(s) activity.
  */
-public class AddPodcastActivity extends PodcatcherBaseActivity
+public class AddPodcastActivity extends BaseActivity
         implements OnLoadPodcastListener, OnAddPodcastListener, OnCancelListener {
 
     /** The tag we identify our add podcast fragment with */
@@ -72,6 +73,8 @@ public class AddPodcastActivity extends PodcatcherBaseActivity
         // No fragment found, create it
         if (addPodcastFragment == null) {
             addPodcastFragment = new AddPodcastFragment();
+            addPodcastFragment.setStyle(DialogFragment.STYLE_NORMAL,
+                    android.R.style.Theme_Holo_Light_Dialog);
 
             // Show the fragment
             addPodcastFragment.show(getFragmentManager(), ADD_PODCAST_FRAGMENT_TAG);

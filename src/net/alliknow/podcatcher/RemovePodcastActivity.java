@@ -24,7 +24,7 @@ import java.util.ListIterator;
 /**
  * Non-UI activity to remove podcasts.
  */
-public class RemovePodcastActivity extends PodcatcherBaseActivity {
+public class RemovePodcastActivity extends BaseActivity {
 
     /** Key to find the podcast positions under */
     public static final String PODCAST_POSITION_LIST_KEY = "position_list_key";

@@ -46,10 +46,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ShowEpisodeListActivity" />
+        <activity android:name=".ShowPodcastActivity" />
         <activity android:name=".ShowEpisodeActivity" />
-        <activity android:name=".AddPodcastActivity" android:theme="@android:style/Theme.Holo.Light.Dialog" />
-        <activity android:name=".AddSuggestionActivity" android:theme="@android:style/Theme.Holo.Light.Dialog" />
+        <activity android:name=".AddPodcastActivity" android:theme="@android:style/Theme.NoDisplay" />
+        <activity android:name=".AddSuggestionActivity" android:theme="@android:style/Theme.NoDisplay" />
         <activity android:name=".RemovePodcastActivity" android:theme="@android:style/Theme.NoDisplay" />
         <service
             android:name=".services.PlayEpisodeService"
