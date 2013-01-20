@@ -133,12 +133,13 @@ public class EpisodeListActivity extends EpisodeActivity implements
                 break;
             case SMALL_PORTRAIT_VIEW:
                 // We need to launch a new activity to display the episode list
-                Intent intent = new Intent(this, ShowPodcastActivity.class);
+                Intent intent = new Intent(this, ShowEpisodeListActivity.class);
                 intent.putExtra(EpisodeListActivity.PODCAST_URL_KEY, podcast.getUrl()
                         .toString());
                 intent.putExtra(MODE_KEY, false);
 
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
         }
     }
 
@@ -173,10 +174,11 @@ public class EpisodeListActivity extends EpisodeActivity implements
                 break;
             case SMALL_PORTRAIT_VIEW:
                 // We need to launch a new activity to display the episode list
-                Intent intent = new Intent(this, ShowPodcastActivity.class);
+                Intent intent = new Intent(this, ShowEpisodeListActivity.class);
                 intent.putExtra(MODE_KEY, true);
 
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
         }
     }
 

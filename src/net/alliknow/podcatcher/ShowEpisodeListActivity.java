@@ -28,7 +28,7 @@ import java.util.ArrayList;
 /**
  * @author Kevin Hausmann
  */
-public class ShowPodcastActivity extends EpisodeListActivity {
+public class ShowEpisodeListActivity extends EpisodeListActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,5 +78,11 @@ public class ShowPodcastActivity extends EpisodeListActivity {
             if (currentPodcast != null)
                 podcastManager.load(currentPodcast);
         }
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
     }
 }

@@ -58,6 +58,8 @@ public class EpisodeActivity extends BaseActivity implements OnSelectEpisodeList
                 // Add the fragment to the UI, placing the list fragment
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.content, episodeFragment, episodeFragmentTag);
+                transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
+                        R.anim.slide_in_right, R.anim.slide_out_right);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 // Set the episode
@@ -70,6 +72,7 @@ public class EpisodeActivity extends BaseActivity implements OnSelectEpisodeList
                 intent.putExtra(EPISODE_URL_KEY, selectedEpisode.getMediaUrl().toExternalForm());
 
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
         }
     }
 
