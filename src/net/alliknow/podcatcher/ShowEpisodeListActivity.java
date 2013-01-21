@@ -38,18 +38,20 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         if (viewMode != SMALL_PORTRAIT_VIEW) {
             finish();
         } else {
+            setContentView(R.layout.main);
+
             if (savedInstanceState == null)
                 // During initial setup, plug in the episode list fragment.
                 getFragmentManager()
                         .beginTransaction()
-                        .add(android.R.id.content, new EpisodeListFragment(),
+                        .add(R.id.content, new EpisodeListFragment(),
                                 episodeListFragmentTag)
                         .commit();
         }
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
 
         // Prepare UI

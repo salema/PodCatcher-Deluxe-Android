@@ -17,10 +17,6 @@
 
 package net.alliknow.podcatcher.services;
 
-import net.alliknow.podcatcher.PodcastActivity;
-import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.listeners.PlayServiceListener;
-import net.alliknow.podcatcher.model.types.Episode;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -44,6 +40,11 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 
+import net.alliknow.podcatcher.PodcastActivity;
+import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.listeners.PlayServiceListener;
+import net.alliknow.podcatcher.model.types.Episode;
+
 /**
  * Play an episode service, wraps media player. This class implements an Android
  * service. It can be used to play back podcast episodes and tries to hide away
@@ -65,11 +66,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     private boolean buffering = false;
     /** Do we have audio focus ? */
     private boolean hasFocus = false;
-    /**
-     * Flag to indicate whether it is okay to resume playback on audio focus
-     * gain
-     */
-    private boolean resumeOnAudioFocusGain = false;
 
     /** Binder given to clients */
     private final IBinder binder = new PlayServiceBinder();
@@ -429,13 +425,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             case AudioManager.AUDIOFOCUS_GAIN:
                 hasFocus = true;
 
-                if (resumeOnAudioFocusGain) {
-                    resume();
-                    player.setVolume(1.0f, 1.0f);
-
-                    resumeOnAudioFocusGain = false;
-                }
-
+                player.setVolume(1.0f, 1.0f);
                 break;
 
             case AudioManager.AUDIOFOCUS_LOSS:
@@ -453,7 +443,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 // playback. We don't release the media player because playback
                 // is likely to resume
                 hasFocus = false;
-                resumeOnAudioFocusGain = true;
 
                 if (isPlaying())
                     pause();

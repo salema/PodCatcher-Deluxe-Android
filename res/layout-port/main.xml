@@ -17,12 +17,18 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <fragment class="net.alliknow.podcatcher.view.fragments.PodcastListFragment"
-        android:id="@+id/podcast_list"
-        android:tag="@string/podcast_list_fragment_tag"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent" />
-</FrameLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+	<FrameLayout android:id="@+id/content"
+		android:layout_width="match_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight="1">
+	</FrameLayout>
+	<fragment class="net.alliknow.podcatcher.view.fragments.PlayerFragment"
+	        android:id="@+id/player"
+	        android:tag="@string/player_fragment_tag"
+	        android:layout_height="wrap_content"
+	        android:layout_width="match_parent" />
+</LinearLayout>

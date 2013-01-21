@@ -21,6 +21,7 @@
     <string name="podcast_list_fragment_tag" translatable="false">podcastListFragment</string>
     <string name="episode_list_fragment_tag" translatable="false">episodeListFragment</string>
     <string name="episode_fragment_tag" translatable="false">episodeFragment</string>
+    <string name="player_fragment_tag" translatable="false">playerFragment</string>
     <string name="divider" translatable="false">Divider</string>
     <string name="app_name">Simple Podcatcher</string>
     <string name="about">About Simple Podcatcher</string>

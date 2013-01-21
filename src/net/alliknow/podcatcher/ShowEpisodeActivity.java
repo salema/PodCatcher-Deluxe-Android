@@ -46,23 +46,22 @@ public class ShowEpisodeActivity extends EpisodeActivity {
                 finish();
                 break;
             case SMALL_PORTRAIT_VIEW:
+                setContentView(R.layout.main);
+
                 if (savedInstanceState == null) {
                     // During initial setup, plug in the details fragment.
                     EpisodeFragment episode = new EpisodeFragment();
                     // Set episode with URL from intent
                     // (getIntent().getExtras());
                     getFragmentManager().beginTransaction()
-                            .add(android.R.id.content, episode, episodeFragmentTag).commit();
+                            .add(R.id.content, episode, episodeFragmentTag).commit();
                 }
         }
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
-
-        // Get episode from intent
-        // and set episode fragment content
 
         // Get URL of podcast to load
         String podcastUrl = getIntent().getExtras().getString(PODCAST_URL_KEY);

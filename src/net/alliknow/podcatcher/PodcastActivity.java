@@ -27,6 +27,7 @@ import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
+import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +54,9 @@ public class PodcastActivity extends EpisodeListActivity implements
         // Inflate the main content view (depends on view mode)
         setContentView(R.layout.main);
 
+        if (viewMode == SMALL_PORTRAIT_VIEW && findPodcastListFragment() == null)
+            getFragmentManager().beginTransaction()
+                    .add(R.id.content, new PodcastListFragment(), podcastListFragmentTag).commit();
         // On small screens in landscape mode, add the episode list fragment
         if (viewMode == SMALL_LANDSCAPE_VIEW && findEpisodeListFragment() == null)
             getFragmentManager().beginTransaction()
@@ -62,7 +66,7 @@ public class PodcastActivity extends EpisodeListActivity implements
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
 
         // Check if podcast list is available - if so, set it
@@ -82,7 +86,7 @@ public class PodcastActivity extends EpisodeListActivity implements
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
 
         // Unregister the listeners

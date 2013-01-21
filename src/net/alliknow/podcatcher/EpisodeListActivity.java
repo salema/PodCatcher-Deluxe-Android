@@ -65,7 +65,7 @@ public class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
 
         podcastManager.addLoadPodcastListener(this);
