@@ -17,18 +17,12 @@
 
 package net.alliknow.podcatcher;
 
-import android.app.FragmentTransaction;
-import android.content.Intent;
-
-import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.model.types.Episode;
-import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
-import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 
 /**
  * Show episode activity.
  */
-public class EpisodeActivity extends BaseActivity implements OnSelectEpisodeListener {
+public class EpisodeActivity extends BaseActivity {
 
     /** Key used to store podcast URL in intent or bundle */
     public static final String PODCAST_URL_KEY = "podcast_url";
@@ -38,51 +32,4 @@ public class EpisodeActivity extends BaseActivity implements OnSelectEpisodeList
     /** The episode currently selected and displayed */
     protected Episode currentEpisode;
 
-    @Override
-    public void onEpisodeSelected(Episode selectedEpisode) {
-        this.currentEpisode = selectedEpisode;
-
-        switch (viewMode) {
-            case LARGE_PORTRAIT_VIEW:
-            case LARGE_LANDSCAPE_VIEW:
-                // Set episode in episode fragment
-                findEpisodeFragment().setEpisode(selectedEpisode);
-                // Make sure selection matches in list fragment
-                // findEpisodeListFragment().selectEpisode(selectedEpisode);
-                break;
-            case SMALL_LANDSCAPE_VIEW:
-                // Find, and if not already done create, episode fragment
-                EpisodeFragment episodeFragment = findEpisodeFragment();
-                if (episodeFragment == null)
-                    episodeFragment = new EpisodeFragment();
-                // Add the fragment to the UI, placing the list fragment
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.content, episodeFragment, episodeFragmentTag);
-                transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
-                        R.anim.slide_in_right, R.anim.slide_out_right);
-                transaction.addToBackStack(null);
-                transaction.commit();
-                // Set the episode
-                episodeFragment.setEpisode(selectedEpisode);
-                break;
-            case SMALL_PORTRAIT_VIEW:
-                // Send intent to open episode as a new activity
-                Intent intent = new Intent(this, ShowEpisodeActivity.class);
-                intent.putExtra(PODCAST_URL_KEY, selectedEpisode.getPodcastUrl());
-                intent.putExtra(EPISODE_URL_KEY, selectedEpisode.getMediaUrl().toExternalForm());
-
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
-        }
-    }
-
-    @Override
-    public void onNoEpisodeSelected() {
-        this.currentEpisode = null;
-
-        // If there is a episode fragment, reset it
-        EpisodeListFragment episodeListFragment = findEpisodeListFragment();
-        if (episodeListFragment != null)
-            episodeListFragment.selectNone();
-    }
 }

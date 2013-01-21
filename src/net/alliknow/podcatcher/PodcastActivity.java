@@ -23,9 +23,12 @@ import android.os.StrictMode;
 
 import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
+import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
+import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,7 +36,7 @@ import java.util.List;
  * state, other activities cooperate.
  */
 public class PodcastActivity extends EpisodeListActivity implements
-        OnLoadPodcastListListener, OnChangePodcastListListener {
+        OnLoadPodcastListListener, OnChangePodcastListListener, OnSelectPodcastListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,12 +63,22 @@ public class PodcastActivity extends EpisodeListActivity implements
 
     @Override
     protected void onResume() {
+        super.onResume();
+
         // Check if podcast list is available - if so, set it
         List<Podcast> podcastList = podcastManager.getPodcastList();
         if (podcastList != null)
             onPodcastListLoaded(podcastList);
 
-        super.onResume();
+        // Re-select previously selected podcast
+        if (currentPodcast != null && viewMode != SMALL_PORTRAIT_VIEW)
+            onPodcastSelected(currentPodcast);
+        else if (currentPodcast == null)
+            onNoPodcastSelected();
+
+        // Hide logo in small portrait
+        if (viewMode == SMALL_PORTRAIT_VIEW)
+            findPodcastListFragment().showLogo(false);
     }
 
     @Override
@@ -101,5 +114,102 @@ public class PodcastActivity extends EpisodeListActivity implements
     public void onPodcastRemoved(Podcast podcast) {
         if (podcast.equals(currentPodcast))
             this.currentPodcast = null;
+    }
+
+    @Override
+    public void onPodcastSelected(Podcast podcast) {
+        this.currentPodcast = podcast;
+        this.currentEpisode = null;
+        this.currentEpisodeList = null;
+        this.multiplePodcastsMode = false;
+
+        // Stop loading previous tasks
+        podcastManager.cancelAllLoadTasks();
+
+        switch (viewMode) {
+            case SMALL_LANDSCAPE_VIEW:
+                // This will go back to the list view in case we are showing
+                // episode details
+                getFragmentManager().popBackStack();
+                // There is no break here on purpose, we need to run the code
+                // below as well
+            case LARGE_PORTRAIT_VIEW:
+            case LARGE_LANDSCAPE_VIEW:
+                // Select in podcast list
+                findPodcastListFragment().select(podcastManager.indexOf(podcast));
+                // List fragment is visible, make it show progress UI
+                EpisodeListFragment episodeListFragment = findEpisodeListFragment();
+                episodeListFragment.resetAndSpin();
+                updateDivider();
+
+                // Load podcast
+                podcastManager.load(podcast);
+                break;
+            case SMALL_PORTRAIT_VIEW:
+                // We need to launch a new activity to display the episode list
+                Intent intent = new Intent(this, ShowEpisodeListActivity.class);
+                intent.putExtra(EpisodeListActivity.PODCAST_URL_KEY, podcast.getUrl()
+                        .toString());
+                intent.putExtra(MODE_KEY, false);
+
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+        }
+    }
+
+    @Override
+    public void onAllPodcastsSelected() {
+        this.currentPodcast = null;
+        this.currentEpisode = null;
+        this.currentEpisodeList = new ArrayList<Episode>();
+        this.multiplePodcastsMode = true;
+
+        // Stop loading previous tasks
+        podcastManager.cancelAllLoadTasks();
+
+        switch (viewMode) {
+            case SMALL_LANDSCAPE_VIEW:
+                // This will go back to the list view in case we are showing
+                // episode details
+                getFragmentManager().popBackStack();
+                // There is no break here on purpose, we need to run the code
+                // below as well
+            case LARGE_PORTRAIT_VIEW:
+            case LARGE_LANDSCAPE_VIEW:
+                findPodcastListFragment().selectAll();
+                // List fragment is visible, make it show progress UI
+                EpisodeListFragment episodeListFragment = findEpisodeListFragment();
+                episodeListFragment.resetAndSpin();
+                updateDivider();
+
+                for (Podcast podcast : podcastManager.getPodcastList())
+                    podcastManager.load(podcast);
+
+                break;
+            case SMALL_PORTRAIT_VIEW:
+                // We need to launch a new activity to display the episode list
+                Intent intent = new Intent(this, ShowEpisodeListActivity.class);
+                intent.putExtra(MODE_KEY, true);
+
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+        }
+    }
+
+    @Override
+    public void onNoPodcastSelected() {
+        this.currentPodcast = null;
+        this.currentEpisode = null;
+        this.currentEpisodeList = null;
+        this.multiplePodcastsMode = false;
+
+        findPodcastListFragment().selectNone();
+
+        // If there is an episode list visible, reset it
+        EpisodeListFragment episodeListFragment = findEpisodeListFragment();
+        if (episodeListFragment != null)
+            episodeListFragment.resetUi();
+
+        updateDivider();
     }
 }
