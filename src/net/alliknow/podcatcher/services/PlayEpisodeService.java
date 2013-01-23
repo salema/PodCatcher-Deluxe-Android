@@ -232,7 +232,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
      * @param episode Episode to check for.
      * @return true iff given episode is loaded (or loading), false otherwise.
      */
-    public boolean isWorkingWith(Episode episode) {
+    public boolean loadedEpisode(Episode episode) {
         return currentEpisode != null && currentEpisode.equals(episode);
     }
 

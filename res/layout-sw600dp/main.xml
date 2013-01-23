@@ -45,11 +45,23 @@
         android:layout_width="@dimen/divider_width"
         android:layout_height="match_parent"
         android:background="@color/divider_off" />
-    <fragment
-        android:id="@+id/episode"
-        android:tag="@string/episode_fragment_tag"
-        android:name="net.alliknow.podcatcher.view.fragments.EpisodeFragment"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="4" />
+        android:layout_weight="4"
+        android:orientation="vertical">
+        <fragment
+            android:id="@+id/episode"
+            android:tag="@string/episode_fragment_tag"
+            android:name="net.alliknow.podcatcher.view.fragments.EpisodeFragment"
+            android:layout_width="match_parent"  
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        <fragment
+            android:name="net.alliknow.podcatcher.view.fragments.PlayerFragment"
+            android:id="@+id/player"
+            android:tag="@string/player_fragment_tag"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent" />
+    </LinearLayout>
 </LinearLayout>

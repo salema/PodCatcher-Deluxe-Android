@@ -26,10 +26,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import net.alliknow.podcatcher.model.PodcastManager;
-import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
-import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
-import net.alliknow.podcatcher.view.fragments.PlayerFragment;
-import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
 
 /**
  * Podcatcher base activity. Defines some common functionality useful for all
@@ -74,15 +70,6 @@ public abstract class BaseActivity extends Activity {
      */
     private static final int MIN_PIXEL_LARGE = 600;
 
-    /** The tag to find and store podcast list fragment in manager under */
-    protected String podcastListFragmentTag;
-    /** The tag to find and store episode list fragment in manager under */
-    protected String episodeListFragmentTag;
-    /** The tag to find and store episode fragment in manager under */
-    protected String episodeFragmentTag;
-    /** The tag to find and store player fragment in manager under */
-    protected String playerFragmentTag;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,12 +79,6 @@ public abstract class BaseActivity extends Activity {
 
         // Set the view mode member
         this.viewMode = determineViewMode();
-
-        // Set the tag values from the resources file
-        podcastListFragmentTag = getResources().getString(R.string.podcast_list_fragment_tag);
-        episodeListFragmentTag = getResources().getString(R.string.episode_list_fragment_tag);
-        episodeFragmentTag = getResources().getString(R.string.episode_fragment_tag);
-        playerFragmentTag = getResources().getString(R.string.player_fragment_tag);
     }
 
     @Override
@@ -121,46 +102,6 @@ public abstract class BaseActivity extends Activity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    /**
-     * Go try to find the current available podcast list fragment.
-     * 
-     * @return The fragment or <code>null</code> if there is none in the layout
-     *         or backstack.
-     */
-    protected PodcastListFragment findPodcastListFragment() {
-        return (PodcastListFragment) getFragmentManager().findFragmentByTag(podcastListFragmentTag);
-    }
-
-    /**
-     * Go try to find the current available episode list fragment.
-     * 
-     * @return The fragment or <code>null</code> if there is none in the layout
-     *         or backstack.
-     */
-    protected EpisodeListFragment findEpisodeListFragment() {
-        return (EpisodeListFragment) getFragmentManager().findFragmentByTag(episodeListFragmentTag);
-    }
-
-    /**
-     * Go try to find the current available episode fragment.
-     * 
-     * @return The fragment or <code>null</code> if there is none in the layout
-     *         or backstack.
-     */
-    protected EpisodeFragment findEpisodeFragment() {
-        return (EpisodeFragment) getFragmentManager().findFragmentByTag(episodeFragmentTag);
-    }
-
-    /**
-     * Go try to find the current available player fragment.
-     * 
-     * @return The fragment or <code>null</code> if there is none in the layout
-     *         or backstack.
-     */
-    protected PlayerFragment findPlayerFragment() {
-        return (PlayerFragment) getFragmentManager().findFragmentByTag(playerFragmentTag);
     }
 
     private int determineViewMode() {

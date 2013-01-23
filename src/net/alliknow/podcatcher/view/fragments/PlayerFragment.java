@@ -30,7 +30,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -43,17 +42,21 @@ import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 
 /**
- * 
+ * The player fragment.
  */
 public class PlayerFragment extends Fragment {
 
-    /** String resource needed for button label */
-    private String at;
-    /** String resource needed for button label */
-    private String of;
-
     /** The listener for the title click */
     private PlayerListener listener;
+
+    private boolean showLoadMenuItem;
+
+    private boolean showPlayer;
+
+    private boolean showPlayerTitle;
+
+    /** The load episode menu bar item */
+    private MenuItem loadMenuItem;
 
     /** The player divider used when title is shown */
     private ImageView dividerView;
@@ -66,8 +69,10 @@ public class PlayerFragment extends Fragment {
     /** The error view */
     private TextView errorView;
 
-    /** The load episode menu bar item */
-    private MenuItem loadMenuItem;
+    /** String resource needed for button label */
+    private String at;
+    /** String resource needed for button label */
+    private String of;
 
     @Override
     public void onAttach(Activity activity) {
@@ -121,17 +126,15 @@ public class PlayerFragment extends Fragment {
                 listener.onTogglePlay();
             }
         });
-        button.setOnLongClickListener(new OnLongClickListener() {
-
-            @Override
-            public boolean onLongClick(View v) {
-                listener.onUnloadEpisode();
-
-                return true;
-            }
-        });
 
         errorView = (TextView) view.findViewById(R.id.player_error);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        showPlayer(showPlayer);
     }
 
     @Override
@@ -145,50 +148,12 @@ public class PlayerFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.episode_load_menuitem:
-
-                listener.onLoadEpisode();
+                // Tell activity to load/unload the current episode
+                listener.onToggleLoad();
 
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    /**
-     * Update the player's UI according to the current state of play.
-     * 
-     * @param service The play episode service (should not be <code>null</code>
-     *            but will fail gracefully).
-     * @param currentEpisode The episode currently selected (may be
-     *            <code>null</code>).
-     */
-    public void update(PlayEpisodeService service, Episode currentEpisode) {
-        if (service != null) {
-
-            // Menu item might be late to load
-            if (loadMenuItem != null) {
-                loadMenuItem.setVisible(true); // currentEpisode != null &&
-                                               // service != null);
-
-                if (loadMenuItem.isVisible()) {
-                    loadMenuItem.setTitle(service.isWorkingWith(currentEpisode) ? R.string.stop
-                            : R.string.play);
-                    loadMenuItem
-                            .setIcon(service.isWorkingWith(currentEpisode) ? R.drawable.ic_media_stop
-                                    : R.drawable.ic_media_play);
-                }
-            }
-
-            errorView.setVisibility(GONE);
-
-            dividerView.setVisibility(service.isWorkingWith(currentEpisode) ? GONE : VISIBLE);
-            titleView.setVisibility(service.isWorkingWith(currentEpisode) ? GONE : VISIBLE);
-            titleView.setText(Html.fromHtml("<a href=\"\">" + service.getCurrentEpisodeName()
-                    + " - "
-                    + service.getCurrentEpisodePodcastName() + "</a>"));
-
-            updateSeekBar(service);
-            updateButton(service);
         }
     }
 
@@ -201,6 +166,32 @@ public class PlayerFragment extends Fragment {
         seekBar.setSecondaryProgress(seconds);
     }
 
+    public void showPlayer(boolean show) {
+        this.showPlayer = show;
+
+        if (isResumed())
+            getView().setVisibility(show ? VISIBLE : GONE);
+    }
+
+    public void showPlayerTitle(boolean show) {
+        this.showPlayerTitle = show;
+
+        if (isResumed()) {
+            dividerView.setVisibility(show ? VISIBLE : GONE);
+            titleView.setVisibility(show ? VISIBLE : GONE);
+        }
+
+    }
+
+    public void showLoadMenuItem(boolean show, boolean load) {
+        if (loadMenuItem != null) {
+            loadMenuItem.setVisible(show);
+
+            loadMenuItem.setTitle(load ? R.string.play : R.string.stop);
+            loadMenuItem.setIcon(load ? R.drawable.ic_media_play : R.drawable.ic_media_stop);
+        }
+    }
+
     /**
      * Show the player's error view.
      */
@@ -209,6 +200,27 @@ public class PlayerFragment extends Fragment {
         button.setVisibility(GONE);
         seekBar.setVisibility(GONE);
         errorView.setVisibility(VISIBLE);
+    }
+
+    /**
+     * Update the player's UI according to the current state of play.
+     * 
+     * @param service The play episode service (should not be <code>null</code>
+     *            but will fail gracefully).
+     * @param currentEpisode The episode currently selected (may be
+     *            <code>null</code>).
+     */
+    public void update(PlayEpisodeService service, Episode currentEpisode) {
+        if (service != null) {
+            errorView.setVisibility(GONE);
+
+            titleView.setText(Html.fromHtml("<a href=\"\">" + service.getCurrentEpisodeName()
+                    + " - "
+                    + service.getCurrentEpisodePodcastName() + "</a>"));
+
+            updateSeekBar(service);
+            updateButton(service);
+        }
     }
 
     private void updateSeekBar(PlayEpisodeService service) {

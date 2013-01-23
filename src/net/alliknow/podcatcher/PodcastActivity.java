@@ -18,12 +18,14 @@
 package net.alliknow.podcatcher;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.StrictMode;
 
 import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
+import net.alliknow.podcatcher.model.tasks.Progress;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
@@ -38,6 +40,9 @@ import java.util.List;
  */
 public class PodcastActivity extends EpisodeListActivity implements
         OnLoadPodcastListListener, OnChangePodcastListListener, OnSelectPodcastListener {
+
+    /** The current podcast list fragment */
+    protected PodcastListFragment podcastListFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,13 +59,40 @@ public class PodcastActivity extends EpisodeListActivity implements
         // Inflate the main content view (depends on view mode)
         setContentView(R.layout.main);
 
-        if (viewMode == SMALL_PORTRAIT_VIEW && findPodcastListFragment() == null)
-            getFragmentManager().beginTransaction()
-                    .add(R.id.content, new PodcastListFragment(), podcastListFragmentTag).commit();
-        // On small screens in landscape mode, add the episode list fragment
-        if (viewMode == SMALL_LANDSCAPE_VIEW && findEpisodeListFragment() == null)
-            getFragmentManager().beginTransaction()
-                    .add(R.id.content, new EpisodeListFragment(), episodeListFragmentTag).commit();
+        // Create and add fragments as needed
+        String podcastListFragmentTag = getResources()
+                .getString(R.string.podcast_list_fragment_tag);
+
+        podcastListFragment = (PodcastListFragment) getFragmentManager().findFragmentByTag(
+                podcastListFragmentTag);
+
+        // On small screens in portrait mode, add the podcast list fragment
+        if (viewMode == SMALL_PORTRAIT_VIEW && savedInstanceState == null) {
+            podcastListFragment = new PodcastListFragment();
+
+            getFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.content, podcastListFragment, podcastListFragmentTag)
+                    .commit();
+        }
+        // On small screens in landscape mode, add the podcast list and the
+        // episode list fragment
+        if (viewMode == SMALL_LANDSCAPE_VIEW && savedInstanceState == null) {
+            podcastListFragment = new PodcastListFragment();
+            episodeListFragment = new EpisodeListFragment();
+
+            getFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.content, podcastListFragment, podcastListFragmentTag)
+                    .add(R.id.episode_data, episodeListFragment,
+                            getResources().getString(R.string.episode_list_fragment_tag))
+                    .commit();
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
 
         // Load all podcasts? TODO Make this a preference
     }
@@ -82,7 +114,7 @@ public class PodcastActivity extends EpisodeListActivity implements
 
         // Hide logo in small portrait
         if (viewMode == SMALL_PORTRAIT_VIEW)
-            findPodcastListFragment().showLogo(false);
+            podcastListFragment.showLogo(false);
     }
 
     @Override
@@ -97,7 +129,8 @@ public class PodcastActivity extends EpisodeListActivity implements
     @Override
     public void onPodcastListLoaded(List<Podcast> podcastList) {
         // Make podcast list show
-        findPodcastListFragment().setPodcastList(podcastList);
+        if (podcastListFragment != null)
+            podcastListFragment.setPodcastList(podcastList);
 
         // If podcast list is empty we show dialog on startup
         if (podcastList.isEmpty())
@@ -111,7 +144,7 @@ public class PodcastActivity extends EpisodeListActivity implements
         this.currentPodcast = podcast;
 
         // Update podcast list
-        findPodcastListFragment().setPodcastList(podcastManager.getPodcastList());
+        podcastListFragment.setPodcastList(podcastManager.getPodcastList());
     }
 
     @Override
@@ -140,9 +173,8 @@ public class PodcastActivity extends EpisodeListActivity implements
             case LARGE_PORTRAIT_VIEW:
             case LARGE_LANDSCAPE_VIEW:
                 // Select in podcast list
-                findPodcastListFragment().select(podcastManager.indexOf(podcast));
+                podcastListFragment.select(podcastManager.indexOf(podcast));
                 // List fragment is visible, make it show progress UI
-                EpisodeListFragment episodeListFragment = findEpisodeListFragment();
                 episodeListFragment.resetAndSpin();
                 updateDivider();
 
@@ -180,9 +212,8 @@ public class PodcastActivity extends EpisodeListActivity implements
                 // below as well
             case LARGE_PORTRAIT_VIEW:
             case LARGE_LANDSCAPE_VIEW:
-                findPodcastListFragment().selectAll();
+                podcastListFragment.selectAll();
                 // List fragment is visible, make it show progress UI
-                EpisodeListFragment episodeListFragment = findEpisodeListFragment();
                 episodeListFragment.resetAndSpin();
                 updateDivider();
 
@@ -207,13 +238,59 @@ public class PodcastActivity extends EpisodeListActivity implements
         this.currentEpisodeList = null;
         this.multiplePodcastsMode = false;
 
-        findPodcastListFragment().selectNone();
+        podcastListFragment.selectNone();
 
         // If there is an episode list visible, reset it
-        EpisodeListFragment episodeListFragment = findEpisodeListFragment();
         if (episodeListFragment != null)
             episodeListFragment.resetUi();
 
         updateDivider();
+    }
+
+    @Override
+    public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
+        super.onPodcastLoadProgress(podcast, progress);
+
+        if (viewMode != SMALL_PORTRAIT_VIEW && multiplePodcastsMode)
+            podcastListFragment.showProgress(podcastManager.indexOf(podcast), progress);
+    }
+
+    @Override
+    public void onPodcastLoaded(Podcast podcast) {
+        super.onPodcastLoaded(podcast);
+
+        if (viewMode != SMALL_PORTRAIT_VIEW) {
+            // This will display the number of episodes
+            podcastListFragment.refresh();
+
+            // Tell the podcast manager to load podcast logo
+            podcastManager.loadLogo(podcast,
+                    podcastListFragment.getLogoViewWidth(),
+                    podcastListFragment.getLogoViewHeight());
+        }
+    }
+
+    @Override
+    public void onPodcastLoadFailed(Podcast failedPodcast) {
+        super.onPodcastLoadFailed(failedPodcast);
+
+        if (viewMode != SMALL_PORTRAIT_VIEW)
+            podcastListFragment.refresh();
+    }
+
+    @Override
+    public void onPodcastLogoLoaded(Podcast podcast, Bitmap logo) {
+        super.onPodcastLogoLoaded(podcast, logo);
+
+        if (podcast.equals(currentPodcast))
+            podcastListFragment.showLogo(logo);
+    }
+
+    @Override
+    protected void updatePlayer() {
+        super.updatePlayer();
+
+        if (viewMode == SMALL_PORTRAIT_VIEW)
+            playerFragment.showLoadMenuItem(false, false);
     }
 }

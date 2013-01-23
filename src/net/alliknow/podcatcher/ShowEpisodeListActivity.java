@@ -45,7 +45,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
                 getFragmentManager()
                         .beginTransaction()
                         .add(R.id.content, new EpisodeListFragment(),
-                                episodeListFragmentTag)
+                                getResources().getString(R.string.episode_list_fragment_tag))
                         .commit();
         }
     }
@@ -55,7 +55,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         super.onResume();
 
         // Prepare UI
-        findEpisodeListFragment().resetAndSpin();
+        episodeListFragment.resetAndSpin();
 
         // Get the load mode
         multiplePodcastsMode = getIntent().getExtras().getBoolean(PodcastActivity.MODE_KEY);
@@ -80,6 +80,14 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
             if (currentPodcast != null)
                 podcastManager.load(currentPodcast);
         }
+    }
+
+    @Override
+    protected void updatePlayer() {
+        super.updatePlayer();
+
+        playerFragment.showLoadMenuItem(false, false);
+        playerFragment.showPlayerTitle(true);
     }
 
     @Override

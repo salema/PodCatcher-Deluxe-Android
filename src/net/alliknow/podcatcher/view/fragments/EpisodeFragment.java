@@ -36,6 +36,9 @@ import net.alliknow.podcatcher.model.types.Episode;
  */
 public class EpisodeFragment extends Fragment {
 
+    /** The currently shown episode */
+    private Episode currentEpisode;
+
     /** The empty view */
     private View emptyView;
     /** The episode title view */
@@ -58,6 +61,7 @@ public class EpisodeFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Find UI widgets
         emptyView = getView().findViewById(android.R.id.empty);
         episodeTitleView = (TextView) getView().findViewById(R.id.episode_title);
         podcastTitleView = (TextView) getView().findViewById(R.id.podcast_title);
@@ -66,26 +70,45 @@ public class EpisodeFragment extends Fragment {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // This will make sure we show the right information once the view
+        // controls are established
+        if (currentEpisode != null)
+            setEpisode(currentEpisode);
+    }
+
     /**
      * Set the displayed episode, all UI will be updated.
      * 
-     * @param selectedEpisode Episode to show (cannot be null).
+     * @param selectedEpisode Episode to show.
      */
     public void setEpisode(Episode selectedEpisode) {
-        episodeTitleView.setText(selectedEpisode.getName());
-        podcastTitleView.setText(selectedEpisode.getPodcastName());
-        episodeDetailView.loadDataWithBaseURL(null, selectedEpisode.getDescription(), "text/html",
-                "utf-8", null);
+        // Set handle to episode in case we are not resumed
+        this.currentEpisode = selectedEpisode;
 
-        updateUiElementVisibility(selectedEpisode);
+        // If the fragment's view is actually visible and the episode is valid,
+        // show episode information
+        if (isResumed() && currentEpisode != null) {
+            episodeTitleView.setText(selectedEpisode.getName());
+            podcastTitleView.setText(selectedEpisode.getPodcastName());
+            episodeDetailView.loadDataWithBaseURL(null, selectedEpisode.getDescription(),
+                    "text/html",
+                    "utf-8", null);
+        }
+
+        // Update the UI widget's visibility to reflect state
+        updateUiElementVisibility();
     }
 
-    private void updateUiElementVisibility(Episode episode) {
-        emptyView.setVisibility(episode == null ? VISIBLE : GONE);
+    private void updateUiElementVisibility() {
+        emptyView.setVisibility(currentEpisode == null ? VISIBLE : GONE);
 
-        episodeTitleView.setVisibility(episode == null ? GONE : VISIBLE);
-        podcastTitleView.setVisibility(episode == null ? GONE : VISIBLE);
-        dividerView.setVisibility(episode == null ? GONE : VISIBLE);
-        episodeDetailView.setVisibility(episode == null ? GONE : VISIBLE);
+        episodeTitleView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
+        podcastTitleView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
+        dividerView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
+        episodeDetailView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
     }
 }

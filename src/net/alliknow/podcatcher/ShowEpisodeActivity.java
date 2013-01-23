@@ -53,8 +53,11 @@ public class ShowEpisodeActivity extends EpisodeActivity {
                     EpisodeFragment episode = new EpisodeFragment();
                     // Set episode with URL from intent
                     // (getIntent().getExtras());
-                    getFragmentManager().beginTransaction()
-                            .add(R.id.content, episode, episodeFragmentTag).commit();
+                    getFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.content, episode,
+                                    getResources().getString(R.string.episode_fragment_tag))
+                            .commit();
                 }
         }
     }
@@ -77,7 +80,7 @@ public class ShowEpisodeActivity extends EpisodeActivity {
             for (Episode episode : selectedPodcast.getEpisodes())
                 if (episode.getMediaUrl().toExternalForm().equals(episodeUrl)) {
                     this.currentEpisode = episode;
-                    findEpisodeFragment().setEpisode(episode);
+                    episodeFragment.setEpisode(episode);
                 }
         }
     }

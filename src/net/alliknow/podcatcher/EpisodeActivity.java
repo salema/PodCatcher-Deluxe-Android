@@ -30,6 +30,8 @@ import net.alliknow.podcatcher.listeners.PlayerListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
+import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
+import net.alliknow.podcatcher.view.fragments.PlayerFragment;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,6 +41,11 @@ import java.util.TimerTask;
  */
 public class EpisodeActivity extends BaseActivity implements
         PlayerListener, PlayServiceListener {
+
+    /** The current episode fragment */
+    protected EpisodeFragment episodeFragment;
+    /** The current player fragment */
+    protected PlayerFragment playerFragment;
 
     /** Key used to store podcast URL in intent or bundle */
     public static final String PODCAST_URL_KEY = "podcast_url";
@@ -69,8 +76,7 @@ public class EpisodeActivity extends BaseActivity implements
 
                 @Override
                 public void run() {
-                    if (findPlayerFragment() != null)
-                        findPlayerFragment().update(service, currentEpisode);
+                    updatePlayer();
                 }
             });
         }
@@ -79,6 +85,14 @@ public class EpisodeActivity extends BaseActivity implements
     @Override
     public void onStart() {
         super.onStart();
+
+        String episodeFragmentTag = getResources().getString(R.string.episode_fragment_tag);
+        String playerFragmentTag = getResources().getString(R.string.player_fragment_tag);
+
+        episodeFragment = (EpisodeFragment) getFragmentManager().findFragmentByTag(
+                episodeFragmentTag);
+        playerFragment = (PlayerFragment) getFragmentManager().findFragmentByTag(
+                playerFragmentTag);
 
         // Make sure play service is started
         startService(new Intent(this, PlayEpisodeService.class));
@@ -92,8 +106,12 @@ public class EpisodeActivity extends BaseActivity implements
         super.onResume();
 
         // Restore from configuration change
-        if (currentEpisode != null && findEpisodeFragment() != null)
-            findEpisodeFragment().setEpisode(currentEpisode);
+        if (currentEpisode != null && episodeFragment != null)
+            episodeFragment.setEpisode(currentEpisode);
+
+        updatePlayer();
+
+        startPlayProgressTimer();
     }
 
     @Override
@@ -119,26 +137,16 @@ public class EpisodeActivity extends BaseActivity implements
 
     }
 
-    public void onLoadEpisode() {
-        // if (service.isWorkingWith(currentEpisode))
-        // onPlaybackComplete();
-        // else
-        if (currentEpisode != null && service != null) {
-            // Episode should not be loaded
-            if (!service.isWorkingWith(currentEpisode)) {
-                stopPlayProgressTimer();
+    public void onToggleLoad() {
+        if (service.loadedEpisode(currentEpisode))
+            onPlaybackComplete();
+        else if (currentEpisode != null && service != null) {
+            stopPlayProgressTimer();
 
-                service.playEpisode(currentEpisode);
-
-                findPlayerFragment().update(service, currentEpisode);
-            }
+            service.playEpisode(currentEpisode);
+            updatePlayer();
         } else
             Log.d(getClass().getSimpleName(), "Cannot load episode (episode or service are null)");
-    }
-
-    @Override
-    public void onUnloadEpisode() {
-        // TODO Auto-generated method stub
     }
 
     public void onTogglePlay() {
@@ -153,7 +161,7 @@ public class EpisodeActivity extends BaseActivity implements
                 startPlayProgressTimer();
             }
 
-            findPlayerFragment().update(service, currentEpisode);
+            updatePlayer();
         } else
             Log.d(getClass().getSimpleName(),
                     "Cannot play/pause episode (service null or unprepared)");
@@ -161,14 +169,17 @@ public class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onReturnToPlayingEpisode() {
-        // if (service != null && service.getCurrentEpisode() != null &&
-        // selectedListener != null)
-        // selectedListener.onEpisodeSelected(service.getCurrentEpisode());
+        if (service != null && service.getCurrentEpisode() != null) {
+            Episode playingEpisode = service.getCurrentEpisode();
+
+            this.currentEpisode = playingEpisode;
+            episodeFragment.setEpisode(playingEpisode);
+        }
     }
 
     @Override
     public void onReadyToPlay() {
-        findPlayerFragment().update(service, currentEpisode);
+        updatePlayer();
         startPlayProgressTimer();
     }
 
@@ -176,7 +187,7 @@ public class EpisodeActivity extends BaseActivity implements
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (fromUser) {
             service.seekTo(progress);
-            findPlayerFragment().update(service, currentEpisode);
+            updatePlayer();
         }
     }
 
@@ -195,7 +206,7 @@ public class EpisodeActivity extends BaseActivity implements
     @Override
     public void onStopForBuffering() {
         stopPlayProgressTimer();
-        findPlayerFragment().update(service, currentEpisode);
+        updatePlayer();
     }
 
     @Override
@@ -205,8 +216,8 @@ public class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onBufferUpdate(int seconds) {
-        if (findPlayerFragment() != null)
-            findPlayerFragment().setSecondaryProgress(seconds);
+        if (playerFragment != null)
+            playerFragment.setSecondaryProgress(seconds);
     }
 
     @Override
@@ -215,26 +226,42 @@ public class EpisodeActivity extends BaseActivity implements
 
         service.reset();
 
-        findPlayerFragment().update(service, currentEpisode);
+        updatePlayer();
     }
 
     @Override
     public void onError() {
         service.reset();
 
-        findPlayerFragment().update(service, currentEpisode);
-
-        findPlayerFragment().showError();
+        playerFragment.showError();
 
         Log.w(getClass().getSimpleName(), "Play service send an error");
     }
 
+    protected void updatePlayer() {
+        // Show/hide menu item
+        playerFragment.showLoadMenuItem(service != null && currentEpisode != null,
+                service != null && !service.loadedEpisode(currentEpisode));
+
+        // Make sure player is shown if needed
+        playerFragment.showPlayer(service != null
+                && (service.isPreparing() || service.isPrepared()));
+        // Make sure player title is shown if needed
+        playerFragment.showPlayerTitle(service != null && !service.loadedEpisode(currentEpisode));
+
+        // Update UI to reflect service status
+        playerFragment.update(service, currentEpisode);
+    }
+
     private void startPlayProgressTimer() {
-        // Only start task if it isn't already running and
-        // there is actually some progress to monitor
-        if (playUpdateTimerTask == null && !seeking) {
-            playUpdateTimerTask = new PlayProgressTask();
-            playUpdateTimer.schedule(playUpdateTimerTask, 0, 1000);
+        // Do not start the task if there is no progress to monitor
+        if (service != null && service.isPlaying()) {
+            // Only start task if it isn't already running and
+            // there is actually some progress to monitor
+            if (playUpdateTimerTask == null && !seeking) {
+                playUpdateTimerTask = new PlayProgressTask();
+                playUpdateTimer.schedule(playUpdateTimerTask, 0, 1000);
+            }
         }
     }
 
@@ -253,14 +280,11 @@ public class EpisodeActivity extends BaseActivity implements
             service = ((PlayServiceBinder) serviceBinder).getService();
             Log.d(EpisodeActivity.this.getClass().getSimpleName(), "Bound to playback service");
 
-            // Register listener and notification
+            // Register listener
             service.setPlayServiceListener(EpisodeActivity.this);
 
-            // Update UI to reflect service status
-            if (currentEpisode == null && service.getCurrentEpisode() != null) {
-                findEpisodeFragment().setEpisode(service.getCurrentEpisode());
-                findPlayerFragment().update(service, currentEpisode);
-            }
+            // Update player UI
+            updatePlayer();
 
             // Restart play progress timer task if service is playing
             startPlayProgressTimer();

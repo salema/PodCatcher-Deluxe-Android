@@ -31,7 +31,6 @@ import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
-import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +40,9 @@ import java.util.List;
  */
 public class EpisodeListActivity extends EpisodeActivity implements
         OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectEpisodeListener {
+
+    /** The current episode list fragment */
+    protected EpisodeListFragment episodeListFragment;
 
     /**
      * Key used to save the current setting for
@@ -62,6 +64,17 @@ public class EpisodeListActivity extends EpisodeActivity implements
 
         if (savedInstanceState != null)
             multiplePodcastsMode = savedInstanceState.getBoolean(MODE_KEY);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        String episodeListFragmentTag = getResources()
+                .getString(R.string.episode_list_fragment_tag);
+
+        episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentByTag(
+                episodeListFragmentTag);
     }
 
     @Override
@@ -94,61 +107,31 @@ public class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
-        switch (viewMode) {
-            case LARGE_PORTRAIT_VIEW:
-            case LARGE_LANDSCAPE_VIEW:
-            case SMALL_LANDSCAPE_VIEW:
-                if (multiplePodcastsMode)
-                    findPodcastListFragment().showProgress(podcastManager.indexOf(podcast),
-                            progress);
-                // No break here intentionally, code down below should run
-            case SMALL_PORTRAIT_VIEW:
-                if (!multiplePodcastsMode && podcast.equals(currentPodcast))
-                    findEpisodeListFragment().showProgress(progress);
-        }
+        if (!multiplePodcastsMode && podcast.equals(currentPodcast))
+            episodeListFragment.showProgress(progress);
     }
 
     @Override
     public void onPodcastLoaded(Podcast podcast) {
-        switch (viewMode) {
-            case LARGE_LANDSCAPE_VIEW:
-            case LARGE_PORTRAIT_VIEW:
-            case SMALL_LANDSCAPE_VIEW:
-                // This will display the number of episodes
-                PodcastListFragment podcastListFragment = findPodcastListFragment();
-                podcastListFragment.refresh();
+        // Update list fragment to show episode list
+        // Select all podcasts
+        if (multiplePodcastsMode) {
+            // TODO decide on this: episodeList.addAll(list.subList(0,
+            // list.size() > 100 ? 100 : list.size() - 1));
+            if (podcast.getEpisodes().size() > 0) {
+                currentEpisodeList.addAll(podcast.getEpisodes());
+                Collections.sort(currentEpisodeList);
+                episodeListFragment.setEpisodes(currentEpisodeList);
+            }
+        } // Select single podcast
+        else if (podcast.equals(currentPodcast)) {
+            currentEpisodeList = podcast.getEpisodes();
+            episodeListFragment.setEpisodes(currentEpisodeList);
 
-                // Tell the podcast manager to load podcast logo
-                podcastManager.loadLogo(podcast,
-                        podcastListFragment.getLogoViewWidth(),
-                        podcastListFragment.getLogoViewHeight());
-
-                // No break here intentionally, code down below should run
-            case SMALL_PORTRAIT_VIEW:
-                // Update list fragment to show episode list
-                EpisodeListFragment episodeListFragment = findEpisodeListFragment();
-
-                if (multiplePodcastsMode) {
-                    // TODO decide on this: episodeList.addAll(list.subList(0,
-                    // list.size() > 100 ? 100 : list.size() - 1));
-                    if (podcast.getEpisodes().size() > 0) {
-                        currentEpisodeList.addAll(podcast.getEpisodes());
-                        Collections.sort(currentEpisodeList);
-                        episodeListFragment.setEpisodes(currentEpisodeList);
-                    }
-                }
-                else if (podcast.equals(currentPodcast)) {
-                    currentEpisodeList = podcast.getEpisodes();
-                    episodeListFragment.setEpisodes(currentEpisodeList);
-
-                }
         }
 
         // Additionally, if on large device, process clever selection update
         if (viewMode == LARGE_LANDSCAPE_VIEW || viewMode == LARGE_PORTRAIT_VIEW) {
-            EpisodeListFragment episodeListFragment = findEpisodeListFragment();
-            EpisodeFragment episodeFragment = findEpisodeFragment();
-
             if (currentEpisodeList != null && currentEpisodeList.contains(currentEpisode))
                 episodeListFragment.select(currentEpisodeList.indexOf(currentEpisode));
         }
@@ -156,25 +139,14 @@ public class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onPodcastLoadFailed(Podcast failedPodcast) {
-        switch (viewMode) {
-            case LARGE_LANDSCAPE_VIEW:
-            case LARGE_PORTRAIT_VIEW:
-            case SMALL_LANDSCAPE_VIEW:
-                // This will display the number of episodes
-                findPodcastListFragment().refresh();
-
-                // No break here intentionally, code down below should run
-            case SMALL_PORTRAIT_VIEW:
-                // TODO What happens in multiple podcast mode?
-                if (!multiplePodcastsMode)
-                    findEpisodeListFragment().showLoadFailed();
-        }
+        // TODO What happens in multiple podcast mode?
+        if (!multiplePodcastsMode)
+            episodeListFragment.showLoadFailed();
     }
 
     @Override
     public void onPodcastLogoLoaded(Podcast podcast, Bitmap logo) {
-        if (podcast.equals(currentPodcast))
-            findPodcastListFragment().showLogo(logo);
+        // pass
     }
 
     @Override
@@ -190,20 +162,22 @@ public class EpisodeListActivity extends EpisodeActivity implements
             case LARGE_PORTRAIT_VIEW:
             case LARGE_LANDSCAPE_VIEW:
                 // Set episode in episode fragment
-                findEpisodeFragment().setEpisode(selectedEpisode);
+                episodeFragment.setEpisode(selectedEpisode);
                 // Make sure selection matches in list fragment
-                // findEpisodeListFragment().selectEpisode(selectedEpisode);
+                // episodeListFragment.selectEpisode(selectedEpisode);
                 break;
             case SMALL_LANDSCAPE_VIEW:
                 // Find, and if not already done create, episode fragment
-                EpisodeFragment episodeFragment = findEpisodeFragment();
                 if (episodeFragment == null)
                     episodeFragment = new EpisodeFragment();
+
                 // Add the fragment to the UI, placing the list fragment
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.content, episodeFragment, episodeFragmentTag);
+                transaction.replace(R.id.episode_data, episodeFragment,
+                        getResources().getString(R.string.episode_fragment_tag));
                 transaction.addToBackStack(null);
                 transaction.commit();
+
                 // Set the episode
                 episodeFragment.setEpisode(selectedEpisode);
                 break;
@@ -221,11 +195,19 @@ public class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
+    public void onReturnToPlayingEpisode() {
+        if (service != null && service.getCurrentEpisode() != null) {
+            Episode playingEpisode = service.getCurrentEpisode();
+
+            onEpisodeSelected(playingEpisode);
+        }
+    }
+
+    @Override
     public void onNoEpisodeSelected() {
         this.currentEpisode = null;
 
         // If there is a episode fragment, reset it
-        EpisodeListFragment episodeListFragment = findEpisodeListFragment();
         if (episodeListFragment != null)
             episodeListFragment.selectNone();
 
