@@ -224,9 +224,9 @@ public class PodcastListFragment extends PodcatcherListFragment {
             logoView.setVisibility(selectAll ? GONE : VISIBLE);
 
             // Menu items might be late to load
-            if (selectAllMenuItem != null)
+            if (selectAllMenuItem != null && adapter != null)
                 selectAllMenuItem.setVisible(adapter.getCount() > 1 && !selectAll);
-            if (removeMenuItem != null)
+            if (removeMenuItem != null && adapter != null)
                 removeMenuItem.setVisible(adapter.getSelectedPosition() > 0);
         }
     }

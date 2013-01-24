@@ -39,6 +39,9 @@ public class EpisodeFragment extends Fragment {
     /** The currently shown episode */
     private Episode currentEpisode;
 
+    /** Status flag indicating that our view is created */
+    private boolean viewCreated = false;
+
     /** The empty view */
     private View emptyView;
     /** The episode title view */
@@ -68,6 +71,7 @@ public class EpisodeFragment extends Fragment {
         episodeDetailView = (WebView) getView().findViewById(R.id.episode_description);
         dividerView = getView().findViewById(R.id.episode_divider);
 
+        viewCreated = true;
     }
 
     @Override
@@ -78,6 +82,13 @@ public class EpisodeFragment extends Fragment {
         // controls are established
         if (currentEpisode != null)
             setEpisode(currentEpisode);
+    }
+
+    @Override
+    public void onDestroyView() {
+        viewCreated = false;
+
+        super.onDestroyView();
     }
 
     /**
@@ -91,10 +102,10 @@ public class EpisodeFragment extends Fragment {
 
         // If the fragment's view is actually visible and the episode is valid,
         // show episode information
-        if (isResumed() && currentEpisode != null) {
-            episodeTitleView.setText(selectedEpisode.getName());
-            podcastTitleView.setText(selectedEpisode.getPodcastName());
-            episodeDetailView.loadDataWithBaseURL(null, selectedEpisode.getDescription(),
+        if (viewCreated && currentEpisode != null) {
+            episodeTitleView.setText(currentEpisode.getName());
+            podcastTitleView.setText(currentEpisode.getPodcastName());
+            episodeDetailView.loadDataWithBaseURL(null, currentEpisode.getDescription(),
                     "text/html",
                     "utf-8", null);
         }
@@ -104,11 +115,13 @@ public class EpisodeFragment extends Fragment {
     }
 
     private void updateUiElementVisibility() {
-        emptyView.setVisibility(currentEpisode == null ? VISIBLE : GONE);
+        if (viewCreated) {
+            emptyView.setVisibility(currentEpisode == null ? VISIBLE : GONE);
 
-        episodeTitleView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
-        podcastTitleView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
-        dividerView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
-        episodeDetailView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
+            episodeTitleView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
+            podcastTitleView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
+            dividerView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
+            episodeDetailView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
+        }
     }
 }

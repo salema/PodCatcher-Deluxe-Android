@@ -17,6 +17,7 @@
 
 package net.alliknow.podcatcher;
 
+import android.app.FragmentManager.OnBackStackChangedListener;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -56,8 +57,28 @@ public class PodcastActivity extends EpisodeListActivity implements
         podcastManager.addLoadPodcastListListener(this);
         podcastManager.addChangePodcastListListener(this);
 
+        // Make sure we are alerted on back stack changes
+        getFragmentManager().addOnBackStackChangedListener(
+                new OnBackStackChangedListener() {
+
+                    @Override
+                    public void onBackStackChanged() {
+                        // This only needed in small landscape mode and in case
+                        // we go back to the episode list
+                        if (viewMode == SMALL_LANDSCAPE_VIEW
+                                && getFragmentManager().getBackStackEntryCount() == 0) {
+                            onNoEpisodeSelected();
+                        }
+                    }
+                });
+
         // Inflate the main content view (depends on view mode)
         setContentView(R.layout.main);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
 
         // Create and add fragments as needed
         String podcastListFragmentTag = getResources()
@@ -66,8 +87,9 @@ public class PodcastActivity extends EpisodeListActivity implements
         podcastListFragment = (PodcastListFragment) getFragmentManager().findFragmentByTag(
                 podcastListFragmentTag);
 
-        // On small screens in portrait mode, add the podcast list fragment
-        if (viewMode == SMALL_PORTRAIT_VIEW && savedInstanceState == null) {
+        // On small screens, add the podcast list fragment
+        if ((viewMode == SMALL_PORTRAIT_VIEW || viewMode == SMALL_LANDSCAPE_VIEW)
+                && podcastListFragment == null) {
             podcastListFragment = new PodcastListFragment();
 
             getFragmentManager()
@@ -75,24 +97,16 @@ public class PodcastActivity extends EpisodeListActivity implements
                     .add(R.id.content, podcastListFragment, podcastListFragmentTag)
                     .commit();
         }
-        // On small screens in landscape mode, add the podcast list and the
-        // episode list fragment
-        if (viewMode == SMALL_LANDSCAPE_VIEW && savedInstanceState == null) {
-            podcastListFragment = new PodcastListFragment();
+        // On small screens in landscape mode, add the episode list fragment
+        if (viewMode == SMALL_LANDSCAPE_VIEW && episodeListFragment == null) {
             episodeListFragment = new EpisodeListFragment();
 
             getFragmentManager()
                     .beginTransaction()
-                    .add(R.id.content, podcastListFragment, podcastListFragmentTag)
-                    .add(R.id.episode_data, episodeListFragment,
+                    .add(R.id.right, episodeListFragment,
                             getResources().getString(R.string.episode_list_fragment_tag))
                     .commit();
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
 
         // Load all podcasts? TODO Make this a preference
     }
@@ -176,6 +190,7 @@ public class PodcastActivity extends EpisodeListActivity implements
                 podcastListFragment.select(podcastManager.indexOf(podcast));
                 // List fragment is visible, make it show progress UI
                 episodeListFragment.resetAndSpin();
+                // Update other UI
                 updateDivider();
 
                 // Load podcast
@@ -290,7 +305,9 @@ public class PodcastActivity extends EpisodeListActivity implements
     protected void updatePlayer() {
         super.updatePlayer();
 
-        if (viewMode == SMALL_PORTRAIT_VIEW)
-            playerFragment.showLoadMenuItem(false, false);
+        if (viewMode == SMALL_PORTRAIT_VIEW && playerFragment != null) {
+            playerFragment.setLoadMenuItemVisibility(false, false);
+            playerFragment.setPlayerTitleVisibility(true);
+        }
     }
 }

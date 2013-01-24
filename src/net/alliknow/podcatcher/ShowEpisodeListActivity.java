@@ -86,8 +86,10 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     protected void updatePlayer() {
         super.updatePlayer();
 
-        playerFragment.showLoadMenuItem(false, false);
-        playerFragment.showPlayerTitle(true);
+        if (playerFragment != null) {
+            playerFragment.setLoadMenuItemVisibility(false, false);
+            playerFragment.setPlayerTitleVisibility(true);
+        }
     }
 
     @Override

@@ -26,6 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
         android:layout_marginBottom="2dp"
         android:scaleType="fitXY"
         android:src="@android:drawable/divider_horizontal_bright"
@@ -45,6 +46,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/episode_view_padding"
+        android:layout_marginRight="@dimen/episode_view_padding"
         android:singleLine="true"
         android:textSize="@dimen/font_size_default"
         android:visibility="gone" />
@@ -53,17 +55,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/episode_view_padding"
+        android:layout_marginRight="@dimen/episode_view_padding"
         android:layout_marginBottom="2dp" />
     <Button
         android:id="@+id/player_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/list_item"
         android:layout_marginLeft="@dimen/episode_view_padding"
+        android:layout_marginRight="@dimen/episode_view_padding"
         android:layout_marginBottom="2dp"
-        android:drawableStart="@drawable/ic_media_pause"
+        android:drawableStart="@drawable/ic_media_play"
         android:gravity="center"
         android:paddingRight="32dp"
         android:text="@string/pause"
         android:textColor="@drawable/button_label"
-        android:textSize="@dimen/font_size_default" />
+        android:textSize="@dimen/font_size_default"
+        android:singleLine="true" 
+        android:ellipsize="marquee" />
 </LinearLayout>

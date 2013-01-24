@@ -22,5 +22,6 @@
         android:id="@+id/episode_load_menuitem"
         android:icon="@drawable/ic_media_play"
         android:showAsAction="always|withText"
-        android:title="@string/play" />
+        android:title="@string/play"
+        android:orderInCategory="5" />
 </menu>

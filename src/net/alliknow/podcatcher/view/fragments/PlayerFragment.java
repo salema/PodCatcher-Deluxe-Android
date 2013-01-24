@@ -39,7 +39,6 @@ import android.widget.TextView;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.PlayerListener;
 import net.alliknow.podcatcher.model.types.Episode;
-import net.alliknow.podcatcher.services.PlayEpisodeService;
 
 /**
  * The player fragment.
@@ -49,11 +48,19 @@ public class PlayerFragment extends Fragment {
     /** The listener for the title click */
     private PlayerListener listener;
 
-    private boolean showLoadMenuItem;
+    /** Flag for show load menu item state */
+    private boolean showLoadMenuItem = false;
+    /** Flag for the state of the load menu item */
+    private boolean loadMenuItemState = true;
+    /** Flag for show player state */
+    private boolean showPlayer = false;
+    /** Flag for show player title state */
+    private boolean showPlayerTitle = false;
+    /** Flag for show error view state */
+    private boolean showError = false;
 
-    private boolean showPlayer;
-
-    private boolean showPlayerTitle;
+    /** Status flag indicating that our view is created */
+    private boolean viewCreated = false;
 
     /** The load episode menu bar item */
     private MenuItem loadMenuItem;
@@ -128,13 +135,18 @@ public class PlayerFragment extends Fragment {
         });
 
         errorView = (TextView) view.findViewById(R.id.player_error);
+
+        viewCreated = true;
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        showPlayer(showPlayer);
+        setLoadMenuItemVisibility(showLoadMenuItem, loadMenuItemState);
+        setPlayerVisibilility(showPlayer);
+        setPlayerTitleVisibility(showPlayerTitle);
+        setErrorViewVisibility(showError);
     }
 
     @Override
@@ -142,6 +154,7 @@ public class PlayerFragment extends Fragment {
         inflater.inflate(R.menu.episode, menu);
 
         loadMenuItem = menu.findItem(R.id.episode_load_menuitem);
+        setLoadMenuItemVisibility(showLoadMenuItem, loadMenuItemState);
     }
 
     @Override
@@ -157,34 +170,29 @@ public class PlayerFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        viewCreated = false;
+
+        super.onDestroyView();
+    }
+
     /**
-     * Set the secondary progress shown in seek bar.
+     * Set whether the fragment should show the load menu item. You can call
+     * this any time and can expect it to happen on menu creation at the latest.
+     * You also have to set the load menu state, <code>true</code> for "Play" /
+     * "Load" and <code>false</code> for "Stop" / "Unload".
      * 
-     * @param seconds The progress in seconds.
+     * @param show Whether to show the load menu item.
+     * @param load State of the load menu item (load / unload)
      */
-    public void setSecondaryProgress(int seconds) {
-        seekBar.setSecondaryProgress(seconds);
-    }
+    public void setLoadMenuItemVisibility(boolean show, boolean load) {
+        this.showLoadMenuItem = show;
+        this.loadMenuItemState = load;
 
-    public void showPlayer(boolean show) {
-        this.showPlayer = show;
-
-        if (isResumed())
-            getView().setVisibility(show ? VISIBLE : GONE);
-    }
-
-    public void showPlayerTitle(boolean show) {
-        this.showPlayerTitle = show;
-
-        if (isResumed()) {
-            dividerView.setVisibility(show ? VISIBLE : GONE);
-            titleView.setVisibility(show ? VISIBLE : GONE);
-        }
-
-    }
-
-    public void showLoadMenuItem(boolean show, boolean load) {
-        if (loadMenuItem != null) {
+        // Only do it right away if resumed and menu item is available,
+        // otherwise onResume or the menu creation callback will call us.
+        if (isResumed() && loadMenuItem != null) {
             loadMenuItem.setVisible(show);
 
             loadMenuItem.setTitle(load ? R.string.play : R.string.stop);
@@ -193,74 +201,126 @@ public class PlayerFragment extends Fragment {
     }
 
     /**
-     * Show the player's error view.
+     * Set whether the fragment should show the player title view. You can call
+     * this any time and can expect it to happen on resume at the latest. This
+     * only makes a difference if the player itself is visible.
+     * 
+     * @param show Whether to show the player title view.
      */
-    public void showError() {
-        titleView.setVisibility(GONE);
-        button.setVisibility(GONE);
-        seekBar.setVisibility(GONE);
-        errorView.setVisibility(VISIBLE);
+    public void setPlayerTitleVisibility(boolean show) {
+        this.showPlayerTitle = show;
+
+        // Only do it right away if resumed, otherwise onResume will call us.
+        if (isResumed()) {
+            dividerView.setVisibility(show ? VISIBLE : GONE);
+            titleView.setVisibility(show ? VISIBLE : GONE);
+        }
     }
 
     /**
-     * Update the player's UI according to the current state of play.
+     * Update the player title view to show name and link to the given episode.
      * 
-     * @param service The play episode service (should not be <code>null</code>
-     *            but will fail gracefully).
-     * @param currentEpisode The episode currently selected (may be
-     *            <code>null</code>).
+     * @param playingEpisode Episode to show link to.
      */
-    public void update(PlayEpisodeService service, Episode currentEpisode) {
-        if (service != null) {
-            errorView.setVisibility(GONE);
+    public void updatePlayerTitle(Episode playingEpisode) {
+        // We can only do this after the fragment's widgets are created
+        if (viewCreated)
+            titleView.setText(Html.fromHtml("<a href=\"\">" + playingEpisode + " - "
+                    + playingEpisode + "</a>"));
+    }
 
-            titleView.setText(Html.fromHtml("<a href=\"\">" + service.getCurrentEpisodeName()
-                    + " - "
-                    + service.getCurrentEpisodePodcastName() + "</a>"));
+    /**
+     * Set whether the fragment should show the player view at all. You can call
+     * this any time and can expect it to happen on resume at the latest.
+     * 
+     * @param show Whether to show the player view.
+     */
+    public void setPlayerVisibilility(boolean show) {
+        this.showPlayer = show;
 
-            updateSeekBar(service);
-            updateButton(service);
+        // Only do it right away if resumed, otherwise onResume will call us.
+        if (isResumed())
+            getView().setVisibility(show ? VISIBLE : GONE);
+    }
+
+    /**
+     * Update the player seek bar to show current progress.
+     * 
+     * @param enabled Whether the seek bar is enabled.
+     * @param max Max value of the seek bar.
+     * @param progress Progress to set.
+     */
+    public void updateSeekBar(boolean enabled, int max, int progress) {
+        // We can only do this after the fragment's widgets are created
+        if (viewCreated) {
+            seekBar.setEnabled(enabled);
+
+            seekBar.setMax(max);
+            seekBar.setProgress(progress);
         }
     }
 
-    private void updateSeekBar(PlayEpisodeService service) {
-        seekBar.setEnabled(!service.isPreparing());
-
-        // We are running and might advance progress
-        if (service.isPrepared()) {
-            seekBar.setMax(service.getDuration());
-            seekBar.setProgress(service.getCurrentPosition());
-        } // Reset progress
-        else {
-            seekBar.setProgress(0);
-            seekBar.setSecondaryProgress(0);
-        }
+    /**
+     * Update the player seek bar's secondary progress.
+     * 
+     * @param secondaryProgress 2ndary progress to set.
+     */
+    public void updateSeekBarSecondaryProgress(int secondaryProgress) {
+        // We can only do this after the fragment's widgets are created
+        if (viewCreated)
+            seekBar.setSecondaryProgress(secondaryProgress);
     }
 
-    private void updateButton(PlayEpisodeService service) {
-        // Update button appearance
-        button.setEnabled(!service.isBuffering());
-        button.setBackgroundResource(service.isPlaying() ? R.drawable.button_red
-                : R.drawable.button_green);
-        button.setCompoundDrawablesWithIntrinsicBounds(
-                service.isPlaying() ? R.drawable.ic_media_pause : R.drawable.ic_media_play, 0, 0, 0);
+    /**
+     * Update the player button to show current state and progress.
+     * 
+     * @param buffering Whether the player is currently buffering.
+     * @param playing Whether the player is currently playing.
+     * @param duration Full duration of current episode.
+     * @param position Player position in current episode.
+     */
+    public void updateButton(boolean buffering, boolean playing, int duration, int position) {
+        // We can only do this after the fragment's widgets are created
+        if (viewCreated) {
+            // Update button appearance
+            button.setEnabled(!buffering);
 
-        // Update button label
-        // Buffering...
-        if (service.isBuffering()) {
-            button.setText(R.string.buffering);
-            button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_rotate, 0, 0, 0);
-        } // Playing or paused
-        else {
-            button.setText(service.isPlaying() ? R.string.pause : R.string.resume);
+            // Buffering...
+            if (buffering) {
+                button.setText(R.string.buffering);
+                button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_rotate, 0, 0, 0);
+            } // Playing or paused
+            else {
+                button.setText(playing ? R.string.pause : R.string.resume);
+                button.setBackgroundResource(playing ?
+                        R.drawable.button_red : R.drawable.button_green);
+                button.setCompoundDrawablesWithIntrinsicBounds(playing ?
+                        R.drawable.ic_media_pause : R.drawable.ic_media_play, 0, 0, 0);
 
-            if (service.isPrepared()) {
-                final String position = formatTime(service.getCurrentPosition());
-                final String duration = formatTime(service.getDuration());
+                final String formattedPosition = formatTime(position);
+                final String formattedDuration = formatTime(duration);
 
-                button.setText(button.getText() + " " + at + " " + position + " " + of + " "
-                        + duration);
+                button.setText(button.getText() + " " + at + " " +
+                        formattedPosition + " " + of + " " + formattedDuration);
             }
+        }
+    }
+
+    /**
+     * Set whether the fragment should show the error view. You can call this
+     * any time and can expect it to happen on resume at the latest.
+     * 
+     * @param show Whether to show the player view.
+     */
+    public void setErrorViewVisibility(boolean show) {
+        this.showError = show;
+
+        // Only do it right away if resumed, otherwise onResume will call us.
+        if (isResumed()) {
+            titleView.setVisibility(show ? GONE : VISIBLE);
+            button.setVisibility(show ? GONE : VISIBLE);
+            seekBar.setVisibility(show ? GONE : VISIBLE);
+            errorView.setVisibility(show ? VISIBLE : GONE);
         }
     }
 

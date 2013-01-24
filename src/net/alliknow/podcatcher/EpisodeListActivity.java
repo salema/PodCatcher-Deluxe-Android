@@ -171,12 +171,15 @@ public class EpisodeListActivity extends EpisodeActivity implements
                 if (episodeFragment == null)
                     episodeFragment = new EpisodeFragment();
 
-                // Add the fragment to the UI, placing the list fragment
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.episode_data, episodeFragment,
-                        getResources().getString(R.string.episode_fragment_tag));
-                transaction.addToBackStack(null);
-                transaction.commit();
+                // Add the fragment to the UI, replacing the list fragment if it
+                // is not already there
+                if (getFragmentManager().getBackStackEntryCount() == 0) {
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.right, episodeFragment,
+                            getResources().getString(R.string.episode_fragment_tag));
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
 
                 // Set the episode
                 episodeFragment.setEpisode(selectedEpisode);
@@ -191,6 +194,7 @@ public class EpisodeListActivity extends EpisodeActivity implements
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
         }
 
+        updatePlayer();
         updateDivider();
     }
 
@@ -211,6 +215,7 @@ public class EpisodeListActivity extends EpisodeActivity implements
         if (episodeListFragment != null)
             episodeListFragment.selectNone();
 
+        updatePlayer();
         updateDivider();
     }
 

@@ -45,6 +45,9 @@ import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.model.types.Episode;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Play an episode service, wraps media player. This class implements an Android
  * service. It can be used to play back podcast episodes and tries to hide away
@@ -69,8 +72,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
     /** Binder given to clients */
     private final IBinder binder = new PlayServiceBinder();
-    /** A listener notified service events */
-    private PlayServiceListener serviceListener;
+    /** The call-back set for the play service listeners */
+    private Set<PlayServiceListener> listeners = new HashSet<PlayServiceListener>();
 
     /** Our wifi lock */
     private WifiLock wifiLock;
@@ -122,7 +125,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
         reset();
 
-        serviceListener = null;
+        listeners = null;
         unregisterReceiver(receiver);
     }
 
@@ -133,11 +136,16 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         return player != null && player.isPlaying();
     }
 
-    /**
-     * @param listener A listener to be alerted on service events.
-     */
-    public void setPlayServiceListener(PlayServiceListener listener) {
-        this.serviceListener = listener;
+    public boolean addPlayServiceListener(PlayServiceListener listener) {
+        Log.d(getClass().getSimpleName(),
+                "Add play service listener " + listener + " (#" + (listeners.size() + 1) + ")");
+        return listeners.add(listener);
+    }
+
+    public boolean removePlayServiceListener(PlayServiceListener listener) {
+        Log.d(getClass().getSimpleName(),
+                "Remove play service listener " + listener + " (#" + (listeners.size() - 1) + ")");
+        return listeners.remove(listener);
     }
 
     /**
@@ -301,24 +309,27 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             player.start();
         }
 
-        if (serviceListener != null)
-            serviceListener.onReadyToPlay();
+        if (listeners.size() > 0)
+            for (PlayServiceListener listener : listeners)
+                listener.onReadyToPlay();
         else
             Log.d(getClass().getSimpleName(), "Episode prepared, but no listener attached");
     }
 
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
-        if (serviceListener != null)
-            serviceListener.onBufferUpdate(getDuration() * percent / 100);
+        if (listeners.size() > 0)
+            for (PlayServiceListener listener : listeners)
+                listener.onBufferUpdate(getDuration() * percent / 100);
         else
             Log.d(getClass().getSimpleName(), "Buffer state changed, but no listener attached");
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        if (serviceListener != null)
-            serviceListener.onPlaybackComplete();
+        if (listeners.size() > 0)
+            for (PlayServiceListener listener : listeners)
+                listener.onPlaybackComplete();
         else {
             reset();
             Log.d(getClass().getSimpleName(),
@@ -331,28 +342,33 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         switch (what) {
             case MediaPlayer.MEDIA_INFO_BUFFERING_START:
                 buffering = true;
-                if (serviceListener != null)
-                    serviceListener.onStopForBuffering();
+
+                for (PlayServiceListener listener : listeners)
+                    listener.onStopForBuffering();
+
                 break;
 
             case MediaPlayer.MEDIA_INFO_BUFFERING_END:
                 buffering = false;
-                if (serviceListener != null)
-                    serviceListener.onResumeFromBuffering();
+
+                for (PlayServiceListener listener : listeners)
+                    listener.onResumeFromBuffering();
+
                 break;
         }
 
-        if (serviceListener == null)
+        if (listeners.size() == 0)
             Log.d(getClass().getSimpleName(), "Media player send info, but no listener attached");
 
-        return serviceListener != null
+        return listeners.size() > 0
                 && (what == MediaPlayer.MEDIA_INFO_BUFFERING_START || what == MediaPlayer.MEDIA_INFO_BUFFERING_END);
     }
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        if (serviceListener != null)
-            serviceListener.onError();
+        if (listeners.size() > 0)
+            for (PlayServiceListener listener : listeners)
+                listener.onError();
         else {
             reset();
             Log.d(getClass().getSimpleName(), "Media player send error, but no listener attached");

@@ -128,13 +128,14 @@ public class EpisodeActivity extends BaseActivity implements
         playUpdateTimer.cancel();
 
         // Detach from play service (prevents leaking)
-        if (service != null)
+        if (service != null) {
+            service.removePlayServiceListener(this);
             unbindService(connection);
+        }
 
         // This would prevent strange service behavior
         if (service != null && !service.isPlaying())
             service.stopSelf();
-
     }
 
     public void onToggleLoad() {
@@ -144,7 +145,11 @@ public class EpisodeActivity extends BaseActivity implements
             stopPlayProgressTimer();
 
             service.playEpisode(currentEpisode);
+
+            // Update UI
             updatePlayer();
+            if (playerFragment != null)
+                playerFragment.updateSeekBarSecondaryProgress(0);
         } else
             Log.d(getClass().getSimpleName(), "Cannot load episode (episode or service are null)");
     }
@@ -217,13 +222,12 @@ public class EpisodeActivity extends BaseActivity implements
     @Override
     public void onBufferUpdate(int seconds) {
         if (playerFragment != null)
-            playerFragment.setSecondaryProgress(seconds);
+            playerFragment.updateSeekBarSecondaryProgress(seconds);
     }
 
     @Override
     public void onPlaybackComplete() {
         stopPlayProgressTimer();
-
         service.reset();
 
         updatePlayer();
@@ -231,26 +235,34 @@ public class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onError() {
+        stopPlayProgressTimer();
         service.reset();
 
-        playerFragment.showError();
+        playerFragment.setErrorViewVisibility(true);
 
         Log.w(getClass().getSimpleName(), "Play service send an error");
     }
 
     protected void updatePlayer() {
-        // Show/hide menu item
-        playerFragment.showLoadMenuItem(service != null && currentEpisode != null,
-                service != null && !service.loadedEpisode(currentEpisode));
+        if (playerFragment != null && service != null) {
+            // Show/hide menu item
+            playerFragment.setLoadMenuItemVisibility(currentEpisode != null,
+                    !service.loadedEpisode(currentEpisode));
 
-        // Make sure player is shown if needed
-        playerFragment.showPlayer(service != null
-                && (service.isPreparing() || service.isPrepared()));
-        // Make sure player title is shown if needed
-        playerFragment.showPlayerTitle(service != null && !service.loadedEpisode(currentEpisode));
+            // Make sure error view is hidden
+            playerFragment.setErrorViewVisibility(false);
+            // Make sure player is shown if needed
+            playerFragment.setPlayerVisibilility(service.isPreparing() || service.isPrepared());
+            // Make sure player title is shown if needed
+            playerFragment.setPlayerTitleVisibility(!service.loadedEpisode(currentEpisode));
 
-        // Update UI to reflect service status
-        playerFragment.update(service, currentEpisode);
+            // Update UI to reflect service status
+            playerFragment.updatePlayerTitle(service.getCurrentEpisode());
+            playerFragment.updateSeekBar(!service.isPreparing(), service.getDuration(),
+                    service.getCurrentPosition());
+            playerFragment.updateButton(service.isBuffering(), service.isPlaying(),
+                    service.getDuration(), service.getCurrentPosition());
+        }
     }
 
     private void startPlayProgressTimer() {
@@ -281,7 +293,7 @@ public class EpisodeActivity extends BaseActivity implements
             Log.d(EpisodeActivity.this.getClass().getSimpleName(), "Bound to playback service");
 
             // Register listener
-            service.setPlayServiceListener(EpisodeActivity.this);
+            service.addPlayServiceListener(EpisodeActivity.this);
 
             // Update player UI
             updatePlayer();
