@@ -49,6 +49,9 @@ public abstract class PodcatcherListFragment extends ListFragment {
     /** The progress bar */
     protected ProgressView progressView;
 
+    /** Status flag indicating that our view is created */
+    protected boolean viewCreated = false;
+
     /** Flags for internal state */
     protected boolean showProgress = false;
     protected boolean showLoadFailed = false;
@@ -61,6 +64,8 @@ public abstract class PodcatcherListFragment extends ListFragment {
         listView = getListView();
         emptyView = (TextView) getView().findViewById(android.R.id.empty);
         progressView = (ProgressView) getView().findViewById(R.id.progress);
+
+        viewCreated = true;
     }
 
     @Override
@@ -68,6 +73,13 @@ public abstract class PodcatcherListFragment extends ListFragment {
         super.onResume();
 
         updateUiElementVisibility();
+    }
+
+    @Override
+    public void onDestroyView() {
+        viewCreated = false;
+
+        super.onDestroyView();
     }
 
     @Override
@@ -150,7 +162,7 @@ public abstract class PodcatcherListFragment extends ListFragment {
         selectAll = false;
 
         setListAdapter(null);
-        if (isResumed())
+        if (viewCreated)
             progressView.reset();
     }
 
@@ -161,7 +173,7 @@ public abstract class PodcatcherListFragment extends ListFragment {
      */
     public void showProgress(Progress progress) {
         // Only show this if we are visible
-        if (isResumed())
+        if (viewCreated)
             progressView.publishProgress(progress);
     }
 
@@ -181,7 +193,7 @@ public abstract class PodcatcherListFragment extends ListFragment {
      * Sub-classes might want to extend this.
      */
     protected void updateUiElementVisibility() {
-        if (isResumed()) {
+        if (viewCreated) {
             // Progress view is displaying information
             if (showProgress || showLoadFailed) {
                 emptyView.setVisibility(GONE);

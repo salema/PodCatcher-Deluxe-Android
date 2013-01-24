@@ -164,7 +164,7 @@ public class EpisodeListActivity extends EpisodeActivity implements
                 // Set episode in episode fragment
                 episodeFragment.setEpisode(selectedEpisode);
                 // Make sure selection matches in list fragment
-                // episodeListFragment.selectEpisode(selectedEpisode);
+                episodeListFragment.select(currentEpisodeList.indexOf(selectedEpisode));
                 break;
             case SMALL_LANDSCAPE_VIEW:
                 // Find, and if not already done create, episode fragment

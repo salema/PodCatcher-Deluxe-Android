@@ -61,6 +61,12 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
     /** The logo view */
     private ImageView logoView;
+    /** The current logo view mode */
+    private LogoViewMode mode = LogoViewMode.SMALL;
+
+    public enum LogoViewMode {
+        SMALL, LARGE
+    };
 
     @Override
     public void onAttach(Activity activity) {
@@ -90,7 +96,6 @@ public class PodcastListFragment extends PodcatcherListFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         logoView = (ImageView) view.findViewById(R.id.podcast_image);
-
         getListView().setMultiChoiceModeListener(new PodcastListContextListener(this));
 
         super.onViewCreated(view, savedInstanceState);
@@ -120,7 +125,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
                 return true;
             case R.id.podcast_remove_menuitem:
-                getListView().setItemChecked(adapter.getSelectedPosition(), true);
+                listView.setItemChecked(adapter.getSelectedPosition(), true);
 
                 return true;
             default:
@@ -153,7 +158,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
         setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
 
         // Only update the UI if it has been inflated
-        if (isResumed())
+        if (viewCreated)
             updateUiElementVisibility();
     }
 
@@ -191,17 +196,18 @@ public class PodcastListFragment extends PodcatcherListFragment {
     public void showProgress(int position, Progress progress) {
         // To prevent this if we are not ready to handle progress update
         // e.g. on app termination
-        if (isResumed()) {
-            View listItemView = getListView().getChildAt(position);
+        if (viewCreated) {
+            View listItemView = listView.getChildAt(position);
             if (listItemView != null)
                 ((HorizontalProgressView) listItemView.findViewById(R.id.list_item_progress))
                         .publishProgress(progress);
         }
     }
 
-    public void showLogo(boolean b) {
-        if (logoView != null)
-            logoView.setVisibility(b ? VISIBLE : GONE);
+    public void setLogoVisibility(LogoViewMode mode) {
+        this.mode = mode;
+
+        updateUiElementVisibility();
     }
 
     public void showLogo(Bitmap logo) {
@@ -220,14 +226,15 @@ public class PodcastListFragment extends PodcatcherListFragment {
     protected void updateUiElementVisibility() {
         super.updateUiElementVisibility();
 
-        if (isResumed()) {
-            logoView.setVisibility(selectAll ? GONE : VISIBLE);
+        if (viewCreated) {
+            logoView.setVisibility(mode.equals(LogoViewMode.SMALL) ? GONE : VISIBLE);
 
             // Menu items might be late to load
-            if (selectAllMenuItem != null && adapter != null)
-                selectAllMenuItem.setVisible(adapter.getCount() > 1 && !selectAll);
-            if (removeMenuItem != null && adapter != null)
-                removeMenuItem.setVisible(adapter.getSelectedPosition() > 0);
+            if (selectAllMenuItem != null)
+                selectAllMenuItem.setVisible(adapter != null && adapter.getCount() > 1
+                        && !selectAll);
+            if (removeMenuItem != null)
+                removeMenuItem.setVisible(adapter != null && adapter.getSelectedPosition() >= 0);
         }
     }
 }

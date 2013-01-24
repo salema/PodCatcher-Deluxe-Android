@@ -31,6 +31,7 @@ import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
+import net.alliknow.podcatcher.view.fragments.PodcastListFragment.LogoViewMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,9 +127,10 @@ public class PodcastActivity extends EpisodeListActivity implements
         else if (currentPodcast == null)
             onNoPodcastSelected();
 
-        // Hide logo in small portrait
-        if (viewMode == SMALL_PORTRAIT_VIEW)
-            podcastListFragment.showLogo(false);
+        // Set podcast logo view mode
+        podcastListFragment.setLogoVisibility(
+                viewMode == LARGE_LANDSCAPE_VIEW && !multiplePodcastsMode ?
+                        LogoViewMode.LARGE : LogoViewMode.SMALL);
     }
 
     @Override
