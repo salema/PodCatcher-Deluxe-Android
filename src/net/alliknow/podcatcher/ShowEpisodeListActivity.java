@@ -70,11 +70,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         else {
             // Get URL of podcast to load
             String podcastUrl = getIntent().getExtras().getString(PODCAST_URL_KEY);
-
-            // Find the podcast object
-            for (Podcast podcast : podcastManager.getPodcastList())
-                if (podcast.getUrl().toString().equals(podcastUrl))
-                    this.currentPodcast = podcast;
+            currentPodcast = podcastManager.findPodcastForUrl(podcastUrl);
 
             // Go load it if found
             if (currentPodcast != null)

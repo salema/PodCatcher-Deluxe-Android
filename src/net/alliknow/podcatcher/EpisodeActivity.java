@@ -105,12 +105,7 @@ public class EpisodeActivity extends BaseActivity implements
     public void onResume() {
         super.onResume();
 
-        // Restore from configuration change
-        if (currentEpisode != null && episodeFragment != null)
-            episodeFragment.setEpisode(currentEpisode);
-
         updatePlayer();
-
         startPlayProgressTimer();
     }
 
@@ -132,10 +127,6 @@ public class EpisodeActivity extends BaseActivity implements
             service.removePlayServiceListener(this);
             unbindService(connection);
         }
-
-        // This would prevent strange service behavior
-        if (service != null && !service.isPlaying())
-            service.stopSelf();
     }
 
     public void onToggleLoad() {
@@ -271,8 +262,10 @@ public class EpisodeActivity extends BaseActivity implements
             // Only start task if it isn't already running and
             // there is actually some progress to monitor
             if (playUpdateTimerTask == null && !seeking) {
-                playUpdateTimerTask = new PlayProgressTask();
-                playUpdateTimer.schedule(playUpdateTimerTask, 0, 1000);
+                PlayProgressTask task = new PlayProgressTask();
+                playUpdateTimer.schedule(task, 0, 1000);
+
+                playUpdateTimerTask = task;
             }
         }
     }
@@ -299,7 +292,8 @@ public class EpisodeActivity extends BaseActivity implements
             updatePlayer();
 
             // Restart play progress timer task if service is playing
-            startPlayProgressTimer();
+            if (service.isPlaying())
+                startPlayProgressTimer();
         }
 
         @Override

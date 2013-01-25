@@ -160,6 +160,6 @@ public class AddPodcastActivity extends BaseActivity
     }
 
     private boolean isCurrentlyLoadingPodcast(Podcast podcast) {
-        return podcast.getUrl().toExternalForm().equalsIgnoreCase(currentLoadUrl);
+        return podcast.getUrl().toString().equalsIgnoreCase(currentLoadUrl);
     }
 }

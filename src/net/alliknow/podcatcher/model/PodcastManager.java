@@ -31,6 +31,7 @@ import net.alliknow.podcatcher.model.tasks.Progress;
 import net.alliknow.podcatcher.model.tasks.StorePodcastListTask;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastLogoTask;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask;
+import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 
 import java.net.MalformedURLException;
@@ -285,6 +286,25 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             // Store changed list
             new StorePodcastListTask(podcatcher.getApplicationContext()).execute(podcastList);
         }
+    }
+
+    public Podcast findPodcastForUrl(String url) {
+        // Find the podcast object
+        for (Podcast podcast : podcastList)
+            if (podcast.getUrl().toString().equals(url))
+                return podcast;
+
+        return null;
+    }
+
+    public Episode findEpisodeForUrl(String url) {
+        for (Podcast podcast : podcastList)
+            if (podcast.getEpisodes().size() > 0)
+                for (Episode episode : podcast.getEpisodes())
+                    if (episode.getMediaUrl().toString().equals(url))
+                        return episode;
+
+        return null;
     }
 
     public int indexOf(Podcast podcast) {

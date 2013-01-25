@@ -20,7 +20,6 @@ package net.alliknow.podcatcher;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Bundle;
 import android.view.View;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
@@ -59,14 +58,6 @@ public class EpisodeListActivity extends EpisodeActivity implements
     protected List<Episode> currentEpisodeList;
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        if (savedInstanceState != null)
-            multiplePodcastsMode = savedInstanceState.getBoolean(MODE_KEY);
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
 
@@ -97,15 +88,6 @@ public class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        // outState.putString(ShowEpisodeListActivity.PODCAST_URL_KEY,
-        // selectedPodcast.getUrl().toString());
-        outState.putBoolean(MODE_KEY, multiplePodcastsMode);
-    }
-
-    @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
         if (!multiplePodcastsMode && podcast.equals(currentPodcast))
             episodeListFragment.showProgress(progress);
@@ -127,13 +109,14 @@ public class EpisodeListActivity extends EpisodeActivity implements
         else if (podcast.equals(currentPodcast)) {
             currentEpisodeList = podcast.getEpisodes();
             episodeListFragment.setEpisodes(currentEpisodeList);
-
         }
 
         // Additionally, if on large device, process clever selection update
         if (viewMode == LARGE_LANDSCAPE_VIEW || viewMode == LARGE_PORTRAIT_VIEW) {
             if (currentEpisodeList != null && currentEpisodeList.contains(currentEpisode))
                 episodeListFragment.select(currentEpisodeList.indexOf(currentEpisode));
+
+            updateDivider();
         }
     }
 
@@ -164,7 +147,8 @@ public class EpisodeListActivity extends EpisodeActivity implements
                 // Set episode in episode fragment
                 episodeFragment.setEpisode(selectedEpisode);
                 // Make sure selection matches in list fragment
-                episodeListFragment.select(currentEpisodeList.indexOf(selectedEpisode));
+                if (currentEpisodeList != null)
+                    episodeListFragment.select(currentEpisodeList.indexOf(selectedEpisode));
                 break;
             case SMALL_LANDSCAPE_VIEW:
                 // Find, and if not already done create, episode fragment
@@ -188,7 +172,7 @@ public class EpisodeListActivity extends EpisodeActivity implements
                 // Send intent to open episode as a new activity
                 Intent intent = new Intent(this, ShowEpisodeActivity.class);
                 intent.putExtra(PODCAST_URL_KEY, selectedEpisode.getPodcastUrl());
-                intent.putExtra(EPISODE_URL_KEY, selectedEpisode.getMediaUrl().toExternalForm());
+                intent.putExtra(EPISODE_URL_KEY, selectedEpisode.getMediaUrl().toString());
 
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
@@ -221,7 +205,8 @@ public class EpisodeListActivity extends EpisodeActivity implements
 
     protected void updateDivider() {
         colorDivider(R.id.divider_first, currentPodcast != null || multiplePodcastsMode);
-        colorDivider(R.id.divider_second, currentEpisode != null);
+        colorDivider(R.id.divider_second,
+                currentEpisodeList != null && currentEpisodeList.indexOf(currentEpisode) >= 0);
     }
 
     protected void colorDivider(int dividerViewId, boolean color) {

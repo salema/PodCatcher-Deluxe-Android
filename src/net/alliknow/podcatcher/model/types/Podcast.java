@@ -323,12 +323,12 @@ public class Podcast implements Comparable<Podcast> {
         if (url == null || other.getUrl() == null)
             return false;
         else
-            return url.toExternalForm().equals(((Podcast) o).getUrl().toExternalForm());
+            return url.toString().equals(((Podcast) o).getUrl().toString());
     }
 
     @Override
     public int hashCode() {
-        return url == null ? 0 : url.toExternalForm().hashCode();
+        return url == null ? 0 : url.toString().hashCode();
     }
 
     @Override

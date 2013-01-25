@@ -69,16 +69,13 @@ public class ShowEpisodeActivity extends EpisodeActivity {
         // Get URL of podcast to load
         String podcastUrl = getIntent().getExtras().getString(PODCAST_URL_KEY);
         String episodeUrl = getIntent().getExtras().getString(EPISODE_URL_KEY);
-        Podcast selectedPodcast = null;
 
         // Find the podcast object
-        for (Podcast podcast : podcastManager.getPodcastList())
-            if (podcast.getUrl().toExternalForm().equals(podcastUrl))
-                selectedPodcast = podcast;
+        Podcast selectedPodcast = podcastManager.findPodcastForUrl(podcastUrl);
 
         if (selectedPodcast != null) {
             for (Episode episode : selectedPodcast.getEpisodes())
-                if (episode.getMediaUrl().toExternalForm().equals(episodeUrl)) {
+                if (episode.getMediaUrl().toString().equals(episodeUrl)) {
                     this.currentEpisode = episode;
                     episodeFragment.setEpisode(episode);
                 }

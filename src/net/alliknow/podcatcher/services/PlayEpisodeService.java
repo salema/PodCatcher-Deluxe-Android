@@ -120,6 +120,18 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     }
 
     @Override
+    public boolean onUnbind(Intent intent) {
+        if (currentEpisode == null) {
+            stopSelf();
+
+            Log.d(getClass().getSimpleName(),
+                    "Service stopped since no clients are bound anymore and no episode is loaded");
+        }
+
+        return false;
+    }
+
+    @Override
     public void onDestroy() {
         Log.d(getClass().getSimpleName(), "Service destroyed");
 
@@ -166,7 +178,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             // Start playback for new episode
             try {
                 initPlayer();
-                player.setDataSource(episode.getMediaUrl().toExternalForm());
+                player.setDataSource(episode.getMediaUrl().toString());
                 player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
                 wifiLock.acquire();
                 putForeground();

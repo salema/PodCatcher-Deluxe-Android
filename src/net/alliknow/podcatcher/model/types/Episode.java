@@ -91,7 +91,7 @@ public class Episode implements Comparable<Episode> {
         if (podcast == null)
             return null;
         else
-            return podcast.getUrl().toExternalForm();
+            return podcast.getUrl().toString();
     }
 
     /**
@@ -141,12 +141,12 @@ public class Episode implements Comparable<Episode> {
         if (mediaUrl == null || other.getMediaUrl() == null)
             return false;
         else
-            return mediaUrl.toExternalForm().equals(((Episode) o).getMediaUrl().toExternalForm());
+            return mediaUrl.toString().equals(((Episode) o).getMediaUrl().toString());
     }
 
     @Override
     public int hashCode() {
-        return mediaUrl == null ? 0 : mediaUrl.toExternalForm().hashCode();
+        return mediaUrl == null ? 0 : mediaUrl.toString().hashCode();
     }
 
     @Override

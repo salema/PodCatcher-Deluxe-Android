@@ -78,6 +78,19 @@ public class PodcastActivity extends EpisodeListActivity implements
     }
 
     @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            multiplePodcastsMode = savedInstanceState.getBoolean(MODE_KEY);
+            currentPodcast = podcastManager.findPodcastForUrl(
+                    savedInstanceState.getString(PODCAST_URL_KEY));
+            currentEpisode = podcastManager.findEpisodeForUrl(
+                    savedInstanceState.getString(EPISODE_URL_KEY));
+        }
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
 
@@ -121,16 +134,35 @@ public class PodcastActivity extends EpisodeListActivity implements
         if (podcastList != null)
             onPodcastListLoaded(podcastList);
 
-        // Re-select previously selected podcast
-        if (currentPodcast != null && viewMode != SMALL_PORTRAIT_VIEW)
+        // Re-select previously selected podcast(s)
+        if (multiplePodcastsMode && viewMode != SMALL_PORTRAIT_VIEW)
+            onAllPodcastsSelected();
+        else if (currentPodcast != null && viewMode != SMALL_PORTRAIT_VIEW)
             onPodcastSelected(currentPodcast);
-        else if (currentPodcast == null)
+        else
             onNoPodcastSelected();
+
+        // Re-select previously selected episode
+        if (currentEpisode != null && viewMode != SMALL_PORTRAIT_VIEW)
+            onEpisodeSelected(currentEpisode);
+        else
+            onNoEpisodeSelected();
 
         // Set podcast logo view mode
         podcastListFragment.setLogoVisibility(
                 viewMode == LARGE_LANDSCAPE_VIEW && !multiplePodcastsMode ?
                         LogoViewMode.LARGE : LogoViewMode.SMALL);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putBoolean(MODE_KEY, multiplePodcastsMode);
+        if (currentPodcast != null)
+            outState.putString(PODCAST_URL_KEY, currentPodcast.getUrl().toString());
+        if (currentEpisode != null)
+            outState.putString(EPISODE_URL_KEY, currentEpisode.getMediaUrl().toString());
     }
 
     @Override
@@ -172,7 +204,6 @@ public class PodcastActivity extends EpisodeListActivity implements
     @Override
     public void onPodcastSelected(Podcast podcast) {
         this.currentPodcast = podcast;
-        this.currentEpisode = null;
         this.currentEpisodeList = null;
         this.multiplePodcastsMode = false;
 
@@ -213,7 +244,6 @@ public class PodcastActivity extends EpisodeListActivity implements
     @Override
     public void onAllPodcastsSelected() {
         this.currentPodcast = null;
-        this.currentEpisode = null;
         this.currentEpisodeList = new ArrayList<Episode>();
         this.multiplePodcastsMode = true;
 
@@ -251,7 +281,6 @@ public class PodcastActivity extends EpisodeListActivity implements
     @Override
     public void onNoPodcastSelected() {
         this.currentPodcast = null;
-        this.currentEpisode = null;
         this.currentEpisodeList = null;
         this.multiplePodcastsMode = false;
 
