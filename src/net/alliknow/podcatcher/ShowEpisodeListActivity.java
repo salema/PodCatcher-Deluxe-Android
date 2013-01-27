@@ -51,8 +51,8 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
+    protected void onResume() {
+        super.onResume();
 
         // Get the load mode
         multiplePodcastsMode = getIntent().getExtras().getBoolean(PodcastActivity.MODE_KEY);
@@ -60,11 +60,6 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         // Get URL of podcast to load
         String podcastUrl = getIntent().getExtras().getString(PODCAST_URL_KEY);
         currentPodcast = podcastManager.findPodcastForUrl(podcastUrl);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
 
         // Prepare UI
         episodeListFragment.resetAndSpin();

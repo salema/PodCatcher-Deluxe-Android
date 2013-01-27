@@ -233,8 +233,8 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             case SMALL_PORTRAIT_VIEW:
                 // We need to launch a new activity to display the episode list
                 Intent intent = new Intent(this, ShowEpisodeListActivity.class);
-                intent.putExtra(EpisodeListActivity.PODCAST_URL_KEY, podcast.getUrl()
-                        .toString());
+                intent.putExtra(EpisodeListActivity.PODCAST_URL_KEY,
+                        podcast.getUrl().toString());
                 intent.putExtra(MODE_KEY, false);
 
                 startActivity(intent);
@@ -290,15 +290,20 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         this.multiplePodcastsMode = false;
 
         podcastListFragment.selectNone();
-        episodeListFragment.selectNone();
 
-        // If there is an episode list visible, reset it
-        if (episodeListFragment != null)
-            episodeListFragment.resetUi();
+        switch (viewMode) {
+            case SMALL_LANDSCAPE_VIEW:
+            case LARGE_PORTRAIT_VIEW:
+            case LARGE_LANDSCAPE_VIEW:
+                // If there is an episode list visible, reset it
+                episodeListFragment.selectNone();
+                episodeListFragment.resetUi();
 
-        // Update other UI
-        updateLogoViewMode();
-        updateDivider();
+                // Update other UI
+                updateLogoViewMode();
+                updateDivider();
+                break;
+        }
     }
 
     @Override
@@ -311,9 +316,11 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
     @Override
     public void onPodcastLoaded(Podcast podcast) {
-        super.onPodcastLoaded(podcast);
-
+        // In small portrait mode, work is done in separate activity
         if (viewMode != SMALL_PORTRAIT_VIEW) {
+            // All the work is done upstairs
+            super.onPodcastLoaded(podcast);
+
             // This will display the number of episodes
             podcastListFragment.refresh();
 

@@ -63,8 +63,8 @@ public class ShowEpisodeActivity extends EpisodeActivity {
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
+    protected void onResume() {
+        super.onResume();
 
         // Get URL of podcast to load
         String podcastUrl = getIntent().getExtras().getString(PODCAST_URL_KEY);
@@ -79,12 +79,8 @@ public class ShowEpisodeActivity extends EpisodeActivity {
                 if (episode.getMediaUrl().toString().equals(episodeUrl))
                     this.currentEpisode = episode;
         }
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
+        // Set episode in fragment UI
         episodeFragment.setEpisode(currentEpisode);
     }
 
