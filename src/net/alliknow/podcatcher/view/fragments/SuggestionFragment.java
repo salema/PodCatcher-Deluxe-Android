@@ -64,7 +64,7 @@ public class SuggestionFragment extends DialogFragment {
     /** Mail address to send new suggestions to */
     private static final String SUGGESTION_MAIL_ADDRESS = "suggestion@podcatcher-deluxe.com";
     /** Subject for mail with new suggestions */
-    private static final String SUGGESTION_MAIL_SUBJECT = "A proposal for a podcast suggestion in the Podcatcher apps";
+    private static final String SUGGESTION_MAIL_SUBJECT = "A proposal for a podcast suggestion in the Podcatcher Android apps";
 
     /** The call back we work on */
     private OnAddSuggestionListener listener;

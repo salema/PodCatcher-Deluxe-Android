@@ -17,14 +17,16 @@
 
 package net.alliknow.podcatcher.view.adapters;
 
-import java.text.DateFormat;
-import java.util.List;
+import android.content.Context;
+import android.text.format.DateUtils;
+import android.view.View;
+import android.view.ViewGroup;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.model.types.Episode;
-import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Adapter class used for the list of episodes.
@@ -35,8 +37,6 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
     protected List<Episode> list;
     /** Whether the podcast name should be shown */
     protected boolean showPodcastName = false;
-    /** Formatter to use for the episode date */
-    protected final DateFormat formatter = DateFormat.getDateInstance(DateFormat.LONG);
 
     /** String to use if no episode publication date available */
     private static final String NO_DATE = "---";
@@ -99,9 +99,14 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
             return NO_DATE;
         else if (episode.getPubDate() == null && showPodcastName)
             return episode.getPodcastName();
-        else if (showPodcastName)
-            return formatter.format(episode.getPubDate()) + SEPARATOR + episode.getPodcastName();
-        else
-            return formatter.format(episode.getPubDate());
+        else {
+            CharSequence date = DateUtils.getRelativeTimeSpanString(episode.getPubDate().getTime(),
+                    new Date().getTime(), DateUtils.HOUR_IN_MILLIS);
+
+            if (showPodcastName)
+                return date + SEPARATOR + episode.getPodcastName();
+            else
+                return date.toString();
+        }
     }
 }

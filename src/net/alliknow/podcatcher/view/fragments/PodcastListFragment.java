@@ -24,7 +24,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -52,7 +51,7 @@ import java.util.List;
 public class PodcastListFragment extends PodcatcherListFragment {
 
     /** The activity we are in (listens to user selection) */
-    private OnSelectPodcastListener selectedListener;
+    private OnSelectPodcastListener selectionListener;
 
     /** Remove podcast menu item */
     private MenuItem selectAllMenuItem;
@@ -72,8 +71,13 @@ public class PodcastListFragment extends PodcatcherListFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        // We need this to work...
-        selectedListener = (OnSelectPodcastListener) activity;
+        // Make sure our listener is present
+        try {
+            this.selectionListener = (OnSelectPodcastListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnSelectPodcastListener");
+        }
     }
 
     @Override
@@ -117,11 +121,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
                 return true;
             case R.id.podcast_select_all_menuitem:
-                if (selectedListener != null)
-                    selectedListener.onAllPodcastsSelected();
-                else
-                    Log.d(getClass().getSimpleName(),
-                            "All podcasts selected, but no listener attached");
+                selectionListener.onAllPodcastsSelected();
 
                 return true;
             case R.id.podcast_remove_menuitem:
@@ -138,10 +138,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
         Podcast selectedPodcast = (Podcast) adapter.getItem(position);
 
         // Alert parent activity
-        if (selectedListener != null)
-            selectedListener.onPodcastSelected(selectedPodcast);
-        else
-            Log.d(getClass().getSimpleName(), "Podcast selected, but no listener attached");
+        selectionListener.onPodcastSelected(selectedPodcast);
     }
 
     @Override

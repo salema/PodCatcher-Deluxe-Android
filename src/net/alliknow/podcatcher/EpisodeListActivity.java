@@ -20,6 +20,7 @@ package net.alliknow.podcatcher;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.view.View;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
@@ -58,7 +59,15 @@ public class EpisodeListActivity extends EpisodeActivity implements
     protected List<Episode> currentEpisodeList;
 
     @Override
-    public void onStart() {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        podcastManager.addLoadPodcastListener(this);
+        podcastManager.addLoadPodcastLogoListener(this);
+    }
+
+    @Override
+    protected void onStart() {
         super.onStart();
 
         String episodeListFragmentTag = getResources()
@@ -69,19 +78,8 @@ public class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        podcastManager.addLoadPodcastListener(this);
-        podcastManager.addLoadPodcastLogoListener(this);
-
-        // Make sure dividers (if any) reflect selection state
-        updateDivider();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onDestroy() {
+        super.onDestroy();
 
         podcastManager.removeLoadPodcastListener(this);
         podcastManager.removeLoadPodcastLogoListener(this);

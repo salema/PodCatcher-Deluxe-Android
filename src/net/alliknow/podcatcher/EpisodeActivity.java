@@ -21,6 +21,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.SeekBar;
@@ -83,7 +84,18 @@ public class EpisodeActivity extends BaseActivity implements
     }
 
     @Override
-    public void onStart() {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Make sure play service is started
+        startService(new Intent(this, PlayEpisodeService.class));
+        // Attach to play service
+        Intent intent = new Intent(this, PlayEpisodeService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStart() {
         super.onStart();
 
         String episodeFragmentTag = getResources().getString(R.string.episode_fragment_tag);
@@ -94,30 +106,19 @@ public class EpisodeActivity extends BaseActivity implements
         playerFragment = (PlayerFragment) getFragmentManager().findFragmentByTag(
                 playerFragmentTag);
 
-        // Make sure play service is started
-        startService(new Intent(this, PlayEpisodeService.class));
-        // Attach to play service
-        Intent intent = new Intent(this, PlayEpisodeService.class);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
         updatePlayer();
         startPlayProgressTimer();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
 
         stopPlayProgressTimer();
     }
 
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
 
         playUpdateTimer.cancel();

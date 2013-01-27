@@ -63,8 +63,8 @@ public class ShowEpisodeActivity extends EpisodeActivity {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
 
         // Get URL of podcast to load
         String podcastUrl = getIntent().getExtras().getString(PODCAST_URL_KEY);
@@ -73,13 +73,19 @@ public class ShowEpisodeActivity extends EpisodeActivity {
         // Find the podcast object
         Podcast selectedPodcast = podcastManager.findPodcastForUrl(podcastUrl);
 
+        // Find and (re)set the current episode to show
         if (selectedPodcast != null) {
             for (Episode episode : selectedPodcast.getEpisodes())
-                if (episode.getMediaUrl().toString().equals(episodeUrl)) {
+                if (episode.getMediaUrl().toString().equals(episodeUrl))
                     this.currentEpisode = episode;
-                    episodeFragment.setEpisode(episode);
-                }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        episodeFragment.setEpisode(currentEpisode);
     }
 
     @Override

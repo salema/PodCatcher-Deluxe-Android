@@ -40,14 +40,14 @@ import java.util.List;
  * Our main activity class. Works as the main controller. Depending on the view
  * state, other activities cooperate.
  */
-public class PodcastActivity extends EpisodeListActivity implements
+public class PodcastActivity extends EpisodeListActivity implements OnBackStackChangedListener,
         OnLoadPodcastListListener, OnChangePodcastListListener, OnSelectPodcastListener {
 
     /** The current podcast list fragment */
     protected PodcastListFragment podcastListFragment;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Enable strict mode when on debug
@@ -59,19 +59,7 @@ public class PodcastActivity extends EpisodeListActivity implements
         podcastManager.addChangePodcastListListener(this);
 
         // Make sure we are alerted on back stack changes
-        getFragmentManager().addOnBackStackChangedListener(
-                new OnBackStackChangedListener() {
-
-                    @Override
-                    public void onBackStackChanged() {
-                        // This only needed in small landscape mode and in case
-                        // we go back to the episode list
-                        if (viewMode == SMALL_LANDSCAPE_VIEW
-                                && getFragmentManager().getBackStackEntryCount() == 0) {
-                            onNoEpisodeSelected();
-                        }
-                    }
-                });
+        getFragmentManager().addOnBackStackChangedListener(this);
 
         // Inflate the main content view (depends on view mode)
         setContentView(R.layout.main);
@@ -81,6 +69,7 @@ public class PodcastActivity extends EpisodeListActivity implements
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
+        // Recover members (used to restore in onResume)
         if (savedInstanceState != null) {
             multiplePodcastsMode = savedInstanceState.getBoolean(MODE_KEY);
             currentPodcast = podcastManager.findPodcastForUrl(
@@ -91,7 +80,17 @@ public class PodcastActivity extends EpisodeListActivity implements
     }
 
     @Override
-    public void onStart() {
+    public void onBackStackChanged() {
+        // This only needed in small landscape mode and in case
+        // we go back to the episode list
+        if (viewMode == SMALL_LANDSCAPE_VIEW
+                && getFragmentManager().getBackStackEntryCount() == 0) {
+            onNoEpisodeSelected();
+        }
+    }
+
+    @Override
+    protected void onStart() {
         super.onStart();
 
         // Create and add fragments as needed
@@ -121,13 +120,13 @@ public class PodcastActivity extends EpisodeListActivity implements
                             getResources().getString(R.string.episode_list_fragment_tag))
                     .commit();
         }
-
-        // Load all podcasts? TODO Make this a preference
     }
 
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
+
+        // Load all podcasts? TODO Make this a preference
 
         // Check if podcast list is available - if so, set it
         List<Podcast> podcastList = podcastManager.getPodcastList();
@@ -149,13 +148,13 @@ public class PodcastActivity extends EpisodeListActivity implements
             onNoEpisodeSelected();
 
         // Set podcast logo view mode
-        podcastListFragment.setLogoVisibility(
-                viewMode == LARGE_LANDSCAPE_VIEW && !multiplePodcastsMode ?
-                        LogoViewMode.LARGE : LogoViewMode.SMALL);
+        updateLogoViewMode();
+        // Make sure dividers (if any) reflect selection state
+        updateDivider();
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
         outState.putBoolean(MODE_KEY, multiplePodcastsMode);
@@ -166,12 +165,13 @@ public class PodcastActivity extends EpisodeListActivity implements
     }
 
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
 
         // Unregister the listeners
         podcastManager.removeLoadPodcastListListener(this);
         podcastManager.removeChangePodcastListListener(this);
+        getFragmentManager().removeOnBackStackChangedListener(this);
     }
 
     @Override
@@ -224,6 +224,7 @@ public class PodcastActivity extends EpisodeListActivity implements
                 // List fragment is visible, make it show progress UI
                 episodeListFragment.resetAndSpin();
                 // Update other UI
+                updateLogoViewMode();
                 updateDivider();
 
                 // Load podcast
@@ -259,9 +260,13 @@ public class PodcastActivity extends EpisodeListActivity implements
                 // below as well
             case LARGE_PORTRAIT_VIEW:
             case LARGE_LANDSCAPE_VIEW:
+                // Prepare podcast list fragment
                 podcastListFragment.selectAll();
                 // List fragment is visible, make it show progress UI
                 episodeListFragment.resetAndSpin();
+                episodeListFragment.setShowPodcastNames(true);
+                // Update other UI
+                updateLogoViewMode();
                 updateDivider();
 
                 for (Podcast podcast : podcastManager.getPodcastList())
@@ -285,11 +290,14 @@ public class PodcastActivity extends EpisodeListActivity implements
         this.multiplePodcastsMode = false;
 
         podcastListFragment.selectNone();
+        episodeListFragment.selectNone();
 
         // If there is an episode list visible, reset it
         if (episodeListFragment != null)
             episodeListFragment.resetUi();
 
+        // Update other UI
+        updateLogoViewMode();
         updateDivider();
     }
 
@@ -330,6 +338,15 @@ public class PodcastActivity extends EpisodeListActivity implements
 
         if (podcast.equals(currentPodcast))
             podcastListFragment.showLogo(logo);
+    }
+
+    protected void updateLogoViewMode() {
+        if (podcastListFragment != null) {
+            // Set podcast logo view mode
+            podcastListFragment.setLogoVisibility(
+                    viewMode == LARGE_LANDSCAPE_VIEW && !multiplePodcastsMode ?
+                            LogoViewMode.LARGE : LogoViewMode.SMALL);
+        }
     }
 
     @Override

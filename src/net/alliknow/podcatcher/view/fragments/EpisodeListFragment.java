@@ -19,7 +19,6 @@ package net.alliknow.podcatcher.view.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,14 +39,22 @@ import java.util.List;
 public class EpisodeListFragment extends PodcatcherListFragment {
 
     /** The activity we are in (listens to user selection) */
-    private OnSelectEpisodeListener selectedListener;
+    private OnSelectEpisodeListener selectionListener;
+
+    /** Flag to store whether podcast names should be shown for episodes */
+    private boolean showPodcastNames = false;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        // This has to work
-        selectedListener = (OnSelectEpisodeListener) activity;
+        // Make sure our listener is present
+        try {
+            this.selectionListener = (OnSelectEpisodeListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnSelectEpisodeListener");
+        }
     }
 
     @Override
@@ -61,72 +68,19 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     public void onListItemClick(ListView list, View view, int position, long id) {
         Episode selectedEpisode = (Episode) adapter.getItem(position);
 
-        if (selectedListener != null)
-            selectedListener.onEpisodeSelected(selectedEpisode);
-        else
-            Log.d(getClass().getSimpleName(), "Episode selected, but no listener attached");
+        selectionListener.onEpisodeSelected(selectedEpisode);
     }
 
-    @Override
-    public void select(int position) {
-        super.select(position);
-        // this.selectedEpisode = selectedEpisode;
-        //
-        // // Episode is available
-        // if (currentPodcast != null &&
-        // currentPodcast.getEpisodes().contains(selectedEpisode))
-        // select(currentPodcast.getEpisodes().indexOf(selectedEpisode));
-        // // Episode is not in the current episode list
-        // else
-        // selectNone();
+    public void setShowPodcastNames(boolean show) {
+        this.showPodcastNames = show;
     }
-
-    // /**
-    // * Set the episode list to display and update the UI accordingly.
-    // *
-    // * @param list List of episodes to display.
-    // */
-    // public void prepareForPodcast(Podcast podcast) {
-    // multiplePodcastsMode = false;
-    // resetAndSpin();
-    //
-    // // Reset internal variables
-    // if (selectedListener != null)
-    // selectedListener.onNoEpisodeSelected();
-    //
-    // currentPodcast = podcast;
-    //
-    // if (!podcast.needsReload()) {
-    // episodeList = currentPodcast.getEpisodes();
-    // processNewEpisodes();
-    // }
-    // }
-    //
-    // public void prepareForAllPodcasts() {
-    // multiplePodcastsMode = true;
-    // resetAndSpin();
-    //
-    // // Reset internal variables
-    // if (selectedListener != null)
-    // selectedListener.onNoEpisodeSelected();
-    //
-    // currentPodcast = null;
-    // episodeList = new ArrayList<Episode>();
-    //
-    // for (Podcast podcast : data.getPodcastList())
-    // if (!podcast.needsReload()) {
-    // episodeList.addAll(podcast.getEpisodes());
-    // }
-    //
-    // Collections.sort(episodeList);
-    // }
 
     public void setEpisodes(List<Episode> episodeList) {
         showProgress = false;
         showLoadFailed = false;
 
         setListAdapter(new EpisodeListAdapter(getActivity(),
-                new ArrayList<Episode>(episodeList), selectAll));
+                new ArrayList<Episode>(episodeList), showPodcastNames));
 
         // Update UI
         if (episodeList.isEmpty())
@@ -138,6 +92,8 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     protected void reset() {
         if (emptyView != null)
             emptyView.setText(R.string.no_podcast_selected);
+
+        showPodcastNames = false;
 
         super.reset();
     }

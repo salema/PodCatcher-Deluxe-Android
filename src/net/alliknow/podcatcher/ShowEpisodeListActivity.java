@@ -51,14 +51,23 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     }
 
     @Override
-    public void onResume() {
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Get the load mode
+        multiplePodcastsMode = getIntent().getExtras().getBoolean(PodcastActivity.MODE_KEY);
+
+        // Get URL of podcast to load
+        String podcastUrl = getIntent().getExtras().getString(PODCAST_URL_KEY);
+        currentPodcast = podcastManager.findPodcastForUrl(podcastUrl);
+    }
+
+    @Override
+    protected void onResume() {
         super.onResume();
 
         // Prepare UI
         episodeListFragment.resetAndSpin();
-
-        // Get the load mode
-        multiplePodcastsMode = getIntent().getExtras().getBoolean(PodcastActivity.MODE_KEY);
 
         // We are in select all mode
         if (multiplePodcastsMode) {
@@ -68,13 +77,11 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
                 podcastManager.load(podcast);
         } // Single podcast to load
         else {
-            // Get URL of podcast to load
-            String podcastUrl = getIntent().getExtras().getString(PODCAST_URL_KEY);
-            currentPodcast = podcastManager.findPodcastForUrl(podcastUrl);
-
             // Go load it if found
             if (currentPodcast != null)
                 podcastManager.load(currentPodcast);
+            else
+                episodeListFragment.showLoadFailed();
         }
     }
 
