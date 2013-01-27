@@ -50,12 +50,11 @@ public class ShowEpisodeActivity extends EpisodeActivity {
 
                 if (savedInstanceState == null) {
                     // During initial setup, plug in the details fragment.
-                    EpisodeFragment episode = new EpisodeFragment();
-                    // Set episode with URL from intent
-                    // (getIntent().getExtras());
+                    episodeFragment = new EpisodeFragment();
+
                     getFragmentManager()
                             .beginTransaction()
-                            .add(R.id.content, episode,
+                            .add(R.id.content, episodeFragment,
                                     getResources().getString(R.string.episode_fragment_tag))
                             .commit();
                 }

@@ -17,6 +17,7 @@
 
 package net.alliknow.podcatcher;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import net.alliknow.podcatcher.model.types.Episode;
@@ -33,6 +34,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        System.out.println("Create");
 
         // Check if we need this activity at all
         if (viewMode != SMALL_PORTRAIT_VIEW) {
@@ -40,19 +42,38 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         } else {
             setContentView(R.layout.main);
 
-            if (savedInstanceState == null)
+            if (savedInstanceState == null) {
                 // During initial setup, plug in the episode list fragment.
+                episodeListFragment = new EpisodeListFragment();
+
                 getFragmentManager()
                         .beginTransaction()
-                        .add(R.id.content, new EpisodeListFragment(),
+                        .add(R.id.content, episodeListFragment,
                                 getResources().getString(R.string.episode_list_fragment_tag))
                         .commit();
+            }
         }
+    }
+
+    @Override
+    protected void onStart() {
+        // TODO Auto-generated method stub
+        super.onStart();
+        System.out.println("Start");
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        // TODO Auto-generated method stub
+        super.onNewIntent(intent);
+        System.out.println("new intent");
+        setIntent(intent);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        System.out.println("Resume");
 
         // Get the load mode
         multiplePodcastsMode = getIntent().getExtras().getBoolean(PodcastActivity.MODE_KEY);
@@ -78,6 +99,29 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
             else
                 episodeListFragment.showLoadFailed();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        // TODO Auto-generated method stub
+        super.onPause();
+
+        System.out.println("Pause");
+    }
+
+    @Override
+    protected void onStop() {
+        // TODO Auto-generated method stub
+        super.onStop();
+        System.out.println("Stop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        // TODO Auto-generated method stub
+        super.onDestroy();
+
+        System.out.println("Destroy");
     }
 
     @Override

@@ -70,23 +70,11 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         super.onRestoreInstanceState(savedInstanceState);
 
         // Recover members (used to restore in onResume)
-        if (savedInstanceState != null) {
-            multiplePodcastsMode = savedInstanceState.getBoolean(MODE_KEY);
-            currentPodcast = podcastManager.findPodcastForUrl(
-                    savedInstanceState.getString(PODCAST_URL_KEY));
-            currentEpisode = podcastManager.findEpisodeForUrl(
-                    savedInstanceState.getString(EPISODE_URL_KEY));
-        }
-    }
-
-    @Override
-    public void onBackStackChanged() {
-        // This only needed in small landscape mode and in case
-        // we go back to the episode list
-        if (viewMode == SMALL_LANDSCAPE_VIEW
-                && getFragmentManager().getBackStackEntryCount() == 0) {
-            onNoEpisodeSelected();
-        }
+        multiplePodcastsMode = savedInstanceState.getBoolean(MODE_KEY);
+        currentPodcast = podcastManager.findPodcastForUrl(
+                savedInstanceState.getString(PODCAST_URL_KEY));
+        currentEpisode = podcastManager.findEpisodeForUrl(
+                savedInstanceState.getString(EPISODE_URL_KEY));
     }
 
     @Override
@@ -175,6 +163,16 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     }
 
     @Override
+    public void onBackStackChanged() {
+        // This only needed in small landscape mode and in case
+        // we go back to the episode list
+        if (viewMode == SMALL_LANDSCAPE_VIEW
+                && getFragmentManager().getBackStackEntryCount() == 0) {
+            onNoEpisodeSelected();
+        }
+    }
+
+    @Override
     public void onPodcastListLoaded(List<Podcast> podcastList) {
         // Make podcast list show
         if (podcastListFragment != null)
@@ -236,6 +234,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                 intent.putExtra(EpisodeListActivity.PODCAST_URL_KEY,
                         podcast.getUrl().toString());
                 intent.putExtra(MODE_KEY, false);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
@@ -308,7 +307,8 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
     @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
-        super.onPodcastLoadProgress(podcast, progress);
+        if (viewMode != SMALL_PORTRAIT_VIEW)
+            super.onPodcastLoadProgress(podcast, progress);
 
         if (viewMode != SMALL_PORTRAIT_VIEW && multiplePodcastsMode)
             podcastListFragment.showProgress(podcastManager.indexOf(podcast), progress);
