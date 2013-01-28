@@ -234,7 +234,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                 intent.putExtra(EpisodeListActivity.PODCAST_URL_KEY,
                         podcast.getUrl().toString());
                 intent.putExtra(MODE_KEY, false);
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);

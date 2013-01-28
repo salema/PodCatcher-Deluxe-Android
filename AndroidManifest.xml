@@ -40,7 +40,7 @@
         android:logo="@drawable/logo"
         android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
         <activity
-            android:name=".PodcastActivity" android:launchMode="singleInstance" >
+            android:name=".PodcastActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

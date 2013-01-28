@@ -17,7 +17,6 @@
 
 package net.alliknow.podcatcher;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import net.alliknow.podcatcher.model.types.Episode;
@@ -60,14 +59,6 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         // TODO Auto-generated method stub
         super.onStart();
         System.out.println("Start");
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        // TODO Auto-generated method stub
-        super.onNewIntent(intent);
-        System.out.println("new intent");
-        setIntent(intent);
     }
 
     @Override
