@@ -39,5 +39,6 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:gravity="top|center_horizontal"
-        android:textSize="@dimen/font_size_small" />
+        android:textSize="@dimen/font_size_small"
+        android:text="@string/wait" />
 </LinearLayout>

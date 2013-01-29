@@ -97,7 +97,7 @@ public class ProgressView extends LinearLayout {
      */
     public void reset() {
         progressBar.setVisibility(VISIBLE);
-        progressTextView.setText(null);
+        progressTextView.setText(R.string.wait);
         progressTextView.setTextColor(getResources().getColor(R.color.text_secondary));
     }
 }
