@@ -21,6 +21,7 @@
     <string name="app_name">Simple Podcatcher</string>
     <string name="about">Acerca Simple Podcatcher</string>
     <string name="help">Ayuda</string>
+    <string name="wait">Esperar</string>
     <string name="connect">Conectar</string>
     <string name="load">Cargar</string>
     <string name="stop">Stop</string>
