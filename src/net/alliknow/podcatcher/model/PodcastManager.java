@@ -18,6 +18,7 @@
 package net.alliknow.podcatcher.model;
 
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
 
@@ -133,7 +134,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             // Download podcast RSS feed (async)
             LoadPodcastTask loadPodcastTask = new LoadPodcastTask(this);
             loadPodcastTask.preventZippedTransfer(podcatcher.isOnFastConnection());
-            loadPodcastTask.execute(podcast);
+            // loadPodcastTask.execute(podcast);
+            loadPodcastTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
 
             loadPodcastTasks.put(podcast, loadPodcastTask);
         }
