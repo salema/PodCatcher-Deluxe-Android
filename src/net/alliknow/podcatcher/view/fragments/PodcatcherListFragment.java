@@ -49,13 +49,13 @@ public abstract class PodcatcherListFragment extends ListFragment {
     /** The progress bar */
     protected ProgressView progressView;
 
-    /** Status flag indicating that our view is created */
-    protected boolean viewCreated = false;
-
     /** Flags for internal state */
     protected boolean showProgress = false;
     protected boolean showLoadFailed = false;
     protected boolean selectAll = false;
+
+    /** Status flag indicating that our view is created */
+    private boolean viewCreated = false;
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -97,8 +97,10 @@ public abstract class PodcatcherListFragment extends ListFragment {
     public void select(int position) {
         selectAll = false;
 
-        adapter.setSelectedPosition(position);
-        scrollListView(position);
+        if (adapter != null && !showProgress) {
+            adapter.setSelectedPosition(position);
+            scrollListView(position);
+        }
     }
 
     /**
@@ -107,8 +109,8 @@ public abstract class PodcatcherListFragment extends ListFragment {
     public void selectAll() {
         selectAll = true;
 
-        if (getListAdapter() != null && !showProgress)
-            ((PodcatcherBaseListAdapter) getListAdapter()).setSelectAll();
+        if (adapter != null && !showProgress)
+            adapter.setSelectAll();
     }
 
     /**
@@ -117,15 +119,16 @@ public abstract class PodcatcherListFragment extends ListFragment {
     public void selectNone() {
         selectAll = false;
 
-        if (getListAdapter() != null && !showProgress)
-            ((PodcatcherBaseListAdapter) getListAdapter()).setSelectNone();
+        if (adapter != null && !showProgress)
+            adapter.setSelectNone();
     }
 
     /**
      * Refresh the list and its views.
      */
     public void refresh() {
-        adapter.notifyDataSetChanged();
+        if (adapter != null)
+            adapter.notifyDataSetChanged();
     }
 
     /**

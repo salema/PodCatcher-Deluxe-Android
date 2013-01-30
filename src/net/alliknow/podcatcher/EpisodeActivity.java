@@ -17,6 +17,7 @@
 
 package net.alliknow.podcatcher;
 
+import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -40,7 +41,7 @@ import java.util.TimerTask;
 /**
  * Show episode activity.
  */
-public class EpisodeActivity extends BaseActivity implements
+public abstract class EpisodeActivity extends BaseActivity implements
         PlayerListener, PlayServiceListener {
 
     /** The current episode fragment */
@@ -94,17 +95,26 @@ public class EpisodeActivity extends BaseActivity implements
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
     }
 
+    /**
+     * Get the fragments needed by this activity from the fragment manager and
+     * set member fields. Sub-classes should call this after setting their
+     * content view or plugging in fragments. Sub-classes that use their own
+     * fragments should also extend this. Members will only be set if
+     * <code>null</code>.
+     */
+    protected void findFragments() {
+        // The player fragment to use
+        if (playerFragment == null)
+            playerFragment = (PlayerFragment) find(R.string.player_fragment_tag);
+
+        // The episode fragment to use
+        if (episodeFragment == null)
+            episodeFragment = (EpisodeFragment) find(R.string.episode_fragment_tag);
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
-
-        String episodeFragmentTag = getResources().getString(R.string.episode_fragment_tag);
-        String playerFragmentTag = getResources().getString(R.string.player_fragment_tag);
-
-        episodeFragment = (EpisodeFragment) getFragmentManager().findFragmentByTag(
-                episodeFragmentTag);
-        playerFragment = (PlayerFragment) getFragmentManager().findFragmentByTag(
-                playerFragmentTag);
 
         updatePlayer();
         startPlayProgressTimer();
@@ -133,7 +143,7 @@ public class EpisodeActivity extends BaseActivity implements
     public void onToggleLoad() {
         if (service.loadedEpisode(currentEpisode))
             onPlaybackComplete();
-        else if (currentEpisode != null && service != null) {
+        else if (currentEpisode != null) {
             stopPlayProgressTimer();
 
             service.playEpisode(currentEpisode);
@@ -276,6 +286,11 @@ public class EpisodeActivity extends BaseActivity implements
             playUpdateTimerTask.cancel();
             playUpdateTimerTask = null;
         }
+    }
+
+    protected Fragment find(int tagId) {
+        String tag = getResources().getString(tagId);
+        return getFragmentManager().findFragmentByTag(tag);
     }
 
     /** Defines callbacks for service binding, passed to bindService() */

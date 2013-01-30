@@ -17,7 +17,9 @@
 
 package net.alliknow.podcatcher;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
@@ -33,12 +35,12 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.out.println("Create");
 
         // Check if we need this activity at all
         if (viewMode != SMALL_PORTRAIT_VIEW) {
             finish();
         } else {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
             setContentView(R.layout.main);
 
             if (savedInstanceState == null) {
@@ -50,31 +52,27 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
                         .add(R.id.content, episodeListFragment,
                                 getResources().getString(R.string.episode_list_fragment_tag))
                         .commit();
+
+                getFragmentManager().executePendingTransactions();
+            }
+
+            findFragments();
+
+            if (getIntent().getExtras() != null) {
+                // Prepare UI
+                episodeListFragment.resetAndSpin();
+                processIntent();
             }
         }
     }
 
-    @Override
-    protected void onStart() {
-        // TODO Auto-generated method stub
-        super.onStart();
-        System.out.println("Start");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        System.out.println("Resume");
-
+    private void processIntent() {
         // Get the load mode
         multiplePodcastsMode = getIntent().getExtras().getBoolean(PodcastActivity.MODE_KEY);
 
         // Get URL of podcast to load
         String podcastUrl = getIntent().getExtras().getString(PODCAST_URL_KEY);
         currentPodcast = podcastManager.findPodcastForUrl(podcastUrl);
-
-        // Prepare UI
-        episodeListFragment.resetAndSpin();
 
         // We are in select all mode
         if (multiplePodcastsMode) {
@@ -85,34 +83,37 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         } // Single podcast to load
         else {
             // Go load it if found
-            if (currentPodcast != null)
+            if (currentPodcast != null) {
+                getActionBar().setTitle(currentPodcast.getName());
                 podcastManager.load(currentPodcast);
-            else
+            } else
                 episodeListFragment.showLoadFailed();
         }
     }
 
     @Override
-    protected void onPause() {
-        // TODO Auto-generated method stub
-        super.onPause();
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // This is called when the Home (Up) button is pressed
+                Intent parentActivityIntent = new Intent(this, PodcastActivity.class);
+                parentActivityIntent.addFlags(
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(parentActivityIntent);
 
-        System.out.println("Pause");
+                finish();
+
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
-    protected void onStop() {
-        // TODO Auto-generated method stub
-        super.onStop();
-        System.out.println("Stop");
-    }
+    public void onPodcastLoaded(Podcast podcast) {
+        super.onPodcastLoaded(podcast);
 
-    @Override
-    protected void onDestroy() {
-        // TODO Auto-generated method stub
-        super.onDestroy();
-
-        System.out.println("Destroy");
+        getActionBar().setSubtitle("Loaded");
     }
 
     @Override

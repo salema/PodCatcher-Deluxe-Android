@@ -50,6 +50,9 @@ import java.util.List;
  */
 public class PodcastListFragment extends PodcatcherListFragment {
 
+    /** The list of podcasts currently shown */
+    private List<Podcast> currentPodcastList;
+
     /** The activity we are in (listens to user selection) */
     private OnSelectPodcastListener selectionListener;
 
@@ -63,9 +66,13 @@ public class PodcastListFragment extends PodcatcherListFragment {
     /** The current logo view mode */
     private LogoViewMode mode = LogoViewMode.SMALL;
 
+    /** The options available for the logo view */
     public enum LogoViewMode {
         SMALL, LARGE
     };
+
+    /** Status flag indicating that our view is created */
+    private boolean viewCreated = false;
 
     @Override
     public void onAttach(Activity activity) {
@@ -99,10 +106,17 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        logoView = (ImageView) view.findViewById(R.id.podcast_image);
-        getListView().setMultiChoiceModeListener(new PodcastListContextListener(this));
-
         super.onViewCreated(view, savedInstanceState);
+
+        logoView = (ImageView) view.findViewById(R.id.podcast_image);
+        listView.setMultiChoiceModeListener(new PodcastListContextListener(this));
+
+        viewCreated = true;
+
+        // This will make sure we show the right information once the view
+        // controls are established (the list might have been set earlier)
+        if (currentPodcastList != null)
+            setPodcastList(currentPodcastList);
     }
 
     @Override
@@ -142,36 +156,56 @@ public class PodcastListFragment extends PodcatcherListFragment {
     }
 
     @Override
+    public void onDestroyView() {
+        viewCreated = false;
+
+        super.onDestroyView();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
 
-        getActivity().startActionMode(null);
+        // getActivity().startActionMode(null);
     }
 
     public void setPodcastList(List<Podcast> podcastList) {
+        this.currentPodcastList = podcastList;
+
         this.showProgress = false;
 
         // Maps the podcast list items to the list UI
-        setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
-
         // Only update the UI if it has been inflated
-        if (viewCreated)
+        if (viewCreated) {
+            setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
+
+            // Make sure to match selection state
+            if (selectAll)
+                selectAll();
+            else if (adapter.getSelectedPosition() >= 0)
+                select(adapter.getSelectedPosition());
+            else
+                selectNone();
+
             updateUiElementVisibility();
+        }
     }
 
     @Override
     public void select(int position) {
         super.select(position);
 
-        Podcast selectedPodcast = (Podcast) adapter.getItem(position);
+        if (viewCreated) {
+            Podcast selectedPodcast = (Podcast) adapter.getItem(position);
 
-        // Prepare UI
-        if (selectedPodcast.getLogo() == null)
-            logoView.setImageResource(R.drawable.default_podcast_logo);
-        else
-            logoView.setImageBitmap(selectedPodcast.getLogo());
+            // Prepare UI
+            if (selectedPodcast.getLogo() == null)
+                logoView.setImageResource(R.drawable.default_podcast_logo);
+            else
+                logoView.setImageBitmap(selectedPodcast.getLogo());
 
-        updateUiElementVisibility();
+            updateUiElementVisibility();
+        }
     }
 
     @Override
@@ -179,17 +213,28 @@ public class PodcastListFragment extends PodcatcherListFragment {
         super.selectAll();
 
         // Prepare UI
-        logoView.setImageResource(R.drawable.default_podcast_logo);
-        updateUiElementVisibility();
+        if (viewCreated) {
+            logoView.setImageResource(R.drawable.default_podcast_logo);
+            updateUiElementVisibility();
+        }
     }
 
     @Override
     public void selectNone() {
         super.selectNone();
 
-        logoView.setImageResource(R.drawable.default_podcast_logo);
+        if (viewCreated) {
+            logoView.setImageResource(R.drawable.default_podcast_logo);
+        }
     }
 
+    /**
+     * Show progress for a certain position in the podcast list. Progress will
+     * ignored if the item is not visible.
+     * 
+     * @param position Position in list to show progress for.
+     * @param progress Progress information to show.
+     */
     public void showProgress(int position, Progress progress) {
         // To prevent this if we are not ready to handle progress update
         // e.g. on app termination
@@ -208,15 +253,16 @@ public class PodcastListFragment extends PodcatcherListFragment {
     }
 
     public void showLogo(Bitmap logo) {
-        logoView.setImageBitmap(logo);
+        if (viewCreated)
+            logoView.setImageBitmap(logo);
     }
 
     public int getLogoViewWidth() {
-        return logoView.getWidth();
+        return viewCreated ? logoView.getWidth() : 100;
     }
 
     public int getLogoViewHeight() {
-        return logoView.getHeight();
+        return viewCreated ? logoView.getHeight() : 100;
     }
 
     @Override

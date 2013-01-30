@@ -140,8 +140,8 @@ public class PlayerFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
 
         setLoadMenuItemVisibility(showLoadMenuItem, loadMenuItemState);
         setPlayerVisibilility(showPlayer);
@@ -224,9 +224,9 @@ public class PlayerFragment extends Fragment {
      */
     public void updatePlayerTitle(Episode playingEpisode) {
         // We can only do this after the fragment's widgets are created
-        if (viewCreated)
-            titleView.setText(Html.fromHtml("<a href=\"\">" + playingEpisode + " - "
-                    + playingEpisode + "</a>"));
+        if (viewCreated && playingEpisode != null)
+            titleView.setText(Html.fromHtml("<a href=\"\">" + playingEpisode.getName() + " - "
+                    + playingEpisode.getPodcastName() + "</a>"));
     }
 
     /**

@@ -38,7 +38,7 @@ import java.util.List;
 /**
  * Show list of episodes activity.
  */
-public class EpisodeListActivity extends EpisodeActivity implements
+public abstract class EpisodeListActivity extends EpisodeActivity implements
         OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectEpisodeListener {
 
     /** The current episode list fragment */
@@ -67,14 +67,12 @@ public class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void findFragments() {
+        super.findFragments();
 
-        String episodeListFragmentTag = getResources()
-                .getString(R.string.episode_list_fragment_tag);
-
-        episodeListFragment = (EpisodeListFragment) getFragmentManager().findFragmentByTag(
-                episodeListFragmentTag);
+        // The episode list fragment
+        if (episodeListFragment == null)
+            episodeListFragment = (EpisodeListFragment) find(R.string.episode_list_fragment_tag);
     }
 
     @Override

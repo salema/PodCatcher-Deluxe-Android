@@ -426,9 +426,10 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     }
 
     private void putForeground() {
-        // This will bring back to app (activity in single mode!)
+        // This will bring back to app
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
-                new Intent(getApplicationContext(), PodcastActivity.class),
+                new Intent(getApplicationContext(), PodcastActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Prepare the notification

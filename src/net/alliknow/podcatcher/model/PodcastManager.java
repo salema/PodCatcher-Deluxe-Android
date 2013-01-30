@@ -262,6 +262,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     @SuppressWarnings("unchecked")
     public void addPodcast(Podcast newPodcast) {
         if (!podcastList.contains(newPodcast)) {
+            // Add the new podcast
             podcastList.add(newPodcast);
             Collections.sort(podcastList);
 
@@ -279,11 +280,12 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     @SuppressWarnings("unchecked")
     public void remove(int index) {
         if (index >= 0 && index < podcastList.size()) {
+            // Remove podcast at given position
+            Podcast removedPodcast = podcastList.remove(index);
+
             // Alert listeners of removed podcast
             for (OnChangePodcastListListener listener : changePodcastListListeners)
-                listener.onPodcastRemoved(podcastList.get(index));
-
-            podcastList.remove(index);
+                listener.onPodcastRemoved(removedPodcast);
 
             // Store changed list
             new StorePodcastListTask(podcatcher.getApplicationContext()).execute(podcastList);

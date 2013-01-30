@@ -18,6 +18,7 @@
 package net.alliknow.podcatcher;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
@@ -35,36 +36,57 @@ public class ShowEpisodeActivity extends EpisodeActivity {
         switch (viewMode) {
             case LARGE_PORTRAIT_VIEW:
             case LARGE_LANDSCAPE_VIEW:
-                // In large layouts we do not need this activity at all
-                finish();
-                break;
             case SMALL_LANDSCAPE_VIEW:
-                // To recover from configuration changes here, we have
-                // to send an intent to the main activity and tell it
-                // to show the episode
-                // TODO Send intent
+                // In large or landscape layouts we do not need this activity at
+                // all, so finish it off
                 finish();
                 break;
             case SMALL_PORTRAIT_VIEW:
+                // Set the content view
                 setContentView(R.layout.main);
 
+                // During initial setup, plug in the details fragment.
                 if (savedInstanceState == null) {
-                    // During initial setup, plug in the details fragment.
                     episodeFragment = new EpisodeFragment();
-
                     getFragmentManager()
                             .beginTransaction()
                             .add(R.id.content, episodeFragment,
                                     getResources().getString(R.string.episode_fragment_tag))
                             .commit();
                 }
+
+                // Set fragment members
+                findFragments();
+
+                // Enable navigation
+                getActionBar().setDisplayHomeAsUpEnabled(true);
+
+                // Set episode in fragment UI
+                restoreCurrentEpisodeFromIntent();
+                episodeFragment.setEpisode(currentEpisode);
         }
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // This is called when the Home (Up) button is pressed
+                finish();
 
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+    }
+
+    private void restoreCurrentEpisodeFromIntent() {
         // Get URL of podcast to load
         String podcastUrl = getIntent().getExtras().getString(PODCAST_URL_KEY);
         String episodeUrl = getIntent().getExtras().getString(EPISODE_URL_KEY);
@@ -78,14 +100,5 @@ public class ShowEpisodeActivity extends EpisodeActivity {
                 if (episode.getMediaUrl().toString().equals(episodeUrl))
                     this.currentEpisode = episode;
         }
-
-        // Set episode in fragment UI
-        episodeFragment.setEpisode(currentEpisode);
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
     }
 }

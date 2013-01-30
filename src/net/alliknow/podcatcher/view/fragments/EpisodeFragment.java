@@ -72,14 +72,9 @@ public class EpisodeFragment extends Fragment {
         dividerView = getView().findViewById(R.id.episode_divider);
 
         viewCreated = true;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
 
         // This will make sure we show the right information once the view
-        // controls are established
+        // controls are established (the episode might have been set earlier)
         if (currentEpisode != null)
             setEpisode(currentEpisode);
     }

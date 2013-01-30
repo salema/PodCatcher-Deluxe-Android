@@ -10,6 +10,5 @@ Read up on sizes and densities again: http://developer.android.com/design/style/
 Try to understand how list selection actually works (again!)
 Make sure services thread heavy operations
 Check for config changes other then orientation to behave correctly
-Try this for podcast loading: loadPodcastTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
-All loading is done in the model
-All call-backs are activities (follow MVC pattern!)
+Review the PendingIntent logic on putForeground
+Loading podcast in AddPodcastFragment should be exclusive (other listeners should not be alerted) - maybe add small retained fragment to hold load task

@@ -38,11 +38,17 @@ import java.util.List;
  */
 public class EpisodeListFragment extends PodcatcherListFragment {
 
+    /** The list of episode we are currently showing. */
+    private List<Episode> currentEpisodeList;
+
     /** The activity we are in (listens to user selection) */
     private OnSelectEpisodeListener selectionListener;
 
     /** Flag to store whether podcast names should be shown for episodes */
     private boolean showPodcastNames = false;
+
+    /** Status flag indicating that our view is created */
+    private boolean viewCreated = false;
 
     @Override
     public void onAttach(Activity activity) {
@@ -65,32 +71,64 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     }
 
     @Override
-    public void onListItemClick(ListView list, View view, int position, long id) {
-        Episode selectedEpisode = (Episode) adapter.getItem(position);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
+        viewCreated = true;
+
+        // This will make sure we show the right information once the view
+        // controls are established (the list might have been set earlier)
+        if (currentEpisodeList != null)
+            setEpisodes(currentEpisodeList);
+    }
+
+    @Override
+    public void onListItemClick(ListView list, View view, int position, long id) {
+        // Find selected episode and alert listener
+        Episode selectedEpisode = (Episode) adapter.getItem(position);
         selectionListener.onEpisodeSelected(selectedEpisode);
     }
 
+    @Override
+    public void onDestroyView() {
+        viewCreated = false;
+
+        super.onDestroyView();
+    }
+
+    /**
+     * Set whether the fragment should show the podcast name for each episode
+     * item. Change will be reflected upon next call of
+     * <code>setEpisodes()</code>.
+     * 
+     * @param show Whether to show the podcast names.
+     */
     public void setShowPodcastNames(boolean show) {
         this.showPodcastNames = show;
     }
 
     public void setEpisodes(List<Episode> episodeList) {
+        this.currentEpisodeList = episodeList;
+
         showProgress = false;
         showLoadFailed = false;
 
-        setListAdapter(new EpisodeListAdapter(getActivity(),
-                new ArrayList<Episode>(episodeList), showPodcastNames));
-
         // Update UI
-        if (episodeList.isEmpty())
-            emptyView.setText(R.string.no_episodes);
-        updateUiElementVisibility();
+        if (viewCreated) {
+            // Update the list
+            setListAdapter(new EpisodeListAdapter(getActivity(),
+                    new ArrayList<Episode>(episodeList), showPodcastNames));
+
+            // Update other UI elements
+            if (episodeList.isEmpty())
+                emptyView.setText(R.string.no_episodes);
+            updateUiElementVisibility();
+        }
     }
 
     @Override
     protected void reset() {
-        if (emptyView != null)
+        if (viewCreated)
             emptyView.setText(R.string.no_podcast_selected);
 
         showPodcastNames = false;
@@ -103,7 +141,8 @@ public class EpisodeListFragment extends PodcatcherListFragment {
      */
     @Override
     public void showLoadFailed() {
-        progressView.showError(R.string.error_podcast_load);
+        if (viewCreated)
+            progressView.showError(R.string.error_podcast_load);
 
         super.showLoadFailed();
     }
