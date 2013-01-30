@@ -15,8 +15,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
- */-->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ */
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginRight="@dimen/player_right_padding"
@@ -70,6 +72,6 @@
         android:text="@string/pause"
         android:textColor="@drawable/button_label"
         android:textSize="@dimen/font_size_default"
-        android:singleLine="true" 
+        android:singleLine="true"
         android:ellipsize="marquee" />
 </LinearLayout>

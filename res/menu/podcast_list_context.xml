@@ -17,10 +17,10 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/podcast_remove_contextmenuitem"
         android:icon="@drawable/ic_menu_delete"
         android:showAsAction="always|withText"
-        android:title="@string/remove"/>
+        android:title="@string/remove" />
 </menu>

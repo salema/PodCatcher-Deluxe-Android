@@ -17,14 +17,15 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal" >
+    android:orientation="horizontal">
     <fragment
+        class="net.alliknow.podcatcher.view.fragments.PodcastListFragment"
         android:id="@+id/podcast_list"
         android:tag="@string/podcast_list_fragment_tag"
-        android:name="net.alliknow.podcatcher.view.fragments.PodcastListFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2" />
@@ -34,9 +35,9 @@
         android:layout_height="match_parent"
         android:background="@color/divider_off" />
     <fragment
+        class="net.alliknow.podcatcher.view.fragments.EpisodeListFragment"
         android:id="@+id/episode_list"
         android:tag="@string/episode_list_fragment_tag"
-        android:name="net.alliknow.podcatcher.view.fragments.EpisodeListFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="3" />
@@ -51,14 +52,14 @@
         android:layout_weight="4"
         android:orientation="vertical">
         <fragment
+            class="net.alliknow.podcatcher.view.fragments.EpisodeFragment"
             android:id="@+id/episode"
             android:tag="@string/episode_fragment_tag"
-            android:name="net.alliknow.podcatcher.view.fragments.EpisodeFragment"
-            android:layout_width="match_parent"  
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />
         <fragment
-            android:name="net.alliknow.podcatcher.view.fragments.PlayerFragment"
+            class="net.alliknow.podcatcher.view.fragments.PlayerFragment"
             android:id="@+id/player"
             android:tag="@string/player_fragment_tag"
             android:layout_height="wrap_content"
