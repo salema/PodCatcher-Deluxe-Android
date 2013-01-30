@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -20,33 +20,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal" >
-    <fragment
-        android:id="@+id/podcast_list"
-        android:name="net.alliknow.podcatcher.fragments.PodcastListFragment"
-        android:layout_width="0dp"
+    android:orientation="horizontal">
+    <FrameLayout android:id="@+id/content"
         android:layout_height="match_parent"
+        android:layout_width="0dp"
         android:layout_weight="2" />
     <View
         android:id="@+id/divider_first"
         android:layout_width="@dimen/divider_width"
         android:layout_height="match_parent"
         android:background="@color/divider_off" />
-    <fragment
-        android:id="@+id/episode_list"
-        android:name="net.alliknow.podcatcher.fragments.EpisodeListFragment"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="3" />
-    <View
-        android:id="@+id/divider_second"
-        android:layout_width="@dimen/divider_width"
-        android:layout_height="match_parent"
-        android:background="@color/divider_off" />
-    <fragment
-        android:id="@+id/episode"
-        android:name="net.alliknow.podcatcher.fragments.EpisodeFragment"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="4" />
+        android:layout_weight="3"
+        android:orientation="vertical">
+        <FrameLayout android:id="@+id/right"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        <fragment class="net.alliknow.podcatcher.view.fragments.PlayerFragment"
+            android:id="@+id/player"
+            android:tag="@string/player_fragment_tag"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent" />
+    </LinearLayout>
 </LinearLayout>

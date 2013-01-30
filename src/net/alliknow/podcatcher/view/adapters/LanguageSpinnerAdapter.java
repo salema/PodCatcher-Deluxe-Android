@@ -1,0 +1,50 @@
+/** Copyright 2012, 2013 Kevin Hausmann
+ *
+ * This file is part of PodCatcher Deluxe.
+ *
+ * PodCatcher Deluxe is free software: you can redistribute it 
+ * and/or modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * PodCatcher Deluxe is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package net.alliknow.podcatcher.view.adapters;
+
+import net.alliknow.podcatcher.model.types.Language;
+import net.alliknow.podcatcher.view.fragments.SuggestionFragment;
+import android.content.Context;
+
+/**
+ * Adapter for the language spinner in the suggestion dialog.
+ */
+public class LanguageSpinnerAdapter extends PodcatcherBaseSpinnerAdapter {
+
+    /**
+     * Create new adapter.
+     * 
+     * @param context The current context.
+     */
+    public LanguageSpinnerAdapter(Context context) {
+        super(context);
+    }
+
+    @Override
+    public Object getItem(int position) {
+        if (position == 0)
+            return SuggestionFragment.FILTER_WILDCARD;
+        else
+            return Language.values()[position - 1];
+    }
+
+    @Override
+    public int getCount() {
+        return Language.values().length + 1;
+    }
+}

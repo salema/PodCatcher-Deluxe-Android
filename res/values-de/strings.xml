@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -21,6 +21,7 @@
     <string name="app_name">Simple Podcatcher</string>
     <string name="about">Über Simple Podcatcher</string>
     <string name="help">Hilfe</string>
+    <string name="wait">Warten</string>
     <string name="connect">Verbinden</string>
     <string name="load">Laden</string>
     <string name="stop">Stop</string>

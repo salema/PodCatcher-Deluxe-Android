@@ -1,4 +1,4 @@
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -14,24 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
-package net.alliknow.podcatcher.listeners;
 
-import net.alliknow.podcatcher.types.Podcast;
+package net.alliknow.podcatcher.listeners;
 
 /**
  * Interface definition for a callback to be invoked when a podcast is added.
  */
 public interface OnAddPodcastListener {
-	
-	/**
-	 * Called on listener when podcast is added.
-	 * @param newPodcast Podcast to add.
-	 */
-	public void addPodcast(Podcast newPodcast);
-	
-	/**
-	 * Called on listener if the user wants to 
-	 * see suggestions for podcasts to add.
-	 */
-	public void showSuggestions();
+
+    /**
+     * Called on listener when podcast url is given.
+     * 
+     * @param podcastUrl Podcast URL spec to add.
+     */
+    public void addPodcast(String podcastUrl);
+
+    /**
+     * Called on listener if the user wants to see suggestions for podcasts to
+     * add.
+     */
+    public void showSuggestions();
 }

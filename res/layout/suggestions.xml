@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -44,7 +44,7 @@
             android:layout_margin="3dp"
             android:layout_weight="1" />
     </LinearLayout>
-    <net.alliknow.podcatcher.views.ProgressView
+    <net.alliknow.podcatcher.view.ProgressView
         android:id="@+id/suggestion_list_progress"
         android:layout_width="match_parent"
         android:layout_height="0dp"

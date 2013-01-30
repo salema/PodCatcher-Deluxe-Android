@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -41,7 +41,7 @@
         android:paddingLeft="@dimen/list_item_padding"
         android:singleLine="true"
         android:textSize="@dimen/font_size_small" />
-    <net.alliknow.podcatcher.views.HorizontalProgressView
+    <net.alliknow.podcatcher.view.HorizontalProgressView
         android:id="@+id/list_item_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

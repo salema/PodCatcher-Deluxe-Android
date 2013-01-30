@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -18,10 +18,15 @@
  */
 -->
 <resources>
-    <string name="app_name">Simple Podcatcher</string>
+    <string name="podcast_list_fragment_tag" translatable="false">podcastListFragment</string>
+    <string name="episode_list_fragment_tag" translatable="false">episodeListFragment</string>
+    <string name="episode_fragment_tag" translatable="false">episodeFragment</string>
+    <string name="player_fragment_tag" translatable="false">playerFragment</string>
     <string name="divider" translatable="false">Divider</string>
+    <string name="app_name">Simple Podcatcher</string>
     <string name="about">About Simple Podcatcher</string>
     <string name="help">Help</string>
+    <string name="wait">Wait</string>
     <string name="connect">Connect</string>
     <string name="load">Load</string>
     <string name="stop">Stop</string>

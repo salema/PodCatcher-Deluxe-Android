@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -55,7 +55,8 @@
             android:background="@drawable/button_green"
             android:gravity="center"
             android:text="@string/add_podcast_button"
-            android:textColor="@drawable/button_label" />
+            android:textColor="@drawable/button_label"
+            android:singleLine="true" />
     </LinearLayout>
     <TextView
         android:id="@+id/suggestion_description"

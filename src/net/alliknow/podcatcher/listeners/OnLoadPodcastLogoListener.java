@@ -1,4 +1,4 @@
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -14,26 +14,30 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.alliknow.podcatcher.listeners;
 
-import net.alliknow.podcatcher.types.Podcast;
+import net.alliknow.podcatcher.model.types.Podcast;
 import android.graphics.Bitmap;
 
 /**
- * Interface definition for a callback to be invoked when a podcast logo is loaded.
+ * Interface definition for a callback to be invoked when a podcast logo is
+ * loaded.
  */
 public interface OnLoadPodcastLogoListener {
-	
-	/**
-	 * Called on completion.
-	 * @param podcast The podcast we are loading the logo for.
-	 * @param logo Podcast logo loaded.
-	 */
-	public void onPodcastLogoLoaded(Podcast podcast, Bitmap logo);
-	
-	/**
-	 * Called when loading the podcast logo failed.
-	 * @param podcast Podcast logo could not be loaded for.
-	 */
-	public void onPodcastLogoLoadFailed(Podcast podcast);
+
+    /**
+     * Called on completion.
+     * 
+     * @param podcast The podcast we are loading the logo for.
+     * @param logo Podcast logo loaded.
+     */
+    public void onPodcastLogoLoaded(Podcast podcast, Bitmap logo);
+
+    /**
+     * Called when loading the podcast logo failed.
+     * 
+     * @param podcast Podcast logo could not be loaded for.
+     */
+    public void onPodcastLogoLoadFailed(Podcast podcast);
 }

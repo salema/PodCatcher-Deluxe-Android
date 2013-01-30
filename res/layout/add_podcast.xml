@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -29,7 +29,7 @@
         android:hint="@string/enter_podcast_url_here"
         android:imeOptions="actionGo"
         android:inputType="textUri|textNoSuggestions" />
-    <net.alliknow.podcatcher.views.HorizontalProgressView
+    <net.alliknow.podcatcher.view.HorizontalProgressView
         android:id="@+id/add_podcast_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -47,7 +47,8 @@
             android:background="@drawable/button_orange"
             android:gravity="center"
             android:text="@string/suggestions"
-            android:textColor="@drawable/button_label" />
+            android:textColor="@drawable/button_label"
+            android:singleLine="true" />
         <Button
             android:id="@+id/podcast_add_button"
             android:layout_width="0dp"
@@ -57,6 +58,7 @@
             android:background="@drawable/button_green"
             android:gravity="center"
             android:text="@string/add_podcast_button"
-            android:textColor="@drawable/button_label" />
+            android:textColor="@drawable/button_label"
+            android:singleLine="true" />
     </LinearLayout>
 </LinearLayout>

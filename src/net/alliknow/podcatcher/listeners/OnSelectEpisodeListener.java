@@ -1,4 +1,4 @@
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -14,23 +14,26 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.alliknow.podcatcher.listeners;
 
-import net.alliknow.podcatcher.types.Episode;
+import net.alliknow.podcatcher.model.types.Episode;
 
 /**
- * Interface definition for a callback to be invoked when an episode is selected.
+ * Interface definition for a callback to be invoked when an episode is
+ * selected.
  */
 public interface OnSelectEpisodeListener {
-	
-	/**
-	 * Called on listener to reflect that an episode has been selected.
-	 * @param selectedEpisode Episode selected by the user.
-	 */
-	public void onEpisodeSelected(Episode selectedEpisode);
 
-	/**
-	 * Called on listener to reflect that no episode is selected anymore.
-	 */
-	public void onNoEpisodeSelected();
+    /**
+     * Called on listener to reflect that an episode has been selected.
+     * 
+     * @param selectedEpisode Episode selected by the user.
+     */
+    public void onEpisodeSelected(Episode selectedEpisode);
+
+    /**
+     * Called on listener to reflect that no episode is selected anymore.
+     */
+    public void onNoEpisodeSelected();
 }
