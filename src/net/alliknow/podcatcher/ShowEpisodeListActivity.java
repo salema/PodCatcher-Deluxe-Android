@@ -17,7 +17,6 @@
 
 package net.alliknow.podcatcher;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -40,7 +39,6 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         if (viewMode != SMALL_PORTRAIT_VIEW) {
             finish();
         } else {
-            getActionBar().setDisplayHomeAsUpEnabled(true);
             setContentView(R.layout.main);
 
             if (savedInstanceState == null) {
@@ -83,10 +81,9 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         } // Single podcast to load
         else {
             // Go load it if found
-            if (currentPodcast != null) {
-                getActionBar().setTitle(currentPodcast.getName());
+            if (currentPodcast != null)
                 podcastManager.load(currentPodcast);
-            } else
+            else
                 episodeListFragment.showLoadFailed();
         }
     }
@@ -96,11 +93,6 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // This is called when the Home (Up) button is pressed
-                Intent parentActivityIntent = new Intent(this, PodcastActivity.class);
-                parentActivityIntent.addFlags(
-                        Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(parentActivityIntent);
-
                 finish();
 
                 return true;
@@ -110,10 +102,11 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     }
 
     @Override
-    public void onPodcastLoaded(Podcast podcast) {
-        super.onPodcastLoaded(podcast);
+    protected void updateActionBar() {
+        super.updateActionBar();
 
-        getActionBar().setSubtitle("Loaded");
+        // Enable navigation
+        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

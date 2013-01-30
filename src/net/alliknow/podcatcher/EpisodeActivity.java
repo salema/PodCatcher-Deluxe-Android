@@ -105,17 +105,18 @@ public abstract class EpisodeActivity extends BaseActivity implements
     protected void findFragments() {
         // The player fragment to use
         if (playerFragment == null)
-            playerFragment = (PlayerFragment) find(R.string.player_fragment_tag);
+            playerFragment = (PlayerFragment) findByTagId(R.string.player_fragment_tag);
 
         // The episode fragment to use
         if (episodeFragment == null)
-            episodeFragment = (EpisodeFragment) find(R.string.episode_fragment_tag);
+            episodeFragment = (EpisodeFragment) findByTagId(R.string.episode_fragment_tag);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
+        updateActionBar();
         updatePlayer();
         startPlayProgressTimer();
     }
@@ -245,6 +246,23 @@ public abstract class EpisodeActivity extends BaseActivity implements
         Log.w(getClass().getSimpleName(), "Play service send an error");
     }
 
+    /**
+     * Update the action bar to reflect current selection and loading state.
+     * Sub-classes should overwrite.
+     */
+    protected void updateActionBar() {
+        if (currentEpisode != null) {
+            getActionBar().setTitle(currentEpisode.getName());
+            getActionBar().setSubtitle(currentEpisode.getPodcastName());
+        } else {
+            getActionBar().setTitle(R.string.app_name);
+            getActionBar().setSubtitle(null);
+        }
+    }
+
+    /**
+     * Update the player fragment UI to reflect current state of play.
+     */
     protected void updatePlayer() {
         if (playerFragment != null && service != null) {
             // Show/hide menu item
@@ -267,6 +285,19 @@ public abstract class EpisodeActivity extends BaseActivity implements
         }
     }
 
+    /**
+     * Gets the fragment for a given tag string id (resolved via app's
+     * resources) from the fragment manager.
+     * 
+     * @param tagId Id of the tag string in resources.
+     * @return The fragment stored under the given tag or <code>null</code> if
+     *         not added to the fragment manager.
+     */
+    protected Fragment findByTagId(int tagId) {
+        String tag = getResources().getString(tagId);
+        return getFragmentManager().findFragmentByTag(tag);
+    }
+
     private void startPlayProgressTimer() {
         // Do not start the task if there is no progress to monitor
         if (service != null && service.isPlaying()) {
@@ -286,11 +317,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
             playUpdateTimerTask.cancel();
             playUpdateTimerTask = null;
         }
-    }
-
-    protected Fragment find(int tagId) {
-        String tag = getResources().getString(tagId);
-        return getFragmentManager().findFragmentByTag(tag);
     }
 
     /** Defines callbacks for service binding, passed to bindService() */

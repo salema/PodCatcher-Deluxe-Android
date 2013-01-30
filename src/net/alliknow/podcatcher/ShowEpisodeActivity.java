@@ -58,9 +58,6 @@ public class ShowEpisodeActivity extends EpisodeActivity {
                 // Set fragment members
                 findFragments();
 
-                // Enable navigation
-                getActionBar().setDisplayHomeAsUpEnabled(true);
-
                 // Set episode in fragment UI
                 restoreCurrentEpisodeFromIntent();
                 episodeFragment.setEpisode(currentEpisode);
@@ -78,6 +75,14 @@ public class ShowEpisodeActivity extends EpisodeActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void updateActionBar() {
+        super.updateActionBar();
+
+        // Enable navigation
+        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

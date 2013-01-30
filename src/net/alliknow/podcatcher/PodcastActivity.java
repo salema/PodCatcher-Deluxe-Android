@@ -60,16 +60,48 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         if (((Podcatcher) getApplication()).isInDebugMode())
             StrictMode.enableDefaults();
 
+        // 1. Register listeners
         // Register as listener to the podcast data manager
         podcastManager.addLoadPodcastListListener(this);
         podcastManager.addChangePodcastListListener(this);
+        // Make sure we are alerted on back stack changes
+        getFragmentManager().addOnBackStackChangedListener(this);
 
+        // 2. Create the UI via XML layouts and fragments
         // Inflate the main content view (depends on view mode)
         setContentView(R.layout.main);
-
         // Make sure all fragment member handles are properly set
         findFragments();
+        // Add extra fragments needed in some view modes
+        plugFragments();
 
+        // 3. Init/restore the app as needed
+        // Check if podcast list is available - if so, set it
+        List<Podcast> podcastList = podcastManager.getPodcastList();
+        if (podcastList != null) {
+            onPodcastListLoaded(podcastList);
+
+            // We only reset our state if the podcast list is available and this
+            // is not the initial create of the activity
+            if (savedInstanceState != null)
+                restoreState(savedInstanceState);
+        }
+    }
+
+    @Override
+    protected void findFragments() {
+        super.findFragments();
+
+        // The podcast list fragment to use
+        if (podcastListFragment == null)
+            podcastListFragment = (PodcastListFragment) findByTagId(R.string.podcast_list_fragment_tag);
+    }
+
+    /**
+     * In certain view modes, we need to add some fragments because they are not
+     * set in the layout XML files. Member variables will be set if needed.
+     */
+    private void plugFragments() {
         // On small screens, add the podcast list fragment
         if ((viewMode == SMALL_PORTRAIT_VIEW || viewMode == SMALL_LANDSCAPE_VIEW)
                 && podcastListFragment == null) {
@@ -89,49 +121,34 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                             getResources().getString(R.string.episode_list_fragment_tag))
                     .commit();
         }
-
-        // Check if podcast list is available - if so, set it
-        List<Podcast> podcastList = podcastManager.getPodcastList();
-        if (podcastList != null)
-            onPodcastListLoaded(podcastList);
-
-        if (savedInstanceState != null) {
-            // Recover members (used to restore in onResume)
-            multiplePodcastsMode = savedInstanceState.getBoolean(MODE_KEY);
-            currentPodcast = podcastManager.findPodcastForUrl(
-                    savedInstanceState.getString(PODCAST_URL_KEY));
-            currentEpisode = podcastManager.findEpisodeForUrl(
-                    savedInstanceState.getString(EPISODE_URL_KEY));
-
-            // Re-select previously selected podcast(s)
-            if (multiplePodcastsMode)
-                onAllPodcastsSelected();
-            else if (currentPodcast != null)
-                onPodcastSelected(currentPodcast);
-            else
-                onNoPodcastSelected();
-
-            // Re-select previously selected episode
-            if (currentEpisode != null)
-                onEpisodeSelected(currentEpisode);
-            else
-                onNoEpisodeSelected();
-        }
-
-        // Disable the home button (only used in overlaying activities)
-        getActionBar().setHomeButtonEnabled(false);
-
-        // Make sure we are alerted on back stack changes
-        getFragmentManager().addOnBackStackChangedListener(this);
     }
 
-    @Override
-    protected void findFragments() {
-        super.findFragments();
+    /**
+     * Restore members and selection state from bundle.
+     * 
+     * @param savedInstanceState Restore information.
+     */
+    private void restoreState(Bundle savedInstanceState) {
+        // Recover members
+        multiplePodcastsMode = savedInstanceState.getBoolean(MODE_KEY);
+        currentPodcast = podcastManager.findPodcastForUrl(
+                savedInstanceState.getString(PODCAST_URL_KEY));
+        currentEpisode = podcastManager.findEpisodeForUrl(
+                savedInstanceState.getString(EPISODE_URL_KEY));
 
-        // The podcast list fragment to use
-        if (podcastListFragment == null)
-            podcastListFragment = (PodcastListFragment) find(R.string.podcast_list_fragment_tag);
+        // Re-select previously selected podcast(s)
+        if (multiplePodcastsMode)
+            onAllPodcastsSelected();
+        else if (currentPodcast != null)
+            onPodcastSelected(currentPodcast);
+        else
+            onNoPodcastSelected();
+
+        // Re-select previously selected episode
+        if (currentEpisode != null)
+            onEpisodeSelected(currentEpisode);
+        else
+            onNoEpisodeSelected();
     }
 
     @Override
@@ -152,6 +169,9 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
         // Podcast list has been changed while we were stopped
         if (podcastListChanged) {
+            // Reset flag
+            podcastListChanged = false;
+
             // Show the last podcast added
             if (currentPodcast != null && !multiplePodcastsMode)
                 onPodcastSelected(currentPodcast);
@@ -197,6 +217,9 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // Make podcast list show
         podcastListFragment.setPodcastList(podcastList);
 
+        // Make action bar show number of podcasts
+        updateActionBar();
+
         // If podcast list is empty we show dialog on startup
         if (podcastList.isEmpty())
             startActivity(new Intent(this, AddPodcastActivity.class));
@@ -215,12 +238,14 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
     @Override
     public void onPodcastRemoved(Podcast podcast) {
-        // Pick up the change in onRestart()
-        podcastListChanged = true;
-
         // Reset member if deleted
-        if (podcast.equals(currentPodcast))
+        if (podcast.equals(currentPodcast)) {
             currentPodcast = null;
+
+            // Pick up the change in onRestart()
+            podcastListChanged = true;
+        }
+
         // Update podcast list
         podcastListFragment.setPodcastList(podcastManager.getPodcastList());
     }
@@ -378,6 +403,23 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             podcastListFragment.setLogoVisibility(
                     viewMode == LARGE_LANDSCAPE_VIEW && !multiplePodcastsMode ?
                             LogoViewMode.LARGE : LogoViewMode.SMALL);
+        }
+    }
+
+    @Override
+    protected void updateActionBar() {
+        getActionBar().setTitle(R.string.app_name);
+
+        // Disable the home button (only used in overlaying activities)
+        getActionBar().setHomeButtonEnabled(false);
+
+        if (podcastManager.getPodcastList() != null) {
+            int podcastCount = podcastManager.getPodcastList().size();
+            getActionBar().setSubtitle(podcastCount == 1 ?
+                    getResources().getString(R.string.one_podcast_selected) :
+                    podcastCount + " " + getResources().getString(R.string.podcasts_selected));
+        } else {
+            getActionBar().setSubtitle(null);
         }
     }
 
