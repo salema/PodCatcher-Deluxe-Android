@@ -17,22 +17,23 @@
 
 package net.alliknow.podcatcher.model.tasks;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Date;
-import java.util.List;
+import android.content.Context;
+import android.os.AsyncTask;
+import android.text.TextUtils;
+import android.util.Log;
 
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.tags.OPML;
 import net.alliknow.podcatcher.model.types.Podcast;
-import android.content.Context;
-import android.os.AsyncTask;
-import android.text.TextUtils;
-import android.util.Log;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Stores the default podcast list to the filesystem asynchronously.

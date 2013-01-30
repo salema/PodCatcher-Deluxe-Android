@@ -17,7 +17,7 @@
 
 package net.alliknow.podcatcher.model.tasks.remote;
 
-import java.io.ByteArrayInputStream;
+import android.util.Log;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.model.tasks.Progress;
@@ -27,7 +27,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import android.util.Log;
+import java.io.ByteArrayInputStream;
 
 /**
  * Loads podcast RSS file asynchronously. Implement the PodcastLoader interface

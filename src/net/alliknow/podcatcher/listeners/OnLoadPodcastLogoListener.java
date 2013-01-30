@@ -17,8 +17,9 @@
 
 package net.alliknow.podcatcher.listeners;
 
-import net.alliknow.podcatcher.model.types.Podcast;
 import android.graphics.Bitmap;
+
+import net.alliknow.podcatcher.model.types.Podcast;
 
 /**
  * Interface definition for a callback to be invoked when a podcast logo is

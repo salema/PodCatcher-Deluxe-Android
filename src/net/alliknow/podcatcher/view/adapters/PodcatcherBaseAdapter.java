@@ -17,14 +17,14 @@
 
 package net.alliknow.podcatcher.view.adapters;
 
-import java.util.Locale;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
+import java.util.Locale;
 
 /**
  * Abstract super class for this app's adapters. Allows access to resources.

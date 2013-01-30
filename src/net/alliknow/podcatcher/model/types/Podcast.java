@@ -17,20 +17,20 @@
 
 package net.alliknow.podcatcher.model.types;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import android.graphics.Bitmap;
+import android.util.Log;
 
 import net.alliknow.podcatcher.model.tags.RSS;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import android.graphics.Bitmap;
-import android.util.Log;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * The podcast type.

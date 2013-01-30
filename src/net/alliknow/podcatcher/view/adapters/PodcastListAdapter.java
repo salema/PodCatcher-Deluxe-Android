@@ -20,14 +20,15 @@ package net.alliknow.podcatcher.view.adapters;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-import java.util.List;
+import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.HorizontalProgressView;
-import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
+
+import java.util.List;
 
 /**
  * Adapter class used for the list of podcasts.

@@ -17,15 +17,16 @@
 
 package net.alliknow.podcatcher.model.tasks.remote;
 
+import android.os.AsyncTask;
+
+import net.alliknow.podcatcher.model.tasks.Progress;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import net.alliknow.podcatcher.model.tasks.Progress;
-import android.os.AsyncTask;
 
 /**
  * Abstract super class for file download tasks.

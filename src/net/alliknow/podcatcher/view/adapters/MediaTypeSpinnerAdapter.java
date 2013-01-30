@@ -17,9 +17,10 @@
 
 package net.alliknow.podcatcher.view.adapters;
 
+import android.content.Context;
+
 import net.alliknow.podcatcher.model.types.MediaType;
 import net.alliknow.podcatcher.view.fragments.SuggestionFragment;
-import android.content.Context;
 
 /**
  * Adapter for the media type spinner in the suggestion dialog.

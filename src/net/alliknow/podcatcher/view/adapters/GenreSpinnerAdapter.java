@@ -17,9 +17,10 @@
 
 package net.alliknow.podcatcher.view.adapters;
 
+import android.content.Context;
+
 import net.alliknow.podcatcher.model.types.Genre;
 import net.alliknow.podcatcher.view.fragments.SuggestionFragment;
-import android.content.Context;
 
 /**
  * Adapter for the genre spinner in the suggestion dialog.

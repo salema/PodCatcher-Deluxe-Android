@@ -17,13 +17,14 @@
 
 package net.alliknow.podcatcher.view;
 
-import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.model.tasks.Progress;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.model.tasks.Progress;
 
 /**
  * A sophisticated horizontal progress view.

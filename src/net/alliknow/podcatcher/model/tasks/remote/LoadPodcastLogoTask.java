@@ -17,11 +17,12 @@
 
 package net.alliknow.podcatcher.model.tasks.remote;
 
-import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
-import net.alliknow.podcatcher.model.types.Podcast;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+
+import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
+import net.alliknow.podcatcher.model.types.Podcast;
 
 /**
  * An async task to load a podcast logo. Implement PodcastLogoLoader to be
