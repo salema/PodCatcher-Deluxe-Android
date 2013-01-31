@@ -20,7 +20,8 @@ package net.alliknow.podcatcher.model.tags;
 /**
  * Defines some constants used in RSS.
  * 
- * @see http://cyber.law.harvard.edu/rss/rss.html
+ * @see <a href="http://cyber.law.harvard.edu/rss/rss.html">RSS
+ *      specification</a>
  */
 public class RSS {
 

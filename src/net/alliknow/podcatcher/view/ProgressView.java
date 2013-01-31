@@ -60,7 +60,7 @@ public class ProgressView extends LinearLayout {
      * works with flags from load tasks.
      * 
      * @param progress Progress to visualize.
-     * @see <code>Progress</code>
+     * @see Progress
      */
     public void publishProgress(Progress progress) {
         progressBar.setVisibility(VISIBLE);

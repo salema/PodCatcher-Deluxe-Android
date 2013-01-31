@@ -30,6 +30,10 @@ import java.net.URL;
 
 /**
  * Abstract super class for file download tasks.
+ * 
+ * @param <Params> Params as definied by {@link AsyncTask}
+ * @param <Result> Result as definied by {@link AsyncTask}
+ * @see AsyncTask
  */
 public abstract class LoadRemoteFileTask<Params, Result> extends
         AsyncTask<Params, Progress, Result> {

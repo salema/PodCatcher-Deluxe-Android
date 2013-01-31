@@ -36,7 +36,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Show list of episodes activity.
+ * Show list of episodes activity. This is thought of an abstract activity for
+ * an app only consisting of an episode list view, the player and the ability to
+ * show an {@link ShowEpisodeActivity} on top. Sub-classes could extends or
+ * simply show this layout.
  */
 public abstract class EpisodeListActivity extends EpisodeActivity implements
         OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectEpisodeListener {
@@ -55,6 +58,9 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     /** The podcast we are showing episodes for */
     protected Podcast currentPodcast;
+    /** Key used to store podcast URL in intent or bundle */
+    protected static final String PODCAST_URL_KEY = "podcast_url";
+
     /** The current episode list */
     protected List<Episode> currentEpisodeList;
 
@@ -169,7 +175,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             case SMALL_PORTRAIT_VIEW:
                 // Send intent to open episode as a new activity
                 Intent intent = new Intent(this, ShowEpisodeActivity.class);
-                intent.putExtra(PODCAST_URL_KEY, selectedEpisode.getPodcastUrl());
                 intent.putExtra(EPISODE_URL_KEY, selectedEpisode.getMediaUrl().toString());
 
                 startActivity(intent);
@@ -220,16 +225,19 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         }
     }
 
+    /**
+     * Update the divider views to reflect current selection state.
+     */
     protected void updateDivider() {
         colorDivider(R.id.divider_first, currentPodcast != null || multiplePodcastsMode);
         colorDivider(R.id.divider_second,
                 currentEpisodeList != null && currentEpisodeList.indexOf(currentEpisode) >= 0);
     }
 
-    protected void colorDivider(int dividerViewId, boolean color) {
+    private void colorDivider(int dividerViewId, boolean colorId) {
         if (getWindow() != null && getWindow().findViewById(dividerViewId) != null) {
             View divider = getWindow().findViewById(dividerViewId);
-            divider.setBackgroundResource(color ? R.color.divider_on : R.color.divider_off);
+            divider.setBackgroundResource(colorId ? R.color.divider_on : R.color.divider_off);
         }
     }
 }

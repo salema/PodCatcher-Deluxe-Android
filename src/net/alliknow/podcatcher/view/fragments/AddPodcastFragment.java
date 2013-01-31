@@ -112,7 +112,7 @@ public class AddPodcastFragment extends DialogFragment {
 
             @Override
             public void onClick(View v) {
-                listener.showSuggestions();
+                listener.onShowSuggestions();
             }
         });
 
@@ -181,7 +181,7 @@ public class AddPodcastFragment extends DialogFragment {
             podcastUrlEditText.setText(spec);
         }
 
-        listener.addPodcast(spec);
+        listener.onAddPodcast(spec);
     }
 
     private void checkClipboardForPodcastUrl() {

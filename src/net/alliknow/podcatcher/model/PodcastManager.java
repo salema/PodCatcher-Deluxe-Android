@@ -88,15 +88,25 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      * @param app The podcatcher application object (also a singleton).
      */
     private PodcastManager(Podcatcher app) {
+        // We use some of its method below, so we keep a reference to the
+        // application object.
         this.podcatcher = app;
 
-        // Load list of podcasts from OPML file
+        // Load list of podcasts from OPML file on start-up, listeners will be
+        // notified below.
         LoadPodcastListTask loadListTask =
                 new LoadPodcastListTask(podcatcher.getApplicationContext(), this);
         loadListTask.execute((Void) null);
     }
 
+    /**
+     * Get the singleton instance of the podcast manager.
+     * 
+     * @param podcatcher Application handle.
+     * @return The singleton instance.
+     */
     public static PodcastManager getInstance(Podcatcher podcatcher) {
+        // If not done, create single instance
         if (manager == null)
             manager = new PodcastManager(podcatcher);
 
@@ -105,12 +115,14 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
 
     @Override
     public void onPodcastListLoaded(List<Podcast> podcastList) {
+        // Set the member
         this.podcastList = podcastList;
 
+        // Put some nice sample podcasts for testing
         if (podcatcher.isInDebugMode())
             putSamplePodcasts();
 
-        // Alert call-backs
+        // Alert call-backs (if any)
         if (loadPodcastListListeners.isEmpty())
             Log.d(getClass().getSimpleName(), "Podcast list loaded, but no listeners set.");
         else
@@ -119,11 +131,31 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     }
 
     /**
+     * Get the list of podcast currently known. This will come as a sorted,
+     * shallow-copied list. Use the <code>add</code> and <code>remove</code>
+     * methods to alter it. The method will return <code>null</code> if the list
+     * in not available yet (we are still starting up), you should register a
+     * load listener to be notified on load completion.
+     * 
+     * @return The podcast list, or <code>null</code> if not available.
+     * @see OnLoadPodcastListListener
+     */
+    public List<Podcast> getPodcastList() {
+        if (podcastList == null)
+            return null;
+        // return copy in order to make sure
+        // nobody changes this list on us.
+        else
+            return new ArrayList<Podcast>(podcastList);
+    }
+
+    /**
      * Load data for given podcast from its URL. This is an async load, so this
      * method will return immediately. Implement the appropriate call-back to
      * monitor the load process and to get its result.
      * 
      * @param podcast Podcast to load.
+     * @see OnLoadPodcastListener
      */
     public void load(Podcast podcast) {
         // Only load podcast if not too old
@@ -137,12 +169,15 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             // loadPodcastTask.execute(podcast);
             loadPodcastTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
 
+            // Keep task reference, so we can cancel the load and determine
+            // whether the podcast is already loading
             loadPodcastTasks.put(podcast, loadPodcastTask);
         }
     }
 
     @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
+        // Notify listeners
         for (OnLoadPodcastListener listener : loadPodcastListeners)
             listener.onPodcastLoadProgress(podcast, progress);
     }
@@ -152,6 +187,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         // Remove from the map of loading task
         loadPodcastTasks.remove(podcast);
 
+        // Notify listeners
         if (loadPodcastListeners.isEmpty())
             Log.d(getClass().getSimpleName(), "Podcast loaded, but no listeners attached.");
         else
@@ -164,6 +200,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         // Remove from the map of loading task
         loadPodcastTasks.remove(podcast);
 
+        // Notify listeners
         if (loadPodcastListeners.isEmpty())
             Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listeners set.");
         else
@@ -180,6 +217,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      * @param width Width the logo can be sampled down to. Give zero (0) to
      *            disable sampling.
      * @param height Height the logo can be sampled down to.
+     * @see OnLoadPodcastLogoListener
      */
     public void loadLogo(Podcast podcast, int width, int height) {
         // Only start the load task if it is not already active
@@ -218,50 +256,19 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
                 listener.onPodcastLogoLoadFailed(podcast);
     }
 
-    public boolean addLoadPodcastListListener(OnLoadPodcastListListener listener) {
-        return loadPodcastListListeners.add(listener);
-    }
-
-    public boolean removeLoadPodcastListListener(OnLoadPodcastListListener listener) {
-        return loadPodcastListListeners.remove(listener);
-    }
-
-    public boolean addChangePodcastListListener(OnChangePodcastListListener listener) {
-        return changePodcastListListeners.add(listener);
-    }
-
-    public boolean removeChangePodcastListListener(OnChangePodcastListListener listener) {
-        return changePodcastListListeners.remove(listener);
-    }
-
-    public boolean addLoadPodcastListener(OnLoadPodcastListener listener) {
-        return loadPodcastListeners.add(listener);
-    }
-
-    public boolean removeLoadPodcastListener(OnLoadPodcastListener listener) {
-        return loadPodcastListeners.remove(listener);
-    }
-
-    public boolean addLoadPodcastLogoListener(OnLoadPodcastLogoListener listener) {
-        return loadPodcastLogoListeners.add(listener);
-    }
-
-    public boolean removeLoadPodcastLogoListener(OnLoadPodcastLogoListener listener) {
-        return loadPodcastLogoListeners.remove(listener);
-    }
-
-    public List<Podcast> getPodcastList() {
-        if (podcastList == null)
-            return null;
-        // return copy in order to make sure
-        // nobody changes this list on us.
-        else
-            return new ArrayList<Podcast>(podcastList);
-    }
-
+    /**
+     * Add a new podcast to the list of podcasts.
+     * {@link OnChangePodcastListListener}s will be notified. If the podcast
+     * already is in the list, it will not be added and no notification takes
+     * place.
+     * 
+     * @param newPodcast Podcast to add.
+     * @see OnChangePodcastListListener
+     */
     @SuppressWarnings("unchecked")
     public void addPodcast(Podcast newPodcast) {
-        if (!podcastList.contains(newPodcast)) {
+        // Check whether the new podcast is already added
+        if (!contains(newPodcast)) {
             // Add the new podcast
             podcastList.add(newPodcast);
             Collections.sort(podcastList);
@@ -277,9 +284,17 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
                     + "\" is already in list.");
     }
 
+    /**
+     * Remove a podcast from the list of podcasts.
+     * {@link OnChangePodcastListListener}s will be notified. If the given index
+     * is out of bounds, no podcast is removed and no notification takes place.
+     * 
+     * @param index Index of podcast to remove.
+     * @see OnChangePodcastListListener
+     */
     @SuppressWarnings("unchecked")
     public void remove(int index) {
-        if (index >= 0 && index < podcastList.size()) {
+        if (index >= 0 && index < size()) {
             // Remove podcast at given position
             Podcast removedPodcast = podcastList.remove(index);
 
@@ -289,9 +304,50 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
 
             // Store changed list
             new StorePodcastListTask(podcatcher.getApplicationContext()).execute(podcastList);
-        }
+        } else
+            Log.w(getClass().getSimpleName(), "Attempted to remove podcast at invalid position: "
+                    + index);
     }
 
+    /**
+     * @return The number of podcasts available to the manager.
+     */
+    public int size() {
+        if (podcastList == null)
+            return 0;
+        else
+            return podcastList.size();
+    }
+
+    /**
+     * Find the index (position) of given podcast in the list of podcasts.
+     * 
+     * @param podcast Podcast to look for.
+     * @return The podcast index, or -1 if not in the list.
+     */
+    public int indexOf(Podcast podcast) {
+        if (podcastList == null)
+            return -1;
+        else
+            return podcastList.indexOf(podcast);
+    }
+
+    /**
+     * Check whether the given podcast is in the list of podcasts.
+     * 
+     * @param podcast Podcast to look for.
+     * @return <code>true</code> iff the podcast is present in list.
+     */
+    public boolean contains(Podcast podcast) {
+        return indexOf(podcast) != -1;
+    }
+
+    /**
+     * Find the podcast object for given URL.
+     * 
+     * @param url URL of podcast to look up.
+     * @return The podcast object, or <code>null</code> if not found.
+     */
     public Podcast findPodcastForUrl(String url) {
         // Find the podcast object
         for (Podcast podcast : podcastList)
@@ -301,6 +357,13 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         return null;
     }
 
+    /**
+     * Find the episode object for given URL. Note that this will only search
+     * episodes currently loaded.
+     * 
+     * @param url URL of episode to look for.
+     * @return The episode object, or <code>null</code> if not found.
+     */
     public Episode findEpisodeForUrl(String url) {
         for (Podcast podcast : podcastList)
             if (podcast.getEpisodes().size() > 0)
@@ -311,36 +374,9 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         return null;
     }
 
-    public int indexOf(Podcast podcast) {
-        if (podcastList == null)
-            return -1;
-        else
-            return podcastList.indexOf(podcast);
-    }
-
-    public Podcast get(int position) {
-        if (podcastList == null)
-            return null;
-        else if (position < 0 || position >= podcastList.size())
-            return null;
-        else
-            return podcastList.get(position);
-    }
-
-    public int size() {
-        if (podcastList == null)
-            return 0;
-        else
-            return podcastList.size();
-    }
-
-    public boolean contains(Podcast podcast) {
-        if (podcastList == null)
-            return false;
-        else
-            return podcastList.contains(podcast);
-    }
-
+    /**
+     * Stop and cancel all load tasks.
+     */
     public void cancelAllLoadTasks() {
         for (LoadPodcastTask task : loadPodcastTasks.values())
             task.cancel(true);
@@ -352,10 +388,88 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     }
 
     /**
+     * Add load podcast list listener.
+     * 
+     * @param listener Listener to add.
+     * @see OnLoadPodcastListListener
+     */
+    public void addLoadPodcastListListener(OnLoadPodcastListListener listener) {
+        loadPodcastListListeners.add(listener);
+    }
+
+    /**
+     * Remove load podcast list listener.
+     * 
+     * @param listener Listener to remove.
+     * @see OnLoadPodcastListListener
+     */
+    public void removeLoadPodcastListListener(OnLoadPodcastListListener listener) {
+        loadPodcastListListeners.remove(listener);
+    }
+
+    /**
+     * Add podcast list change listener.
+     * 
+     * @param listener Listener to add.
+     * @see OnChangePodcastListListener
+     */
+    public void addChangePodcastListListener(OnChangePodcastListListener listener) {
+        changePodcastListListeners.add(listener);
+    }
+
+    /**
+     * Remove podcast list change listener.
+     * 
+     * @param listener Listener to remove.
+     * @see OnChangePodcastListListener
+     */
+    public void removeChangePodcastListListener(OnChangePodcastListListener listener) {
+        changePodcastListListeners.remove(listener);
+    }
+
+    /**
+     * Add load podcast listener.
+     * 
+     * @param listener Listener to add.
+     * @see OnLoadPodcastListener
+     */
+    public void addLoadPodcastListener(OnLoadPodcastListener listener) {
+        loadPodcastListeners.add(listener);
+    }
+
+    /**
+     * Remove load podcast listener.
+     * 
+     * @param listener Listener to remove.
+     * @see OnLoadPodcastListener
+     */
+    public void removeLoadPodcastListener(OnLoadPodcastListener listener) {
+        loadPodcastListeners.remove(listener);
+    }
+
+    /**
+     * Add load podcast logo listener.
+     * 
+     * @param listener Listener to add.
+     * @see OnLoadPodcastLogoListener
+     */
+    public void addLoadPodcastLogoListener(OnLoadPodcastLogoListener listener) {
+        loadPodcastLogoListeners.add(listener);
+    }
+
+    /**
+     * Remove load podcast logo listener.
+     * 
+     * @param listener Listener to remove.
+     * @see OnLoadPodcastLogoListener
+     */
+    public void removeLoadPodcastLogoListener(OnLoadPodcastLogoListener listener) {
+        loadPodcastLogoListeners.remove(listener);
+    }
+
+    /**
      * Clear list. Add a small number of sample podcast to the list for testing.
      * Sort list.
-     * 
-     * @param list List to fill.
      */
     private void putSamplePodcasts() {
         podcastList.clear();
@@ -371,14 +485,14 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         podcastList.add(createPodcast("neo",
                 "http://www.zdf.de/ZDFmediathek/podcast/1446344?view=podcast"));
 
-        // Remove null elements if accidentially create and added above
+        // Remove null elements if accidentally create and added above
         while (podcastList.remove(null))
             ;
 
         Collections.sort(podcastList);
     }
 
-    private static Podcast createPodcast(String name, String url) {
+    private Podcast createPodcast(String name, String url) {
         try {
             return new Podcast(Html.fromHtml(name).toString(), new URL(url));
         } catch (MalformedURLException e) {

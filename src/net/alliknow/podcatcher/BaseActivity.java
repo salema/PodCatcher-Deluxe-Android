@@ -36,53 +36,54 @@ public abstract class BaseActivity extends Activity {
     /** The podcast manager handle */
     protected PodcastManager podcastManager;
 
-    /** The podcatcher website URL */
-    private static final String PODCATCHER_WEBSITE = "http://www.podcatcher-deluxe.com";
-    /** The podcatcher help website URL */
-    private static final String PODCATCHER_HELPSITE = "http://www.podcatcher-deluxe.com/help";
-
+    /** The currently active view mode */
+    protected int viewMode;
     /** These are the four view modes we want adapt to. */
     /**
      * Small and normal screens (smallest width < 600dp) in portrait orientation
      */
-    public static final int SMALL_PORTRAIT_VIEW = 0;
+    protected static final int SMALL_PORTRAIT_VIEW = 0;
     /**
      * Small and normal screens (smallest width < 600dp) in square or landscape
      * orientation
      */
-    public static final int SMALL_LANDSCAPE_VIEW = 1;
+    protected static final int SMALL_LANDSCAPE_VIEW = 1;
     /**
      * Large and extra-large screens (smallest width >= 600dp) in portrait
      * orientation
      */
-    public static final int LARGE_PORTRAIT_VIEW = 2;
+    protected static final int LARGE_PORTRAIT_VIEW = 2;
     /**
      * Large and extra-large screens (smallest width >= 600dp) in square or
      * landscape orientation
      */
-    public static final int LARGE_LANDSCAPE_VIEW = 3;
+    protected static final int LARGE_LANDSCAPE_VIEW = 3;
 
-    /** The currently active view mode */
-    protected int viewMode;
     /**
      * The amount of dp establishing the border between small and large screen
      * buckets
      */
     private static final int MIN_PIXEL_LARGE = 600;
 
+    /** The podcatcher website URL */
+    private static final String PODCATCHER_WEBSITE = "http://www.podcatcher-deluxe.com";
+    /** The podcatcher help website URL */
+    private static final String PODCATCHER_HELPSITE = "http://www.podcatcher-deluxe.com/help";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Set the data manager
-        this.podcastManager = ((Podcatcher) getApplication()).getPodcastManager();
+        podcastManager = ((Podcatcher) getApplication()).getPodcastManager();
 
         // Set the view mode member
-        this.viewMode = determineViewMode();
+        viewMode = determineViewMode();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // Add generic menu items (help, web site...)
         getMenuInflater().inflate(R.menu.podcatcher, menu);
 
         return true;
@@ -105,15 +106,17 @@ public abstract class BaseActivity extends Activity {
     }
 
     private int determineViewMode() {
+        // Get config information
         Configuration config = getResources().getConfiguration();
 
+        // Determine view mode
         switch (config.orientation) {
             case Configuration.ORIENTATION_PORTRAIT:
-                return config.smallestScreenWidthDp >= MIN_PIXEL_LARGE ? LARGE_PORTRAIT_VIEW
-                        : SMALL_PORTRAIT_VIEW;
-            default:
-                return config.smallestScreenWidthDp >= MIN_PIXEL_LARGE ? LARGE_LANDSCAPE_VIEW
-                        : SMALL_LANDSCAPE_VIEW;
+                return config.smallestScreenWidthDp >= MIN_PIXEL_LARGE ?
+                        LARGE_PORTRAIT_VIEW : SMALL_PORTRAIT_VIEW;
+            default: // Landscape and square
+                return config.smallestScreenWidthDp >= MIN_PIXEL_LARGE ?
+                        LARGE_LANDSCAPE_VIEW : SMALL_LANDSCAPE_VIEW;
         }
     }
 }

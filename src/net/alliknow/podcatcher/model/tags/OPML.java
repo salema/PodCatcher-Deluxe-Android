@@ -20,7 +20,7 @@ package net.alliknow.podcatcher.model.tags;
 /**
  * Defines some constants used in OPML.
  * 
- * @see http://dev.opml.org/spec2.html
+ * @see <a href="http://dev.opml.org/spec2.html">OPML specification</a>
  */
 public abstract class OPML {
 

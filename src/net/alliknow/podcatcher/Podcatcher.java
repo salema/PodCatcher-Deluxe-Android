@@ -27,13 +27,21 @@ import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.SuggestionManager;
 
 /**
- * Our application subclass. Holds global state and model.
+ * Our application subclass. Holds global state and model. The Podcatcher
+ * application object is created on application startup and will be alive for
+ * all the app's lifetime. Its main purpose is to hold handles to the singleton
+ * instances of our model data and data managers. In addition, it provides some
+ * generic convenience methods.
  */
 public class Podcatcher extends Application {
 
-    /** Podcast data manager to be used across all the app's components */
+    /**
+     * Podcast data manager to be used across all the app's components (namely
+     * in the controller) to access and alter the podcast data. The data manager
+     * is implemented as a singleton.
+     */
     private PodcastManager podcastManager;
-    /** Suggestion data manager, persistent and global */
+    /** Suggestion data manager, persistent and global singleton object. */
     private SuggestionManager suggestionManager;
 
     @Override
@@ -48,7 +56,9 @@ public class Podcatcher extends Application {
     }
 
     /**
-     * Grant access to the global podcast data model.
+     * Grant access to the global podcast data model. The returned manager
+     * object is a singleton, all calls to this method will always return the
+     * same single instance of the podcast manager.
      * 
      * @return The manager handle.
      */
@@ -57,7 +67,9 @@ public class Podcatcher extends Application {
     }
 
     /**
-     * Grant access to the global suggestion data model.
+     * Grant access to the global suggestion data model. The returned manager
+     * object is a singleton, all calls to this method will always return the
+     * same single instance of the suggestion manager.
      * 
      * @return The manager handle.
      */
@@ -102,8 +114,8 @@ public class Podcatcher extends Application {
         PackageManager manager = getApplicationContext().getPackageManager();
         try
         {
-            ApplicationInfo info = manager.getApplicationInfo(getApplicationContext()
-                    .getPackageName(), 0);
+            ApplicationInfo info = manager.getApplicationInfo(
+                    getApplicationContext().getPackageName(), 0);
             debug = (0 != (info.flags &= ApplicationInfo.FLAG_DEBUGGABLE));
         } catch (Exception e) {
         }

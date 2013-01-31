@@ -39,7 +39,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * Show episode activity.
+ * Show episode activity. This is thought of an abstract activity for an app
+ * only consisting of an episode view and the player. Sub-classes could extends
+ * or simply show this layout.
  */
 public abstract class EpisodeActivity extends BaseActivity implements
         PlayerListener, PlayServiceListener {
@@ -49,13 +51,10 @@ public abstract class EpisodeActivity extends BaseActivity implements
     /** The current player fragment */
     protected PlayerFragment playerFragment;
 
-    /** Key used to store podcast URL in intent or bundle */
-    public static final String PODCAST_URL_KEY = "podcast_url";
-    /** Key used to store episode URL in intent or bundle */
-    public static final String EPISODE_URL_KEY = "episode_url";
-
     /** The episode currently selected and displayed */
     protected Episode currentEpisode;
+    /** Key used to store episode URL in intent or bundle */
+    protected static final String EPISODE_URL_KEY = "episode_url";
 
     /** Play service */
     protected PlayEpisodeService service;
@@ -141,6 +140,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
         }
     }
 
+    @Override
     public void onToggleLoad() {
         if (service.loadedEpisode(currentEpisode))
             onPlaybackComplete();
@@ -157,6 +157,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
             Log.d(getClass().getSimpleName(), "Cannot load episode (episode or service are null)");
     }
 
+    @Override
     public void onTogglePlay() {
         if (service != null && service.isPrepared()) {
             // Player is playing

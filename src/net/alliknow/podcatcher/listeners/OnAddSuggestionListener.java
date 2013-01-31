@@ -30,5 +30,5 @@ public interface OnAddSuggestionListener {
      * 
      * @param suggestion Podcast to add.
      */
-    public void addPodcast(Podcast suggestion);
+    public void onAddPodcast(Podcast suggestion);
 }

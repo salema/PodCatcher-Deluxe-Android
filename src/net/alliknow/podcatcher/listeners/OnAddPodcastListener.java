@@ -27,11 +27,11 @@ public interface OnAddPodcastListener {
      * 
      * @param podcastUrl Podcast URL spec to add.
      */
-    public void addPodcast(String podcastUrl);
+    public void onAddPodcast(String podcastUrl);
 
     /**
      * Called on listener if the user wants to see suggestions for podcasts to
      * add.
      */
-    public void showSuggestions();
+    public void onShowSuggestions();
 }

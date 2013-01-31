@@ -79,7 +79,7 @@ public class SuggestionListAdapter extends PodcastListAdapter {
                 addButton.setCompoundDrawablesWithIntrinsicBounds(0, 0,
                         R.drawable.ic_checkmark_light, 0);
 
-                listener.addPodcast(suggestion);
+                listener.onAddPodcast(suggestion);
             }
         });
 

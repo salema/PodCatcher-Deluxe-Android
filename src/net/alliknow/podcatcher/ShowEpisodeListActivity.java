@@ -27,7 +27,8 @@ import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 import java.util.ArrayList;
 
 /**
- * @author Kevin Hausmann
+ * Activity to show only the episode list and possibly the player. Used in small
+ * portrait view mode only.
  */
 public class ShowEpisodeListActivity extends EpisodeListActivity {
 
@@ -39,28 +40,24 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         if (viewMode != SMALL_PORTRAIT_VIEW) {
             finish();
         } else {
+            // Set the content view
             setContentView(R.layout.main);
+            // Set fragment members
+            findFragments();
 
-            if (savedInstanceState == null) {
-                // During initial setup, plug in the episode list fragment.
+            // During initial setup, plug in the episode list fragment.
+            if (savedInstanceState == null && episodeListFragment == null) {
                 episodeListFragment = new EpisodeListFragment();
-
                 getFragmentManager()
                         .beginTransaction()
                         .add(R.id.content, episodeListFragment,
                                 getResources().getString(R.string.episode_list_fragment_tag))
                         .commit();
-
-                getFragmentManager().executePendingTransactions();
             }
 
-            findFragments();
-
-            if (getIntent().getExtras() != null) {
-                // Prepare UI
-                episodeListFragment.resetAndSpin();
-                processIntent();
-            }
+            // Prepare UI
+            episodeListFragment.resetAndSpin();
+            processIntent();
         }
     }
 
@@ -113,6 +110,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     protected void updatePlayer() {
         super.updatePlayer();
 
+        // Make sure to show episode title in player
         if (playerFragment != null) {
             playerFragment.setLoadMenuItemVisibility(false, false);
             playerFragment.setPlayerTitleVisibility(true);

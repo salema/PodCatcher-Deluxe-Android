@@ -221,7 +221,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         updateActionBar();
 
         // If podcast list is empty we show dialog on startup
-        if (podcastList.isEmpty())
+        if (podcastManager.size() == 0)
             startActivity(new Intent(this, AddPodcastActivity.class));
     }
 
@@ -366,13 +366,13 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
     @Override
     public void onPodcastLoaded(Podcast podcast) {
+        // This will display the number of episodes
+        podcastListFragment.refresh();
+
         // In small portrait mode, work is done in separate activity
         if (viewMode != SMALL_PORTRAIT_VIEW) {
             // All the work is done upstairs
             super.onPodcastLoaded(podcast);
-
-            // This will display the number of episodes
-            podcastListFragment.refresh();
 
             // Tell the podcast manager to load podcast logo
             podcastManager.loadLogo(podcast,
@@ -397,6 +397,9 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             podcastListFragment.showLogo(logo);
     }
 
+    /**
+     * Update the logo view mode according to current app state.
+     */
     protected void updateLogoViewMode() {
         if (podcastListFragment != null) {
             // Set podcast logo view mode
@@ -414,7 +417,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         getActionBar().setHomeButtonEnabled(false);
 
         if (podcastManager.getPodcastList() != null) {
-            int podcastCount = podcastManager.getPodcastList().size();
+            int podcastCount = podcastManager.size();
             getActionBar().setSubtitle(podcastCount == 1 ?
                     getResources().getString(R.string.one_podcast_selected) :
                     podcastCount + " " + getResources().getString(R.string.podcasts_selected));

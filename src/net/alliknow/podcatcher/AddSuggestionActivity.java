@@ -112,7 +112,7 @@ public class AddSuggestionActivity extends BaseActivity implements
     }
 
     @Override
-    public void addPodcast(Podcast suggestion) {
+    public void onAddPodcast(Podcast suggestion) {
         podcastManager.addPodcast(suggestion);
     }
 

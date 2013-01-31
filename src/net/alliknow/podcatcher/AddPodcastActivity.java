@@ -98,7 +98,7 @@ public class AddPodcastActivity extends BaseActivity
     }
 
     @Override
-    public void addPodcast(String podcastUrl) {
+    public void onAddPodcast(String podcastUrl) {
         // Try to load the given online resource
         try {
             // TODO Handle the case were given podcast is already added
@@ -145,7 +145,7 @@ public class AddPodcastActivity extends BaseActivity
     }
 
     @Override
-    public void showSuggestions() {
+    public void onShowSuggestions() {
         addPodcastFragment.dismiss();
         finish();
 
