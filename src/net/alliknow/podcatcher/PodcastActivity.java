@@ -234,6 +234,9 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         currentPodcast = podcast;
         // Update podcast list
         podcastListFragment.setPodcastList(podcastManager.getPodcastList());
+
+        // Update UI
+        updateActionBar();
     }
 
     @Override
@@ -248,6 +251,9 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
         // Update podcast list
         podcastListFragment.setPodcastList(podcastManager.getPodcastList());
+
+        // Update UI
+        updateActionBar();
     }
 
     @Override
