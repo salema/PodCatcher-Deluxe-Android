@@ -33,18 +33,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * List fragment to display the list of episodes as part of the podcast
- * activity.
+ * List fragment to display the list of episodes.
  */
 public class EpisodeListFragment extends PodcatcherListFragment {
 
-    /** The list of episode we are currently showing. */
+    /** The list of episodes we are currently showing. */
     private List<Episode> currentEpisodeList;
 
     /** The activity we are in (listens to user selection) */
     private OnSelectEpisodeListener selectionListener;
 
-    /** Flag to store whether podcast names should be shown for episodes */
+    /** Flag to indicate whether podcast names should be shown for episodes */
     private boolean showPodcastNames = false;
 
     /** Status flag indicating that our view is created */
@@ -97,16 +96,11 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     }
 
     /**
-     * Set whether the fragment should show the podcast name for each episode
-     * item. Change will be reflected upon next call of
-     * <code>setEpisodes()</code>.
+     * Set the list of episodes to show ion this fragment. You can call this any
+     * time and the view will catch up as soon as it is created.
      * 
-     * @param show Whether to show the podcast names.
+     * @param episodeList List of episodes to show.
      */
-    public void setShowPodcastNames(boolean show) {
-        this.showPodcastNames = show;
-    }
-
     public void setEpisodes(List<Episode> episodeList) {
         this.currentEpisodeList = episodeList;
 
@@ -122,8 +116,21 @@ public class EpisodeListFragment extends PodcatcherListFragment {
             // Update other UI elements
             if (episodeList.isEmpty())
                 emptyView.setText(R.string.no_episodes);
+
+            // Make sure view shows as needed
             updateUiElementVisibility();
         }
+    }
+
+    /**
+     * Set whether the fragment should show the podcast name for each episode
+     * item. Change will be reflected upon next call of
+     * <code>setEpisodes()</code>.
+     * 
+     * @param show Whether to show the podcast names.
+     */
+    public void setShowPodcastNames(boolean show) {
+        this.showPodcastNames = show;
     }
 
     @Override

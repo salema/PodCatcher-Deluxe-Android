@@ -77,7 +77,7 @@ public class Podcast implements Comparable<Podcast> {
      * @param name The podcast's name, if you give <code>null</code> the name
      *            will be read from the RSS file (if set afterwards).
      * @param url The location of the podcast's RSS file.
-     * @see parse
+     * @see #parse(XmlPullParser)
      */
     public Podcast(String name, URL url) {
         this.name = name;
@@ -160,7 +160,7 @@ public class Podcast implements Comparable<Podcast> {
      * RSS file before expecting any results.
      * 
      * @return The list of episodes as listed in the feed.
-     * @see parse
+     * @see #parse(XmlPullParser)
      */
     public List<Episode> getEpisodes() {
         return episodes;
@@ -178,7 +178,7 @@ public class Podcast implements Comparable<Podcast> {
      * file is set.
      * 
      * @return URL pointing at the logo location.
-     * @see parse
+     * @see #parse(XmlPullParser)
      */
     public URL getLogoUrl() {
         return logoUrl;

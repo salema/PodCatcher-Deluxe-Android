@@ -20,6 +20,7 @@ package net.alliknow.podcatcher.model.types;
 /**
  * Language a podcast is broadcasted in.
  */
+@SuppressWarnings("javadoc")
 public enum Language {
     ENGLISH, GERMAN
 }

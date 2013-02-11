@@ -59,18 +59,27 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
         notifyDataSetChanged();
     }
 
+    /**
+     * Put adapter in select all mode.
+     */
     public void setSelectAll() {
         selectAll = true;
         selectedPositions.clear();
         notifyDataSetChanged();
     }
 
+    /**
+     * Put adapter in select none mode.
+     */
     public void setSelectNone() {
         selectAll = false;
         selectedPositions.clear();
         notifyDataSetChanged();
     }
 
+    /**
+     * @return The selected position, or -1 if none.
+     */
     public int getSelectedPosition() {
         if (selectAll || selectedPositions.size() != 1)
             return -1;
@@ -121,12 +130,5 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
         textView.setChecked(checkedPositions.get(position));
         textView.setSelected(selectedPositions.get(position));
         textView.setSingleLine(!selectedPositions.get(position));
-    }
-
-    @Override
-    public void notifyDataSetChanged() {
-        // This prevents an excpetion when the last podcast is deleted...
-        if (getCount() > 0)
-            super.notifyDataSetChanged();
     }
 }

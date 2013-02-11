@@ -88,14 +88,14 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
             if (loader != null)
                 loader.onPodcastLogoLoadFailed(podcast);
             else
-                Log.d(getClass().getSimpleName(),
+                Log.w(getClass().getSimpleName(),
                         "Podcast logo loading failed, but no listener attached");
         } // Podcast logo was loaded
         else {
             if (loader != null)
                 loader.onPodcastLogoLoaded(podcast, result);
             else
-                Log.d(getClass().getSimpleName(), "Podcast logo loaded, but no listener attached");
+                Log.w(getClass().getSimpleName(), "Podcast logo loaded, but no listener attached");
         }
     }
 

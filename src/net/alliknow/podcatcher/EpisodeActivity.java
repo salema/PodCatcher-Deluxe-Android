@@ -154,7 +154,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
             if (playerFragment != null)
                 playerFragment.updateSeekBarSecondaryProgress(0);
         } else
-            Log.d(getClass().getSimpleName(), "Cannot load episode (episode or service are null)");
+            Log.w(getClass().getSimpleName(), "Cannot load episode (episode or service are null)");
     }
 
     @Override
@@ -172,7 +172,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
             updatePlayer();
         } else
-            Log.d(getClass().getSimpleName(),
+            Log.w(getClass().getSimpleName(),
                     "Cannot play/pause episode (service null or unprepared)");
     }
 
@@ -326,7 +326,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
         @Override
         public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
             service = ((PlayServiceBinder) serviceBinder).getService();
-            Log.d(EpisodeActivity.this.getClass().getSimpleName(), "Bound to playback service");
 
             // Register listener
             service.addPlayServiceListener(EpisodeActivity.this);
@@ -341,7 +340,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            Log.d(EpisodeActivity.this.getClass().getSimpleName(), "Unbound from playback service");
         }
     };
 }

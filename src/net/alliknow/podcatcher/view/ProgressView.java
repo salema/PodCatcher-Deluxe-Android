@@ -37,6 +37,12 @@ public class ProgressView extends LinearLayout {
     /** The progress bar text */
     protected TextView progressTextView;
 
+    /**
+     * Create a new progress view.
+     * 
+     * @param context Context for the view to live in.
+     * @param attrs View attributes.
+     */
     public ProgressView(Context context, AttributeSet attrs) {
         super(context, attrs);
 

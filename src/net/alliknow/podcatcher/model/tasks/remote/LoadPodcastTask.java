@@ -104,7 +104,7 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
         if (listener != null)
             listener.onPodcastLoadProgress(podcast, progress[0]);
         else if (listener == null)
-            Log.d(getClass().getSimpleName(), "Podcast progress update, but no listener attached");
+            Log.w(getClass().getSimpleName(), "Podcast progress update, but no listener attached");
     }
 
     @Override
@@ -117,13 +117,13 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
             if (listener != null)
                 listener.onPodcastLoadFailed(podcast);
             else
-                Log.d(getClass().getSimpleName(),
+                Log.w(getClass().getSimpleName(),
                         "Podcast failed to load, but no listener attached");
         } // Podcast was loaded
         else if (listener != null)
             listener.onPodcastLoaded(podcast);
         else
-            Log.d(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
+            Log.w(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
     }
 
     @Override

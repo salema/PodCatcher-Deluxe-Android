@@ -31,6 +31,12 @@ import net.alliknow.podcatcher.model.tasks.Progress;
  */
 public class HorizontalProgressView extends ProgressView {
 
+    /**
+     * Create progress view.
+     * 
+     * @param context Context view lives in.
+     * @param attrs View attributes.
+     */
     public HorizontalProgressView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }

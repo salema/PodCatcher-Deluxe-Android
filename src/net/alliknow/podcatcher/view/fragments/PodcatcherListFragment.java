@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
@@ -42,16 +41,16 @@ public abstract class PodcatcherListFragment extends ListFragment {
     /** The list adapter */
     protected PodcatcherBaseListAdapter adapter;
 
-    /** The list view */
-    protected ListView listView;
     /** The empty view */
     protected TextView emptyView;
     /** The progress bar */
     protected ProgressView progressView;
 
-    /** Flags for internal state */
+    /** Flags for internal state: show progress */
     protected boolean showProgress = false;
+    /** Flags for internal state: show error */
     protected boolean showLoadFailed = false;
+    /** Flags for internal state: select all */
     protected boolean selectAll = false;
 
     /** Status flag indicating that our view is created */
@@ -61,7 +60,6 @@ public abstract class PodcatcherListFragment extends ListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        listView = getListView();
         emptyView = (TextView) getView().findViewById(android.R.id.empty);
         progressView = (ProgressView) getView().findViewById(R.id.progress);
 
@@ -156,8 +154,8 @@ public abstract class PodcatcherListFragment extends ListFragment {
      * Reset the fragments state. Sub-classes should extends this. Will be
      * called on public reset.
      * 
-     * @see resetUi
-     * @see resetAndSpin
+     * @see #resetUi()
+     * @see #resetAndSpin()
      */
     protected void reset() {
         showProgress = false;
@@ -200,14 +198,14 @@ public abstract class PodcatcherListFragment extends ListFragment {
             // Progress view is displaying information
             if (showProgress || showLoadFailed) {
                 emptyView.setVisibility(GONE);
-                listView.setVisibility(GONE);
+                getListView().setVisibility(GONE);
                 progressView.setVisibility(VISIBLE);
             } // Show the episode list or the empty view
             else {
                 boolean itemsAvailable = getListAdapter() != null && !getListAdapter().isEmpty();
 
                 emptyView.setVisibility(itemsAvailable ? GONE : VISIBLE);
-                listView.setVisibility(itemsAvailable ? VISIBLE : GONE);
+                getListView().setVisibility(itemsAvailable ? VISIBLE : GONE);
                 progressView.setVisibility(GONE);
             }
         }
@@ -222,7 +220,7 @@ public abstract class PodcatcherListFragment extends ListFragment {
         // This happens at times and we do not want to react in this case.
         if (getListView().getFirstVisiblePosition() < 0 ||
                 getListView().getLastVisiblePosition() < 0)
-            Log.d(getClass().getSimpleName(), "Scroll list failed (first: " +
+            Log.w(getClass().getSimpleName(), "Scroll list failed (first: " +
                     getListView().getFirstVisiblePosition() + ", last: " +
                     getListView().getLastVisiblePosition() + ")!");
         // Scroll if necessary

@@ -20,6 +20,7 @@ package net.alliknow.podcatcher.model.types;
 /**
  * Genre (category) of the podcast.
  */
+@SuppressWarnings("javadoc")
 public enum Genre {
     COMEDY, EDUCATION, ENTERTAINMENT, MOBILITY, MUSIC, NEWS, POLITICS, SCIENCE, SPORTS, TECHNOLOGY
 }

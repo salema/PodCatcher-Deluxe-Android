@@ -84,6 +84,10 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
      * The binder to return to client.
      */
     public class PlayServiceBinder extends Binder {
+
+        /**
+         * @return The service binder.
+         */
         public PlayEpisodeService getService() {
             // Return this instance of this service, so clients can call public
             // methods
@@ -96,8 +100,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(getClass().getSimpleName(), "Received intent " + intent);
-
             pause();
         }
     };
@@ -124,7 +126,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         if (currentEpisode == null) {
             stopSelf();
 
-            Log.d(getClass().getSimpleName(),
+            Log.i(getClass().getSimpleName(),
                     "Service stopped since no clients are bound anymore and no episode is loaded");
         }
 
@@ -133,8 +135,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
     @Override
     public void onDestroy() {
-        Log.d(getClass().getSimpleName(), "Service destroyed");
-
         reset();
 
         listeners = null;
@@ -148,16 +148,22 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         return player != null && player.isPlaying();
     }
 
-    public boolean addPlayServiceListener(PlayServiceListener listener) {
-        Log.d(getClass().getSimpleName(),
-                "Add play service listener " + listener + " (#" + (listeners.size() + 1) + ")");
-        return listeners.add(listener);
+    /**
+     * Register a play service listener.
+     * 
+     * @param listener Listener to add.
+     */
+    public void addPlayServiceListener(PlayServiceListener listener) {
+        listeners.add(listener);
     }
 
-    public boolean removePlayServiceListener(PlayServiceListener listener) {
-        Log.d(getClass().getSimpleName(),
-                "Remove play service listener " + listener + " (#" + (listeners.size() - 1) + ")");
-        return listeners.remove(listener);
+    /**
+     * Unregister a play service listener.
+     * 
+     * @param listener Listener to remove.
+     */
+    public void removePlayServiceListener(PlayServiceListener listener) {
+        listeners.remove(listener);
     }
 
     /**
@@ -167,9 +173,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
      */
     public void playEpisode(Episode episode) {
         if (episode != null) {
-            Log.d(getClass().getSimpleName(),
-                    "Loading episode " + episode + " (" + episode.getMediaUrl() + ")");
-
             // Stop and release the current player and reset variables
             reset();
 
@@ -195,7 +198,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
      */
     public void pause() {
         if (currentEpisode == null)
-            Log.d(getClass().getSimpleName(), "Called pause without setting episode");
+            Log.w(getClass().getSimpleName(), "Called pause without setting episode");
         else if (prepared && isPlaying())
             player.pause();
     }
@@ -205,9 +208,9 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
      */
     public void resume() {
         if (currentEpisode == null)
-            Log.d(getClass().getSimpleName(), "Called resume without setting episode");
+            Log.w(getClass().getSimpleName(), "Called resume without setting episode");
         else if (!hasFocus)
-            Log.d(getClass().getSimpleName(), "Called resume without having audio focus");
+            Log.w(getClass().getSimpleName(), "Called resume without having audio focus");
         else if (prepared && !isPlaying())
             player.start();
     }
@@ -325,7 +328,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             for (PlayServiceListener listener : listeners)
                 listener.onReadyToPlay();
         else
-            Log.d(getClass().getSimpleName(), "Episode prepared, but no listener attached");
+            Log.w(getClass().getSimpleName(), "Episode prepared, but no listener attached");
     }
 
     @Override
@@ -334,7 +337,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             for (PlayServiceListener listener : listeners)
                 listener.onBufferUpdate(getDuration() * percent / 100);
         else
-            Log.d(getClass().getSimpleName(), "Buffer state changed, but no listener attached");
+            Log.w(getClass().getSimpleName(), "Buffer state changed, but no listener attached");
     }
 
     @Override
@@ -344,7 +347,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 listener.onPlaybackComplete();
         else {
             reset();
-            Log.d(getClass().getSimpleName(),
+            Log.w(getClass().getSimpleName(),
                     "Episode playback completed, but no listener attached");
         }
     }
@@ -370,7 +373,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         }
 
         if (listeners.size() == 0)
-            Log.d(getClass().getSimpleName(), "Media player send info, but no listener attached");
+            Log.w(getClass().getSimpleName(), "Media player send info, but no listener attached");
 
         return listeners.size() > 0
                 && (what == MediaPlayer.MEDIA_INFO_BUFFERING_START || what == MediaPlayer.MEDIA_INFO_BUFFERING_END);
@@ -383,7 +386,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 listener.onError();
         else {
             reset();
-            Log.d(getClass().getSimpleName(), "Media player send error, but no listener attached");
+            Log.w(getClass().getSimpleName(), "Media player send error, but no listener attached");
         }
 
         return true;
@@ -457,7 +460,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
     @Override
     public void onAudioFocusChange(int focusChange) {
-        Log.d(getClass().getSimpleName(), "Audio focus changed to: " + focusChange);
 
         switch (focusChange) {
             case AudioManager.AUDIOFOCUS_GAIN:

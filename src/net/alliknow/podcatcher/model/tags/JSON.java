@@ -20,8 +20,8 @@ package net.alliknow.podcatcher.model.tags;
 /**
  * Defines some constants used in JSON-files.
  */
+@SuppressWarnings("javadoc")
 public class JSON {
-
     public static final String FEATURED = "featured";
     public static final String SUGGESTION = "suggestions";
 

@@ -38,8 +38,9 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
     /** The list our data resides in */
     protected List<Podcast> list;
 
-    /** String resources used */
+    /** String resources used: one episode */
     protected final String oneEpisode;
+    /** String resources used: multiple episodes */
     protected final String episodes;
 
     /**

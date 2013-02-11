@@ -215,7 +215,7 @@ public class Episode implements Comparable<Episode> {
                     Locale.ENGLISH);
             return formatter.parse(value);
         } catch (ParseException e) {
-            Log.d(getClass().getSimpleName(), "Episode has invalid publication date", e);
+            Log.w(getClass().getSimpleName(), "Episode has invalid publication date", e);
         }
 
         return null;

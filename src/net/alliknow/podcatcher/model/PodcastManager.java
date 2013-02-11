@@ -124,7 +124,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
 
         // Alert call-backs (if any)
         if (loadPodcastListListeners.isEmpty())
-            Log.d(getClass().getSimpleName(), "Podcast list loaded, but no listeners set.");
+            Log.w(getClass().getSimpleName(), "Podcast list loaded, but no listeners set.");
         else
             for (OnLoadPodcastListListener listener : loadPodcastListListeners)
                 listener.onPodcastListLoaded(getPodcastList());
@@ -189,7 +189,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
 
         // Notify listeners
         if (loadPodcastListeners.isEmpty())
-            Log.d(getClass().getSimpleName(), "Podcast loaded, but no listeners attached.");
+            Log.w(getClass().getSimpleName(), "Podcast loaded, but no listeners attached.");
         else
             for (OnLoadPodcastListener listener : loadPodcastListeners)
                 listener.onPodcastLoaded(podcast);
@@ -202,7 +202,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
 
         // Notify listeners
         if (loadPodcastListeners.isEmpty())
-            Log.d(getClass().getSimpleName(), "Podcast failed to load, but no listeners set.");
+            Log.w(getClass().getSimpleName(), "Podcast failed to load, but no listeners set.");
         else
             for (OnLoadPodcastListener listener : loadPodcastListeners)
                 listener.onPodcastLoadFailed(podcast);
@@ -239,7 +239,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         podcast.setLogo(logo);
 
         if (loadPodcastLogoListeners.isEmpty())
-            Log.d(getClass().getSimpleName(), "Podcast logo loaded, but no listener set.");
+            Log.w(getClass().getSimpleName(), "Podcast logo loaded, but no listener set.");
         else
             for (OnLoadPodcastLogoListener listener : loadPodcastLogoListeners)
                 listener.onPodcastLogoLoaded(podcast, logo);
@@ -250,7 +250,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         loadPodcastLogoTasks.remove(podcast);
 
         if (loadPodcastLogoListeners.isEmpty())
-            Log.d(getClass().getSimpleName(), "Podcast logo failed to load, but no listener set.");
+            Log.w(getClass().getSimpleName(), "Podcast logo failed to load, but no listener set.");
         else
             for (OnLoadPodcastLogoListener listener : loadPodcastLogoListeners)
                 listener.onPodcastLogoLoadFailed(podcast);
@@ -280,7 +280,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             // Store changed list
             new StorePodcastListTask(podcatcher.getApplicationContext()).execute(podcastList);
         } else
-            Log.d(getClass().getSimpleName(), "Podcast \"" + newPodcast.getName()
+            Log.i(getClass().getSimpleName(), "Podcast \"" + newPodcast.getName()
                     + "\" is already in list.");
     }
 

@@ -56,6 +56,7 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
      *            keep a handle on this task, but set to <code>null</code> after
      *            execution.
      * @param listener Callback to be alerted on completion.
+     * @see PodcastManager#OPML_FILENAME
      */
     public LoadPodcastListTask(Context context, OnLoadPodcastListListener listener) {
         this.listener = listener;
@@ -135,9 +136,9 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
             // Create the podcast
             return new Podcast(name, url);
         } catch (MalformedURLException e) {
-            Log.d(getClass().getSimpleName(), "OPML outline has bad URL!", e);
+            Log.w(getClass().getSimpleName(), "OPML outline has bad URL!", e);
         } catch (XmlPullParserException e) {
-            Log.d(getClass().getSimpleName(), "OPML outline not parsable!", e);
+            Log.w(getClass().getSimpleName(), "OPML outline not parsable!", e);
         } catch (IOException e) { /* pass */
         }
 
@@ -149,6 +150,6 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
         if (listener != null)
             listener.onPodcastListLoaded(result);
         else
-            Log.d(getClass().getSimpleName(), "Podcast list loaded, but no listener attached");
+            Log.w(getClass().getSimpleName(), "Podcast list loaded, but no listener attached");
     }
 }

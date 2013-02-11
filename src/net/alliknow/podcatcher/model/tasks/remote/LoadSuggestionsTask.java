@@ -99,7 +99,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
         if (listener != null)
             listener.onSuggestionsLoadProgress(progress[0]);
         else if (listener == null)
-            Log.d(getClass().getSimpleName(),
+            Log.w(getClass().getSimpleName(),
                     "Suggestions progress update, but no listener attached");
     }
 
@@ -110,13 +110,13 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
             if (listener != null)
                 listener.onSuggestionsLoadFailed();
             else
-                Log.d(getClass().getSimpleName(),
+                Log.w(getClass().getSimpleName(),
                         "Suggestions failed to load, but no listener attached");
         } // Podcast was loaded
         else if (listener != null)
             listener.onSuggestionsLoaded(suggestions);
         else
-            Log.d(getClass().getSimpleName(), "Suggestions loaded, but no listener attached");
+            Log.w(getClass().getSimpleName(), "Suggestions loaded, but no listener attached");
     }
 
     /**
@@ -162,14 +162,14 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
             suggestion.setGenre(Genre.valueOf(json.getString(JSON.CATEGORY).toUpperCase(Locale.US)
                     .trim()));
         } catch (JSONException e) {
-            Log.d(getClass().getSimpleName(), "Problem parsing JSON for suggestion: " + suggestion,
+            Log.w(getClass().getSimpleName(), "Problem parsing JSON for suggestion: " + suggestion,
                     e);
             return null;
         } catch (IllegalArgumentException e) {
-            Log.d(getClass().getSimpleName(), "Enum value missing for suggestion: " + suggestion, e);
+            Log.w(getClass().getSimpleName(), "Enum value missing for suggestion: " + suggestion, e);
             return null;
         } catch (MalformedURLException e) {
-            Log.d(getClass().getSimpleName(), "Bad URL for suggestion: " + suggestion, e);
+            Log.w(getClass().getSimpleName(), "Bad URL for suggestion: " + suggestion, e);
             return null;
         }
 

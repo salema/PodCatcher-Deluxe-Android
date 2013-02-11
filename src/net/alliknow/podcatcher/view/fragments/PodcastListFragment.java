@@ -45,8 +45,7 @@ import net.alliknow.podcatcher.view.adapters.PodcastListAdapter;
 import java.util.List;
 
 /**
- * List fragment to display the list of podcasts as part of the podcast
- * activity.
+ * List fragment to display the list of podcasts.
  */
 public class PodcastListFragment extends PodcatcherListFragment {
 
@@ -109,7 +108,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
         super.onViewCreated(view, savedInstanceState);
 
         logoView = (ImageView) view.findViewById(R.id.podcast_image);
-        listView.setMultiChoiceModeListener(new PodcastListContextListener(this));
+        getListView().setMultiChoiceModeListener(new PodcastListContextListener(this));
 
         viewCreated = true;
 
@@ -139,7 +138,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
                 return true;
             case R.id.podcast_remove_menuitem:
-                listView.setItemChecked(adapter.getSelectedPosition(), true);
+                getListView().setItemChecked(adapter.getSelectedPosition(), true);
 
                 return true;
             default:
@@ -160,13 +159,6 @@ public class PodcastListFragment extends PodcatcherListFragment {
         viewCreated = false;
 
         super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        // getActivity().startActionMode(null);
     }
 
     public void setPodcastList(List<Podcast> podcastList) {
@@ -239,7 +231,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
         // To prevent this if we are not ready to handle progress update
         // e.g. on app termination
         if (viewCreated) {
-            View listItemView = listView.getChildAt(position);
+            View listItemView = getListView().getChildAt(position);
             if (listItemView != null)
                 ((HorizontalProgressView) listItemView.findViewById(R.id.list_item_progress))
                         .publishProgress(progress);

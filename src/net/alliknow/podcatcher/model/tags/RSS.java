@@ -23,8 +23,8 @@ package net.alliknow.podcatcher.model.tags;
  * @see <a href="http://cyber.law.harvard.edu/rss/rss.html">RSS
  *      specification</a>
  */
+@SuppressWarnings("javadoc")
 public class RSS {
-
     public static final String ITEM = "item";
     public static final String IMAGE = "image";
     public static final String TITLE = "title";
@@ -36,5 +36,4 @@ public class RSS {
     public static final String PUBDATE = "pubDate";
     public static final String THUMBNAIL = "thumbnail";
     public static final String DESCRIPTION = "description";
-
 }

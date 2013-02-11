@@ -22,7 +22,6 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
-import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.tags.OPML;
@@ -54,7 +53,7 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
      * @param context Context to get file handle from. This will not be leaked
      *            if you keep a handle on this task, but set to
      *            <code>null</code> after execution.
-     * @see Podcatcher.OPML_FILENAME
+     * @see PodcastManager#OPML_FILENAME
      */
     public StorePodcastListTask(Context context) {
         this.context = context;
