@@ -136,6 +136,13 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         currentEpisode = podcastManager.findEpisodeForUrl(
                 savedInstanceState.getString(EPISODE_URL_KEY));
 
+        restoreSelection();
+    }
+
+    /**
+     * Restore selection to match member variables
+     */
+    private void restoreSelection() {
         // Re-select previously selected podcast(s)
         if (multiplePodcastsMode)
             onAllPodcastsSelected();
@@ -149,6 +156,18 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             onEpisodeSelected(currentEpisode);
         else
             onNoEpisodeSelected();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        // Recover members
+        multiplePodcastsMode = intent.getBooleanExtra(MODE_KEY, false);
+        currentPodcast = podcastManager.findPodcastForUrl(
+                intent.getStringExtra(PODCAST_URL_KEY));
+        currentEpisode = podcastManager.findEpisodeForUrl(
+                intent.getStringExtra(EPISODE_URL_KEY));
+
+        restoreSelection();
     }
 
     @Override

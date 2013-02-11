@@ -427,9 +427,17 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
     private void putForeground() {
         // This will bring back to app
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                getApplicationContext(),
+                0,
                 new Intent(getApplicationContext(), PodcastActivity.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP),
+                        .putExtra(PodcastActivity.MODE_KEY, false)
+                        .putExtra(PodcastActivity.PODCAST_URL_KEY,
+                                currentEpisode.getPodcastUrl().toString())
+                        .putExtra(PodcastActivity.EPISODE_URL_KEY,
+                                currentEpisode.getMediaUrl().toString())
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                                Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Prepare the notification

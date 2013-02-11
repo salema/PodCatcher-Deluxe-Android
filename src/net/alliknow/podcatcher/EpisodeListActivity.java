@@ -59,7 +59,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     /** The podcast we are showing episodes for */
     protected Podcast currentPodcast;
     /** Key used to store podcast URL in intent or bundle */
-    protected static final String PODCAST_URL_KEY = "podcast_url";
+    public static final String PODCAST_URL_KEY = "podcast_url";
 
     /** The current episode list */
     protected List<Episode> currentEpisodeList;

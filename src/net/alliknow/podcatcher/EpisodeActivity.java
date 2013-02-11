@@ -54,7 +54,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
     /** The episode currently selected and displayed */
     protected Episode currentEpisode;
     /** Key used to store episode URL in intent or bundle */
-    protected static final String EPISODE_URL_KEY = "episode_url";
+    public static final String EPISODE_URL_KEY = "episode_url";
 
     /** Play service */
     protected PlayEpisodeService service;
