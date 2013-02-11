@@ -449,6 +449,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 .setContentTitle(currentEpisode.getName())
                 .setContentText(currentEpisode.getPodcastName())
                 .setContentInfo(getResources().getString(R.string.app_name))
+                .setWhen(0)
                 .setOngoing(true).getNotification();
 
         startForeground(NOTIFICATION_ID, notification);
