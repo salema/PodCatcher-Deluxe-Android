@@ -96,7 +96,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     }
 
     /**
-     * Set the list of episodes to show ion this fragment. You can call this any
+     * Set the list of episodes to show in this fragment. You can call this any
      * time and the view will catch up as soon as it is created.
      * 
      * @param episodeList List of episodes to show.

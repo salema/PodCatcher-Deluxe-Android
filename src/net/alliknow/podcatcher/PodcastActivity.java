@@ -81,10 +81,17 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         if (podcastList != null) {
             onPodcastListLoaded(podcastList);
 
-            // We only reset our state if the podcast list is available and this
-            // is not the initial create of the activity
+            // We only reset our state if the podcast list is available, because
+            // otherwise we will not be able to select anything.
+            // There are two cases to cover here:
+            // 1. We come back from a configuration change and restore from the
+            // bundle saved at onSaveInstanceState()
             if (savedInstanceState != null)
                 restoreState(savedInstanceState);
+            // 2. We are (re)started and the intent might contain some
+            // information we need to parse (this also works if it doesn't)
+            else
+                onNewIntent(getIntent());
         }
     }
 
@@ -178,8 +185,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
         // Set podcast logo view mode
         updateLogoViewMode();
-        // Make sure dividers (if any) reflect selection state
-        updateDivider();
     }
 
     @Override
@@ -400,9 +405,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             super.onPodcastLoaded(podcast);
 
             // Tell the podcast manager to load podcast logo
-            podcastManager.loadLogo(podcast,
-                    podcastListFragment.getLogoViewWidth(),
-                    podcastListFragment.getLogoViewHeight());
+            podcastManager.loadLogo(podcast);
         }
     }
 
@@ -418,8 +421,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     public void onPodcastLogoLoaded(Podcast podcast, Bitmap logo) {
         super.onPodcastLogoLoaded(podcast, logo);
 
-        if (podcast.equals(currentPodcast))
-            podcastListFragment.showLogo(logo);
+        updateLogoViewMode();
     }
 
     /**

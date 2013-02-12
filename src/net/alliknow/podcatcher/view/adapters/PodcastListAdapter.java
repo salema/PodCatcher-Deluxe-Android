@@ -23,6 +23,7 @@ import static android.view.View.VISIBLE;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.model.types.Podcast;
@@ -37,6 +38,8 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 
     /** The list our data resides in */
     protected List<Podcast> list;
+
+    protected boolean showLogoView = false;
 
     /** String resources used: one episode */
     protected final String oneEpisode;
@@ -55,6 +58,12 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
         this.list = podcastList;
         oneEpisode = context.getResources().getString(R.string.one_episode);
         episodes = context.getResources().getString(R.string.episodes);
+    }
+
+    public void setShowLogo(boolean show) {
+        this.showLogoView = show;
+
+        notifyDataSetChanged();
     }
 
     @Override
@@ -76,18 +85,26 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         convertView = findReturnView(convertView, parent, R.layout.list_item);
 
-        int numberOfEpisodes = list.get(position).getEpisodes().size();
-        setTextAndState(convertView, R.id.list_item_title, list.get(position).getName(), position);
+        Podcast podcast = list.get(position);
+        int numberOfEpisodes = podcast.getEpisodes().size();
+        setTextAndState(convertView, R.id.list_item_title, podcast.getName(), position);
         setTextAndState(convertView, R.id.list_item_caption, createCaption(numberOfEpisodes),
                 position);
 
         // Show progress on select all podcasts?
         HorizontalProgressView progressView = (HorizontalProgressView) convertView
                 .findViewById(R.id.list_item_progress);
-        progressView.setVisibility(list.get(position).isLoading() && selectAll ? VISIBLE : GONE);
+        progressView.setVisibility(podcast.isLoading() && selectAll ? VISIBLE : GONE);
         // Not if episodes are already available...
         View episodeNumberView = convertView.findViewById(R.id.list_item_caption);
         episodeNumberView.setVisibility(numberOfEpisodes != 0 ? VISIBLE : GONE);
+
+        if (showLogoView && podcast.getLogo() != null) {
+            ImageView logoView = (ImageView) convertView.findViewById(R.id.podcast_image);
+
+            logoView.setVisibility(View.VISIBLE);
+            logoView.setImageBitmap(podcast.getLogo());
+        }
 
         return convertView;
     }

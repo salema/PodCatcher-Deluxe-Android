@@ -59,7 +59,7 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
 
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-        setTitle(mode);
+        update(mode);
 
         return true;
     }
@@ -100,18 +100,24 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
 
     @Override
     public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-        // Let list adapter know which items to mark checked
+        update(mode);
+    }
+
+    private void update(ActionMode mode) {
+        // Let list adapter know which items to mark checked (row color)
         ((PodcastListAdapter) fragment.getListAdapter()).setCheckedPositions(
                 fragment.getListView().getCheckedItemPositions());
 
-        setTitle(mode);
-    }
-
-    private void setTitle(ActionMode mode) {
+        // Update the mode title text
         int checkedItemCount = fragment.getListView().getCheckedItemCount();
-        mode.setTitle(checkedItemCount == 1 ?
-                fragment.getResources().getString(R.string.one_podcast_selected) :
-                checkedItemCount + " "
-                        + fragment.getResources().getString(R.string.podcasts_selected));
+        String newTitle = fragment.getResources().getString(R.string.no_podcast_selected);
+
+        if (checkedItemCount == 1)
+            newTitle = fragment.getResources().getString(R.string.one_podcast_selected);
+        else if (checkedItemCount > 1)
+            newTitle = checkedItemCount + " "
+                    + fragment.getResources().getString(R.string.podcasts_selected);
+
+        mode.setTitle(newTitle);
     }
 }

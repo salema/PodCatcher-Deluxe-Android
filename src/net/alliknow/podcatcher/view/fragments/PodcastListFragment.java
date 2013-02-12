@@ -17,12 +17,8 @@
 
 package net.alliknow.podcatcher.view.fragments;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -54,6 +50,8 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
     /** The activity we are in (listens to user selection) */
     private OnSelectPodcastListener selectionListener;
+    /** The currently selected podcast (if any) */
+    private Podcast selectedPodcast;
 
     /** Remove podcast menu item */
     private MenuItem selectAllMenuItem;
@@ -63,7 +61,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
     /** The logo view */
     private ImageView logoView;
     /** The current logo view mode */
-    private LogoViewMode mode = LogoViewMode.SMALL;
+    private LogoViewMode logoViewMode = LogoViewMode.SMALL;
 
     /** The options available for the logo view */
     public enum LogoViewMode {
@@ -107,15 +105,21 @@ public class PodcastListFragment extends PodcatcherListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Find logo view member handle
         logoView = (ImageView) view.findViewById(R.id.podcast_image);
+        // Set list choice listener (context action mode)
         getListView().setMultiChoiceModeListener(new PodcastListContextListener(this));
 
+        // Consider the view created successfully beyond this point
         viewCreated = true;
 
         // This will make sure we show the right information once the view
         // controls are established (the list might have been set earlier)
         if (currentPodcastList != null)
             setPodcastList(currentPodcastList);
+
+        // Make sure logo view mode is set
+        setLogoVisibility(logoViewMode);
     }
 
     @Override
@@ -155,12 +159,25 @@ public class PodcastListFragment extends PodcatcherListFragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putLongArray("test", getListView().getCheckedItemIds());
+    }
+
+    @Override
     public void onDestroyView() {
         viewCreated = false;
 
         super.onDestroyView();
     }
 
+    /**
+     * Set the list of podcasts to show in this fragment. You can call this any
+     * time and the view will catch up as soon as it is created.
+     * 
+     * @param podcastList List of podcasts to show.
+     */
     public void setPodcastList(List<Podcast> podcastList) {
         this.currentPodcastList = podcastList;
 
@@ -187,37 +204,26 @@ public class PodcastListFragment extends PodcatcherListFragment {
     public void select(int position) {
         super.select(position);
 
-        if (viewCreated) {
-            Podcast selectedPodcast = (Podcast) adapter.getItem(position);
+        if (adapter != null)
+            this.selectedPodcast = (Podcast) adapter.getItem(position);
 
-            // Prepare UI
-            if (selectedPodcast.getLogo() == null)
-                logoView.setImageResource(R.drawable.default_podcast_logo);
-            else
-                logoView.setImageBitmap(selectedPodcast.getLogo());
-
-            updateUiElementVisibility();
-        }
+        updateUiElementVisibility();
     }
 
     @Override
     public void selectAll() {
         super.selectAll();
+        this.selectedPodcast = null;
 
-        // Prepare UI
-        if (viewCreated) {
-            logoView.setImageResource(R.drawable.default_podcast_logo);
-            updateUiElementVisibility();
-        }
+        updateUiElementVisibility();
     }
 
     @Override
     public void selectNone() {
         super.selectNone();
+        this.selectedPodcast = null;
 
-        if (viewCreated) {
-            logoView.setImageResource(R.drawable.default_podcast_logo);
-        }
+        updateUiElementVisibility();
     }
 
     /**
@@ -238,32 +244,41 @@ public class PodcastListFragment extends PodcatcherListFragment {
         }
     }
 
+    /**
+     * Set the logo view mode. This will also update the logo if possible.
+     * 
+     * @param mode The logo view mode to use.
+     */
     public void setLogoVisibility(LogoViewMode mode) {
-        this.mode = mode;
+        this.logoViewMode = mode;
 
         updateUiElementVisibility();
-    }
-
-    public void showLogo(Bitmap logo) {
-        if (viewCreated)
-            logoView.setImageBitmap(logo);
-    }
-
-    public int getLogoViewWidth() {
-        return viewCreated ? logoView.getWidth() : 100;
-    }
-
-    public int getLogoViewHeight() {
-        return viewCreated ? logoView.getHeight() : 100;
     }
 
     @Override
     protected void updateUiElementVisibility() {
         super.updateUiElementVisibility();
 
+        // Only act if the view is actually created
         if (viewCreated) {
-            logoView.setVisibility(mode.equals(LogoViewMode.SMALL) ? GONE : VISIBLE);
+            // 1. Update according to logo view mode
+            // In large mode show single logo at the bottom of the list
+            if (logoViewMode.equals(LogoViewMode.LARGE)) {
+                if (adapter != null)
+                    ((PodcastListAdapter) adapter).setShowLogo(false);
+                logoView.setVisibility(View.VISIBLE);
 
+                if (selectedPodcast == null || selectedPodcast.getLogo() == null)
+                    logoView.setImageResource(R.drawable.default_podcast_logo);
+                else
+                    logoView.setImageBitmap(selectedPodcast.getLogo());
+            } else {
+                if (adapter != null)
+                    ((PodcastListAdapter) adapter).setShowLogo(true);
+                logoView.setVisibility(View.GONE);
+            }
+
+            // 2. Update menu items
             // Menu items might be late to load
             if (selectAllMenuItem != null)
                 selectAllMenuItem.setVisible(adapter != null && adapter.getCount() > 1

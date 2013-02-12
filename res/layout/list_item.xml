@@ -48,4 +48,12 @@
         android:layout_height="wrap_content"
         android:indeterminate="true"
         android:visibility="gone" />
+    <ImageView
+        android:id="@+id/podcast_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/podcast_image"
+        android:padding="2dp"
+        android:scaleType="centerInside"
+        android:visibility="gone" />
 </LinearLayout>

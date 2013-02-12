@@ -68,6 +68,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     /** The list of podcasts we know */
     private List<Podcast> podcastList;
 
+    private static final int LOGO_DIMENSION = 100;
+
     /** The current podcast load tasks */
     private Map<Podcast, LoadPodcastTask> loadPodcastTasks = new HashMap<Podcast, LoadPodcastTask>();
     /** The current podcast logo load tasks */
@@ -214,15 +216,13 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      * monitor the load process and to get its result.
      * 
      * @param podcast Podcast to load logo for.
-     * @param width Width the logo can be sampled down to. Give zero (0) to
-     *            disable sampling.
-     * @param height Height the logo can be sampled down to.
      * @see OnLoadPodcastLogoListener
      */
-    public void loadLogo(Podcast podcast, int width, int height) {
+    public void loadLogo(Podcast podcast) {
         // Only start the load task if it is not already active
         if (!loadPodcastLogoTasks.containsKey(podcast)) {
-            LoadPodcastLogoTask loadPodcastLogoTask = new LoadPodcastLogoTask(this, width, height);
+            LoadPodcastLogoTask loadPodcastLogoTask =
+                    new LoadPodcastLogoTask(this, LOGO_DIMENSION, LOGO_DIMENSION);
             loadPodcastLogoTask.setLoadLimit(podcatcher.isOnFastConnection() ?
                     LoadPodcastLogoTask.MAX_LOGO_SIZE_WIFI
                     : LoadPodcastLogoTask.MAX_LOGO_SIZE_MOBILE);

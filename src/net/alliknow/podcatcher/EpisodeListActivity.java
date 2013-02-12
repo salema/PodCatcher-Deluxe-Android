@@ -90,6 +90,14 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Make sure dividers (if any) reflect selection state
+        updateDivider();
+    }
+
+    @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
         if (!multiplePodcastsMode && podcast.equals(currentPodcast))
             episodeListFragment.showProgress(progress);
