@@ -31,8 +31,8 @@ import java.net.URL;
 /**
  * Abstract super class for file download tasks.
  * 
- * @param <Params> Params as definied by {@link AsyncTask}
- * @param <Result> Result as definied by {@link AsyncTask}
+ * @param <Params> Params as defined by {@link AsyncTask}
+ * @param <Result> Result as defined by {@link AsyncTask}
  * @see AsyncTask
  */
 public abstract class LoadRemoteFileTask<Params, Result> extends
@@ -98,7 +98,8 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
 
         try {
             // Open stream and check whether we know its length
-            remoteStream = new BufferedInputStream(connection.getInputStream());
+            remoteStream = connection.getInputStream();
+            BufferedInputStream bufferedRemoteStream = new BufferedInputStream(remoteStream);
             boolean sendLoadProgress = connection.getContentLength() > 0;
 
             // Create the byte buffer to write to
@@ -109,7 +110,7 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
             int bytesRead = 0;
             int totalBytes = 0;
             // Read stream and report progress (if possible)
-            while ((bytesRead = remoteStream.read(buffer)) > 0) {
+            while ((bytesRead = bufferedRemoteStream.read(buffer)) > 0) {
                 if (isCancelled())
                     return null;
 
@@ -124,8 +125,7 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
                     publishProgress(new Progress(totalBytes, connection.getContentLength()));
             }
 
-            // Return result as a byte array
-            return result.toByteArray();
+            bufferedRemoteStream.close();
         } finally {
             // Close the streams
             if (remoteStream != null)
@@ -135,5 +135,8 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
             // Disconnect
             connection.disconnect();
         }
+
+        // Return result as a byte array
+        return result.toByteArray();
     }
 }

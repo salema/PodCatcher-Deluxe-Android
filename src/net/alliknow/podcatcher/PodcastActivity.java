@@ -52,6 +52,12 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
      */
     private boolean podcastListChanged = false;
 
+    /**
+     * Flag indicating whether the app should show the add podcast dialog if the
+     * list of podcasts is empty.
+     */
+    private boolean showAddPodcastOnEmptyPodcastList = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +82,9 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         plugFragments();
 
         // 3. Init/restore the app as needed
+        // If we are newly starting up and the podcast list is empty, show add
+        // podcast dialog
+        showAddPodcastOnEmptyPodcastList = savedInstanceState == null;
         // Check if podcast list is available - if so, set it
         List<Podcast> podcastList = podcastManager.getPodcastList();
         if (podcastList != null) {
@@ -196,6 +205,12 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             // Reset flag
             podcastListChanged = false;
 
+            // Update podcast list
+            podcastListFragment.setPodcastList(podcastManager.getPodcastList());
+
+            // Update UI
+            updateActionBar();
+
             // Show the last podcast added
             if (currentPodcast != null && !multiplePodcastsMode)
                 onPodcastSelected(currentPodcast);
@@ -245,8 +260,10 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         updateActionBar();
 
         // If podcast list is empty we show dialog on startup
-        if (podcastManager.size() == 0)
+        if (podcastManager.size() == 0 && showAddPodcastOnEmptyPodcastList) {
+            showAddPodcastOnEmptyPodcastList = false;
             startActivity(new Intent(this, AddPodcastActivity.class));
+        }
     }
 
     @Override
@@ -256,28 +273,16 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
         // Set the member
         currentPodcast = podcast;
-        // Update podcast list
-        podcastListFragment.setPodcastList(podcastManager.getPodcastList());
-
-        // Update UI
-        updateActionBar();
     }
 
     @Override
     public void onPodcastRemoved(Podcast podcast) {
+        // Pick up the change in onRestart()
+        podcastListChanged = true;
+
         // Reset member if deleted
-        if (podcast.equals(currentPodcast)) {
+        if (podcast.equals(currentPodcast))
             currentPodcast = null;
-
-            // Pick up the change in onRestart()
-            podcastListChanged = true;
-        }
-
-        // Update podcast list
-        podcastListFragment.setPodcastList(podcastManager.getPodcastList());
-
-        // Update UI
-        updateActionBar();
     }
 
     @Override
