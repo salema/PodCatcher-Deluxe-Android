@@ -140,8 +140,8 @@ public class PlayerFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
 
         setLoadMenuItemVisibility(showLoadMenuItem, loadMenuItemState);
         setPlayerVisibilility(showPlayer);
