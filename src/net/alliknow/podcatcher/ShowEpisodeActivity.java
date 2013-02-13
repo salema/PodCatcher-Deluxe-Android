@@ -81,7 +81,8 @@ public class ShowEpisodeActivity extends EpisodeActivity {
 
     @Override
     protected void updateActionBar() {
-        super.updateActionBar();
+        getActionBar().setTitle(R.string.app_name);
+        getActionBar().setSubtitle(null);
 
         // Enable navigation
         getActionBar().setDisplayHomeAsUpEnabled(true);

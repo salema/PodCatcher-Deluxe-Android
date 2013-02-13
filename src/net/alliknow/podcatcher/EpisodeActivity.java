@@ -249,17 +249,9 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     /**
      * Update the action bar to reflect current selection and loading state.
-     * Sub-classes should overwrite.
+     * Sub-classes need to overwrite.
      */
-    protected void updateActionBar() {
-        if (currentEpisode != null) {
-            getActionBar().setTitle(currentEpisode.getName());
-            getActionBar().setSubtitle(currentEpisode.getPodcastName());
-        } else {
-            getActionBar().setTitle(R.string.app_name);
-            getActionBar().setSubtitle(null);
-        }
-    }
+    protected abstract void updateActionBar();
 
     /**
      * Update the player fragment UI to reflect current state of play.

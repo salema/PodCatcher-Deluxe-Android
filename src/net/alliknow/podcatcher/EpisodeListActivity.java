@@ -216,25 +216,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         updateDivider();
     }
 
-    @Override
-    protected void updateActionBar() {
-        if (currentPodcast != null) {
-            getActionBar().setTitle(currentPodcast.getName());
-
-            if (currentPodcast.getEpisodes().isEmpty())
-                getActionBar().setSubtitle(null);
-            else {
-                int episodeCount = currentPodcast.getEpisodes().size();
-                getActionBar().setSubtitle(episodeCount == 1 ?
-                        getResources().getString(R.string.one_episode) :
-                        episodeCount + " " + getResources().getString(R.string.episodes));
-            }
-        } else {
-            getActionBar().setTitle(R.string.app_name);
-            getActionBar().setSubtitle(null);
-        }
-    }
-
     /**
      * Update the divider views to reflect current selection state.
      */
