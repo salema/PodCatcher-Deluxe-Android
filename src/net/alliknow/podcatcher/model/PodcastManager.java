@@ -67,8 +67,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
 
     /** The list of podcasts we know */
     private List<Podcast> podcastList;
-
-    private static final int LOGO_DIMENSION = 100;
+    /** The maximum size we sample podcast logos down to */
+    private static final int LOGO_DIMENSION = 250;
 
     /** The current podcast load tasks */
     private Map<Podcast, LoadPodcastTask> loadPodcastTasks = new HashMap<Podcast, LoadPodcastTask>();

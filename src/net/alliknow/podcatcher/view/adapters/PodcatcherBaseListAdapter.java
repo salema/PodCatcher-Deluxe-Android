@@ -20,8 +20,9 @@ package net.alliknow.podcatcher.view.adapters;
 import android.content.Context;
 import android.util.SparseBooleanArray;
 import android.view.View;
-import android.widget.CheckedTextView;
 import android.widget.TextView;
+
+import net.alliknow.podcatcher.R;
 
 /**
  * Abstract super class for this app's list adapters. Handles the
@@ -56,6 +57,7 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
         selectAll = false;
         selectedPositions.clear();
         selectedPositions.put(position, true);
+
         notifyDataSetChanged();
     }
 
@@ -65,6 +67,7 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
     public void setSelectAll() {
         selectAll = true;
         selectedPositions.clear();
+
         notifyDataSetChanged();
     }
 
@@ -74,6 +77,7 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
     public void setSelectNone() {
         selectAll = false;
         selectedPositions.clear();
+
         notifyDataSetChanged();
     }
 
@@ -103,6 +107,20 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
     }
 
     /**
+     * This sets a views background color according to the selection state of
+     * the given position.
+     * 
+     * @param view View to set background for.
+     * @param position Position of the view in the list.
+     */
+    protected void setBackgroundColorForPosition(View view, int position) {
+        // Set list item color background
+        view.setBackgroundResource(checkedPositions.get(position) ?
+                R.color.theme_light : selectedPositions.get(position) ?
+                        R.color.theme_dark : R.color.transparent);
+    }
+
+    /**
      * Set text for a list item view element.
      * 
      * @param listItem The view representing the whole list item.
@@ -112,23 +130,5 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
      */
     protected void setText(View listItem, int viewId, String text) {
         ((TextView) listItem.findViewById(viewId)).setText(text);
-    }
-
-    /**
-     * Set text and selection/choice state for a list item view element.
-     * 
-     * @param listItem The view representing the whole list item.
-     * @param viewId View id of the child view, has to be (a subclass of)
-     *            <code>CheckedTextView</code>.
-     * @param text Text to display.
-     * @param position Position in list.
-     */
-    protected void setTextAndState(View listItem, int viewId, String text, int position) {
-        CheckedTextView textView = (CheckedTextView) listItem.findViewById(viewId);
-        textView.setText(text);
-
-        textView.setChecked(checkedPositions.get(position));
-        textView.setSelected(selectedPositions.get(position));
-        textView.setSingleLine(!selectedPositions.get(position));
     }
 }

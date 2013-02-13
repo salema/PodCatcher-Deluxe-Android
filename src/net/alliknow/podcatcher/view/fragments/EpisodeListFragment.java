@@ -29,7 +29,6 @@ import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.view.adapters.EpisodeListAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -110,8 +109,10 @@ public class EpisodeListFragment extends PodcatcherListFragment {
         // Update UI
         if (viewCreated) {
             // Update the list
-            setListAdapter(new EpisodeListAdapter(getActivity(),
-                    new ArrayList<Episode>(episodeList), showPodcastNames));
+            EpisodeListAdapter adapter = new EpisodeListAdapter(getActivity(), episodeList);
+            adapter.setShowPodcastNames(showPodcastNames);
+
+            setListAdapter(adapter);
 
             // Update other UI elements
             if (episodeList.isEmpty())

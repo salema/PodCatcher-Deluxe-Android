@@ -65,7 +65,20 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
     /** The options available for the logo view */
     public enum LogoViewMode {
-        SMALL, LARGE
+        /**
+         * Do not show the podcast logo
+         */
+        NONE,
+
+        /**
+         * Show small podcast logo in list item
+         */
+        SMALL,
+
+        /**
+         * Show large podcast logo at the bottom
+         */
+        LARGE
     };
 
     /** Status flag indicating that our view is created */
@@ -262,20 +275,29 @@ public class PodcastListFragment extends PodcatcherListFragment {
         // Only act if the view is actually created
         if (viewCreated) {
             // 1. Update according to logo view mode
-            // In large mode show single logo at the bottom of the list
-            if (logoViewMode.equals(LogoViewMode.LARGE)) {
-                if (adapter != null)
-                    ((PodcastListAdapter) adapter).setShowLogo(false);
-                logoView.setVisibility(View.VISIBLE);
+            switch (logoViewMode) {
+                case LARGE: // In large mode show single logo at the bottom
+                    if (adapter != null)
+                        ((PodcastListAdapter) adapter).setShowLogo(false);
+                    logoView.setVisibility(View.VISIBLE);
 
-                if (selectedPodcast == null || selectedPodcast.getLogo() == null)
-                    logoView.setImageResource(R.drawable.default_podcast_logo);
-                else
-                    logoView.setImageBitmap(selectedPodcast.getLogo());
-            } else {
-                if (adapter != null)
-                    ((PodcastListAdapter) adapter).setShowLogo(true);
-                logoView.setVisibility(View.GONE);
+                    if (selectedPodcast == null || selectedPodcast.getLogo() == null)
+                        logoView.setImageResource(R.drawable.default_podcast_logo);
+                    else
+                        logoView.setImageBitmap(selectedPodcast.getLogo());
+
+                    break;
+                case SMALL: // In small mode show logo inline
+                    if (adapter != null)
+                        ((PodcastListAdapter) adapter).setShowLogo(true);
+                    logoView.setVisibility(View.GONE);
+
+                    break;
+
+                default: // Show no logo at all
+                    if (adapter != null)
+                        ((PodcastListAdapter) adapter).setShowLogo(false);
+                    logoView.setVisibility(View.GONE);
             }
 
             // 2. Update menu items

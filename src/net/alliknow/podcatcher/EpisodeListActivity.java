@@ -32,6 +32,7 @@ import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -113,7 +114,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             if (podcast.getEpisodes().size() > 0) {
                 currentEpisodeList.addAll(podcast.getEpisodes());
                 Collections.sort(currentEpisodeList);
-                episodeListFragment.setEpisodes(currentEpisodeList);
+                // Make sure this is a copy
+                episodeListFragment.setEpisodes(new ArrayList<Episode>(currentEpisodeList));
             }
         } // Select single podcast
         else if (podcast.equals(currentPodcast)) {

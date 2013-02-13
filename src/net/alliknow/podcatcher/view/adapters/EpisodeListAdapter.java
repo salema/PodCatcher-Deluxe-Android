@@ -36,7 +36,7 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
     /** The list our data resides in */
     protected List<Episode> list;
     /** Whether the podcast name should be shown */
-    protected boolean showPodcastName = false;
+    protected boolean showPodcastNames = false;
 
     /** String to use if no episode publication date available */
     private static final String NO_DATE = "---";
@@ -50,22 +50,21 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
      * @param episodeList The list of episodes to show in list.
      */
     public EpisodeListAdapter(Context context, List<Episode> episodeList) {
-        this(context, episodeList, false);
-    }
-
-    /**
-     * Create new adapter.
-     * 
-     * @param context The activity.
-     * @param episodeList The list of episodes to show in list.
-     * @param showPodcastName Whether the podcast name should be shown next to
-     *            the date.
-     */
-    public EpisodeListAdapter(Context context, List<Episode> episodeList, boolean showPodcastName) {
         super(context);
 
         this.list = episodeList;
-        this.showPodcastName = showPodcastName;
+    }
+
+    /**
+     * Set whether the podcast name for the episode should be shown. This will
+     * redraw the list and take effect immediately.
+     * 
+     * @param show Whether to show each episode's podcast name.
+     */
+    public void setShowPodcastNames(boolean show) {
+        this.showPodcastNames = show;
+
+        notifyDataSetChanged();
     }
 
     @Override
@@ -85,26 +84,40 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        // Get the return view (possibly recycle a used one)
         convertView = findReturnView(convertView, parent, R.layout.list_item);
 
-        setTextAndState(convertView, R.id.list_item_title, list.get(position).getName(), position);
-        setTextAndState(convertView, R.id.list_item_caption, createCaption(list.get(position)),
-                position);
+        // Set list item color background
+        setBackgroundColorForPosition(convertView, position);
+
+        // Find episode to represent
+        final Episode episode = list.get(position);
+
+        // Set the text to display for title
+        setText(convertView, R.id.list_item_title, episode.getName());
+        // Set the text to display as caption
+        setText(convertView, R.id.list_item_caption, createCaption(episode));
 
         return convertView;
     }
 
     private String createCaption(Episode episode) {
-        if (episode.getPubDate() == null && !showPodcastName)
+        // This should not happen (but we cover it)
+        if (episode.getPubDate() == null && !showPodcastNames)
             return NO_DATE;
-        else if (episode.getPubDate() == null && showPodcastName)
+        // Episode has no date, should not happen
+        else if (episode.getPubDate() == null && showPodcastNames)
             return episode.getPodcastName();
+        // This is the interesting case
         else {
+            // Get a nice time span string for the age of the episode
             CharSequence date = DateUtils.getRelativeTimeSpanString(episode.getPubDate().getTime(),
                     new Date().getTime(), DateUtils.HOUR_IN_MILLIS);
 
-            if (showPodcastName)
+            // Append podcast name
+            if (showPodcastNames)
                 return date + SEPARATOR + episode.getPodcastName();
+            // Omit podcast name
             else
                 return date.toString();
         }

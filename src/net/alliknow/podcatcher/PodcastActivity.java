@@ -387,11 +387,14 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
     @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
-        if (viewMode != SMALL_PORTRAIT_VIEW)
+        // Only react on progress here, if the activity is visible
+        if (viewMode != SMALL_PORTRAIT_VIEW) {
             super.onPodcastLoadProgress(podcast, progress);
 
-        if (viewMode != SMALL_PORTRAIT_VIEW && multiplePodcastsMode)
-            podcastListFragment.showProgress(podcastManager.indexOf(podcast), progress);
+            // We are in select all mode, show progress in podcast list
+            if (multiplePodcastsMode)
+                podcastListFragment.showProgress(podcastManager.indexOf(podcast), progress);
+        }
     }
 
     @Override
@@ -399,22 +402,21 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // This will display the number of episodes
         podcastListFragment.refresh();
 
-        // In small portrait mode, work is done in separate activity
-        if (viewMode != SMALL_PORTRAIT_VIEW) {
-            // All the work is done upstairs
-            super.onPodcastLoaded(podcast);
+        // Tell the podcast manager to load podcast logo
+        podcastManager.loadLogo(podcast);
 
-            // Tell the podcast manager to load podcast logo
-            podcastManager.loadLogo(podcast);
-        }
+        // In small portrait mode, work is done in separate activity
+        if (viewMode != SMALL_PORTRAIT_VIEW)
+            super.onPodcastLoaded(podcast);
     }
 
     @Override
     public void onPodcastLoadFailed(Podcast failedPodcast) {
-        super.onPodcastLoadFailed(failedPodcast);
+        podcastListFragment.refresh();
 
+        // In small portrait mode, work is done in separate activity
         if (viewMode != SMALL_PORTRAIT_VIEW)
-            podcastListFragment.refresh();
+            super.onPodcastLoadFailed(failedPodcast);
     }
 
     @Override
@@ -428,12 +430,14 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
      * Update the logo view mode according to current app state.
      */
     protected void updateLogoViewMode() {
-        if (podcastListFragment != null) {
-            // Set podcast logo view mode
-            podcastListFragment.setLogoVisibility(
-                    viewMode == LARGE_LANDSCAPE_VIEW && !multiplePodcastsMode ?
-                            LogoViewMode.LARGE : LogoViewMode.SMALL);
-        }
+        LogoViewMode logoViewMode = LogoViewMode.NONE;
+
+        if (viewMode == LARGE_LANDSCAPE_VIEW && !multiplePodcastsMode)
+            logoViewMode = LogoViewMode.LARGE;
+        else if (viewMode == SMALL_PORTRAIT_VIEW)
+            logoViewMode = LogoViewMode.SMALL;
+
+        podcastListFragment.setLogoVisibility(logoViewMode);
     }
 
     @Override
