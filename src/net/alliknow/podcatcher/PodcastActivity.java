@@ -200,6 +200,10 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     protected void onResume() {
         super.onResume();
 
+        // Reset podcast list fragment in small portrait mode
+        if (viewMode == SMALL_PORTRAIT_VIEW && multiplePodcastsMode)
+            podcastListFragment.selectNone();
+
         // Podcast list has been changed while we were stopped
         if (podcastListChanged) {
             // Reset flag
@@ -211,12 +215,16 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             // Update UI
             updateActionBar();
 
-            // Show the last podcast added
-            if (currentPodcast != null && !multiplePodcastsMode)
-                onPodcastSelected(currentPodcast);
-            // Selected podcast was deleted
-            else if (currentPodcast == null && !multiplePodcastsMode)
-                onNoPodcastSelected();
+            // Only act if we are not in select all mode or in small portrait
+            // view mode
+            if (!multiplePodcastsMode && viewMode != SMALL_PORTRAIT_VIEW) {
+                // Show the last podcast added
+                if (currentPodcast != null)
+                    onPodcastSelected(currentPodcast);
+                // Selected podcast was deleted
+                else
+                    onNoPodcastSelected();
+            }
         }
     }
 
@@ -292,7 +300,10 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         this.multiplePodcastsMode = false;
 
         // Stop loading previous tasks
-        podcastManager.cancelAllLoadTasks();
+        // podcastManager.cancelAllLoadTasks();
+
+        // Select in podcast list
+        podcastListFragment.select(podcastManager.indexOf(podcast));
 
         switch (viewMode) {
             case SMALL_LANDSCAPE_VIEW:
@@ -303,8 +314,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                 // below as well
             case LARGE_PORTRAIT_VIEW:
             case LARGE_LANDSCAPE_VIEW:
-                // Select in podcast list
-                podcastListFragment.select(podcastManager.indexOf(podcast));
                 // List fragment is visible, make it show progress UI
                 episodeListFragment.resetAndSpin();
                 // Update other UI
@@ -333,7 +342,10 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         this.multiplePodcastsMode = true;
 
         // Stop loading previous tasks
-        podcastManager.cancelAllLoadTasks();
+        // podcastManager.cancelAllLoadTasks();
+
+        // Prepare podcast list fragment
+        podcastListFragment.selectAll();
 
         switch (viewMode) {
             case SMALL_LANDSCAPE_VIEW:
@@ -344,8 +356,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                 // below as well
             case LARGE_PORTRAIT_VIEW:
             case LARGE_LANDSCAPE_VIEW:
-                // Prepare podcast list fragment
-                podcastListFragment.selectAll();
                 // List fragment is visible, make it show progress UI
                 episodeListFragment.resetAndSpin();
                 episodeListFragment.setShowPodcastNames(true);
@@ -373,6 +383,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         this.currentEpisodeList = null;
         this.multiplePodcastsMode = false;
 
+        // Reset podcast list fragment
         podcastListFragment.selectNone();
 
         switch (viewMode) {

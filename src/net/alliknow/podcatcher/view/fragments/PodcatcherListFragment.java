@@ -52,6 +52,8 @@ public abstract class PodcatcherListFragment extends ListFragment {
     protected boolean showLoadFailed = false;
     /** Flags for internal state: select all */
     protected boolean selectAll = false;
+    /** Member to keep track of current selection */
+    protected int selectedPosition = -1;
 
     /** Status flag indicating that our view is created */
     private boolean viewCreated = false;
@@ -94,6 +96,7 @@ public abstract class PodcatcherListFragment extends ListFragment {
      */
     public void select(int position) {
         selectAll = false;
+        selectedPosition = position;
 
         if (adapter != null && !showProgress) {
             adapter.setSelectedPosition(position);
@@ -106,6 +109,7 @@ public abstract class PodcatcherListFragment extends ListFragment {
      */
     public void selectAll() {
         selectAll = true;
+        selectedPosition = -1;
 
         if (adapter != null && !showProgress)
             adapter.setSelectAll();
@@ -116,6 +120,7 @@ public abstract class PodcatcherListFragment extends ListFragment {
      */
     public void selectNone() {
         selectAll = false;
+        selectedPosition = -1;
 
         if (adapter != null && !showProgress)
             adapter.setSelectNone();

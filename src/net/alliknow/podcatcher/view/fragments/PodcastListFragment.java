@@ -50,8 +50,6 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
     /** The activity we are in (listens to user selection) */
     private OnSelectPodcastListener selectionListener;
-    /** The currently selected podcast (if any) */
-    private Podcast selectedPodcast;
 
     /** Remove podcast menu item */
     private MenuItem selectAllMenuItem;
@@ -155,7 +153,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
                 return true;
             case R.id.podcast_remove_menuitem:
-                getListView().setItemChecked(adapter.getSelectedPosition(), true);
+                getListView().setItemChecked(selectedPosition, true);
 
                 return true;
             default:
@@ -204,8 +202,8 @@ public class PodcastListFragment extends PodcatcherListFragment {
             // Make sure to match selection state
             if (selectAll)
                 selectAll();
-            else if (adapter.getSelectedPosition() >= 0)
-                select(adapter.getSelectedPosition());
+            else if (selectedPosition >= 0)
+                select(selectedPosition);
             else
                 selectNone();
 
@@ -217,16 +215,12 @@ public class PodcastListFragment extends PodcatcherListFragment {
     public void select(int position) {
         super.select(position);
 
-        if (adapter != null)
-            this.selectedPodcast = (Podcast) adapter.getItem(position);
-
         updateUiElementVisibility();
     }
 
     @Override
     public void selectAll() {
         super.selectAll();
-        this.selectedPodcast = null;
 
         updateUiElementVisibility();
     }
@@ -234,7 +228,6 @@ public class PodcastListFragment extends PodcatcherListFragment {
     @Override
     public void selectNone() {
         super.selectNone();
-        this.selectedPodcast = null;
 
         updateUiElementVisibility();
     }
@@ -281,10 +274,19 @@ public class PodcastListFragment extends PodcatcherListFragment {
                         ((PodcastListAdapter) adapter).setShowLogo(false);
                     logoView.setVisibility(View.VISIBLE);
 
-                    if (selectedPodcast == null || selectedPodcast.getLogo() == null)
+                    // Go find the currently selected podcast (if any)
+                    if (currentPodcastList != null && selectedPosition >= 0) {
+                        Podcast selectedPodcast = currentPodcastList.get(selectedPosition);
+
+                        // Check for logo and show it if available
+                        if (selectedPodcast.getLogo() == null)
+                            logoView.setImageBitmap(selectedPodcast.getLogo());
+                        else
+                            // Otherwise show default image
+                            logoView.setImageResource(R.drawable.default_podcast_logo);
+                    } else
+                        // Otherwise show default image
                         logoView.setImageResource(R.drawable.default_podcast_logo);
-                    else
-                        logoView.setImageBitmap(selectedPodcast.getLogo());
 
                     break;
                 case SMALL: // In small mode show logo inline
@@ -302,11 +304,10 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
             // 2. Update menu items
             // Menu items might be late to load
-            if (selectAllMenuItem != null)
-                selectAllMenuItem.setVisible(adapter != null && adapter.getCount() > 1
-                        && !selectAll);
+            if (selectAllMenuItem != null && adapter != null)
+                selectAllMenuItem.setVisible(adapter.getCount() > 1 && !selectAll);
             if (removeMenuItem != null)
-                removeMenuItem.setVisible(adapter != null && adapter.getSelectedPosition() >= 0);
+                removeMenuItem.setVisible(selectedPosition >= 0);
         }
     }
 }

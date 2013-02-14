@@ -20,6 +20,7 @@ package net.alliknow.podcatcher;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import net.alliknow.podcatcher.model.tasks.Progress;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
@@ -99,7 +100,23 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     }
 
     @Override
+    public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
+        super.onPodcastLoadProgress(podcast, progress);
+
+        if (multiplePodcastsMode)
+            updateActionBar();
+    }
+
+    @Override
+    public void onPodcastLoadFailed(Podcast failedPodcast) {
+        super.onPodcastLoadFailed(failedPodcast);
+
+        updateActionBar();
+    }
+
+    @Override
     protected void updateActionBar() {
+        // Single podcast selected
         if (currentPodcast != null) {
             getActionBar().setTitle(currentPodcast.getName());
 
@@ -111,10 +128,33 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
                         getResources().getString(R.string.one_episode) :
                         episodeCount + " " + getResources().getString(R.string.episodes));
             }
-        } else {
+        } // Multiple podcast mode
+        else if (multiplePodcastsMode) {
             getActionBar().setTitle(R.string.app_name);
-            getActionBar().setSubtitle(null);
-        }
+
+            if (podcastManager.getPodcastList() != null) {
+                int podcastCount = podcastManager.size();
+                int loadingPodcastCount = 0;
+
+                for (Podcast podcast : podcastManager.getPodcastList())
+                    if (podcast.isLoading())
+                        loadingPodcastCount++;
+
+                if (loadingPodcastCount == 0) {
+                    getActionBar().setSubtitle(
+                            podcastCount == 1 ?
+                                    getResources().getString(R.string.one_podcast_selected) :
+                                    podcastCount + " "
+                                            + getResources().getString(R.string.podcasts_selected));
+                } else
+                    getActionBar().setSubtitle(
+                            (podcastCount - loadingPodcastCount) + " "
+                                    + getResources().getString(R.string.of) + " " + podcastCount
+                                    + " "
+                                    + getResources().getString(R.string.podcasts_selected));
+            }
+        } else
+            getActionBar().setTitle(R.string.app_name);
 
         // Enable navigation
         getActionBar().setDisplayHomeAsUpEnabled(true);

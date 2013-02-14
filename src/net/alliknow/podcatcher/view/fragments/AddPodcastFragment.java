@@ -30,6 +30,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.webkit.URLUtil;
 import android.widget.Button;
@@ -84,6 +85,11 @@ public class AddPodcastFragment extends DialogFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         getDialog().setTitle(R.string.add_podcast);
+
+        // Prevent automatic display of the soft keyboard on first appearance
+        if (savedInstanceState == null)
+            getDialog().getWindow().setSoftInputMode(
+                    WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         podcastUrlEditText = (EditText) view.findViewById(R.id.podcast_url);
         podcastUrlEditText.setOnEditorActionListener(new OnEditorActionListener() {

@@ -118,6 +118,14 @@ public class EpisodeListFragment extends PodcatcherListFragment {
             if (episodeList.isEmpty())
                 emptyView.setText(R.string.no_episodes);
 
+            // Make sure to match selection state
+            if (selectAll)
+                selectAll();
+            else if (selectedPosition >= 0)
+                select(selectedPosition);
+            else
+                selectNone();
+
             // Make sure view shows as needed
             updateUiElementVisibility();
         }

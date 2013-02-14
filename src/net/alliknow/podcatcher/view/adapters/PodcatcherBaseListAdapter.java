@@ -82,16 +82,6 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
     }
 
     /**
-     * @return The selected position, or -1 if none.
-     */
-    public int getSelectedPosition() {
-        if (selectAll || selectedPositions.size() != 1)
-            return -1;
-        else
-            return selectedPositions.keyAt(0);
-    }
-
-    /**
      * Set the chosen items in the list.
      * 
      * @param positions The array denoting chosen positions. Give
