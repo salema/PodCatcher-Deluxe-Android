@@ -104,7 +104,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         super.onPodcastLoadProgress(podcast, progress);
 
         if (multiplePodcastsMode)
-            updateActionBar();
+            updateActionBarSubtitleOnMultipleLoad();
     }
 
     @Override
@@ -132,32 +132,38 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         else if (multiplePodcastsMode) {
             getActionBar().setTitle(R.string.app_name);
 
-            if (podcastManager.getPodcastList() != null) {
-                int podcastCount = podcastManager.size();
-                int loadingPodcastCount = 0;
-
-                for (Podcast podcast : podcastManager.getPodcastList())
-                    if (podcast.isLoading())
-                        loadingPodcastCount++;
-
-                if (loadingPodcastCount == 0) {
-                    getActionBar().setSubtitle(
-                            podcastCount == 1 ?
-                                    getResources().getString(R.string.one_podcast_selected) :
-                                    podcastCount + " "
-                                            + getResources().getString(R.string.podcasts_selected));
-                } else
-                    getActionBar().setSubtitle(
-                            (podcastCount - loadingPodcastCount) + " "
-                                    + getResources().getString(R.string.of) + " " + podcastCount
-                                    + " "
-                                    + getResources().getString(R.string.podcasts_selected));
-            }
+            updateActionBarSubtitleOnMultipleLoad();
         } else
             getActionBar().setTitle(R.string.app_name);
 
         // Enable navigation
         getActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    /**
+     * Set the action bar subtitle to reflect multiple podcast load progress
+     */
+    private void updateActionBarSubtitleOnMultipleLoad() {
+        if (podcastManager.getPodcastList() != null) {
+            final int podcastCount = podcastManager.size();
+            int loadingPodcastCount = 0;
+
+            final String onePodcast = getResources().getString(R.string.one_podcast_selected);
+            final String morePodcasts = getResources().getString(R.string.podcasts_selected);
+            final String of = getResources().getString(R.string.of);
+
+            for (Podcast podcast : podcastManager.getPodcastList())
+                if (podcast.isLoading())
+                    loadingPodcastCount++;
+
+            if (loadingPodcastCount == 0) {
+                getActionBar().setSubtitle(podcastCount == 1 ?
+                        onePodcast : podcastCount + " " + morePodcasts);
+            } else
+                getActionBar().setSubtitle(
+                        (podcastCount - loadingPodcastCount) + " "
+                                + of + " " + podcastCount + " " + morePodcasts);
+        }
     }
 
     @Override

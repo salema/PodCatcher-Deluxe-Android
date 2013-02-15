@@ -163,7 +163,9 @@ public class Podcast implements Comparable<Podcast> {
      * @see #parse(XmlPullParser)
      */
     public List<Episode> getEpisodes() {
-        return episodes;
+        // Need to return copy, so nobody can change this on us and changes made
+        // in the model do not make problems in the UI
+        return new ArrayList<Episode>(episodes);
     }
 
     /**
