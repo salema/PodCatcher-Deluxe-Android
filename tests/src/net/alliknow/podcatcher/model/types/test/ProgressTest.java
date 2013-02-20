@@ -3,8 +3,9 @@ package net.alliknow.podcatcher.model.types.test;
 
 import junit.framework.TestCase;
 
-import net.alliknow.podcatcher.model.tasks.Progress;
+import net.alliknow.podcatcher.model.types.Progress;
 
+@SuppressWarnings("javadoc")
 public class ProgressTest extends TestCase {
 
     public void testPercentageDone() {

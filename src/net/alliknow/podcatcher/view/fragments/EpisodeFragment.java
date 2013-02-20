@@ -99,7 +99,7 @@ public class EpisodeFragment extends Fragment {
         // show episode information
         if (viewCreated && currentEpisode != null) {
             episodeTitleView.setText(currentEpisode.getName());
-            podcastTitleView.setText(currentEpisode.getPodcastName());
+            podcastTitleView.setText(currentEpisode.getPodcast().getName());
             episodeDetailView.loadDataWithBaseURL(null, currentEpisode.getDescription(),
                     "text/html",
                     "utf-8", null);

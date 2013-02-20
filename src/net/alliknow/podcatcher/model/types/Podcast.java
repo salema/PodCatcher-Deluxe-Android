@@ -20,6 +20,7 @@ package net.alliknow.podcatcher.model.types;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import net.alliknow.podcatcher.model.ParserUtils;
 import net.alliknow.podcatcher.model.tags.RSS;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -33,20 +34,21 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * The podcast type.
+ * The podcast type. This represents the most important type in the podcatcher
+ * application. To create a podcast, give its name and an online location to
+ * load its RSS/XML file from. Call {@link #parse(XmlPullParser)} before you
+ * expect any additional data to show up.
  */
 public class Podcast implements Comparable<Podcast> {
-
-    /**
-     * The minimum time podcast content is buffered (in milliseconds). If older,
-     * we need to reload.
-     */
-    public static final int TIME_TO_LIFE = 30 * 60 * 1000;
 
     /** Name of the podcast */
     private String name;
     /** Location of the podcast's RSS file */
     private URL url;
+
+    /** The podcasts list of episodes */
+    private List<Episode> episodes = new ArrayList<Episode>();
+
     /** Podcast's description */
     private String description;
     /** Broadcast language */
@@ -55,16 +57,14 @@ public class Podcast implements Comparable<Podcast> {
     private Genre genre;
     /** Podcast media type */
     private MediaType mediaType;
-    /** The podcasts list of episodes */
-    private List<Episode> episodes = new ArrayList<Episode>();
+
     /** The podcast's image (logo) location */
     private URL logoUrl;
     /** The cached logo bitmap */
     private Bitmap logo;
+
     /** The point in time when the RSS file as last been set */
     private Date updated;
-    /** The encoding of the loaded file */
-    private String encoding;
     /** Whether this podcast is currently loading */
     private boolean loading;
 
@@ -72,7 +72,7 @@ public class Podcast implements Comparable<Podcast> {
      * Create a new podcast by name and RSS file location. The name will not be
      * read from the file, but remains as given (unless you give
      * <code>null</code> as the name). All other data on the podcast will only
-     * be available after <code>parse()</code> was called.
+     * be available after {@link #parse(XmlPullParser)} was called.
      * 
      * @param name The podcast's name, if you give <code>null</code> the name
      *            will be read from the RSS file (if set afterwards).
@@ -156,16 +156,23 @@ public class Podcast implements Comparable<Podcast> {
 
     /**
      * Find and return all episodes for this podcast. Will never return
-     * <code>null</code> but an empty list when encountering problems. Set the
-     * RSS file before expecting any results.
+     * <code>null</code> but an empty list when encountering problems. Set and
+     * parse the RSS file before expecting any results.
      * 
      * @return The list of episodes as listed in the feed.
      * @see #parse(XmlPullParser)
      */
     public List<Episode> getEpisodes() {
-        // Need to return copy, so nobody can change this on us and changes made
-        // in the model do not make problems in the UI
+        // Need to return a copy, so nobody can change this on us and changes
+        // made in the model do not make problems in the UI
         return new ArrayList<Episode>(episodes);
+    }
+
+    /**
+     * @return The number of episode for this podcast (always >= 0).
+     */
+    public int getEpisodeNumber() {
+        return episodes.size();
     }
 
     /**
@@ -206,16 +213,6 @@ public class Podcast implements Comparable<Podcast> {
     }
 
     /**
-     * The podcast's encoding.
-     * 
-     * @return Get the input encoding for the podcast file loaded. This may be
-     *         <code>null</code>, if unknown.
-     */
-    public String getEncoding() {
-        return encoding;
-    }
-
-    /**
      * Set the RSS file parser representing this podcast. This is were the
      * object gets its information from. Many of its methods will not return
      * valid results unless this method was called. Calling this method also
@@ -229,7 +226,6 @@ public class Podcast implements Comparable<Podcast> {
         // Reset state
         resetEpisodes();
         updated = new Date();
-        encoding = parser.getInputEncoding();
 
         // Start parsing
         int eventType = parser.next();
@@ -260,26 +256,8 @@ public class Podcast implements Comparable<Podcast> {
     }
 
     /**
-     * Whether the podcast content is old enough to need reloading. This relates
-     * to the time that <code>parse</code> has last been called on this object
-     * and has nothing to do with the updating of the podcast RSS file on the
-     * provider's server.
-     * 
-     * @return <code>true</code> iff time to live expired or the podcast has
-     *         never been loaded.
-     */
-    public boolean needsReload() {
-        // Has never been loaded
-        if (updated == null)
-            return true;
-        // Check age
-        else
-            return new Date().getTime() - updated.getTime() > TIME_TO_LIFE;
-    }
-
-    /**
      * Check whether the podcast is currently in the loading state. This only
-     * works if somebody set the flag via <code>setLoading()</code>.
+     * works if somebody set the flag via {@link #setLoading(boolean)}.
      * 
      * @return The flag.
      */
@@ -297,10 +275,11 @@ public class Podcast implements Comparable<Podcast> {
     }
 
     /**
-     * @return Whether this podcast has an non-empty name and an URL.
+     * @return The point in time this podcast has last been loaded or
+     *         <code>null</code> iff it had not been loaded every.
      */
-    public boolean hasNameAndUrl() {
-        return name != null && name.length() > 0 && url != null;
+    public Date getLastLoaded() {
+        return updated;
     }
 
     @Override

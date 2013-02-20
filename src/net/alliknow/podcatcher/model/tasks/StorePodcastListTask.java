@@ -26,6 +26,7 @@ import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.tags.OPML;
 import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.Progress;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -63,34 +64,33 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
 
     @Override
     protected Void doInBackground(List<Podcast>... params) {
-        List<Podcast> list = params[0];
-
-        OutputStream fileStream = null;
+        BufferedWriter writer = null;
 
         try {
-            if (list == null)
-                throw new Exception("Podcast list cannot be null!");
-            // Open the file and get a writer
-            fileStream = context.openFileOutput(PodcastManager.OPML_FILENAME, Context.MODE_PRIVATE);
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fileStream,
+            // 1. Open the file and get a writer
+            OutputStream fileStream = context.openFileOutput(PodcastManager.OPML_FILENAME,
+                    Context.MODE_PRIVATE);
+            writer = new BufferedWriter(new OutputStreamWriter(fileStream,
                     PodcastManager.OPML_FILE_ENCODING));
-            // Write new file content
+
+            // 2. Write new file content
             writeHeader(writer);
-            for (Podcast podcast : list)
+            for (Podcast podcast : params[0])
                 writePodcast(writer, podcast);
             writeFooter(writer);
-            // Tidy up
-            writer.close();
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Cannot store podcast OPML file", e);
         } finally {
             // Make sure we do not leak the context
             this.context = null;
+
             // Make sure we close the file stream
-            if (fileStream != null)
+            if (writer != null)
                 try {
-                    fileStream.close();
-                } catch (IOException e) { /* pass... */
+                    writer.close();
+                } catch (IOException e) {
+                    /* Nothing we can do here */
+                    Log.w(getClass().getSimpleName(), "Failed to close podcast file writer!", e);
                 }
         }
 
@@ -98,7 +98,8 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
     }
 
     private void writePodcast(BufferedWriter writer, Podcast podcast) throws IOException {
-        if (podcast.hasNameAndUrl()) {
+        // Skip, if not a valid podcast
+        if (hasNameAndUrl(podcast)) {
             String opmlString = "<" + OPML.OUTLINE + " " + OPML.TEXT + "=\"" +
                     TextUtils.htmlEncode(podcast.getName()) + "\" " +
                     OPML.TYPE + "=\"" + OPML.RSS_TYPE + "\" " +
@@ -106,6 +107,14 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
 
             writeLine(writer, 2, opmlString);
         }
+    }
+
+    /**
+     * @return Whether given podcast has an non-empty name and an URL.
+     */
+    private boolean hasNameAndUrl(Podcast podcast) {
+        return podcast.getName() != null && podcast.getName().length() > 0
+                && podcast.getUrl() != null;
     }
 
     private void writeHeader(BufferedWriter writer) throws IOException {

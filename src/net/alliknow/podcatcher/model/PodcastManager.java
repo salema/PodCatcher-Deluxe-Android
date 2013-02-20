@@ -28,17 +28,20 @@ import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.model.tasks.LoadPodcastListTask;
-import net.alliknow.podcatcher.model.tasks.Progress;
 import net.alliknow.podcatcher.model.tasks.StorePodcastListTask;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastLogoTask;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.Progress;
+
+import org.xmlpull.v1.XmlPullParser;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -59,6 +62,12 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     private static PodcastManager manager;
     /** The application itself */
     private Podcatcher podcatcher;
+
+    /**
+     * The minimum time podcast content is buffered (in milliseconds). If older,
+     * we need to reload.
+     */
+    public static final int TIME_TO_LIFE = 30 * 60 * 1000;
 
     /** The name of the file we store our saved podcasts in (as OPML) */
     public static final String OPML_FILENAME = "podcasts.opml";
@@ -161,7 +170,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      */
     public void load(Podcast podcast) {
         // Only load podcast if not too old
-        if (!podcast.needsReload())
+        if (!needsReload(podcast))
             onPodcastLoaded(podcast);
         // Only start the load task if it is not already active
         else if (!loadPodcastTasks.containsKey(podcast)) {
@@ -172,7 +181,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             loadPodcastTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
 
             // Keep task reference, so we can cancel the load and determine
-            // whether the podcast is already loading
+            // whether a task for this podcast is already running
             loadPodcastTasks.put(podcast, loadPodcastTask);
         }
     }
@@ -366,25 +375,12 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      */
     public Episode findEpisodeForUrl(String url) {
         for (Podcast podcast : podcastList)
-            if (podcast.getEpisodes().size() > 0)
+            if (podcast.getEpisodeNumber() > 0)
                 for (Episode episode : podcast.getEpisodes())
                     if (episode.getMediaUrl().toString().equals(url))
                         return episode;
 
         return null;
-    }
-
-    /**
-     * Stop and cancel all load tasks.
-     */
-    public void cancelAllLoadTasks() {
-        for (LoadPodcastTask task : loadPodcastTasks.values())
-            task.cancel(true);
-        for (LoadPodcastLogoTask task : loadPodcastLogoTasks.values())
-            task.cancel(true);
-
-        loadPodcastTasks.clear();
-        loadPodcastLogoTasks.clear();
     }
 
     /**
@@ -468,6 +464,24 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     }
 
     /**
+     * Whether the podcast content is old enough to need reloading. This relates
+     * to the time that {@link #parse(XmlPullParser)} has last been called on
+     * the object and has nothing to do with the updating of the podcast RSS
+     * file on the provider's server.
+     * 
+     * @return <code>true</code> iff time to live expired or the podcast has
+     *         never been loaded.
+     */
+    private boolean needsReload(Podcast podcast) {
+        // Has never been loaded
+        if (podcast.getLastLoaded() == null)
+            return true;
+        // Check age
+        else
+            return new Date().getTime() - podcast.getLastLoaded().getTime() > PodcastManager.TIME_TO_LIFE;
+    }
+
+    /**
      * Clear list. Add a small number of sample podcast to the list for testing.
      * Sort list.
      */
@@ -477,8 +491,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         podcastList.add(createPodcast("This American Life",
                 "http://feeds.thisamericanlife.org/talpodcast"));
         podcastList.add(createPodcast("Radiolab", "http://feeds.wnyc.org/radiolab"));
-        podcastList
-                .add(createPodcast("Linux' Outlaws", "http://feeds.feedburner.com/linuxoutlaws"));
+        podcastList.add(createPodcast("Linux' Outlaws",
+                "http://feeds.feedburner.com/linuxoutlaws"));
         podcastList.add(createPodcast("GEO", "http://www.geo.de/GEOaudio/index.xml"));
         podcastList.add(createPodcast("Mäuse", "http://podcast.wdr.de/maus.xml"));
         podcastList.add(createPodcast("D&uuml;de", "http://feeds.feedburner.com/UhhYeahDude"));

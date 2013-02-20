@@ -17,9 +17,9 @@
 
 package net.alliknow.podcatcher.model.types;
 
-import android.graphics.Bitmap;
 import android.util.Log;
 
+import net.alliknow.podcatcher.model.ParserUtils;
 import net.alliknow.podcatcher.model.tags.RSS;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -35,7 +35,9 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * The episode type.
+ * The episode type. Each episode represents an item from a podcast's RSS/XML
+ * feed. Episodes are created when the podcast is loaded (parsed), you should
+ * have no need to create instances yourself.
  */
 public class Episode implements Comparable<Episode> {
 
@@ -54,10 +56,21 @@ public class Episode implements Comparable<Episode> {
     /**
      * Create a new episode.
      * 
-     * @param podcast Podcast this episode belongs to.
+     * @param podcast Podcast this episode belongs to. Cannot be
+     *            <code>null</code>.
      */
     public Episode(Podcast podcast) {
+        if (podcast == null)
+            throw new NullPointerException("Episode can not have null as the podcast instance!");
+
         this.podcast = podcast;
+    }
+
+    /**
+     * @return The owning podcast. This will not be <code>null</code>.
+     */
+    public Podcast getPodcast() {
+        return podcast;
     }
 
     /**
@@ -72,38 +85,6 @@ public class Episode implements Comparable<Episode> {
      */
     public URL getMediaUrl() {
         return mediaUrl;
-    }
-
-    /**
-     * @return The owning podcast's name.
-     */
-    public String getPodcastName() {
-        if (podcast == null)
-            return null;
-        else
-            return podcast.getName();
-    }
-
-    /**
-     * @return The owning podcast's URL.
-     */
-    public String getPodcastUrl() {
-        if (podcast == null)
-            return null;
-        else
-            return podcast.getUrl().toString();
-    }
-
-    /**
-     * Get the podcast logo if available.
-     * 
-     * @return The logo bitmap or <code>null</code> if unavailable.
-     */
-    public Bitmap getPodcastLogo() {
-        if (podcast == null)
-            return null;
-        else
-            return podcast.getLogo();
     }
 
     /**
@@ -211,8 +192,10 @@ public class Episode implements Comparable<Episode> {
 
     private Date parsePubDate(String value) {
         try {
-            DateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz",
-                    Locale.ENGLISH);
+            // RSS/XML files use this format for dates
+            DateFormat formatter =
+                    new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
+
             return formatter.parse(value);
         } catch (ParseException e) {
             Log.w(getClass().getSimpleName(), "Episode has invalid publication date", e);

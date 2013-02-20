@@ -26,9 +26,9 @@ import android.os.StrictMode;
 import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
-import net.alliknow.podcatcher.model.tasks.Progress;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment.LogoViewMode;
@@ -299,9 +299,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         this.currentEpisodeList = null;
         this.multiplePodcastsMode = false;
 
-        // Stop loading previous tasks
-        // podcastManager.cancelAllLoadTasks();
-
         // Select in podcast list
         podcastListFragment.select(podcastManager.indexOf(podcast));
 
@@ -340,9 +337,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         this.currentPodcast = null;
         this.currentEpisodeList = new ArrayList<Episode>();
         this.multiplePodcastsMode = true;
-
-        // Stop loading previous tasks
-        // podcastManager.cancelAllLoadTasks();
 
         // Prepare podcast list fragment
         podcastListFragment.selectAll();

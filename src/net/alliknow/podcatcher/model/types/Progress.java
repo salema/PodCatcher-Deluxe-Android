@@ -15,21 +15,25 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.alliknow.podcatcher.model.tasks;
+package net.alliknow.podcatcher.model.types;
 
 /**
- * Class to indicate load progress.
+ * Type to indicate load progress. This has two modes: By default a progress is
+ * given as the amount of work done towards a total workload. In addition, this
+ * class defines a number of static progress events to use.
  */
 public class Progress {
 
     /** Flag indicating waiting state */
-    private static final int PROGRESS_WAIT = -4;
+    private static final int PROGRESS_WAIT = -5;
     /** Flag indicating connection state */
-    private static final int PROGRESS_CONNECT = -3;
+    private static final int PROGRESS_CONNECT = -4;
     /** Flag indicating loading state */
-    private static final int PROGRESS_LOAD = -2;
+    private static final int PROGRESS_LOAD = -3;
     /** Flag indicating parsing state */
-    private static final int PROGRESS_PARSE = -1;
+    private static final int PROGRESS_PARSE = -2;
+    /** Flag indicating parsing state */
+    private static final int PROGRESS_DONE = -1;
 
     /** Waiting state */
     public static final Progress WAIT = new Progress(PROGRESS_WAIT, -1);
@@ -39,6 +43,8 @@ public class Progress {
     public static final Progress LOAD = new Progress(PROGRESS_LOAD, -1);
     /** Parsing state */
     public static final Progress PARSE = new Progress(PROGRESS_PARSE, -1);
+    /** Done state */
+    public static final Progress DONE = new Progress(PROGRESS_DONE, -1);
 
     /** The actual amount of progress made */
     protected final int progress;
@@ -83,6 +89,45 @@ public class Progress {
 
     @Override
     public String toString() {
-        return progress + "/" + total;
+        // Predefined state
+        if (total < 0) {
+            switch (progress) {
+                case PROGRESS_WAIT:
+                    return "Wait";
+                case PROGRESS_CONNECT:
+                    return "Connect";
+                case PROGRESS_LOAD:
+                    return "Load";
+                case PROGRESS_PARSE:
+                    return "Parse";
+                case PROGRESS_DONE:
+                    return "Done";
+                default:
+                    return "Unknown progress";
+            }
+        } // Standard case
+        else
+            return progress + "/" + total;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        else if (!(o instanceof Progress))
+            return false;
+
+        Progress other = (Progress) o;
+
+        return progress == other.getProgress() && total == other.getTotal();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + progress;
+        hash = 31 * hash + total;
+
+        return hash;
     }
 }

@@ -98,7 +98,7 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 
         // Find podcast to represent
         final Podcast podcast = list.get(position);
-        final int episodeNumber = podcast.getEpisodes().size();
+        final int episodeNumber = podcast.getEpisodeNumber();
 
         // Set the text to display for title
         setText(convertView, R.id.list_item_title, podcast.getName());

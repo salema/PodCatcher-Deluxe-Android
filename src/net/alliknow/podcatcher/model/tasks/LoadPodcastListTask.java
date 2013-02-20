@@ -26,6 +26,7 @@ import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.tags.OPML;
 import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.Progress;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -40,7 +41,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Loads the default podcast list from the filesystem asynchronously.
+ * Loads the default podcast list from the file system asynchronously. On
+ * failure, an empty podcast list is returned.
  */
 public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>> {
 
@@ -55,7 +57,9 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
      * @param context Context to read file from. This will not be leaked if you
      *            keep a handle on this task, but set to <code>null</code> after
      *            execution.
-     * @param listener Callback to be alerted on completion.
+     * @param listener Callback to be alerted on completion. This will not be
+     *            leaked if you keep a handle on this task, but set to
+     *            <code>null</code> after execution.
      * @see PodcastManager#OPML_FILENAME
      */
     public LoadPodcastListTask(Context context, OnLoadPodcastListListener listener) {
@@ -68,18 +72,20 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
         InputStream fileStream = null;
 
         try {
-            // Build parser
+            // 1. Build parser
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             // Create the parser to use
             XmlPullParser parser = factory.newPullParser();
-            // Open default podcast file
+
+            // 2. Open default podcast file
             fileStream = context.openFileInput(PodcastManager.OPML_FILENAME);
             parser.setInput(fileStream, PodcastManager.OPML_FILE_ENCODING);
-            // Create list
+
+            // 3. Create list
             List<Podcast> result = new ArrayList<Podcast>();
 
-            // Start parsing
+            // 4. Parse the OPML file
             int eventType = parser.next();
 
             // Read complete document
@@ -97,11 +103,12 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
                 eventType = parser.next();
             }
 
-            // Sort and tidy up!
+            // 5. Sort and tidy up!
             while (result.remove(null))
                 ;
             Collections.sort(result);
 
+            // 6. Return the result
             return result;
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Load failed for podcast list!", e);
@@ -111,15 +118,27 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
         } finally {
             // Make sure we do not leak the context
             this.context = null;
+
             // Make sure we close the file stream
             if (fileStream != null)
                 try {
                     fileStream.close();
-                } catch (IOException e) { /* pass... */
+                } catch (IOException e) {
+                    /* Nothing we can do here */
+                    Log.w(getClass().getSimpleName(), "Failed to close podcast file stream!", e);
                 }
         }
     }
 
+    /**
+     * Read podcast information from the given parser and create a new podcast
+     * object for it.
+     * 
+     * @param parser Parser to read from. Has to be set to the OPML outline
+     *            start tag.
+     * @return A new Podcast instance with name and URL set. If any error
+     *         occurs, <code>null</code> is returned.
+     */
     private Podcast createPodcast(XmlPullParser parser) {
         try {
             // Make sure we start at item tag
@@ -147,9 +166,11 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
 
     @Override
     protected void onPostExecute(List<Podcast> result) {
-        if (listener != null)
+        if (listener != null) {
             listener.onPodcastListLoaded(result);
-        else
+            // Make sure we do not leak the listener
+            listener = null;
+        } else
             Log.w(getClass().getSimpleName(), "Podcast list loaded, but no listener attached");
     }
 }

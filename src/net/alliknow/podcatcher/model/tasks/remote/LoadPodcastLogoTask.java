@@ -23,10 +23,11 @@ import android.util.Log;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.Progress;
 
 /**
- * An async task to load a podcast logo. Implement PodcastLogoLoader to be
- * alerted on completion or failure.
+ * An async task to load a podcast logo. Implement
+ * {@link OnLoadPodcastLogoListener} to be alerted on completion or failure.
  */
 public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 
@@ -36,24 +37,27 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
     public static final int MAX_LOGO_SIZE_MOBILE = 100000;
 
     /** Owner */
-    private final OnLoadPodcastLogoListener loader;
+    private OnLoadPodcastLogoListener listener;
     /** Podcast currently loading */
     private Podcast podcast;
 
     /** Dimensions we decode the logo image file to (saves memory in places) */
     protected final int requestedWidth;
+    /** The height */
     protected final int requestedHeight;
 
     /**
      * Create new task.
      * 
-     * @param fragment Owner fragment.
+     * @param listener Callback to be alerted on progress and completion. This
+     *            will not be leaked if you keep a handle on this task, but set
+     *            to <code>null</code> after execution.
      * @param requestedWidth Width to sample result image to.
      * @param requestedHeight Height to sample result image to.
      */
-    public LoadPodcastLogoTask(OnLoadPodcastLogoListener fragment, int requestedWidth,
+    public LoadPodcastLogoTask(OnLoadPodcastLogoListener listener, int requestedWidth,
             int requestedHeight) {
-        this.loader = fragment;
+        this.listener = listener;
 
         this.requestedWidth = requestedWidth;
         this.requestedHeight = requestedHeight;
@@ -64,18 +68,19 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
         this.podcast = podcasts[0];
 
         try {
-            if (podcast == null || podcast.getLogoUrl() == null)
-                throw new Exception("Podcast and/or logo URL cannot be null!");
+            // 1. Get logo data
+            byte[] logo = loadFile(podcast.getLogoUrl());
 
-            byte[] logo = loadFile(podcasts[0].getLogoUrl());
-
+            // 2. Decode and sample the result
             if (!isCancelled())
                 return decodeAndSampleBitmap(logo);
         } catch (Exception e) {
             failed = true;
+
             Log.w(getClass().getSimpleName(), "Logo failed to load for podcast \"" + podcasts[0]
-                    + "\" with " +
-                    "logo URL " + podcasts[0].getLogoUrl(), e);
+                    + "\" with " + "logo URL " + podcasts[0].getLogoUrl(), e);
+        } finally {
+            publishProgress(Progress.DONE);
         }
 
         return null;
@@ -85,20 +90,29 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
     protected void onPostExecute(Bitmap result) {
         // Background task failed to complete
         if (failed || result == null) {
-            if (loader != null)
-                loader.onPodcastLogoLoadFailed(podcast);
+            if (listener != null)
+                listener.onPodcastLogoLoadFailed(podcast);
             else
                 Log.w(getClass().getSimpleName(),
                         "Podcast logo loading failed, but no listener attached");
         } // Podcast logo was loaded
         else {
-            if (loader != null)
-                loader.onPodcastLogoLoaded(podcast, result);
+            if (listener != null)
+                listener.onPodcastLogoLoaded(podcast, result);
             else
                 Log.w(getClass().getSimpleName(), "Podcast logo loaded, but no listener attached");
         }
     }
 
+    /**
+     * Create a memory-efficient bitmap at the correct size needed for the
+     * application. If the bitmap is larger than width or height given at
+     * {@link #LoadPodcastLogoTask(OnLoadPodcastLogoListener, int, int)}, it
+     * will be sample down.
+     * 
+     * @param data Bitmap data loaded from the internet.
+     * @return The decoded and sampled bitmap.
+     */
     protected Bitmap decodeAndSampleBitmap(byte[] data) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
 
@@ -118,6 +132,12 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
         return BitmapFactory.decodeByteArray(data, 0, data.length, options);
     }
 
+    /**
+     * Calculate the sample size for the image.
+     * 
+     * @param options Bitmap options to work with.
+     * @return The sample size.
+     */
     protected int calculateInSampleSize(BitmapFactory.Options options) {
         // Raw height and width of image
         final int height = options.outHeight;

@@ -25,7 +25,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.model.tasks.Progress;
+import net.alliknow.podcatcher.model.types.Progress;
 
 /**
  * A sophisticated progress view.

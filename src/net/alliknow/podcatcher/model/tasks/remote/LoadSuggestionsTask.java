@@ -21,11 +21,11 @@ import android.util.Log;
 
 import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
 import net.alliknow.podcatcher.model.tags.JSON;
-import net.alliknow.podcatcher.model.tasks.Progress;
 import net.alliknow.podcatcher.model.types.Genre;
 import net.alliknow.podcatcher.model.types.Language;
 import net.alliknow.podcatcher.model.types.MediaType;
 import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.Progress;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,7 +44,7 @@ import java.util.Locale;
 public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>> {
 
     /** Owner */
-    private final OnLoadSuggestionListener listener;
+    private OnLoadSuggestionListener listener;
 
     /** The file encoding */
     private static final String SUGGESTIONS_FILE_ENCODING = "utf8";
@@ -52,9 +52,11 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
     private static final String SOURCE = "https://raw.github.com/salema/PodCatcher-Deluxe/master/suggestions.json";
 
     /**
-     * Create new task
+     * Create new task.
      * 
-     * @param listener Owner fragment
+     * @param listener Callback to be alerted on progress and completion. This
+     *            will not be leaked if you keep a handle on this task, but set
+     *            to <code>null</code> after execution.
      */
     public LoadSuggestionsTask(OnLoadSuggestionListener listener) {
         this.listener = listener;
@@ -65,33 +67,38 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
         List<Podcast> result = new ArrayList<Podcast>();
 
         try {
-            // Load the file from the internets
+            // 1. Load the file from the internets
             publishProgress(Progress.CONNECT);
             byte[] suggestionsFile = loadFile(new URL(SOURCE));
 
-            // Get result as a document
+            // 2. Get result as a document
             publishProgress(Progress.PARSE);
-            JSONObject completeJson = new JSONObject(new String(suggestionsFile,
-                    SUGGESTIONS_FILE_ENCODING));
+            JSONObject completeJson = new JSONObject(
+                    new String(suggestionsFile, SUGGESTIONS_FILE_ENCODING));
             if (isCancelled())
                 return null;
 
-            // Add all featured podcasts
+            // 3. Add all featured podcasts
             addSuggestionsFromJsonArray(completeJson.getJSONArray(JSON.FEATURED), result);
             if (isCancelled())
                 return null;
-            // Add all suggestions
+
+            // 4. Add all suggestions
             addSuggestionsFromJsonArray(completeJson.getJSONArray(JSON.SUGGESTION), result);
             if (isCancelled())
                 return null;
 
+            // 5. Sort and return the result
             Collections.sort(result);
+            return result;
         } catch (Exception e) {
             failed = true;
-            Log.w(getClass().getSimpleName(), "Load failed for podcast suggestions file", e);
-        }
 
-        return result;
+            Log.w(getClass().getSimpleName(), "Load failed for podcast suggestions file", e);
+            return result;
+        } finally {
+            publishProgress(Progress.DONE);
+        }
     }
 
     @Override
@@ -117,6 +124,9 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
             listener.onSuggestionsLoaded(suggestions);
         else
             Log.w(getClass().getSimpleName(), "Suggestions loaded, but no listener attached");
+
+        // Make sure we do not leak the listener
+        listener = null;
     }
 
     /**

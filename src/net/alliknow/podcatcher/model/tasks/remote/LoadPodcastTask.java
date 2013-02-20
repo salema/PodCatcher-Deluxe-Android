@@ -20,11 +20,10 @@ package net.alliknow.podcatcher.model.tasks.remote;
 import android.util.Log;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
-import net.alliknow.podcatcher.model.tasks.Progress;
 import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.Progress;
 
 import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.ByteArrayInputStream;
@@ -32,8 +31,8 @@ import java.io.ByteArrayInputStream;
 /**
  * Loads podcast RSS file asynchronously. Implement the PodcastLoader interface
  * to be alerted on completion or failure. The downloaded file will be used as
- * the podcast's content via <code>parse()</code>, use the podcast object given
- * (and returned via callbacks) to access it.
+ * the podcast's content via {@link Podcast#parse(XmlPullParser)}, use the
+ * podcast object given (and returned via callbacks) to access it.
  */
 public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 
@@ -41,28 +40,21 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
     public static final int MAX_RSS_FILE_SIZE = 2000000;
 
     /** Owner */
-    private final OnLoadPodcastListener listener;
+    private OnLoadPodcastListener listener;
 
     /** Podcast currently loading */
     private Podcast podcast;
-    /** XML pull parser factory to use */
-    private XmlPullParserFactory factory;
 
     /**
      * Create new task.
      * 
-     * @param listener Owner fragment, receives call-backs.
+     * @param listener Callback to be alerted on progress and completion. This
+     *            will not be leaked if you keep a handle on this task, but set
+     *            to <code>null</code> after execution.
      */
     public LoadPodcastTask(OnLoadPodcastListener listener) {
         this.listener = listener;
         this.loadLimit = MAX_RSS_FILE_SIZE;
-
-        try {
-            factory = XmlPullParserFactory.newInstance();
-        } catch (XmlPullParserException e) {
-            Log.e(getClass().getSimpleName(), "Cannot get parser factory!", e);
-        }
-        factory.setNamespaceAware(true);
     }
 
     @Override
@@ -70,30 +62,32 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
         this.podcast = podcasts[0];
 
         try {
-            if (podcast == null || podcast.getUrl() == null)
-                throw new Exception("Podcast and/or URL cannot be null!");
             podcast.setLoading(true);
 
-            // Load the file from the internets
+            // 1. Load the file from the internets
             publishProgress(Progress.CONNECT);
             byte[] podcastRssFile = loadFile(podcast.getUrl());
 
-            // Get result as a document
             if (isCancelled())
                 return null;
             else
                 publishProgress(Progress.PARSE);
 
-            // Create the parser to use
+            // 2. Create the parser to use
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            factory.setNamespaceAware(true);
             XmlPullParser parser = factory.newPullParser();
             parser.setInput(new ByteArrayInputStream(podcastRssFile), null);
 
-            // Set as podcast content
+            // 3. Parse as podcast content
             if (!isCancelled())
                 podcast.parse(parser);
         } catch (Exception e) {
             failed = true;
+
             Log.w(getClass().getSimpleName(), "Load failed for podcast \"" + podcasts[0] + "\"", e);
+        } finally {
+            publishProgress(Progress.DONE);
         }
 
         return null;
@@ -124,11 +118,17 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
             listener.onPodcastLoaded(podcast);
         else
             Log.w(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
+
+        // Make sure we do not leak the listener
+        listener = null;
     }
 
     @Override
     protected void onCancelled(Void result) {
         if (podcast != null)
             podcast.setLoading(false);
+
+        // Make sure we do not leak the listener
+        listener = null;
     }
 }

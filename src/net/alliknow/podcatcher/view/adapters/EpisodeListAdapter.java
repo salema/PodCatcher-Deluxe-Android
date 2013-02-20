@@ -107,7 +107,7 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
             return NO_DATE;
         // Episode has no date, should not happen
         else if (episode.getPubDate() == null && showPodcastNames)
-            return episode.getPodcastName();
+            return episode.getPodcast().getName();
         // This is the interesting case
         else {
             // Get a nice time span string for the age of the episode
@@ -116,7 +116,7 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
 
             // Append podcast name
             if (showPodcastNames)
-                return date + SEPARATOR + episode.getPodcastName();
+                return date + SEPARATOR + episode.getPodcast().getName();
             // Omit podcast name
             else
                 return date.toString();

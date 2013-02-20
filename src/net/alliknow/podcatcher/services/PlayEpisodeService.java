@@ -281,10 +281,10 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
      *         might be <code>null</code>).
      */
     public String getCurrentEpisodePodcastName() {
-        if (currentEpisode == null)
-            return null;
+        if (currentEpisode != null)
+            return currentEpisode.getPodcast().getName();
         else
-            return currentEpisode.getPodcastName();
+            return null;
     }
 
     /**
@@ -435,7 +435,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 new Intent(getApplicationContext(), PodcastActivity.class)
                         .putExtra(PodcastActivity.MODE_KEY, false)
                         .putExtra(PodcastActivity.PODCAST_URL_KEY,
-                                currentEpisode.getPodcastUrl().toString())
+                                currentEpisode.getPodcast().getUrl().toString())
                         .putExtra(PodcastActivity.EPISODE_URL_KEY,
                                 currentEpisode.getMediaUrl().toString())
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
@@ -450,7 +450,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 // .setLargeIcon(BitmapFactory.decodeResource(getResources(),
                 // R.drawable.ic_stat))
                 .setContentTitle(currentEpisode.getName())
-                .setContentText(currentEpisode.getPodcastName())
+                .setContentText(currentEpisode.getPodcast().getName())
                 .setContentInfo(getResources().getString(R.string.app_name))
                 .setWhen(0)
                 .setOngoing(true).getNotification();

@@ -41,7 +41,7 @@ import android.widget.TextView.OnEditorActionListener;
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
-import net.alliknow.podcatcher.model.tasks.Progress;
+import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.HorizontalProgressView;
 
 /**

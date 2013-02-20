@@ -24,14 +24,17 @@ import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastLogoTask;
 import net.alliknow.podcatcher.model.test.Utils;
 import net.alliknow.podcatcher.model.types.Podcast;
-import net.alliknow.podcatcher.model.types.test.ExamplePodcast;
 
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+@SuppressWarnings("javadoc")
 public class LoadPodcastLogoTaskTest extends InstrumentationTestCase {
 
     private CountDownLatch signal = null;
+
+    private List<Podcast> examplePodcasts;
 
     private class MockPodcastLogoLoader implements OnLoadPodcastLogoListener {
 
@@ -54,12 +57,23 @@ public class LoadPodcastLogoTaskTest extends InstrumentationTestCase {
         }
     }
 
+    @Override
+    protected void setUp() throws Exception {
+        System.out.println("Set up test \"LoadPodcastLogo\" by loading example podcasts...");
+
+        final Date start = new Date();
+        examplePodcasts = Utils.getExamplePodcasts();
+
+        System.out.println("Waited " + (new Date().getTime() - start.getTime())
+                + "ms for example podcasts...");
+    }
+
     public final void testLoadPodcastLogo() throws Throwable {
         MockPodcastLogoLoader mockLoader = new MockPodcastLogoLoader();
 
         // Actual example Podcast
-        for (ExamplePodcast ep : ExamplePodcast.values()) {
-            Podcast podcast = new Podcast(ep.name(), ep.getURL());
+        for (Podcast ep : examplePodcasts) {
+            Podcast podcast = new Podcast(ep.getName(), ep.getUrl());
             podcast.parse(Utils.getParser(podcast));
 
             LoadPodcastLogoTask task = loadAndWait(mockLoader, podcast);

@@ -20,9 +20,9 @@ package net.alliknow.podcatcher;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import net.alliknow.podcatcher.model.tasks.Progress;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 
 import java.util.ArrayList;
@@ -123,7 +123,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
             if (currentPodcast.getEpisodes().isEmpty())
                 getActionBar().setSubtitle(null);
             else {
-                int episodeCount = currentPodcast.getEpisodes().size();
+                int episodeCount = currentPodcast.getEpisodeNumber();
                 getActionBar().setSubtitle(episodeCount == 1 ?
                         getResources().getString(R.string.one_episode) :
                         episodeCount + " " + getResources().getString(R.string.episodes));

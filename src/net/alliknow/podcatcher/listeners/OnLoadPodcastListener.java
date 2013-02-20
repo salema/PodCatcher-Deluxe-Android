@@ -17,8 +17,8 @@
 
 package net.alliknow.podcatcher.listeners;
 
-import net.alliknow.podcatcher.model.tasks.Progress;
 import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.Progress;
 
 /**
  * Interface definition for a callback to be invoked when a podcast is loaded.

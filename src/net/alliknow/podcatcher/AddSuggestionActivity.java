@@ -25,8 +25,8 @@ import android.os.Bundle;
 import net.alliknow.podcatcher.listeners.OnAddSuggestionListener;
 import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
 import net.alliknow.podcatcher.model.SuggestionManager;
-import net.alliknow.podcatcher.model.tasks.Progress;
 import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.fragments.SuggestionFragment;
 
 import java.util.ArrayList;

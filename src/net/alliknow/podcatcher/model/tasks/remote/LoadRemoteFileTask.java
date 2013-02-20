@@ -18,13 +18,13 @@
 package net.alliknow.podcatcher.model.tasks.remote;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
-import net.alliknow.podcatcher.model.tasks.Progress;
+import net.alliknow.podcatcher.model.types.Progress;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -53,7 +53,7 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
     /**
      * Set a load limit for the actual download of the file. The default is a
      * negative number, turning off the limit evaluation. If positive and
-     * reached <code>loadFile</code> below will return <code>null</code>
+     * reached {@link #loadFile(URL)} below will return <code>null</code>
      * immediately.
      * 
      * @param limit The limit to set in bytes.
@@ -74,7 +74,7 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
 
     /**
      * Download the file and return it as a byte array. Will feed
-     * <code>publishProgress</code>.
+     * {@link #publishProgress(Object...)}.
      * 
      * @param remote URL connection to load from.
      * @return The file content.
@@ -93,23 +93,23 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
         // DatatypeCon.encode(userpass.getBytes()));
         // connection.setRequestProperty ("Authorization", basicAuth);
 
-        InputStream remoteStream = null;
+        BufferedInputStream bufferedRemoteStream = null;
         ByteArrayOutputStream result = null;
 
         try {
-            // Open stream and check whether we know its length
-            remoteStream = connection.getInputStream();
-            BufferedInputStream bufferedRemoteStream = new BufferedInputStream(remoteStream);
+            // 1. Open stream and check whether we know its length
+            bufferedRemoteStream = new BufferedInputStream(connection.getInputStream());
             boolean sendLoadProgress = connection.getContentLength() > 0;
 
-            // Create the byte buffer to write to
+            // 2. Create the byte buffer to write to
             result = new ByteArrayOutputStream();
             publishProgress(Progress.LOAD);
 
             byte[] buffer = new byte[1024];
             int bytesRead = 0;
             int totalBytes = 0;
-            // Read stream and report progress (if possible)
+
+            // 3. Read stream and report progress (if possible)
             while ((bytesRead = bufferedRemoteStream.read(buffer)) > 0) {
                 if (isCancelled())
                     return null;
@@ -125,18 +125,28 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
                     publishProgress(new Progress(totalBytes, connection.getContentLength()));
             }
 
-            bufferedRemoteStream.close();
+            // 4. Return result as a byte array
+            return result.toByteArray();
         } finally {
             // Close the streams
-            if (remoteStream != null)
-                remoteStream.close();
+            // To remote
+            if (bufferedRemoteStream != null)
+                try {
+                    bufferedRemoteStream.close();
+                } catch (Exception e) {
+                    Log.w(getClass().getSimpleName(), "Failed to close remote stream", e);
+                }
+
+            // To the local byte array
             if (result != null)
-                result.close();
+                try {
+                    result.close();
+                } catch (Exception e) {
+                    Log.w(getClass().getSimpleName(), "Failed to close local output stream", e);
+                }
+
             // Disconnect
             connection.disconnect();
         }
-
-        // Return result as a byte array
-        return result.toByteArray();
     }
 }

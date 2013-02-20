@@ -15,7 +15,7 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.alliknow.podcatcher.model.types;
+package net.alliknow.podcatcher.model;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -23,7 +23,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 
 /**
- * @author Kevin Hausmann
+ * Utility class to support podcast XML/RSS parsing.
  */
 public class ParserUtils {
 
@@ -35,9 +35,12 @@ public class ParserUtils {
      * @throws IOException On I/O trouble.
      */
     public static void skipSubTree(XmlPullParser parser) throws XmlPullParserException, IOException {
+        // We need to see a start tag next. The tag and any sub-tree it might
+        // have will be skipped.
         parser.require(XmlPullParser.START_TAG, null, null);
 
         int level = 1;
+        // Continue parsing and increase/decrease the level
         while (level > 0) {
             int eventType = parser.next();
             if (eventType == XmlPullParser.END_TAG) {
@@ -46,6 +49,9 @@ public class ParserUtils {
                 ++level;
             }
         }
+
+        // We are back to the original level, behind the start tag given and any
+        // sub-tree that might have been there. Return.
     }
 
 }

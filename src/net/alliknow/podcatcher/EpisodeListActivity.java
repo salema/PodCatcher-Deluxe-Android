@@ -26,9 +26,9 @@ import android.view.View;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
-import net.alliknow.podcatcher.model.tasks.Progress;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 
@@ -111,7 +111,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         if (multiplePodcastsMode) {
             // TODO decide on this: episodeList.addAll(list.subList(0,
             // list.size() > 100 ? 100 : list.size() - 1));
-            if (podcast.getEpisodes().size() > 0) {
+            if (podcast.getEpisodeNumber() > 0) {
                 currentEpisodeList.addAll(podcast.getEpisodes());
                 Collections.sort(currentEpisodeList);
                 // Make sure this is a copy

@@ -19,9 +19,9 @@ package net.alliknow.podcatcher.model;
 
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
-import net.alliknow.podcatcher.model.tasks.Progress;
 import net.alliknow.podcatcher.model.tasks.remote.LoadSuggestionsTask;
 import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.Progress;
 
 import java.util.HashSet;
 import java.util.List;

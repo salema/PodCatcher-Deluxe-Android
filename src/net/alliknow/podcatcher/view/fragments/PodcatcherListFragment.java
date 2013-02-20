@@ -28,7 +28,7 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.model.tasks.Progress;
+import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.ProgressView;
 import net.alliknow.podcatcher.view.adapters.PodcatcherBaseListAdapter;
 

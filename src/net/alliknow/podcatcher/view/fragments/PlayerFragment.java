@@ -226,7 +226,7 @@ public class PlayerFragment extends Fragment {
         // We can only do this after the fragment's widgets are created
         if (viewCreated && playingEpisode != null)
             titleView.setText(Html.fromHtml("<a href=\"\">" + playingEpisode.getName() + " - "
-                    + playingEpisode.getPodcastName() + "</a>"));
+                    + playingEpisode.getPodcast().getName() + "</a>"));
     }
 
     /**
