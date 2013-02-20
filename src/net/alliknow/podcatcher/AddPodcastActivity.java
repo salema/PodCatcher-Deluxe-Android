@@ -25,8 +25,8 @@ import android.os.Bundle;
 
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
-import net.alliknow.podcatcher.model.tasks.Progress;
 import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.fragments.AddPodcastFragment;
 
 import java.net.MalformedURLException;
@@ -102,10 +102,11 @@ public class AddPodcastActivity extends BaseActivity
         // Try to load the given online resource
         try {
             // TODO Handle the case were given podcast is already added
-            currentLoadUrl = podcastUrl;
             podcastManager.load(new Podcast(null, new URL(podcastUrl)));
+            currentLoadUrl = podcastUrl;
         } catch (MalformedURLException e) {
-            onPodcastLoadFailed(null);
+            // Show failed UI
+            addPodcastFragment.showPodcastLoadFailed();
         }
     }
 
