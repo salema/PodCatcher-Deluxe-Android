@@ -73,7 +73,7 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
                     PodcastManager.OPML_FILE_ENCODING));
 
             // 2. Write new file content
-            writeHeader(writer);
+            writeHeader(writer, opmlFileTitle);
             for (Podcast podcast : params[0])
                 writePodcast(writer, podcast);
             writeFooter(writer);
@@ -93,7 +93,7 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
         return null;
     }
 
-    private void writePodcast(BufferedWriter writer, Podcast podcast) throws IOException {
+    private static void writePodcast(BufferedWriter writer, Podcast podcast) throws IOException {
         // Skip, if not a valid podcast
         if (hasNameAndUrl(podcast)) {
             String opmlString = "<" + OPML.OUTLINE + " " + OPML.TEXT + "=\"" +
@@ -108,28 +108,28 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
     /**
      * @return Whether given podcast has an non-empty name and an URL.
      */
-    private boolean hasNameAndUrl(Podcast podcast) {
+    private static boolean hasNameAndUrl(Podcast podcast) {
         return podcast.getName() != null && podcast.getName().length() > 0
                 && podcast.getUrl() != null;
     }
 
-    private void writeHeader(BufferedWriter writer) throws IOException {
+    private static void writeHeader(BufferedWriter writer, String fileName) throws IOException {
         writeLine(writer, 0, "<?xml version=\"1.0\" encoding=\""
                 + PodcastManager.OPML_FILE_ENCODING + "\"?>");
         writeLine(writer, 0, "<opml version=\"2.0\">");
         writeLine(writer, 1, "<head>");
-        writeLine(writer, 2, "<title>" + opmlFileTitle + "</title>");
+        writeLine(writer, 2, "<title>" + fileName + "</title>");
         writeLine(writer, 2, "<dateModified>" + new Date().toString() + "</dateModified>");
         writeLine(writer, 1, "</head>");
         writeLine(writer, 1, "<body>");
     }
 
-    private void writeFooter(BufferedWriter writer) throws IOException {
+    private static void writeFooter(BufferedWriter writer) throws IOException {
         writeLine(writer, 1, "</body>");
         writeLine(writer, 0, "</opml>");
     }
 
-    private void writeLine(BufferedWriter writer, int level, String line) throws IOException {
+    private static void writeLine(BufferedWriter writer, int level, String line) throws IOException {
         for (int i = 0; i < level * 2; i++)
             writer.write(INDENT);
 

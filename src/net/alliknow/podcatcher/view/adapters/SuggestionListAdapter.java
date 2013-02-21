@@ -54,28 +54,28 @@ public class SuggestionListAdapter extends PodcastListAdapter {
     }
 
     @Override
-    public View getView(int position, View itemView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
         // Create the return view (this should not be recycled)
-        itemView = LayoutInflater.from(parent.getContext())
+        View listItemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.suggestion_list_item, parent, false);
 
         // Find suggestion to represent
         final Podcast suggestion = list.get(position);
 
         // Set the text to display for title
-        setText(itemView, R.id.suggestion_name, suggestion.getName());
+        setText(listItemView, R.id.suggestion_name, suggestion.getName());
         // Set the text to display for classification
-        setText(itemView, R.id.suggestion_meta,
-                getResourceString(itemView.getResources(), suggestion.getLanguage())
+        setText(listItemView, R.id.suggestion_meta,
+                getResourceString(listItemView.getResources(), suggestion.getLanguage())
                         + METADATA_SEPARATOR +
-                        getResourceString(itemView.getResources(), suggestion.getGenre())
+                        getResourceString(listItemView.getResources(), suggestion.getGenre())
                         + METADATA_SEPARATOR +
-                        getResourceString(itemView.getResources(), suggestion.getMediaType()));
+                        getResourceString(listItemView.getResources(), suggestion.getMediaType()));
         // Set the text to display for the description
-        setText(itemView, R.id.suggestion_description, suggestion.getDescription());
+        setText(listItemView, R.id.suggestion_description, suggestion.getDescription());
 
         // Find and prepare the add button
-        final Button addButton = (Button) itemView.findViewById(R.id.suggestion_add_button);
+        final Button addButton = (Button) listItemView.findViewById(R.id.suggestion_add_button);
         addButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -90,6 +90,6 @@ public class SuggestionListAdapter extends PodcastListAdapter {
             }
         });
 
-        return itemView;
+        return listItemView;
     }
 }

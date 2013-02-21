@@ -118,7 +118,7 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
      *            <code>TextView</code>.
      * @param text Text to display.
      */
-    protected void setText(View listItem, int viewId, String text) {
+    protected static void setText(View listItem, int viewId, String text) {
         ((TextView) listItem.findViewById(viewId)).setText(text);
     }
 }

@@ -85,20 +85,20 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the return view (possibly recycle a used one)
-        convertView = findReturnView(convertView, parent, R.layout.list_item);
+        View listItemView = findReturnView(convertView, parent, R.layout.list_item);
 
         // Set list item color background
-        setBackgroundColorForPosition(convertView, position);
+        setBackgroundColorForPosition(listItemView, position);
 
         // Find episode to represent
         final Episode episode = list.get(position);
 
         // Set the text to display for title
-        setText(convertView, R.id.list_item_title, episode.getName());
+        setText(listItemView, R.id.list_item_title, episode.getName());
         // Set the text to display as caption
-        setText(convertView, R.id.list_item_caption, createCaption(episode));
+        setText(listItemView, R.id.list_item_caption, createCaption(episode));
 
-        return convertView;
+        return listItemView;
     }
 
     private String createCaption(Episode episode) {

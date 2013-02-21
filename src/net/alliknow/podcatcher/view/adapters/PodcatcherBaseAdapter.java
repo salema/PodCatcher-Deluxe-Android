@@ -59,7 +59,7 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
      * @param inflateId Id of view to inflate if recycling is not possible.
      * @return A view to use (not <code>null</code>).
      */
-    protected View findReturnView(View convertView, ViewGroup parent, int inflateId) {
+    protected static View findReturnView(View convertView, ViewGroup parent, int inflateId) {
         // Can we recycle the convert view?
         // No:
         if (convertView == null)

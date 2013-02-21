@@ -332,6 +332,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
+            // Nothing to do here
         }
     };
 }

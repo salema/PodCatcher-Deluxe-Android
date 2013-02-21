@@ -88,6 +88,7 @@ public class Podcatcher extends Application {
                     getApplicationContext().getPackageName(), 0);
             debug = (0 != (info.flags &= ApplicationInfo.FLAG_DEBUGGABLE));
         } catch (Exception e) {
+            // pass
         }
 
         return debug;

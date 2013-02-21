@@ -61,6 +61,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
     }
 
     @Override
+    @SuppressWarnings("unused")
     protected List<Podcast> doInBackground(Void... params) {
         List<Podcast> result = new ArrayList<Podcast>();
 
@@ -118,6 +119,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
     }
 
     @Override
+    @SuppressWarnings("unused")
     protected void onCancelled(List<Podcast> suggestions) {
         // Suggestions failed to load
         if (listener != null)

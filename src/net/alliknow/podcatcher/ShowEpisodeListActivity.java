@@ -64,7 +64,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
 
     private void processIntent() {
         // Get the load mode
-        multiplePodcastsMode = getIntent().getExtras().getBoolean(PodcastActivity.MODE_KEY);
+        multiplePodcastsMode = getIntent().getExtras().getBoolean(EpisodeListActivity.MODE_KEY);
 
         // Get URL of podcast to load
         String podcastUrl = getIntent().getExtras().getString(PODCAST_URL_KEY);

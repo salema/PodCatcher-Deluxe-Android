@@ -58,6 +58,7 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
     }
 
     @Override
+    @SuppressWarnings("unused")
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
         update(mode);
 
@@ -94,11 +95,13 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
     }
 
     @Override
+    @SuppressWarnings("unused")
     public void onDestroyActionMode(ActionMode mode) {
         ((PodcastListAdapter) fragment.getListAdapter()).setCheckedPositions(null);
     }
 
     @Override
+    @SuppressWarnings("unused")
     public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
         update(mode);
     }

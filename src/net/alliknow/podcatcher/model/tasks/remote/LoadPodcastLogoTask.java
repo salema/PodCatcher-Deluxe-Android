@@ -99,7 +99,8 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
     }
 
     @Override
-    protected void onCancelled(Bitmap result) {
+    protected void onCancelled(@SuppressWarnings("unused")
+    Bitmap result) {
         // Background task failed to complete
         if (listener != null)
             listener.onPodcastLogoLoadFailed(podcast);

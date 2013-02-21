@@ -92,36 +92,36 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the return view (possibly recycle a used one)
-        convertView = findReturnView(convertView, parent, R.layout.list_item);
+        View listItemView = findReturnView(convertView, parent, R.layout.list_item);
 
         // Set list item color background
-        setBackgroundColorForPosition(convertView, position);
+        setBackgroundColorForPosition(listItemView, position);
 
         // Find podcast to represent
         final Podcast podcast = list.get(position);
         final int episodeNumber = podcast.getEpisodeNumber();
 
         // Set the text to display for title
-        setText(convertView, R.id.list_item_title, podcast.getName());
+        setText(listItemView, R.id.list_item_title, podcast.getName());
         // Set the text to display as caption
-        TextView captionView = (TextView) convertView.findViewById(R.id.list_item_caption);
+        TextView captionView = (TextView) listItemView.findViewById(R.id.list_item_caption);
         captionView.setText(createCaption(episodeNumber));
         captionView.setVisibility(episodeNumber != 0 ? VISIBLE : GONE);
 
         // Set the podcast logo if available
         boolean show = showLogoView && podcast.getLogo() != null;
 
-        ImageView logoView = (ImageView) convertView.findViewById(R.id.podcast_logo);
+        ImageView logoView = (ImageView) listItemView.findViewById(R.id.podcast_logo);
         logoView.setVisibility(show ? VISIBLE : GONE);
         logoView.setImageBitmap(show ? podcast.getLogo() : null);
 
         // Show progress on select all podcasts?
         HorizontalProgressView progressView = (HorizontalProgressView)
-                convertView.findViewById(R.id.list_item_progress);
+                listItemView.findViewById(R.id.list_item_progress);
         progressView.setVisibility(PodcastManager.getInstance().isLoading(podcast)
                 && selectAll ? VISIBLE : GONE);
 
-        return convertView;
+        return listItemView;
     }
 
     private String createCaption(int numberOfEpisodes) {

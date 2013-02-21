@@ -142,9 +142,9 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     }
 
     @Override
-    public void onPodcastListLoaded(List<Podcast> podcastList) {
+    public void onPodcastListLoaded(List<Podcast> list) {
         // Set the member
-        this.podcastList = podcastList;
+        this.podcastList = list;
 
         // Put some nice sample podcasts for testing
         if (podcatcher.isInDebugMode())
@@ -504,7 +504,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      * @return <code>true</code> iff time to live expired or the podcast has
      *         never been loaded.
      */
-    private boolean needsReload(Podcast podcast) {
+    private static boolean needsReload(Podcast podcast) {
         // Has never been loaded
         if (podcast.getLastLoaded() == null)
             return true;
@@ -538,7 +538,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         Collections.sort(podcastList);
     }
 
-    private Podcast createPodcast(String name, String url) {
+    private static Podcast createPodcast(String name, String url) {
         try {
             return new Podcast(Html.fromHtml(name).toString(), new URL(url));
         } catch (MalformedURLException e) {

@@ -65,8 +65,6 @@ public class Podcast implements Comparable<Podcast> {
 
     /** The point in time when the RSS file as last been set */
     private Date updated;
-    /** Whether this podcast is currently loading */
-    private boolean loading;
 
     /**
      * Create a new podcast by name and RSS file location. The name will not be
