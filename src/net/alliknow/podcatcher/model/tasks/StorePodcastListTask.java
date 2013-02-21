@@ -36,7 +36,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Stores the default podcast list to the filesystem asynchronously.
+ * Stores the default podcast list to the file system asynchronously. This will
+ * fail silently with a non-UI error message.
  */
 public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Void> {
 
@@ -51,9 +52,7 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
     /**
      * Create new task.
      * 
-     * @param context Context to get file handle from. This will not be leaked
-     *            if you keep a handle on this task, but set to
-     *            <code>null</code> after execution.
+     * @param context Context to get file handle from (not <code>null</code>).
      * @see PodcastManager#OPML_FILENAME
      */
     public StorePodcastListTask(Context context) {
@@ -81,9 +80,6 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Cannot store podcast OPML file", e);
         } finally {
-            // Make sure we do not leak the context
-            this.context = null;
-
             // Make sure we close the file stream
             if (writer != null)
                 try {

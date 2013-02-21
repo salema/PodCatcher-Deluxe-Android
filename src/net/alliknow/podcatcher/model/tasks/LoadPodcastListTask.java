@@ -54,21 +54,20 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
     /**
      * Create new task.
      * 
-     * @param context Context to read file from. This will not be leaked if you
-     *            keep a handle on this task, but set to <code>null</code> after
-     *            execution.
-     * @param listener Callback to be alerted on completion. This will not be
-     *            leaked if you keep a handle on this task, but set to
-     *            <code>null</code> after execution.
+     * @param context Context to read file from (not <code>null</code>).
+     * @param listener Callback to be alerted on completion. Could be
+     *            <code>null</code>, but then nobody would ever know that this
+     *            task finished.
      * @see PodcastManager#OPML_FILENAME
      */
     public LoadPodcastListTask(Context context, OnLoadPodcastListListener listener) {
-        this.listener = listener;
         this.context = context;
+        this.listener = listener;
     }
 
     @Override
     protected List<Podcast> doInBackground(Void... params) {
+        List<Podcast> result = new ArrayList<Podcast>();
         InputStream fileStream = null;
 
         try {
@@ -82,10 +81,7 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
             fileStream = context.openFileInput(PodcastManager.OPML_FILENAME);
             parser.setInput(fileStream, PodcastManager.OPML_FILE_ENCODING);
 
-            // 3. Create list
-            List<Podcast> result = new ArrayList<Podcast>();
-
-            // 4. Parse the OPML file
+            // 3. Parse the OPML file
             int eventType = parser.next();
 
             // Read complete document
@@ -103,22 +99,13 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
                 eventType = parser.next();
             }
 
-            // 5. Sort and tidy up!
+            // 4. Sort and tidy up!
             while (result.remove(null))
                 ;
             Collections.sort(result);
-
-            // 6. Return the result
-            return result;
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Load failed for podcast list!", e);
-
-            // Return empty list as a fall-back
-            return new ArrayList<Podcast>();
         } finally {
-            // Make sure we do not leak the context
-            this.context = null;
-
             // Make sure we close the file stream
             if (fileStream != null)
                 try {
@@ -128,6 +115,8 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
                     Log.w(getClass().getSimpleName(), "Failed to close podcast file stream!", e);
                 }
         }
+
+        return result;
     }
 
     /**
@@ -166,11 +155,9 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
 
     @Override
     protected void onPostExecute(List<Podcast> result) {
-        if (listener != null) {
+        if (listener != null)
             listener.onPodcastListLoaded(result);
-            // Make sure we do not leak the listener
-            listener = null;
-        } else
+        else
             Log.w(getClass().getSimpleName(), "Podcast list loaded, but no listener attached");
     }
 }

@@ -43,7 +43,7 @@ import java.util.Locale;
  */
 public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>> {
 
-    /** Owner */
+    /** Call back */
     private OnLoadSuggestionListener listener;
 
     /** The file encoding */
@@ -54,9 +54,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
     /**
      * Create new task.
      * 
-     * @param listener Callback to be alerted on progress and completion. This
-     *            will not be leaked if you keep a handle on this task, but set
-     *            to <code>null</code> after execution.
+     * @param listener Callback to be alerted on progress and completion.
      */
     public LoadSuggestionsTask(OnLoadSuggestionListener listener) {
         this.listener = listener;
@@ -88,17 +86,17 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
             if (isCancelled())
                 return null;
 
-            // 5. Sort and return the result
+            // 5. Sort the result
             Collections.sort(result);
-            return result;
         } catch (Exception e) {
-            failed = true;
-
             Log.w(getClass().getSimpleName(), "Load failed for podcast suggestions file", e);
-            return result;
+
+            cancel(true);
         } finally {
             publishProgress(Progress.DONE);
         }
+
+        return result;
     }
 
     @Override
@@ -112,21 +110,21 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
 
     @Override
     protected void onPostExecute(List<Podcast> suggestions) {
-        // Background task failed to complete
-        if (failed) {
-            if (listener != null)
-                listener.onSuggestionsLoadFailed();
-            else
-                Log.w(getClass().getSimpleName(),
-                        "Suggestions failed to load, but no listener attached");
-        } // Podcast was loaded
-        else if (listener != null)
+        // Suggestions loaded successfully
+        if (listener != null)
             listener.onSuggestionsLoaded(suggestions);
         else
             Log.w(getClass().getSimpleName(), "Suggestions loaded, but no listener attached");
+    }
 
-        // Make sure we do not leak the listener
-        listener = null;
+    @Override
+    protected void onCancelled(List<Podcast> suggestions) {
+        // Suggestions failed to load
+        if (listener != null)
+            listener.onSuggestionsLoadFailed();
+        else
+            Log.w(getClass().getSimpleName(),
+                    "Suggestions failed to load, but no listener attached");
     }
 
     /**

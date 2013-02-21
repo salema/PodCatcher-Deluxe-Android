@@ -45,10 +45,8 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
 
     /** A file size limit in bytes for the download */
     protected int loadLimit = -1;
-    /** Whether we prevent gzipping on server side */
+    /** Whether we prevent zipping on server side */
     protected boolean preventZippedTransfer = false;
-    /** Store whether loading failed */
-    protected boolean failed = false;
 
     /**
      * Set a load limit for the actual download of the file. The default is a

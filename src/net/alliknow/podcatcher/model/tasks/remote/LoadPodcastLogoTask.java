@@ -36,11 +36,11 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
     /** Maximum byte size for the logo to load on mobile connection */
     public static final int MAX_LOGO_SIZE_MOBILE = 100000;
 
-    /** Owner */
+    /** Call back */
     private OnLoadPodcastLogoListener listener;
+
     /** Podcast currently loading */
     private Podcast podcast;
-
     /** Dimensions we decode the logo image file to (saves memory in places) */
     protected final int requestedWidth;
     /** The height */
@@ -49,14 +49,12 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
     /**
      * Create new task.
      * 
-     * @param listener Callback to be alerted on progress and completion. This
-     *            will not be leaked if you keep a handle on this task, but set
-     *            to <code>null</code> after execution.
+     * @param listener Callback to be alerted on progress and completion.
      * @param requestedWidth Width to sample result image to.
      * @param requestedHeight Height to sample result image to.
      */
-    public LoadPodcastLogoTask(OnLoadPodcastLogoListener listener, int requestedWidth,
-            int requestedHeight) {
+    public LoadPodcastLogoTask(OnLoadPodcastLogoListener listener,
+            int requestedWidth, int requestedHeight) {
         this.listener = listener;
 
         this.requestedWidth = requestedWidth;
@@ -66,6 +64,7 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
     @Override
     protected Bitmap doInBackground(Podcast... podcasts) {
         this.podcast = podcasts[0];
+        Bitmap result = null;
 
         try {
             // 1. Get logo data
@@ -73,35 +72,37 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 
             // 2. Decode and sample the result
             if (!isCancelled())
-                return decodeAndSampleBitmap(logo);
+                result = decodeAndSampleBitmap(logo);
         } catch (Exception e) {
-            failed = true;
-
             Log.w(getClass().getSimpleName(), "Logo failed to load for podcast \"" + podcasts[0]
                     + "\" with " + "logo URL " + podcasts[0].getLogoUrl(), e);
+
+            cancel(true);
         } finally {
             publishProgress(Progress.DONE);
         }
 
-        return null;
+        return result;
     }
 
     @Override
     protected void onPostExecute(Bitmap result) {
+        // Podcast logo was loaded
+        if (listener != null)
+            listener.onPodcastLogoLoaded(podcast, result);
+        else
+            Log.w(getClass().getSimpleName(), "Podcast logo loaded, but no listener attached");
+
+    }
+
+    @Override
+    protected void onCancelled(Bitmap result) {
         // Background task failed to complete
-        if (failed || result == null) {
-            if (listener != null)
-                listener.onPodcastLogoLoadFailed(podcast);
-            else
-                Log.w(getClass().getSimpleName(),
-                        "Podcast logo loading failed, but no listener attached");
-        } // Podcast logo was loaded
-        else {
-            if (listener != null)
-                listener.onPodcastLogoLoaded(podcast, result);
-            else
-                Log.w(getClass().getSimpleName(), "Podcast logo loaded, but no listener attached");
-        }
+        if (listener != null)
+            listener.onPodcastLogoLoadFailed(podcast);
+        else
+            Log.w(getClass().getSimpleName(),
+                    "Podcast logo loading failed, but no listener attached");
     }
 
     /**

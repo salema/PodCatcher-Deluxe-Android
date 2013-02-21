@@ -39,7 +39,7 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
     /** Maximum byte size for the RSS file to load */
     public static final int MAX_RSS_FILE_SIZE = 2000000;
 
-    /** Owner */
+    /** Call back */
     private OnLoadPodcastListener listener;
 
     /** Podcast currently loading */
@@ -48,9 +48,7 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
     /**
      * Create new task.
      * 
-     * @param listener Callback to be alerted on progress and completion. This
-     *            will not be leaked if you keep a handle on this task, but set
-     *            to <code>null</code> after execution.
+     * @param listener Callback to be alerted on progress and completion.
      */
     public LoadPodcastTask(OnLoadPodcastListener listener) {
         this.listener = listener;
@@ -83,9 +81,9 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
             if (!isCancelled())
                 podcast.parse(parser);
         } catch (Exception e) {
-            failed = true;
-
             Log.w(getClass().getSimpleName(), "Load failed for podcast \"" + podcasts[0] + "\"", e);
+
+            cancel(true);
         } finally {
             publishProgress(Progress.DONE);
         }
@@ -106,29 +104,23 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
         if (podcast != null)
             podcast.setLoading(false);
 
-        // Background task failed to complete
-        if (failed) {
-            if (listener != null)
-                listener.onPodcastLoadFailed(podcast);
-            else
-                Log.w(getClass().getSimpleName(),
-                        "Podcast failed to load, but no listener attached");
-        } // Podcast was loaded
-        else if (listener != null)
+        // Podcast was loaded
+        if (listener != null)
             listener.onPodcastLoaded(podcast);
         else
             Log.w(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
-
-        // Make sure we do not leak the listener
-        listener = null;
     }
 
     @Override
-    protected void onCancelled(Void result) {
+    protected void onCancelled(Void nothing) {
         if (podcast != null)
             podcast.setLoading(false);
 
-        // Make sure we do not leak the listener
-        listener = null;
+        // Background task failed to complete
+        if (listener != null)
+            listener.onPodcastLoadFailed(podcast);
+        else
+            Log.w(getClass().getSimpleName(),
+                    "Podcast failed to load, but no listener attached");
     }
 }
