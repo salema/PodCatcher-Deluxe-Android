@@ -19,7 +19,6 @@ package net.alliknow.podcatcher;
 
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 
@@ -142,7 +141,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
-    public void onPodcastLogoLoaded(Podcast podcast, Bitmap logo) {
+    public void onPodcastLogoLoaded(Podcast podcast) {
         // pass
     }
 

@@ -47,7 +47,7 @@ public class SuggestionManager implements OnLoadSuggestionListener {
     private Set<OnLoadSuggestionListener> loadSuggestionListListeners = new HashSet<OnLoadSuggestionListener>();
 
     /**
-     * Init the podcast data.
+     * Init the suggestion manager.
      * 
      * @param app The podcatcher application object (also a singleton).
      */
@@ -56,15 +56,33 @@ public class SuggestionManager implements OnLoadSuggestionListener {
     }
 
     /**
-     * Get the suggestion manager instance.
+     * Get the suggestion manager instance, which grants access to the global
+     * suggestion data model. The returned manager object is a singleton, all
+     * calls to this method will always return the same single instance of the
+     * suggestion manager.
      * 
      * @param podcatcher The main app object.
-     * @return The suggestion manager handle
+     * @return The suggestion manager handle.
      */
     public static SuggestionManager getInstance(Podcatcher podcatcher) {
         if (manager == null)
             manager = new SuggestionManager(podcatcher);
 
+        return manager;
+    }
+
+    /**
+     * Get the suggestion manager instance, which grants access to the global
+     * suggestion data model. The returned manager object is a singleton, all
+     * calls to this method will always return the same single instance of the
+     * suggestion manager.
+     * 
+     * @return The suggestion manager handle.
+     */
+    public static SuggestionManager getInstance() {
+        // We make sure in Application.onCreate() that this method is not called
+        // unless the other one with the application instance actually set ran
+        // to least once
         return manager;
     }
 
@@ -113,6 +131,8 @@ public class SuggestionManager implements OnLoadSuggestionListener {
     public void onSuggestionsLoaded(List<Podcast> suggestions) {
         // Cache the load result
         this.podcastSuggestions = suggestions;
+        // Reset task
+        this.loadTask = null;
 
         for (OnLoadSuggestionListener listener : loadSuggestionListListeners)
             listener.onSuggestionsLoaded(suggestions);
@@ -120,6 +140,9 @@ public class SuggestionManager implements OnLoadSuggestionListener {
 
     @Override
     public void onSuggestionsLoadFailed() {
+        // Reset task
+        this.loadTask = null;
+
         for (OnLoadSuggestionListener listener : loadSuggestionListListeners)
             listener.onSuggestionsLoadFailed();
     }

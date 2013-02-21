@@ -146,15 +146,11 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     private void updateActionBarSubtitleOnMultipleLoad() {
         if (podcastManager.getPodcastList() != null) {
             final int podcastCount = podcastManager.size();
-            int loadingPodcastCount = 0;
+            final int loadingPodcastCount = podcastManager.getLoadCount();
 
             final String onePodcast = getResources().getString(R.string.one_podcast_selected);
             final String morePodcasts = getResources().getString(R.string.podcasts_selected);
             final String of = getResources().getString(R.string.of);
-
-            for (Podcast podcast : podcastManager.getPodcastList())
-                if (podcastManager.isLoading(podcast))
-                    loadingPodcastCount++;
 
             if (loadingPodcastCount == 0) {
                 getActionBar().setSubtitle(podcastCount == 1 ?

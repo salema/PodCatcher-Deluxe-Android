@@ -42,8 +42,8 @@ public class LoadPodcastLogoTaskTest extends InstrumentationTestCase {
         protected boolean failed;
 
         @Override
-        public void onPodcastLogoLoaded(Podcast podcast, Bitmap logo) {
-            this.result = logo;
+        public void onPodcastLogoLoaded(Podcast podcast) {
+            this.result = podcast.getLogo();
             this.failed = false;
 
             signal.countDown();
