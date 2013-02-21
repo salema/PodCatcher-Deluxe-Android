@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.HorizontalProgressView;
 
@@ -117,7 +118,8 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
         // Show progress on select all podcasts?
         HorizontalProgressView progressView = (HorizontalProgressView)
                 convertView.findViewById(R.id.list_item_progress);
-        progressView.setVisibility(podcast.isLoading() && selectAll ? VISIBLE : GONE);
+        progressView.setVisibility(PodcastManager.getInstance(null).isLoading(podcast)
+                && selectAll ? VISIBLE : GONE);
 
         return convertView;
     }

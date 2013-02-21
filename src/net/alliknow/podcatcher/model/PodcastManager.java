@@ -186,6 +186,15 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         }
     }
 
+    /**
+     * Check whether a podcast is currently loading.
+     * 
+     * @return <code>true</code> iff loading.
+     */
+    public boolean isLoading(Podcast podcast) {
+        return loadPodcastTasks.containsKey(podcast);
+    }
+
     @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
         // Notify listeners

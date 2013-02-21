@@ -60,8 +60,6 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
         this.podcast = podcasts[0];
 
         try {
-            podcast.setLoading(true);
-
             // 1. Load the file from the internets
             publishProgress(Progress.CONNECT);
             byte[] podcastRssFile = loadFile(podcast.getUrl());
@@ -101,9 +99,6 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 
     @Override
     protected void onPostExecute(Void nothing) {
-        if (podcast != null)
-            podcast.setLoading(false);
-
         // Podcast was loaded
         if (listener != null)
             listener.onPodcastLoaded(podcast);
@@ -113,14 +108,10 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 
     @Override
     protected void onCancelled(Void nothing) {
-        if (podcast != null)
-            podcast.setLoading(false);
-
         // Background task failed to complete
         if (listener != null)
             listener.onPodcastLoadFailed(podcast);
         else
-            Log.w(getClass().getSimpleName(),
-                    "Podcast failed to load, but no listener attached");
+            Log.w(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
     }
 }

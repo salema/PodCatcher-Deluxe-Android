@@ -256,25 +256,6 @@ public class Podcast implements Comparable<Podcast> {
     }
 
     /**
-     * Check whether the podcast is currently in the loading state. This only
-     * works if somebody set the flag via {@link #setLoading(boolean)}.
-     * 
-     * @return The flag.
-     */
-    public boolean isLoading() {
-        return loading;
-    }
-
-    /**
-     * Set the loading flag.
-     * 
-     * @param loading The flag to set.
-     */
-    public void setLoading(boolean loading) {
-        this.loading = loading;
-    }
-
-    /**
      * @return The point in time this podcast has last been loaded or
      *         <code>null</code> iff it had not been loaded every.
      */

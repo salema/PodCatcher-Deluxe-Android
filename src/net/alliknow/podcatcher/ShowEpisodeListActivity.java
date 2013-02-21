@@ -153,7 +153,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
             final String of = getResources().getString(R.string.of);
 
             for (Podcast podcast : podcastManager.getPodcastList())
-                if (podcast.isLoading())
+                if (podcastManager.isLoading(podcast))
                     loadingPodcastCount++;
 
             if (loadingPodcastCount == 0) {
