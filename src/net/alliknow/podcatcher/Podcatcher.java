@@ -35,46 +35,16 @@ import net.alliknow.podcatcher.model.SuggestionManager;
  */
 public class Podcatcher extends Application {
 
-    /**
-     * Podcast data manager to be used across all the app's components (namely
-     * in the controller) to access and alter the podcast data. The data manager
-     * is implemented as a singleton.
-     */
-    private PodcastManager podcastManager;
-    /** Suggestion data manager, persistent and global singleton object. */
-    private SuggestionManager suggestionManager;
-
     @Override
     public void onCreate() {
         super.onCreate();
 
         // This will only run once in the lifetime of the app
-        // since the application is an implicit singleton.
-        podcastManager = PodcastManager.getInstance(this);
+        // since the application is an implicit singleton. We create the other
+        // singletons here to make sure they know their application instance.
+        PodcastManager.getInstance(this);
         // dito
-        suggestionManager = SuggestionManager.getInstance(this);
-    }
-
-    /**
-     * Grant access to the global podcast data model. The returned manager
-     * object is a singleton, all calls to this method will always return the
-     * same single instance of the podcast manager.
-     * 
-     * @return The manager handle.
-     */
-    public PodcastManager getPodcastManager() {
-        return podcastManager;
-    }
-
-    /**
-     * Grant access to the global suggestion data model. The returned manager
-     * object is a singleton, all calls to this method will always return the
-     * same single instance of the suggestion manager.
-     * 
-     * @return The manager handle.
-     */
-    public SuggestionManager getSuggestionManager() {
-        return suggestionManager;
+        SuggestionManager.getInstance(this);
     }
 
     /**

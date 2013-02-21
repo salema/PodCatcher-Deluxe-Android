@@ -19,7 +19,6 @@ package net.alliknow.podcatcher;
 
 import android.app.FragmentManager.OnBackStackChangedListener;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.StrictMode;
 
@@ -430,8 +429,8 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     }
 
     @Override
-    public void onPodcastLogoLoaded(Podcast podcast, Bitmap logo) {
-        super.onPodcastLogoLoaded(podcast, logo);
+    public void onPodcastLogoLoaded(Podcast podcast) {
+        super.onPodcastLogoLoaded(podcast);
 
         updateLogoViewMode();
     }

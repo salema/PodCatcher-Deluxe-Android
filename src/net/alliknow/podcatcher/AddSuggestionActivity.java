@@ -52,7 +52,7 @@ public class AddSuggestionActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
 
         // Get suggestions manager and register call-back
-        suggestionManager = ((Podcatcher) getApplication()).getSuggestionManager();
+        suggestionManager = SuggestionManager.getInstance();
         suggestionManager.addLoadSuggestionListListener(this);
     }
 

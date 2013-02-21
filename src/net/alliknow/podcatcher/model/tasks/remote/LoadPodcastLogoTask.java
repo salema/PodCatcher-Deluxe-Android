@@ -87,9 +87,12 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 
     @Override
     protected void onPostExecute(Bitmap result) {
+        // Set the logo as a podcast member
+        podcast.setLogo(result);
+
         // Podcast logo was loaded
         if (listener != null)
-            listener.onPodcastLogoLoaded(podcast, result);
+            listener.onPodcastLogoLoaded(podcast);
         else
             Log.w(getClass().getSimpleName(), "Podcast logo loaded, but no listener attached");
 

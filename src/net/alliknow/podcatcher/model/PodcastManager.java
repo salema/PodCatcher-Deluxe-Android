@@ -17,7 +17,6 @@
 
 package net.alliknow.podcatcher.model;
 
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
@@ -111,7 +110,10 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     }
 
     /**
-     * Get the singleton instance of the podcast manager.
+     * Get the singleton instance of the podcast manager, which grants access to
+     * the global podcast data model. The returned manager object is a
+     * singleton, all calls to this method will always return the same single
+     * instance of the podcast manager.
      * 
      * @param podcatcher Application handle.
      * @return The singleton instance.
@@ -121,6 +123,21 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         if (manager == null)
             manager = new PodcastManager(podcatcher);
 
+        return manager;
+    }
+
+    /**
+     * Get the singleton instance of the podcast manager, which grants access to
+     * the global podcast data model. The returned manager object is a
+     * singleton, all calls to this method will always return the same single
+     * instance of the podcast manager.
+     * 
+     * @return The singleton instance.
+     */
+    public static PodcastManager getInstance() {
+        // We make sure in Application.onCreate() that this method is not called
+        // unless the other one with the application instance actually set ran
+        // to least once
         return manager;
     }
 
@@ -189,10 +206,18 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     /**
      * Check whether a podcast is currently loading.
      * 
+     * @param podcast Podcast to check for.
      * @return <code>true</code> iff loading.
      */
     public boolean isLoading(Podcast podcast) {
         return loadPodcastTasks.containsKey(podcast);
+    }
+
+    /**
+     * @return The number of podcasts currently loading.
+     */
+    public int getLoadCount() {
+        return loadPodcastTasks.size();
     }
 
     @Override
@@ -251,16 +276,14 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     }
 
     @Override
-    public void onPodcastLogoLoaded(Podcast podcast, Bitmap logo) {
+    public void onPodcastLogoLoaded(Podcast podcast) {
         loadPodcastLogoTasks.remove(podcast);
-
-        podcast.setLogo(logo);
 
         if (loadPodcastLogoListeners.isEmpty())
             Log.w(getClass().getSimpleName(), "Podcast logo loaded, but no listener set.");
         else
             for (OnLoadPodcastLogoListener listener : loadPodcastLogoListeners)
-                listener.onPodcastLogoLoaded(podcast, logo);
+                listener.onPodcastLogoLoaded(podcast);
     }
 
     @Override

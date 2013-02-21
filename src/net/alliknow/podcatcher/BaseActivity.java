@@ -75,7 +75,7 @@ public abstract class BaseActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         // Set the data manager
-        podcastManager = ((Podcatcher) getApplication()).getPodcastManager();
+        podcastManager = PodcastManager.getInstance();
 
         // Set the view mode member
         viewMode = determineViewMode();
