@@ -60,7 +60,7 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
 
         @Override
         public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
-            System.out.println(progress + " (" + progress.getPercentDone() + ")");
+            // System.out.println(progress);
         }
     }
 
@@ -78,24 +78,30 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
     public final void testLoadPodcast() throws Throwable {
         final MockPodcastLoader mockLoader = new MockPodcastLoader();
 
+        int size = examplePodcasts.size();
+        int index = 0;
+        int failed = 0;
+
         // Actual example Podcast
         for (Podcast ep : examplePodcasts) {
-            System.out.println("---- New Podcast ----");
+            System.out.println("---- New Podcast (" + ++index + "/" + size + ") ----");
             System.out.println("Testing \"" + ep + "\"...");
             LoadPodcastTask task = loadAndWait(mockLoader, new Podcast(ep.getName(), ep.getUrl()));
 
             if (mockLoader.failed) {
                 System.out.println("Podcast " + ep.getName() + " failed!");
+                failed++;
             } else {
                 assertFalse(task.isCancelled());
-                assertFalse(mockLoader.failed);
                 assertNotNull(mockLoader.result);
                 assertFalse(mockLoader.result.getEpisodes().isEmpty());
                 assertNotNull(mockLoader.result.getLastLoaded());
 
-                System.out.println("Tested \"" + ep + "\" - okay...");
+                System.out.println("Tested \"" + mockLoader.result + "\" - okay...");
             }
         }
+
+        System.out.println("*** Tested all example podcast, failed on " + failed);
 
         // null
         loadAndWait(mockLoader, (Podcast) null);
