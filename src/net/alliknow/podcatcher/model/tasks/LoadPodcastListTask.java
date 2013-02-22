@@ -66,7 +66,6 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
     }
 
     @Override
-    @SuppressWarnings("unused")
     protected List<Podcast> doInBackground(Void... params) {
         List<Podcast> result = new ArrayList<Podcast>();
         InputStream fileStream = null;

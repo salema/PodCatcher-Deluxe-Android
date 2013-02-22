@@ -98,7 +98,6 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
     }
 
     @Override
-    @SuppressWarnings("unused")
     protected void onPostExecute(Void nothing) {
         // Podcast was loaded
         if (listener != null)
@@ -108,7 +107,6 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
     }
 
     @Override
-    @SuppressWarnings("unused")
     protected void onCancelled(Void nothing) {
         // Background task failed to complete
         if (listener != null)

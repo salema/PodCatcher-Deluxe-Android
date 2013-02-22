@@ -107,7 +107,7 @@ public class Progress {
             }
         } // Standard case
         else
-            return progress + "/" + total;
+            return progress + "/" + total + "(" + getPercentDone() + ")";
     }
 
     @Override
