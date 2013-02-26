@@ -37,7 +37,7 @@ public class SuggestionListAdapter extends PodcastListAdapter {
     /** Owner for button call backs */
     protected final OnAddSuggestionListener listener;
     /** Separator for meta data in the UI */
-    private static final String METADATA_SEPARATOR = " ● ";
+    private static final String METADATA_SEPARATOR = " • ";
 
     /**
      * Create new adapter.
