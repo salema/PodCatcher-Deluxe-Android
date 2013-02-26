@@ -111,15 +111,19 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
         // This is the interesting case
         else {
             // Get a nice time span string for the age of the episode
-            CharSequence date = DateUtils.getRelativeTimeSpanString(episode.getPubDate().getTime(),
-                    new Date().getTime(), DateUtils.HOUR_IN_MILLIS);
+            String dateString = DateUtils.getRelativeTimeSpanString(episode.getPubDate().getTime(),
+                    new Date().getTime(), DateUtils.HOUR_IN_MILLIS).toString();
+
+            // Make sure date string starts with upper case
+            if (dateString.length() > 1 && Character.isLetter(dateString.charAt(0)))
+                dateString = Character.toUpperCase(dateString.charAt(0)) + dateString.substring(1);
 
             // Append podcast name
             if (showPodcastNames)
-                return date + SEPARATOR + episode.getPodcast().getName();
+                return dateString + SEPARATOR + episode.getPodcast().getName();
             // Omit podcast name
             else
-                return date.toString();
+                return dateString;
         }
     }
 }
