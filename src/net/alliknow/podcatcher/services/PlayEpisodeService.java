@@ -185,7 +185,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 player.setDataSource(episode.getMediaUrl().toString());
                 player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
                 wifiLock.acquire();
-                putForeground();
 
                 player.prepareAsync(); // might take long! (for buffering, etc)
             } catch (Exception e) {
@@ -323,13 +322,15 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             hasFocus = true;
             player.start();
-        }
 
-        if (listeners.size() > 0)
-            for (PlayServiceListener listener : listeners)
-                listener.onReadyToPlay();
-        else
-            Log.w(getClass().getSimpleName(), "Episode prepared, but no listener attached");
+            putForeground();
+
+            if (listeners.size() > 0)
+                for (PlayServiceListener listener : listeners)
+                    listener.onReadyToPlay();
+            else
+                Log.w(getClass().getSimpleName(), "Episode prepared, but no listener attached");
+        }
     }
 
     @Override

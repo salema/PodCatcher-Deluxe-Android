@@ -242,6 +242,9 @@ public abstract class EpisodeActivity extends BaseActivity implements
         stopPlayProgressTimer();
         service.reset();
 
+        updatePlayer();
+        playerFragment.setPlayerVisibilility(true);
+        playerFragment.setPlayerTitleVisibility(false);
         playerFragment.setErrorViewVisibility(true);
 
         Log.w(getClass().getSimpleName(), "Play service send an error");
