@@ -134,7 +134,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     /**
      * Set whether the fragment should show the podcast name for each episode
      * item. Change will be reflected upon next call of
-     * <code>setEpisodes()</code>.
+     * {@link #setEpisodes(List)}
      * 
      * @param show Whether to show the podcast names.
      */

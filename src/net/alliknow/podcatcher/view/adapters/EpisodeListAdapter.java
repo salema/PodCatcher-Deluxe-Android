@@ -18,14 +18,13 @@
 package net.alliknow.podcatcher.view.adapters;
 
 import android.content.Context;
-import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.model.types.Episode;
+import net.alliknow.podcatcher.view.Utils;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,7 +40,7 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
     /** String to use if no episode publication date available */
     private static final String NO_DATE = "---";
     /** Separator for date and podcast name */
-    private static final String SEPARATOR = " - ";
+    private static final String SEPARATOR = " • ";
 
     /**
      * Create new adapter.
@@ -111,12 +110,7 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
         // This is the interesting case
         else {
             // Get a nice time span string for the age of the episode
-            String dateString = DateUtils.getRelativeTimeSpanString(episode.getPubDate().getTime(),
-                    new Date().getTime(), DateUtils.HOUR_IN_MILLIS).toString();
-
-            // Make sure date string starts with upper case
-            if (dateString.length() > 1 && Character.isLetter(dateString.charAt(0)))
-                dateString = Character.toUpperCase(dateString.charAt(0)) + dateString.substring(1);
+            String dateString = Utils.getRelativePubDate(episode);
 
             // Append podcast name
             if (showPodcastNames)

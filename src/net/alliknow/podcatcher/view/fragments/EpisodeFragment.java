@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.model.types.Episode;
+import net.alliknow.podcatcher.view.Utils;
 
 /**
  * Fragment showing episode details.
@@ -39,19 +40,25 @@ public class EpisodeFragment extends Fragment {
     /** The currently shown episode */
     private Episode currentEpisode;
 
+    /** Flag to indicate whether the episode date should be shown */
+    private boolean showEpisodeDate = false;
+
+    /** Separator for date and podcast name */
+    private static final String SEPARATOR = " • ";
+
     /** Status flag indicating that our view is created */
     private boolean viewCreated = false;
 
     /** The empty view */
     private View emptyView;
     /** The episode title view */
-    private TextView episodeTitleView;
+    private TextView titleView;
     /** The podcast title view */
-    private TextView podcastTitleView;
+    private TextView subtitleView;
     /** The divider view between title and description */
     private View dividerView;
     /** The episode description web view */
-    private WebView episodeDetailView;
+    private WebView descriptionView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,9 +73,9 @@ public class EpisodeFragment extends Fragment {
 
         // Find UI widgets
         emptyView = getView().findViewById(android.R.id.empty);
-        episodeTitleView = (TextView) getView().findViewById(R.id.episode_title);
-        podcastTitleView = (TextView) getView().findViewById(R.id.podcast_title);
-        episodeDetailView = (WebView) getView().findViewById(R.id.episode_description);
+        titleView = (TextView) getView().findViewById(R.id.episode_title);
+        subtitleView = (TextView) getView().findViewById(R.id.podcast_title);
+        descriptionView = (WebView) getView().findViewById(R.id.episode_description);
         dividerView = getView().findViewById(R.id.episode_divider);
 
         viewCreated = true;
@@ -98,9 +105,13 @@ public class EpisodeFragment extends Fragment {
         // If the fragment's view is actually visible and the episode is valid,
         // show episode information
         if (viewCreated && currentEpisode != null) {
-            episodeTitleView.setText(currentEpisode.getName());
-            podcastTitleView.setText(currentEpisode.getPodcast().getName());
-            episodeDetailView.loadDataWithBaseURL(null, currentEpisode.getDescription(),
+            titleView.setText(currentEpisode.getName());
+            subtitleView.setText(currentEpisode.getPodcast().getName());
+            if (showEpisodeDate)
+                subtitleView.setText(subtitleView.getText() + SEPARATOR
+                        + Utils.getRelativePubDate(currentEpisode));
+
+            descriptionView.loadDataWithBaseURL(null, currentEpisode.getDescription(),
                     "text/html",
                     "utf-8", null);
         }
@@ -109,14 +120,25 @@ public class EpisodeFragment extends Fragment {
         updateUiElementVisibility();
     }
 
+    /**
+     * Set whether the fragment should show the episode date for the episode
+     * shown. Change will be reflected upon next call of
+     * {@link #setEpisode(Episode)}
+     * 
+     * @param show Whether to show the episode date.
+     */
+    public void setShowEpisodeDate(boolean show) {
+        this.showEpisodeDate = show;
+    }
+
     private void updateUiElementVisibility() {
         if (viewCreated) {
             emptyView.setVisibility(currentEpisode == null ? VISIBLE : GONE);
 
-            episodeTitleView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
-            podcastTitleView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
+            titleView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
+            subtitleView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
             dividerView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
-            episodeDetailView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
+            descriptionView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
         }
     }
 }

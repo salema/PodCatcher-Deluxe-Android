@@ -62,6 +62,7 @@ public class ShowEpisodeActivity extends EpisodeActivity {
                     this.currentEpisode = podcastManager.findEpisodeForUrl(episodeUrl);
 
                     episodeFragment.setEpisode(currentEpisode);
+                    episodeFragment.setShowEpisodeDate(true);
                 }
         }
     }
