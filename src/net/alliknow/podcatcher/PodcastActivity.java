@@ -214,15 +214,14 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             // Update UI
             updateActionBar();
 
-            // Only act if we are not in select all mode or in small portrait
-            // view mode
-            if (!multiplePodcastsMode && viewMode != SMALL_PORTRAIT_VIEW) {
-                // Show the last podcast added
-                if (currentPodcast != null)
-                    onPodcastSelected(currentPodcast);
+            // Only act if we are not in select all mode
+            if (!multiplePodcastsMode) {
                 // Selected podcast was deleted
-                else
+                if (currentPodcast == null)
                     onNoPodcastSelected();
+                // Show the last podcast added if not in small portrait mode
+                else if (viewMode != SMALL_PORTRAIT_VIEW)
+                    onPodcastSelected(currentPodcast);
             }
         }
     }
