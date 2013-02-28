@@ -44,12 +44,18 @@ public abstract class PodcatcherBaseSpinnerAdapter extends PodcatcherBaseAdapter
         TextView result = (TextView) findReturnView(convertView, parent,
                 android.R.layout.simple_spinner_item);
 
-        result.setText(getResourceString(result.getResources(), position));
+        // Get the resource string as the item's toString().toLowerCase() result
+        // plus "R.string." and set as label
+        int stringId = getStringIdentifier(getItem(position));
+        result.setText(resources.getString(stringId));
+
         return result;
     }
 
     @Override
     public long getItemId(int position) {
-        return getItem(position).hashCode();
+        // Since there are only enums behind this, it is actually okay to simply
+        // return the position...
+        return position;
     }
 }

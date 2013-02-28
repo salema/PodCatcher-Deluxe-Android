@@ -110,13 +110,13 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
 
         // Update the mode title text
         int checkedItemCount = fragment.getListView().getCheckedItemCount();
-        String newTitle = fragment.getResources().getString(R.string.no_podcast_selected);
+        String newTitle = fragment.getString(R.string.no_podcast_selected);
 
         if (checkedItemCount == 1)
-            newTitle = fragment.getResources().getString(R.string.one_podcast_selected);
+            newTitle = fragment.getString(R.string.one_podcast_selected);
         else if (checkedItemCount > 1)
             newTitle = checkedItemCount + " "
-                    + fragment.getResources().getString(R.string.podcasts_selected);
+                    + fragment.getString(R.string.podcasts_selected);
 
         mode.setTitle(newTitle);
     }

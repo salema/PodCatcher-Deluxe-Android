@@ -46,44 +46,44 @@ public class ProgressView extends LinearLayout {
     public ProgressView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        inflate(context);
-    }
-
-    /**
-     * Inflate the view's layout, override to change in subclass.
-     * 
-     * @param context Context view lives in.
-     */
-    protected void inflate(Context context) {
-        View view = View.inflate(context, R.layout.progress, this);
+        View view = View.inflate(context, getLayout(), this);
 
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         progressTextView = (TextView) view.findViewById(R.id.progress_text);
     }
 
     /**
+     * @return The layout resource id to inflate for this view. Sub-classes
+     *         might want to overwrite this.
+     */
+    protected int getLayout() {
+        return R.layout.progress;
+    }
+
+    /**
      * Show a textual progress information. Beyond actual percentages this also
-     * works with flags from load tasks.
+     * works with flags from {@link Progress}.
      * 
      * @param progress Progress to visualize.
      * @see Progress
      */
     public void publishProgress(Progress progress) {
         progressBar.setVisibility(VISIBLE);
-        progressTextView.setTextColor(getResources().getColor(R.color.text_secondary));
+
+        progressTextView.setTextColor(getColor(R.color.text_secondary));
 
         if (progress.equals(Progress.WAIT))
-            progressTextView.setText(getResources().getString(R.string.wait));
+            progressTextView.setText(getString(R.string.wait));
         else if (progress.equals(Progress.CONNECT))
-            progressTextView.setText(getResources().getString(R.string.connect));
+            progressTextView.setText(getString(R.string.connect));
         else if (progress.equals(Progress.LOAD))
-            progressTextView.setText(getResources().getString(R.string.load));
+            progressTextView.setText(getString(R.string.load));
         else if (progress.equals(Progress.PARSE))
-            progressTextView.setText(getResources().getString(R.string.parse));
+            progressTextView.setText(getString(R.string.parse));
         else if (progress.getPercentDone() >= 0 && progress.getPercentDone() <= 100)
             progressTextView.setText(progress.getPercentDone() + "%");
         else
-            progressTextView.setText(getResources().getString(R.string.load));
+            progressTextView.setText(getString(R.string.load));
     }
 
     /**
@@ -94,8 +94,9 @@ public class ProgressView extends LinearLayout {
     public void showError(int errorId) {
         progressBar.setVisibility(GONE);
 
-        progressTextView.setTextColor(getResources().getColor(R.color.text_error));
+        progressTextView.setVisibility(VISIBLE);
         progressTextView.setText(errorId);
+        progressTextView.setTextColor(getColor(R.color.text_error));
     }
 
     /**
@@ -103,7 +104,29 @@ public class ProgressView extends LinearLayout {
      */
     public void reset() {
         progressBar.setVisibility(VISIBLE);
+
+        progressTextView.setVisibility(VISIBLE);
         progressTextView.setText(R.string.wait);
-        progressTextView.setTextColor(getResources().getColor(R.color.text_secondary));
+        progressTextView.setTextColor(getColor(R.color.text_secondary));
+    }
+
+    /**
+     * Short cut to string resource.
+     * 
+     * @param id String resources id key.
+     * @return The string resource.
+     */
+    protected String getString(int id) {
+        return getResources().getString(id);
+    }
+
+    /**
+     * Short cut to color resource.
+     * 
+     * @param id Color resources id key.
+     * @return The color resource.
+     */
+    protected int getColor(int id) {
+        return getResources().getColor(id);
     }
 }

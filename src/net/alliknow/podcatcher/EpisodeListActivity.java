@@ -170,7 +170,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 if (getFragmentManager().getBackStackEntryCount() == 0) {
                     FragmentTransaction transaction = getFragmentManager().beginTransaction();
                     transaction.replace(R.id.right, episodeFragment,
-                            getResources().getString(R.string.episode_fragment_tag));
+                            getString(R.string.episode_fragment_tag));
                     transaction.addToBackStack(null);
                     transaction.commit();
                 }

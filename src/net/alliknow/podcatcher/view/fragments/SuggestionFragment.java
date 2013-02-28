@@ -144,7 +144,7 @@ public class SuggestionFragment extends DialogFragment {
         sendSuggestionView = (TextView) view.findViewById(R.id.suggestion_send);
         sendSuggestionView.setText(Html.fromHtml("<a href=\"mailto:" + SUGGESTION_MAIL_ADDRESS +
                 "?subject=" + SUGGESTION_MAIL_SUBJECT + "\">" +
-                getResources().getString(R.string.send_suggestion) + "</a>"));
+                getString(R.string.send_suggestion) + "</a>"));
         sendSuggestionView.setMovementMethod(LinkMovementMethod.getInstance());
 
         restoreFilters(savedInstanceState);

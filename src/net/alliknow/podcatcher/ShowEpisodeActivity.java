@@ -52,7 +52,7 @@ public class ShowEpisodeActivity extends EpisodeActivity {
                     getFragmentManager()
                             .beginTransaction()
                             .add(R.id.content, episodeFragment,
-                                    getResources().getString(R.string.episode_fragment_tag))
+                                    getString(R.string.episode_fragment_tag))
                             .commit();
                 }
 

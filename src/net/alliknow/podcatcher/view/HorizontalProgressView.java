@@ -19,9 +19,6 @@ package net.alliknow.podcatcher.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.model.types.Progress;
@@ -30,6 +27,11 @@ import net.alliknow.podcatcher.model.types.Progress;
  * A sophisticated horizontal progress view.
  */
 public class HorizontalProgressView extends ProgressView {
+
+    /**
+     * The layout id to inflate for this view.
+     */
+    protected static int LAYOUT = R.layout.progress_horizontal;
 
     /**
      * Create progress view.
@@ -42,30 +44,19 @@ public class HorizontalProgressView extends ProgressView {
     }
 
     @Override
-    protected void inflate(Context context) {
-        View view = View.inflate(context, R.layout.progress_horizontal, this);
-
-        progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
-        progressTextView = (TextView) view.findViewById(R.id.progress_text);
+    protected int getLayout() {
+        return R.layout.progress_horizontal;
     }
 
     @Override
     public void publishProgress(Progress progress) {
         super.publishProgress(progress);
 
+        // Show progress in progress bar
         if (progress.getPercentDone() >= 0 && progress.getPercentDone() <= 100) {
             progressBar.setIndeterminate(false);
             progressBar.setProgress(progress.getPercentDone());
         } else
             progressBar.setIndeterminate(true);
-    }
-
-    /**
-     * Whether to show the textual progress representation.
-     * 
-     * @param show The flag (default is <code>true</code>).
-     */
-    public void showTextProgress(boolean show) {
-        progressTextView.setVisibility(show ? VISIBLE : GONE);
     }
 }

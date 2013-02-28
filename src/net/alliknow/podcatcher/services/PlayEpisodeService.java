@@ -450,11 +450,9 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 .setContentIntent(pendingIntent)
                 .setTicker(currentEpisode.getName())
                 .setSmallIcon(R.drawable.ic_stat)
-                // .setLargeIcon(BitmapFactory.decodeResource(getResources(),
-                // R.drawable.ic_stat))
                 .setContentTitle(currentEpisode.getName())
                 .setContentText(currentEpisode.getPodcast().getName())
-                .setContentInfo(getResources().getString(R.string.app_name))
+                .setContentInfo(getString(R.string.app_name))
                 .setWhen(0)
                 .setOngoing(true).getNotification();
 

@@ -76,11 +76,6 @@ public class PlayerFragment extends Fragment {
     /** The error view */
     private TextView errorView;
 
-    /** String resource needed for button label */
-    private String at;
-    /** String resource needed for button label */
-    private String of;
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -108,9 +103,6 @@ public class PlayerFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        at = getResources().getString(R.string.at);
-        of = getResources().getString(R.string.of);
 
         dividerView = (ImageView) view.findViewById(R.id.player_divider);
         titleView = (TextView) view.findViewById(R.id.player_title);
@@ -300,8 +292,8 @@ public class PlayerFragment extends Fragment {
                 final String formattedPosition = formatTime(position);
                 final String formattedDuration = formatTime(duration);
 
-                button.setText(button.getText() + " " + at + " " +
-                        formattedPosition + " " + of + " " + formattedDuration);
+                button.setText(button.getText() + " " + getString(R.string.at) + " " +
+                        formattedPosition + " " + getString(R.string.of) + " " + formattedDuration);
             }
         }
     }

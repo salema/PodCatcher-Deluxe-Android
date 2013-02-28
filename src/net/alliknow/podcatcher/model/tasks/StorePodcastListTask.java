@@ -58,7 +58,7 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
     public StorePodcastListTask(Context context) {
         this.context = context;
 
-        opmlFileTitle = context.getResources().getString(R.string.app_name) + " " + opmlFileTitle;
+        opmlFileTitle = context.getString(R.string.app_name) + " " + opmlFileTitle;
     }
 
     @Override

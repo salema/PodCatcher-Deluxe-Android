@@ -31,8 +31,11 @@ import java.util.Locale;
  */
 public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 
+    /** The resources handle */
+    protected final Resources resources;
+
     /** We need to know our package name to retrieve identifiers */
-    protected String packageName;
+    protected final String packageName;
 
     /** The def type for string resources */
     private static final String STRING_DEFTYPE = "string";
@@ -43,6 +46,7 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
      * @param context The current context.
      */
     public PodcatcherBaseAdapter(Context context) {
+        this.resources = context.getResources();
         this.packageName = context.getPackageName();
     }
 
@@ -52,7 +56,7 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
     }
 
     /**
-     * Check whether a view can be recycled and inflate new one if not.
+     * Check whether a view can be recycled and inflate a new one if not.
      * 
      * @param convertView View to check.
      * @param parent View group to attach to.
@@ -70,52 +74,15 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
     }
 
     /**
-     * Get the resource (language-specific) string for an item.
+     * Get a string resource for given item. This will use the item's
+     * toString()-method, call toLowerCase() on the result and append the
+     * outcome to "R.string.".
      * 
-     * @param resources Resources to use.
-     * @param item Item which <code>toString</code> method result in lower case
-     *            is a string resource key.
-     * @return The string in the correct language. Throws a runtime exception if
-     *         no such resource exists.
+     * @param item Item to find string resource for.
+     * @return The resource id or zero if not found.
      */
-    protected String getResourceString(Resources resources, Object item) {
-        return getResourceString(resources, item.toString());
-    }
-
-    /**
-     * Get the resource (language-specific) string for the given key.
-     * 
-     * @param resources Resources to use.
-     * @param key Key to look up. Will be changed to lower case.
-     * @return The string in the correct language. Throws a runtime exception if
-     *         no such resource exists.
-     */
-    protected String getResourceString(Resources resources, String key) {
-        return resources.getString(getStringIdentifier(resources, key));
-    }
-
-    /**
-     * Get the resource (language-specific) string for item at the given
-     * position.
-     * 
-     * @param resources Resources to use.
-     * @param position Index to the item to get string for.
-     * @return The string in the correct language. Throws a runtime exception if
-     *         no such resource exists.
-     */
-    protected String getResourceString(Resources resources, int position) {
-        return getResourceString(resources, getItem(position));
-    }
-
-    /**
-     * Get the resource key (identifier) from the given string key.
-     * 
-     * @param resources Resources to use.
-     * @param key Key as a string (will be changed to lower case).
-     * @return The resource identifier for this key. Throws a runtime exception
-     *         if no such resource exists.
-     */
-    protected int getStringIdentifier(Resources resources, String key) {
-        return resources.getIdentifier(key.toLowerCase(Locale.US), STRING_DEFTYPE, packageName);
+    protected int getStringIdentifier(Object item) {
+        return resources.getIdentifier(item.toString().toLowerCase(Locale.US),
+                STRING_DEFTYPE, packageName);
     }
 }

@@ -52,7 +52,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
                 getFragmentManager()
                         .beginTransaction()
                         .add(R.id.content, episodeListFragment,
-                                getResources().getString(R.string.episode_list_fragment_tag))
+                                getString(R.string.episode_list_fragment_tag))
                         .commit();
             }
 
@@ -125,9 +125,9 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
                 getActionBar().setSubtitle(null);
             else {
                 int episodeCount = currentPodcast.getEpisodeNumber();
-                getActionBar().setSubtitle(episodeCount == 1 ?
-                        getResources().getString(R.string.one_episode) :
-                        episodeCount + " " + getResources().getString(R.string.episodes));
+                getActionBar().setSubtitle(
+                        episodeCount == 1 ? getString(R.string.one_episode) :
+                                episodeCount + " " + getString(R.string.episodes));
             }
         } // Multiple podcast mode
         else if (multiplePodcastsMode) {
@@ -149,9 +149,9 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
             final int podcastCount = podcastManager.size();
             final int loadingPodcastCount = podcastManager.getLoadCount();
 
-            final String onePodcast = getResources().getString(R.string.one_podcast_selected);
-            final String morePodcasts = getResources().getString(R.string.podcasts_selected);
-            final String of = getResources().getString(R.string.of);
+            final String onePodcast = getString(R.string.one_podcast_selected);
+            final String morePodcasts = getString(R.string.podcasts_selected);
+            final String of = getString(R.string.of);
 
             if (loadingPodcastCount == 0) {
                 getActionBar().setSubtitle(podcastCount == 1 ?

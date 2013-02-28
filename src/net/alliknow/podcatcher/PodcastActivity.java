@@ -124,7 +124,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             getFragmentManager()
                     .beginTransaction()
                     .add(R.id.content, podcastListFragment,
-                            getResources().getString(R.string.podcast_list_fragment_tag))
+                            getString(R.string.podcast_list_fragment_tag))
                     .commit();
         }
         // On small screens in landscape mode, add the episode list fragment
@@ -133,7 +133,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             getFragmentManager()
                     .beginTransaction()
                     .add(R.id.right, episodeListFragment,
-                            getResources().getString(R.string.episode_list_fragment_tag))
+                            getString(R.string.episode_list_fragment_tag))
                     .commit();
         }
     }
@@ -458,9 +458,9 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
         if (podcastManager.getPodcastList() != null) {
             int podcastCount = podcastManager.size();
-            getActionBar().setSubtitle(podcastCount == 1 ?
-                    getResources().getString(R.string.one_podcast_selected) :
-                    podcastCount + " " + getResources().getString(R.string.podcasts_selected));
+            getActionBar().setSubtitle(
+                    podcastCount == 1 ? getString(R.string.one_podcast_selected) : podcastCount
+                            + " " + getString(R.string.podcasts_selected));
         } else {
             getActionBar().setSubtitle(null);
         }

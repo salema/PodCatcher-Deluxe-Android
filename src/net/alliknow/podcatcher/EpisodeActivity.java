@@ -290,8 +290,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
      *         not added to the fragment manager.
      */
     protected Fragment findByTagId(int tagId) {
-        String tag = getResources().getString(tagId);
-        return getFragmentManager().findFragmentByTag(tag);
+        return getFragmentManager().findFragmentByTag(getString(tagId));
     }
 
     private void startPlayProgressTimer() {

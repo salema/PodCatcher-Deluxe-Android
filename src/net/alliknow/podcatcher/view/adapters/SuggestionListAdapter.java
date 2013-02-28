@@ -66,11 +66,11 @@ public class SuggestionListAdapter extends PodcastListAdapter {
         setText(listItemView, R.id.suggestion_name, suggestion.getName());
         // Set the text to display for classification
         setText(listItemView, R.id.suggestion_meta,
-                getResourceString(listItemView.getResources(), suggestion.getLanguage())
+                resources.getString(getStringIdentifier(suggestion.getLanguage()))
                         + METADATA_SEPARATOR +
-                        getResourceString(listItemView.getResources(), suggestion.getGenre())
+                        resources.getString(getStringIdentifier(suggestion.getGenre()))
                         + METADATA_SEPARATOR +
-                        getResourceString(listItemView.getResources(), suggestion.getMediaType()));
+                        resources.getString(getStringIdentifier(suggestion.getMediaType())));
         // Set the text to display for the description
         setText(listItemView, R.id.suggestion_description, suggestion.getDescription());
 

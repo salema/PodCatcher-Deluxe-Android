@@ -43,11 +43,6 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
     /** Member flag to indicate whether we show the podcast logo */
     protected boolean showLogoView = false;
 
-    /** String resources used: one episode */
-    protected final String oneEpisode;
-    /** String resources used: multiple episodes */
-    protected final String episodes;
-
     /**
      * Create new adapter.
      * 
@@ -58,8 +53,6 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
         super(context);
 
         this.list = podcastList;
-        oneEpisode = context.getResources().getString(R.string.one_episode);
-        episodes = context.getResources().getString(R.string.episodes);
     }
 
     /**
@@ -108,9 +101,9 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
         captionView.setText(createCaption(episodeNumber));
         captionView.setVisibility(episodeNumber != 0 ? VISIBLE : GONE);
 
-        // Set the podcast logo if available
+        // Check whether we should show the podcast logo
         boolean show = showLogoView && podcast.getLogo() != null;
-
+        // Set the podcast logo if available and wanted
         ImageView logoView = (ImageView) listItemView.findViewById(R.id.podcast_logo);
         logoView.setVisibility(show ? VISIBLE : GONE);
         logoView.setImageBitmap(show ? podcast.getLogo() : null);
@@ -125,6 +118,7 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
     }
 
     private String createCaption(int numberOfEpisodes) {
-        return numberOfEpisodes == 1 ? oneEpisode : numberOfEpisodes + " " + episodes;
+        return numberOfEpisodes == 1 ? resources.getString(R.string.one_episode) :
+                numberOfEpisodes + " " + resources.getString(R.string.episodes);
     }
 }
