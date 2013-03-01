@@ -22,7 +22,6 @@ import static android.view.View.VISIBLE;
 
 import android.app.ListFragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.TextView;
@@ -100,8 +99,10 @@ public abstract class PodcatcherListFragment extends ListFragment {
 
         if (adapter != null && !showProgress) {
             adapter.setSelectedPosition(position);
-            scrollListView(position);
+            getListView().smoothScrollToPosition(position);
         }
+
+        updateUiElementVisibility();
     }
 
     /**
@@ -113,6 +114,8 @@ public abstract class PodcatcherListFragment extends ListFragment {
 
         if (adapter != null && !showProgress)
             adapter.setSelectAll();
+
+        updateUiElementVisibility();
     }
 
     /**
@@ -124,6 +127,8 @@ public abstract class PodcatcherListFragment extends ListFragment {
 
         if (adapter != null && !showProgress)
             adapter.setSelectNone();
+
+        updateUiElementVisibility();
     }
 
     /**
@@ -166,6 +171,7 @@ public abstract class PodcatcherListFragment extends ListFragment {
         showProgress = false;
         showLoadFailed = false;
         selectAll = false;
+        selectedPosition = -1;
 
         setListAdapter(null);
         if (viewCreated)
@@ -214,23 +220,5 @@ public abstract class PodcatcherListFragment extends ListFragment {
                 progressView.setVisibility(GONE);
             }
         }
-    }
-
-    /**
-     * Smoothly scroll to given position if not currently visible.
-     * 
-     * @param position Position to scroll to.
-     */
-    protected void scrollListView(int position) {
-        // This happens at times and we do not want to react in this case.
-        if (getListView().getFirstVisiblePosition() < 0 ||
-                getListView().getLastVisiblePosition() < 0)
-            Log.w(getClass().getSimpleName(), "Scroll list failed (first: " +
-                    getListView().getFirstVisiblePosition() + ", last: " +
-                    getListView().getLastVisiblePosition() + ")!");
-        // Scroll if necessary
-        else if (getListView().getFirstVisiblePosition() > position
-                || getListView().getLastVisiblePosition() < position)
-            getListView().smoothScrollToPosition(position);
     }
 }

@@ -38,9 +38,9 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         super.onCreate(savedInstanceState);
 
         // Check if we need this activity at all
-        if (viewMode != SMALL_PORTRAIT_VIEW) {
+        if (viewMode != SMALL_PORTRAIT_VIEW)
             finish();
-        } else {
+        else {
             // Set the content view
             setContentView(R.layout.main);
             // Set fragment members

@@ -17,7 +17,6 @@
 
 package net.alliknow.podcatcher;
 
-import android.app.FragmentManager.OnBackStackChangedListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -39,7 +38,7 @@ import java.util.List;
  * Our main activity class. Works as the main controller. Depending on the view
  * state, other activities cooperate.
  */
-public class PodcastActivity extends EpisodeListActivity implements OnBackStackChangedListener,
+public class PodcastActivity extends EpisodeListActivity implements
         OnLoadPodcastListListener, OnChangePodcastListListener, OnSelectPodcastListener {
 
     /** The current podcast list fragment */
@@ -69,8 +68,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // Register as listener to the podcast data manager
         podcastManager.addLoadPodcastListListener(this);
         podcastManager.addChangePodcastListListener(this);
-        // Make sure we are alerted on back stack changes
-        getFragmentManager().addOnBackStackChangedListener(this);
 
         // 2. Create the UI via XML layouts and fragments
         // Inflate the main content view (depends on view mode)
@@ -82,7 +79,8 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
         // 3. Init/restore the app as needed
         // If we are newly starting up and the podcast list is empty, show add
-        // podcast dialog
+        // podcast dialog (this is used in onPodcastListLoaded(), since we only
+        // know then, whether the list is actually empty.
         showAddPodcastOnEmptyPodcastList = savedInstanceState == null;
         // Check if podcast list is available - if so, set it
         List<Podcast> podcastList = podcastManager.getPodcastList();
@@ -244,17 +242,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // Unregister the listeners
         podcastManager.removeLoadPodcastListListener(this);
         podcastManager.removeChangePodcastListListener(this);
-        getFragmentManager().removeOnBackStackChangedListener(this);
-    }
-
-    @Override
-    public void onBackStackChanged() {
-        // This only needed in small landscape mode and in case
-        // we go back to the episode list
-        if (viewMode == SMALL_LANDSCAPE_VIEW
-                && getFragmentManager().getBackStackEntryCount() == 0) {
-            onNoEpisodeSelected();
-        }
     }
 
     @Override
@@ -304,7 +291,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             case SMALL_LANDSCAPE_VIEW:
                 // This will go back to the list view in case we are showing
                 // episode details
-                getFragmentManager().popBackStack();
+                getFragmentManager().popBackStackImmediate();
                 // There is no break here on purpose, we need to run the code
                 // below as well
             case LARGE_PORTRAIT_VIEW:

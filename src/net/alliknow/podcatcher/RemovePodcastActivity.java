@@ -46,7 +46,9 @@ public class RemovePodcastActivity extends BaseActivity {
 
             // Remove podcast starting with the last one
             while (li.hasPrevious())
-                // TODO This might store the podcast list multiple times...
+                // TODO This will store the podcast list multiple times... maybe
+                // the podcast manager could offer a specific removeMultiple
+                // method
                 podcastManager.remove(li.previous());
         }
 

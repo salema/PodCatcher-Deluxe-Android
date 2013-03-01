@@ -185,51 +185,27 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
     /**
      * Set the list of podcasts to show in this fragment. You can call this any
-     * time and the view will catch up as soon as it is created.
+     * time and the view will catch up as soon as it is created. This will also
+     * reset any selection.
      * 
      * @param podcastList List of podcasts to show.
      */
     public void setPodcastList(List<Podcast> podcastList) {
         this.currentPodcastList = podcastList;
 
-        this.showProgress = false;
+        showProgress = false;
+        showLoadFailed = false;
+
+        // Reset selection since it might not work with the new list
+        selectNone();
 
         // Maps the podcast list items to the list UI
         // Only update the UI if it has been inflated
         if (viewCreated) {
             setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
 
-            // Make sure to match selection state
-            if (selectAll)
-                selectAll();
-            else if (selectedPosition >= 0)
-                select(selectedPosition);
-            else
-                selectNone();
-
             updateUiElementVisibility();
         }
-    }
-
-    @Override
-    public void select(int position) {
-        super.select(position);
-
-        updateUiElementVisibility();
-    }
-
-    @Override
-    public void selectAll() {
-        super.selectAll();
-
-        updateUiElementVisibility();
-    }
-
-    @Override
-    public void selectNone() {
-        super.selectNone();
-
-        updateUiElementVisibility();
     }
 
     /**
@@ -279,7 +255,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
                         Podcast selectedPodcast = currentPodcastList.get(selectedPosition);
 
                         // Check for logo and show it if available
-                        if (selectedPodcast.getLogo() == null)
+                        if (selectedPodcast.getLogo() != null)
                             logoView.setImageBitmap(selectedPodcast.getLogo());
                         else
                             // Otherwise show default image

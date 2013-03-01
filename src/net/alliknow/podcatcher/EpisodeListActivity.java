@@ -19,7 +19,6 @@ package net.alliknow.podcatcher;
 
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.View;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
@@ -65,28 +64,17 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     protected List<Episode> currentEpisodeList;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        podcastManager.addLoadPodcastListener(this);
-        podcastManager.addLoadPodcastLogoListener(this);
-    }
-
-    @Override
     protected void findFragments() {
         super.findFragments();
 
         // The episode list fragment
         if (episodeListFragment == null)
             episodeListFragment = (EpisodeListFragment) findByTagId(R.string.episode_list_fragment_tag);
-    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        podcastManager.removeLoadPodcastListener(this);
-        podcastManager.removeLoadPodcastLogoListener(this);
+        // We have to do this here instead of onCreate since we can only react
+        // on the call-backs properly once we have our fragment
+        podcastManager.addLoadPodcastListener(this);
+        podcastManager.addLoadPodcastLogoListener(this);
     }
 
     @Override
@@ -95,6 +83,14 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
         // Make sure dividers (if any) reflect selection state
         updateDivider();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        podcastManager.removeLoadPodcastListener(this);
+        podcastManager.removeLoadPodcastLogoListener(this);
     }
 
     @Override
@@ -114,12 +110,12 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 currentEpisodeList.addAll(podcast.getEpisodes());
                 Collections.sort(currentEpisodeList);
                 // Make sure this is a copy
-                episodeListFragment.setEpisodes(new ArrayList<Episode>(currentEpisodeList));
+                episodeListFragment.setEpisodeList(new ArrayList<Episode>(currentEpisodeList));
             }
         } // Select single podcast
         else if (podcast.equals(currentPodcast)) {
             currentEpisodeList = podcast.getEpisodes();
-            episodeListFragment.setEpisodes(currentEpisodeList);
+            episodeListFragment.setEpisodeList(currentEpisodeList);
         }
 
         // Additionally, if on large device, process clever selection update

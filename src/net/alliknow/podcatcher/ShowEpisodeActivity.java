@@ -32,38 +32,34 @@ public class ShowEpisodeActivity extends EpisodeActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        switch (viewMode) {
-            case LARGE_PORTRAIT_VIEW:
-            case LARGE_LANDSCAPE_VIEW:
-            case SMALL_LANDSCAPE_VIEW:
-                // In large or landscape layouts we do not need this activity at
-                // all, so finish it off
-                finish();
-                break;
-            case SMALL_PORTRAIT_VIEW:
-                // Set the content view
-                setContentView(R.layout.main);
-                // Set fragment members
-                findFragments();
+        // In large or landscape layouts we do not need this activity at
+        // all, so finish it off
+        if (viewMode != SMALL_PORTRAIT_VIEW)
+            finish();
+        else {
+            // Set the content view
+            setContentView(R.layout.main);
+            // Set fragment members
+            findFragments();
 
-                // During initial setup, plug in the details fragment.
-                if (savedInstanceState == null && episodeFragment == null) {
-                    episodeFragment = new EpisodeFragment();
-                    getFragmentManager()
-                            .beginTransaction()
-                            .add(R.id.content, episodeFragment,
-                                    getString(R.string.episode_fragment_tag))
-                            .commit();
-                }
+            // During initial setup, plug in the details fragment.
+            if (savedInstanceState == null && episodeFragment == null) {
+                episodeFragment = new EpisodeFragment();
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.content, episodeFragment,
+                                getString(R.string.episode_fragment_tag))
+                        .commit();
+            }
 
-                // Set episode in fragment UI
-                if (getIntent().getExtras() != null) {
-                    String episodeUrl = getIntent().getExtras().getString(EPISODE_URL_KEY);
-                    this.currentEpisode = podcastManager.findEpisodeForUrl(episodeUrl);
+            // Set episode in fragment UI
+            if (getIntent().getExtras() != null) {
+                String episodeUrl = getIntent().getExtras().getString(EPISODE_URL_KEY);
+                this.currentEpisode = podcastManager.findEpisodeForUrl(episodeUrl);
 
-                    episodeFragment.setEpisode(currentEpisode);
-                    episodeFragment.setShowEpisodeDate(true);
-                }
+                episodeFragment.setEpisode(currentEpisode);
+                episodeFragment.setShowEpisodeDate(true);
+            }
         }
     }
 

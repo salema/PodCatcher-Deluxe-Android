@@ -17,6 +17,8 @@
 
 package net.alliknow.podcatcher.listeners;
 
+import net.alliknow.podcatcher.services.PlayEpisodeService;
+
 /**
  * Listener interface to implement if you are interested to be alerted by the
  * play episode service on a couple of important events.
@@ -52,7 +54,7 @@ public interface PlayServiceListener {
     /**
      * Called by the service on the listener if an episode finished playing. The
      * service does not free resources on completion automatically, you might
-     * want to call <code>reset()</code>.
+     * want to call {@link PlayEpisodeService#reset()}.
      */
     public void onPlaybackComplete();
 

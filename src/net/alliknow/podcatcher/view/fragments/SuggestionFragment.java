@@ -86,6 +86,13 @@ public class SuggestionFragment extends DialogFragment {
     /** The send a suggestion view */
     private TextView sendSuggestionView;
 
+    /** Bundle key for language filter position */
+    private static final String LANGUAGE_FILTER_POSITION = "language_filter_position";
+    /** Bundle key for genre filter position */
+    private static final String GENRE_FILTER_POSITION = "genre_filter_position";
+    /** Bundle key for media type filter position */
+    private static final String MEDIATYPE_FILTER_POSITION = "mediatype_filter_position";
+
     /** The listener to update the list on filter change */
     private final OnItemSelectedListener selectionListener = new OnItemSelectedListener() {
 
@@ -147,7 +154,15 @@ public class SuggestionFragment extends DialogFragment {
                 getString(R.string.send_suggestion) + "</a>"));
         sendSuggestionView.setMovementMethod(LinkMovementMethod.getInstance());
 
-        restoreFilters(savedInstanceState);
+        // Set/restore filter settings
+        // Coming from configuration change
+        if (savedInstanceState != null) {
+            languageFilter.setSelection(savedInstanceState.getInt(LANGUAGE_FILTER_POSITION));
+            genreFilter.setSelection(savedInstanceState.getInt(GENRE_FILTER_POSITION));
+            mediaTypeFilter.setSelection(savedInstanceState.getInt(MEDIATYPE_FILTER_POSITION));
+        } // Initial opening of the dialog
+        else
+            setInitialFilterSelection();
     }
 
     @Override
@@ -162,9 +177,9 @@ public class SuggestionFragment extends DialogFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putInt(Language.class.getSimpleName(), languageFilter.getSelectedItemPosition());
-        outState.putInt(Genre.class.getSimpleName(), genreFilter.getSelectedItemPosition());
-        outState.putInt(MediaType.class.getSimpleName(), mediaTypeFilter.getSelectedItemPosition());
+        outState.putInt(LANGUAGE_FILTER_POSITION, languageFilter.getSelectedItemPosition());
+        outState.putInt(GENRE_FILTER_POSITION, genreFilter.getSelectedItemPosition());
+        outState.putInt(MEDIATYPE_FILTER_POSITION, mediaTypeFilter.getSelectedItemPosition());
     }
 
     @Override
@@ -202,18 +217,6 @@ public class SuggestionFragment extends DialogFragment {
      */
     public void showLoadFailed() {
         progressView.showError(R.string.error_suggestions_load);
-    }
-
-    private void restoreFilters(Bundle savedInstanceState) {
-        // Coming from configuration change
-        if (savedInstanceState != null) {
-            languageFilter.setSelection(savedInstanceState.getInt(Language.class.getSimpleName()));
-            genreFilter.setSelection(savedInstanceState.getInt(Genre.class.getSimpleName()));
-            mediaTypeFilter
-                    .setSelection(savedInstanceState.getInt(MediaType.class.getSimpleName()));
-        } // Initial opening of the dialog
-        else
-            setInitialFilterSelection();
     }
 
     private void setInitialFilterSelection() {

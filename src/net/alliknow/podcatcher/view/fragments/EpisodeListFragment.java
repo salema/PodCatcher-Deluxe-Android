@@ -77,7 +77,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
         // This will make sure we show the right information once the view
         // controls are established (the list might have been set earlier)
         if (currentEpisodeList != null)
-            setEpisodes(currentEpisodeList);
+            setEpisodeList(currentEpisodeList);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
      * 
      * @param episodeList List of episodes to show.
      */
-    public void setEpisodes(List<Episode> episodeList) {
+    public void setEpisodeList(List<Episode> episodeList) {
         this.currentEpisodeList = episodeList;
 
         showProgress = false;
@@ -121,20 +121,17 @@ public class EpisodeListFragment extends PodcatcherListFragment {
             // Make sure to match selection state
             if (selectAll)
                 selectAll();
-            else if (selectedPosition >= 0)
+            else if (selectedPosition >= 0 && selectedPosition < episodeList.size())
                 select(selectedPosition);
             else
                 selectNone();
-
-            // Make sure view shows as needed
-            updateUiElementVisibility();
         }
     }
 
     /**
      * Set whether the fragment should show the podcast name for each episode
      * item. Change will be reflected upon next call of
-     * {@link #setEpisodes(List)}
+     * {@link #setEpisodeList(List)}
      * 
      * @param show Whether to show the podcast names.
      */
