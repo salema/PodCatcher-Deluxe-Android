@@ -20,8 +20,8 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.alliknow.podcatcher"
-    android:versionCode="9"
-    android:versionName="2.4.0">
+    android:versionCode="10"
+    android:versionName="2.4.1">
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="17" />
