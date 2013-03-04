@@ -144,7 +144,9 @@ public abstract class EpisodeActivity extends BaseActivity implements
     @Override
     public void onToggleDownload() {
         episodeFragment.setDownloadMenuItemVisibility(true, false);
-        Log.w(getClass().getSimpleName(), "Toggle download episode: " + currentEpisode);
+        Log.i(getClass().getSimpleName(), "Toggle download episode: " + currentEpisode);
+
+        episodeManager.download(currentEpisode);
     }
 
     @Override

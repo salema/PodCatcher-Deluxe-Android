@@ -23,6 +23,7 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.SuggestionManager;
 
@@ -43,6 +44,8 @@ public class Podcatcher extends Application {
         // since the application is an implicit singleton. We create the other
         // singletons here to make sure they know their application instance.
         PodcastManager.getInstance(this);
+        // And this one as well
+        EpisodeManager.getInstance(this);
         // dito
         SuggestionManager.getInstance(this);
     }
