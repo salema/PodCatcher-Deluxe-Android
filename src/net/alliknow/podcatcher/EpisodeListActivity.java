@@ -174,6 +174,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 // Set the episode
                 episodeFragment.setEpisode(selectedEpisode);
                 episodeFragment.setShowEpisodeDate(true);
+                episodeFragment.setDownloadMenuItemVisibility(true, true);
                 break;
             case SMALL_PORTRAIT_VIEW:
                 // Send intent to open episode as a new activity

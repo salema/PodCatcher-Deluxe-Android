@@ -20,15 +20,20 @@ package net.alliknow.podcatcher.view.fragments;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.view.Utils;
 
@@ -37,9 +42,15 @@ import net.alliknow.podcatcher.view.Utils;
  */
 public class EpisodeFragment extends Fragment {
 
+    /** The listener for the menu item */
+    private OnDownloadEpisodeListener listener;
     /** The currently shown episode */
     private Episode currentEpisode;
 
+    /** Flag for show download menu item state */
+    private boolean showDownloadMenuItem = true;
+    /** Flag for the state of the download menu item */
+    private boolean downloadMenuItemState = true;
     /** Flag to indicate whether the episode date should be shown */
     private boolean showEpisodeDate = false;
 
@@ -48,6 +59,9 @@ public class EpisodeFragment extends Fragment {
 
     /** Status flag indicating that our view is created */
     private boolean viewCreated = false;
+
+    /** The download episode menu bar item */
+    private MenuItem downloadMenuItem;
 
     /** The empty view */
     private View emptyView;
@@ -59,6 +73,26 @@ public class EpisodeFragment extends Fragment {
     private View dividerView;
     /** The episode description web view */
     private WebView descriptionView;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // Make sure our listener is present
+        try {
+            this.listener = (OnDownloadEpisodeListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnDownloadEpisodeListener");
+        }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -84,6 +118,27 @@ public class EpisodeFragment extends Fragment {
         // controls are established (the episode might have been set earlier)
         if (currentEpisode != null)
             setEpisode(currentEpisode);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.episode, menu);
+
+        downloadMenuItem = menu.findItem(R.id.episode_download_menuitem);
+        setDownloadMenuItemVisibility(showDownloadMenuItem, downloadMenuItemState);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.episode_download_menuitem:
+                // Tell activity to load/unload the current episode
+                listener.onToggleDownload();
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -118,6 +173,30 @@ public class EpisodeFragment extends Fragment {
 
         // Update the UI widget's visibility to reflect state
         updateUiElementVisibility();
+    }
+
+    /**
+     * Set whether the fragment should show the download menu item. You can call
+     * this any time and can expect it to happen on menu creation at the latest.
+     * You also have to set the download menu state, <code>true</code> for
+     * "Download" and <code>false</code> for "Delete".
+     * 
+     * @param show Whether to show the download menu item.
+     * @param download State of the download menu item (download / delete)
+     */
+    public void setDownloadMenuItemVisibility(boolean show, boolean download) {
+        this.showDownloadMenuItem = show;
+        this.downloadMenuItemState = download;
+
+        // Only do it right away if resumed and menu item is available,
+        // otherwise onResume or the menu creation callback will call us.
+        if (isResumed() && downloadMenuItem != null) {
+            downloadMenuItem.setVisible(show);
+
+            downloadMenuItem.setTitle(download ? R.string.download : R.string.remove);
+            downloadMenuItem.setIcon(download ? R.drawable.ic_menu_download
+                    : R.drawable.ic_menu_delete);
+        }
     }
 
     /**

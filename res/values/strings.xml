@@ -28,6 +28,7 @@
     <string name="help">Help</string>
     <string name="wait">Wait</string>
     <string name="connect">Connect</string>
+    <string name="download" translatable="false">Download</string>
     <string name="load">Load</string>
     <string name="stop">Stop</string>
     <string name="parse">Read</string>

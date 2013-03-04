@@ -27,6 +27,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.SeekBar;
 
+import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.listeners.PlayerListener;
 import net.alliknow.podcatcher.model.types.Episode;
@@ -44,7 +45,7 @@ import java.util.TimerTask;
  * or simply show this layout.
  */
 public abstract class EpisodeActivity extends BaseActivity implements
-        PlayerListener, PlayServiceListener {
+        OnDownloadEpisodeListener, PlayerListener, PlayServiceListener {
 
     /** The current episode fragment */
     protected EpisodeFragment episodeFragment;
@@ -138,6 +139,12 @@ public abstract class EpisodeActivity extends BaseActivity implements
             service.removePlayServiceListener(this);
             unbindService(connection);
         }
+    }
+
+    @Override
+    public void onToggleDownload() {
+        episodeFragment.setDownloadMenuItemVisibility(true, false);
+        Log.w(getClass().getSimpleName(), "Toggle download episode: " + currentEpisode);
     }
 
     @Override
