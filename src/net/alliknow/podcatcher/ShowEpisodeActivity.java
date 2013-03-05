@@ -59,6 +59,9 @@ public class ShowEpisodeActivity extends EpisodeActivity {
 
                 episodeFragment.setEpisode(currentEpisode);
                 episodeFragment.setShowEpisodeDate(true);
+                episodeFragment.setDownloadMenuItemVisibility(true,
+                        !(episodeManager.isDownloaded(currentEpisode) ||
+                        episodeManager.isDownloading(currentEpisode)));
             }
         }
     }
