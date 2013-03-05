@@ -44,11 +44,8 @@ public class RemovePodcastActivity extends BaseActivity {
             // We need to iterate backwards, so positions are not screwed up
             ListIterator<Integer> li = positions.listIterator(positions.size());
 
-            // Remove podcast starting with the last one
+            // Remove podcasts starting with the last one
             while (li.hasPrevious())
-                // TODO This will store the podcast list multiple times... maybe
-                // the podcast manager could offer a specific removeMultiple
-                // method
                 podcastManager.remove(li.previous());
         }
 
