@@ -17,6 +17,9 @@
 
 package net.alliknow.podcatcher.model;
 
+import static android.os.Environment.getExternalStoragePublicDirectory;
+import static net.alliknow.podcatcher.Podcatcher.sanitizeAsFilename;
+
 import android.app.DownloadManager;
 import android.app.DownloadManager.Query;
 import android.app.DownloadManager.Request;
@@ -30,16 +33,21 @@ import android.os.Environment;
 import android.util.Log;
 
 import net.alliknow.podcatcher.Podcatcher;
+import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
+import net.alliknow.podcatcher.model.tasks.StoreEpisodeMetadataTask;
 import net.alliknow.podcatcher.model.types.Episode;
 
 import java.io.File;
-import java.util.HashMap;
+import java.net.URL;
 import java.util.Map;
 
 /**
  * Manager to handle episode specific activities.
  */
-public class EpisodeManager extends BroadcastReceiver {
+public class EpisodeManager implements OnLoadEpisodeMetadataListener {
+
+    /** The file name to store episode metadata information under */
+    public static final String METADATA_FILENAME = "episodes.xml";
 
     /** The single instance */
     private static EpisodeManager manager;
@@ -48,11 +56,53 @@ public class EpisodeManager extends BroadcastReceiver {
 
     /** The system download manager */
     private DownloadManager downloadManager;
+    /** The metadata information held for episodes */
+    private Map<URL, EpisodeMetadata> metadata;
 
-    private Map<Episode, EpisodeMetadata> metadata = new HashMap<Episode, EpisodeMetadata>();
+    /** The receiver we register for episode downloads */
+    private BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
 
-    /** Characters not allowed in filenames */
-    private static final String RESERVED_CHARS = "|\\?*<\":>+[]/'";
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get the download id that finished
+            long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+
+            // Check if this was a download we care for
+            for (EpisodeMetadata meta : metadata.values())
+                if (meta.downloadId != null && meta.downloadId == downloadId) {
+                    // Find download result information
+                    Cursor result = downloadManager.query(new Query().setFilterById(downloadId));
+                    // There should be information on the download
+                    if (result.moveToFirst())
+                        // Download was a success
+                        if (DownloadManager.STATUS_SUCCESSFUL == result.getInt(
+                                result.getColumnIndex(DownloadManager.COLUMN_STATUS))) {
+
+                            // Get the path to the new local file and put in as
+                            // metadata information
+                            String uri = result.getString(result
+                                    .getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                            meta.filePath = Uri.parse(uri).getPath();
+
+                            // TODO Alert listeners
+
+                            Log.i(getClass().getSimpleName(), "Completed download for episode");
+                            Log.i(getClass().getSimpleName(), "Download id: " + meta.downloadId);
+                            Log.i(getClass().getSimpleName(), "Local path: " + meta.filePath);
+                        }
+                        // Download failed
+                        else {
+                            // TODO Alert listeners
+
+                            Log.i(getClass().getSimpleName(), "Failed to download episode");
+                            Log.i(getClass().getSimpleName(), "Download id: " + meta.downloadId);
+                        }
+
+                    // Close cursor
+                    result.close();
+                }
+        };
+    };
 
     /**
      * Init the episode manager.
@@ -69,9 +119,9 @@ public class EpisodeManager extends BroadcastReceiver {
         downloadManager = (DownloadManager)
                 podcatcher.getSystemService(Context.DOWNLOAD_SERVICE);
 
-        // Register as a receiver for download event so we are alerted when a
-        // download completes
-        podcatcher.registerReceiver(this,
+        // Register as a receiver for download events so we are alerted when a
+        // download completes (both successfully or failed)
+        podcatcher.registerReceiver(onDownloadComplete,
                 new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
     }
 
@@ -101,12 +151,31 @@ public class EpisodeManager extends BroadcastReceiver {
         return manager;
     }
 
+    @Override
+    public void onEpisodeMetadataLoaded(Map<URL, EpisodeMetadata> metadata) {
+        this.metadata = metadata;
+
+        System.out.println(metadata);
+    }
+
+    /**
+     * Persist the manager's data to disk.
+     */
+    @SuppressWarnings("unchecked")
+    public void saveState() {
+        new StoreEpisodeMetadataTask(podcatcher).execute(metadata);
+    }
+
     public void download(Episode episode) {
         if (!(isDownloading(episode) || isDownloaded(episode))) {
-            String path = createPath(episode);
+            // Make sure podcast directory exists
+            new File(getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS),
+                    sanitizeAsFilename(episode.getPodcast().getName())).mkdir();
+
+            String subPath = getSubPath(episode);
 
             Request download = new Request(Uri.parse(episode.getMediaUrl().toString()))
-                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_PODCASTS, path)
+                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_PODCASTS, subPath)
                     .setTitle(episode.getName())
                     .setDescription(episode.getPodcast().getName());
 
@@ -114,17 +183,17 @@ public class EpisodeManager extends BroadcastReceiver {
 
             EpisodeMetadata meta = new EpisodeMetadata();
             meta.downloadId = id;
-            metadata.put(episode, meta);
+            metadata.put(episode.getMediaUrl(), meta);
 
             Log.i(getClass().getSimpleName(), "Start download for episode: " + episode);
             Log.i(getClass().getSimpleName(), "Download id: " + id);
-            Log.i(getClass().getSimpleName(), "Download path: " + path);
+            Log.i(getClass().getSimpleName(), "Download path: " + subPath);
         }
     }
 
     public void deleteDownload(Episode episode) {
         if (isDownloading(episode) || isDownloaded(episode)) {
-            EpisodeMetadata meta = metadata.get(episode);
+            EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
 
             if (meta != null) {
                 downloadManager.remove(meta.downloadId);
@@ -134,98 +203,74 @@ public class EpisodeManager extends BroadcastReceiver {
                 Log.i(getClass().getSimpleName(), "Download path: " + meta.filePath);
 
                 meta.downloadId = null;
+                meta.filePath = null;
             }
         }
     }
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        Log.i(getClass().getSimpleName(), "Action: " + intent.getAction());
-
-        long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
-
-        // Check if this was a download we care for
-        for (EpisodeMetadata meta : metadata.values())
-            if (meta.downloadId == downloadId) {
-
-                Query query = new Query();
-                query.setFilterById(downloadId);
-                Cursor c = downloadManager.query(query);
-
-                c.moveToFirst();
-
-                Log.i(getClass().getName(), "COLUMN_ID: " +
-                        c.getLong(c.getColumnIndex(DownloadManager.COLUMN_ID)));
-                Log.i(getClass().getName(), "COLUMN_BYTES_DOWNLOADED_SO_FAR: " +
-                        c.getLong(c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)));
-                Log.i(getClass().getName(), "COLUMN_LAST_MODIFIED_TIMESTAMP: " +
-                        c.getLong(c.getColumnIndex(DownloadManager.COLUMN_LAST_MODIFIED_TIMESTAMP)));
-                Log.i(getClass().getName(), "COLUMN_LOCAL_URI: " +
-                        c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI)));
-                Log.i(getClass().getName(), "COLUMN_STATUS: " +
-                        c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS)));
-                Log.i(getClass().getName(), "COLUMN_REASON: " +
-                        c.getInt(c.getColumnIndex(DownloadManager.COLUMN_REASON)));
-
-                if (DownloadManager.STATUS_SUCCESSFUL == c.getInt(c
-                        .getColumnIndex(DownloadManager.COLUMN_STATUS))) {
-
-                    Log.i(getClass().getSimpleName(), "Completed download for episode");
-                    Log.i(getClass().getSimpleName(), "Download id: " + meta.downloadId);
-                    Log.i(getClass().getSimpleName(),
-                            "Local path: " + c.getString(
-                                    c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI)));
-
-                    meta.filePath = c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-                }
-                else {
-                    Log.i(getClass().getSimpleName(), "Failed to download episode");
-                    Log.i(getClass().getSimpleName(), "Download id: " + meta.downloadId);
-                }
-            }
-    }
-
+    /**
+     * Check whether given episode is already downloaded and available on the
+     * filesystem.
+     * 
+     * @param episode Episode to check for.
+     * @return <code>true</code> if the episode is downloaded and available.
+     */
     public boolean isDownloaded(Episode episode) {
-        EpisodeMetadata meta = metadata.get(episode);
+        EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
 
-        return meta != null &&
-                meta.downloadId != null &&
-                meta.filePath != null;
+        return meta != null
+                && meta.downloadId != null
+                && meta.filePath != null
+                && new File(meta.filePath).exists();
     }
 
+    /**
+     * Check whether given episode is currently downloading.
+     * 
+     * @param episode Episode to check for.
+     * @return <code>true</code> if the episode is currently in the process of
+     *         being downloaded.
+     */
     public boolean isDownloading(Episode episode) {
-        EpisodeMetadata meta = metadata.get(episode);
+        EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
 
-        return meta != null &&
-                meta.downloadId != null &&
-                meta.filePath == null;
+        return meta != null
+                && meta.downloadId != null
+                && meta.filePath == null;
     }
 
-    private String createPath(Episode episode) {
-        // Make sure podcast directory exisits
-        new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS),
-                sanitizeAsFilename(episode.getPodcast().getName())).mkdir();
+    /**
+     * Get the absolute, local path to a downloaded episode.
+     * 
+     * @param episode Episode to get local path for.
+     * @return The complete local path to the downloaded episode or
+     *         <code>null</code> if the episode is not available locally.
+     * @see #isDownloaded(Episode)
+     */
+    public String getLocalPath(Episode episode) {
+        EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
 
+        return meta == null ? null : meta.filePath;
+    }
+
+    /**
+     * Find the path relative to the base directory the local episode file
+     * should be located in.
+     * 
+     * @param episode Episode to create sub-path for.
+     * @return The relative path
+     */
+    private String getSubPath(Episode episode) {
         // Extract file ending
-        String remoteFile = episode.getMediaUrl().getFile();
+        String remoteFile = episode.getMediaUrl().getPath();
         String fileEnding = remoteFile.substring(remoteFile.lastIndexOf('.'));
 
-        return sanitizeAsFilename(episode.getPodcast().getName()) + "/" +
+        return sanitizeAsFilename(episode.getPodcast().getName()) + File.separatorChar +
                 sanitizeAsFilename(episode.getName()) + fileEnding;
     }
 
-    private String sanitizeAsFilename(String name) {
-        StringBuilder builder = new StringBuilder();
-
-        for (int i = 0; i < name.length(); i++)
-            if (RESERVED_CHARS.indexOf(name.charAt(i)) == -1)
-                builder.append(name.charAt(i));
-
-        return builder.toString();
-    }
-
-    private class EpisodeMetadata {
-        private Long downloadId;
-        private String filePath;
+    public class EpisodeMetadata {
+        public Long downloadId;
+        public String filePath;
     }
 }

@@ -79,7 +79,7 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
 
             // 2. Open default podcast file
             fileStream = context.openFileInput(PodcastManager.OPML_FILENAME);
-            parser.setInput(fileStream, PodcastManager.OPML_FILE_ENCODING);
+            parser.setInput(fileStream, StoreFileTask.FILE_ENCODING);
 
             // 3. Parse the OPML file
             int eventType = parser.next();

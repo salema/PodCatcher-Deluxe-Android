@@ -86,6 +86,14 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Persist state of episode metadata
+        episodeManager.saveState();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 
@@ -175,8 +183,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 episodeFragment.setEpisode(selectedEpisode);
                 episodeFragment.setShowEpisodeDate(true);
                 episodeFragment.setDownloadMenuItemVisibility(true,
-                        !(episodeManager.isDownloaded(selectedEpisode) ||
-                        episodeManager.isDownloading(selectedEpisode)));
+                        !(episodeManager.isDownloading(selectedEpisode) ||
+                        episodeManager.isDownloaded(selectedEpisode)));
 
                 break;
             case SMALL_PORTRAIT_VIEW:
