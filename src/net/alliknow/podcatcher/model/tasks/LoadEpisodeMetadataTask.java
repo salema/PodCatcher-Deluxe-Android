@@ -23,8 +23,8 @@ import android.util.Log;
 
 import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
 import net.alliknow.podcatcher.model.EpisodeManager;
-import net.alliknow.podcatcher.model.EpisodeManager.EpisodeMetadata;
 import net.alliknow.podcatcher.model.tags.METADATA;
+import net.alliknow.podcatcher.model.types.EpisodeMetadata;
 import net.alliknow.podcatcher.model.types.Progress;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -34,6 +34,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,6 +47,9 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
     private Context context;
     /** The listener callback */
     private OnLoadEpisodeMetadataListener listener;
+
+    /** Member to measure performance */
+    private Date startTime;
 
     /**
      * Create new task.
@@ -63,6 +67,10 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
 
     @Override
     protected Map<URL, EpisodeMetadata> doInBackground(Void... params) {
+        // Record start time
+        this.startTime = new Date();
+
+        // Create resulting data structure and file stream
         Map<URL, EpisodeMetadata> result = new HashMap<URL, EpisodeMetadata>();
         InputStream fileStream = null;
 
@@ -117,15 +125,20 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
 
     @Override
     protected void onPostExecute(Map<URL, EpisodeMetadata> result) {
+        Log.d(getClass().getSimpleName(), "Read " + result.size() + " metadata records in "
+                + (new Date().getTime() - startTime.getTime()) + "ms.");
+
         if (listener != null)
             listener.onEpisodeMetadataLoaded(result);
         else
             Log.w(getClass().getSimpleName(), "Episode metadata loaded, but no listener attached");
     }
 
-    private EpisodeMetadata readMetadata(XmlPullParser parser) throws XmlPullParserException,
-            IOException {
-        EpisodeMetadata result = EpisodeManager.getInstance().new EpisodeMetadata();
+    private EpisodeMetadata readMetadata(XmlPullParser parser)
+            throws XmlPullParserException, IOException {
+
+        // Create the resulting metadata record
+        EpisodeMetadata result = new EpisodeMetadata();
 
         // Parse the metadata information
         int eventType = parser.next();

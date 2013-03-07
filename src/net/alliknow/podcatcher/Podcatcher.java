@@ -26,11 +26,11 @@ import android.net.NetworkInfo;
 import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
 import net.alliknow.podcatcher.model.EpisodeManager;
-import net.alliknow.podcatcher.model.EpisodeManager.EpisodeMetadata;
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.SuggestionManager;
 import net.alliknow.podcatcher.model.tasks.LoadEpisodeMetadataTask;
 import net.alliknow.podcatcher.model.tasks.LoadPodcastListTask;
+import net.alliknow.podcatcher.model.types.EpisodeMetadata;
 import net.alliknow.podcatcher.model.types.Podcast;
 
 import java.net.URL;
@@ -74,16 +74,19 @@ public class Podcatcher extends Application implements OnLoadEpisodeMetadataList
 
     @Override
     public void onEpisodeMetadataLoaded(Map<URL, EpisodeMetadata> result) {
+        // Step 1 finished
         // Make episode manager aware
         EpisodeManager.getInstance().onEpisodeMetadataLoaded(result);
 
-        // Load list of podcasts from OPML file on start-up, this is step 2
+        // This is step 2
+        // Load list of podcasts from OPML file on start-up
         new LoadPodcastListTask(this, this).execute((Void) null);
     }
 
     @Override
     public void onPodcastListLoaded(List<Podcast> podcastList) {
-        // Make episode manager aware (it will notify the UI)
+        // Step 2 finished
+        // Make episode manager aware (it will notify the UI, step 3)
         PodcastManager.getInstance().onPodcastListLoaded(podcastList);
     }
 

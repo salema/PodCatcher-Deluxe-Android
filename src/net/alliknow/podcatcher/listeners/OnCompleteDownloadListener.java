@@ -17,22 +17,13 @@
 
 package net.alliknow.podcatcher.listeners;
 
-import net.alliknow.podcatcher.model.types.EpisodeMetadata;
-
-import java.net.URL;
-import java.util.Map;
-
 /**
- * Interface definition for a callback to be invoked when the episode metadata
- * is loaded.
+ * Interface for the controller to implement when it wants to get updates on
+ * download completion.
  */
-public interface OnLoadEpisodeMetadataListener {
+public interface OnCompleteDownloadListener {
 
-    /**
-     * Called on completion.
-     * 
-     * @param metadata Episode metadata loaded.
-     */
-    public void onEpisodeMetadataLoaded(Map<URL, EpisodeMetadata> metadata);
+    public void onDownloadSuccess();
 
+    public void onDownloadFailed();
 }

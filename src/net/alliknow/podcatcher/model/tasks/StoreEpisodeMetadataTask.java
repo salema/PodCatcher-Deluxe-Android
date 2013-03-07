@@ -26,7 +26,7 @@ import android.content.Context;
 import android.util.Log;
 
 import net.alliknow.podcatcher.model.EpisodeManager;
-import net.alliknow.podcatcher.model.EpisodeManager.EpisodeMetadata;
+import net.alliknow.podcatcher.model.types.EpisodeMetadata;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -87,14 +87,16 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMeta
     private void writeRecord(URL key, EpisodeMetadata value) throws IOException {
         writeLine(1, "<" + METADATA + " " + EPISODE_URL + "=\"" + key.toString() + "\">");
 
-        if (value.downloadId != null)
-            writeLine(2, "<" + DOWNLOAD_ID + ">" + value.downloadId + "</" + DOWNLOAD_ID + ">");
-
-        if (value.filePath != null)
-            writeLine(2, "<" + LOCAL_FILE_PATH + ">" + value.filePath + "</" + LOCAL_FILE_PATH
-                    + ">");
+        writeData(value.downloadId, DOWNLOAD_ID);
+        writeData(value.filePath, LOCAL_FILE_PATH);
 
         writeLine(1, "</" + METADATA + ">");
+    }
+
+    private void writeData(Object data, String tag) throws IOException {
+        // For all fields: only write data that is actually there!
+        if (data != null)
+            writeLine(2, "<" + tag + ">" + data + "</" + tag + ">");
     }
 
     private void writeHeader() throws IOException {

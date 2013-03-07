@@ -36,10 +36,13 @@ import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
 import net.alliknow.podcatcher.model.tasks.StoreEpisodeMetadataTask;
 import net.alliknow.podcatcher.model.types.Episode;
+import net.alliknow.podcatcher.model.types.EpisodeMetadata;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Manager to handle episode specific activities.
@@ -80,9 +83,8 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
                             // Get the path to the new local file and put in as
                             // metadata information
-                            String uri = result.getString(result
-                                    .getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-                            meta.filePath = Uri.parse(uri).getPath();
+                            meta.filePath = result.getString(result
+                                    .getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME));
 
                             // TODO Alert listeners
 
@@ -92,10 +94,15 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                         }
                         // Download failed
                         else {
+                            downloadManager.remove(downloadId);
+
+                            meta.downloadId = null;
+                            meta.filePath = null;
+
                             // TODO Alert listeners
 
                             Log.i(getClass().getSimpleName(), "Failed to download episode");
-                            Log.i(getClass().getSimpleName(), "Download id: " + meta.downloadId);
+                            Log.i(getClass().getSimpleName(), "Download id: " + downloadId);
                         }
 
                     // Close cursor
@@ -155,7 +162,10 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     public void onEpisodeMetadataLoaded(Map<URL, EpisodeMetadata> metadata) {
         this.metadata = metadata;
 
-        System.out.println(metadata);
+        // TODO house keeping? what about download that finish/were deleted
+        // while the app was closed? How to avoid many, many old entries that do
+        // not change anymore? (Maybe this should be done by the load task to
+        // keep it off the main thread?)
     }
 
     /**
@@ -163,9 +173,26 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      */
     @SuppressWarnings("unchecked")
     public void saveState() {
+        // Do house keeping and remove all metadata instances without data
+        Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Entry<URL, EpisodeMetadata> entry = iterator.next();
+
+            if (!entry.getValue().hasData())
+                iterator.remove();
+        }
+
+        // Store cleaned record
         new StoreEpisodeMetadataTask(podcatcher).execute(metadata);
     }
 
+    /**
+     * Initiate a download for the given episode. Will do nothing if the episode
+     * is already downloaded or is currently downloading.
+     * 
+     * @param episode Episode to get.
+     */
     public void download(Episode episode) {
         if (!(isDownloading(episode) || isDownloaded(episode))) {
             // Make sure podcast directory exists
@@ -191,6 +218,11 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
         }
     }
 
+    /**
+     * Cancel the download for given episode and delete all downloaded content.
+     * 
+     * @param episode Episode to delete download for.
+     */
     public void deleteDownload(Episode episode) {
         if (isDownloading(episode) || isDownloaded(episode)) {
             EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
@@ -267,10 +299,5 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
         return sanitizeAsFilename(episode.getPodcast().getName()) + File.separatorChar +
                 sanitizeAsFilename(episode.getName()) + fileEnding;
-    }
-
-    public class EpisodeMetadata {
-        public Long downloadId;
-        public String filePath;
     }
 }

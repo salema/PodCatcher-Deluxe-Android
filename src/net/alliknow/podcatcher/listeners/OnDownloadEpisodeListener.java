@@ -27,5 +27,4 @@ public interface OnDownloadEpisodeListener {
      * Start/stop the download for the current episode.
      */
     public void onToggleDownload();
-
 }
