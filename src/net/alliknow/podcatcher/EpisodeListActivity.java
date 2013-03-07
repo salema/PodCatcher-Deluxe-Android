@@ -163,6 +163,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             case LARGE_LANDSCAPE_VIEW:
                 // Set episode in episode fragment
                 episodeFragment.setEpisode(selectedEpisode);
+                updateDownloadMenuItem();
+
                 break;
             case SMALL_LANDSCAPE_VIEW:
                 // Find, and if not already done create, episode fragment
@@ -179,12 +181,10 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                     transaction.commit();
                 }
 
-                // Set the episode
+                // Set the episode and update the UI
                 episodeFragment.setEpisode(selectedEpisode);
                 episodeFragment.setShowEpisodeDate(true);
-                episodeFragment.setDownloadMenuItemVisibility(true,
-                        !(episodeManager.isDownloading(selectedEpisode) ||
-                        episodeManager.isDownloaded(selectedEpisode)));
+                updateDownloadMenuItem();
 
                 break;
             case SMALL_PORTRAIT_VIEW:

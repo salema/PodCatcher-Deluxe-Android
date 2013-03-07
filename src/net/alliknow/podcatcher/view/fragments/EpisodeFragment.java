@@ -48,7 +48,7 @@ public class EpisodeFragment extends Fragment {
     private Episode currentEpisode;
 
     /** Flag for show download menu item state */
-    private boolean showDownloadMenuItem = true;
+    private boolean showDownloadMenuItem = false;
     /** Flag for the state of the download menu item */
     private boolean downloadMenuItemState = true;
     /** Flag to indicate whether the episode date should be shown */

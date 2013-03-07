@@ -27,6 +27,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.SeekBar;
 
+import net.alliknow.podcatcher.listeners.OnCompleteDownloadListener;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.listeners.PlayerListener;
@@ -45,7 +46,7 @@ import java.util.TimerTask;
  * or simply show this layout.
  */
 public abstract class EpisodeActivity extends BaseActivity implements
-        OnDownloadEpisodeListener, PlayerListener, PlayServiceListener {
+        OnDownloadEpisodeListener, OnCompleteDownloadListener, PlayerListener, PlayServiceListener {
 
     /** The current episode fragment */
     protected EpisodeFragment episodeFragment;
@@ -110,6 +111,10 @@ public abstract class EpisodeActivity extends BaseActivity implements
         // The episode fragment to use
         if (episodeFragment == null)
             episodeFragment = (EpisodeFragment) findByTagId(R.string.episode_fragment_tag);
+
+        // We have to do this here instead of onCreate since we can only react
+        // on the call-backs properly once we have our fragment
+        episodeManager.addCompleteDownloadListener(this);
     }
 
     @Override
@@ -132,6 +137,10 @@ public abstract class EpisodeActivity extends BaseActivity implements
     protected void onDestroy() {
         super.onDestroy();
 
+        // Disconnect from episode manager
+        episodeManager.removeCompleteDownloadListener(this);
+
+        // Stop the timer
         playUpdateTimer.cancel();
 
         // Detach from play service (prevents leaking)
@@ -154,7 +163,17 @@ public abstract class EpisodeActivity extends BaseActivity implements
             episodeManager.deleteDownload(currentEpisode);
 
         // Update the UI
-        episodeFragment.setDownloadMenuItemVisibility(true, !download);
+        updateDownloadMenuItem();
+    }
+
+    @Override
+    public void onDownloadSuccess() {
+        updateDownloadMenuItem();
+    }
+
+    @Override
+    public void onDownloadFailed() {
+        updateDownloadMenuItem();
     }
 
     @Override
@@ -272,6 +291,15 @@ public abstract class EpisodeActivity extends BaseActivity implements
      * Sub-classes need to overwrite.
      */
     protected abstract void updateActionBar();
+
+    /**
+     * Update the download menu item state and visibility
+     */
+    protected void updateDownloadMenuItem() {
+        episodeFragment.setDownloadMenuItemVisibility(currentEpisode != null,
+                !(episodeManager.isDownloading(currentEpisode) ||
+                episodeManager.isDownloaded(currentEpisode)));
+    }
 
     /**
      * Update the player fragment UI to reflect current state of play.

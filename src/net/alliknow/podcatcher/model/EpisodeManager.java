@@ -33,6 +33,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import net.alliknow.podcatcher.Podcatcher;
+import net.alliknow.podcatcher.listeners.OnCompleteDownloadListener;
 import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
 import net.alliknow.podcatcher.model.tasks.StoreEpisodeMetadataTask;
 import net.alliknow.podcatcher.model.types.Episode;
@@ -40,9 +41,11 @@ import net.alliknow.podcatcher.model.types.EpisodeMetadata;
 
 import java.io.File;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Manager to handle episode specific activities.
@@ -61,6 +64,9 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     private DownloadManager downloadManager;
     /** The metadata information held for episodes */
     private Map<URL, EpisodeMetadata> metadata;
+
+    /** The call-back set for the complete download listeners */
+    private Set<OnCompleteDownloadListener> completeDownloadListeners = new HashSet<OnCompleteDownloadListener>();
 
     /** The receiver we register for episode downloads */
     private BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
@@ -86,7 +92,8 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                             meta.filePath = result.getString(result
                                     .getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME));
 
-                            // TODO Alert listeners
+                            for (OnCompleteDownloadListener listener : completeDownloadListeners)
+                                listener.onDownloadSuccess();
 
                             Log.i(getClass().getSimpleName(), "Completed download for episode");
                             Log.i(getClass().getSimpleName(), "Download id: " + meta.downloadId);
@@ -99,7 +106,8 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                             meta.downloadId = null;
                             meta.filePath = null;
 
-                            // TODO Alert listeners
+                            for (OnCompleteDownloadListener listener : completeDownloadListeners)
+                                listener.onDownloadFailed();
 
                             Log.i(getClass().getSimpleName(), "Failed to download episode");
                             Log.i(getClass().getSimpleName(), "Download id: " + downloadId);
@@ -283,6 +291,26 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
         EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
 
         return meta == null ? null : meta.filePath;
+    }
+
+    /**
+     * Add complete download listener.
+     * 
+     * @param listener Listener to add.
+     * @see OnCompleteDownloadListener
+     */
+    public void addCompleteDownloadListener(OnCompleteDownloadListener listener) {
+        completeDownloadListeners.add(listener);
+    }
+
+    /**
+     * Remove complete download listener.
+     * 
+     * @param listener Listener to remove.
+     * @see OnCompleteDownloadListener
+     */
+    public void removeCompleteDownloadListener(OnCompleteDownloadListener listener) {
+        completeDownloadListeners.remove(listener);
     }
 
     /**

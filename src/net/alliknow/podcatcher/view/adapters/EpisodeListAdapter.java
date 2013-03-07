@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.view.Utils;
 
@@ -94,8 +95,16 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
 
         // Set the text to display for title
         setText(listItemView, R.id.list_item_title, episode.getName());
+
+        String caption = createCaption(episode);
+        EpisodeManager em = EpisodeManager.getInstance();
+        if (em.isDownloading(episode))
+            caption += "ActiveDownload";
+        if (em.isDownloaded(episode))
+            caption += "IsDownloaded";
+
         // Set the text to display as caption
-        setText(listItemView, R.id.list_item_caption, createCaption(episode));
+        setText(listItemView, R.id.list_item_caption, caption);
 
         return listItemView;
     }
