@@ -202,7 +202,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      * @param episode Episode to get.
      */
     public void download(Episode episode) {
-        if (!(isDownloading(episode) || isDownloaded(episode))) {
+        if (episode != null && !isDownloadingOrDownloaded(episode)) {
             // Make sure podcast directory exists
             new File(getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS),
                     sanitizeAsFilename(episode.getPodcast().getName())).mkdir();
@@ -232,7 +232,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      * @param episode Episode to delete download for.
      */
     public void deleteDownload(Episode episode) {
-        if (isDownloading(episode) || isDownloaded(episode)) {
+        if (episode != null && isDownloadingOrDownloaded(episode)) {
             EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
 
             if (meta != null) {
@@ -256,12 +256,16 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      * @return <code>true</code> if the episode is downloaded and available.
      */
     public boolean isDownloaded(Episode episode) {
-        EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+        if (episode == null)
+            return false;
+        else {
+            EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
 
-        return meta != null
-                && meta.downloadId != null
-                && meta.filePath != null
-                && new File(meta.filePath).exists();
+            return meta != null
+                    && meta.downloadId != null
+                    && meta.filePath != null
+                    && new File(meta.filePath).exists();
+        }
     }
 
     /**
@@ -272,11 +276,15 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      *         being downloaded.
      */
     public boolean isDownloading(Episode episode) {
-        EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+        if (episode == null)
+            return false;
+        else {
+            EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
 
-        return meta != null
-                && meta.downloadId != null
-                && meta.filePath == null;
+            return meta != null
+                    && meta.downloadId != null
+                    && meta.filePath == null;
+        }
     }
 
     /**
@@ -288,9 +296,13 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      * @see #isDownloaded(Episode)
      */
     public String getLocalPath(Episode episode) {
-        EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+        if (episode == null)
+            return null;
+        else {
+            EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
 
-        return meta == null ? null : meta.filePath;
+            return meta == null ? null : meta.filePath;
+        }
     }
 
     /**
@@ -327,5 +339,17 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
         return sanitizeAsFilename(episode.getPodcast().getName()) + File.separatorChar +
                 sanitizeAsFilename(episode.getName()) + fileEnding;
+    }
+
+    /**
+     * Shortcut to check whether there is any download action going on with this
+     * episode.
+     * 
+     * @param episode Episode to check for.
+     * @return <code>true</code> iff the episode is downloading or already
+     *         downloaded.
+     */
+    private boolean isDownloadingOrDownloaded(Episode episode) {
+        return isDownloading(episode) || isDownloaded(episode);
     }
 }

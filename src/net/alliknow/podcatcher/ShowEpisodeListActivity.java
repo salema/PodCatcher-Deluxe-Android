@@ -88,6 +88,13 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        updateDownloadStatus();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:

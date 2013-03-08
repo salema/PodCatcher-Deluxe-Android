@@ -20,6 +20,7 @@ package net.alliknow.podcatcher;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.view.View;
+import android.widget.BaseAdapter;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
@@ -163,7 +164,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             case LARGE_LANDSCAPE_VIEW:
                 // Set episode in episode fragment
                 episodeFragment.setEpisode(selectedEpisode);
-                updateDownloadMenuItem();
+                updateDownloadStatus();
 
                 break;
             case SMALL_LANDSCAPE_VIEW:
@@ -184,7 +185,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 // Set the episode and update the UI
                 episodeFragment.setEpisode(selectedEpisode);
                 episodeFragment.setShowEpisodeDate(true);
-                updateDownloadMenuItem();
+                updateDownloadStatus();
 
                 break;
             case SMALL_PORTRAIT_VIEW:
@@ -223,6 +224,14 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
         updatePlayer();
         updateDivider();
+    }
+
+    @Override
+    protected void updateDownloadStatus() {
+        super.updateDownloadStatus();
+
+        if (episodeListFragment != null && episodeListFragment.getListAdapter() != null)
+            ((BaseAdapter) episodeListFragment.getListAdapter()).notifyDataSetChanged();
     }
 
     /**

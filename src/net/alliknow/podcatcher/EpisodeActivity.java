@@ -163,17 +163,17 @@ public abstract class EpisodeActivity extends BaseActivity implements
             episodeManager.deleteDownload(currentEpisode);
 
         // Update the UI
-        updateDownloadMenuItem();
+        updateDownloadStatus();
     }
 
     @Override
     public void onDownloadSuccess() {
-        updateDownloadMenuItem();
+        updateDownloadStatus();
     }
 
     @Override
     public void onDownloadFailed() {
-        updateDownloadMenuItem();
+        updateDownloadStatus();
     }
 
     @Override
@@ -295,10 +295,16 @@ public abstract class EpisodeActivity extends BaseActivity implements
     /**
      * Update the download menu item state and visibility
      */
-    protected void updateDownloadMenuItem() {
-        episodeFragment.setDownloadMenuItemVisibility(currentEpisode != null,
-                !(episodeManager.isDownloading(currentEpisode) ||
-                episodeManager.isDownloaded(currentEpisode)));
+    protected void updateDownloadStatus() {
+        if (episodeFragment != null) {
+            final boolean downloading = episodeManager.isDownloading(currentEpisode);
+            final boolean downloaded = episodeManager.isDownloaded(currentEpisode);
+
+            episodeFragment.setDownloadMenuItemVisibility(currentEpisode != null,
+                    !(downloading || downloaded));
+
+            episodeFragment.setDownloadIconVisibility(downloading || downloaded, downloaded);
+        }
     }
 
     /**
