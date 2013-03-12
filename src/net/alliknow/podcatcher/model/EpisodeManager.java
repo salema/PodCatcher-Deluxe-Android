@@ -203,20 +203,40 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      */
     public void download(Episode episode) {
         if (episode != null && !isDownloadingOrDownloaded(episode)) {
-            // Make sure podcast directory exists
-            new File(getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS),
-                    sanitizeAsFilename(episode.getPodcast().getName())).mkdir();
-
+            // Find the podcast directory and the path to store episode under
+            File podcastDir = getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS);
             String subPath = getSubPath(episode);
+            // We need to put a download id. If the episode is already
+            // downloaded (i.e. the file exists) and we somehow missed to catch
+            // it, zero will work just fine.
+            long id = 0;
+            // Find or create the metadata information holder
+            EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+            if (meta == null)
+                meta = new EpisodeMetadata();
 
-            Request download = new Request(Uri.parse(episode.getMediaUrl().toString()))
-                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_PODCASTS, subPath)
-                    .setTitle(episode.getName())
-                    .setDescription(episode.getPodcast().getName());
+            // Start download if the episode is not there
+            if (!new File(podcastDir, subPath).exists()) {
+                // Make sure podcast directory exists
+                new File(podcastDir, sanitizeAsFilename(episode.getPodcast().getName())).mkdir();
 
-            long id = downloadManager.enqueue(download);
+                // Create the request
+                Request download = new Request(Uri.parse(episode.getMediaUrl().toString()))
+                        .setDestinationInExternalPublicDir(Environment.DIRECTORY_PODCASTS, subPath)
+                        .setTitle(episode.getName())
+                        .setDescription(episode.getPodcast().getName());
 
-            EpisodeMetadata meta = new EpisodeMetadata();
+                // Start the download
+                id = downloadManager.enqueue(download);
+            } // The episode is already there, alert listeners
+            else {
+                meta.filePath = new File(podcastDir, subPath).getAbsolutePath();
+
+                for (OnCompleteDownloadListener listener : completeDownloadListeners)
+                    listener.onDownloadSuccess();
+            }
+
+            // Put metadata information
             meta.downloadId = id;
             metadata.put(episode.getMediaUrl(), meta);
 
@@ -233,9 +253,11 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      */
     public void deleteDownload(Episode episode) {
         if (episode != null && isDownloadingOrDownloaded(episode)) {
+            // Find the metadata information holder
             EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
 
             if (meta != null) {
+                // This should delete the download and remove any information
                 downloadManager.remove(meta.downloadId);
 
                 Log.i(getClass().getSimpleName(), "Deleted download for episode: " + episode);
@@ -245,6 +267,14 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                 meta.downloadId = null;
                 meta.filePath = null;
             }
+
+            // Find the podcast directory and the path the episode is stored
+            // under
+            File podcastDir = getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS);
+            String subPath = getSubPath(episode);
+            // Make sure the file is deleted since this might not have taken
+            // care of by remove() above
+            new File(podcastDir, subPath).delete();
         }
     }
 

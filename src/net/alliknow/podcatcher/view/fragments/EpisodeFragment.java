@@ -227,7 +227,7 @@ public class EpisodeFragment extends Fragment {
         if (viewCreated) {
             downloadIconView.setVisibility(show ? VISIBLE : GONE);
             downloadIconView.setImageResource(downloaded ?
-                    R.drawable.ic_media_fullscreen : R.drawable.ic_menu_download);
+                    R.drawable.ic_media_downloaded : R.drawable.ic_media_downloading);
         }
     }
 
