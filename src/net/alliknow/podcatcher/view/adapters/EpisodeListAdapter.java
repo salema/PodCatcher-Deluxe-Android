@@ -20,6 +20,7 @@ package net.alliknow.podcatcher.view.adapters;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.model.EpisodeManager;
@@ -34,7 +35,9 @@ import java.util.List;
 public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
 
     /** The list our data resides in */
-    protected List<Episode> list;
+    protected final List<Episode> list;
+    /** The episode manager handle */
+    protected final EpisodeManager episodeManager;
     /** Whether the podcast name should be shown */
     protected boolean showPodcastNames = false;
 
@@ -53,6 +56,7 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
         super(context);
 
         this.list = episodeList;
+        this.episodeManager = EpisodeManager.getInstance();
     }
 
     /**
@@ -85,7 +89,7 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the return view (possibly recycle a used one)
-        View listItemView = findReturnView(convertView, parent, R.layout.list_item);
+        View listItemView = findReturnView(convertView, parent, R.layout.episode_list_item);
 
         // Set list item color background
         setBackgroundColorForPosition(listItemView, position);
@@ -95,16 +99,10 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
 
         // Set the text to display for title
         setText(listItemView, R.id.list_item_title, episode.getName());
-
-        String caption = createCaption(episode);
-        EpisodeManager em = EpisodeManager.getInstance();
-        if (em.isDownloading(episode))
-            caption += "ActiveDownload";
-        if (em.isDownloaded(episode))
-            caption += "IsDownloaded";
-
         // Set the text to display as caption
-        setText(listItemView, R.id.list_item_caption, caption);
+        setText(listItemView, R.id.list_item_caption, createCaption(episode));
+        // Update the icons to show for this episode
+        updateIcons(listItemView, episode);
 
         return listItemView;
     }
@@ -128,5 +126,18 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
             else
                 return dateString;
         }
+    }
+
+    private void updateIcons(View listItemView, Episode episode) {
+        ImageView downloadIconView = (ImageView) listItemView.findViewById(R.id.download_icon);
+        boolean downloading = episodeManager.isDownloading(episode);
+        boolean downloaded = episodeManager.isDownloaded(episode);
+
+        if (downloading)
+            downloadIconView.setImageResource(R.drawable.ic_media_downloading);
+        else if (downloaded)
+            downloadIconView.setImageResource(R.drawable.ic_media_downloaded);
+
+        downloadIconView.setVisibility(downloading || downloaded ? View.VISIBLE : View.GONE);
     }
 }

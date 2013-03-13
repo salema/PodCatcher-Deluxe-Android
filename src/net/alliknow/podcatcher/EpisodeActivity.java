@@ -25,7 +25,10 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import net.alliknow.podcatcher.listeners.OnCompleteDownloadListener;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
@@ -157,8 +160,11 @@ public abstract class EpisodeActivity extends BaseActivity implements
                 episodeManager.isDownloaded(currentEpisode));
 
         // Kick off the appropriate action
-        if (download)
+        if (download) {
             episodeManager.download(currentEpisode);
+
+            showDownloadToast();
+        }
         else
             episodeManager.deleteDownload(currentEpisode);
 
@@ -363,6 +369,16 @@ public abstract class EpisodeActivity extends BaseActivity implements
             playUpdateTimerTask.cancel();
             playUpdateTimerTask = null;
         }
+    }
+
+    private void showDownloadToast() {
+        Toast toast = Toast.makeText(this,
+                "Started download for \n\"" + currentEpisode.getName() + "\"", Toast.LENGTH_SHORT);
+
+        TextView textView = (TextView) toast.getView().findViewById(android.R.id.message);
+        textView.setGravity(Gravity.CENTER);
+
+        toast.show();
     }
 
     /** Defines callbacks for service binding, passed to bindService() */
