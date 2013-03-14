@@ -19,6 +19,8 @@ package net.alliknow.podcatcher.model.types;
 
 import net.alliknow.podcatcher.model.EpisodeManager;
 
+import java.util.Date;
+
 /**
  * Instances of this type represent additional information on episodes that is
  * not derived from the podcast feed, but from the user's interaction with the
@@ -27,14 +29,20 @@ import net.alliknow.podcatcher.model.EpisodeManager;
  */
 public class EpisodeMetadata {
 
+    /** The name of the podcast this episode belongs to */
+    public String podcastName;
+    /** The URL of the podcast this episode belongs to */
+    public String podcastUrl;
+    /** The episode name for this metadata */
+    public String episodeName;
+    /** The episode publication date for this metadata */
+    public Date episodePubDate;
+    /** The episode description for this metadata */
+    public String episodeDescription;
     /** The download manager id for this episode. */
     public Long downloadId;
     /** The absolute local filepath to the downloaded copy of this episode. */
     public String filePath;
-    /** The name of the podcast this episode belongs to */
-    public String podcastName;
-    /** The episode name for this metadata */
-    public String episodeName;
 
     /**
      * @return Whether the metadata is actually need because it has any data.

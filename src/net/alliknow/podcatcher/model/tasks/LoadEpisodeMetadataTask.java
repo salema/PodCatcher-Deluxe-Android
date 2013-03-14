@@ -166,8 +166,14 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
                 // Metadata detail found
                 if (tagName.equalsIgnoreCase(METADATA.EPISODE_NAME))
                     result.episodeName = parser.nextText();
+                else if (tagName.equalsIgnoreCase(METADATA.EPISODE_DATE))
+                    result.episodePubDate = new Date(Long.parseLong(parser.nextText()));
+                else if (tagName.equalsIgnoreCase(METADATA.EPISODE_DESCRIPTION))
+                    result.episodeDescription = parser.nextText();
                 else if (tagName.equalsIgnoreCase(METADATA.PODCAST_NAME))
                     result.podcastName = parser.nextText();
+                else if (tagName.equalsIgnoreCase(METADATA.PODCAST_URL))
+                    result.podcastUrl = parser.nextText();
                 else if (tagName.equalsIgnoreCase(METADATA.DOWNLOAD_ID))
                     result.downloadId = Long.parseLong(parser.nextText());
                 else if (tagName.equalsIgnoreCase(METADATA.LOCAL_FILE_PATH))

@@ -18,11 +18,14 @@
 package net.alliknow.podcatcher.model.tasks;
 
 import static net.alliknow.podcatcher.model.tags.METADATA.DOWNLOAD_ID;
+import static net.alliknow.podcatcher.model.tags.METADATA.EPISODE_DATE;
+import static net.alliknow.podcatcher.model.tags.METADATA.EPISODE_DESCRIPTION;
 import static net.alliknow.podcatcher.model.tags.METADATA.EPISODE_NAME;
 import static net.alliknow.podcatcher.model.tags.METADATA.EPISODE_URL;
 import static net.alliknow.podcatcher.model.tags.METADATA.LOCAL_FILE_PATH;
 import static net.alliknow.podcatcher.model.tags.METADATA.METADATA;
 import static net.alliknow.podcatcher.model.tags.METADATA.PODCAST_NAME;
+import static net.alliknow.podcatcher.model.tags.METADATA.PODCAST_URL;
 
 import android.content.Context;
 import android.util.Log;
@@ -95,7 +98,12 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMeta
         writeLine(1, "<" + METADATA + " " + EPISODE_URL + "=\"" + key.toString() + "\">");
 
         writeData(value.episodeName, EPISODE_NAME);
+        if (value.episodePubDate != null)
+            writeLine(2, "<" + EPISODE_DATE + ">" + value.episodePubDate.getTime() + "</"
+                    + EPISODE_DATE + ">");
+        writeData(value.episodeDescription, EPISODE_DESCRIPTION);
         writeData(value.podcastName, PODCAST_NAME);
+        writeData(value.podcastUrl, PODCAST_URL);
         writeData(value.downloadId, DOWNLOAD_ID);
         writeData(value.filePath, LOCAL_FILE_PATH);
 

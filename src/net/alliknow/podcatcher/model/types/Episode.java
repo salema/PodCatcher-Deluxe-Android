@@ -67,6 +67,25 @@ public class Episode implements Comparable<Episode> {
     }
 
     /**
+     * Create a new episode and set all fields manually.
+     * 
+     * @param podcast Podcast this episode belongs to. Cannot be
+     *            <code>null</code>.
+     * @param name Episode name.
+     * @param mediaUrl The remote URL of this episode.
+     * @param pubDate The publication date.
+     * @param description The episode's description.
+     */
+    public Episode(Podcast podcast, String name, URL mediaUrl, Date pubDate, String description) {
+        this(podcast);
+
+        this.name = name;
+        this.mediaUrl = mediaUrl;
+        this.pubDate = pubDate;
+        this.description = description;
+    }
+
+    /**
      * @return The owning podcast. This will not be <code>null</code>.
      */
     public Podcast getPodcast() {

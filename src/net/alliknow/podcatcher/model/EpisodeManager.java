@@ -38,11 +38,17 @@ import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
 import net.alliknow.podcatcher.model.tasks.StoreEpisodeMetadataTask;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
+import net.alliknow.podcatcher.model.types.Podcast;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -261,7 +267,10 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
             // Put metadata information
             meta.downloadId = id;
             meta.episodeName = episode.getName();
+            meta.episodePubDate = episode.getPubDate();
+            meta.episodeDescription = episode.getDescription();
             meta.podcastName = episode.getPodcast().getName();
+            meta.podcastUrl = episode.getPodcast().getUrl().toString();
             metadata.put(episode.getMediaUrl(), meta);
 
             Log.i(getClass().getSimpleName(), "Start download for episode: " + episode);
@@ -339,6 +348,33 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                     && meta.downloadId != null
                     && meta.filePath == null;
         }
+    }
+
+    public List<Episode> getDownloads() {
+        List<Episode> result = new ArrayList<Episode>();
+
+        // Find downloads from metadata
+        Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Entry<URL, EpisodeMetadata> entry = iterator.next();
+
+            if (entry.getValue().downloadId != null && entry.getValue().filePath != null
+                    && new File(entry.getValue().filePath).exists()) {
+
+                Podcast podcast;
+                try {
+                    podcast = new Podcast(entry.getValue().podcastName, new URL(
+                            entry.getValue().podcastUrl));
+                } catch (MalformedURLException e) {
+                    continue;
+                }
+
+                result.add(new Episode(podcast, entry.getValue().episodeName, entry.getKey(), entry
+                        .getValue().episodePubDate, entry.getValue().episodeDescription));
+            }
+        }
+
+        return result;
     }
 
     /**
