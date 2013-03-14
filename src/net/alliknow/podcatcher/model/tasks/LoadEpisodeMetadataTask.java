@@ -17,8 +17,13 @@
 
 package net.alliknow.podcatcher.model.tasks;
 
+import static android.os.Environment.getExternalStoragePublicDirectory;
+import static net.alliknow.podcatcher.Podcatcher.sanitizeAsFilename;
+
 import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 
 import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
@@ -31,12 +36,15 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Load the episode metadata from the file system.
@@ -106,6 +114,10 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
                 // Done, get next parsing event
                 eventType = parser.next();
             }
+
+            // 4. Do some house keeping since file availability might have
+            // changed
+            cleanMetadata(result);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Load failed for episode metadata!", e);
         } finally {
@@ -152,7 +164,11 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
                 String tagName = parser.getName();
 
                 // Metadata detail found
-                if (tagName.equalsIgnoreCase(METADATA.DOWNLOAD_ID))
+                if (tagName.equalsIgnoreCase(METADATA.EPISODE_NAME))
+                    result.episodeName = parser.nextText();
+                else if (tagName.equalsIgnoreCase(METADATA.PODCAST_NAME))
+                    result.podcastName = parser.nextText();
+                else if (tagName.equalsIgnoreCase(METADATA.DOWNLOAD_ID))
                     result.downloadId = Long.parseLong(parser.nextText());
                 else if (tagName.equalsIgnoreCase(METADATA.LOCAL_FILE_PATH))
                     result.filePath = parser.nextText();
@@ -163,5 +179,48 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
         }
 
         return result;
+    }
+
+    private void cleanMetadata(Map<URL, EpisodeMetadata> result) {
+        // Handle the case where the download finished while the application was
+        // not running. In this case, there would be a downloadId but no
+        // filePath while the episode media file is actually there.
+        Iterator<Entry<URL, EpisodeMetadata>> iterator = result.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Entry<URL, EpisodeMetadata> entry = iterator.next();
+            File downloadPath = getDownloadLocationFor(entry);
+
+            if (entry.getValue().downloadId != null && entry.getValue().filePath == null
+                    && downloadPath.exists())
+                entry.getValue().filePath = downloadPath.getAbsolutePath();
+        }
+
+        // Handle the case that the media file has been delete from outside the
+        // app. In this case, downloadId and and filePath would be there, but no
+        // file.
+        iterator = result.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Entry<URL, EpisodeMetadata> entry = iterator.next();
+            File downloadPath = getDownloadLocationFor(entry);
+
+            if (entry.getValue().downloadId != null && entry.getValue().filePath != null
+                    && !downloadPath.exists())
+                iterator.remove();
+        }
+    }
+
+    private File getDownloadLocationFor(Entry<URL, EpisodeMetadata> entry) {
+        File podcastDir = getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS);
+
+        // Extract file ending
+        String remoteFile = Uri.parse(entry.getKey().toString()).getPath();
+        String fileEnding = remoteFile.substring(remoteFile.lastIndexOf('.'));
+
+        String subpath = sanitizeAsFilename(entry.getValue().podcastName) + File.separatorChar +
+                sanitizeAsFilename(entry.getValue().episodeName) + fileEnding;
+
+        return new File(podcastDir, subpath);
     }
 }

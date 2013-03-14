@@ -31,6 +31,10 @@ public class EpisodeMetadata {
     public Long downloadId;
     /** The absolute local filepath to the downloaded copy of this episode. */
     public String filePath;
+    /** The name of the podcast this episode belongs to */
+    public String podcastName;
+    /** The episode name for this metadata */
+    public String episodeName;
 
     /**
      * @return Whether the metadata is actually need because it has any data.

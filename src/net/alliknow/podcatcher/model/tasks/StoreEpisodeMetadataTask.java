@@ -18,9 +18,11 @@
 package net.alliknow.podcatcher.model.tasks;
 
 import static net.alliknow.podcatcher.model.tags.METADATA.DOWNLOAD_ID;
+import static net.alliknow.podcatcher.model.tags.METADATA.EPISODE_NAME;
 import static net.alliknow.podcatcher.model.tags.METADATA.EPISODE_URL;
 import static net.alliknow.podcatcher.model.tags.METADATA.LOCAL_FILE_PATH;
 import static net.alliknow.podcatcher.model.tags.METADATA.METADATA;
+import static net.alliknow.podcatcher.model.tags.METADATA.PODCAST_NAME;
 
 import android.content.Context;
 import android.util.Log;
@@ -34,6 +36,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -57,12 +60,16 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMeta
     @Override
     protected Void doInBackground(Map<URL, EpisodeMetadata>... params) {
         try {
-            // 1. Open the file and get a writer
+            // 1. Do house keeping and remove all metadata instances without
+            // data
+            cleanMetadata(params[0]);
+
+            // 2. Open the file and get a writer
             OutputStream fileStream =
                     context.openFileOutput(EpisodeManager.METADATA_FILENAME, Context.MODE_PRIVATE);
             writer = new BufferedWriter(new OutputStreamWriter(fileStream, FILE_ENCODING));
 
-            // 2. Write new file content
+            // 3. Write new file content
             writeHeader();
             for (Entry<URL, EpisodeMetadata> entry : params[0].entrySet())
                 writeRecord(entry.getKey(), entry.getValue());
@@ -87,6 +94,8 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMeta
     private void writeRecord(URL key, EpisodeMetadata value) throws IOException {
         writeLine(1, "<" + METADATA + " " + EPISODE_URL + "=\"" + key.toString() + "\">");
 
+        writeData(value.episodeName, EPISODE_NAME);
+        writeData(value.podcastName, PODCAST_NAME);
         writeData(value.downloadId, DOWNLOAD_ID);
         writeData(value.filePath, LOCAL_FILE_PATH);
 
@@ -106,5 +115,16 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMeta
 
     private void writeFooter() throws IOException {
         writeLine(0, "</xml>");
+    }
+
+    private void cleanMetadata(Map<URL, EpisodeMetadata> metadata) {
+        Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Entry<URL, EpisodeMetadata> entry = iterator.next();
+
+            if (!entry.getValue().hasData())
+                iterator.remove();
+        }
     }
 }

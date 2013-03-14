@@ -30,7 +30,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.alliknow.podcatcher.listeners.OnCompleteDownloadListener;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.listeners.PlayerListener;
@@ -49,7 +48,7 @@ import java.util.TimerTask;
  * or simply show this layout.
  */
 public abstract class EpisodeActivity extends BaseActivity implements
-        OnDownloadEpisodeListener, OnCompleteDownloadListener, PlayerListener, PlayServiceListener {
+        OnDownloadEpisodeListener, PlayerListener, PlayServiceListener {
 
     /** The current episode fragment */
     protected EpisodeFragment episodeFragment;
@@ -117,7 +116,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
         // We have to do this here instead of onCreate since we can only react
         // on the call-backs properly once we have our fragment
-        episodeManager.addCompleteDownloadListener(this);
+        episodeManager.addDownloadListener(this);
     }
 
     @Override
@@ -141,7 +140,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
         super.onDestroy();
 
         // Disconnect from episode manager
-        episodeManager.removeCompleteDownloadListener(this);
+        episodeManager.removeDownloadListener(this);
 
         // Stop the timer
         playUpdateTimer.cancel();
@@ -170,6 +169,11 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
         // Update the UI
         updateDownloadStatus();
+    }
+
+    @Override
+    public void onShowDownload(String episodeUri) {
+        Log.i(getClass().getSimpleName(), "Show episode with URI: " + episodeUri);
     }
 
     @Override
@@ -216,16 +220,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
         } else
             Log.w(getClass().getSimpleName(),
                     "Cannot play/pause episode (service null or unprepared)");
-    }
-
-    @Override
-    public void onReturnToPlayingEpisode() {
-        if (service != null && service.getCurrentEpisode() != null) {
-            Episode playingEpisode = service.getCurrentEpisode();
-
-            this.currentEpisode = playingEpisode;
-            episodeFragment.setEpisode(playingEpisode);
-        }
     }
 
     @Override

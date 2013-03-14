@@ -33,7 +33,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import net.alliknow.podcatcher.Podcatcher;
-import net.alliknow.podcatcher.listeners.OnCompleteDownloadListener;
+import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
 import net.alliknow.podcatcher.model.tasks.StoreEpisodeMetadataTask;
 import net.alliknow.podcatcher.model.types.Episode;
@@ -42,9 +42,7 @@ import net.alliknow.podcatcher.model.types.EpisodeMetadata;
 import java.io.File;
 import java.net.URL;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -66,7 +64,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     private Map<URL, EpisodeMetadata> metadata;
 
     /** The call-back set for the complete download listeners */
-    private Set<OnCompleteDownloadListener> completeDownloadListeners = new HashSet<OnCompleteDownloadListener>();
+    private Set<OnDownloadEpisodeListener> downloadListeners = new HashSet<OnDownloadEpisodeListener>();
 
     /** The receiver we register for episode downloads */
     private BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
@@ -92,7 +90,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                             meta.filePath = result.getString(result
                                     .getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME));
 
-                            for (OnCompleteDownloadListener listener : completeDownloadListeners)
+                            for (OnDownloadEpisodeListener listener : downloadListeners)
                                 listener.onDownloadSuccess();
 
                             Log.i(getClass().getSimpleName(), "Completed download for episode");
@@ -106,12 +104,42 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                             meta.downloadId = null;
                             meta.filePath = null;
 
-                            for (OnCompleteDownloadListener listener : completeDownloadListeners)
+                            for (OnDownloadEpisodeListener listener : downloadListeners)
                                 listener.onDownloadFailed();
 
                             Log.i(getClass().getSimpleName(), "Failed to download episode");
                             Log.i(getClass().getSimpleName(), "Download id: " + downloadId);
                         }
+
+                    // Close cursor
+                    result.close();
+                }
+        };
+    };
+
+    /** The receiver we register for download selections */
+    private BroadcastReceiver onDownloadClicked = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get the download id that was clicked (first if multiple)
+            long downloadId = intent
+                    .getLongArrayExtra(DownloadManager.EXTRA_NOTIFICATION_CLICK_DOWNLOAD_IDS)[0];
+
+            // Check if this was a download we care for
+            for (EpisodeMetadata meta : metadata.values())
+                if (meta.downloadId != null && meta.downloadId == downloadId) {
+                    // Find download result information
+                    Cursor result = downloadManager.query(new Query().setFilterById(downloadId));
+                    // There should be information on the download
+                    if (result.moveToFirst()) {
+                        // Get the URI for this download
+                        String episodeUri = result.getString(result
+                                .getColumnIndex(DownloadManager.COLUMN_URI));
+
+                        for (OnDownloadEpisodeListener listener : downloadListeners)
+                            listener.onShowDownload(episodeUri);
+                    }
 
                     // Close cursor
                     result.close();
@@ -138,6 +166,10 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
         // download completes (both successfully or failed)
         podcatcher.registerReceiver(onDownloadComplete,
                 new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        // Register as a receiver for downloads selections so we are alerted
+        // when a download is clicked in the DownloadManager UI
+        podcatcher.registerReceiver(onDownloadClicked,
+                new IntentFilter(DownloadManager.ACTION_NOTIFICATION_CLICKED));
     }
 
     /**
@@ -181,16 +213,6 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      */
     @SuppressWarnings("unchecked")
     public void saveState() {
-        // Do house keeping and remove all metadata instances without data
-        Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
-
-        while (iterator.hasNext()) {
-            Entry<URL, EpisodeMetadata> entry = iterator.next();
-
-            if (!entry.getValue().hasData())
-                iterator.remove();
-        }
-
         // Store cleaned record
         new StoreEpisodeMetadataTask(podcatcher).execute(metadata);
     }
@@ -232,12 +254,14 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
             else {
                 meta.filePath = new File(podcastDir, subPath).getAbsolutePath();
 
-                for (OnCompleteDownloadListener listener : completeDownloadListeners)
+                for (OnDownloadEpisodeListener listener : downloadListeners)
                     listener.onDownloadSuccess();
             }
 
             // Put metadata information
             meta.downloadId = id;
+            meta.episodeName = episode.getName();
+            meta.podcastName = episode.getPodcast().getName();
             metadata.put(episode.getMediaUrl(), meta);
 
             Log.i(getClass().getSimpleName(), "Start download for episode: " + episode);
@@ -336,23 +360,23 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     }
 
     /**
-     * Add complete download listener.
+     * Add a download listener.
      * 
      * @param listener Listener to add.
-     * @see OnCompleteDownloadListener
+     * @see OnDownloadEpisodeListener
      */
-    public void addCompleteDownloadListener(OnCompleteDownloadListener listener) {
-        completeDownloadListeners.add(listener);
+    public void addDownloadListener(OnDownloadEpisodeListener listener) {
+        downloadListeners.add(listener);
     }
 
     /**
-     * Remove complete download listener.
+     * Remove a download listener.
      * 
      * @param listener Listener to remove.
-     * @see OnCompleteDownloadListener
+     * @see OnDownloadEpisodeListener
      */
-    public void removeCompleteDownloadListener(OnCompleteDownloadListener listener) {
-        completeDownloadListeners.remove(listener);
+    public void removeDownloadListener(OnDownloadEpisodeListener listener) {
+        downloadListeners.remove(listener);
     }
 
     /**
