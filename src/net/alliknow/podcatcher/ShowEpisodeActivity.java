@@ -74,6 +74,16 @@ public class ShowEpisodeActivity extends EpisodeActivity {
     }
 
     @Override
+    public void onShowDownload(String episodeUri) {
+        Episode episode = podcastManager.findEpisodeForUrl(episodeUri);
+
+        if (episode != null) {
+            this.currentEpisode = episode;
+            updateUi();
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:

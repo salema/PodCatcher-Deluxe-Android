@@ -172,11 +172,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     @Override
-    public void onShowDownload(String episodeUri) {
-        Log.i(getClass().getSimpleName(), "Show episode with URI: " + episodeUri);
-    }
-
-    @Override
     public void onDownloadSuccess() {
         updateDownloadStatus();
     }
