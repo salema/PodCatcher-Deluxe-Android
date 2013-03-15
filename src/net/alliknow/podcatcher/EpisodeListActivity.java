@@ -227,14 +227,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
-    public void onShowDownload(String episodeUri) {
-        Episode episode = podcastManager.findEpisodeForUrl(episodeUri);
-
-        if (episode != null)
-            onEpisodeSelected(episode);
-    }
-
-    @Override
     public void onNoEpisodeSelected() {
         this.currentEpisode = null;
 

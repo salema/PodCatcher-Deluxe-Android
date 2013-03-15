@@ -29,13 +29,6 @@ public interface OnDownloadEpisodeListener {
     public void onToggleDownload();
 
     /**
-     * Called when the user selects a download notification.
-     * 
-     * @param episodeUri URI of the episode (download) selected.
-     */
-    public void onShowDownload(String episodeUri);
-
-    /**
      * Called on the listener once a download finished successfully.
      */
     public void onDownloadSuccess();

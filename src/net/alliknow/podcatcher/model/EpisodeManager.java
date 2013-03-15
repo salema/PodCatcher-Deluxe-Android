@@ -32,16 +32,18 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
+import net.alliknow.podcatcher.EpisodeActivity;
+import net.alliknow.podcatcher.EpisodeListActivity;
+import net.alliknow.podcatcher.EpisodeListActivity.ContentMode;
+import net.alliknow.podcatcher.PodcastActivity;
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
 import net.alliknow.podcatcher.model.tasks.StoreEpisodeMetadataTask;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
-import net.alliknow.podcatcher.model.types.Podcast;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -137,25 +139,32 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                 // Get the download id that was clicked (first if multiple)
                 long downloadId = downloadIds[0];
 
-                // Check if this was a download we care for
-                for (EpisodeMetadata meta : metadata.values())
-                    if (meta.downloadId != null && meta.downloadId == downloadId) {
-                        // Find download result information
-                        Cursor result = downloadManager
-                                .query(new Query().setFilterById(downloadId));
-                        // There should be information on the download
-                        if (result.moveToFirst()) {
-                            // Get the URI for this download
-                            String episodeUri = result.getString(result
-                                    .getColumnIndex(DownloadManager.COLUMN_URI));
+                // Find download from metadata
+                Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    Entry<URL, EpisodeMetadata> entry = iterator.next();
+                    // Only act if we care for this download
+                    if (entry.getValue().downloadId != null
+                            && entry.getValue().downloadId == downloadId) {
 
-                            for (OnDownloadEpisodeListener listener : downloadListeners)
-                                listener.onShowDownload(episodeUri);
-                        }
-
-                        // Close cursor
-                        result.close();
+                        // Create the downloading episode
+                        Episode download = entry.getValue().marshalEpisode(entry.getKey());
+                        // Make the app switch to it.
+                        podcatcher.startActivity(
+                                new Intent(podcatcher.getApplicationContext(),
+                                        PodcastActivity.class)
+                                        .putExtra(EpisodeListActivity.MODE_KEY,
+                                                ContentMode.SINGLE_PODCAST)
+                                        .putExtra(EpisodeListActivity.PODCAST_URL_KEY,
+                                                download.getPodcast().getUrl().toString())
+                                        .putExtra(EpisodeActivity.EPISODE_URL_KEY,
+                                                download.getMediaUrl().toString())
+                                        .addFlags(
+                                                Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                                                        Intent.FLAG_ACTIVITY_NEW_TASK
+                                                        | Intent.FLAG_ACTIVITY_SINGLE_TOP));
                     }
+                }
             }
         };
     };
@@ -372,18 +381,11 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
             // Find records for downloaded episodes
             if (isDownloaded(entry.getValue())) {
-                // Create the corresponding podcast
-                Podcast podcast;
-                try {
-                    podcast = new Podcast(entry.getValue().podcastName, new URL(
-                            entry.getValue().podcastUrl));
-                } catch (MalformedURLException e) {
-                    continue;
-                }
-
                 // Create and add the downloaded episode
-                result.add(new Episode(podcast, entry.getValue().episodeName, entry.getKey(), entry
-                        .getValue().episodePubDate, entry.getValue().episodeDescription));
+                Episode download = entry.getValue().marshalEpisode(entry.getKey());
+
+                if (download != null)
+                    result.add(download);
             }
         }
 

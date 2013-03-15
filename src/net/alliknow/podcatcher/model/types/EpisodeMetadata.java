@@ -19,6 +19,8 @@ package net.alliknow.podcatcher.model.types;
 
 import net.alliknow.podcatcher.model.EpisodeManager;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
 
 /**
@@ -50,5 +52,24 @@ public class EpisodeMetadata {
     public boolean hasData() {
         return downloadId != null ||
                 filePath != null;
+    }
+
+    /**
+     * Create an actual episode object from the metadata.
+     * 
+     * @param episodeUrl URL for the new episode to be identified by.
+     * @return An episode object or <code>null</code> if something goes wrong.
+     */
+    public Episode marshalEpisode(URL episodeUrl) {
+        // Create the corresponding podcast
+        Podcast podcast;
+        try {
+            podcast = new Podcast(podcastName, new URL(podcastUrl));
+        } catch (MalformedURLException e) {
+            return null;
+        }
+
+        // Create and return the episode
+        return new Episode(podcast, episodeName, episodeUrl, episodePubDate, episodeDescription);
     }
 }

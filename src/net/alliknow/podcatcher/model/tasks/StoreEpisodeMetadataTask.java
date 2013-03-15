@@ -28,6 +28,7 @@ import static net.alliknow.podcatcher.model.tags.METADATA.PODCAST_NAME;
 import static net.alliknow.podcatcher.model.tags.METADATA.PODCAST_URL;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import net.alliknow.podcatcher.model.EpisodeManager;
@@ -101,7 +102,7 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMeta
         if (value.episodePubDate != null)
             writeLine(2, "<" + EPISODE_DATE + ">" + value.episodePubDate.getTime() + "</"
                     + EPISODE_DATE + ">");
-        writeData(value.episodeDescription, EPISODE_DESCRIPTION);
+        writeData(TextUtils.htmlEncode(value.episodeDescription), EPISODE_DESCRIPTION);
         writeData(value.podcastName, PODCAST_NAME);
         writeData(value.podcastUrl, PODCAST_URL);
         writeData(value.downloadId, DOWNLOAD_ID);

@@ -56,7 +56,13 @@ public class ShowEpisodeActivity extends EpisodeActivity {
             // Set episode in fragment UI
             if (getIntent().getExtras() != null) {
                 String episodeUrl = getIntent().getExtras().getString(EPISODE_URL_KEY);
+                // Try find episode from the podcast manager
                 this.currentEpisode = podcastManager.findEpisodeForUrl(episodeUrl);
+                // If that fails, it might be a download
+                if (currentEpisode == null)
+                    for (Episode download : episodeManager.getDownloads())
+                        if (download.getMediaUrl().toString().equals(episodeUrl))
+                            this.currentEpisode = download;
 
                 updateUi();
             }
@@ -69,16 +75,6 @@ public class ShowEpisodeActivity extends EpisodeActivity {
             Episode playingEpisode = service.getCurrentEpisode();
             this.currentEpisode = playingEpisode;
 
-            updateUi();
-        }
-    }
-
-    @Override
-    public void onShowDownload(String episodeUri) {
-        Episode episode = podcastManager.findEpisodeForUrl(episodeUri);
-
-        if (episode != null) {
-            this.currentEpisode = episode;
             updateUi();
         }
     }
