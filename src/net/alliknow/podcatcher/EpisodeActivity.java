@@ -177,16 +177,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     @Override
-    public void onReturnToPlayingEpisode() {
-        if (service != null && service.getCurrentEpisode() != null) {
-            Episode playingEpisode = service.getCurrentEpisode();
-
-            this.currentEpisode = playingEpisode;
-            episodeFragment.setEpisode(playingEpisode);
-        }
-    }
-
-    @Override
     public void onReadyToPlay() {
         updatePlayer();
         startPlayProgressTimer();
