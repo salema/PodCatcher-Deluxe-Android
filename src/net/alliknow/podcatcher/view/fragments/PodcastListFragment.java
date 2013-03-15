@@ -20,7 +20,6 @@ package net.alliknow.podcatcher.view.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,8 +33,6 @@ import net.alliknow.podcatcher.AddPodcastActivity;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.listeners.PodcastListContextListener;
-import net.alliknow.podcatcher.model.EpisodeManager;
-import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.HorizontalProgressView;
@@ -149,10 +146,6 @@ public class PodcastListFragment extends PodcatcherListFragment {
         switch (item.getItemId()) {
             case R.id.podcast_add_menuitem:
                 startActivity(new Intent(getActivity(), AddPodcastActivity.class));
-
-                EpisodeManager episodeManager = EpisodeManager.getInstance();
-                for (Episode episode : episodeManager.getDownloads())
-                    Log.i(getClass().getSimpleName(), "Downloaded episode: " + episode);
 
                 return true;
             case R.id.podcast_select_all_menuitem:

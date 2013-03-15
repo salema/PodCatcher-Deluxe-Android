@@ -53,8 +53,20 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
      */
     public static final String MODE_KEY = "MODE_KEY";
 
-    /** Flag to indicate whether we are in multiple podcast mode */
-    protected boolean multiplePodcastsMode = false;
+    /** The options available for the content mode */
+    public enum ContentMode {
+        /** Show single podcast */
+        SINGLE_PODCAST,
+
+        /** Show all podcast */
+        ALL_PODCASTS,
+
+        /** Show downloads */
+        DOWNLOADS
+    };
+
+    /** Member to indicate which mode we are in */
+    protected ContentMode contentMode = ContentMode.SINGLE_PODCAST;
 
     /** The podcast we are showing episodes for */
     protected Podcast currentPodcast;
@@ -104,7 +116,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
-        if (!multiplePodcastsMode && podcast.equals(currentPodcast))
+        if (contentMode.equals(ContentMode.SINGLE_PODCAST) && podcast.equals(currentPodcast))
             episodeListFragment.showProgress(progress);
     }
 
@@ -112,7 +124,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     public void onPodcastLoaded(Podcast podcast) {
         // Update list fragment to show episode list
         // Select all podcasts
-        if (multiplePodcastsMode) {
+        if (contentMode.equals(ContentMode.ALL_PODCASTS)) {
             // TODO decide on this: episodeList.addAll(list.subList(0,
             // list.size() > 100 ? 100 : list.size() - 1));
             if (podcast.getEpisodeNumber() > 0) {
@@ -122,7 +134,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 episodeListFragment.setEpisodeList(new ArrayList<Episode>(currentEpisodeList));
             }
         } // Select single podcast
-        else if (podcast.equals(currentPodcast)) {
+        else if (contentMode.equals(ContentMode.SINGLE_PODCAST) && podcast.equals(currentPodcast)) {
             currentEpisodeList = podcast.getEpisodes();
             episodeListFragment.setEpisodeList(currentEpisodeList);
         }
@@ -141,7 +153,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     @Override
     public void onPodcastLoadFailed(Podcast failedPodcast) {
         // TODO What happens in multiple podcast mode?
-        if (!multiplePodcastsMode)
+        if (contentMode.equals(ContentMode.SINGLE_PODCAST) && failedPodcast.equals(currentPodcast))
             episodeListFragment.showLoadFailed();
     }
 
@@ -246,7 +258,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
      * Update the divider views to reflect current selection state.
      */
     protected void updateDivider() {
-        colorDivider(R.id.divider_first, currentPodcast != null || multiplePodcastsMode);
+        colorDivider(R.id.divider_first,
+                currentPodcast != null || !contentMode.equals(ContentMode.SINGLE_PODCAST));
         colorDivider(R.id.divider_second,
                 currentEpisodeList != null && currentEpisodeList.indexOf(currentEpisode) >= 0);
     }

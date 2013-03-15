@@ -20,6 +20,8 @@ package net.alliknow.podcatcher;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
@@ -136,6 +138,26 @@ public class PodcastActivity extends EpisodeListActivity implements
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.mode, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.downloads:
+                onDownloadsSelected();
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     /**
      * Restore members and selection state from bundle.
      * 
@@ -143,7 +165,7 @@ public class PodcastActivity extends EpisodeListActivity implements
      */
     private void restoreState(Bundle savedInstanceState) {
         // Recover members
-        multiplePodcastsMode = savedInstanceState.getBoolean(MODE_KEY);
+        contentMode = (ContentMode) savedInstanceState.getSerializable(MODE_KEY);
         currentPodcast = podcastManager.findPodcastForUrl(
                 savedInstanceState.getString(PODCAST_URL_KEY));
         currentEpisode = podcastManager.findEpisodeForUrl(
@@ -157,10 +179,12 @@ public class PodcastActivity extends EpisodeListActivity implements
      */
     private void restoreSelection() {
         // Re-select previously selected podcast(s)
-        if (multiplePodcastsMode)
+        if (contentMode.equals(ContentMode.ALL_PODCASTS))
             onAllPodcastsSelected();
-        else if (currentPodcast != null)
+        else if (contentMode.equals(ContentMode.SINGLE_PODCAST) && currentPodcast != null)
             onPodcastSelected(currentPodcast);
+        else if (contentMode.equals(ContentMode.DOWNLOADS))
+            onDownloadsSelected();
         else
             onNoPodcastSelected();
 
@@ -174,7 +198,7 @@ public class PodcastActivity extends EpisodeListActivity implements
     @Override
     protected void onNewIntent(Intent intent) {
         // Recover members
-        multiplePodcastsMode = intent.getBooleanExtra(MODE_KEY, false);
+        contentMode = (ContentMode) intent.getSerializableExtra(MODE_KEY);
         currentPodcast = podcastManager.findPodcastForUrl(
                 intent.getStringExtra(PODCAST_URL_KEY));
         currentEpisode = podcastManager.findEpisodeForUrl(
@@ -198,7 +222,7 @@ public class PodcastActivity extends EpisodeListActivity implements
         super.onResume();
 
         // Reset podcast list fragment in small portrait mode
-        if (viewMode == SMALL_PORTRAIT_VIEW && multiplePodcastsMode)
+        if (viewMode == SMALL_PORTRAIT_VIEW && contentMode.equals(ContentMode.ALL_PODCASTS))
             podcastListFragment.selectNone();
 
         // Podcast list has been changed while we were stopped
@@ -213,7 +237,7 @@ public class PodcastActivity extends EpisodeListActivity implements
             updateActionBar();
 
             // Only act if we are not in select all mode
-            if (!multiplePodcastsMode) {
+            if (contentMode.equals(ContentMode.SINGLE_PODCAST)) {
                 // Selected podcast was deleted
                 if (currentPodcast == null)
                     onNoPodcastSelected();
@@ -228,7 +252,7 @@ public class PodcastActivity extends EpisodeListActivity implements
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putBoolean(MODE_KEY, multiplePodcastsMode);
+        outState.putSerializable(MODE_KEY, contentMode);
         if (currentPodcast != null)
             outState.putString(PODCAST_URL_KEY, currentPodcast.getUrl().toString());
         if (currentEpisode != null)
@@ -282,7 +306,7 @@ public class PodcastActivity extends EpisodeListActivity implements
     public void onPodcastSelected(Podcast podcast) {
         this.currentPodcast = podcast;
         this.currentEpisodeList = null;
-        this.multiplePodcastsMode = false;
+        this.contentMode = ContentMode.SINGLE_PODCAST;
 
         // Select in podcast list
         podcastListFragment.select(podcastManager.indexOf(podcast));
@@ -310,7 +334,7 @@ public class PodcastActivity extends EpisodeListActivity implements
                 Intent intent = new Intent(this, ShowEpisodeListActivity.class);
                 intent.putExtra(EpisodeListActivity.PODCAST_URL_KEY,
                         podcast.getUrl().toString());
-                intent.putExtra(MODE_KEY, false);
+                intent.putExtra(MODE_KEY, contentMode);
 
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
@@ -321,7 +345,7 @@ public class PodcastActivity extends EpisodeListActivity implements
     public void onAllPodcastsSelected() {
         this.currentPodcast = null;
         this.currentEpisodeList = new ArrayList<Episode>();
-        this.multiplePodcastsMode = true;
+        this.contentMode = ContentMode.ALL_PODCASTS;
 
         // Prepare podcast list fragment
         podcastListFragment.selectAll();
@@ -349,7 +373,7 @@ public class PodcastActivity extends EpisodeListActivity implements
             case SMALL_PORTRAIT_VIEW:
                 // We need to launch a new activity to display the episode list
                 Intent intent = new Intent(this, ShowEpisodeListActivity.class);
-                intent.putExtra(MODE_KEY, true);
+                intent.putExtra(MODE_KEY, contentMode);
 
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
@@ -360,7 +384,7 @@ public class PodcastActivity extends EpisodeListActivity implements
     public void onNoPodcastSelected() {
         this.currentPodcast = null;
         this.currentEpisodeList = null;
-        this.multiplePodcastsMode = false;
+        this.contentMode = ContentMode.SINGLE_PODCAST;
 
         // Reset podcast list fragment
         podcastListFragment.selectNone();
@@ -380,6 +404,44 @@ public class PodcastActivity extends EpisodeListActivity implements
         }
     }
 
+    public void onDownloadsSelected() {
+        this.currentPodcast = null;
+        this.currentEpisodeList = episodeManager.getDownloads();
+        this.contentMode = ContentMode.DOWNLOADS;
+
+        // Prepare podcast list fragment
+        podcastListFragment.selectNone();
+
+        switch (viewMode) {
+            case SMALL_LANDSCAPE_VIEW:
+                // This will go back to the list view in case we are showing
+                // episode details
+                getFragmentManager().popBackStack();
+                // There is no break here on purpose, we need to run the code
+                // below as well
+            case LARGE_PORTRAIT_VIEW:
+            case LARGE_LANDSCAPE_VIEW:
+                // List fragment is visible, make it show progress UI
+                episodeListFragment.resetAndSpin();
+                episodeListFragment.setShowPodcastNames(true);
+                // Update other UI
+                updateLogoViewMode();
+                updateDivider();
+
+                episodeListFragment.setEpisodeList(currentEpisodeList);
+
+                break;
+            case SMALL_PORTRAIT_VIEW:
+                // We need to launch a new activity to display the list of
+                // downloads
+                Intent intent = new Intent(this, ShowEpisodeListActivity.class);
+                intent.putExtra(MODE_KEY, contentMode);
+
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+        }
+    }
+
     @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
         // Only react on progress here, if the activity is visible
@@ -387,7 +449,7 @@ public class PodcastActivity extends EpisodeListActivity implements
             super.onPodcastLoadProgress(podcast, progress);
 
             // We are in select all mode, show progress in podcast list
-            if (multiplePodcastsMode)
+            if (contentMode.equals(ContentMode.ALL_PODCASTS))
                 podcastListFragment.showProgress(podcastManager.indexOf(podcast), progress);
         }
     }
@@ -427,7 +489,7 @@ public class PodcastActivity extends EpisodeListActivity implements
     protected void updateLogoViewMode() {
         LogoViewMode logoViewMode = LogoViewMode.NONE;
 
-        if (viewMode == LARGE_LANDSCAPE_VIEW && !multiplePodcastsMode)
+        if (viewMode == LARGE_LANDSCAPE_VIEW && contentMode.equals(ContentMode.SINGLE_PODCAST))
             logoViewMode = LogoViewMode.LARGE;
         else if (viewMode == SMALL_PORTRAIT_VIEW)
             logoViewMode = LogoViewMode.SMALL;

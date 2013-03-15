@@ -44,6 +44,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -128,28 +129,34 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            // Get the download id that was clicked (first if multiple)
-            long downloadId = intent
-                    .getLongArrayExtra(DownloadManager.EXTRA_NOTIFICATION_CLICK_DOWNLOAD_IDS)[0];
+            // Get clicked ids
+            long[] downloadIds = intent
+                    .getLongArrayExtra(DownloadManager.EXTRA_NOTIFICATION_CLICK_DOWNLOAD_IDS);
 
-            // Check if this was a download we care for
-            for (EpisodeMetadata meta : metadata.values())
-                if (meta.downloadId != null && meta.downloadId == downloadId) {
-                    // Find download result information
-                    Cursor result = downloadManager.query(new Query().setFilterById(downloadId));
-                    // There should be information on the download
-                    if (result.moveToFirst()) {
-                        // Get the URI for this download
-                        String episodeUri = result.getString(result
-                                .getColumnIndex(DownloadManager.COLUMN_URI));
+            if (downloadIds != null && downloadIds.length > 0) {
+                // Get the download id that was clicked (first if multiple)
+                long downloadId = downloadIds[0];
 
-                        for (OnDownloadEpisodeListener listener : downloadListeners)
-                            listener.onShowDownload(episodeUri);
+                // Check if this was a download we care for
+                for (EpisodeMetadata meta : metadata.values())
+                    if (meta.downloadId != null && meta.downloadId == downloadId) {
+                        // Find download result information
+                        Cursor result = downloadManager
+                                .query(new Query().setFilterById(downloadId));
+                        // There should be information on the download
+                        if (result.moveToFirst()) {
+                            // Get the URI for this download
+                            String episodeUri = result.getString(result
+                                    .getColumnIndex(DownloadManager.COLUMN_URI));
+
+                            for (OnDownloadEpisodeListener listener : downloadListeners)
+                                listener.onShowDownload(episodeUri);
+                        }
+
+                        // Close cursor
+                        result.close();
                     }
-
-                    // Close cursor
-                    result.close();
-                }
+            }
         };
     };
 
@@ -324,10 +331,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
         else {
             EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
 
-            return meta != null
-                    && meta.downloadId != null
-                    && meta.filePath != null
-                    && new File(meta.filePath).exists();
+            return isDownloaded(meta);
         }
     }
 
@@ -350,7 +354,15 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
         }
     }
 
+    /**
+     * Get the list of downloaded episodes. Returns only episodes fully
+     * available locally. The episodes are sorted by date, latest first.
+     * 
+     * @return The list of downloaded episodes (might be empty, but not
+     *         <code>null</code>)
+     */
     public List<Episode> getDownloads() {
+        // Create empty result list
         List<Episode> result = new ArrayList<Episode>();
 
         // Find downloads from metadata
@@ -358,9 +370,9 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
         while (iterator.hasNext()) {
             Entry<URL, EpisodeMetadata> entry = iterator.next();
 
-            if (entry.getValue().downloadId != null && entry.getValue().filePath != null
-                    && new File(entry.getValue().filePath).exists()) {
-
+            // Find records for downloaded episodes
+            if (isDownloaded(entry.getValue())) {
+                // Create the corresponding podcast
                 Podcast podcast;
                 try {
                     podcast = new Podcast(entry.getValue().podcastName, new URL(
@@ -369,11 +381,14 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                     continue;
                 }
 
+                // Create and add the downloaded episode
                 result.add(new Episode(podcast, entry.getValue().episodeName, entry.getKey(), entry
                         .getValue().episodePubDate, entry.getValue().episodeDescription));
             }
         }
 
+        // Sort and return the list
+        Collections.sort(result);
         return result;
     }
 
@@ -429,6 +444,14 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
         return sanitizeAsFilename(episode.getPodcast().getName()) + File.separatorChar +
                 sanitizeAsFilename(episode.getName()) + fileEnding;
+    }
+
+    private boolean isDownloaded(EpisodeMetadata meta) {
+        return meta != null
+                && meta.downloadId != null
+                && meta.filePath != null
+                && new File(meta.filePath).exists();
+
     }
 
     /**
