@@ -174,6 +174,20 @@ public class PodcastActivity extends EpisodeListActivity implements
         restoreSelection();
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        // Recover members (if available)
+        if (intent.getSerializableExtra(MODE_KEY) != null)
+            contentMode = (ContentMode) intent.getSerializableExtra(MODE_KEY);
+
+        currentPodcast = podcastManager.findPodcastForUrl(
+                intent.getStringExtra(PODCAST_URL_KEY));
+        currentEpisode = podcastManager.findEpisodeForUrl(
+                intent.getStringExtra(EPISODE_URL_KEY));
+
+        restoreSelection();
+    }
+
     /**
      * Restore selection to match member variables
      */
@@ -193,18 +207,6 @@ public class PodcastActivity extends EpisodeListActivity implements
             onEpisodeSelected(currentEpisode);
         else
             onNoEpisodeSelected();
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        // Recover members
-        contentMode = (ContentMode) intent.getSerializableExtra(MODE_KEY);
-        currentPodcast = podcastManager.findPodcastForUrl(
-                intent.getStringExtra(PODCAST_URL_KEY));
-        currentEpisode = podcastManager.findEpisodeForUrl(
-                intent.getStringExtra(EPISODE_URL_KEY));
-
-        restoreSelection();
     }
 
     @Override

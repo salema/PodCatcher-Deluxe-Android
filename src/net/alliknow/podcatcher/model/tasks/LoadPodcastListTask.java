@@ -129,7 +129,7 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
 
     @Override
     protected void onPostExecute(List<Podcast> result) {
-        Log.d(getClass().getSimpleName(), "Added " + result.size() + " podcast(s) to list in "
+        Log.i(getClass().getSimpleName(), "Added " + result.size() + " podcast(s) to list in "
                 + (new Date().getTime() - startTime.getTime()) + "ms.");
 
         if (listener != null)

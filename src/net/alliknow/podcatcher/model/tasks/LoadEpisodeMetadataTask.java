@@ -137,7 +137,7 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
 
     @Override
     protected void onPostExecute(Map<URL, EpisodeMetadata> result) {
-        Log.d(getClass().getSimpleName(), "Read " + result.size() + " metadata records in "
+        Log.i(getClass().getSimpleName(), "Read " + result.size() + " metadata records in "
                 + (new Date().getTime() - startTime.getTime()) + "ms.");
 
         if (listener != null)
