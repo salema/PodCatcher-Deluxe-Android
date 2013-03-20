@@ -18,8 +18,8 @@
  */
 -->
 <resources>
-    <string name="app_name">Simple Podcatcher</string>
-    <string name="about">A propos Simple Podcatcher</string>
+    <string name="app_name">Podcatcher Deluxe</string>
+    <string name="about">A propos Podcatcher Deluxe</string>
     <string name="help">Aide</string>
     <string name="wait">Attendre</string>
     <string name="connect">Connecter</string>

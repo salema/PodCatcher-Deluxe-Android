@@ -19,8 +19,8 @@
 -->
 <resources>
     <color name="transparent">@android:color/transparent</color>
-    <color name="theme_light">@android:color/holo_orange_light</color>
-    <color name="theme_dark">@android:color/holo_orange_dark</color>
+    <color name="theme_light">#ffbb9acc</color>
+    <color name="theme_dark">@android:color/holo_purple</color>
     <color name="button_label_enabled">@android:color/white</color>
     <color name="button_label_disabled">@android:color/darker_gray</color>
     <color name="button_green_light">@android:color/holo_green_light</color>
