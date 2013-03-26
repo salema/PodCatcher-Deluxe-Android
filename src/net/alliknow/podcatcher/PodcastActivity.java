@@ -226,6 +226,8 @@ public class PodcastActivity extends EpisodeListActivity implements
 
     @Override
     protected void onPause() {
+        super.onPause();
+
         // Make sure we persist the podcast manager state
         podcastManager.saveState();
     }
