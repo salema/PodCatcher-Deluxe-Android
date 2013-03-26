@@ -358,8 +358,12 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     @SuppressWarnings("unchecked")
     public void saveState() {
         // Store podcast list if dirty
-        if (podcastListChanged)
+        if (podcastListChanged) {
             new StorePodcastListTask(podcatcher.getApplicationContext()).execute(podcastList);
+
+            // Reset the flag, so the list will only be saved if changed again
+            podcastListChanged = false;
+        }
     }
 
     /**
