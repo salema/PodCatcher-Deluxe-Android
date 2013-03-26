@@ -251,6 +251,12 @@ public class PodcastActivity extends EpisodeListActivity implements
     }
 
     @Override
+    protected void onPause() {
+        // Make sure we persist the podcast manager state
+        podcastManager.saveState();
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 

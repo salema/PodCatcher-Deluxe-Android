@@ -72,6 +72,9 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
 
     /** The list of podcasts we know */
     private List<Podcast> podcastList;
+    /** Flag to indicate whether podcast list is dirty */
+    private boolean podcastListChanged;
+
     /** The maximum size we sample podcast logos down to */
     private static final int LOGO_DIMENSION = 250;
 
@@ -136,6 +139,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     public void onPodcastListLoaded(List<Podcast> list) {
         // Set the member
         this.podcastList = list;
+        this.podcastListChanged = false;
 
         // Put some nice sample podcasts for testing
         if (podcatcher.isInDebugMode())
@@ -297,7 +301,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      * @param newPodcast Podcast to add.
      * @see OnChangePodcastListListener
      */
-    @SuppressWarnings("unchecked")
     public void addPodcast(Podcast newPodcast) {
         // Check whether the new podcast is already added
         if (!contains(newPodcast)) {
@@ -309,8 +312,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             for (OnChangePodcastListListener listener : changePodcastListListeners)
                 listener.onPodcastAdded(newPodcast);
 
-            // Store changed list
-            new StorePodcastListTask(podcatcher.getApplicationContext()).execute(podcastList);
+            // Mark podcast list dirty
+            podcastListChanged = true;
         } else
             Log.i(getClass().getSimpleName(), "Podcast \"" + newPodcast.getName()
                     + "\" is already in list.");
@@ -324,7 +327,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      * @param index Index of podcast to remove.
      * @see OnChangePodcastListListener
      */
-    @SuppressWarnings("unchecked")
     public void remove(int index) {
         if (index >= 0 && index < size()) {
             // Remove podcast at given position
@@ -334,11 +336,21 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             for (OnChangePodcastListListener listener : changePodcastListListeners)
                 listener.onPodcastRemoved(removedPodcast);
 
-            // Store changed list
-            new StorePodcastListTask(podcatcher.getApplicationContext()).execute(podcastList);
+            // Mark podcast list dirty
+            podcastListChanged = true;
         } else
             Log.w(getClass().getSimpleName(), "Attempted to remove podcast at invalid position: "
                     + index);
+    }
+
+    /**
+     * Make sure the podcast manager persists its state as needed.
+     */
+    @SuppressWarnings("unchecked")
+    public void saveState() {
+        // Store podcast list if dirty
+        if (podcastListChanged)
+            new StorePodcastListTask(podcatcher.getApplicationContext()).execute(podcastList);
     }
 
     /**
