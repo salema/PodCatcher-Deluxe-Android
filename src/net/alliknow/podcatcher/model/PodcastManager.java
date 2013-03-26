@@ -26,7 +26,6 @@ import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
-import net.alliknow.podcatcher.model.tasks.LoadPodcastListTask;
 import net.alliknow.podcatcher.model.tasks.StorePodcastListTask;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastLogoTask;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask;
@@ -70,8 +69,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
 
     /** The name of the file we store our saved podcasts in (as OPML) */
     public static final String OPML_FILENAME = "podcasts.opml";
-    /** The OPML file encoding */
-    public static final String OPML_FILE_ENCODING = "utf8";
 
     /** The list of podcasts we know */
     private List<Podcast> podcastList;
@@ -101,12 +98,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         // We use some of its method below, so we keep a reference to the
         // application object.
         this.podcatcher = app;
-
-        // Load list of podcasts from OPML file on start-up, listeners will be
-        // notified below.
-        LoadPodcastListTask loadListTask =
-                new LoadPodcastListTask(podcatcher.getApplicationContext(), this);
-        loadListTask.execute((Void) null);
     }
 
     /**
@@ -530,6 +521,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         podcastList.add(createPodcast("D&uuml;de", "http://feeds.feedburner.com/UhhYeahDude"));
         podcastList.add(createPodcast("neo",
                 "http://www.zdf.de/ZDFmediathek/podcast/1446344?view=podcast"));
+        podcastList.add(createPodcast("Little Letter for Gaelic Learners",
+                "http://downloads.bbc.co.uk/podcasts/scotland/litirbheag/rss.xml"));
 
         // Remove null elements if accidentally create and added above
         while (podcastList.remove(null))

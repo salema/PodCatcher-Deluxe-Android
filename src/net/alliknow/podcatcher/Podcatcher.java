@@ -23,8 +23,19 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
+import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
+import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.SuggestionManager;
+import net.alliknow.podcatcher.model.tasks.LoadEpisodeMetadataTask;
+import net.alliknow.podcatcher.model.tasks.LoadPodcastListTask;
+import net.alliknow.podcatcher.model.types.EpisodeMetadata;
+import net.alliknow.podcatcher.model.types.Podcast;
+
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Our application subclass. Holds global state and model. The Podcatcher
@@ -33,7 +44,11 @@ import net.alliknow.podcatcher.model.SuggestionManager;
  * instances of our model data and data managers. In addition, it provides some
  * generic convenience methods.
  */
-public class Podcatcher extends Application {
+public class Podcatcher extends Application implements OnLoadEpisodeMetadataListener,
+        OnLoadPodcastListListener {
+
+    /** Characters not allowed in filenames */
+    private static final String RESERVED_CHARS = "|\\?*<\":>+[]/'#!,";
 
     @Override
     public void onCreate() {
@@ -43,8 +58,36 @@ public class Podcatcher extends Application {
         // since the application is an implicit singleton. We create the other
         // singletons here to make sure they know their application instance.
         PodcastManager.getInstance(this);
+        // And this one as well
+        EpisodeManager.getInstance(this);
         // dito
         SuggestionManager.getInstance(this);
+
+        // Now we will trigger the preparation on start-up, steps include:
+        // 1. Load episode metadata from file
+        // 2. Load podcast list from file
+        // 3. Tell the UI to start
+
+        // This starts step 1
+        new LoadEpisodeMetadataTask(this, this).execute((Void) null);
+    }
+
+    @Override
+    public void onEpisodeMetadataLoaded(Map<URL, EpisodeMetadata> result) {
+        // Step 1 finished
+        // Make episode manager aware
+        EpisodeManager.getInstance().onEpisodeMetadataLoaded(result);
+
+        // This is step 2
+        // Load list of podcasts from OPML file on start-up
+        new LoadPodcastListTask(this, this).execute((Void) null);
+    }
+
+    @Override
+    public void onPodcastListLoaded(List<Podcast> podcastList) {
+        // Step 2 finished
+        // Make episode manager aware (it will notify the UI, step 3)
+        PodcastManager.getInstance().onPodcastListLoaded(podcastList);
     }
 
     /**
@@ -92,5 +135,22 @@ public class Podcatcher extends Application {
         }
 
         return debug;
+    }
+
+    /**
+     * Clean up given string to be suitable as a file/directory name. This works
+     * by removing all reserved chars.
+     * 
+     * @param name The String to clean up (not <code>null</code>).
+     * @return A cleaned string, might have zero length.
+     */
+    public static String sanitizeAsFilename(String name) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < name.length(); i++)
+            if (RESERVED_CHARS.indexOf(name.charAt(i)) == -1)
+                builder.append(name.charAt(i));
+
+        return builder.toString();
     }
 }

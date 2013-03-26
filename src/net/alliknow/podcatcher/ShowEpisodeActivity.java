@@ -20,6 +20,7 @@ package net.alliknow.podcatcher;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
 
 /**
@@ -55,11 +56,26 @@ public class ShowEpisodeActivity extends EpisodeActivity {
             // Set episode in fragment UI
             if (getIntent().getExtras() != null) {
                 String episodeUrl = getIntent().getExtras().getString(EPISODE_URL_KEY);
+                // Try find episode from the podcast manager
                 this.currentEpisode = podcastManager.findEpisodeForUrl(episodeUrl);
+                // If that fails, it might be a download
+                if (currentEpisode == null)
+                    for (Episode download : episodeManager.getDownloads())
+                        if (download.getMediaUrl().toString().equals(episodeUrl))
+                            this.currentEpisode = download;
 
-                episodeFragment.setEpisode(currentEpisode);
-                episodeFragment.setShowEpisodeDate(true);
+                updateUi();
             }
+        }
+    }
+
+    @Override
+    public void onReturnToPlayingEpisode() {
+        if (service != null && service.getCurrentEpisode() != null) {
+            Episode playingEpisode = service.getCurrentEpisode();
+            this.currentEpisode = playingEpisode;
+
+            updateUi();
         }
     }
 
@@ -89,5 +105,12 @@ public class ShowEpisodeActivity extends EpisodeActivity {
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+    }
+
+    private void updateUi() {
+        episodeFragment.setEpisode(this.currentEpisode);
+        episodeFragment.setShowEpisodeDate(true);
+        updateDownloadStatus();
+        updatePlayer();
     }
 }

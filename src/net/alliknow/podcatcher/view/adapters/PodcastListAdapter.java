@@ -85,7 +85,7 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the return view (possibly recycle a used one)
-        View listItemView = findReturnView(convertView, parent, R.layout.list_item);
+        View listItemView = findReturnView(convertView, parent, R.layout.podcast_list_item);
 
         // Set list item color background
         setBackgroundColorForPosition(listItemView, position);

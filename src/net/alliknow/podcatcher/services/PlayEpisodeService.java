@@ -41,9 +41,11 @@ import android.util.Log;
 
 import net.alliknow.podcatcher.EpisodeActivity;
 import net.alliknow.podcatcher.EpisodeListActivity;
+import net.alliknow.podcatcher.EpisodeListActivity.ContentMode;
 import net.alliknow.podcatcher.PodcastActivity;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
+import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
 
 import java.util.HashSet;
@@ -60,6 +62,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         OnCompletionListener, OnErrorListener, OnBufferingUpdateListener,
         OnInfoListener, OnAudioFocusChangeListener {
 
+    /** The episode manager handle */
+    private EpisodeManager episodeManager;
     /** Current episode */
     private Episode currentEpisode;
     /** Our MediaPlayer handle */
@@ -115,6 +119,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         IntentFilter filter = new IntentFilter();
         filter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         registerReceiver(receiver, filter);
+
+        episodeManager = EpisodeManager.getInstance();
     }
 
     @Override
@@ -182,10 +188,20 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             // Start playback for new episode
             try {
                 initPlayer();
-                player.setDataSource(episode.getMediaUrl().toString());
-                player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
-                wifiLock.acquire();
 
+                Log.i(getClass().getSimpleName(),
+                        "Downloaded: " + episodeManager.isDownloaded(episode));
+
+                // Play local file
+                if (episodeManager.isDownloaded(episode))
+                    player.setDataSource(episodeManager.getLocalPath(episode));
+                // Need to resort to remote file
+                else {
+                    player.setDataSource(episode.getMediaUrl().toString());
+                    wifiLock.acquire();
+                }
+
+                player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
                 player.prepareAsync(); // might take long! (for buffering, etc)
             } catch (Exception e) {
                 Log.e(getClass().getSimpleName(), "Prepare/Play failed for episode: " + episode, e);
@@ -436,7 +452,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 getApplicationContext(),
                 0,
                 new Intent(getApplicationContext(), PodcastActivity.class)
-                        .putExtra(EpisodeListActivity.MODE_KEY, false)
+                        .putExtra(EpisodeListActivity.MODE_KEY, ContentMode.SINGLE_PODCAST)
                         .putExtra(EpisodeListActivity.PODCAST_URL_KEY,
                                 currentEpisode.getPodcast().getUrl().toString())
                         .putExtra(EpisodeActivity.EPISODE_URL_KEY,

@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
 /** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
@@ -16,12 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
--->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/episode_download_menuitem"
-        android:icon="@drawable/ic_menu_download"
-        android:showAsAction="always|withText"
-        android:title="@string/download"
-        android:orderInCategory="10" />
-</menu>
+
+package net.alliknow.podcatcher.listeners;
+
+import net.alliknow.podcatcher.model.types.EpisodeMetadata;
+
+import java.net.URL;
+import java.util.Map;
+
+/**
+ * Interface definition for a callback to be invoked when the episode metadata
+ * is loaded.
+ */
+public interface OnLoadEpisodeMetadataListener {
+
+    /**
+     * Called on completion.
+     * 
+     * @param metadata Episode metadata loaded.
+     */
+    public void onEpisodeMetadataLoaded(Map<URL, EpisodeMetadata> metadata);
+
+}

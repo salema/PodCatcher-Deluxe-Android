@@ -19,9 +19,8 @@
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/episode_download_menuitem"
+        android:id="@+id/downloads"
         android:icon="@drawable/ic_menu_download"
-        android:showAsAction="always|withText"
-        android:title="@string/download"
-        android:orderInCategory="10" />
+        android:showAsAction="never|withText"
+        android:title="@string/downloads" />
 </menu>

@@ -38,6 +38,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,6 +51,9 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
     private Context context;
     /** The listener callback */
     private OnLoadPodcastListListener listener;
+
+    /** Member to measure performance */
+    private Date startTime;
 
     /**
      * Create new task.
@@ -67,6 +71,10 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
 
     @Override
     protected List<Podcast> doInBackground(Void... params) {
+        // Record start time
+        this.startTime = new Date();
+
+        // Create resulting data structure and file stream
         List<Podcast> result = new ArrayList<Podcast>();
         InputStream fileStream = null;
 
@@ -79,7 +87,7 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
 
             // 2. Open default podcast file
             fileStream = context.openFileInput(PodcastManager.OPML_FILENAME);
-            parser.setInput(fileStream, PodcastManager.OPML_FILE_ENCODING);
+            parser.setInput(fileStream, StoreFileTask.FILE_ENCODING);
 
             // 3. Parse the OPML file
             int eventType = parser.next();
@@ -119,6 +127,17 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
         return result;
     }
 
+    @Override
+    protected void onPostExecute(List<Podcast> result) {
+        Log.i(getClass().getSimpleName(), "Added " + result.size() + " podcast(s) to list in "
+                + (new Date().getTime() - startTime.getTime()) + "ms.");
+
+        if (listener != null)
+            listener.onPodcastListLoaded(result);
+        else
+            Log.w(getClass().getSimpleName(), "Podcast list loaded, but no listener attached");
+    }
+
     /**
      * Read podcast information from the given parser and create a new podcast
      * object for it.
@@ -151,13 +170,5 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
         }
 
         return null;
-    }
-
-    @Override
-    protected void onPostExecute(List<Podcast> result) {
-        if (listener != null)
-            listener.onPodcastListLoaded(result);
-        else
-            Log.w(getClass().getSimpleName(), "Podcast list loaded, but no listener attached");
     }
 }

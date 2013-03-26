@@ -20,6 +20,7 @@ package net.alliknow.podcatcher;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.view.View;
+import android.widget.BaseAdapter;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
@@ -52,8 +53,20 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
      */
     public static final String MODE_KEY = "MODE_KEY";
 
-    /** Flag to indicate whether we are in multiple podcast mode */
-    protected boolean multiplePodcastsMode = false;
+    /** The options available for the content mode */
+    public enum ContentMode {
+        /** Show single podcast */
+        SINGLE_PODCAST,
+
+        /** Show all podcast */
+        ALL_PODCASTS,
+
+        /** Show downloads */
+        DOWNLOADS
+    };
+
+    /** Member to indicate which mode we are in */
+    protected ContentMode contentMode = ContentMode.SINGLE_PODCAST;
 
     /** The podcast we are showing episodes for */
     protected Podcast currentPodcast;
@@ -86,6 +99,14 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Persist state of episode metadata
+        episodeManager.saveState();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 
@@ -95,7 +116,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
-        if (!multiplePodcastsMode && podcast.equals(currentPodcast))
+        if (contentMode.equals(ContentMode.SINGLE_PODCAST) && podcast.equals(currentPodcast))
             episodeListFragment.showProgress(progress);
     }
 
@@ -103,7 +124,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     public void onPodcastLoaded(Podcast podcast) {
         // Update list fragment to show episode list
         // Select all podcasts
-        if (multiplePodcastsMode) {
+        if (contentMode.equals(ContentMode.ALL_PODCASTS)) {
             // TODO decide on this: episodeList.addAll(list.subList(0,
             // list.size() > 100 ? 100 : list.size() - 1));
             if (podcast.getEpisodeNumber() > 0) {
@@ -113,7 +134,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 episodeListFragment.setEpisodeList(new ArrayList<Episode>(currentEpisodeList));
             }
         } // Select single podcast
-        else if (podcast.equals(currentPodcast)) {
+        else if (contentMode.equals(ContentMode.SINGLE_PODCAST) && podcast.equals(currentPodcast)) {
             currentEpisodeList = podcast.getEpisodes();
             episodeListFragment.setEpisodeList(currentEpisodeList);
         }
@@ -132,7 +153,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     @Override
     public void onPodcastLoadFailed(Podcast failedPodcast) {
         // TODO What happens in multiple podcast mode?
-        if (!multiplePodcastsMode)
+        if (contentMode.equals(ContentMode.SINGLE_PODCAST) && failedPodcast.equals(currentPodcast))
             episodeListFragment.showLoadFailed();
     }
 
@@ -155,6 +176,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             case LARGE_LANDSCAPE_VIEW:
                 // Set episode in episode fragment
                 episodeFragment.setEpisode(selectedEpisode);
+                updateDownloadStatus();
+
                 break;
             case SMALL_LANDSCAPE_VIEW:
                 // Find, and if not already done create, episode fragment
@@ -171,9 +194,11 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                     transaction.commit();
                 }
 
-                // Set the episode
+                // Set the episode and update the UI
                 episodeFragment.setEpisode(selectedEpisode);
                 episodeFragment.setShowEpisodeDate(true);
+                updateDownloadStatus();
+
                 break;
             case SMALL_PORTRAIT_VIEW:
                 // Send intent to open episode as a new activity
@@ -213,11 +238,20 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         updateDivider();
     }
 
+    @Override
+    protected void updateDownloadStatus() {
+        super.updateDownloadStatus();
+
+        if (episodeListFragment != null && episodeListFragment.getListAdapter() != null)
+            ((BaseAdapter) episodeListFragment.getListAdapter()).notifyDataSetChanged();
+    }
+
     /**
      * Update the divider views to reflect current selection state.
      */
     protected void updateDivider() {
-        colorDivider(R.id.divider_first, currentPodcast != null || multiplePodcastsMode);
+        colorDivider(R.id.divider_first,
+                currentPodcast != null || !contentMode.equals(ContentMode.SINGLE_PODCAST));
         colorDivider(R.id.divider_second,
                 currentEpisodeList != null && currentEpisodeList.indexOf(currentEpisode) >= 0);
     }

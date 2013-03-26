@@ -25,8 +25,12 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.listeners.PlayerListener;
 import net.alliknow.podcatcher.model.types.Episode;
@@ -44,7 +48,7 @@ import java.util.TimerTask;
  * or simply show this layout.
  */
 public abstract class EpisodeActivity extends BaseActivity implements
-        PlayerListener, PlayServiceListener {
+        OnDownloadEpisodeListener, PlayerListener, PlayServiceListener {
 
     /** The current episode fragment */
     protected EpisodeFragment episodeFragment;
@@ -109,6 +113,10 @@ public abstract class EpisodeActivity extends BaseActivity implements
         // The episode fragment to use
         if (episodeFragment == null)
             episodeFragment = (EpisodeFragment) findByTagId(R.string.episode_fragment_tag);
+
+        // We have to do this here instead of onCreate since we can only react
+        // on the call-backs properly once we have our fragment
+        episodeManager.addDownloadListener(this);
     }
 
     @Override
@@ -131,6 +139,10 @@ public abstract class EpisodeActivity extends BaseActivity implements
     protected void onDestroy() {
         super.onDestroy();
 
+        // Disconnect from episode manager
+        episodeManager.removeDownloadListener(this);
+
+        // Stop the timer
         playUpdateTimer.cancel();
 
         // Detach from play service (prevents leaking)
@@ -138,6 +150,35 @@ public abstract class EpisodeActivity extends BaseActivity implements
             service.removePlayServiceListener(this);
             unbindService(connection);
         }
+    }
+
+    @Override
+    public void onToggleDownload() {
+        // Check for action to perform
+        boolean download = !(episodeManager.isDownloading(currentEpisode) ||
+                episodeManager.isDownloaded(currentEpisode));
+
+        // Kick off the appropriate action
+        if (download) {
+            episodeManager.download(currentEpisode);
+
+            showDownloadToast();
+        }
+        else
+            episodeManager.deleteDownload(currentEpisode);
+
+        // Update the UI
+        updateDownloadStatus();
+    }
+
+    @Override
+    public void onDownloadSuccess() {
+        updateDownloadStatus();
+    }
+
+    @Override
+    public void onDownloadFailed() {
+        updateDownloadStatus();
     }
 
     @Override
@@ -174,16 +215,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
         } else
             Log.w(getClass().getSimpleName(),
                     "Cannot play/pause episode (service null or unprepared)");
-    }
-
-    @Override
-    public void onReturnToPlayingEpisode() {
-        if (service != null && service.getCurrentEpisode() != null) {
-            Episode playingEpisode = service.getCurrentEpisode();
-
-            this.currentEpisode = playingEpisode;
-            episodeFragment.setEpisode(playingEpisode);
-        }
     }
 
     @Override
@@ -257,6 +288,21 @@ public abstract class EpisodeActivity extends BaseActivity implements
     protected abstract void updateActionBar();
 
     /**
+     * Update the download menu item state and visibility
+     */
+    protected void updateDownloadStatus() {
+        if (episodeFragment != null) {
+            final boolean downloading = episodeManager.isDownloading(currentEpisode);
+            final boolean downloaded = episodeManager.isDownloaded(currentEpisode);
+
+            episodeFragment.setDownloadMenuItemVisibility(currentEpisode != null,
+                    !(downloading || downloaded));
+
+            episodeFragment.setDownloadIconVisibility(downloading || downloaded, downloaded);
+        }
+    }
+
+    /**
      * Update the player fragment UI to reflect current state of play.
      */
     protected void updatePlayer() {
@@ -312,6 +358,16 @@ public abstract class EpisodeActivity extends BaseActivity implements
             playUpdateTimerTask.cancel();
             playUpdateTimerTask = null;
         }
+    }
+
+    private void showDownloadToast() {
+        Toast toast = Toast.makeText(this,
+                "Started download for \n\"" + currentEpisode.getName() + "\"", Toast.LENGTH_SHORT);
+
+        TextView textView = (TextView) toast.getView().findViewById(android.R.id.message);
+        textView.setGravity(Gravity.CENTER);
+
+        toast.show();
     }
 
     /** Defines callbacks for service binding, passed to bindService() */

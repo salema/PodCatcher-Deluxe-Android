@@ -19,9 +19,13 @@
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/episode_download_menuitem"
+        android:id="@+id/episode_download_contextmenuitem"
         android:icon="@drawable/ic_menu_download"
         android:showAsAction="always|withText"
-        android:title="@string/download"
-        android:orderInCategory="10" />
+        android:title="@string/download" />
+    <item
+        android:id="@+id/episode_remove_contextmenuitem"
+        android:icon="@drawable/ic_menu_delete"
+        android:showAsAction="always|withText"
+        android:title="@string/remove" />
 </menu>

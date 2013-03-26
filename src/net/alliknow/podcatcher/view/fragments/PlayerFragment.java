@@ -143,7 +143,7 @@ public class PlayerFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.episode, menu);
+        inflater.inflate(R.menu.player, menu);
 
         loadMenuItem = menu.findItem(R.id.episode_load_menuitem);
         setLoadMenuItemVisibility(showLoadMenuItem, loadMenuItemState);

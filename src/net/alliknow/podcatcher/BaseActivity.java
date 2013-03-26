@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.PodcastManager;
 
 /**
@@ -35,6 +36,8 @@ public abstract class BaseActivity extends Activity {
 
     /** The podcast manager handle */
     protected PodcastManager podcastManager;
+    /** The episode manager handle */
+    protected EpisodeManager episodeManager;
 
     /** The currently active view mode */
     protected int viewMode;
@@ -74,8 +77,9 @@ public abstract class BaseActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Set the data manager
+        // Set the data managers
         podcastManager = PodcastManager.getInstance();
+        episodeManager = EpisodeManager.getInstance();
 
         // Set the view mode member
         viewMode = determineViewMode();
