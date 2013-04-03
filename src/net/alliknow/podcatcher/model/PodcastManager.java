@@ -406,10 +406,15 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      * @return The podcast object, or <code>null</code> if not found.
      */
     public Podcast findPodcastForUrl(String url) {
-        // Find the podcast object
-        for (Podcast podcast : podcastList)
-            if (podcast.getUrl().toString().equals(url))
-                return podcast;
+        // Make sure search only runs once the podcast list is actually
+        // available.
+        if (podcastList != null) {
+
+            // Find the podcast object
+            for (Podcast podcast : podcastList)
+                if (podcast.getUrl().toString().equals(url))
+                    return podcast;
+        }
 
         return null;
     }
@@ -422,11 +427,17 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      * @return The episode object, or <code>null</code> if not found.
      */
     public Episode findEpisodeForUrl(String url) {
-        for (Podcast podcast : podcastList)
-            if (podcast.getEpisodeNumber() > 0)
-                for (Episode episode : podcast.getEpisodes())
-                    if (episode.getMediaUrl().toString().equals(url))
-                        return episode;
+        // Make sure search only runs once the podcast list is actually
+        // available.
+        if (podcastList != null) {
+
+            // Go try find the episode
+            for (Podcast podcast : podcastList)
+                if (podcast.getEpisodeNumber() > 0)
+                    for (Episode episode : podcast.getEpisodes())
+                        if (episode.getMediaUrl().toString().equals(url))
+                            return episode;
+        }
 
         return null;
     }
