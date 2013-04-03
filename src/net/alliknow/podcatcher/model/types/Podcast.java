@@ -306,26 +306,31 @@ public class Podcast implements Comparable<Podcast> {
     }
 
     private void loadImage(XmlPullParser parser) throws XmlPullParserException, IOException {
-        // HREF attribute used?
-        if (parser.getAttributeValue("", RSS.HREF) != null)
-            logoUrl = createLogoUrl(parser.getAttributeValue("", RSS.HREF));
-        // URL tag used!
-        else {
-            // Make sure we start at image tag
-            parser.require(XmlPullParser.START_TAG, "", RSS.IMAGE);
+        try {
+            // HREF attribute used?
+            if (parser.getAttributeValue("", RSS.HREF) != null)
+                logoUrl = createLogoUrl(parser.getAttributeValue("", RSS.HREF));
+            // URL tag used!
+            else {
+                // Make sure we start at image tag
+                parser.require(XmlPullParser.START_TAG, "", RSS.IMAGE);
 
-            // Look at all start tags of this image
-            while (parser.nextTag() == XmlPullParser.START_TAG) {
-                // URL tag found
-                if (parser.getName().equalsIgnoreCase(RSS.URL))
-                    logoUrl = createLogoUrl(parser.nextText());
-                // Unneeded node, skip...
-                else
-                    ParserUtils.skipSubTree(parser);
+                // Look at all start tags of this image
+                while (parser.nextTag() == XmlPullParser.START_TAG) {
+                    // URL tag found
+                    if (parser.getName().equalsIgnoreCase(RSS.URL))
+                        logoUrl = createLogoUrl(parser.nextText());
+                    // Unneeded node, skip...
+                    else
+                        ParserUtils.skipSubTree(parser);
+                }
+
+                // Make sure we end at image tag
+                parser.require(XmlPullParser.END_TAG, "", RSS.IMAGE);
             }
-
-            // Make sure we end at image tag
-            parser.require(XmlPullParser.END_TAG, "", RSS.IMAGE);
+        } catch (XmlPullParserException e) {
+            // The podcast logo information could not be read from the RSS file,
+            // skip...
         }
     }
 

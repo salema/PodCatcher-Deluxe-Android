@@ -170,12 +170,14 @@ public class EpisodeFragment extends Fragment {
         // If the fragment's view is actually visible and the episode is valid,
         // show episode information
         if (viewCreated && currentEpisode != null) {
+            // Title and sub-title
             titleView.setText(currentEpisode.getName());
             subtitleView.setText(currentEpisode.getPodcast().getName());
-            if (showEpisodeDate)
+            // Episode publication data
+            if (showEpisodeDate && currentEpisode.getPubDate() != null)
                 subtitleView.setText(subtitleView.getText() + SEPARATOR
                         + Utils.getRelativePubDate(currentEpisode));
-
+            // Episode description
             descriptionView.loadDataWithBaseURL(null, currentEpisode.getDescription(),
                     "text/html",
                     "utf-8", null);
@@ -216,7 +218,7 @@ public class EpisodeFragment extends Fragment {
      * "is downloaded" and <code>false</code> for "is currently downloading".
      * 
      * @param show Whether to show the download menu item.
-     * @param download State of the download menu item (download / delete)
+     * @param downloaded State of the download menu item (download / delete)
      */
     public void setDownloadIconVisibility(boolean show, boolean downloaded) {
         this.showDownloadIcon = show;
