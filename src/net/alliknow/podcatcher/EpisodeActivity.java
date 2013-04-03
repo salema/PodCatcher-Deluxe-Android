@@ -346,9 +346,14 @@ public abstract class EpisodeActivity extends BaseActivity implements
             // there is actually some progress to monitor
             if (playUpdateTimerTask == null && !seeking) {
                 PlayProgressTask task = new PlayProgressTask();
-                playUpdateTimer.schedule(task, 0, 1000);
 
-                playUpdateTimerTask = task;
+                try {
+                    playUpdateTimer.schedule(task, 0, 1000);
+                    playUpdateTimerTask = task;
+                } catch (IllegalStateException e) {
+                    // In rare cases, the timer might be canceled (the activity
+                    // is going down) while schedule() is called, skip...
+                }
             }
         }
     }

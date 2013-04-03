@@ -110,6 +110,7 @@ public class ShowEpisodeActivity extends EpisodeActivity {
     private void updateUi() {
         episodeFragment.setEpisode(this.currentEpisode);
         episodeFragment.setShowEpisodeDate(true);
+
         updateDownloadStatus();
         updatePlayer();
     }
