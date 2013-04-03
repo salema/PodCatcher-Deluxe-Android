@@ -40,9 +40,9 @@ public abstract class StoreFileTask<Params> extends AsyncTask<Params, Progress, 
     protected BufferedWriter writer;
 
     /**
-     * @param level
-     * @param line
-     * @throws IOException
+     * @param level Indent level to put in front of line.
+     * @param line Actual text to write.
+     * @throws IOException If writing the line goes wrong.
      */
     protected void writeLine(int level, String line) throws IOException {
         for (int i = 0; i < level * 2; i++)

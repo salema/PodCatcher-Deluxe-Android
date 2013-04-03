@@ -414,6 +414,9 @@ public class PodcastActivity extends EpisodeListActivity implements
         }
     }
 
+    /**
+     * Content mode changed to <strong>Downloads</strong>.
+     */
     public void onDownloadsSelected() {
         this.currentPodcast = null;
         this.currentEpisodeList = episodeManager.getDownloads();

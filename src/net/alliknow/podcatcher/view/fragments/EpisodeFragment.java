@@ -218,7 +218,7 @@ public class EpisodeFragment extends Fragment {
      * "is downloaded" and <code>false</code> for "is currently downloading".
      * 
      * @param show Whether to show the download menu item.
-     * @param download State of the download menu item (download / delete)
+     * @param downloaded State of the download menu item (download / delete)
      */
     public void setDownloadIconVisibility(boolean show, boolean downloaded) {
         this.showDownloadIcon = show;
