@@ -13,3 +13,4 @@ When a podcast is tapped and the data is older then 30 minutes but the reload of
 Cache podcast logos in download folders and use them instead of reloading them all the time
 Hide the "play" button in small-landscape mode when episode fragment is not visible
 Hide episode name and seek bar from player in small landscape mode
+Podcast and episode names might contain characters that break the XML structure of the episode metadata file
