@@ -102,7 +102,7 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMeta
         if (value.episodePubDate != null)
             writeLine(2, "<" + EPISODE_DATE + ">" + value.episodePubDate.getTime() + "</"
                     + EPISODE_DATE + ">");
-        writeData(TextUtils.htmlEncode(value.episodeDescription), EPISODE_DESCRIPTION);
+        writeData(value.episodeDescription, EPISODE_DESCRIPTION);
         writeData(value.podcastName, PODCAST_NAME);
         writeData(value.podcastUrl, PODCAST_URL);
         writeData(value.downloadId, DOWNLOAD_ID);
@@ -114,7 +114,7 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMeta
     private void writeData(Object data, String tag) throws IOException {
         // For all fields: only write data that is actually there!
         if (data != null)
-            writeLine(2, "<" + tag + ">" + data + "</" + tag + ">");
+            writeLine(2, "<" + tag + ">" + TextUtils.htmlEncode(data.toString()) + "</" + tag + ">");
     }
 
     private void writeHeader() throws IOException {

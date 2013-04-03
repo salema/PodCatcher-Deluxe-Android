@@ -48,7 +48,7 @@ public class Podcatcher extends Application implements OnLoadEpisodeMetadataList
         OnLoadPodcastListListener {
 
     /** Characters not allowed in filenames */
-    private static final String RESERVED_CHARS = "|\\?*<\":>+[]/'#!,";
+    private static final String RESERVED_CHARS = "|\\?*<\":>+[]/'#!,&";
 
     @Override
     public void onCreate() {
