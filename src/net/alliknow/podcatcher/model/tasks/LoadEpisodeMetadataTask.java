@@ -178,6 +178,8 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
                     result.downloadId = Long.parseLong(parser.nextText());
                 else if (tagName.equalsIgnoreCase(METADATA.LOCAL_FILE_PATH))
                     result.filePath = parser.nextText();
+                else if (tagName.equalsIgnoreCase(METADATA.EPISODE_RESUME_AT))
+                    result.resumeAt = Integer.parseInt(parser.nextText());
             }
 
             // Done, get next parsing event

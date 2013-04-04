@@ -433,6 +433,46 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     }
 
     /**
+     * Set the resume time meta data field for an episode.
+     * 
+     * @param episode Episode to set resume time for.
+     * @param at Time in millis from the start of the episode's media file to
+     *            resume playback from. Give <code>null</code> to reset.
+     */
+    public void setResumeAt(Episode episode, Integer at) {
+        if (episode != null && episode.getMediaUrl() != null) {
+            EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+
+            // Metadata not yet created
+            if (meta == null && at != null) {
+                meta = new EpisodeMetadata();
+                meta.resumeAt = at;
+
+                metadata.put(episode.getMediaUrl(), meta);
+            } // Metadata available
+            else
+                meta.resumeAt = at;
+        }
+    }
+
+    /**
+     * Get the resume time meta data field for an episode.
+     * 
+     * @param episode Episode to get resume time for.
+     * @return The resume time as millis from the start or zero if not set.
+     */
+    public int getResumeAt(Episode episode) {
+        if (episode != null && episode.getMediaUrl() != null) {
+            EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+
+            if (meta != null && meta.resumeAt != null)
+                return meta.resumeAt;
+        }
+
+        return 0;
+    }
+
+    /**
      * Find the path relative to the base directory the local episode file
      * should be located in.
      * 

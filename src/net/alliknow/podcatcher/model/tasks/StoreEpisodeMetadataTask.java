@@ -21,6 +21,7 @@ import static net.alliknow.podcatcher.model.tags.METADATA.DOWNLOAD_ID;
 import static net.alliknow.podcatcher.model.tags.METADATA.EPISODE_DATE;
 import static net.alliknow.podcatcher.model.tags.METADATA.EPISODE_DESCRIPTION;
 import static net.alliknow.podcatcher.model.tags.METADATA.EPISODE_NAME;
+import static net.alliknow.podcatcher.model.tags.METADATA.EPISODE_RESUME_AT;
 import static net.alliknow.podcatcher.model.tags.METADATA.EPISODE_URL;
 import static net.alliknow.podcatcher.model.tags.METADATA.LOCAL_FILE_PATH;
 import static net.alliknow.podcatcher.model.tags.METADATA.METADATA;
@@ -100,21 +101,31 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMeta
 
         writeData(value.episodeName, EPISODE_NAME);
         if (value.episodePubDate != null)
-            writeLine(2, "<" + EPISODE_DATE + ">" + value.episodePubDate.getTime() + "</"
-                    + EPISODE_DATE + ">");
+            writeData(value.episodePubDate.getTime(), EPISODE_DATE);
         writeData(value.episodeDescription, EPISODE_DESCRIPTION);
         writeData(value.podcastName, PODCAST_NAME);
         writeData(value.podcastUrl, PODCAST_URL);
         writeData(value.downloadId, DOWNLOAD_ID);
         writeData(value.filePath, LOCAL_FILE_PATH);
+        writeData(value.resumeAt, EPISODE_RESUME_AT);
 
         writeLine(1, "</" + METADATA + ">");
     }
 
-    private void writeData(Object data, String tag) throws IOException {
+    private void writeData(String data, String tag) throws IOException {
         // For all fields: only write data that is actually there!
         if (data != null)
-            writeLine(2, "<" + tag + ">" + TextUtils.htmlEncode(data.toString()) + "</" + tag + ">");
+            writeLine(2, "<" + tag + ">" + TextUtils.htmlEncode(data) + "</" + tag + ">");
+    }
+
+    private void writeData(Long data, String tag) throws IOException {
+        // For all fields: only write data that is actually there!
+        if (data != null)
+            writeLine(2, "<" + tag + ">" + data + "</" + tag + ">");
+    }
+
+    private void writeData(Integer data, String tag) throws IOException {
+        writeData(Long.valueOf(data), tag);
     }
 
     private void writeHeader() throws IOException {

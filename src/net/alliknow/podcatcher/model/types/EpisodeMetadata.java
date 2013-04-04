@@ -45,13 +45,16 @@ public class EpisodeMetadata {
     public Long downloadId;
     /** The absolute local filepath to the downloaded copy of this episode. */
     public String filePath;
+    /** The time in millis to resume episode playback at */
+    public Integer resumeAt;
 
     /**
      * @return Whether the metadata is actually need because it has any data.
      */
     public boolean hasData() {
         return downloadId != null ||
-                filePath != null;
+                filePath != null ||
+                resumeAt != null;
     }
 
     /**
