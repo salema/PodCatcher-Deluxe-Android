@@ -125,7 +125,8 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMeta
     }
 
     private void writeData(Integer data, String tag) throws IOException {
-        writeData(Long.valueOf(data), tag);
+        if (data != null)
+            writeData(Long.valueOf(data), tag);
     }
 
     private void writeHeader() throws IOException {
