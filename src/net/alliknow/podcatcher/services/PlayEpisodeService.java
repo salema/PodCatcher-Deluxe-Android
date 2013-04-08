@@ -189,9 +189,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             try {
                 initPlayer();
 
-                Log.i(getClass().getSimpleName(),
-                        "Downloaded: " + episodeManager.isDownloaded(episode));
-
                 // Play local file
                 if (episodeManager.isDownloaded(episode))
                     player.setDataSource(episodeManager.getLocalPath(episode));
@@ -337,6 +334,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             hasFocus = true;
+            player.seekTo(episodeManager.getResumeAt(currentEpisode));
             player.start();
 
             putForeground();
@@ -414,6 +412,9 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
      * Reset the service to creation state.
      */
     public void reset() {
+        // Store resume at time
+        storeResumeAt();
+
         // Stop current playback if any
         if (isPlaying())
             player.stop();
@@ -432,6 +433,19 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         if (player != null) {
             player.release();
             player = null;
+        }
+    }
+
+    private void storeResumeAt() {
+        if (currentEpisode != null && player != null) {
+            final int position = player.getCurrentPosition();
+            final int duration = player.getDuration();
+
+            // Only set resume at time if it is actually interesting, i.e. not
+            // at the beginning or very close to the end (position == duration
+            // might not be true even after player called onCompletion)
+            episodeManager.setResumeAt(currentEpisode,
+                    position == 0 || position / (float) duration > 0.99 ? null : position);
         }
     }
 

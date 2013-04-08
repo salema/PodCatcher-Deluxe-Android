@@ -197,10 +197,13 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
 
         while (iterator.hasNext()) {
             Entry<URL, EpisodeMetadata> entry = iterator.next();
+            // Skip all entries without a download id
+            if (entry.getValue().downloadId == null)
+                continue;
+
             File downloadPath = getDownloadLocationFor(entry);
 
-            if (entry.getValue().downloadId != null && entry.getValue().filePath == null
-                    && downloadPath.exists())
+            if (entry.getValue().filePath == null && downloadPath.exists())
                 entry.getValue().filePath = downloadPath.getAbsolutePath();
         }
 
@@ -211,11 +214,17 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
 
         while (iterator.hasNext()) {
             Entry<URL, EpisodeMetadata> entry = iterator.next();
+            // Skip all entries without a download id
+            if (entry.getValue().downloadId == null)
+                continue;
+
             File downloadPath = getDownloadLocationFor(entry);
 
-            if (entry.getValue().downloadId != null && entry.getValue().filePath != null
-                    && !downloadPath.exists())
-                iterator.remove();
+            // Invalidate file path and download id data
+            if (entry.getValue().filePath != null && !downloadPath.exists()) {
+                entry.getValue().downloadId = null;
+                entry.getValue().filePath = null;
+            }
         }
     }
 
