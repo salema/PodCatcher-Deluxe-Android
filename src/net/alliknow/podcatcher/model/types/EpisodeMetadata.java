@@ -31,6 +31,20 @@ import java.util.Date;
  */
 public class EpisodeMetadata {
 
+    /** The download manager id for this episode. */
+    public Long downloadId;
+    /** The absolute local filepath to the downloaded copy of this episode. */
+    public String filePath;
+    /** The time in millis to resume episode playback at */
+    public Integer resumeAt;
+    /** The state information (old/new) for the episode */
+    public Boolean isOld;
+
+    /**
+     * Extra information to make it possible to actually display an episode not
+     * available from any podcast. It is not essential for the metadata record
+     * and is only needed if the episode is downloaded.
+     */
     /** The name of the podcast this episode belongs to */
     public String podcastName;
     /** The URL of the podcast this episode belongs to */
@@ -41,12 +55,6 @@ public class EpisodeMetadata {
     public Date episodePubDate;
     /** The episode description for this metadata */
     public String episodeDescription;
-    /** The download manager id for this episode. */
-    public Long downloadId;
-    /** The absolute local filepath to the downloaded copy of this episode. */
-    public String filePath;
-    /** The time in millis to resume episode playback at */
-    public Integer resumeAt;
 
     /**
      * @return Whether the metadata is actually need because it has any data.
@@ -54,7 +62,8 @@ public class EpisodeMetadata {
     public boolean hasData() {
         return downloadId != null ||
                 filePath != null ||
-                resumeAt != null;
+                resumeAt != null ||
+                isOld != null;
     }
 
     /**

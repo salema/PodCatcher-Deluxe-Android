@@ -26,6 +26,7 @@ public class METADATA {
 
     public static final String EPISODE_URL = "episodeUrl";
     public static final String EPISODE_RESUME_AT = "resumeAt";
+    public static final String EPISODE_STATE = "isOld";
     public static final String DOWNLOAD_ID = "downloadId";
     public static final String EPISODE_NAME = "episodeName";
     public static final String EPISODE_DATE = "episodeDate";

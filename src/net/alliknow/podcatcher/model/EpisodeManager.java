@@ -432,6 +432,34 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
         downloadListeners.remove(listener);
     }
 
+    public void setState(Episode episode, Boolean isOld) {
+        if (episode != null && episode.getMediaUrl() != null) {
+            EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+
+            // Metadata not yet created
+            if (meta == null && isOld != null && isOld) {
+                meta = new EpisodeMetadata();
+                meta.isOld = isOld;
+
+                metadata.put(episode.getMediaUrl(), meta);
+            } // Metadata available
+            else
+                // We do not need to set this if false, simply remove the record
+                meta.isOld = (isOld != null && isOld ? true : null);
+        }
+    }
+
+    public boolean getState(Episode episode) {
+        if (episode != null && episode.getMediaUrl() != null) {
+            EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+
+            if (meta != null && meta.isOld != null)
+                return meta.isOld;
+        }
+
+        return false;
+    }
+
     /**
      * Set the resume time meta data field for an episode.
      * 
