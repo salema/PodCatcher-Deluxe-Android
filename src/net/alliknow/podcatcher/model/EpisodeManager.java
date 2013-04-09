@@ -37,6 +37,7 @@ import net.alliknow.podcatcher.EpisodeListActivity;
 import net.alliknow.podcatcher.EpisodeListActivity.ContentMode;
 import net.alliknow.podcatcher.PodcastActivity;
 import net.alliknow.podcatcher.Podcatcher;
+import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
 import net.alliknow.podcatcher.model.tasks.StoreEpisodeMetadataTask;
@@ -74,6 +75,8 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
     /** The call-back set for the complete download listeners */
     private Set<OnDownloadEpisodeListener> downloadListeners = new HashSet<OnDownloadEpisodeListener>();
+    /** The call-back set for the episode state changed listeners */
+    private Set<OnChangeEpisodeStateListener> stateListeners = new HashSet<OnChangeEpisodeStateListener>();
 
     /** The receiver we register for episode downloads */
     private BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
@@ -432,6 +435,13 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
         downloadListeners.remove(listener);
     }
 
+    /**
+     * Set the old/new state for an episode.
+     * 
+     * @param episode Episode to set state for (not <code>null</code>).
+     * @param isOld State to set, give <code>null</code> to reset the value to
+     *            the default.
+     */
     public void setState(Episode episode, Boolean isOld) {
         if (episode != null && episode.getMediaUrl() != null) {
             EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
@@ -446,9 +456,20 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
             else
                 // We do not need to set this if false, simply remove the record
                 meta.isOld = (isOld != null && isOld ? true : null);
+
+            // Alert listeners
+            for (OnChangeEpisodeStateListener listener : stateListeners)
+                listener.onStateChanged(episode);
         }
     }
 
+    /**
+     * Get the state information for an episode.
+     * 
+     * @param episode Episode to get old/new state for.
+     * @return The state: <code>true</code> if the episode is marked old,
+     *         <code>false</code> otherwise.
+     */
     public boolean getState(Episode episode) {
         if (episode != null && episode.getMediaUrl() != null) {
             EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
@@ -458,6 +479,26 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
         }
 
         return false;
+    }
+
+    /**
+     * Add a state changed listener.
+     * 
+     * @param listener Listener to add.
+     * @see OnChangeEpisodeStateListener
+     */
+    public void addStateChangedListener(OnChangeEpisodeStateListener listener) {
+        stateListeners.add(listener);
+    }
+
+    /**
+     * Remove a download listener.
+     * 
+     * @param listener Listener to remove.
+     * @see OnChangeEpisodeStateListener
+     */
+    public void removeStateChangedListener(OnChangeEpisodeStateListener listener) {
+        stateListeners.remove(listener);
     }
 
     /**
