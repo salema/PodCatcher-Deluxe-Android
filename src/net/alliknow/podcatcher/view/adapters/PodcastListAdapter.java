@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.HorizontalProgressView;
@@ -43,6 +44,11 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
     /** Member flag to indicate whether we show the podcast logo */
     protected boolean showLogoView = false;
 
+    /** The podcast manager handle */
+    private final PodcastManager podcastManager;
+    /** The episode manager handle */
+    private final EpisodeManager episodeManager;
+
     /**
      * Create new adapter.
      * 
@@ -53,6 +59,8 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
         super(context);
 
         this.list = podcastList;
+        this.podcastManager = PodcastManager.getInstance();
+        this.episodeManager = EpisodeManager.getInstance();
     }
 
     /**
@@ -92,14 +100,13 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 
         // Find podcast to represent
         final Podcast podcast = list.get(position);
-        final int episodeNumber = podcast.getEpisodeNumber();
 
         // Set the text to display for title
         setText(listItemView, R.id.list_item_title, podcast.getName());
         // Set the text to display as caption
         TextView captionView = (TextView) listItemView.findViewById(R.id.list_item_caption);
-        captionView.setText(createCaption(episodeNumber));
-        captionView.setVisibility(episodeNumber != 0 ? VISIBLE : GONE);
+        captionView.setText(createCaption(podcast));
+        captionView.setVisibility(podcast.getEpisodeNumber() != 0 ? VISIBLE : GONE);
 
         // Check whether we should show the podcast logo
         boolean show = showLogoView && podcast.getLogo() != null;
@@ -111,14 +118,26 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
         // Show progress on select all podcasts?
         HorizontalProgressView progressView = (HorizontalProgressView)
                 listItemView.findViewById(R.id.list_item_progress);
-        progressView.setVisibility(PodcastManager.getInstance().isLoading(podcast)
+        progressView.setVisibility(podcastManager.isLoading(podcast)
                 && selectAll ? VISIBLE : GONE);
 
         return listItemView;
     }
 
-    private String createCaption(int numberOfEpisodes) {
-        return numberOfEpisodes == 1 ? resources.getString(R.string.one_episode) :
-                numberOfEpisodes + " " + resources.getString(R.string.episodes);
+    private String createCaption(Podcast podcast) {
+        final int numberOfEpisodes = podcast.getEpisodeNumber();
+        final int numberOfNewEpisodes = episodeManager.getNewEpisodeCount(podcast);
+
+        String caption = "";
+
+        if (numberOfNewEpisodes == 0)
+            caption += resources.getString(R.string.no_new_episodes);
+        else if (numberOfNewEpisodes == 1)
+            caption += resources.getString(R.string.one_new_episode);
+        else
+            caption += numberOfNewEpisodes + " " + resources.getString(R.string.new_episodes);
+
+        return caption +
+                " (" + numberOfEpisodes + " " + resources.getString(R.string.total_episodes) + ")";
     }
 }

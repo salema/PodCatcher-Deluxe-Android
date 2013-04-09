@@ -43,6 +43,7 @@ import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
 import net.alliknow.podcatcher.model.tasks.StoreEpisodeMetadataTask;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
+import net.alliknow.podcatcher.model.types.Podcast;
 
 import java.io.File;
 import java.net.URL;
@@ -479,6 +480,23 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
         }
 
         return false;
+    }
+
+    /**
+     * Count the number of episodes not marked old for given podcast.
+     * 
+     * @param podcast Podcast to count for.
+     * @return The number of new episode in the podcast.
+     */
+    public int getNewEpisodeCount(Podcast podcast) {
+        int count = 0;
+
+        if (podcast != null)
+            for (Episode episode : podcast.getEpisodes())
+                if (!getState(episode))
+                    count++;
+
+        return count;
     }
 
     /**

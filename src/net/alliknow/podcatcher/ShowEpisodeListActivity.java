@@ -97,6 +97,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     protected void onResume() {
         super.onResume();
 
+        updateNewStatus();
         updateDownloadStatus();
     }
 

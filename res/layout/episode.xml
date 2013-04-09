@@ -56,13 +56,26 @@
                 android:textSize="@dimen/font_size_small"
                 android:visibility="gone" />
         </LinearLayout>
-        <ImageView
-            android:id="@+id/download_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="bottom"
-            android:scaleType="centerInside"
-            android:visibility="gone" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/state_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="top"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_media_new"
+                android:visibility="gone" />
+            <ImageView
+                android:id="@+id/download_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="bottom"
+                android:scaleType="centerInside"
+                android:visibility="gone" />
+        </LinearLayout>
     </LinearLayout>
     <ImageView
         android:id="@+id/episode_divider"

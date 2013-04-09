@@ -74,6 +74,8 @@ public class EpisodeFragment extends Fragment {
     private TextView titleView;
     /** The podcast title view */
     private TextView subtitleView;
+    /** The state icon view */
+    private ImageView stateIconView;
     /** The download icon view */
     private ImageView downloadIconView;
     /** The divider view between title and description */
@@ -116,6 +118,7 @@ public class EpisodeFragment extends Fragment {
         emptyView = getView().findViewById(android.R.id.empty);
         titleView = (TextView) getView().findViewById(R.id.episode_title);
         subtitleView = (TextView) getView().findViewById(R.id.podcast_title);
+        stateIconView = (ImageView) getView().findViewById(R.id.state_icon);
         downloadIconView = (ImageView) getView().findViewById(R.id.download_icon);
         descriptionView = (WebView) getView().findViewById(R.id.episode_description);
         dividerView = getView().findViewById(R.id.episode_divider);
@@ -242,6 +245,11 @@ public class EpisodeFragment extends Fragment {
      */
     public void setShowEpisodeDate(boolean show) {
         this.showEpisodeDate = show;
+    }
+
+    public void setShowNewIcon(boolean show) {
+        if (viewCreated)
+            stateIconView.setVisibility(show ? VISIBLE : GONE);
     }
 
     private void updateUiElementVisibility() {

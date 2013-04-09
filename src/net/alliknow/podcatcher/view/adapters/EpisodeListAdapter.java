@@ -130,8 +130,11 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
 
     private void updateIcons(View listItemView, Episode episode) {
         ImageView downloadIconView = (ImageView) listItemView.findViewById(R.id.download_icon);
-        boolean downloading = episodeManager.isDownloading(episode);
-        boolean downloaded = episodeManager.isDownloaded(episode);
+        ImageView stateIconView = (ImageView) listItemView.findViewById(R.id.state_icon);
+
+        final boolean downloading = episodeManager.isDownloading(episode);
+        final boolean downloaded = episodeManager.isDownloaded(episode);
+        final boolean isNew = !episodeManager.getState(episode);
 
         if (downloading)
             downloadIconView.setImageResource(R.drawable.ic_media_downloading);
@@ -139,5 +142,6 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
             downloadIconView.setImageResource(R.drawable.ic_media_downloaded);
 
         downloadIconView.setVisibility(downloading || downloaded ? View.VISIBLE : View.GONE);
+        stateIconView.setVisibility(isNew ? View.VISIBLE : View.GONE);
     }
 }

@@ -30,6 +30,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.listeners.PlayerListener;
@@ -48,7 +49,8 @@ import java.util.TimerTask;
  * or simply show this layout.
  */
 public abstract class EpisodeActivity extends BaseActivity implements
-        OnDownloadEpisodeListener, PlayerListener, PlayServiceListener {
+        OnDownloadEpisodeListener, OnChangeEpisodeStateListener, PlayerListener,
+        PlayServiceListener {
 
     /** The current episode fragment */
     protected EpisodeFragment episodeFragment;
@@ -182,6 +184,11 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     @Override
+    public void onStateChanged(Episode episode) {
+        updateNewStatus();
+    }
+
+    @Override
     public void onToggleLoad() {
         if (service.loadedEpisode(currentEpisode))
             onPlaybackComplete();
@@ -262,6 +269,9 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onPlaybackComplete() {
+        // Mark the episode old (needs to be done before resetting the service!)
+        episodeManager.setState(service.getCurrentEpisode(), true);
+
         stopPlayProgressTimer();
         service.reset();
 
@@ -286,6 +296,12 @@ public abstract class EpisodeActivity extends BaseActivity implements
      * Sub-classes need to overwrite.
      */
     protected abstract void updateActionBar();
+
+    protected void updateNewStatus() {
+        if (episodeFragment != null) {
+            episodeFragment.setShowNewIcon(!episodeManager.getState(currentEpisode));
+        }
+    }
 
     /**
      * Update the download menu item state and visibility

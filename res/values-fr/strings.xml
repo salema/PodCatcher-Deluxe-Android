@@ -62,6 +62,10 @@
     <string name="no_episode_selected">Aucune description disponible</string>
     <string name="one_episode">Une épisode</string>
     <string name="episodes">épisodes</string>
+    <string name="no_new_episodes">Pas de nouveaux épisodes</string>
+    <string name="one_new_episode">Une nouvel épisode</string>
+    <string name="new_episodes">nouveaux épisodes</string>
+    <string name="total_episodes">total</string>
     <string name="add_podcast">Ajouter un nouveau podcast</string>
     <string name="add_podcast_button">Ajouter</string>
     <string name="remove">Supprimer</string>

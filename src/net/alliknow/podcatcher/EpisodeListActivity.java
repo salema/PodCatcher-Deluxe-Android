@@ -176,6 +176,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             case LARGE_LANDSCAPE_VIEW:
                 // Set episode in episode fragment
                 episodeFragment.setEpisode(selectedEpisode);
+                updateNewStatus();
                 updateDownloadStatus();
 
                 break;
@@ -197,6 +198,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 // Set the episode and update the UI
                 episodeFragment.setEpisode(selectedEpisode);
                 episodeFragment.setShowEpisodeDate(true);
+                updateNewStatus();
                 updateDownloadStatus();
 
                 break;
