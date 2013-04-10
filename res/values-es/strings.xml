@@ -66,6 +66,7 @@
     <string name="one_new_episode">Un episodio nuevo</string>
     <string name="new_episodes">episodios nuevos</string>
     <string name="total_episodes">todo</string>
+    <string name="newOnly">Nuevos</string>
     <string name="add_podcast">Añadir podcast nuevo</string>
     <string name="add_podcast_button">Añadir</string>
     <string name="remove">Eliminar</string>
