@@ -54,6 +54,8 @@ public class EpisodeFragment extends Fragment {
     private boolean downloadMenuItemState = true;
     /** Flag to indicate whether the episode date should be shown */
     private boolean showEpisodeDate = false;
+    /** Flag for show new icon state */
+    private boolean showNewStateIcon = false;
     /** Flag for show download icon state */
     private boolean showDownloadIcon = false;
     /** Flag for the state of the download icon */
@@ -129,6 +131,7 @@ public class EpisodeFragment extends Fragment {
         // controls are established (the episode might have been set earlier)
         if (currentEpisode != null) {
             setEpisode(currentEpisode);
+            setNewIconVisibility(showNewStateIcon);
             setDownloadIconVisibility(showDownloadIcon, downloadIconState);
         }
     }
@@ -215,6 +218,19 @@ public class EpisodeFragment extends Fragment {
     }
 
     /**
+     * Set whether the fragment should show the episode state icon to indicate
+     * that the episode is new (not marked old).
+     * 
+     * @param show Whether to show the new icon.
+     */
+    public void setNewIconVisibility(boolean show) {
+        this.showNewStateIcon = show;
+
+        if (viewCreated)
+            stateIconView.setVisibility(show ? VISIBLE : GONE);
+    }
+
+    /**
      * Set whether the fragment should show the download icon. You can call this
      * any time and can expect it to happen on fragment resume at the latest.
      * You also have to set the download icon state, <code>true</code> for
@@ -245,17 +261,6 @@ public class EpisodeFragment extends Fragment {
      */
     public void setShowEpisodeDate(boolean show) {
         this.showEpisodeDate = show;
-    }
-
-    /**
-     * Set whether the fragment should show the episode state icon to indicate
-     * that the episode is new (not marked old).
-     * 
-     * @param show Whether to show the new icon.
-     */
-    public void setShowNewIcon(boolean show) {
-        if (viewCreated)
-            stateIconView.setVisibility(show ? VISIBLE : GONE);
     }
 
     private void updateUiElementVisibility() {

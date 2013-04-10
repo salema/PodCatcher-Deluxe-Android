@@ -304,7 +304,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
      */
     protected void updateNewStatus() {
         if (episodeFragment != null) {
-            episodeFragment.setShowNewIcon(!episodeManager.getState(currentEpisode));
+            episodeFragment.setNewIconVisibility(!episodeManager.getState(currentEpisode));
         }
     }
 

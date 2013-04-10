@@ -40,10 +40,21 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
     /** The episode manager handle */
     private final EpisodeManager episodeManager;
 
+    /** The mark new menu item */
+    private MenuItem newMenuItem;
+    /** The mark old menu item */
+    private MenuItem oldMenuItem;
+
     /** The download menu item */
     private MenuItem downloadMenuItem;
     /** The delete menu item */
     private MenuItem deleteMenuItem;
+
+    /**
+     * Flag to indicate whether the mode should do potentially expensive UI
+     * updates when a list item is checked
+     */
+    private boolean updateUi = true;
 
     /**
      * Create new listener for the episode list context mode.
@@ -61,6 +72,8 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
         MenuInflater inflater = mode.getMenuInflater();
         inflater.inflate(R.menu.episode_list_context, menu);
 
+        newMenuItem = menu.findItem(R.id.episode_new_contextmenuitem);
+        oldMenuItem = menu.findItem(R.id.episode_old_contextmenuitem);
         downloadMenuItem = menu.findItem(R.id.episode_download_contextmenuitem);
         deleteMenuItem = menu.findItem(R.id.episode_remove_contextmenuitem);
 
@@ -76,14 +89,30 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        boolean markNew = false;
         boolean download = false;
+
+        SparseBooleanArray checkedItems = fragment.getListView().getCheckedItemPositions();
+
         switch (item.getItemId()) {
+            case R.id.episode_new_contextmenuitem:
+                markNew = true;
+                // No break here, code blow should run
+            case R.id.episode_old_contextmenuitem:
+                for (int position = 0; position < fragment.getListAdapter().getCount(); position++)
+                    if (checkedItems.get(position)) {
+                        Episode episode = (Episode) fragment.getListAdapter().getItem(position);
+
+                        episodeManager.setState(episode, !markNew);
+                    }
+
+                // Action picked, so close the CAB
+                mode.finish();
+                return true;
             case R.id.episode_download_contextmenuitem:
                 download = true;
                 // No break here, code blow should run
             case R.id.episode_remove_contextmenuitem:
-                SparseBooleanArray checkedItems = fragment.getListView().getCheckedItemPositions();
-
                 for (int position = 0; position < fragment.getListAdapter().getCount(); position++)
                     if (checkedItems.get(position)) {
                         Episode episode = (Episode) fragment.getListAdapter().getItem(position);
@@ -96,6 +125,16 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
 
                 // Action picked, so close the CAB
                 mode.finish();
+                return true;
+            case R.id.episode_select_all_contextmenuitem:
+                // Disable expensive UI updates
+                updateUi = false;
+                for (int index = 0; index < fragment.getListAdapter().getCount(); index++)
+                    fragment.getListView().setItemChecked(index, true);
+
+                // Re-enable UI updates
+                updateUi = true;
+                update(mode);
                 return true;
             default:
                 return false;
@@ -113,39 +152,57 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
     }
 
     private void update(ActionMode mode) {
-        updateMenuItems();
+        if (updateUi) {
+            updateMenuItems();
 
-        // Let list adapter know which items to mark checked (row color)
-        ((EpisodeListAdapter) fragment.getListAdapter()).setCheckedPositions(
-                fragment.getListView().getCheckedItemPositions());
+            // Let list adapter know which items to mark checked (row color)
+            ((EpisodeListAdapter) fragment.getListAdapter()).setCheckedPositions(
+                    fragment.getListView().getCheckedItemPositions());
 
-        // Update the mode title text
-        int checkedItemCount = fragment.getListView().getCheckedItemCount();
-        String newTitle = fragment.getString(R.string.no_episode_selected);
+            // Update the mode title text
+            int checkedItemCount = fragment.getListView().getCheckedItemCount();
+            String newTitle = fragment.getString(R.string.no_episode_selected);
 
-        if (checkedItemCount == 1)
-            newTitle = fragment.getString(R.string.one_episode);
-        else if (checkedItemCount > 1)
-            newTitle = checkedItemCount + " "
-                    + fragment.getString(R.string.episodes);
+            if (checkedItemCount == 1)
+                newTitle = fragment.getString(R.string.one_episode);
+            else if (checkedItemCount > 1)
+                newTitle = checkedItemCount + " "
+                        + fragment.getString(R.string.episodes);
 
-        mode.setTitle(newTitle);
+            mode.setTitle(newTitle);
+        }
     }
 
     private void updateMenuItems() {
+        // Make all menu items invisible
+        newMenuItem.setVisible(false);
+        oldMenuItem.setVisible(false);
         downloadMenuItem.setVisible(false);
         deleteMenuItem.setVisible(false);
 
         SparseBooleanArray checkedItems = fragment.getListView().getCheckedItemPositions();
 
-        for (int position = 0; position < fragment.getListAdapter().getCount(); position++)
+        // Check which option apply to current selection and make corresponding
+        // menu items visible
+        for (int position = 0; position < fragment.getListAdapter().getCount(); position++) {
             if (checkedItems.get(position)) {
                 Episode episode = (Episode) fragment.getListAdapter().getItem(position);
+
+                if (episodeManager.getState(episode))
+                    newMenuItem.setVisible(true);
+                else
+                    oldMenuItem.setVisible(true);
 
                 if (episodeManager.isDownloaded(episode) || episodeManager.isDownloading(episode))
                     deleteMenuItem.setVisible(true);
                 else
                     downloadMenuItem.setVisible(true);
             }
+
+            // Break out of the loop if all menu items are visible
+            if (newMenuItem.isVisible() && oldMenuItem.isVisible()
+                    && downloadMenuItem.isVisible() && deleteMenuItem.isVisible())
+                break;
+        }
     }
 }

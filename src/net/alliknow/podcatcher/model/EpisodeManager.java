@@ -30,7 +30,6 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 
 import net.alliknow.podcatcher.EpisodeActivity;
 import net.alliknow.podcatcher.EpisodeListActivity;
@@ -73,6 +72,8 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     private DownloadManager downloadManager;
     /** The metadata information held for episodes */
     private Map<URL, EpisodeMetadata> metadata;
+    /** Flag to indicate whether metadata is dirty */
+    private boolean metadataChanged;
 
     /** The call-back set for the complete download listeners */
     private Set<OnDownloadEpisodeListener> downloadListeners = new HashSet<OnDownloadEpisodeListener>();
@@ -105,10 +106,6 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
                             for (OnDownloadEpisodeListener listener : downloadListeners)
                                 listener.onDownloadSuccess();
-
-                            Log.i(getClass().getSimpleName(), "Completed download for episode");
-                            Log.i(getClass().getSimpleName(), "Download id: " + meta.downloadId);
-                            Log.i(getClass().getSimpleName(), "Local path: " + meta.filePath);
                         }
                         // Download failed
                         else {
@@ -119,13 +116,12 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
                             for (OnDownloadEpisodeListener listener : downloadListeners)
                                 listener.onDownloadFailed();
-
-                            Log.i(getClass().getSimpleName(), "Failed to download episode");
-                            Log.i(getClass().getSimpleName(), "Download id: " + downloadId);
                         }
 
                     // Close cursor
                     result.close();
+                    // Mark metadata record as dirty
+                    metadataChanged = true;
                 }
         };
     };
@@ -227,11 +223,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     @Override
     public void onEpisodeMetadataLoaded(Map<URL, EpisodeMetadata> metadata) {
         this.metadata = metadata;
-
-        // TODO house keeping? what about download that finish/were deleted
-        // while the app was closed? How to avoid many, many old entries that do
-        // not change anymore? (Maybe this should be done by the load task to
-        // keep it off the main thread?)
+        this.metadataChanged = false;
     }
 
     /**
@@ -239,8 +231,14 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      */
     @SuppressWarnings("unchecked")
     public void saveState() {
-        // Store cleaned record
-        new StoreEpisodeMetadataTask(podcatcher).execute(metadata);
+        // Store cleaned matadata if dirty
+        if (metadataChanged) {
+            new StoreEpisodeMetadataTask(podcatcher).execute(metadata);
+
+            // Reset the flag, so the list will only be saved if changed again
+            metadataChanged = false;
+        }
+
     }
 
     /**
@@ -293,9 +291,8 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
             meta.podcastUrl = episode.getPodcast().getUrl().toString();
             metadata.put(episode.getMediaUrl(), meta);
 
-            Log.i(getClass().getSimpleName(), "Start download for episode: " + episode);
-            Log.i(getClass().getSimpleName(), "Download id: " + id);
-            Log.i(getClass().getSimpleName(), "Download path: " + subPath);
+            // Mark metadata record as dirty
+            metadataChanged = true;
         }
     }
 
@@ -313,12 +310,11 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                 // This should delete the download and remove any information
                 downloadManager.remove(meta.downloadId);
 
-                Log.i(getClass().getSimpleName(), "Deleted download for episode: " + episode);
-                Log.i(getClass().getSimpleName(), "Download id: " + meta.downloadId);
-                Log.i(getClass().getSimpleName(), "Download path: " + meta.filePath);
-
                 meta.downloadId = null;
                 meta.filePath = null;
+
+                // Mark metadata record as dirty
+                metadataChanged = true;
             }
 
             // Find the podcast directory and the path the episode is stored
@@ -458,6 +454,9 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                 // We do not need to set this if false, simply remove the record
                 meta.isOld = (isOld != null && isOld ? true : null);
 
+            // Mark metadata record as dirty
+            metadataChanged = true;
+
             // Alert listeners
             for (OnChangeEpisodeStateListener listener : stateListeners)
                 listener.onStateChanged(episode);
@@ -539,6 +538,9 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
             } // Metadata available
             else
                 meta.resumeAt = at;
+
+            // Mark metadata record as dirty
+            metadataChanged = true;
         }
     }
 

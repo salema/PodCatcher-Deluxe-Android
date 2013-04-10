@@ -98,7 +98,6 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         super.onResume();
 
         updateFilter();
-        updateNewStatus();
         updateDownloadStatus();
     }
 

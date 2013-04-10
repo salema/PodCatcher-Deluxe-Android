@@ -191,7 +191,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
         // otherwise onResume or the menu creation callback will call us.
         if (filterMenuItem != null) {
             filterMenuItem.setVisible(showFilterMenuItem);
-            filterMenuItem.setTitle(filterMenuItemState ? R.string.all : R.string.newOnly);
+            filterMenuItem.setTitle(filterMenuItemState ? R.string.all : R.string.new_only);
         }
     }
 
