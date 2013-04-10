@@ -247,6 +247,12 @@ public class EpisodeFragment extends Fragment {
         this.showEpisodeDate = show;
     }
 
+    /**
+     * Set whether the fragment should show the episode state icon to indicate
+     * that the episode is new (not marked old).
+     * 
+     * @param show Whether to show the new icon.
+     */
     public void setShowNewIcon(boolean show) {
         if (viewCreated)
             stateIconView.setVisibility(show ? VISIBLE : GONE);

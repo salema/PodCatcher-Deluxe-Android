@@ -20,6 +20,9 @@ package net.alliknow.podcatcher.view.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -27,6 +30,7 @@ import android.widget.ListView;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.EpisodeListContextListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
+import net.alliknow.podcatcher.listeners.OnToggleFilterListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.view.adapters.EpisodeListAdapter;
 
@@ -42,12 +46,21 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
     /** The activity we are in (listens to user selection) */
     private OnSelectEpisodeListener selectionListener;
+    /** The activity we are in (listens to filter toggles) */
+    private OnToggleFilterListener filterListener;
 
+    /** Flag for show filter menu item state */
+    private boolean showFilterMenuItem = false;
+    /** Flag for the state of the filter menu item */
+    private boolean filterMenuItemState = false;
     /** Flag to indicate whether podcast names should be shown for episodes */
     private boolean showPodcastNames = false;
 
     /** Status flag indicating that our view is created */
     private boolean viewCreated = false;
+
+    /** The download episode menu bar item */
+    private MenuItem filterMenuItem;
 
     @Override
     public void onAttach(Activity activity) {
@@ -56,10 +69,18 @@ public class EpisodeListFragment extends PodcatcherListFragment {
         // Make sure our listener is present
         try {
             this.selectionListener = (OnSelectEpisodeListener) activity;
+            this.filterListener = (OnToggleFilterListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnSelectEpisodeListener");
+                    + " must implement OnSelectEpisodeListener and OnFilterToggleListener");
         }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -82,6 +103,27 @@ public class EpisodeListFragment extends PodcatcherListFragment {
         // controls are established (the list might have been set earlier)
         if (currentEpisodeList != null)
             setEpisodeList(currentEpisodeList);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.episode_list, menu);
+
+        filterMenuItem = menu.findItem(R.id.filter_menuitem);
+        setFilterMenuItemVisibility(showFilterMenuItem, filterMenuItemState);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.filter_menuitem:
+                // Tell activity to toggle the filter
+                filterListener.onToggleFilter();
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -129,6 +171,27 @@ public class EpisodeListFragment extends PodcatcherListFragment {
                 select(selectedPosition);
             else
                 selectNone();
+        }
+    }
+
+    /**
+     * Set whether the fragment should show the filter icon. You can call this
+     * any time and can expect it to happen on fragment resume at the latest.
+     * You also have to set the filter icon state, <code>true</code> for
+     * "new only" and <code>false</code> for "show all".
+     * 
+     * @param show Whether to show the filter menu item.
+     * @param filter State of the filter menu item (new / all)
+     */
+    public void setFilterMenuItemVisibility(boolean show, boolean filter) {
+        this.showFilterMenuItem = show;
+        this.filterMenuItemState = filter;
+
+        // Only do it right away if resumed and menu item is available,
+        // otherwise onResume or the menu creation callback will call us.
+        if (filterMenuItem != null) {
+            filterMenuItem.setVisible(showFilterMenuItem);
+            filterMenuItem.setTitle(filterMenuItemState ? R.string.all : R.string.newOnly);
         }
     }
 

@@ -20,11 +20,11 @@ package net.alliknow.podcatcher;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.view.View;
-import android.widget.BaseAdapter;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
+import net.alliknow.podcatcher.listeners.OnToggleFilterListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
@@ -33,6 +33,7 @@ import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -42,7 +43,8 @@ import java.util.List;
  * simply show this layout.
  */
 public abstract class EpisodeListActivity extends EpisodeActivity implements
-        OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectEpisodeListener {
+        OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectEpisodeListener,
+        OnToggleFilterListener {
 
     /** The current episode list fragment */
     protected EpisodeListFragment episodeListFragment;
@@ -75,6 +77,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     /** The current episode list */
     protected List<Episode> currentEpisodeList;
+    /** Flag indicating whether we filter the episode list */
+    protected boolean filterActive = false;
 
     @Override
     protected void findFragments() {
@@ -131,12 +135,12 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 currentEpisodeList.addAll(podcast.getEpisodes());
                 Collections.sort(currentEpisodeList);
                 // Make sure this is a copy
-                episodeListFragment.setEpisodeList(new ArrayList<Episode>(currentEpisodeList));
+                setFilteredEpisodeList();
             }
         } // Select single podcast
         else if (contentMode.equals(ContentMode.SINGLE_PODCAST) && podcast.equals(currentPodcast)) {
             currentEpisodeList = podcast.getEpisodes();
-            episodeListFragment.setEpisodeList(currentEpisodeList);
+            setFilteredEpisodeList();
         }
 
         // Additionally, if on large device, process clever selection update
@@ -147,6 +151,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             updateDivider();
         }
 
+        updateFilter();
         updateActionBar();
     }
 
@@ -241,11 +246,56 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
+    public void onToggleFilter() {
+        if (episodeListFragment != null) {
+            filterActive = !filterActive;
+
+            if (currentEpisodeList != null)
+                setFilteredEpisodeList();
+
+            updateFilter();
+        }
+    }
+
+    /**
+     * Filter and set the current episode list to show if the episode list
+     * fragment.
+     */
+    protected void setFilteredEpisodeList() {
+        List<Episode> copy = new ArrayList<Episode>(currentEpisodeList);
+
+        if (filterActive) {
+            Iterator<Episode> iterator = copy.iterator();
+
+            while (iterator.hasNext())
+                if (episodeManager.getState(iterator.next()))
+                    iterator.remove();
+        }
+
+        episodeListFragment.setEpisodeList(copy);
+    }
+
+    @Override
+    public void onStateChanged(Episode episode) {
+        super.onStateChanged(episode);
+
+        if (episodeListFragment != null)
+            episodeListFragment.refresh();
+    }
+
+    /**
+     * Update the filter menu icon visibility.
+     */
+    protected void updateFilter() {
+        episodeListFragment.setFilterMenuItemVisibility(currentEpisodeList != null, filterActive);
+    }
+
+    @Override
     protected void updateDownloadStatus() {
         super.updateDownloadStatus();
 
-        if (episodeListFragment != null && episodeListFragment.getListAdapter() != null)
-            ((BaseAdapter) episodeListFragment.getListAdapter()).notifyDataSetChanged();
+        if (episodeListFragment != null)
+            episodeListFragment.refresh();
     }
 
     /**

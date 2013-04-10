@@ -119,6 +119,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
         // We have to do this here instead of onCreate since we can only react
         // on the call-backs properly once we have our fragment
         episodeManager.addDownloadListener(this);
+        episodeManager.addStateChangedListener(this);
     }
 
     @Override
@@ -143,6 +144,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
         // Disconnect from episode manager
         episodeManager.removeDownloadListener(this);
+        episodeManager.removeStateChangedListener(this);
 
         // Stop the timer
         playUpdateTimer.cancel();
@@ -297,6 +299,9 @@ public abstract class EpisodeActivity extends BaseActivity implements
      */
     protected abstract void updateActionBar();
 
+    /**
+     * Update the episode state icon.
+     */
     protected void updateNewStatus() {
         if (episodeFragment != null) {
             episodeFragment.setShowNewIcon(!episodeManager.getState(currentEpisode));
@@ -304,7 +309,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     /**
-     * Update the download menu item state and visibility
+     * Update the download menu item state and visibility.
      */
     protected void updateDownloadStatus() {
         if (episodeFragment != null) {

@@ -73,6 +73,7 @@
     <string name="one_new_episode">1 new episode</string>
     <string name="new_episodes">new episodes</string>
     <string name="total_episodes">total</string>
+    <string name="newOnly">New</string>
     <string name="add_podcast">New podcast</string>
     <string name="add_podcast_button">Add</string>
     <string name="remove">Remove</string>
