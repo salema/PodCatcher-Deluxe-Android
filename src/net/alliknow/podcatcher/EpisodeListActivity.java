@@ -77,6 +77,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     /** The current episode list */
     protected List<Episode> currentEpisodeList;
+    /** The filtered episode list */
+    protected List<Episode> filteredEpisodeList;
     /** Flag indicating whether we filter the episode list */
     protected boolean filterActive = false;
 
@@ -145,9 +147,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
         // Additionally, if on large device, process clever selection update
         if (viewMode == LARGE_LANDSCAPE_VIEW || viewMode == LARGE_PORTRAIT_VIEW) {
-            if (currentEpisodeList != null && currentEpisodeList.contains(currentEpisode))
-                episodeListFragment.select(currentEpisodeList.indexOf(currentEpisode));
-
+            updateEpisodeListSelection();
             updateDivider();
         }
 
@@ -217,8 +217,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         }
 
         // Make sure selection matches in list fragment
-        if (currentEpisodeList != null)
-            episodeListFragment.select(currentEpisodeList.indexOf(selectedEpisode));
+        updateEpisodeListSelection();
 
         updatePlayer();
         updateDivider();
@@ -258,21 +257,30 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     /**
-     * Filter and set the current episode list to show if the episode list
+     * Filter and set the current episode list to show in the episode list
      * fragment.
      */
     protected void setFilteredEpisodeList() {
-        List<Episode> copy = new ArrayList<Episode>(currentEpisodeList);
+        filteredEpisodeList = new ArrayList<Episode>(currentEpisodeList);
 
         if (filterActive) {
-            Iterator<Episode> iterator = copy.iterator();
+            Iterator<Episode> iterator = filteredEpisodeList.iterator();
 
             while (iterator.hasNext())
                 if (episodeManager.getState(iterator.next()))
                     iterator.remove();
         }
 
-        episodeListFragment.setEpisodeList(copy);
+        episodeListFragment.setEpisodeList(filteredEpisodeList);
+        updateEpisodeListSelection();
+    }
+
+    protected void updateEpisodeListSelection() {
+        // Make sure the episode selection in the list is updated
+        if (filteredEpisodeList != null && filteredEpisodeList.contains(currentEpisode))
+            episodeListFragment.select(filteredEpisodeList.indexOf(currentEpisode));
+        else
+            episodeListFragment.selectNone();
     }
 
     @Override

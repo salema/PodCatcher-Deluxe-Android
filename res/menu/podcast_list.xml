@@ -21,16 +21,16 @@
     <item
         android:id="@+id/podcast_add_menuitem"
         android:icon="@drawable/ic_menu_add"
-        android:showAsAction="always|withText"
+        android:showAsAction="always"
         android:title="@string/add_podcast" />
     <item
         android:id="@+id/podcast_select_all_menuitem"
-        android:showAsAction="never|withText"
+        android:showAsAction="never"
         android:title="@string/select_all_podcasts" />
     <item
         android:id="@+id/podcast_remove_menuitem"
         android:icon="@drawable/ic_menu_delete"
-        android:showAsAction="never|withText"
+        android:showAsAction="never"
         android:title="@string/remove_podcast"
         android:visible="false" />
 </menu>

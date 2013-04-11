@@ -450,7 +450,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
                 metadata.put(episode.getMediaUrl(), meta);
             } // Metadata available
-            else
+            else if (meta != null)
                 // We do not need to set this if false, simply remove the record
                 meta.isOld = (isOld != null && isOld ? true : null);
 
@@ -536,7 +536,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
                 metadata.put(episode.getMediaUrl(), meta);
             } // Metadata available
-            else
+            else if (meta != null)
                 meta.resumeAt = at;
 
             // Mark metadata record as dirty

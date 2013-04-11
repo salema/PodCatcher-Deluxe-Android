@@ -21,22 +21,22 @@
     <item
         android:id="@+id/episode_new_contextmenuitem"
         android:icon="@drawable/ic_menu_new"
-        android:showAsAction="always|withText"
+        android:showAsAction="always"
         android:title="@string/new_only" />
     <item
         android:id="@+id/episode_old_contextmenuitem"
         android:icon="@drawable/ic_menu_old"
-        android:showAsAction="always|withText"
+        android:showAsAction="always"
         android:title="@string/old" />
     <item
         android:id="@+id/episode_download_contextmenuitem"
         android:icon="@drawable/ic_menu_download"
-        android:showAsAction="always|withText"
+        android:showAsAction="always"
         android:title="@string/download" />
     <item
         android:id="@+id/episode_remove_contextmenuitem"
         android:icon="@drawable/ic_menu_delete"
-        android:showAsAction="always|withText"
+        android:showAsAction="always"
         android:title="@string/remove" />
     <item
         android:id="@+id/episode_select_all_contextmenuitem"
