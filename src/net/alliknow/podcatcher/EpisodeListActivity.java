@@ -176,6 +176,10 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             case LARGE_LANDSCAPE_VIEW:
                 // Set episode in episode fragment
                 episodeFragment.setEpisode(selectedEpisode);
+
+                // Make sure selection matches in list fragment and the UI is
+                // updated
+                episodeListFragment.select(currentEpisodeList.indexOf(selectedEpisode));
                 updateDownloadStatus();
 
                 break;
@@ -197,6 +201,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 // Set the episode and update the UI
                 episodeFragment.setEpisode(selectedEpisode);
                 episodeFragment.setShowEpisodeDate(true);
+
                 updateDownloadStatus();
 
                 break;
@@ -208,10 +213,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
         }
-
-        // Make sure selection matches in list fragment
-        if (currentEpisodeList != null)
-            episodeListFragment.select(currentEpisodeList.indexOf(selectedEpisode));
 
         updatePlayer();
         updateDivider();
