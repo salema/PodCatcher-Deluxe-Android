@@ -255,7 +255,7 @@ public class Podcast implements Comparable<Podcast> {
 
     /**
      * @return The point in time this podcast has last been loaded or
-     *         <code>null</code> iff it had not been loaded every.
+     *         <code>null</code> iff it had not been loaded before.
      */
     public Date getLastLoaded() {
         return updated;
