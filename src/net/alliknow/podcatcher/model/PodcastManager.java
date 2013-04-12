@@ -63,10 +63,16 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     private Podcatcher podcatcher;
 
     /**
-     * The minimum time podcast content is buffered (in milliseconds). If older,
-     * we need to reload.
+     * The time podcast content is buffered on non-mobile connections (in
+     * milliseconds). If older, we will to reload.
      */
     public static final int TIME_TO_LIFE = 30 * 60 * 1000;
+
+    /**
+     * The minimum time podcast content is buffered on mobile connections (in
+     * milliseconds). If older, we will to reload.
+     */
+    public static final int TIME_TO_LIFE_MOBILE = 60 * 60 * 1000;
 
     /** The name of the file we store our saved podcasts in (as OPML) */
     public static final String OPML_FILENAME = "podcasts.opml";
@@ -531,13 +537,17 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      * @return <code>true</code> iff time to live expired or the podcast has
      *         never been loaded.
      */
-    private static boolean needsReload(Podcast podcast) {
+    private boolean needsReload(Podcast podcast) {
         // Has never been loaded
         if (podcast.getLastLoaded() == null)
             return true;
+        // Has been loaded and we are now offline
+        else if (!podcatcher.isOnline())
+            return false;
         // Check age
         else
-            return new Date().getTime() - podcast.getLastLoaded().getTime() > PodcastManager.TIME_TO_LIFE;
+            return new Date().getTime() - podcast.getLastLoaded().getTime() > (podcatcher
+                    .isOnFastConnection() ? TIME_TO_LIFE : TIME_TO_LIFE_MOBILE);
     }
 
     /**
