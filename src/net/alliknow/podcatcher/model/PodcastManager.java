@@ -188,7 +188,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      */
     public void load(Podcast podcast) {
         // Only load podcast if not too old
-        if (!needsReload(podcast))
+        if (!shouldReload(podcast))
             onPodcastLoaded(podcast);
         // Only start the load task if it is not already active
         else if (!loadPodcastTasks.containsKey(podcast)) {
@@ -528,7 +528,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      * @return <code>true</code> iff time to live expired or the podcast has
      *         never been loaded.
      */
-    private boolean needsReload(Podcast podcast) {
+    private boolean shouldReload(Podcast podcast) {
         // Has never been loaded
         if (podcast.getLastLoaded() == null)
             return true;
@@ -536,9 +536,10 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         else if (!podcatcher.isOnline())
             return false;
         // Check age
-        else
-            return new Date().getTime() - podcast.getLastLoaded().getTime() > (podcatcher
-                    .isOnFastConnection() ? TIME_TO_LIFE : TIME_TO_LIFE_MOBILE);
+        else {
+            final long age = new Date().getTime() - podcast.getLastLoaded().getTime();
+            return age > (podcatcher.isOnFastConnection() ? TIME_TO_LIFE : TIME_TO_LIFE_MOBILE);
+        }
     }
 
     /**

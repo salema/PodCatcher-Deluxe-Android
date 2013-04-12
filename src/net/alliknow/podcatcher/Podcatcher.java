@@ -92,7 +92,7 @@ public class Podcatcher extends Application implements OnLoadEpisodeMetadataList
 
     /**
      * Checks whether the device is currently online and can receive data from
-     * the interets.
+     * the internets.
      * 
      * @return <code>true</code> iff we have Internet access.
      */
