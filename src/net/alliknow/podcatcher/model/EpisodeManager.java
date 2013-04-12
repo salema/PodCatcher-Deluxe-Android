@@ -48,6 +48,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -233,7 +234,11 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     public void saveState() {
         // Store cleaned matadata if dirty
         if (metadataChanged) {
-            new StoreEpisodeMetadataTask(podcatcher).execute(metadata);
+            // Store a copy of the actual map, since there might come in changes
+            // to the metadata while the task is running and that would lead to
+            // a concurrent modification exception.
+            new StoreEpisodeMetadataTask(podcatcher)
+                    .execute(new HashMap<URL, EpisodeMetadata>(metadata));
 
             // Reset the flag, so the list will only be saved if changed again
             metadataChanged = false;
