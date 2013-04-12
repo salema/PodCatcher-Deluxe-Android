@@ -62,6 +62,13 @@
     <string name="no_episode_selected">Keine Episode ausgewählt</string>
     <string name="one_episode">Eine Episode</string>
     <string name="episodes">Episoden</string>
+    <string name="no_new_episodes">Keine neuen Episoden</string>
+    <string name="one_new_episode">1 neue Episode</string>
+    <string name="new_episodes">neue Episoden</string>
+    <string name="total_episodes">gesamt</string>
+    <string name="select_all">Alle auswählen</string>
+    <string name="old">Alt</string>
+    <string name="new_only">Neu</string>
     <string name="add_podcast">Neuer Podcast</string>
     <string name="add_podcast_button">Anhören</string>
     <string name="remove">Entfernen</string>

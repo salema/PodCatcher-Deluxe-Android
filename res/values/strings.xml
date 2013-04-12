@@ -69,6 +69,13 @@
     <string name="no_episode_selected">No episode selected</string>
     <string name="one_episode">One episode</string>
     <string name="episodes">episodes</string>
+    <string name="no_new_episodes">No new episodes</string>
+    <string name="one_new_episode">1 new episode</string>
+    <string name="new_episodes">new episodes</string>
+    <string name="total_episodes">total</string>
+    <string name="select_all">Select all</string>
+    <string name="old">Old</string>
+    <string name="new_only">New</string>
     <string name="add_podcast">New podcast</string>
     <string name="add_podcast_button">Add</string>
     <string name="remove">Remove</string>

@@ -30,23 +30,25 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 
 import net.alliknow.podcatcher.EpisodeActivity;
 import net.alliknow.podcatcher.EpisodeListActivity;
 import net.alliknow.podcatcher.EpisodeListActivity.ContentMode;
 import net.alliknow.podcatcher.PodcastActivity;
 import net.alliknow.podcatcher.Podcatcher;
+import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
 import net.alliknow.podcatcher.model.tasks.StoreEpisodeMetadataTask;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
+import net.alliknow.podcatcher.model.types.Podcast;
 
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -71,9 +73,13 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     private DownloadManager downloadManager;
     /** The metadata information held for episodes */
     private Map<URL, EpisodeMetadata> metadata;
+    /** Flag to indicate whether metadata is dirty */
+    private boolean metadataChanged;
 
     /** The call-back set for the complete download listeners */
     private Set<OnDownloadEpisodeListener> downloadListeners = new HashSet<OnDownloadEpisodeListener>();
+    /** The call-back set for the episode state changed listeners */
+    private Set<OnChangeEpisodeStateListener> stateListeners = new HashSet<OnChangeEpisodeStateListener>();
 
     /** The receiver we register for episode downloads */
     private BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
@@ -101,10 +107,6 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
                             for (OnDownloadEpisodeListener listener : downloadListeners)
                                 listener.onDownloadSuccess();
-
-                            Log.i(getClass().getSimpleName(), "Completed download for episode");
-                            Log.i(getClass().getSimpleName(), "Download id: " + meta.downloadId);
-                            Log.i(getClass().getSimpleName(), "Local path: " + meta.filePath);
                         }
                         // Download failed
                         else {
@@ -115,13 +117,12 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
                             for (OnDownloadEpisodeListener listener : downloadListeners)
                                 listener.onDownloadFailed();
-
-                            Log.i(getClass().getSimpleName(), "Failed to download episode");
-                            Log.i(getClass().getSimpleName(), "Download id: " + downloadId);
                         }
 
                     // Close cursor
                     result.close();
+                    // Mark metadata record as dirty
+                    metadataChanged = true;
                 }
         };
     };
@@ -223,11 +224,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     @Override
     public void onEpisodeMetadataLoaded(Map<URL, EpisodeMetadata> metadata) {
         this.metadata = metadata;
-
-        // TODO house keeping? what about download that finish/were deleted
-        // while the app was closed? How to avoid many, many old entries that do
-        // not change anymore? (Maybe this should be done by the load task to
-        // keep it off the main thread?)
+        this.metadataChanged = false;
     }
 
     /**
@@ -235,8 +232,18 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      */
     @SuppressWarnings("unchecked")
     public void saveState() {
-        // Store cleaned record
-        new StoreEpisodeMetadataTask(podcatcher).execute(metadata);
+        // Store cleaned matadata if dirty
+        if (metadataChanged) {
+            // Store a copy of the actual map, since there might come in changes
+            // to the metadata while the task is running and that would lead to
+            // a concurrent modification exception.
+            new StoreEpisodeMetadataTask(podcatcher)
+                    .execute(new HashMap<URL, EpisodeMetadata>(metadata));
+
+            // Reset the flag, so the list will only be saved if changed again
+            metadataChanged = false;
+        }
+
     }
 
     /**
@@ -289,9 +296,8 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
             meta.podcastUrl = episode.getPodcast().getUrl().toString();
             metadata.put(episode.getMediaUrl(), meta);
 
-            Log.i(getClass().getSimpleName(), "Start download for episode: " + episode);
-            Log.i(getClass().getSimpleName(), "Download id: " + id);
-            Log.i(getClass().getSimpleName(), "Download path: " + subPath);
+            // Mark metadata record as dirty
+            metadataChanged = true;
         }
     }
 
@@ -309,12 +315,11 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                 // This should delete the download and remove any information
                 downloadManager.remove(meta.downloadId);
 
-                Log.i(getClass().getSimpleName(), "Deleted download for episode: " + episode);
-                Log.i(getClass().getSimpleName(), "Download id: " + meta.downloadId);
-                Log.i(getClass().getSimpleName(), "Download path: " + meta.filePath);
-
                 meta.downloadId = null;
                 meta.filePath = null;
+
+                // Mark metadata record as dirty
+                metadataChanged = true;
             }
 
             // Find the podcast directory and the path the episode is stored
@@ -433,6 +438,92 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     }
 
     /**
+     * Set the old/new state for an episode.
+     * 
+     * @param episode Episode to set state for (not <code>null</code>).
+     * @param isOld State to set, give <code>null</code> to reset the value to
+     *            the default.
+     */
+    public void setState(Episode episode, Boolean isOld) {
+        if (episode != null && episode.getMediaUrl() != null) {
+            EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+
+            // Metadata not yet created
+            if (meta == null && isOld != null && isOld) {
+                meta = new EpisodeMetadata();
+                meta.isOld = isOld;
+
+                metadata.put(episode.getMediaUrl(), meta);
+            } // Metadata available
+            else if (meta != null)
+                // We do not need to set this if false, simply remove the record
+                meta.isOld = (isOld != null && isOld ? true : null);
+
+            // Mark metadata record as dirty
+            metadataChanged = true;
+
+            // Alert listeners
+            for (OnChangeEpisodeStateListener listener : stateListeners)
+                listener.onStateChanged(episode);
+        }
+    }
+
+    /**
+     * Get the state information for an episode.
+     * 
+     * @param episode Episode to get old/new state for.
+     * @return The state: <code>true</code> if the episode is marked old,
+     *         <code>false</code> otherwise.
+     */
+    public boolean getState(Episode episode) {
+        if (episode != null && episode.getMediaUrl() != null) {
+            EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+
+            if (meta != null && meta.isOld != null)
+                return meta.isOld;
+        }
+
+        return false;
+    }
+
+    /**
+     * Count the number of episodes not marked old for given podcast.
+     * 
+     * @param podcast Podcast to count for.
+     * @return The number of new episode in the podcast.
+     */
+    public int getNewEpisodeCount(Podcast podcast) {
+        int count = 0;
+
+        if (podcast != null)
+            for (Episode episode : podcast.getEpisodes())
+                if (!getState(episode))
+                    count++;
+
+        return count;
+    }
+
+    /**
+     * Add a state changed listener.
+     * 
+     * @param listener Listener to add.
+     * @see OnChangeEpisodeStateListener
+     */
+    public void addStateChangedListener(OnChangeEpisodeStateListener listener) {
+        stateListeners.add(listener);
+    }
+
+    /**
+     * Remove a download listener.
+     * 
+     * @param listener Listener to remove.
+     * @see OnChangeEpisodeStateListener
+     */
+    public void removeStateChangedListener(OnChangeEpisodeStateListener listener) {
+        stateListeners.remove(listener);
+    }
+
+    /**
      * Set the resume time meta data field for an episode.
      * 
      * @param episode Episode to set resume time for.
@@ -450,8 +541,11 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
                 metadata.put(episode.getMediaUrl(), meta);
             } // Metadata available
-            else
+            else if (meta != null)
                 meta.resumeAt = at;
+
+            // Mark metadata record as dirty
+            metadataChanged = true;
         }
     }
 

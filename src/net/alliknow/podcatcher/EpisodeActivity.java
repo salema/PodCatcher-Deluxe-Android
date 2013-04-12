@@ -30,6 +30,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.listeners.PlayerListener;
@@ -48,7 +49,8 @@ import java.util.TimerTask;
  * or simply show this layout.
  */
 public abstract class EpisodeActivity extends BaseActivity implements
-        OnDownloadEpisodeListener, PlayerListener, PlayServiceListener {
+        OnDownloadEpisodeListener, OnChangeEpisodeStateListener, PlayerListener,
+        PlayServiceListener {
 
     /** The current episode fragment */
     protected EpisodeFragment episodeFragment;
@@ -117,6 +119,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
         // We have to do this here instead of onCreate since we can only react
         // on the call-backs properly once we have our fragment
         episodeManager.addDownloadListener(this);
+        episodeManager.addStateChangedListener(this);
     }
 
     @Override
@@ -141,6 +144,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
         // Disconnect from episode manager
         episodeManager.removeDownloadListener(this);
+        episodeManager.removeStateChangedListener(this);
 
         // Stop the timer
         playUpdateTimer.cancel();
@@ -179,6 +183,11 @@ public abstract class EpisodeActivity extends BaseActivity implements
     @Override
     public void onDownloadFailed() {
         updateDownloadStatus();
+    }
+
+    @Override
+    public void onStateChanged(Episode episode) {
+        updateNewStatus();
     }
 
     @Override
@@ -262,6 +271,9 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onPlaybackComplete() {
+        // Mark the episode old (needs to be done before resetting the service!)
+        episodeManager.setState(service.getCurrentEpisode(), true);
+
         stopPlayProgressTimer();
         service.reset();
 
@@ -288,7 +300,16 @@ public abstract class EpisodeActivity extends BaseActivity implements
     protected abstract void updateActionBar();
 
     /**
-     * Update the download menu item state and visibility
+     * Update the episode state icon.
+     */
+    protected void updateNewStatus() {
+        if (episodeFragment != null) {
+            episodeFragment.setNewIconVisibility(!episodeManager.getState(currentEpisode));
+        }
+    }
+
+    /**
+     * Update the download menu item state and visibility.
      */
     protected void updateDownloadStatus() {
         if (episodeFragment != null) {

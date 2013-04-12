@@ -54,6 +54,8 @@ public class EpisodeFragment extends Fragment {
     private boolean downloadMenuItemState = true;
     /** Flag to indicate whether the episode date should be shown */
     private boolean showEpisodeDate = false;
+    /** Flag for show new icon state */
+    private boolean showNewStateIcon = false;
     /** Flag for show download icon state */
     private boolean showDownloadIcon = false;
     /** Flag for the state of the download icon */
@@ -74,6 +76,8 @@ public class EpisodeFragment extends Fragment {
     private TextView titleView;
     /** The podcast title view */
     private TextView subtitleView;
+    /** The state icon view */
+    private ImageView stateIconView;
     /** The download icon view */
     private ImageView downloadIconView;
     /** The divider view between title and description */
@@ -116,6 +120,7 @@ public class EpisodeFragment extends Fragment {
         emptyView = getView().findViewById(android.R.id.empty);
         titleView = (TextView) getView().findViewById(R.id.episode_title);
         subtitleView = (TextView) getView().findViewById(R.id.podcast_title);
+        stateIconView = (ImageView) getView().findViewById(R.id.state_icon);
         downloadIconView = (ImageView) getView().findViewById(R.id.download_icon);
         descriptionView = (WebView) getView().findViewById(R.id.episode_description);
         dividerView = getView().findViewById(R.id.episode_divider);
@@ -126,6 +131,7 @@ public class EpisodeFragment extends Fragment {
         // controls are established (the episode might have been set earlier)
         if (currentEpisode != null) {
             setEpisode(currentEpisode);
+            setNewIconVisibility(showNewStateIcon);
             setDownloadIconVisibility(showDownloadIcon, downloadIconState);
         }
     }
@@ -209,6 +215,19 @@ public class EpisodeFragment extends Fragment {
             downloadMenuItem.setIcon(download ? R.drawable.ic_menu_download
                     : R.drawable.ic_menu_delete);
         }
+    }
+
+    /**
+     * Set whether the fragment should show the episode state icon to indicate
+     * that the episode is new (not marked old).
+     * 
+     * @param show Whether to show the new icon.
+     */
+    public void setNewIconVisibility(boolean show) {
+        this.showNewStateIcon = show;
+
+        if (viewCreated)
+            stateIconView.setVisibility(show ? VISIBLE : GONE);
     }
 
     /**

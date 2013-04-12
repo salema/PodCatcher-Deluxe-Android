@@ -89,7 +89,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         else if (contentMode.equals(ContentMode.DOWNLOADS)) {
             this.currentEpisodeList = episodeManager.getDownloads();
 
-            episodeListFragment.setEpisodeList(currentEpisodeList);
+            setFilteredEpisodeList();
         }
     }
 
@@ -97,6 +97,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     protected void onResume() {
         super.onResume();
 
+        updateFilter();
         updateDownloadStatus();
     }
 

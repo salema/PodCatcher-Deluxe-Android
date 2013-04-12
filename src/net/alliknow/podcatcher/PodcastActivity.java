@@ -422,6 +422,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                 episodeListFragment.resetUi();
 
                 // Update other UI
+                updateFilter();
                 updateLogoViewMode();
                 updateDivider();
                 break;
@@ -455,7 +456,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                 updateLogoViewMode();
                 updateDivider();
 
-                episodeListFragment.setEpisodeList(currentEpisodeList);
+                setFilteredEpisodeList();
 
                 break;
             case SMALL_PORTRAIT_VIEW:
@@ -508,6 +509,14 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         super.onPodcastLogoLoaded(podcast);
 
         updateLogoViewMode();
+    }
+
+    @Override
+    public void onStateChanged(Episode episode) {
+        super.onStateChanged(episode);
+
+        if (podcastListFragment != null)
+            podcastListFragment.refresh();
     }
 
     /**

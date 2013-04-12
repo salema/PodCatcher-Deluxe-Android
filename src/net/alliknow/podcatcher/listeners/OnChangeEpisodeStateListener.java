@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
 /** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
@@ -16,11 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
--->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/downloads"
-        android:icon="@drawable/ic_menu_download"
-        android:showAsAction="never"
-        android:title="@string/downloads" />
-</menu>
+
+package net.alliknow.podcatcher.listeners;
+
+import net.alliknow.podcatcher.model.types.Episode;
+
+/**
+ * Interface definition for a listener to be alerted when the old/new state of
+ * an episode changes.
+ */
+public interface OnChangeEpisodeStateListener {
+
+    /**
+     * Called on the listener when the state (old/new) of an episode is altered.
+     * 
+     * @param episode Episode the state was changed for.
+     */
+    public void onStateChanged(Episode episode);
+
+}

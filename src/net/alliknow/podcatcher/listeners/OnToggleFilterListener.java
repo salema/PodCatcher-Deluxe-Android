@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
 /** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
@@ -16,11 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
--->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/downloads"
-        android:icon="@drawable/ic_menu_download"
-        android:showAsAction="never"
-        android:title="@string/downloads" />
-</menu>
+
+package net.alliknow.podcatcher.listeners;
+
+/**
+ * Interface for the controller to implement when the user requests an episode
+ * filter toggle.
+ */
+public interface OnToggleFilterListener {
+
+    /**
+     * Called on the listener if the filter state toggles.
+     */
+    public void onToggleFilter();
+}

@@ -20,11 +20,11 @@ package net.alliknow.podcatcher;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.view.View;
-import android.widget.BaseAdapter;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
+import net.alliknow.podcatcher.listeners.OnToggleFilterListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
@@ -33,6 +33,7 @@ import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -42,7 +43,8 @@ import java.util.List;
  * simply show this layout.
  */
 public abstract class EpisodeListActivity extends EpisodeActivity implements
-        OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectEpisodeListener {
+        OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectEpisodeListener,
+        OnToggleFilterListener {
 
     /** The current episode list fragment */
     protected EpisodeListFragment episodeListFragment;
@@ -75,6 +77,10 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     /** The current episode list */
     protected List<Episode> currentEpisodeList;
+    /** The filtered episode list */
+    protected List<Episode> filteredEpisodeList;
+    /** Flag indicating whether we filter the episode list */
+    protected boolean filterActive = false;
 
     @Override
     protected void findFragments() {
@@ -131,22 +137,21 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 currentEpisodeList.addAll(podcast.getEpisodes());
                 Collections.sort(currentEpisodeList);
                 // Make sure this is a copy
-                episodeListFragment.setEpisodeList(new ArrayList<Episode>(currentEpisodeList));
+                setFilteredEpisodeList();
             }
         } // Select single podcast
         else if (contentMode.equals(ContentMode.SINGLE_PODCAST) && podcast.equals(currentPodcast)) {
             currentEpisodeList = podcast.getEpisodes();
-            episodeListFragment.setEpisodeList(currentEpisodeList);
+            setFilteredEpisodeList();
         }
 
         // Additionally, if on large device, process clever selection update
         if (viewMode == LARGE_LANDSCAPE_VIEW || viewMode == LARGE_PORTRAIT_VIEW) {
-            if (currentEpisodeList != null && currentEpisodeList.contains(currentEpisode))
-                episodeListFragment.select(currentEpisodeList.indexOf(currentEpisode));
-
+            updateEpisodeListSelection();
             updateDivider();
         }
 
+        updateFilter();
         updateActionBar();
     }
 
@@ -179,7 +184,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
                 // Make sure selection matches in list fragment and the UI is
                 // updated
-                episodeListFragment.select(currentEpisodeList.indexOf(selectedEpisode));
+                updateEpisodeListSelection();
+                updateNewStatus();
                 updateDownloadStatus();
 
                 break;
@@ -202,6 +208,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 episodeFragment.setEpisode(selectedEpisode);
                 episodeFragment.setShowEpisodeDate(true);
 
+                updateNewStatus();
                 updateDownloadStatus();
 
                 break;
@@ -240,11 +247,73 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
+    public void onToggleFilter() {
+        if (episodeListFragment != null) {
+            filterActive = !filterActive;
+
+            if (currentEpisodeList != null)
+                setFilteredEpisodeList();
+
+            updateFilter();
+        }
+    }
+
+    /**
+     * Filter and set the current episode list to show in the episode list
+     * fragment.
+     */
+    protected void setFilteredEpisodeList() {
+        filteredEpisodeList = new ArrayList<Episode>(currentEpisodeList);
+
+        if (filterActive) {
+            Iterator<Episode> iterator = filteredEpisodeList.iterator();
+
+            while (iterator.hasNext())
+                if (episodeManager.getState(iterator.next()))
+                    iterator.remove();
+        }
+
+        episodeListFragment.setEpisodeList(filteredEpisodeList);
+        updateEpisodeListSelection();
+    }
+
+    protected void updateEpisodeListSelection() {
+        switch (viewMode) {
+            case LARGE_PORTRAIT_VIEW:
+            case LARGE_LANDSCAPE_VIEW:
+                // Make sure the episode selection in the list is updated
+                if (filteredEpisodeList != null && filteredEpisodeList.contains(currentEpisode))
+                    episodeListFragment.select(filteredEpisodeList.indexOf(currentEpisode));
+                else
+                    episodeListFragment.selectNone();
+
+                break;
+            default:
+                episodeListFragment.selectNone();
+        }
+    }
+
+    @Override
+    public void onStateChanged(Episode episode) {
+        super.onStateChanged(episode);
+
+        if (episodeListFragment != null)
+            episodeListFragment.refresh();
+    }
+
+    /**
+     * Update the filter menu icon visibility.
+     */
+    protected void updateFilter() {
+        episodeListFragment.setFilterMenuItemVisibility(currentEpisodeList != null, filterActive);
+    }
+
+    @Override
     protected void updateDownloadStatus() {
         super.updateDownloadStatus();
 
-        if (episodeListFragment != null && episodeListFragment.getListAdapter() != null)
-            ((BaseAdapter) episodeListFragment.getListAdapter()).notifyDataSetChanged();
+        if (episodeListFragment != null)
+            episodeListFragment.refresh();
     }
 
     /**
