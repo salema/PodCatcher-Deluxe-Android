@@ -10,7 +10,7 @@ Make sure services thread heavy operations
 Loading podcast in AddPodcastFragment should be exclusive (other listeners should not be alerted) - maybe add small retained fragment to hold load task
 In small mode, rotate and rotate again should get me back to the original screen
 When a podcast is tapped and the data is older then 30 minutes but the reload of the feed fails, use the old data (really?)
+Use different podcast episode cache times when on mobile data and do not try to reload if offline
 Cache podcast logos in download folders and use them instead of reloading them all the time
-Hide the "play" button in small-landscape mode when episode fragment is not visible
 Hide episode name and seek bar from player in small landscape mode
-Podcast and episode names might contain characters that break the XML structure of the episode metadata file
+
