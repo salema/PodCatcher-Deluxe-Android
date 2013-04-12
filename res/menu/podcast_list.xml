@@ -27,10 +27,4 @@
         android:id="@+id/podcast_select_all_menuitem"
         android:showAsAction="never|withText"
         android:title="@string/select_all_podcasts" />
-    <item
-        android:id="@+id/podcast_remove_menuitem"
-        android:icon="@drawable/ic_menu_delete"
-        android:showAsAction="never|withText"
-        android:title="@string/remove_podcast"
-        android:visible="false" />
 </menu>

@@ -53,8 +53,6 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
     /** Remove podcast menu item */
     private MenuItem selectAllMenuItem;
-    /** Remove podcast menu item */
-    private MenuItem removeMenuItem;
 
     /** The logo view */
     private ImageView logoView;
@@ -137,7 +135,6 @@ public class PodcastListFragment extends PodcatcherListFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.podcast_list, menu);
 
-        removeMenuItem = (MenuItem) menu.findItem(R.id.podcast_remove_menuitem);
         selectAllMenuItem = (MenuItem) menu.findItem(R.id.podcast_select_all_menuitem);
     }
 
@@ -150,10 +147,6 @@ public class PodcastListFragment extends PodcatcherListFragment {
                 return true;
             case R.id.podcast_select_all_menuitem:
                 selectionListener.onAllPodcastsSelected();
-
-                return true;
-            case R.id.podcast_remove_menuitem:
-                getListView().setItemChecked(selectedPosition, true);
 
                 return true;
             default:
@@ -282,8 +275,6 @@ public class PodcastListFragment extends PodcatcherListFragment {
             // Menu items might be late to load
             if (selectAllMenuItem != null && adapter != null)
                 selectAllMenuItem.setVisible(adapter.getCount() > 1 && !selectAll);
-            if (removeMenuItem != null)
-                removeMenuItem.setVisible(selectedPosition >= 0);
         }
     }
 }
