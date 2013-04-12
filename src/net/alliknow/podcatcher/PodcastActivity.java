@@ -292,9 +292,6 @@ public class PodcastActivity extends EpisodeListActivity implements
         this.currentEpisodeList = null;
         this.multiplePodcastsMode = false;
 
-        // Select in podcast list
-        podcastListFragment.select(podcastManager.indexOf(podcast));
-
         switch (viewMode) {
             case SMALL_LANDSCAPE_VIEW:
                 // This will go back to the list view in case we are showing
@@ -312,6 +309,9 @@ public class PodcastActivity extends EpisodeListActivity implements
 
                 // Load podcast
                 podcastManager.load(podcast);
+                // Select in podcast list
+                podcastListFragment.select(podcastManager.indexOf(podcast));
+
                 break;
             case SMALL_PORTRAIT_VIEW:
                 // We need to launch a new activity to display the episode list
@@ -338,7 +338,7 @@ public class PodcastActivity extends EpisodeListActivity implements
             case SMALL_LANDSCAPE_VIEW:
                 // This will go back to the list view in case we are showing
                 // episode details
-                getFragmentManager().popBackStack();
+                getFragmentManager().popBackStackImmediate();
                 // There is no break here on purpose, we need to run the code
                 // below as well
             case LARGE_PORTRAIT_VIEW:

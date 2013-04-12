@@ -155,6 +155,9 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             case LARGE_LANDSCAPE_VIEW:
                 // Set episode in episode fragment
                 episodeFragment.setEpisode(selectedEpisode);
+                // Make sure selection matches in list fragment
+                episodeListFragment.select(currentEpisodeList.indexOf(selectedEpisode));
+
                 break;
             case SMALL_LANDSCAPE_VIEW:
                 // Find, and if not already done create, episode fragment
@@ -174,6 +177,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 // Set the episode
                 episodeFragment.setEpisode(selectedEpisode);
                 episodeFragment.setShowEpisodeDate(true);
+
                 break;
             case SMALL_PORTRAIT_VIEW:
                 // Send intent to open episode as a new activity
@@ -183,10 +187,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
         }
-
-        // Make sure selection matches in list fragment
-        if (currentEpisodeList != null)
-            episodeListFragment.select(currentEpisodeList.indexOf(selectedEpisode));
 
         updatePlayer();
         updateDivider();
