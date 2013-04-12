@@ -97,7 +97,14 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
         try {
             // 1. Open stream and check whether we know its length
             bufferedRemoteStream = new BufferedInputStream(connection.getInputStream());
-            boolean sendLoadProgress = connection.getContentLength() > 0;
+            // Check whether we should abort load since we have a load limit set
+            // and the content length is higher.
+            final int contentLength = connection.getContentLength();
+            if (loadLimit >= 0 && contentLength != -1 && contentLength > loadLimit)
+                throw new IOException("Load limit exceeded (content length reported by remote is "
+                        + contentLength + " bytes, limit was " + loadLimit + " bytes)!");
+            // Check whether we could calculate the percentage of completion
+            boolean sendLoadProgress = contentLength > 0;
 
             // 2. Create the byte buffer to write to
             result = new ByteArrayOutputStream();

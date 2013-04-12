@@ -91,6 +91,18 @@ public class Podcatcher extends Application implements OnLoadEpisodeMetadataList
     }
 
     /**
+     * Checks whether the device is currently online and can receive data from
+     * the interets.
+     * 
+     * @return <code>true</code> iff we have Internet access.
+     */
+    public boolean isOnline() {
+        final NetworkInfo activeNetwork = getNetworkInfo();
+
+        return activeNetwork != null && activeNetwork.isConnected();
+    }
+
+    /**
      * Checks whether the device is currently on a fast network (such as wifi)
      * as opposed to a mobile network.
      * 
@@ -98,10 +110,7 @@ public class Podcatcher extends Application implements OnLoadEpisodeMetadataList
      *         Internet access.
      */
     public boolean isOnFastConnection() {
-        ConnectivityManager manager =
-                (ConnectivityManager) getApplicationContext()
-                        .getSystemService(CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = manager.getActiveNetworkInfo();
+        final NetworkInfo activeNetwork = getNetworkInfo();
 
         if (activeNetwork == null)
             return false;
@@ -152,5 +161,13 @@ public class Podcatcher extends Application implements OnLoadEpisodeMetadataList
                 builder.append(name.charAt(i));
 
         return builder.toString();
+    }
+
+    private NetworkInfo getNetworkInfo() {
+        ConnectivityManager manager =
+                (ConnectivityManager) getApplicationContext()
+                        .getSystemService(CONNECTIVITY_SERVICE);
+
+        return manager.getActiveNetworkInfo();
     }
 }
