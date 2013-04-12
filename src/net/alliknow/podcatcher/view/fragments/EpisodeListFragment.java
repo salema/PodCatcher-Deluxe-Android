@@ -192,6 +192,8 @@ public class EpisodeListFragment extends PodcatcherListFragment {
         if (filterMenuItem != null) {
             filterMenuItem.setVisible(showFilterMenuItem);
             filterMenuItem.setTitle(filterMenuItemState ? R.string.all : R.string.new_only);
+            filterMenuItem.setIcon(filterMenuItemState ?
+                    R.drawable.ic_menu_filter_back : R.drawable.ic_menu_filter);
         }
     }
 
