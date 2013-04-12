@@ -17,6 +17,7 @@
 
 package net.alliknow.podcatcher;
 
+import android.app.FragmentManager.OnBackStackChangedListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -38,7 +39,7 @@ import java.util.List;
  * Our main activity class. Works as the main controller. Depending on the view
  * state, other activities cooperate.
  */
-public class PodcastActivity extends EpisodeListActivity implements
+public class PodcastActivity extends EpisodeListActivity implements OnBackStackChangedListener,
         OnLoadPodcastListListener, OnChangePodcastListListener, OnSelectPodcastListener {
 
     /** The current podcast list fragment */
@@ -68,6 +69,8 @@ public class PodcastActivity extends EpisodeListActivity implements
         // Register as listener to the podcast data manager
         podcastManager.addLoadPodcastListListener(this);
         podcastManager.addChangePodcastListListener(this);
+        // Make sure we are alerted on back stack changes
+        getFragmentManager().addOnBackStackChangedListener(this);
 
         // 2. Create the UI via XML layouts and fragments
         // Inflate the main content view (depends on view mode)
@@ -250,6 +253,17 @@ public class PodcastActivity extends EpisodeListActivity implements
         // Unregister the listeners
         podcastManager.removeLoadPodcastListListener(this);
         podcastManager.removeChangePodcastListListener(this);
+        getFragmentManager().removeOnBackStackChangedListener(this);
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        // This only needed in small landscape mode and in case
+        // we go back to the episode list
+        if (viewMode == SMALL_LANDSCAPE_VIEW
+                && getFragmentManager().getBackStackEntryCount() == 0) {
+            onNoEpisodeSelected();
+        }
     }
 
     @Override
