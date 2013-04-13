@@ -113,7 +113,11 @@ public class EpisodeFragment extends Fragment {
                 subtitleView.setText(subtitleView.getText() + SEPARATOR
                         + Utils.getRelativePubDate(currentEpisode));
             // Episode description
-            descriptionView.loadDataWithBaseURL(null, currentEpisode.getDescription(),
+            descriptionView.loadDataWithBaseURL(null, currentEpisode.getDescription() +
+                    "<hr style=\"color: gray; width: 100%\">" +
+                    "<span style=\"color: gray; font-size: smaller;\">" +
+                    getResources().getString(R.string.ad) +
+                    "</span>",
                     "text/html",
                     "utf-8", null);
         }

@@ -70,4 +70,5 @@
     <string name="enter_podcast_url_here">Insérez l\'URL du podcast ici</string>
     <string name="error_podcast_add">Le téléchargement du podcast a échoué.</string>
     <string name="error_podcast_load">Le téléchargement du podcast a échoué. Assurez-vous que vous êtes en ligne.</string>
+    <string name="ad">Essayez &lt;a href="http://play.google.com/store/apps/details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt;: Téléchargements, Listes de lecture, Filtres et bien plus encore!</string>
 </resources>
