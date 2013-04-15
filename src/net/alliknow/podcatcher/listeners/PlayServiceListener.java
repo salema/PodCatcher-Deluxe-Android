@@ -29,7 +29,14 @@ public interface PlayServiceListener {
      * Called by the service on the listener if an episode is loaded and ready
      * to play (the service might in fact already have started playback...)
      */
-    public void onReadyToPlay();
+    public void onPlaybackStarted();
+
+    /**
+     * Called by the service on the listener if the state of the service
+     * (playing/paused) is changed externally, e.g. via the headsets media
+     * buttons.
+     */
+    public void onPlaybackStateChanged();
 
     /**
      * Called by the service on the listener if an episode is temporarily
