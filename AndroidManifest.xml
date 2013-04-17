@@ -60,6 +60,28 @@
             android:theme="@android:style/Theme.NoDisplay" />
         <service
             android:name=".services.PlayEpisodeService"
-            android:exported="false" />
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.podcatcher.deluxe.action.TOGGLE" />
+                <action android:name="com.podcatcher.deluxe.action.PLAY" />
+                <action android:name="com.podcatcher.deluxe.action.PAUSE" />
+                <action android:name="com.podcatcher.deluxe.action.PREVIOUS" />
+                <action android:name="com.podcatcher.deluxe.action.SKIP" />
+                <action android:name="com.podcatcher.deluxe.action.REWIND" />
+                <action android:name="com.podcatcher.deluxe.action.FORWARD" />
+                <action android:name="com.podcatcher.deluxe.action.STOP" />
+            </intent-filter>
+        </service>
+        <receiver 
+            android:name=".services.MediaButtonReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".services.BecomingNoisyReceiver">
+            <intent-filter>
+                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

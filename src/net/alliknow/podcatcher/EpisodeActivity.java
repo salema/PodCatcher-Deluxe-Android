@@ -192,7 +192,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onToggleLoad() {
-        if (service.loadedEpisode(currentEpisode))
+        if (service.isLoadedEpisode(currentEpisode))
             onPlaybackComplete();
         else if (currentEpisode != null) {
             stopPlayProgressTimer();
@@ -227,9 +227,19 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     @Override
-    public void onReadyToPlay() {
+    public void onPlaybackStarted() {
         updatePlayer();
         startPlayProgressTimer();
+    }
+
+    @Override
+    public void onPlaybackStateChanged() {
+        updatePlayer();
+
+        if (service != null && service.isPlaying())
+            startPlayProgressTimer();
+        else
+            stopPlayProgressTimer();
     }
 
     @Override
@@ -260,7 +270,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onResumeFromBuffering() {
-        onReadyToPlay();
+        onPlaybackStarted();
     }
 
     @Override
@@ -330,14 +340,14 @@ public abstract class EpisodeActivity extends BaseActivity implements
         if (playerFragment != null && service != null) {
             // Show/hide menu item
             playerFragment.setLoadMenuItemVisibility(currentEpisode != null,
-                    !service.loadedEpisode(currentEpisode));
+                    !service.isLoadedEpisode(currentEpisode));
 
             // Make sure error view is hidden
             playerFragment.setErrorViewVisibility(false);
             // Make sure player is shown if needed
             playerFragment.setPlayerVisibilility(service.isPreparing() || service.isPrepared());
             // Make sure player title is shown if needed
-            playerFragment.setPlayerTitleVisibility(!service.loadedEpisode(currentEpisode));
+            playerFragment.setPlayerTitleVisibility(!service.isLoadedEpisode(currentEpisode));
 
             // Update UI to reflect service status
             playerFragment.updatePlayerTitle(service.getCurrentEpisode());

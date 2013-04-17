@@ -20,6 +20,7 @@ package net.alliknow.podcatcher;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -77,7 +78,11 @@ public abstract class BaseActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Set the data managers
+        // This will suggest to the Android system, that the volume to be
+        // changed for this app (all its activities) is the music stream
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+        // Set the data manager
         podcastManager = PodcastManager.getInstance();
         episodeManager = EpisodeManager.getInstance();
 

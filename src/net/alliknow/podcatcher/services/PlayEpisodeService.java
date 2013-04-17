@@ -17,13 +17,18 @@
 
 package net.alliknow.podcatcher.services;
 
+import static android.media.RemoteControlClient.PLAYSTATE_BUFFERING;
+import static android.media.RemoteControlClient.PLAYSTATE_ERROR;
+import static android.media.RemoteControlClient.PLAYSTATE_PAUSED;
+import static android.media.RemoteControlClient.PLAYSTATE_PLAYING;
+import static android.media.RemoteControlClient.PLAYSTATE_STOPPED;
+
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
@@ -55,12 +60,30 @@ import java.util.Set;
  * Play an episode service, wraps media player. This class implements an Android
  * service. It can be used to play back podcast episodes and tries to hide away
  * the complexity of the media player support in Android. All methods should
- * fail gracefully. Connect to the service from your activity/fragment to use
- * it. Also implement <code>PlayServiceListener</code> for interaction.
+ * fail gracefully. Connect (bind) to the service from your activity/fragment
+ * and/or send intent actions to use it. For even more interaction, implement
+ * {@link PlayServiceListener}.
  */
 public class PlayEpisodeService extends Service implements OnPreparedListener,
         OnCompletionListener, OnErrorListener, OnBufferingUpdateListener,
         OnInfoListener, OnAudioFocusChangeListener {
+
+    /** Action to send to service to toggle play/pause */
+    public static final String ACTION_TOGGLE = "com.podcatcher.deluxe.action.TOGGLE";
+    /** Action to send to service to play (resume) episode */
+    public static final String ACTION_PLAY = "com.podcatcher.deluxe.action.PLAY";
+    /** Action to send to service to pause episode */
+    public static final String ACTION_PAUSE = "com.podcatcher.deluxe.action.PAUSE";
+    /** Action to send to service to restart the current episode */
+    public static final String ACTION_PREVIOUS = "com.podcatcher.deluxe.action.PREVIOUS";
+    /** Action to send to service to skip to next episode */
+    public static final String ACTION_SKIP = "com.podcatcher.deluxe.action.SKIP";
+    /** Action to send to service to rewind the current episode */
+    public static final String ACTION_REWIND = "com.podcatcher.deluxe.action.REWIND";
+    /** Action to send to service to fast forward the current episode */
+    public static final String ACTION_FORWARD = "com.podcatcher.deluxe.action.FORWARD";
+    /** Action to send to service to stop episode */
+    public static final String ACTION_STOP = "com.podcatcher.deluxe.action.STOP";
 
     /** The episode manager handle */
     private EpisodeManager episodeManager;
@@ -74,16 +97,29 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     private boolean buffering = false;
     /** Do we have audio focus ? */
     private boolean hasFocus = false;
+    /** Are we bound to any activity ? */
+    private boolean bound = false;
 
-    /** Binder given to clients */
-    private final IBinder binder = new PlayServiceBinder();
-    /** The call-back set for the play service listeners */
-    private Set<PlayServiceListener> listeners = new HashSet<PlayServiceListener>();
-
+    /** Our audio manager handle */
+    private AudioManager audioManager;
+    /** Our media button broadcast receiver */
+    private ComponentName mediaButtonReceiver;
+    /** Our remote control client */
+    private PodcatcherRCClient remoteControlClient;
     /** Our wifi lock */
     private WifiLock wifiLock;
-    /** Our notification id */
-    private static final int NOTIFICATION_ID = 1;
+
+    /** Our notification id (does not really matter) */
+    private static final int NOTIFICATION_ID = 123;
+    /** The amount of seconds used for any forward or rewind event */
+    private static final int SKIP_AMOUNT = 3;
+    /** The volume we duck playback to */
+    private static final float DUCK_VOLUME = 0.1f;
+
+    /** The call-back set for the play service listeners */
+    private Set<PlayServiceListener> listeners = new HashSet<PlayServiceListener>();
+    /** Binder given to clients */
+    private final IBinder binder = new PlayServiceBinder();
 
     /**
      * The binder to return to client.
@@ -100,42 +136,84 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         }
     }
 
-    /** Receiver for unplugging headphones */
-    private final BroadcastReceiver receiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            pause();
-        }
-    };
-
     @Override
     public void onCreate() {
         super.onCreate();
 
+        // Get the audio manager handle
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+        // Create the wifi lock (not acquired yet)
         wifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
                 .createWifiLock(WifiManager.WIFI_MODE_FULL, "mylock");
 
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
-        registerReceiver(receiver, filter);
-
+        // Get our episode manager handle
         episodeManager = EpisodeManager.getInstance();
+
+        // Create handle to media button receiver
+        mediaButtonReceiver = new ComponentName(this, MediaButtonReceiver.class);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // We might have received an action to perform
+        if (intent != null && intent.getAction() != null && prepared) {
+            // Retrieve the action
+            String action = intent.getAction();
+            // Go handle the action
+            if (action.equals(ACTION_TOGGLE)) {
+                if (isPlaying())
+                    pause();
+                else
+                    resume();
+            }
+            else if (action.equals(ACTION_PLAY))
+                resume();
+            else if (action.equals(ACTION_PAUSE))
+                pause();
+            else if (action.equals(ACTION_PREVIOUS))
+                seekTo(0);
+            else if (action.equals(ACTION_SKIP))
+                ;
+            else if (action.equals(ACTION_REWIND)) {
+                final int newPosition = getCurrentPosition() - SKIP_AMOUNT;
+                seekTo(newPosition <= 0 ? 0 : newPosition);
+            }
+            else if (action.equals(ACTION_FORWARD)) {
+                final int newPosition = getCurrentPosition() + SKIP_AMOUNT;
+
+                if (newPosition < getDuration())
+                    seekTo(newPosition);
+            }
+            else if (action.equals(ACTION_STOP))
+                reset();
+
+            // Alert listeners so the UI can adjust
+            for (PlayServiceListener listener : listeners)
+                listener.onPlaybackStateChanged();
+        }
+
+        // TODO Now we might have started the service. Maybe it is not even
+        // needed...
+        return START_NOT_STICKY;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
+        this.bound = true;
+
         return binder;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        if (currentEpisode == null) {
-            stopSelf();
+        this.bound = false;
 
-            Log.i(getClass().getSimpleName(),
-                    "Service stopped since no clients are bound anymore and no episode is loaded");
-        }
+        // Since this is a started service (which is also bound to in addition)
+        // we need to take care of stopping ourself. But we do not want to go
+        // away if there is still some playback. Therefore we check whether
+        // there is any episode loaded and only stop ourselves if there is none.
+        stopSelfIfUnboundAndIdle();
 
         return false;
     }
@@ -143,16 +221,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     @Override
     public void onDestroy() {
         reset();
-
-        listeners = null;
-        unregisterReceiver(receiver);
-    }
-
-    /**
-     * @return Whether the player is currently playing.
-     */
-    public boolean isPlaying() {
-        return player != null && player.isPlaying();
     }
 
     /**
@@ -183,6 +251,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             // Stop and release the current player and reset variables
             reset();
 
+            // Make the new episode our current source
             this.currentEpisode = episode;
 
             // Start playback for new episode
@@ -211,9 +280,12 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
      */
     public void pause() {
         if (currentEpisode == null)
-            Log.w(getClass().getSimpleName(), "Called pause without setting episode");
-        else if (prepared && isPlaying())
+            Log.d(getClass().getSimpleName(), "Called pause without setting episode");
+        else if (prepared && isPlaying()) {
             player.pause();
+
+            updateRemoteControlPlaystate(PLAYSTATE_PAUSED);
+        }
     }
 
     /**
@@ -221,11 +293,14 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
      */
     public void resume() {
         if (currentEpisode == null)
-            Log.w(getClass().getSimpleName(), "Called resume without setting episode");
+            Log.d(getClass().getSimpleName(), "Called resume without setting episode");
         else if (!hasFocus)
-            Log.w(getClass().getSimpleName(), "Called resume without having audio focus");
-        else if (prepared && !isPlaying())
+            Log.d(getClass().getSimpleName(), "Called resume without having audio focus");
+        else if (prepared && !isPlaying()) {
             player.start();
+
+            updateRemoteControlPlaystate(PLAYSTATE_PLAYING);
+        }
     }
 
     /**
@@ -234,8 +309,15 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
      * @param seconds Seconds from the start to seek to.
      */
     public void seekTo(int seconds) {
-        if (isPrepared() && seconds >= 0 && seconds <= getDuration())
+        if (prepared && seconds >= 0 && seconds <= getDuration())
             player.seekTo(seconds * 1000); // multiply to get millis
+    }
+
+    /**
+     * @return Whether the player is currently playing.
+     */
+    public boolean isPlaying() {
+        return player != null && player.isPlaying();
     }
 
     /**
@@ -268,7 +350,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
      * @param episode Episode to check for.
      * @return true iff given episode is loaded (or loading), false otherwise.
      */
-    public boolean loadedEpisode(Episode episode) {
+    public boolean isLoadedEpisode(Episode episode) {
         return currentEpisode != null && currentEpisode.equals(episode);
     }
 
@@ -277,28 +359,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
      */
     public Episode getCurrentEpisode() {
         return currentEpisode;
-    }
-
-    /**
-     * @return The title of the currently loaded episode (if any, might be
-     *         <code>null</code>).
-     */
-    public String getCurrentEpisodeName() {
-        if (currentEpisode == null)
-            return null;
-        else
-            return currentEpisode.getName();
-    }
-
-    /**
-     * @return The title of the currently loaded episode's podcast (if any,
-     *         might be <code>null</code>).
-     */
-    public String getCurrentEpisodePodcastName() {
-        if (currentEpisode != null)
-            return currentEpisode.getPodcast().getName();
-        else
-            return null;
     }
 
     /**
@@ -324,48 +384,42 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     }
 
     @Override
-    public void onPrepared(MediaPlayer mp) {
-        prepared = true;
+    public void onPrepared(MediaPlayer mediaPlayer) {
+        this.prepared = true;
 
         // Try to get audio focus
-        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
                 AudioManager.AUDIOFOCUS_GAIN);
 
+        // Only start playback if focus is granted
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            // So we have audio focus and we tell the audio manager all the
+            // details about our playback and that it should route media buttons
+            // to us
             hasFocus = true;
+            updateAudioManager();
+            updateRemoteControlPlaystate(PLAYSTATE_PLAYING);
+
+            // Go start and show the notification
             player.seekTo(episodeManager.getResumeAt(currentEpisode));
             player.start();
-
             putForeground();
 
+            // Alert the listeners
             if (listeners.size() > 0)
                 for (PlayServiceListener listener : listeners)
-                    listener.onReadyToPlay();
+                    listener.onPlaybackStarted();
             else
-                Log.w(getClass().getSimpleName(), "Episode prepared, but no listener attached");
-        }
+                Log.d(getClass().getSimpleName(), "Episode prepared, but no listener attached");
+        } else
+            onError(mediaPlayer, 0, 0);
     }
 
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
-        if (listeners.size() > 0)
-            for (PlayServiceListener listener : listeners)
-                listener.onBufferUpdate(getDuration() * percent / 100);
-        else
-            Log.w(getClass().getSimpleName(), "Buffer state changed, but no listener attached");
-    }
-
-    @Override
-    public void onCompletion(MediaPlayer mp) {
-        if (listeners.size() > 0)
-            for (PlayServiceListener listener : listeners)
-                listener.onPlaybackComplete();
-        else {
-            reset();
-            Log.w(getClass().getSimpleName(),
-                    "Episode playback completed, but no listener attached");
-        }
+        // Send buffer information to listeners
+        for (PlayServiceListener listener : listeners)
+            listener.onBufferUpdate(getDuration() * percent / 100);
     }
 
     @Override
@@ -373,14 +427,15 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         switch (what) {
             case MediaPlayer.MEDIA_INFO_BUFFERING_START:
                 buffering = true;
+                updateRemoteControlPlaystate(PLAYSTATE_BUFFERING);
 
                 for (PlayServiceListener listener : listeners)
                     listener.onStopForBuffering();
 
                 break;
-
             case MediaPlayer.MEDIA_INFO_BUFFERING_END:
                 buffering = false;
+                updateRemoteControlPlaystate(isPlaying() ? PLAYSTATE_PLAYING : PLAYSTATE_PAUSED);
 
                 for (PlayServiceListener listener : listeners)
                     listener.onResumeFromBuffering();
@@ -388,24 +443,77 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 break;
         }
 
-        if (listeners.size() == 0)
-            Log.w(getClass().getSimpleName(), "Media player send info, but no listener attached");
+        return false;
+    }
 
-        return listeners.size() > 0
-                && (what == MediaPlayer.MEDIA_INFO_BUFFERING_START || what == MediaPlayer.MEDIA_INFO_BUFFERING_END);
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        updateRemoteControlPlaystate(PLAYSTATE_STOPPED);
+
+        // If there is anybody listening, alert and let them decide what to do
+        // next, if not we reset and possibly stop ourselves
+        if (listeners.size() > 0)
+            for (PlayServiceListener listener : listeners)
+                listener.onPlaybackComplete();
+        else {
+            reset();
+            stopSelfIfUnboundAndIdle();
+        }
     }
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
+        updateRemoteControlPlaystate(PLAYSTATE_ERROR);
+
+        // If there is anybody listening, alert and let them decide what to do
+        // next, if not we reset and possibly stop ourselves
         if (listeners.size() > 0)
             for (PlayServiceListener listener : listeners)
                 listener.onError();
         else {
             reset();
-            Log.w(getClass().getSimpleName(), "Media player send error, but no listener attached");
+            stopSelfIfUnboundAndIdle();
+
+            Log.e(getClass().getSimpleName(), "Media player send error: " + what + "/" + extra);
         }
 
         return true;
+    }
+
+    @Override
+    public void onAudioFocusChange(int focusChange) {
+        switch (focusChange) {
+            case AudioManager.AUDIOFOCUS_GAIN:
+                hasFocus = true;
+
+                player.setVolume(1.0f, 1.0f);
+                break;
+
+            case AudioManager.AUDIOFOCUS_LOSS:
+                // Lost focus for an unbounded amount of time: stop playback and
+                // release media player
+                hasFocus = false;
+
+                reset();
+                break;
+
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                // Lost focus for a short time, but we have to stop
+                // playback. We don't release the media player because playback
+                // is likely to resume
+                hasFocus = false;
+
+                pause();
+                break;
+
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                // Lost focus for a short time, but it's ok to keep playing
+                // at an attenuated level
+                hasFocus = false;
+
+                player.setVolume(DUCK_VOLUME, DUCK_VOLUME);
+                break;
+        }
     }
 
     /**
@@ -418,18 +526,24 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         // Stop current playback if any
         if (isPlaying())
             player.stop();
+
         // Reset variables
         this.currentEpisode = null;
         this.prepared = false;
         this.buffering = false;
-        // Release resources
-        ((AudioManager) getSystemService(Context.AUDIO_SERVICE)).abandonAudioFocus(this);
-        hasFocus = false;
 
+        // Release resources
+        audioManager.abandonAudioFocus(this);
+        hasFocus = false;
+        audioManager.unregisterRemoteControlClient(remoteControlClient);
+        audioManager.unregisterMediaButtonEventReceiver(mediaButtonReceiver);
         if (wifiLock.isHeld())
             wifiLock.release();
+
+        // Remove notification
         stopForeground(true);
 
+        // Release player
         if (player != null) {
             player.release();
             player = null;
@@ -489,44 +603,32 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         startForeground(NOTIFICATION_ID, notification);
     }
 
-    @Override
-    public void onAudioFocusChange(int focusChange) {
+    private void stopSelfIfUnboundAndIdle() {
+        if (!bound && currentEpisode == null) {
+            stopSelf();
 
-        switch (focusChange) {
-            case AudioManager.AUDIOFOCUS_GAIN:
-                hasFocus = true;
-
-                player.setVolume(1.0f, 1.0f);
-                break;
-
-            case AudioManager.AUDIOFOCUS_LOSS:
-                // Lost focus for an unbounded amount of time: stop playback and
-                // release media player
-                hasFocus = false;
-
-                if (isPlaying())
-                    player.stop();
-                onCompletion(player);
-                break;
-
-            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-                // Lost focus for a short time, but we have to stop
-                // playback. We don't release the media player because playback
-                // is likely to resume
-                hasFocus = false;
-
-                if (isPlaying())
-                    pause();
-                break;
-
-            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                // Lost focus for a short time, but it's ok to keep playing
-                // at an attenuated level
-                hasFocus = false;
-
-                if (isPlaying())
-                    player.setVolume(0.1f, 0.1f);
-                break;
+            Log.d(getClass().getSimpleName(),
+                    "Service stopped since no clients are bound anymore and no episode is loaded");
         }
+    }
+
+    private void updateAudioManager() {
+        // Register our media button receiver
+        audioManager.registerMediaButtonEventReceiver(mediaButtonReceiver);
+
+        // Build the PendingIntent for the remote control client
+        Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
+        mediaButtonIntent.setComponent(mediaButtonReceiver);
+        PendingIntent mediaPendingIntent =
+                PendingIntent.getBroadcast(getApplicationContext(), 0, mediaButtonIntent, 0);
+
+        // Create and register the remote control client
+        remoteControlClient = new PodcatcherRCClient(mediaPendingIntent, currentEpisode);
+        audioManager.registerRemoteControlClient(remoteControlClient);
+    }
+
+    private void updateRemoteControlPlaystate(int state) {
+        if (remoteControlClient != null)
+            remoteControlClient.setPlaybackState(state);
     }
 }
