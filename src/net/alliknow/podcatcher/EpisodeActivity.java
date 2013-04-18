@@ -244,10 +244,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
         updatePlayer();
         playerFragment.setPlayerVisibilility(true);
-        playerFragment.setPlayerTitleVisibility(false);
         playerFragment.setErrorViewVisibility(true);
-
-        Log.w(getClass().getSimpleName(), "Play service send an error");
     }
 
     /**
@@ -261,16 +258,20 @@ public abstract class EpisodeActivity extends BaseActivity implements
      */
     protected void updatePlayer() {
         if (playerFragment != null && service != null) {
+            final boolean currentEpisodeIsShowing = service.isLoadedEpisode(currentEpisode);
+            final boolean isInSmallLandscapeMode = viewMode == SMALL_LANDSCAPE_VIEW;
+
             // Show/hide menu item
             playerFragment.setLoadMenuItemVisibility(currentEpisode != null,
-                    !service.isLoadedEpisode(currentEpisode));
+                    !currentEpisodeIsShowing);
 
             // Make sure error view is hidden
             playerFragment.setErrorViewVisibility(false);
-            // Make sure player is shown if needed
+            // Make sure player is shown if and as needed
             playerFragment.setPlayerVisibilility(service.isPreparing() || service.isPrepared());
-            // Make sure player title is shown if needed
-            playerFragment.setPlayerTitleVisibility(!service.isLoadedEpisode(currentEpisode));
+            playerFragment.setPlayerTitleVisibility(!isInSmallLandscapeMode
+                    && !currentEpisodeIsShowing);
+            playerFragment.setPlayerSeekbarVisibility(!isInSmallLandscapeMode);
 
             // Update UI to reflect service status
             playerFragment.updatePlayerTitle(service.getCurrentEpisode());
