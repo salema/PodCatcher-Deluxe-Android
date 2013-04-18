@@ -48,15 +48,17 @@ public class PlayerFragment extends Fragment {
     /** The listener for the title click */
     private PlayerListener listener;
 
-    /** Flag for show load menu item state */
+    /** Flag for the show load menu item state */
     private boolean showLoadMenuItem = false;
     /** Flag for the state of the load menu item */
     private boolean loadMenuItemState = true;
-    /** Flag for show player state */
+    /** Flag for the show player state */
     private boolean showPlayer = false;
-    /** Flag for show player title state */
+    /** Flag for the show player title state */
     private boolean showPlayerTitle = false;
-    /** Flag for show error view state */
+    /** Flag for the show player seek bar state */
+    private boolean showPlayerSeekbar = true;
+    /** Flag for the show error view state */
     private boolean showError = false;
 
     /** Status flag indicating that our view is created */
@@ -138,6 +140,7 @@ public class PlayerFragment extends Fragment {
         setLoadMenuItemVisibility(showLoadMenuItem, loadMenuItemState);
         setPlayerVisibilility(showPlayer);
         setPlayerTitleVisibility(showPlayerTitle);
+        setPlayerSeekbarVisibility(showPlayerSeekbar);
         setErrorViewVisibility(showError);
     }
 
@@ -207,6 +210,21 @@ public class PlayerFragment extends Fragment {
             dividerView.setVisibility(show ? VISIBLE : GONE);
             titleView.setVisibility(show ? VISIBLE : GONE);
         }
+    }
+
+    /**
+     * Set whether the fragment should show the player seek bar view. You can
+     * call this any time and can expect it to happen on resume at the latest.
+     * This only makes a difference if the player itself is visible.
+     * 
+     * @param show Whether to show the player title view.
+     */
+    public void setPlayerSeekbarVisibility(boolean show) {
+        this.showPlayerSeekbar = show;
+
+        // Only do it right away if resumed, otherwise onResume will call us.
+        if (isResumed())
+            seekBar.setVisibility(show ? VISIBLE : GONE);
     }
 
     /**
