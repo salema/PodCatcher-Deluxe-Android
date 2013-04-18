@@ -453,6 +453,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                 episodeListFragment.resetAndSpin();
                 episodeListFragment.setShowPodcastNames(true);
                 // Update other UI
+                updateFilter();
                 updateLogoViewMode();
                 updateDivider();
 
