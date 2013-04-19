@@ -27,12 +27,9 @@
         android:id="@+id/player_divider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
-        android:layout_marginBottom="2dp"
+        android:layout_marginBottom="3dp"
         android:scaleType="fitXY"
         android:src="@android:drawable/divider_horizontal_bright"
-        android:visibility="gone"
         android:contentDescription="@string/divider" />
     <TextView
         android:id="@+id/player_error"
@@ -49,6 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/episode_view_padding"
         android:layout_marginRight="@dimen/episode_view_padding"
+        android:layout_marginBottom="3dp"
         android:singleLine="true"
         android:textSize="@dimen/font_size_default"
         android:visibility="gone" />
@@ -58,7 +56,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/episode_view_padding"
         android:layout_marginRight="@dimen/episode_view_padding"
-        android:layout_marginTop="3dp"
         android:layout_marginBottom="3dp" />
     <Button
         android:id="@+id/player_button"
