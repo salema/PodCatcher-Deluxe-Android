@@ -32,7 +32,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -67,8 +66,6 @@ public class PlayerFragment extends Fragment {
     /** The load episode menu bar item */
     private MenuItem loadMenuItem;
 
-    /** The player divider used when title is shown */
-    private ImageView dividerView;
     /** Title view showing current episode title */
     private TextView titleView;
     /** The player's seek bar */
@@ -106,7 +103,6 @@ public class PlayerFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        dividerView = (ImageView) view.findViewById(R.id.player_divider);
         titleView = (TextView) view.findViewById(R.id.player_title);
         titleView.setOnClickListener(new View.OnClickListener() {
 
@@ -206,10 +202,8 @@ public class PlayerFragment extends Fragment {
         this.showPlayerTitle = show;
 
         // Only do it right away if resumed, otherwise onResume will call us.
-        if (isResumed()) {
-            dividerView.setVisibility(show ? VISIBLE : GONE);
+        if (isResumed())
             titleView.setVisibility(show ? VISIBLE : GONE);
-        }
     }
 
     /**
