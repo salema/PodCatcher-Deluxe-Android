@@ -52,6 +52,8 @@ public class Episode implements Comparable<Episode> {
     private Date pubDate;
     /** The episode's description */
     private String description;
+    /** The episode's long content description */
+    private String content;
 
     /**
      * Create a new episode.
@@ -124,6 +126,14 @@ public class Episode implements Comparable<Episode> {
         return description;
     }
 
+    /**
+     * @return The long content description for this episode from the
+     *         content:encoded tag (if any). Might be <code>null</code>.
+     */
+    public String getLongDescription() {
+        return content;
+    }
+
     @Override
     public String toString() {
         return getName();
@@ -190,6 +200,8 @@ public class Episode implements Comparable<Episode> {
             // Episode description
             else if (tagName.equalsIgnoreCase(RSS.DESCRIPTION))
                 description = parser.nextText();
+            else if (isContentEncodedTag(parser))
+                content = parser.nextText();
             // Unneeded node, skip...
             else
                 ParserUtils.skipSubTree(parser);
@@ -197,6 +209,11 @@ public class Episode implements Comparable<Episode> {
 
         // Make sure we end at item tag
         parser.require(XmlPullParser.END_TAG, "", RSS.ITEM);
+    }
+
+    private boolean isContentEncodedTag(XmlPullParser parser) {
+        return RSS.CONTENT_ENCODED.equals(parser.getName()) &&
+                RSS.CONTENT_NAMESPACE.equals(parser.getNamespace(parser.getPrefix()));
     }
 
     private URL createMediaUrl(String url) {

@@ -36,4 +36,7 @@ public class RSS {
     public static final String PUBDATE = "pubDate";
     public static final String THUMBNAIL = "thumbnail";
     public static final String DESCRIPTION = "description";
+    public static final String CONTENT_ENCODED = "encoded";
+
+    public static final String CONTENT_NAMESPACE = "http://purl.org/rss/1.0/modules/content/";
 }

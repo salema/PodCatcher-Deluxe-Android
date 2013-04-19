@@ -77,4 +77,5 @@
     <string name="enter_podcast_url_here">Insertar URL del podcast</string>
     <string name="error_podcast_add">El podcast no se pudo cargar.</string>
     <string name="error_podcast_load">El podcast no se pudo cargar. Comprueba la URL y asegúrate de que estás conectado.</string>
+    <string name="no_episode_description">No hay ninguna descripción disponible.</string>
 </resources>
