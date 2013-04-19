@@ -20,6 +20,7 @@ package net.alliknow.podcatcher.view.fragments;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -59,6 +60,18 @@ public class EpisodeFragment extends Fragment {
     private View dividerView;
     /** The episode description web view */
     private WebView descriptionView;
+
+    /** The ad shown under episode description */
+    private String ad;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        ad = "<hr style=\"color: gray; width: 100%\">" +
+                "<span style=\"color: gray; font-size: smaller;\">" +
+                getString(R.string.ad) + "</span>";
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -112,14 +125,14 @@ public class EpisodeFragment extends Fragment {
             if (showEpisodeDate && currentEpisode.getPubDate() != null)
                 subtitleView.setText(subtitleView.getText() + SEPARATOR
                         + Utils.getRelativePubDate(currentEpisode));
-            // Episode description
-            descriptionView.loadDataWithBaseURL(null, currentEpisode.getDescription() +
-                    "<hr style=\"color: gray; width: 100%\">" +
-                    "<span style=\"color: gray; font-size: smaller;\">" +
-                    getResources().getString(R.string.ad) +
-                    "</span>",
-                    "text/html",
-                    "utf-8", null);
+            // Find valid episode description
+            String description = currentEpisode.getLongDescription();
+            if (description == null)
+                description = currentEpisode.getDescription();
+            if (description == null)
+                description = getString(R.string.no_episode_description);
+            // Set episode description
+            descriptionView.loadDataWithBaseURL(null, description + ad, "text/html", "utf-8", null);
         }
 
         // Update the UI widget's visibility to reflect state
