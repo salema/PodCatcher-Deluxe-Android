@@ -192,19 +192,20 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onToggleLoad() {
-        if (service.isLoadedEpisode(currentEpisode))
-            onPlaybackComplete();
-        else if (currentEpisode != null) {
-            stopPlayProgressTimer();
+        // Stop timer task
+        stopPlayProgressTimer();
 
+        // Stop called: unload episode
+        if (service.isLoadedEpisode(currentEpisode))
+            service.reset();
+        // Play called on unloaded episode
+        else if (currentEpisode != null)
             service.playEpisode(currentEpisode);
 
-            // Update UI
-            updatePlayer();
-            if (playerFragment != null)
-                playerFragment.updateSeekBarSecondaryProgress(0);
-        } else
-            Log.w(getClass().getSimpleName(), "Cannot load episode (episode or service are null)");
+        // Update UI
+        updatePlayer();
+        if (playerFragment != null)
+            playerFragment.updateSeekBarSecondaryProgress(0);
     }
 
     @Override
