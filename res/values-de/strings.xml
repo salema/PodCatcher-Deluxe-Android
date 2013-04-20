@@ -23,6 +23,8 @@
     <string name="help">Hilfe</string>
     <string name="wait">Warten</string>
     <string name="connect">Verbinden</string>
+    <string name="started_download">Download gestartet für</string>
+    <string name="download_failed">Download fehlgeschlagen.</string>
     <string name="load">Laden</string>
     <string name="stop">Stop</string>
     <string name="parse">Lesen</string>

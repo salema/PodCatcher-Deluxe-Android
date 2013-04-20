@@ -30,6 +30,7 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import net.alliknow.podcatcher.EpisodeActivity;
 import net.alliknow.podcatcher.EpisodeListActivity;
@@ -117,6 +118,13 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
                             for (OnDownloadEpisodeListener listener : downloadListeners)
                                 listener.onDownloadFailed();
+
+                            final int status = result.getInt(result
+                                    .getColumnIndex(DownloadManager.COLUMN_STATUS));
+                            final int reason = result.getInt(
+                                    result.getColumnIndex(DownloadManager.COLUMN_REASON));
+                            Log.e(getClass().getSimpleName(),
+                                    "Download failed (status/reason): " + status + "/" + reason);
                         }
 
                     // Close cursor

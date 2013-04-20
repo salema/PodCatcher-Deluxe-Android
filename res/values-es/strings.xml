@@ -23,6 +23,8 @@
     <string name="help">Ayuda</string>
     <string name="wait">Esperar</string>
     <string name="connect">Conectar</string>
+    <string name="started_download">Descarga activa: </string>
+    <string name="download_failed">Le téléchargement a échoué.</string>
     <string name="load">Cargar</string>
     <string name="stop">Stop</string>
     <string name="parse">Leer</string>

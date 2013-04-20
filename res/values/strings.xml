@@ -30,6 +30,8 @@
     <string name="connect">Connect</string>
     <string name="download" translatable="false">Download</string>
     <string name="downloads" translatable="false">Downloads</string>
+    <string name="started_download">Started download for</string>
+    <string name="download_failed">Download failed.</string>
     <string name="load">Load</string>
     <string name="stop">Stop</string>
     <string name="parse">Read</string>

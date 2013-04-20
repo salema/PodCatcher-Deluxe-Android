@@ -166,7 +166,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
         if (download) {
             episodeManager.download(currentEpisode);
 
-            showDownloadToast();
+            showToast(getString(R.string.started_download) + "\n\""
+                    + currentEpisode.getName() + "\"");
         }
         else
             episodeManager.deleteDownload(currentEpisode);
@@ -183,6 +184,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
     @Override
     public void onDownloadFailed() {
         updateDownloadStatus();
+
+        showToast(getString(R.string.download_failed));
     }
 
     @Override
@@ -398,9 +401,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
         }
     }
 
-    private void showDownloadToast() {
-        Toast toast = Toast.makeText(this,
-                "Started download for \n\"" + currentEpisode.getName() + "\"", Toast.LENGTH_SHORT);
+    private void showToast(String text) {
+        Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
 
         TextView textView = (TextView) toast.getView().findViewById(android.R.id.message);
         textView.setGravity(Gravity.CENTER);
