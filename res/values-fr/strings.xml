@@ -24,7 +24,7 @@
     <string name="wait">Attendre</string>
     <string name="connect">Connecter</string>
     <string name="started_download">Téléchargements actifs: </string>
-    <string name="download_failed">Descarga fallida.</string>
+    <string name="download_failed">Le téléchargement a échoué.</string>
     <string name="load">Charger</string>
     <string name="stop">Stop</string>
     <string name="parse">Lire</string>
