@@ -71,5 +71,5 @@
     <string name="error_podcast_add">Der Podcast konnte nicht geladen werden.</string>
     <string name="error_podcast_load">Podcast kann nicht geladen werden, bitte prüfen Sie Ihre Internetverbindung!</string>
     <string name="no_episode_description">Keine Beschreibung verfügbar.</string>
-    <string name="ad">Testen Sie &lt;a href="http://play.google.com/store/apps/details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt;: Downloads, Filter und viele weitere Komfortfunktionen!</string>
+    <string name="ad">Testen Sie &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt;: Downloads, Filter und viele weitere Komfortfunktionen!</string>
 </resources>
