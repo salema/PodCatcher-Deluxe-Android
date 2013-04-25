@@ -227,7 +227,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
             // Start download if the episode is not there
             if (!new File(podcastDir, subPath).exists()) {
                 // Make sure podcast directory exists
-                new File(podcastDir, sanitizeAsFilename(episode.getPodcast().getName())).mkdir();
+                new File(podcastDir, sanitizeAsFilename(episode.getPodcast().getName())).mkdirs();
 
                 // Create the request
                 Request download = new Request(Uri.parse(episode.getMediaUrl().toString()))
