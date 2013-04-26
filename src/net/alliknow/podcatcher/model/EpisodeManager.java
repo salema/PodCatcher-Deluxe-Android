@@ -233,7 +233,12 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                 Request download = new Request(Uri.parse(episode.getMediaUrl().toString()))
                         .setDestinationInExternalPublicDir(Environment.DIRECTORY_PODCASTS, subPath)
                         .setTitle(episode.getName())
-                        .setDescription(episode.getPodcast().getName());
+                        .setDescription(episode.getPodcast().getName())
+                        // We overwrite the AndroidDownloadManager user agent
+                        // string here because there are servers out there (e.g.
+                        // ORF.at) that apparently block downloads based on this
+                        // information
+                        .addRequestHeader("User-Agent", "Mozilla/5.0 (Linux)");
 
                 // Start the download
                 id = downloadManager.enqueue(download);
