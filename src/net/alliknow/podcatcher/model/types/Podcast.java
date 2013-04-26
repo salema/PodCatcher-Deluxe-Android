@@ -258,7 +258,10 @@ public class Podcast implements Comparable<Podcast> {
      *         <code>null</code> iff it had not been loaded before.
      */
     public Date getLastLoaded() {
-        return updated;
+        if (updated == null)
+            return null;
+        else
+            return new Date(updated.getTime());
     }
 
     @Override

@@ -83,7 +83,7 @@ public class Episode implements Comparable<Episode> {
 
         this.name = name;
         this.mediaUrl = mediaUrl;
-        this.pubDate = pubDate;
+        this.pubDate = new Date(pubDate.getTime());
         this.description = description;
     }
 
