@@ -17,6 +17,9 @@
 
 package net.alliknow.podcatcher.model.tasks.remote;
 
+import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_KEY;
+import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_VALUE;
+
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -82,6 +85,10 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
         HttpURLConnection connection = (HttpURLConnection) remote.openConnection();
         connection.setConnectTimeout(CONNECT_TIMEOUT);
         connection.setReadTimeout(READ_TIMEOUT);
+        // We set a custom user agent here because some servers (e.g. ZDF.de)
+        // redirect connections from mobile devices to servers where the content
+        // we are looking for might not be available.
+        connection.setRequestProperty(USER_AGENT_KEY, USER_AGENT_VALUE);
         if (preventZippedTransfer)
             connection.setRequestProperty("Accept-Encoding", "identity");
 
