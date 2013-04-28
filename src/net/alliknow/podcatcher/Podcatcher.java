@@ -47,6 +47,11 @@ import java.util.Map;
 public class Podcatcher extends Application implements OnLoadEpisodeMetadataListener,
         OnLoadPodcastListListener {
 
+    /** The http request header field key for the user agent */
+    public static final String USER_AGENT_KEY = "User-Agent";
+    /** The user agent string we use to identify us */
+    public static final String USER_AGENT_VALUE = "Podcatcher Deluxe";
+
     /** Characters not allowed in filenames */
     private static final String RESERVED_CHARS = "|\\?*<\":>+[]/'#!,&";
 

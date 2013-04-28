@@ -26,6 +26,8 @@ import static android.app.DownloadManager.EXTRA_DOWNLOAD_ID;
 import static android.app.DownloadManager.EXTRA_NOTIFICATION_CLICK_DOWNLOAD_IDS;
 import static android.app.DownloadManager.STATUS_SUCCESSFUL;
 import static android.os.Environment.getExternalStoragePublicDirectory;
+import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_KEY;
+import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_VALUE;
 import static net.alliknow.podcatcher.Podcatcher.sanitizeAsFilename;
 
 import android.app.DownloadManager;
@@ -238,7 +240,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                         // string here because there are servers out there (e.g.
                         // ORF.at) that apparently block downloads based on this
                         // information
-                        .addRequestHeader("User-Agent", "Mozilla/5.0 (Linux)");
+                        .addRequestHeader(USER_AGENT_KEY, USER_AGENT_VALUE);
 
                 // Start the download
                 id = downloadManager.enqueue(download);
