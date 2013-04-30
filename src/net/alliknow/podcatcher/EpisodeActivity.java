@@ -299,10 +299,12 @@ public abstract class EpisodeActivity extends BaseActivity implements
         // Remove the finished episode from the playlist
         episodeManager.removeFromPlaylist(service.getCurrentEpisode());
 
-        stopPlayProgressTimer();
-        service.reset();
-
-        updatePlayer();
+        if (episodeManager.isPlaylistEmpty()) {
+            stopPlayProgressTimer();
+            service.reset();
+            updatePlayer();
+        } else
+            onNext();
     }
 
     @Override
