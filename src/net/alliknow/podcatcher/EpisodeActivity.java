@@ -259,7 +259,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
     protected void updatePlayer() {
         if (playerFragment != null && service != null) {
             final boolean currentEpisodeIsShowing = service.isLoadedEpisode(currentEpisode);
-            final boolean isInSmallLandscapeMode = viewMode == SMALL_LANDSCAPE_VIEW;
 
             // Show/hide menu item
             playerFragment.setLoadMenuItemVisibility(currentEpisode != null,
@@ -269,9 +268,9 @@ public abstract class EpisodeActivity extends BaseActivity implements
             playerFragment.setErrorViewVisibility(false);
             // Make sure player is shown if and as needed
             playerFragment.setPlayerVisibilility(service.isPreparing() || service.isPrepared());
-            playerFragment.setPlayerTitleVisibility(!isInSmallLandscapeMode
+            playerFragment.setPlayerTitleVisibility(!viewMode.isSmallLandscape()
                     && !currentEpisodeIsShowing);
-            playerFragment.setPlayerSeekbarVisibility(!isInSmallLandscapeMode);
+            playerFragment.setPlayerSeekbarVisibility(!viewMode.isSmallLandscape());
 
             // Update UI to reflect service status
             playerFragment.updatePlayerTitle(service.getCurrentEpisode());

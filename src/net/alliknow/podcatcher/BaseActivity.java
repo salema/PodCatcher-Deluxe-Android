@@ -19,7 +19,6 @@ package net.alliknow.podcatcher;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import net.alliknow.podcatcher.model.PodcastManager;
+import net.alliknow.podcatcher.view.ViewMode;
 
 /**
  * Podcatcher base activity. Defines some common functionality useful for all
@@ -38,33 +38,7 @@ public abstract class BaseActivity extends Activity {
     protected PodcastManager podcastManager;
 
     /** The currently active view mode */
-    protected int viewMode;
-    /** These are the four view modes we want adapt to. */
-    /**
-     * Small and normal screens (smallest width < 600dp) in portrait orientation
-     */
-    protected static final int SMALL_PORTRAIT_VIEW = 0;
-    /**
-     * Small and normal screens (smallest width < 600dp) in square or landscape
-     * orientation
-     */
-    protected static final int SMALL_LANDSCAPE_VIEW = 1;
-    /**
-     * Large and extra-large screens (smallest width >= 600dp) in portrait
-     * orientation
-     */
-    protected static final int LARGE_PORTRAIT_VIEW = 2;
-    /**
-     * Large and extra-large screens (smallest width >= 600dp) in square or
-     * landscape orientation
-     */
-    protected static final int LARGE_LANDSCAPE_VIEW = 3;
-
-    /**
-     * The amount of dp establishing the border between small and large screen
-     * buckets
-     */
-    private static final int MIN_PIXEL_LARGE = 600;
+    protected ViewMode viewMode;
 
     /** The podcatcher website URL */
     private static final String PODCATCHER_WEBSITE = "http://www.podcatcher-deluxe.com";
@@ -83,7 +57,7 @@ public abstract class BaseActivity extends Activity {
         podcastManager = PodcastManager.getInstance();
 
         // Set the view mode member
-        viewMode = determineViewMode();
+        viewMode = ViewMode.determineViewMode(getResources());
     }
 
     @Override
@@ -107,21 +81,6 @@ public abstract class BaseActivity extends Activity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private int determineViewMode() {
-        // Get config information
-        Configuration config = getResources().getConfiguration();
-
-        // Determine view mode
-        switch (config.orientation) {
-            case Configuration.ORIENTATION_PORTRAIT:
-                return config.smallestScreenWidthDp >= MIN_PIXEL_LARGE ?
-                        LARGE_PORTRAIT_VIEW : SMALL_PORTRAIT_VIEW;
-            default: // Landscape and square
-                return config.smallestScreenWidthDp >= MIN_PIXEL_LARGE ?
-                        LARGE_LANDSCAPE_VIEW : SMALL_LANDSCAPE_VIEW;
         }
     }
 }
