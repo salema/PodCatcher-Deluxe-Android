@@ -38,7 +38,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         super.onCreate(savedInstanceState);
 
         // Check if we need this activity at all
-        if (viewMode != SMALL_PORTRAIT_VIEW)
+        if (!viewMode.isSmallPortrait())
             finish();
         else {
             // Set the content view
