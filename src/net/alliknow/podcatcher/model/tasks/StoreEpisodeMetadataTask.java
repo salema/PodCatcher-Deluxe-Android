@@ -26,6 +26,7 @@ import static net.alliknow.podcatcher.model.tags.METADATA.EPISODE_STATE;
 import static net.alliknow.podcatcher.model.tags.METADATA.EPISODE_URL;
 import static net.alliknow.podcatcher.model.tags.METADATA.LOCAL_FILE_PATH;
 import static net.alliknow.podcatcher.model.tags.METADATA.METADATA;
+import static net.alliknow.podcatcher.model.tags.METADATA.PLAYLIST_POSITION;
 import static net.alliknow.podcatcher.model.tags.METADATA.PODCAST_NAME;
 import static net.alliknow.podcatcher.model.tags.METADATA.PODCAST_URL;
 
@@ -111,6 +112,7 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMeta
         writeData(value.resumeAt, EPISODE_RESUME_AT);
         if (value.isOld != null && value.isOld)
             writeData("true", EPISODE_STATE);
+        writeData(value.playlistPosition, PLAYLIST_POSITION);
 
         writeLine(1, "</" + METADATA + ">");
     }

@@ -64,7 +64,10 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         ALL_PODCASTS,
 
         /** Show downloads */
-        DOWNLOADS
+        DOWNLOADS,
+
+        /** Show playlist */
+        PLAYLIST
     };
 
     /** Member to indicate which mode we are in */

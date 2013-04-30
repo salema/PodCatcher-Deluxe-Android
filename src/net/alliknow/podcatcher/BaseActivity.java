@@ -42,6 +42,7 @@ public abstract class BaseActivity extends Activity {
 
     /** The currently active view mode */
     protected int viewMode;
+
     /** These are the four view modes we want adapt to. */
     /**
      * Small and normal screens (smallest width < 600dp) in portrait orientation
@@ -112,6 +113,10 @@ public abstract class BaseActivity extends Activity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    protected boolean isSmallViewMode() {
+        return viewMode < 2;
     }
 
     private int determineViewMode() {

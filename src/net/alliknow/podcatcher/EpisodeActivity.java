@@ -231,6 +231,17 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     @Override
+    public void onNext() {
+        if (!episodeManager.isPlaylistEmpty()) {
+            Episode next = episodeManager.getPlaylist().get(0);
+            episodeManager.removeFromPlaylist(next);
+
+            service.playEpisode(next);
+            updatePlayer();
+        }
+    }
+
+    @Override
     public void onPlaybackStarted() {
         updatePlayer();
         startPlayProgressTimer();
@@ -338,7 +349,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
      * Update the player fragment UI to reflect current state of play.
      */
     protected void updatePlayer() {
-        if (playerFragment != null && service != null) {
+        try {
             final boolean currentEpisodeIsShowing = service.isLoadedEpisode(currentEpisode);
             final boolean isInSmallLandscapeMode = viewMode == SMALL_LANDSCAPE_VIEW;
 
@@ -354,12 +365,18 @@ public abstract class EpisodeActivity extends BaseActivity implements
                     && !currentEpisodeIsShowing);
             playerFragment.setPlayerSeekbarVisibility(!isInSmallLandscapeMode);
 
+            final boolean playlistHasEntries = !episodeManager.isPlaylistEmpty();
+            playerFragment.setShowShortPosition(playlistHasEntries && isSmallViewMode());
+            playerFragment.setNextButtonVisibility(playlistHasEntries);
+
             // Update UI to reflect service status
             playerFragment.updatePlayerTitle(service.getCurrentEpisode());
             playerFragment.updateSeekBar(!service.isPreparing(), service.getDuration(),
                     service.getCurrentPosition());
             playerFragment.updateButton(service.isBuffering(), service.isPlaying(),
                     service.getDuration(), service.getCurrentPosition());
+        } catch (NullPointerException nex) {
+            // pass
         }
     }
 

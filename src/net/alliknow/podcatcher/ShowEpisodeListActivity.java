@@ -90,6 +90,11 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
             this.currentEpisodeList = episodeManager.getDownloads();
 
             setFilteredEpisodeList();
+        } // Playlist mode
+        else if (contentMode.equals(ContentMode.PLAYLIST)) {
+            this.currentEpisodeList = episodeManager.getPlaylist();
+
+            setFilteredEpisodeList();
         }
     }
 

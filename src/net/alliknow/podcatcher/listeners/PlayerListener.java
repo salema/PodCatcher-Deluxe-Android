@@ -35,6 +35,11 @@ public interface PlayerListener extends OnSeekBarChangeListener {
     public void onTogglePlay();
 
     /**
+     * Play next episode in playlist requested.
+     */
+    public void onNext();
+
+    /**
      * Alert the listener that it should return to the currently played episode.
      */
     public void onReturnToPlayingEpisode();

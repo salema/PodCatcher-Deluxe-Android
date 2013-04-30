@@ -91,6 +91,7 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         boolean markNew = false;
         boolean download = false;
+        boolean append = false;
 
         SparseBooleanArray checkedItems = fragment.getListView().getCheckedItemPositions();
 
@@ -135,6 +136,23 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
                 // Re-enable UI updates
                 updateUi = true;
                 update(mode);
+                return true;
+            case R.id.episode_add_to_playlist_contextmenuitem:
+                append = true;
+                // No break here, code blow should run
+            case R.id.episode_remove_from_playlist_contextmenuitem:
+                for (int position = 0; position < fragment.getListAdapter().getCount(); position++)
+                    if (checkedItems.get(position)) {
+                        Episode episode = (Episode) fragment.getListAdapter().getItem(position);
+
+                        if (append)
+                            episodeManager.appendToPlaylist(episode);
+                        else
+                            episodeManager.removeFromPlaylist(episode);
+                    }
+
+                // Action picked, so close the CAB
+                mode.finish();
                 return true;
             default:
                 return false;

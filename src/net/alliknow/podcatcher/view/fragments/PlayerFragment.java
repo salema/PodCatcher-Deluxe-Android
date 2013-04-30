@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -57,6 +58,10 @@ public class PlayerFragment extends Fragment {
     private boolean showPlayerTitle = false;
     /** Flag for the show player seek bar state */
     private boolean showPlayerSeekbar = true;
+    /** Flag for the position/duration information state */
+    private boolean showShortPlaybackPosition = false;
+    /** Flag for the show next button state */
+    private boolean showNextButton = false;
     /** Flag for the show error view state */
     private boolean showError = false;
 
@@ -71,7 +76,9 @@ public class PlayerFragment extends Fragment {
     /** The player's seek bar */
     private SeekBar seekBar;
     /** The player main button */
-    private Button button;
+    private Button playPauseButton;
+    /** The next button */
+    private ImageButton nextButton;
     /** The error view */
     private TextView errorView;
 
@@ -115,12 +122,21 @@ public class PlayerFragment extends Fragment {
         seekBar = (SeekBar) view.findViewById(R.id.player_seekbar);
         seekBar.setOnSeekBarChangeListener(listener);
 
-        button = (Button) view.findViewById(R.id.player_button);
-        button.setOnClickListener(new OnClickListener() {
+        playPauseButton = (Button) view.findViewById(R.id.player_button);
+        playPauseButton.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 listener.onTogglePlay();
+            }
+        });
+
+        nextButton = (ImageButton) view.findViewById(R.id.player_next);
+        nextButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                listener.onNext();
             }
         });
 
@@ -137,6 +153,7 @@ public class PlayerFragment extends Fragment {
         setPlayerVisibilility(showPlayer);
         setPlayerTitleVisibility(showPlayerTitle);
         setPlayerSeekbarVisibility(showPlayerSeekbar);
+        setNextButtonVisibility(showNextButton);
         setErrorViewVisibility(showError);
     }
 
@@ -222,6 +239,34 @@ public class PlayerFragment extends Fragment {
     }
 
     /**
+     * Set whether the fragment should show the long or the short
+     * playback/duration string label on its play/pause button. This has effect
+     * only after you update the button for the next time.
+     * 
+     * @param showShortPosition The flag, give <code>true</code> for a short
+     *            label.
+     * @see PlayerFragment#updateButton
+     */
+    public void setShowShortPosition(boolean showShortPosition) {
+        this.showShortPlaybackPosition = showShortPosition;
+    }
+
+    /**
+     * Set whether the fragment should show the next button view. You can call
+     * this any time and can expect it to happen on resume at the latest. This
+     * only makes a difference if the player itself is visible.
+     * 
+     * @param show Whether to show the next button view.
+     */
+    public void setNextButtonVisibility(boolean show) {
+        this.showNextButton = show;
+
+        // Only do it right away if resumed, otherwise onResume will call us.
+        if (isResumed())
+            nextButton.setVisibility(show ? VISIBLE : GONE);
+    }
+
+    /**
      * Update the player title view to show name and link to the given episode.
      * 
      * @param playingEpisode Episode to show link to.
@@ -287,25 +332,27 @@ public class PlayerFragment extends Fragment {
         // We can only do this after the fragment's widgets are created
         if (viewCreated) {
             // Update button appearance
-            button.setEnabled(!buffering);
+            playPauseButton.setEnabled(!buffering);
 
             // Buffering...
             if (buffering) {
-                button.setText(R.string.buffering);
-                button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_rotate, 0, 0, 0);
+                playPauseButton.setText(R.string.buffering);
+                playPauseButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_rotate,
+                        0, 0, 0);
             } // Playing or paused
             else {
-                button.setText(playing ? R.string.pause : R.string.resume);
-                button.setBackgroundResource(playing ?
+                String label = "";
+                if (!showShortPlaybackPosition)
+                    label += getString(playing ? R.string.pause : R.string.resume) + " ";
+
+                label += getString(R.string.at) + " " + formatTime(position) + " " +
+                        getString(R.string.of) + " " + formatTime(duration);
+                playPauseButton.setText(label);
+
+                playPauseButton.setBackgroundResource(playing ?
                         R.drawable.button_red : R.drawable.button_green);
-                button.setCompoundDrawablesWithIntrinsicBounds(playing ?
+                playPauseButton.setCompoundDrawablesWithIntrinsicBounds(playing ?
                         R.drawable.ic_media_pause : R.drawable.ic_media_play, 0, 0, 0);
-
-                final String formattedPosition = formatTime(position);
-                final String formattedDuration = formatTime(duration);
-
-                button.setText(button.getText() + " " + getString(R.string.at) + " " +
-                        formattedPosition + " " + getString(R.string.of) + " " + formattedDuration);
             }
         }
     }
@@ -322,7 +369,7 @@ public class PlayerFragment extends Fragment {
         // Only do it right away if resumed, otherwise onResume will call us.
         if (isResumed()) {
             titleView.setVisibility(show ? GONE : VISIBLE);
-            button.setVisibility(show ? GONE : VISIBLE);
+            playPauseButton.setVisibility(show ? GONE : VISIBLE);
             seekBar.setVisibility(show ? GONE : VISIBLE);
             errorView.setVisibility(show ? VISIBLE : GONE);
         }
