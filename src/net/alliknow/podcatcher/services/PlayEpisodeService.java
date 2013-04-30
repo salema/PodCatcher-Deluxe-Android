@@ -54,6 +54,7 @@ import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -174,7 +175,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             else if (action.equals(ACTION_PREVIOUS))
                 seekTo(0);
             else if (action.equals(ACTION_SKIP))
-                ;
+                playNext();
             else if (action.equals(ACTION_REWIND)) {
                 final int newPosition = getCurrentPosition() - SKIP_AMOUNT;
                 seekTo(newPosition <= 0 ? 0 : newPosition);
@@ -272,6 +273,20 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             } catch (Exception e) {
                 Log.e(getClass().getSimpleName(), "Prepare/Play failed for episode: " + episode, e);
             }
+        }
+    }
+
+    /**
+     * Play the next episode in the playlist. Does nothing if there is none.
+     */
+    public void playNext() {
+        final List<Episode> playlist = episodeManager.getPlaylist();
+
+        if (!playlist.isEmpty()) {
+            Episode next = playlist.get(0);
+            episodeManager.removeFromPlaylist(next);
+
+            playEpisode(next);
         }
     }
 

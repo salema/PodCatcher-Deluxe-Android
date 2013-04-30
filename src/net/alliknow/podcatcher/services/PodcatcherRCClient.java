@@ -25,6 +25,7 @@ import static android.media.RemoteControlClient.MetadataEditor.BITMAP_KEY_ARTWOR
 import android.app.PendingIntent;
 import android.media.RemoteControlClient;
 
+import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.view.Utils;
 
@@ -48,7 +49,8 @@ public class PodcatcherRCClient extends RemoteControlClient {
     public PodcatcherRCClient(PendingIntent mediaButtonIntent, Episode episode) {
         super(mediaButtonIntent);
 
-        setTransportControlFlags(SUPPORTED_TRANSPORTS);
+        final boolean canSkip = !EpisodeManager.getInstance().isPlaylistEmpty();
+        setTransportControlFlags(SUPPORTED_TRANSPORTS | (canSkip ? FLAG_KEY_MEDIA_NEXT : 0));
         setMetadata(episode);
     }
 

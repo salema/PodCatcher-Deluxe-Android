@@ -232,13 +232,10 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onNext() {
-        if (!episodeManager.isPlaylistEmpty()) {
-            Episode next = episodeManager.getPlaylist().get(0);
-            episodeManager.removeFromPlaylist(next);
+        service.playNext();
 
-            service.playEpisode(next);
-            updatePlayer();
-        }
+        updatePlayer();
+        updatePlaylistStatus();
     }
 
     @Override
@@ -250,6 +247,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
     @Override
     public void onPlaybackStateChanged() {
         updatePlayer();
+        updatePlaylistStatus();
 
         if (service != null && service.isPlaying())
             startPlayProgressTimer();
@@ -298,6 +296,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
     public void onPlaybackComplete() {
         // Mark the episode old (needs to be done before resetting the service!)
         episodeManager.setState(service.getCurrentEpisode(), true);
+        // Remove the finished episode from the playlist
+        episodeManager.removeFromPlaylist(service.getCurrentEpisode());
 
         stopPlayProgressTimer();
         service.reset();
@@ -344,6 +344,12 @@ public abstract class EpisodeActivity extends BaseActivity implements
             episodeFragment.setDownloadIconVisibility(downloading || downloaded, downloaded);
         }
     }
+
+    /**
+     * Update the UI to reflect current playlist state state. Sub-classes need
+     * to overwrite.
+     */
+    protected abstract void updatePlaylistStatus();
 
     /**
      * Update the player fragment UI to reflect current state of play.

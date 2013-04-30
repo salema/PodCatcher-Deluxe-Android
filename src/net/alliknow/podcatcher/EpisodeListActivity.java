@@ -319,6 +319,12 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             episodeListFragment.refresh();
     }
 
+    @Override
+    protected void updatePlaylistStatus() {
+        if (episodeListFragment != null)
+            episodeListFragment.refresh();
+    }
+
     /**
      * Update the divider views to reflect current selection state.
      */
