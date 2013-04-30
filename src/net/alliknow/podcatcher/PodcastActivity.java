@@ -259,7 +259,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     public void onBackStackChanged() {
         // This only needed in small landscape mode and in case
         // we go back to the episode list
-        if (viewMode.isSmallPortrait()
+        if (viewMode.isSmallLandscape()
                 && getFragmentManager().getBackStackEntryCount() == 0) {
             onNoEpisodeSelected();
         }
