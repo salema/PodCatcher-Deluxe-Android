@@ -119,13 +119,9 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         }
 
         // Additionally, if on large device, process clever selection update
-        if (viewMode == LARGE_LANDSCAPE_VIEW || viewMode == LARGE_PORTRAIT_VIEW) {
-            if (currentEpisodeList != null && currentEpisodeList.contains(currentEpisode))
-                episodeListFragment.select(currentEpisodeList.indexOf(currentEpisode));
-
-            updateDivider();
-        }
-
+        updateEpisodeListSelection();
+        // Update other UI
+        updateDivider();
         updateActionBar();
     }
 
@@ -156,7 +152,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 // Set episode in episode fragment
                 episodeFragment.setEpisode(selectedEpisode);
                 // Make sure selection matches in list fragment
-                episodeListFragment.select(currentEpisodeList.indexOf(selectedEpisode));
+                updateEpisodeListSelection();
 
                 break;
             case SMALL_LANDSCAPE_VIEW:
@@ -211,6 +207,25 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
         updatePlayer();
         updateDivider();
+    }
+
+    /**
+     * Update the episode list to select the correct episode
+     */
+    protected void updateEpisodeListSelection() {
+        switch (viewMode) {
+            case LARGE_PORTRAIT_VIEW:
+            case LARGE_LANDSCAPE_VIEW:
+                // Make sure the episode selection in the list is updated
+                if (currentEpisodeList != null && currentEpisodeList.contains(currentEpisode))
+                    episodeListFragment.select(currentEpisodeList.indexOf(currentEpisode));
+                else
+                    episodeListFragment.selectNone();
+
+                break;
+            default:
+                episodeListFragment.selectNone();
+        }
     }
 
     /**
