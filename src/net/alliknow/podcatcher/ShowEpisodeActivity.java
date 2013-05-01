@@ -102,11 +102,6 @@ public class ShowEpisodeActivity extends EpisodeActivity {
     }
 
     @Override
-    protected void updatePlaylistStatus() {
-        // There is nothing to do here
-    }
-
-    @Override
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);

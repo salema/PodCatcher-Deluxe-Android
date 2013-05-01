@@ -297,6 +297,14 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
+    public void onPlaylistChanged() {
+        super.onPlaylistChanged();
+
+        if (episodeListFragment != null)
+            episodeListFragment.refresh();
+    }
+
+    @Override
     public void onStateChanged(Episode episode) {
         super.onStateChanged(episode);
 
@@ -315,12 +323,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     protected void updateDownloadStatus() {
         super.updateDownloadStatus();
 
-        if (episodeListFragment != null)
-            episodeListFragment.refresh();
-    }
-
-    @Override
-    protected void updatePlaylistStatus() {
         if (episodeListFragment != null)
             episodeListFragment.refresh();
     }

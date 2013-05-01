@@ -465,15 +465,23 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     public void onCompletion(MediaPlayer mp) {
         updateRemoteControlPlaystate(PLAYSTATE_STOPPED);
 
-        // If there is anybody listening, alert and let them decide what to do
-        // next, if not we reset and possibly stop ourselves
-        if (listeners.size() > 0)
-            for (PlayServiceListener listener : listeners)
-                listener.onPlaybackComplete();
+        // Mark the episode old (needs to be done before resetting the service!)
+        episodeManager.setState(currentEpisode, true);
+        // Remove the finished episode from the playlist
+        episodeManager.removeFromPlaylist(currentEpisode);
+
+        // If there is another episode on the playlist, play it.
+        if (!episodeManager.isPlaylistEmpty())
+            playNext();
         else {
             reset();
             stopSelfIfUnboundAndIdle();
         }
+
+        // Alert listeners
+        if (listeners.size() > 0)
+            for (PlayServiceListener listener : listeners)
+                listener.onPlaybackComplete();
     }
 
     @Override

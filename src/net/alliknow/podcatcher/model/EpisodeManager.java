@@ -48,6 +48,7 @@ import net.alliknow.podcatcher.EpisodeListActivity.ContentMode;
 import net.alliknow.podcatcher.PodcastActivity;
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
+import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
 import net.alliknow.podcatcher.model.tasks.StoreEpisodeMetadataTask;
@@ -90,6 +91,8 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
     /** The call-back set for the complete download listeners */
     private Set<OnDownloadEpisodeListener> downloadListeners = new HashSet<OnDownloadEpisodeListener>();
+    /** The call-back set for the playlist listeners */
+    private Set<OnChangePlaylistListener> playlistListeners = new HashSet<OnChangePlaylistListener>();
     /** The call-back set for the episode state changed listeners */
     private Set<OnChangeEpisodeStateListener> stateListeners = new HashSet<OnChangeEpisodeStateListener>();
 
@@ -391,6 +394,16 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     }
 
     /**
+     * Remove a download listener.
+     * 
+     * @param listener Listener to remove.
+     * @see OnDownloadEpisodeListener
+     */
+    public void removeDownloadListener(OnDownloadEpisodeListener listener) {
+        downloadListeners.remove(listener);
+    }
+
+    /**
      * @return The current playlist. Might be empty but not <code>null</code>.
      */
     public List<Episode> getPlaylist() {
@@ -448,6 +461,10 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                 meta.playlistPosition = position;
                 putAdditionalEpisodeInformation(episode, meta);
 
+                // Alert listeners
+                for (OnChangePlaylistListener listener : playlistListeners)
+                    listener.onPlaylistChanged();
+
                 // Mark metadata record as dirty
                 metadataChanged = true;
             }
@@ -474,6 +491,10 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                 // Reset the playlist position for given episode
                 meta.playlistPosition = null;
 
+                // Alert listeners
+                for (OnChangePlaylistListener listener : playlistListeners)
+                    listener.onPlaylistChanged();
+
                 // Mark metadata record as dirty
                 metadataChanged = true;
             }
@@ -481,13 +502,23 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     }
 
     /**
-     * Remove a download listener.
+     * Add a playlist listener.
+     * 
+     * @param listener Listener to add.
+     * @see OnChangePlaylistListener
+     */
+    public void addPlaylistListener(OnChangePlaylistListener listener) {
+        playlistListeners.add(listener);
+    }
+
+    /**
+     * Remove a playlist listener.
      * 
      * @param listener Listener to remove.
-     * @see OnDownloadEpisodeListener
+     * @see OnChangePlaylistListener
      */
-    public void removeDownloadListener(OnDownloadEpisodeListener listener) {
-        downloadListeners.remove(listener);
+    public void removePlaylistListener(OnChangePlaylistListener listener) {
+        playlistListeners.remove(listener);
     }
 
     /**

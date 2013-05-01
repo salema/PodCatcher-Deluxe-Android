@@ -18,6 +18,7 @@
 package net.alliknow.podcatcher;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -86,5 +87,17 @@ public abstract class BaseActivity extends Activity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /**
+     * Gets the fragment for a given tag string id (resolved via app's
+     * resources) from the fragment manager.
+     * 
+     * @param tagId Id of the tag string in resources.
+     * @return The fragment stored under the given tag or <code>null</code> if
+     *         not added to the fragment manager.
+     */
+    protected Fragment findByTagId(int tagId) {
+        return getFragmentManager().findFragmentByTag(getString(tagId));
     }
 }

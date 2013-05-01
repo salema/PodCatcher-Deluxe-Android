@@ -17,7 +17,6 @@
 
 package net.alliknow.podcatcher;
 
-import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
+import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.listeners.PlayerListener;
@@ -49,8 +49,8 @@ import java.util.TimerTask;
  * or simply show this layout.
  */
 public abstract class EpisodeActivity extends BaseActivity implements
-        OnDownloadEpisodeListener, OnChangeEpisodeStateListener, PlayerListener,
-        PlayServiceListener {
+        OnDownloadEpisodeListener, OnChangePlaylistListener, OnChangeEpisodeStateListener,
+        PlayerListener, PlayServiceListener {
 
     /** The current episode fragment */
     protected EpisodeFragment episodeFragment;
@@ -119,6 +119,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
         // We have to do this here instead of onCreate since we can only react
         // on the call-backs properly once we have our fragment
         episodeManager.addDownloadListener(this);
+        episodeManager.addPlaylistListener(this);
         episodeManager.addStateChangedListener(this);
     }
 
@@ -144,6 +145,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
         // Disconnect from episode manager
         episodeManager.removeDownloadListener(this);
+        episodeManager.removePlaylistListener(this);
         episodeManager.removeStateChangedListener(this);
 
         // Stop the timer
@@ -186,6 +188,11 @@ public abstract class EpisodeActivity extends BaseActivity implements
         updateDownloadStatus();
 
         showToast(getString(R.string.download_failed));
+    }
+
+    @Override
+    public void onPlaylistChanged() {
+        updatePlayer();
     }
 
     @Override
@@ -233,9 +240,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
     @Override
     public void onNext() {
         service.playNext();
-
-        updatePlayer();
-        updatePlaylistStatus();
     }
 
     @Override
@@ -247,7 +251,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
     @Override
     public void onPlaybackStateChanged() {
         updatePlayer();
-        updatePlaylistStatus();
 
         if (service != null && service.isPlaying())
             startPlayProgressTimer();
@@ -294,17 +297,10 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onPlaybackComplete() {
-        // Mark the episode old (needs to be done before resetting the service!)
-        episodeManager.setState(service.getCurrentEpisode(), true);
-        // Remove the finished episode from the playlist
-        episodeManager.removeFromPlaylist(service.getCurrentEpisode());
-
         if (episodeManager.isPlaylistEmpty()) {
             stopPlayProgressTimer();
-            service.reset();
             updatePlayer();
-        } else
-            onNext();
+        }
     }
 
     @Override
@@ -348,12 +344,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     /**
-     * Update the UI to reflect current playlist state state. Sub-classes need
-     * to overwrite.
-     */
-    protected abstract void updatePlaylistStatus();
-
-    /**
      * Update the player fragment UI to reflect current state of play.
      */
     protected void updatePlayer() {
@@ -385,18 +375,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
         } catch (NullPointerException nex) {
             // pass
         }
-    }
-
-    /**
-     * Gets the fragment for a given tag string id (resolved via app's
-     * resources) from the fragment manager.
-     * 
-     * @param tagId Id of the tag string in resources.
-     * @return The fragment stored under the given tag or <code>null</code> if
-     *         not added to the fragment manager.
-     */
-    protected Fragment findByTagId(int tagId) {
-        return getFragmentManager().findFragmentByTag(getString(tagId));
     }
 
     private void startPlayProgressTimer() {
