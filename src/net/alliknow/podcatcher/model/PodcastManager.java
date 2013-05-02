@@ -17,6 +17,10 @@
 
 package net.alliknow.podcatcher.model;
 
+import static net.alliknow.podcatcher.model.tasks.remote.LoadPodcastLogoTask.MAX_LOGO_SIZE_MOBILE;
+import static net.alliknow.podcatcher.model.tasks.remote.LoadPodcastLogoTask.MAX_LOGO_SIZE_WIFI;
+
+import android.net.http.HttpResponseCache;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
@@ -248,6 +252,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         else
             for (OnLoadPodcastListener listener : loadPodcastListeners)
                 listener.onPodcastLoaded(podcast);
+
+        flushHttpCache();
     }
 
     @Override
@@ -272,13 +278,15 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      * @see OnLoadPodcastLogoListener
      */
     public void loadLogo(Podcast podcast) {
+        // Only load podcast logo if it is not there yet
+        if (podcast.getLogo() != null)
+            onPodcastLogoLoaded(podcast);
         // Only start the load task if it is not already active
-        if (!loadPodcastLogoTasks.containsKey(podcast)) {
+        else if (!loadPodcastLogoTasks.containsKey(podcast)) {
             LoadPodcastLogoTask loadPodcastLogoTask =
                     new LoadPodcastLogoTask(this, LOGO_DIMENSION, LOGO_DIMENSION);
             loadPodcastLogoTask.setLoadLimit(podcatcher.isOnFastConnection() ?
-                    LoadPodcastLogoTask.MAX_LOGO_SIZE_WIFI
-                    : LoadPodcastLogoTask.MAX_LOGO_SIZE_MOBILE);
+                    MAX_LOGO_SIZE_WIFI : MAX_LOGO_SIZE_MOBILE);
             loadPodcastLogoTask.execute(podcast);
 
             loadPodcastLogoTasks.put(podcast, loadPodcastLogoTask);
@@ -294,6 +302,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         else
             for (OnLoadPodcastLogoListener listener : loadPodcastLogoListeners)
                 listener.onPodcastLogoLoaded(podcast);
+
+        flushHttpCache();
     }
 
     @Override
@@ -548,6 +558,19 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         else {
             final long age = new Date().getTime() - podcast.getLastLoaded().getTime();
             return age > (podcatcher.isOnFastConnection() ? TIME_TO_LIFE : TIME_TO_LIFE_MOBILE);
+        }
+    }
+
+    private void flushHttpCache() {
+        final HttpResponseCache cache = HttpResponseCache.getInstalled();
+        if (cache != null) {
+            new Runnable() {
+
+                @Override
+                public void run() {
+                    cache.flush();
+                }
+            }.run();
         }
     }
 
