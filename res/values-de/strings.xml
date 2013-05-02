@@ -25,6 +25,8 @@
     <string name="connect">Verbinden</string>
     <string name="started_download">Download gestartet für</string>
     <string name="download_failed">Download fehlgeschlagen.</string>
+    <string name="playlist_add">Zur Playlist hinzufügen</string>
+    <string name="playlist_remove">Aus Playlist löschen</string>
     <string name="load">Laden</string>
     <string name="stop">Stop</string>
     <string name="parse">Lesen</string>
@@ -51,7 +53,7 @@
     <string name="play">Abspielen</string>
     <string name="buffering">Puffer füllen&#8230;</string>
     <string name="pause">Pause</string>
-    <string name="resume">Weiterspielen</string>
+    <string name="resume">Abspielen</string>
     <string name="at">bei</string>
     <string name="of">von</string>
     <string name="error_player">Wiedergabe fehlgeschlagen</string>

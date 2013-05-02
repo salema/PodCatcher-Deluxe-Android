@@ -335,6 +335,18 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     }
 
     /**
+     * Shortcut to check whether there is any download action going on with this
+     * episode.
+     * 
+     * @param episode Episode to check for.
+     * @return <code>true</code> iff the episode is downloading or already
+     *         downloaded.
+     */
+    public boolean isDownloadingOrDownloaded(Episode episode) {
+        return isDownloading(episode) || isDownloaded(episode);
+    }
+
+    /**
      * Get the list of downloaded episodes. Returns only episodes fully
      * available locally. The episodes are sorted by date, latest first.
      * 
@@ -426,10 +438,33 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
         return new ArrayList<Episode>(playlist.values());
     }
 
+    /**
+     * @return Whether the current playlist has any entries.
+     */
     public boolean isPlaylistEmpty() {
-        return getPlaylist().isEmpty();
+        for (EpisodeMetadata meta : metadata.values())
+            if (meta.playlistPosition != null)
+                return false;
+
+        return true;
     }
 
+    /**
+     * Check whether a specific episode already exists in the playlist.
+     * 
+     * @param episode Episode to check for.
+     * @return <code>true</code> iff present in playlist.
+     */
+    public boolean isInPlaylist(Episode episode) {
+        return getPlaylistPosition(episode) != -1;
+    }
+
+    /**
+     * Find the position of the given episode in the playlist.
+     * 
+     * @param episode Episode to find.
+     * @return The position of the episode (staring at 0) or -1 if not present.
+     */
     public int getPlaylistPosition(Episode episode) {
         int result = -1;
 
@@ -443,6 +478,12 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
         return result;
     }
 
+    /**
+     * Add an episode to the playlist. The episode will be appended to the end
+     * of the list.
+     * 
+     * @param episode The episode to add.
+     */
     public void appendToPlaylist(Episode episode) {
         if (episode != null) {
             // Only append the episode if it is not already part of the playlist
@@ -471,6 +512,11 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
         }
     }
 
+    /**
+     * Delete given episode off the playlist.
+     * 
+     * @param episode Episode to pop.
+     */
     public void removeFromPlaylist(Episode episode) {
         if (episode != null) {
             // Find the metadata information holder
@@ -664,18 +710,6 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
         return sanitizeAsFilename(episode.getPodcast().getName()) + File.separatorChar +
                 sanitizeAsFilename(episode.getName()) + fileEnding;
-    }
-
-    /**
-     * Shortcut to check whether there is any download action going on with this
-     * episode.
-     * 
-     * @param episode Episode to check for.
-     * @return <code>true</code> iff the episode is downloading or already
-     *         downloaded.
-     */
-    private boolean isDownloadingOrDownloaded(Episode episode) {
-        return isDownloading(episode) || isDownloaded(episode);
     }
 
     private boolean isDownloaded(EpisodeMetadata meta) {

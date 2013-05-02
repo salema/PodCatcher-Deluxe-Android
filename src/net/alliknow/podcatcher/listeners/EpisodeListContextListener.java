@@ -35,6 +35,11 @@ import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
  */
 public class EpisodeListContextListener implements MultiChoiceModeListener {
 
+    /** The maximum number of episodes to download at once */
+    private static final int MAX_DOWNLOADS = 10;
+    /** The maximum number of episodes to enqueue in playlist at once */
+    private static final int MAX_TO_PLAYLIST = 25;
+
     /** The owning fragment */
     private EpisodeListFragment fragment;
     /** The episode manager handle */
@@ -49,6 +54,11 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
     private MenuItem downloadMenuItem;
     /** The delete menu item */
     private MenuItem deleteMenuItem;
+
+    /** The add to playlist menu item */
+    private MenuItem addToPlaylistMenuItem;
+    /** The remove from playlist menu item */
+    private MenuItem removeFromPlaylistMenuItem;
 
     /**
      * Flag to indicate whether the mode should do potentially expensive UI
@@ -76,6 +86,10 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
         oldMenuItem = menu.findItem(R.id.episode_old_contextmenuitem);
         downloadMenuItem = menu.findItem(R.id.episode_download_contextmenuitem);
         deleteMenuItem = menu.findItem(R.id.episode_remove_contextmenuitem);
+        addToPlaylistMenuItem = menu
+                .findItem(R.id.episode_add_to_playlist_contextmenuitem);
+        removeFromPlaylistMenuItem = menu
+                .findItem(R.id.episode_remove_from_playlist_contextmenuitem);
 
         return true;
     }
@@ -197,6 +211,8 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
         oldMenuItem.setVisible(false);
         downloadMenuItem.setVisible(false);
         deleteMenuItem.setVisible(false);
+        addToPlaylistMenuItem.setVisible(false);
+        removeFromPlaylistMenuItem.setVisible(false);
 
         SparseBooleanArray checkedItems = fragment.getListView().getCheckedItemPositions();
 
@@ -211,16 +227,22 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
                 else
                     oldMenuItem.setVisible(true);
 
-                if (episodeManager.isDownloaded(episode) || episodeManager.isDownloading(episode))
+                if (episodeManager.isDownloadingOrDownloaded(episode))
                     deleteMenuItem.setVisible(true);
                 else
                     downloadMenuItem.setVisible(true);
-            }
 
-            // Break out of the loop if all menu items are visible
-            if (newMenuItem.isVisible() && oldMenuItem.isVisible()
-                    && downloadMenuItem.isVisible() && deleteMenuItem.isVisible())
-                break;
+                if (episodeManager.isInPlaylist(episode))
+                    removeFromPlaylistMenuItem.setVisible(true);
+                else
+                    addToPlaylistMenuItem.setVisible(true);
+            }
         }
+
+        // Do not show some actions if too many episodes are selected
+        if (checkedItems.size() > MAX_DOWNLOADS)
+            downloadMenuItem.setVisible(false);
+        if (checkedItems.size() > MAX_TO_PLAYLIST)
+            addToPlaylistMenuItem.setVisible(false);
     }
 }

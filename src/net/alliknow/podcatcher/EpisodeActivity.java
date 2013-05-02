@@ -21,7 +21,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Gravity;
@@ -44,8 +43,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * Show episode activity. This is thought of an abstract activity for an app
- * only consisting of an episode view and the player. Sub-classes could extends
+ * Show episode activity. This is thought of as an abstract activity for an app
+ * only consisting of an episode view and the player. Sub-classes could extend
  * or simply show this layout.
  */
 public abstract class EpisodeActivity extends BaseActivity implements
@@ -65,9 +64,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
     /** Play service */
     protected PlayEpisodeService service;
 
-    /** Whether a seek is currently active */
-    private boolean seeking = false;
-
     /** Play update timer task */
     private Timer playUpdateTimer = new Timer();
     /** Play update timer task */
@@ -83,21 +79,10 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
                 @Override
                 public void run() {
-                    updatePlayer();
+                    updatePlayerUi();
                 }
             });
         }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        // Make sure play service is started
-        startService(new Intent(this, PlayEpisodeService.class));
-        // Attach to play service
-        Intent intent = new Intent(this, PlayEpisodeService.class);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
     }
 
     /**
@@ -105,7 +90,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
      * set member fields. Sub-classes should call this after setting their
      * content view or plugging in fragments. Sub-classes that use their own
      * fragments should also extend this. Members will only be set if
-     * <code>null</code>.
+     * <code>null</code>. It is safe to assume the fragment members to be
+     * non-null once this method completed.
      */
     protected void findFragments() {
         // The player fragment to use
@@ -115,6 +101,20 @@ public abstract class EpisodeActivity extends BaseActivity implements
         // The episode fragment to use
         if (episodeFragment == null)
             episodeFragment = (EpisodeFragment) findByTagId(R.string.episode_fragment_tag);
+    }
+
+    /**
+     * Register the various listeners, that will alert our activities on model
+     * or UI changes. This runs after the fragments have been established to
+     * avoid the case where we are hit by a call-back and could not react to it.
+     */
+    protected void registerListeners() {
+        // Make sure play service is started
+        startService(new Intent(this, PlayEpisodeService.class));
+        // Attach to play service, this will register the play service listener
+        // once the service is up
+        Intent intent = new Intent(this, PlayEpisodeService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
         // We have to do this here instead of onCreate since we can only react
         // on the call-backs properly once we have our fragment
@@ -127,9 +127,17 @@ public abstract class EpisodeActivity extends BaseActivity implements
     protected void onStart() {
         super.onStart();
 
-        updateActionBar();
-        updatePlayer();
+        // This is safe since it actually only starts the timer if it is
+        // actually needed
         startPlayProgressTimer();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        updateActionBar();
+        updatePlayerUi();
     }
 
     @Override
@@ -143,13 +151,13 @@ public abstract class EpisodeActivity extends BaseActivity implements
     protected void onDestroy() {
         super.onDestroy();
 
+        // Stop the timer
+        playUpdateTimer.cancel();
+
         // Disconnect from episode manager
         episodeManager.removeDownloadListener(this);
         episodeManager.removePlaylistListener(this);
         episodeManager.removeStateChangedListener(this);
-
-        // Stop the timer
-        playUpdateTimer.cancel();
 
         // Detach from play service (prevents leaking)
         if (service != null) {
@@ -159,10 +167,32 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     @Override
+    public final void onDownloadSuccess() {
+        updateDownloadUi();
+    }
+
+    @Override
+    public final void onDownloadFailed() {
+        updateDownloadUi();
+
+        showToast(getString(R.string.download_failed));
+    }
+
+    @Override
+    public final void onPlaylistChanged() {
+        updatePlaylistUi();
+        updatePlayerUi();
+    }
+
+    @Override
+    public final void onStateChanged(Episode episode) {
+        updateStateUi();
+    }
+
+    @Override
     public void onToggleDownload() {
         // Check for action to perform
-        boolean download = !(episodeManager.isDownloading(currentEpisode) ||
-                episodeManager.isDownloaded(currentEpisode));
+        boolean download = !episodeManager.isDownloadingOrDownloaded(currentEpisode);
 
         // Kick off the appropriate action
         if (download) {
@@ -175,29 +205,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
             episodeManager.deleteDownload(currentEpisode);
 
         // Update the UI
-        updateDownloadStatus();
-    }
-
-    @Override
-    public void onDownloadSuccess() {
-        updateDownloadStatus();
-    }
-
-    @Override
-    public void onDownloadFailed() {
-        updateDownloadStatus();
-
-        showToast(getString(R.string.download_failed));
-    }
-
-    @Override
-    public void onPlaylistChanged() {
-        updatePlayer();
-    }
-
-    @Override
-    public void onStateChanged(Episode episode) {
-        updateNewStatus();
+        updateDownloadUi();
     }
 
     @Override
@@ -213,28 +221,23 @@ public abstract class EpisodeActivity extends BaseActivity implements
             service.playEpisode(currentEpisode);
 
         // Update UI
-        updatePlayer();
-        if (playerFragment != null)
-            playerFragment.updateSeekBarSecondaryProgress(0);
+        updatePlayerUi();
+        playerFragment.updateSeekBarSecondaryProgress(0);
     }
 
     @Override
     public void onTogglePlay() {
-        if (service != null && service.isPrepared()) {
-            // Player is playing
-            if (service.isPlaying()) {
-                service.pause();
-                stopPlayProgressTimer();
-            } // Player in pause
-            else {
-                service.resume();
-                startPlayProgressTimer();
-            }
+        // Player is playing
+        if (service.isPlaying()) {
+            service.pause();
+            stopPlayProgressTimer();
+        } // Player in pause
+        else {
+            service.resume();
+            startPlayProgressTimer();
+        }
 
-            updatePlayer();
-        } else
-            Log.w(getClass().getSimpleName(),
-                    "Cannot play/pause episode (service null or unprepared)");
+        updatePlayerUi();
     }
 
     @Override
@@ -244,13 +247,12 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onPlaybackStarted() {
-        updatePlayer();
         startPlayProgressTimer();
     }
 
     @Override
     public void onPlaybackStateChanged() {
-        updatePlayer();
+        updatePlayerUi();
 
         if (service != null && service.isPlaying())
             startPlayProgressTimer();
@@ -262,44 +264,41 @@ public abstract class EpisodeActivity extends BaseActivity implements
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (fromUser) {
             service.seekTo(progress);
-            updatePlayer();
+            updatePlayerUi();
         }
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        seeking = true;
         stopPlayProgressTimer();
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        seeking = false;
         startPlayProgressTimer();
     }
 
     @Override
     public void onStopForBuffering() {
         stopPlayProgressTimer();
-        updatePlayer();
+        updatePlayerUi();
     }
 
     @Override
     public void onResumeFromBuffering() {
-        onPlaybackStarted();
+        startPlayProgressTimer();
     }
 
     @Override
     public void onBufferUpdate(int seconds) {
-        if (playerFragment != null)
-            playerFragment.updateSeekBarSecondaryProgress(seconds);
+        playerFragment.updateSeekBarSecondaryProgress(seconds);
     }
 
     @Override
     public void onPlaybackComplete() {
         if (episodeManager.isPlaylistEmpty()) {
             stopPlayProgressTimer();
-            updatePlayer();
+            updatePlayerUi();
         }
     }
 
@@ -308,7 +307,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
         stopPlayProgressTimer();
         service.reset();
 
-        updatePlayer();
+        updatePlayerUi();
         playerFragment.setPlayerVisibilility(true);
         playerFragment.setErrorViewVisibility(true);
     }
@@ -320,33 +319,48 @@ public abstract class EpisodeActivity extends BaseActivity implements
     protected abstract void updateActionBar();
 
     /**
-     * Update the episode state icon.
+     * Update all UI related to the download state of the current selection.
+     * Sub-classes might want to extend this.
      */
-    protected void updateNewStatus() {
-        if (episodeFragment != null) {
-            episodeFragment.setNewIconVisibility(!episodeManager.getState(currentEpisode));
-        }
-    }
-
-    /**
-     * Update the download menu item state and visibility.
-     */
-    protected void updateDownloadStatus() {
+    protected void updateDownloadUi() {
+        // The episode fragment might be popped out if we are in small landscape
+        // view mode and the episode list is currently visible
         if (episodeFragment != null) {
             final boolean downloading = episodeManager.isDownloading(currentEpisode);
             final boolean downloaded = episodeManager.isDownloaded(currentEpisode);
 
             episodeFragment.setDownloadMenuItemVisibility(currentEpisode != null,
                     !(downloading || downloaded));
-
             episodeFragment.setDownloadIconVisibility(downloading || downloaded, downloaded);
         }
     }
 
     /**
+     * Update all UI related to the playlist. Sub-classes might want to extend
+     * this.
+     */
+    protected void updatePlaylistUi() {
+        // Nothing to do here
+    }
+
+    /**
+     * Update all UI related to the old/new state of the current selection.
+     * Sub-classes might want to extend this.
+     */
+    protected void updateStateUi() {
+        // The episode fragment might be popped out if we are in small landscape
+        // view mode and the episode list is currently visible
+        if (episodeFragment != null)
+            episodeFragment.setNewIconVisibility(!episodeManager.getState(currentEpisode));
+    }
+
+    /**
      * Update the player fragment UI to reflect current state of play.
      */
-    protected void updatePlayer() {
+    protected void updatePlayerUi() {
+        // Even though all the fragments should be present, the service might
+        // not have been connected to yet. Also, the episode manager might not
+        // be ready
         try {
             final boolean currentEpisodeIsShowing = service.isLoadedEpisode(currentEpisode);
 
@@ -358,10 +372,11 @@ public abstract class EpisodeActivity extends BaseActivity implements
             playerFragment.setErrorViewVisibility(false);
             // Make sure player is shown if and as needed
             playerFragment.setPlayerVisibilility(service.isPreparing() || service.isPrepared());
-            playerFragment.setPlayerTitleVisibility(!viewMode.isSmallLandscape()
-                    && !currentEpisodeIsShowing);
+            playerFragment.setPlayerTitleVisibility(
+                    !viewMode.isSmallLandscape() && !currentEpisodeIsShowing);
             playerFragment.setPlayerSeekbarVisibility(!viewMode.isSmallLandscape());
 
+            // Enable/disable next button
             final boolean playlistHasEntries = !episodeManager.isPlaylistEmpty();
             playerFragment.setShowShortPosition(playlistHasEntries && viewMode.isSmall());
             playerFragment.setNextButtonVisibility(playlistHasEntries);
@@ -373,7 +388,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
             playerFragment.updateButton(service.isBuffering(), service.isPlaying(),
                     service.getDuration(), service.getCurrentPosition());
         } catch (NullPointerException nex) {
-            // pass
+            Log.d(getClass().getSimpleName(), "Update player failed!", nex);
         }
     }
 
@@ -382,7 +397,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
         if (service != null && service.isPlaying()) {
             // Only start task if it isn't already running and
             // there is actually some progress to monitor
-            if (playUpdateTimerTask == null && !seeking) {
+            if (playUpdateTimerTask == null) {
                 PlayProgressTask task = new PlayProgressTask();
 
                 try {
@@ -423,7 +438,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
             service.addPlayServiceListener(EpisodeActivity.this);
 
             // Update player UI
-            updatePlayer();
+            updatePlayerUi();
 
             // Restart play progress timer task if service is playing
             if (service.isPlaying())

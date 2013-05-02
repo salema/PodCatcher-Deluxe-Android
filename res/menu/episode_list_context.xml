@@ -31,21 +31,23 @@
     <item
         android:id="@+id/episode_download_contextmenuitem"
         android:icon="@drawable/ic_menu_download"
-        android:showAsAction="always"
+        android:showAsAction="ifRoom"
         android:title="@string/download" />
     <item
         android:id="@+id/episode_remove_contextmenuitem"
         android:icon="@drawable/ic_menu_delete"
-        android:showAsAction="always"
+        android:showAsAction="ifRoom"
         android:title="@string/remove" />
     <item
         android:id="@+id/episode_add_to_playlist_contextmenuitem"
-        android:showAsAction="never"
-        android:title="Add to Playlist" />
+        android:icon="@drawable/ic_menu_playlist_add"
+        android:showAsAction="always"
+        android:title="@string/playlist_add" />
     <item
         android:id="@+id/episode_remove_from_playlist_contextmenuitem"
-        android:showAsAction="never"
-        android:title="Remove from Playlist" />
+        android:icon="@drawable/ic_menu_playlist_remove"
+        android:showAsAction="always"
+        android:title="@string/playlist_remove" />
     <item
         android:id="@+id/episode_select_all_contextmenuitem"
         android:showAsAction="never"

@@ -41,11 +41,11 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         if (!viewMode.isSmallPortrait())
             finish();
         else {
-            // Set the content view
+            // 1. Set the content view
             setContentView(R.layout.main);
-            // Set fragment members
-            findFragments();
 
+            // 2. Set, find, create the fragments
+            findFragments();
             // During initial setup, plug in the episode list fragment.
             if (savedInstanceState == null && episodeListFragment == null) {
                 episodeListFragment = new EpisodeListFragment();
@@ -55,6 +55,9 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
                                 getString(R.string.episode_list_fragment_tag))
                         .commit();
             }
+
+            // 3. Register the listeners needed to function as a controller
+            registerListeners();
 
             // Prepare UI
             episodeListFragment.resetAndSpin();
@@ -103,7 +106,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         super.onResume();
 
         updateFilter();
-        updateDownloadStatus();
+        updateDownloadUi();
     }
 
     @Override
@@ -183,14 +186,12 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     }
 
     @Override
-    protected void updatePlayer() {
-        super.updatePlayer();
+    protected void updatePlayerUi() {
+        super.updatePlayerUi();
 
         // Make sure to show episode title in player
-        if (playerFragment != null) {
-            playerFragment.setLoadMenuItemVisibility(false, false);
-            playerFragment.setPlayerTitleVisibility(true);
-        }
+        playerFragment.setLoadMenuItemVisibility(false, false);
+        playerFragment.setPlayerTitleVisibility(true);
     }
 
     @Override

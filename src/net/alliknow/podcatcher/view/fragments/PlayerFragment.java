@@ -321,7 +321,7 @@ public class PlayerFragment extends Fragment {
     }
 
     /**
-     * Update the player button to show current state and progress.
+     * Update the player button(s) to show current state and progress.
      * 
      * @param buffering Whether the player is currently buffering.
      * @param playing Whether the player is currently playing.
@@ -343,10 +343,11 @@ public class PlayerFragment extends Fragment {
             else {
                 String label = "";
                 if (!showShortPlaybackPosition)
-                    label += getString(playing ? R.string.pause : R.string.resume) + " ";
+                    label += getString(playing ? R.string.pause : R.string.resume) +
+                            " " + getString(R.string.at) + " ";
 
-                label += getString(R.string.at) + " " + formatTime(position) + " " +
-                        getString(R.string.of) + " " + formatTime(duration);
+                label += formatTime(position) + " " + getString(R.string.of) + " "
+                        + formatTime(duration);
                 playPauseButton.setText(label);
 
                 playPauseButton.setBackgroundResource(playing ?
@@ -369,8 +370,9 @@ public class PlayerFragment extends Fragment {
         // Only do it right away if resumed, otherwise onResume will call us.
         if (isResumed()) {
             titleView.setVisibility(show ? GONE : VISIBLE);
-            playPauseButton.setVisibility(show ? GONE : VISIBLE);
             seekBar.setVisibility(show ? GONE : VISIBLE);
+            playPauseButton.setVisibility(show ? GONE : VISIBLE);
+            nextButton.setVisibility(show ? GONE : VISIBLE);
             errorView.setVisibility(show ? VISIBLE : GONE);
         }
     }

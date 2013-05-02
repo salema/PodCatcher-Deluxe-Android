@@ -194,8 +194,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 listener.onPlaybackStateChanged();
         }
 
-        // TODO Now we might have started the service. Maybe it is not even
-        // needed...
         return START_NOT_STICKY;
     }
 
@@ -420,6 +418,9 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             player.start();
             putForeground();
 
+            // Pop the episode off the playlist
+            episodeManager.removeFromPlaylist(currentEpisode);
+
             // Alert the listeners
             if (listeners.size() > 0)
                 for (PlayServiceListener listener : listeners)
@@ -467,8 +468,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
         // Mark the episode old (needs to be done before resetting the service!)
         episodeManager.setState(currentEpisode, true);
-        // Remove the finished episode from the playlist
-        episodeManager.removeFromPlaylist(currentEpisode);
 
         // If there is another episode on the playlist, play it.
         if (!episodeManager.isPlaylistEmpty())

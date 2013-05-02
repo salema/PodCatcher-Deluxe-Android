@@ -26,5 +26,5 @@
     <item
         android:id="@+id/playlist"
         android:showAsAction="never"
-        android:title="Playlist" />
+        android:title="@string/playlist" />
 </menu>
