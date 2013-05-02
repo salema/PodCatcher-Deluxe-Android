@@ -32,7 +32,7 @@ import net.alliknow.podcatcher.model.types.Progress;
 public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 
     /** Maximum byte size for the logo to load on wifi */
-    public static final int MAX_LOGO_SIZE_WIFI = 250000;
+    public static final int MAX_LOGO_SIZE_WIFI = 500000;
     /** Maximum byte size for the logo to load on mobile connection */
     public static final int MAX_LOGO_SIZE_MOBILE = 100000;
 

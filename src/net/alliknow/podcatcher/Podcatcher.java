@@ -22,6 +22,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.http.HttpResponseCache;
+import android.util.Log;
 
 import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
@@ -33,6 +35,8 @@ import net.alliknow.podcatcher.model.tasks.LoadPodcastListTask;
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
 import net.alliknow.podcatcher.model.types.Podcast;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +61,8 @@ public class Podcatcher extends Application implements OnLoadEpisodeMetadataList
     public static final String USER_AGENT_KEY = "User-Agent";
     /** The user agent string we use to identify us */
     public static final String USER_AGENT_VALUE = "Podcatcher Deluxe";
+    /** The HTTP cache size */
+    public static final long HTTP_CACHE_SIZE = 8 * 1024 * 1024; // 8 MiB
 
     /** Characters not allowed in filenames */
     private static final String RESERVED_CHARS = "|\\?*<\":>+[]/'#!,&";
@@ -64,6 +70,14 @@ public class Podcatcher extends Application implements OnLoadEpisodeMetadataList
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // Enabled caching for our HTTP connections
+        try {
+            File httpCacheDir = new File(getCacheDir(), "http");
+            HttpResponseCache.install(httpCacheDir, HTTP_CACHE_SIZE);
+        } catch (IOException ioe) {
+            Log.i(getClass().getSimpleName(), "HTTP response cache installation failed:" + ioe);
+        }
 
         // This will only run once in the lifetime of the app
         // since the application is an implicit singleton. We create the other
