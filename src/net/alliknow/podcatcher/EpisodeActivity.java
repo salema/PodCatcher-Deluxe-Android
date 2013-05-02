@@ -243,6 +243,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
     @Override
     public void onNext() {
         service.playNext();
+        updatePlayerUi();
     }
 
     @Override
