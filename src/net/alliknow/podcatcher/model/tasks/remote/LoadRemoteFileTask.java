@@ -20,6 +20,7 @@ package net.alliknow.podcatcher.model.tasks.remote;
 import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_KEY;
 import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_VALUE;
 
+import android.net.http.HttpResponseCache;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -159,6 +160,15 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
 
             // Disconnect
             connection.disconnect();
+
+            HttpResponseCache cache = HttpResponseCache.getInstalled();
+            if (cache != null) {
+                Log.i(getClass().getSimpleName(), "HTTP cache size: " + cache.size());
+                Log.i(getClass().getSimpleName(), "HTTP request count: " + cache.getRequestCount());
+                Log.i(getClass().getSimpleName(),
+                        "HTTP network requests: " + cache.getNetworkCount());
+                Log.i(getClass().getSimpleName(), "HTTP cache hits: " + cache.getHitCount());
+            }
         }
     }
 }

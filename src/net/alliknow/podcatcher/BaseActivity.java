@@ -22,11 +22,16 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.net.http.HttpResponseCache;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import net.alliknow.podcatcher.model.PodcastManager;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Podcatcher base activity. Defines some common functionality useful for all
@@ -84,6 +89,15 @@ public abstract class BaseActivity extends Activity {
 
         // Set the view mode member
         viewMode = determineViewMode();
+
+        // Enabled caching for our http connections
+        try {
+            File httpCacheDir = new File(getCacheDir(), "http");
+            long httpCacheSize = 20 * 1024 * 1024; // 20 MiB
+            HttpResponseCache.install(httpCacheDir, httpCacheSize);
+        } catch (IOException ioe) {
+            Log.i(getClass().getSimpleName(), "HTTP response cache installation failed:" + ioe);
+        }
     }
 
     @Override
@@ -107,6 +121,16 @@ public abstract class BaseActivity extends Activity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        HttpResponseCache cache = HttpResponseCache.getInstalled();
+        if (cache != null) {
+            cache.flush();
         }
     }
 
