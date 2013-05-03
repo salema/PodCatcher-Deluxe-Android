@@ -40,6 +40,12 @@ import java.io.IOException;
  */
 public class Podcatcher extends Application {
 
+    /**
+     * The amount of dp establishing the border between small and large screen
+     * buckets
+     */
+    public static final int MIN_PIXEL_LARGE = 600;
+
     /** The http request header field key for the user agent */
     public static final String USER_AGENT_KEY = "User-Agent";
     /** The user agent string we use to identify us */

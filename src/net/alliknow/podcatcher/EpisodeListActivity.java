@@ -152,15 +152,15 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         this.currentEpisode = selectedEpisode;
 
         switch (viewMode) {
-            case LARGE_PORTRAIT_VIEW:
-            case LARGE_LANDSCAPE_VIEW:
+            case LARGE_PORTRAIT:
+            case LARGE_LANDSCAPE:
                 // Set episode in episode fragment
                 episodeFragment.setEpisode(selectedEpisode);
                 // Make sure selection matches in list fragment
                 updateEpisodeListSelection();
 
                 break;
-            case SMALL_LANDSCAPE_VIEW:
+            case SMALL_LANDSCAPE:
                 // Find, and if not already done create, episode fragment
                 if (episodeFragment == null)
                     episodeFragment = new EpisodeFragment();
@@ -180,7 +180,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 episodeFragment.setShowEpisodeDate(true);
 
                 break;
-            case SMALL_PORTRAIT_VIEW:
+            case SMALL_PORTRAIT:
                 // Send intent to open episode as a new activity
                 Intent intent = new Intent(this, ShowEpisodeActivity.class);
                 intent.putExtra(EPISODE_URL_KEY, selectedEpisode.getMediaUrl().toString());
@@ -219,8 +219,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
      */
     protected void updateEpisodeListSelection() {
         switch (viewMode) {
-            case LARGE_PORTRAIT_VIEW:
-            case LARGE_LANDSCAPE_VIEW:
+            case LARGE_PORTRAIT:
+            case LARGE_LANDSCAPE:
                 // Make sure the episode selection in the list is updated
                 if (currentEpisodeList != null && currentEpisodeList.contains(currentEpisode))
                     episodeListFragment.select(currentEpisodeList.indexOf(currentEpisode));
