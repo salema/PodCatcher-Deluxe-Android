@@ -29,6 +29,7 @@ import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
@@ -98,6 +99,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
     /** Our audio manager handle */
     private AudioManager audioManager;
+    /** Our becoming noisy broadcast receiver */
+    private ComponentName noisyReceiver;
     /** Our media button broadcast receiver */
     private ComponentName mediaButtonReceiver;
     /** Our remote control client */
@@ -136,15 +139,20 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     public void onCreate() {
         super.onCreate();
 
+        // Get and enable broadcast receivers
+        noisyReceiver = new ComponentName(this, BecomingNoisyReceiver.class);
+        getPackageManager().setComponentEnabledSetting(noisyReceiver,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+        mediaButtonReceiver = new ComponentName(this, MediaButtonReceiver.class);
+        getPackageManager().setComponentEnabledSetting(mediaButtonReceiver,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+
         // Get the audio manager handle
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         // Create the wifi lock (not acquired yet)
         wifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
                 .createWifiLock(WifiManager.WIFI_MODE_FULL, "mylock");
-
-        // Create handle to media button receiver
-        mediaButtonReceiver = new ComponentName(this, MediaButtonReceiver.class);
     }
 
     @Override
@@ -186,8 +194,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 listener.onPlaybackStateChanged();
         }
 
-        // TODO Now we might have started the service. Maybe it is not even
-        // needed...
         return START_NOT_STICKY;
     }
 
@@ -214,6 +220,12 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     @Override
     public void onDestroy() {
         reset();
+
+        // Disable broadcast receivers
+        getPackageManager().setComponentEnabledSetting(noisyReceiver,
+                PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP);
+        getPackageManager().setComponentEnabledSetting(mediaButtonReceiver,
+                PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP);
     }
 
     /**
