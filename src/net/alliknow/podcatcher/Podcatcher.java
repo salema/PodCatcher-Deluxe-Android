@@ -46,7 +46,17 @@ public class Podcatcher extends Application {
     public static final String USER_AGENT_VALUE = "Podcatcher Deluxe";
 
     /** The HTTP cache size */
-    public static final long HTTP_CACHE_SIZE = 8 * 1024 * 1024; // 8 MiB
+    private static final long HTTP_CACHE_SIZE = 8 * 1024 * 1024; // 8 MiB
+    /** Static inner thread class to pull flushing the cache off the main thread */
+    private static final Thread flushHttpCache = new Thread() {
+
+        @Override
+        public void run() {
+            final HttpResponseCache cache = HttpResponseCache.getInstalled();
+            if (cache != null)
+                cache.flush();
+        }
+    };
 
     @Override
     public void onCreate() {
@@ -66,6 +76,13 @@ public class Podcatcher extends Application {
         PodcastManager.getInstance(this);
         // dito
         SuggestionManager.getInstance(this);
+    }
+
+    /**
+     * Write http cache data to disk (async).
+     */
+    public void flushHttpCache() {
+        flushHttpCache.start();
     }
 
     /**
