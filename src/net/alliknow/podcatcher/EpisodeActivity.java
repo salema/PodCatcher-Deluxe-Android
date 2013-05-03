@@ -68,6 +68,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
     private Timer playUpdateTimer = new Timer();
     /** Play update timer task */
     private TimerTask playUpdateTimerTask;
+    /** Flag for visibility, coordinating timer */
+    private boolean visible = false;
 
     /** The actual task to regularly update the UI on playback */
     private class PlayProgressTask extends TimerTask {
@@ -126,6 +128,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
     @Override
     protected void onStart() {
         super.onStart();
+        this.visible = true;
 
         // This is safe since it actually only starts the timer if it is
         // actually needed
@@ -143,6 +146,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
     @Override
     protected void onStop() {
         super.onStop();
+        this.visible = false;
 
         stopPlayProgressTimer();
     }
@@ -394,8 +398,9 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     private void startPlayProgressTimer() {
-        // Do not start the task if there is no progress to monitor
-        if (service != null && service.isPlaying()) {
+        // Do not start the task if there is no progress to monitor and we are
+        // visible (this fixes the case of stacked activities running the timer)
+        if (visible && service != null && service.isPlaying()) {
             // Only start task if it isn't already running and
             // there is actually some progress to monitor
             if (playUpdateTimerTask == null) {
