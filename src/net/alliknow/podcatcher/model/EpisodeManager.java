@@ -246,7 +246,9 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                         // string here because there are servers out there (e.g.
                         // ORF.at) that apparently block downloads based on this
                         // information
-                        .addRequestHeader(USER_AGENT_KEY, USER_AGENT_VALUE);
+                        .addRequestHeader(USER_AGENT_KEY, USER_AGENT_VALUE)
+                        // Make sure our download dont end up in the http cache
+                        .addRequestHeader("Cache-Control", "no-store");
 
                 // Start the download
                 id = downloadManager.enqueue(download);
