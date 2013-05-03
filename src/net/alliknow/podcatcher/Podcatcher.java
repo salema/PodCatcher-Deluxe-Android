@@ -22,9 +22,14 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.http.HttpResponseCache;
+import android.util.Log;
 
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.SuggestionManager;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Our application subclass. Holds global state and model. The Podcatcher
@@ -40,12 +45,20 @@ public class Podcatcher extends Application {
     /** The user agent string we use to identify us */
     public static final String USER_AGENT_VALUE = "Podcatcher Deluxe";
 
-    /** Characters not allowed in filenames */
-    private static final String RESERVED_CHARS = "|\\?*<\":>+[]/'#!,&";
+    /** The HTTP cache size */
+    private static final long HTTP_CACHE_SIZE = 8 * 1024 * 1024; // 8 MiB
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // Enabled caching for our HTTP connections
+        try {
+            File httpCacheDir = new File(getCacheDir(), "http");
+            HttpResponseCache.install(httpCacheDir, HTTP_CACHE_SIZE);
+        } catch (IOException ioe) {
+            Log.i(getClass().getSimpleName(), "HTTP response cache installation failed:" + ioe);
+        }
 
         // This will only run once in the lifetime of the app
         // since the application is an implicit singleton. We create the other
@@ -53,6 +66,21 @@ public class Podcatcher extends Application {
         PodcastManager.getInstance(this);
         // dito
         SuggestionManager.getInstance(this);
+    }
+
+    /**
+     * Write http cache data to disk (async).
+     */
+    public void flushHttpCache() {
+        new Runnable() {
+
+            @Override
+            public void run() {
+                HttpResponseCache cache = HttpResponseCache.getInstalled();
+                if (cache != null)
+                    cache.flush();
+            }
+        }.run();
     }
 
     /**
