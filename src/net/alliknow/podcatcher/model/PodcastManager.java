@@ -193,8 +193,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             onPodcastLoaded(podcast);
         // Only start the load task if it is not already active
         else if (!loadPodcastTasks.containsKey(podcast)) {
-            // Store time stamp to avoid loading this logo too often
-            podcast.setLastLoadLogoAttempt(new Date());
             // Download podcast RSS feed (async)
             LoadPodcastTask task = new LoadPodcastTask(this);
             task.setOnlyIfCached(!podcatcher.isOnline());
@@ -242,8 +240,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         else
             for (OnLoadPodcastListener listener : loadPodcastListeners)
                 listener.onPodcastLoaded(podcast);
-
-        podcatcher.flushHttpCache();
     }
 
     @Override
@@ -273,6 +269,9 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             onPodcastLogoLoaded(podcast);
         // Only start the load task if it is not already active
         else if (!loadPodcastLogoTasks.containsKey(podcast)) {
+            // Store time stamp to avoid loading this logo too often
+            podcast.setLastLoadLogoAttempt(new Date());
+            // Start logo download
             LoadPodcastLogoTask task = new LoadPodcastLogoTask(this, LOGO_DIMENSION, LOGO_DIMENSION);
             task.setOnlyIfCached(!podcatcher.isOnline());
             task.setLoadLimit(MAX_LOGO_SIZE);
@@ -291,8 +290,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         else
             for (OnLoadPodcastLogoListener listener : loadPodcastLogoListeners)
                 listener.onPodcastLogoLoaded(podcast);
-
-        podcatcher.flushHttpCache();
     }
 
     @Override
