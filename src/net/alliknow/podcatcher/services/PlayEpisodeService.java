@@ -100,9 +100,9 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     /** Our audio manager handle */
     private AudioManager audioManager;
     /** Our becoming noisy broadcast receiver */
-    private ComponentName noisyReceiver = new ComponentName(this, BecomingNoisyReceiver.class);
+    private ComponentName noisyReceiver;
     /** Our media button broadcast receiver */
-    private ComponentName mediaButtonReceiver = new ComponentName(this, MediaButtonReceiver.class);
+    private ComponentName mediaButtonReceiver;
     /** Our remote control client */
     private PodcatcherRCClient remoteControlClient;
     /** Our wifi lock */
@@ -139,9 +139,11 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     public void onCreate() {
         super.onCreate();
 
-        // Enable broadcast receivers
+        // Get and enable broadcast receivers
+        noisyReceiver = new ComponentName(this, BecomingNoisyReceiver.class);
         getPackageManager().setComponentEnabledSetting(noisyReceiver,
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+        mediaButtonReceiver = new ComponentName(this, MediaButtonReceiver.class);
         getPackageManager().setComponentEnabledSetting(mediaButtonReceiver,
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 
