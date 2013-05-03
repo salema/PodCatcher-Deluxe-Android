@@ -7,3 +7,5 @@ Check again for memory leaks
 Do not put button into buffering state when seeking
 Make sure services thread heavy operations
 Loading podcast in AddPodcastFragment should be exclusive (other listeners should not be alerted) - maybe add small retained fragment to hold load task
+Disable play button if not online
+Show toast on select all if some podcasts fail to load
