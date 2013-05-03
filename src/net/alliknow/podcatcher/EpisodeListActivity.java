@@ -127,8 +127,13 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onPodcastLoadFailed(Podcast failedPodcast) {
-        // TODO What happens in multiple podcast mode?
-        if (!multiplePodcastsMode)
+        // The podcast we are waiting for failed to load
+        if (!multiplePodcastsMode && failedPodcast.equals(currentPodcast))
+            episodeListFragment.showLoadFailed();
+        // The last podcast failed to load and none of the others had any
+        // episodes to show in the list
+        else if (multiplePodcastsMode && podcastManager.getLoadCount() == 0
+                && (currentEpisodeList == null || currentEpisodeList.isEmpty()))
             episodeListFragment.showLoadFailed();
     }
 
