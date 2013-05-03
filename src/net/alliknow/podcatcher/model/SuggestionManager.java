@@ -137,8 +137,6 @@ public class SuggestionManager implements OnLoadSuggestionListener {
 
         for (OnLoadSuggestionListener listener : loadSuggestionListListeners)
             listener.onSuggestionsLoaded(suggestions);
-
-        podcatcher.flushHttpCache();
     }
 
     @Override

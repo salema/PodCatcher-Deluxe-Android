@@ -236,6 +236,14 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+
+        // Make sure our http cache is written to disk
+        ((Podcatcher) getApplication()).flushHttpCache();
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
