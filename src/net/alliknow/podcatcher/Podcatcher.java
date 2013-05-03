@@ -67,6 +67,19 @@ public class Podcatcher extends Application implements OnLoadEpisodeMetadataList
     /** The HTTP cache size */
     public static final long HTTP_CACHE_SIZE = 8 * 1024 * 1024; // 8 MiB
 
+    /** Thread to move the http cache flushing off the UI thread */
+    private static class FlushCacheThread extends Thread {
+
+        @Override
+        public void run() {
+            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+
+            HttpResponseCache cache = HttpResponseCache.getInstalled();
+            if (cache != null)
+                cache.flush();
+        }
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -119,15 +132,7 @@ public class Podcatcher extends Application implements OnLoadEpisodeMetadataList
      * Write http cache data to disk (async).
      */
     public void flushHttpCache() {
-        new Runnable() {
-
-            @Override
-            public void run() {
-                HttpResponseCache cache = HttpResponseCache.getInstalled();
-                if (cache != null)
-                    cache.flush();
-            }
-        }.run();
+        new FlushCacheThread().start();
     }
 
     /**
