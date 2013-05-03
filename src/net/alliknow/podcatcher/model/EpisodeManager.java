@@ -82,6 +82,9 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     /** The application itself */
     private Podcatcher podcatcher;
 
+    /** Helper to make playlist methods more efficient */
+    private int playlistSize = -1;
+
     /** The system download manager */
     private DownloadManager downloadManager;
     /** The metadata information held for episodes */
@@ -437,6 +440,10 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
             }
         }
 
+        // Since we have the playlist here, we could just as well set this and
+        // make the other methods return faster
+        this.playlistSize = playlist.size();
+
         return new ArrayList<Episode>(playlist.values());
     }
 
@@ -444,11 +451,15 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      * @return Whether the current playlist has any entries.
      */
     public boolean isPlaylistEmpty() {
-        for (EpisodeMetadata meta : metadata.values())
-            if (meta.playlistPosition != null)
-                return false;
+        if (playlistSize == -1) {
+            playlistSize = 0;
 
-        return true;
+            for (EpisodeMetadata meta : metadata.values())
+                if (meta.playlistPosition != null)
+                    playlistSize++;
+        }
+
+        return playlistSize == 0;
     }
 
     /**
@@ -504,6 +515,10 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                 meta.playlistPosition = position;
                 putAdditionalEpisodeInformation(episode, meta);
 
+                // Increment counter
+                if (playlistSize != -1)
+                    playlistSize++;
+
                 // Alert listeners
                 for (OnChangePlaylistListener listener : playlistListeners)
                     listener.onPlaylistChanged();
@@ -538,6 +553,10 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
                 // Reset the playlist position for given episode
                 meta.playlistPosition = null;
+
+                // Decrement counter
+                if (playlistSize != -1)
+                    playlistSize--;
 
                 // Alert listeners
                 for (OnChangePlaylistListener listener : playlistListeners)
