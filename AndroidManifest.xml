@@ -72,12 +72,14 @@
             </intent-filter>
         </service>
         <receiver 
-            android:name=".services.MediaButtonReceiver">
+            android:name=".services.MediaButtonReceiver"
+            android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".services.BecomingNoisyReceiver">
+        <receiver android:name=".services.BecomingNoisyReceiver"
+            android:enabled="false">
             <intent-filter>
                 <action android:name="android.media.AUDIO_BECOMING_NOISY" />
             </intent-filter>
