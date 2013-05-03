@@ -17,9 +17,6 @@
 
 package net.alliknow.podcatcher.model;
 
-import static net.alliknow.podcatcher.model.tasks.remote.LoadPodcastLogoTask.MAX_LOGO_SIZE_MOBILE;
-import static net.alliknow.podcatcher.model.tasks.remote.LoadPodcastLogoTask.MAX_LOGO_SIZE_WIFI;
-
 import android.net.http.HttpResponseCache;
 import android.os.AsyncTask;
 import android.text.Html;
@@ -70,12 +67,13 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      * milliseconds). If older, we will to reload.
      */
     public static final int TIME_TO_LIFE = 30 * 60 * 1000;
-
     /**
      * The minimum time podcast content is buffered on mobile connections (in
      * milliseconds). If older, we will to reload.
      */
     public static final int TIME_TO_LIFE_MOBILE = 60 * 60 * 1000;
+    /** Maximum byte size for the logo to load */
+    public static final int MAX_LOGO_SIZE = 500000;
 
     /** The name of the file we store our saved podcasts in (as OPML) */
     public static final String OPML_FILENAME = "podcasts.opml";
@@ -101,6 +99,17 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     private Set<OnLoadPodcastListener> loadPodcastListeners = new HashSet<OnLoadPodcastListener>();
     /** The call-back set for the podcast logo load listeners */
     private Set<OnLoadPodcastLogoListener> loadPodcastLogoListeners = new HashSet<OnLoadPodcastLogoListener>();
+
+    /** Static inner thread class to pull flushing the cache off the main thread */
+    private static final Thread flushHttpCache = new Thread() {
+
+        @Override
+        public void run() {
+            final HttpResponseCache cache = HttpResponseCache.getInstalled();
+            if (cache != null)
+                cache.flush();
+        }
+    };
 
     /**
      * Init the podcast data.
@@ -196,15 +205,17 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             onPodcastLoaded(podcast);
         // Only start the load task if it is not already active
         else if (!loadPodcastTasks.containsKey(podcast)) {
+            // Store time stamp to avoid loading this logo too often
+            podcast.setLastLoadLogoAttempt(new Date());
             // Download podcast RSS feed (async)
-            LoadPodcastTask loadPodcastTask = new LoadPodcastTask(this);
-            loadPodcastTask.preventZippedTransfer(podcatcher.isOnFastConnection());
-            // loadPodcastTask.execute(podcast);
-            loadPodcastTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
+            LoadPodcastTask task = new LoadPodcastTask(this);
+            task.setOnlyIfCached(!podcatcher.isOnline());
+            task.preventZippedTransfer(podcatcher.isOnFastConnection());
+            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
 
             // Keep task reference, so we can cancel the load and determine
             // whether a task for this podcast is already running
-            loadPodcastTasks.put(podcast, loadPodcastTask);
+            loadPodcastTasks.put(podcast, task);
         }
     }
 
@@ -244,7 +255,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             for (OnLoadPodcastListener listener : loadPodcastListeners)
                 listener.onPodcastLoaded(podcast);
 
-        flushHttpCache();
+        flushHttpCache.start();
     }
 
     @Override
@@ -270,17 +281,16 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      */
     public void loadLogo(Podcast podcast) {
         // Only load podcast logo if it is not there yet
-        if (podcast.getLogo() != null)
+        if (!shouldReloadLogo(podcast))
             onPodcastLogoLoaded(podcast);
         // Only start the load task if it is not already active
         else if (!loadPodcastLogoTasks.containsKey(podcast)) {
-            LoadPodcastLogoTask loadPodcastLogoTask =
-                    new LoadPodcastLogoTask(this, LOGO_DIMENSION, LOGO_DIMENSION);
-            loadPodcastLogoTask.setLoadLimit(podcatcher.isOnFastConnection() ?
-                    MAX_LOGO_SIZE_WIFI : MAX_LOGO_SIZE_MOBILE);
-            loadPodcastLogoTask.execute(podcast);
+            LoadPodcastLogoTask task = new LoadPodcastLogoTask(this, LOGO_DIMENSION, LOGO_DIMENSION);
+            task.setOnlyIfCached(!podcatcher.isOnline());
+            task.setLoadLimit(MAX_LOGO_SIZE);
+            task.execute(podcast);
 
-            loadPodcastLogoTasks.put(podcast, loadPodcastLogoTask);
+            loadPodcastLogoTasks.put(podcast, task);
         }
     }
 
@@ -294,7 +304,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             for (OnLoadPodcastLogoListener listener : loadPodcastLogoListeners)
                 listener.onPodcastLogoLoaded(podcast);
 
-        flushHttpCache();
+        flushHttpCache.start();
     }
 
     @Override
@@ -535,6 +545,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      * the object and has nothing to do with the updating of the podcast RSS
      * file on the provider's server.
      * 
+     * @param Podcast to check.
      * @return <code>true</code> iff time to live expired or the podcast has
      *         never been loaded.
      */
@@ -552,17 +563,18 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         }
     }
 
-    private void flushHttpCache() {
-        final HttpResponseCache cache = HttpResponseCache.getInstalled();
-        if (cache != null) {
-            new Runnable() {
-
-                @Override
-                public void run() {
-                    cache.flush();
-                }
-            }.run();
-        }
+    /**
+     * Check whether we should reload the podcast logo. This depends on a
+     * combination of things including whether there is a logo and when the last
+     * effort has been made to get it.
+     * 
+     * @param Podcast to check.
+     * @return <code>true</code> iff it seems worth our time and resources to
+     *         try reload the podcast logo.
+     */
+    private boolean shouldReloadLogo(Podcast podcast) {
+        return podcast != null && podcast.getLastLoadLogoAttempt() == null
+                && podcast.getLogo() == null;
     }
 
     /**

@@ -114,6 +114,7 @@ public class SuggestionManager implements OnLoadSuggestionListener {
         // loading)
         if (podcastSuggestions == null && loadTask == null) {
             loadTask = new LoadSuggestionsTask(this);
+            loadTask.setOnlyIfCached(!podcatcher.isOnline());
             loadTask.preventZippedTransfer(podcatcher.isOnFastConnection());
             loadTask.execute((Void) null);
         } // Suggestions already present
