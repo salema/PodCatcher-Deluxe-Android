@@ -175,7 +175,7 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
             // Disconnect
             connection.disconnect();
 
-            reportCacheStats();
+            // reportCacheStats();
         }
     }
 
