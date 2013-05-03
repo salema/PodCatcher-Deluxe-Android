@@ -48,6 +48,7 @@ import net.alliknow.podcatcher.EpisodeListActivity.ContentMode;
 import net.alliknow.podcatcher.PodcastActivity;
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
+import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
 import net.alliknow.podcatcher.model.tasks.StoreEpisodeMetadataTask;
@@ -66,6 +67,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Manager to handle episode specific activities.
@@ -80,6 +82,9 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     /** The application itself */
     private Podcatcher podcatcher;
 
+    /** Helper to make playlist methods more efficient */
+    private int playlistSize = -1;
+
     /** The system download manager */
     private DownloadManager downloadManager;
     /** The metadata information held for episodes */
@@ -89,6 +94,8 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
     /** The call-back set for the complete download listeners */
     private Set<OnDownloadEpisodeListener> downloadListeners = new HashSet<OnDownloadEpisodeListener>();
+    /** The call-back set for the playlist listeners */
+    private Set<OnChangePlaylistListener> playlistListeners = new HashSet<OnChangePlaylistListener>();
     /** The call-back set for the episode state changed listeners */
     private Set<OnChangeEpisodeStateListener> stateListeners = new HashSet<OnChangeEpisodeStateListener>();
 
@@ -223,8 +230,10 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
             long id = 0;
             // Find or create the metadata information holder
             EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
-            if (meta == null)
+            if (meta == null) {
                 meta = new EpisodeMetadata();
+                metadata.put(episode.getMediaUrl(), meta);
+            }
 
             // Start download if the episode is not there
             if (!new File(podcastDir, subPath).exists()) {
@@ -240,7 +249,9 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                         // string here because there are servers out there (e.g.
                         // ORF.at) that apparently block downloads based on this
                         // information
-                        .addRequestHeader(USER_AGENT_KEY, USER_AGENT_VALUE);
+                        .addRequestHeader(USER_AGENT_KEY, USER_AGENT_VALUE)
+                        // Make sure our download dont end up in the http cache
+                        .addRequestHeader("Cache-Control", "no-store");
 
                 // Start the download
                 id = downloadManager.enqueue(download);
@@ -254,12 +265,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
             // Put metadata information
             meta.downloadId = id;
-            meta.episodeName = episode.getName();
-            meta.episodePubDate = episode.getPubDate();
-            meta.episodeDescription = episode.getDescription();
-            meta.podcastName = episode.getPodcast().getName();
-            meta.podcastUrl = episode.getPodcast().getUrl().toString();
-            metadata.put(episode.getMediaUrl(), meta);
+            putAdditionalEpisodeInformation(episode, meta);
 
             // Mark metadata record as dirty
             metadataChanged = true;
@@ -334,6 +340,18 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     }
 
     /**
+     * Shortcut to check whether there is any download action going on with this
+     * episode.
+     * 
+     * @param episode Episode to check for.
+     * @return <code>true</code> iff the episode is downloading or already
+     *         downloaded.
+     */
+    public boolean isDownloadingOrDownloaded(Episode episode) {
+        return isDownloading(episode) || isDownloaded(episode);
+    }
+
+    /**
      * Get the list of downloaded episodes. Returns only episodes fully
      * available locally. The episodes are sorted by date, latest first.
      * 
@@ -400,6 +418,174 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      */
     public void removeDownloadListener(OnDownloadEpisodeListener listener) {
         downloadListeners.remove(listener);
+    }
+
+    /**
+     * @return The current playlist. Might be empty but not <code>null</code>.
+     */
+    public List<Episode> getPlaylist() {
+        // The resulting playlist
+        TreeMap<Integer, Episode> playlist = new TreeMap<Integer, Episode>();
+
+        // Find playlist entries from metadata
+        Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Entry<URL, EpisodeMetadata> entry = iterator.next();
+
+            // Find records for playlist entries
+            if (entry.getValue().playlistPosition != null) {
+                // Create and add the downloaded episode
+                Episode playlistEntry = entry.getValue().marshalEpisode(entry.getKey());
+                playlist.put(entry.getValue().playlistPosition, playlistEntry);
+            }
+        }
+
+        // Since we have the playlist here, we could just as well set this and
+        // make the other methods return faster
+        this.playlistSize = playlist.size();
+
+        return new ArrayList<Episode>(playlist.values());
+    }
+
+    /**
+     * @return Whether the current playlist has any entries.
+     */
+    public boolean isPlaylistEmpty() {
+        if (playlistSize == -1) {
+            playlistSize = 0;
+
+            for (EpisodeMetadata meta : metadata.values())
+                if (meta.playlistPosition != null)
+                    playlistSize++;
+        }
+
+        return playlistSize == 0;
+    }
+
+    /**
+     * Check whether a specific episode already exists in the playlist.
+     * 
+     * @param episode Episode to check for.
+     * @return <code>true</code> iff present in playlist.
+     */
+    public boolean isInPlaylist(Episode episode) {
+        return getPlaylistPosition(episode) != -1;
+    }
+
+    /**
+     * Find the position of the given episode in the playlist.
+     * 
+     * @param episode Episode to find.
+     * @return The position of the episode (staring at 0) or -1 if not present.
+     */
+    public int getPlaylistPosition(Episode episode) {
+        int result = -1;
+
+        if (episode != null) {
+            // Find metadata information holder
+            EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+            if (meta != null && meta.playlistPosition != null)
+                result = meta.playlistPosition;
+        }
+
+        return result;
+    }
+
+    /**
+     * Add an episode to the playlist. The episode will be appended to the end
+     * of the list.
+     * 
+     * @param episode The episode to add.
+     */
+    public void appendToPlaylist(Episode episode) {
+        if (episode != null) {
+            // Only append the episode if it is not already part of the playlist
+            final List<Episode> playlist = getPlaylist();
+            if (!playlist.contains(episode)) {
+                final int position = playlist.size();
+
+                // Find or create the metadata information holder
+                EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+                if (meta == null) {
+                    meta = new EpisodeMetadata();
+                    metadata.put(episode.getMediaUrl(), meta);
+                }
+
+                // Put metadata information
+                meta.playlistPosition = position;
+                putAdditionalEpisodeInformation(episode, meta);
+
+                // Increment counter
+                if (playlistSize != -1)
+                    playlistSize++;
+
+                // Alert listeners
+                for (OnChangePlaylistListener listener : playlistListeners)
+                    listener.onPlaylistChanged();
+
+                // Mark metadata record as dirty
+                metadataChanged = true;
+            }
+        }
+    }
+
+    /**
+     * Delete given episode off the playlist.
+     * 
+     * @param episode Episode to pop.
+     */
+    public void removeFromPlaylist(Episode episode) {
+        if (episode != null) {
+            // Find the metadata information holder
+            EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+            if (meta != null && meta.playlistPosition != null) {
+                // Update the playlist positions for all entries beyond the one
+                // we are removing
+                Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    EpisodeMetadata other = iterator.next().getValue();
+
+                    // Find records for playlist entries
+                    if (other.playlistPosition != null
+                            && other.playlistPosition > meta.playlistPosition)
+                        other.playlistPosition--;
+                }
+
+                // Reset the playlist position for given episode
+                meta.playlistPosition = null;
+
+                // Decrement counter
+                if (playlistSize != -1)
+                    playlistSize--;
+
+                // Alert listeners
+                for (OnChangePlaylistListener listener : playlistListeners)
+                    listener.onPlaylistChanged();
+
+                // Mark metadata record as dirty
+                metadataChanged = true;
+            }
+        }
+    }
+
+    /**
+     * Add a playlist listener.
+     * 
+     * @param listener Listener to add.
+     * @see OnChangePlaylistListener
+     */
+    public void addPlaylistListener(OnChangePlaylistListener listener) {
+        playlistListeners.add(listener);
+    }
+
+    /**
+     * Remove a playlist listener.
+     * 
+     * @param listener Listener to remove.
+     * @see OnChangePlaylistListener
+     */
+    public void removePlaylistListener(OnChangePlaylistListener listener) {
+        playlistListeners.remove(listener);
     }
 
     /**
@@ -547,23 +733,19 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                 sanitizeAsFilename(episode.getName()) + fileEnding;
     }
 
-    /**
-     * Shortcut to check whether there is any download action going on with this
-     * episode.
-     * 
-     * @param episode Episode to check for.
-     * @return <code>true</code> iff the episode is downloading or already
-     *         downloaded.
-     */
-    private boolean isDownloadingOrDownloaded(Episode episode) {
-        return isDownloading(episode) || isDownloaded(episode);
-    }
-
     private boolean isDownloaded(EpisodeMetadata meta) {
         return meta != null
                 && meta.downloadId != null
                 && meta.filePath != null
                 && new File(meta.filePath).exists();
+    }
+
+    private void putAdditionalEpisodeInformation(Episode episode, EpisodeMetadata meta) {
+        meta.episodeName = episode.getName();
+        meta.episodePubDate = episode.getPubDate();
+        meta.episodeDescription = episode.getDescription();
+        meta.podcastName = episode.getPodcast().getName();
+        meta.podcastUrl = episode.getPodcast().getUrl().toString();
     }
 
     private void processDownloadComplete(long downloadId) {

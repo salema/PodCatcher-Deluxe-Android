@@ -17,30 +17,15 @@
 
 package net.alliknow.podcatcher.listeners;
 
-import android.widget.SeekBar.OnSeekBarChangeListener;
 
 /**
- * Interface definition for a callback to be by the player fragment.
+ * Interface definition for a listener to be alerted when the playlist changes.
  */
-public interface PlayerListener extends OnSeekBarChangeListener {
+public interface OnChangePlaylistListener {
 
     /**
-     * Load/unload of the current episode requested.
+     * Called on the listener when the playlist is altered.
      */
-    public void onToggleLoad();
+    public void onPlaylistChanged();
 
-    /**
-     * Play/pause of the current episode requested.
-     */
-    public void onTogglePlay();
-
-    /**
-     * Play next episode in playlist requested.
-     */
-    public void onNext();
-
-    /**
-     * Alert the listener that it should return to the currently played episode.
-     */
-    public void onReturnToPlayingEpisode();
 }

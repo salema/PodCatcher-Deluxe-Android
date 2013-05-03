@@ -25,6 +25,8 @@
     <string name="connect">Connecter</string>
     <string name="started_download">Téléchargements actifs: </string>
     <string name="download_failed">Le téléchargement a échoué.</string>
+    <string name="playlist_add">Ajouter à la playlist</string>
+    <string name="playlist_remove">Supprimer de la Playlist</string>
     <string name="load">Charger</string>
     <string name="stop">Stop</string>
     <string name="parse">Lire</string>

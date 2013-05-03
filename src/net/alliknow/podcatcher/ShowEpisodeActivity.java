@@ -35,14 +35,14 @@ public class ShowEpisodeActivity extends EpisodeActivity {
 
         // In large or landscape layouts we do not need this activity at
         // all, so finish it off
-        if (viewMode != SMALL_PORTRAIT_VIEW)
+        if (!viewMode.isSmallPortrait())
             finish();
         else {
-            // Set the content view
+            // 1. Set the content view
             setContentView(R.layout.main);
-            // Set fragment members
-            findFragments();
 
+            // 2. Set, find, create the fragments
+            findFragments();
             // During initial setup, plug in the details fragment.
             if (savedInstanceState == null && episodeFragment == null) {
                 episodeFragment = new EpisodeFragment();
@@ -53,29 +53,27 @@ public class ShowEpisodeActivity extends EpisodeActivity {
                         .commit();
             }
 
-            // Set episode in fragment UI
+            // 3. Register the listeners needed to function as a controller
+            registerListeners();
+
+            // 4. Set episode in fragment UI
             if (getIntent().getExtras() != null) {
                 String episodeUrl = getIntent().getExtras().getString(EPISODE_URL_KEY);
                 // Try find episode from the podcast manager
                 this.currentEpisode = podcastManager.findEpisodeForUrl(episodeUrl);
-                // If that fails, it might be a download
+                // If that fails, it might be a download...
                 if (currentEpisode == null)
                     for (Episode download : episodeManager.getDownloads())
                         if (download.getMediaUrl().toString().equals(episodeUrl))
                             this.currentEpisode = download;
+                // ... or a playlist entry
+                if (currentEpisode == null)
+                    for (Episode entry : episodeManager.getPlaylist())
+                        if (entry.getMediaUrl().toString().equals(episodeUrl))
+                            this.currentEpisode = entry;
 
                 updateUi();
             }
-        }
-    }
-
-    @Override
-    public void onReturnToPlayingEpisode() {
-        if (service != null && service.getCurrentEpisode() != null) {
-            Episode playingEpisode = service.getCurrentEpisode();
-            this.currentEpisode = playingEpisode;
-
-            updateUi();
         }
     }
 
@@ -90,6 +88,16 @@ public class ShowEpisodeActivity extends EpisodeActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onReturnToPlayingEpisode() {
+        if (service != null && service.getCurrentEpisode() != null) {
+            Episode playingEpisode = service.getCurrentEpisode();
+            this.currentEpisode = playingEpisode;
+
+            updateUi();
+        }
     }
 
     @Override
@@ -111,8 +119,8 @@ public class ShowEpisodeActivity extends EpisodeActivity {
         episodeFragment.setEpisode(this.currentEpisode);
         episodeFragment.setShowEpisodeDate(true);
 
-        updateNewStatus();
-        updateDownloadStatus();
-        updatePlayer();
+        updateDownloadUi();
+        updateStateUi();
+        updatePlayerUi();
     }
 }

@@ -20,6 +20,7 @@ package net.alliknow.podcatcher.model.tasks.remote;
 import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_KEY;
 import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_VALUE;
 
+import android.net.http.HttpResponseCache;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -48,6 +49,8 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
 
     /** A file size limit in bytes for the download */
     protected int loadLimit = -1;
+    /** Flag whether only use cached content */
+    protected boolean onlyIfCached = false;
     /** Whether we prevent zipping on server side */
     protected boolean preventZippedTransfer = false;
 
@@ -61,6 +64,16 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
      */
     public void setLoadLimit(int limit) {
         this.loadLimit = limit;
+    }
+
+    /**
+     * Sets whether the file should only be taken from local cache, there will
+     * be no attempt to reach the server if <code>true</code>.
+     * 
+     * @param onlyIfCached Use cached content only?
+     */
+    public void setOnlyIfCached(boolean onlyIfCached) {
+        this.onlyIfCached = onlyIfCached;
     }
 
     /**
@@ -89,6 +102,8 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
         // redirect connections from mobile devices to servers where the content
         // we are looking for might not be available.
         connection.setRequestProperty(USER_AGENT_KEY, USER_AGENT_VALUE);
+        if (onlyIfCached)
+            connection.addRequestProperty("Cache-Control", "only-if-cached");
         if (preventZippedTransfer)
             connection.setRequestProperty("Accept-Encoding", "identity");
 
@@ -159,6 +174,20 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
 
             // Disconnect
             connection.disconnect();
+
+            // reportCacheStats();
+        }
+    }
+
+    private void reportCacheStats() {
+        HttpResponseCache cache = HttpResponseCache.getInstalled();
+        if (cache != null) {
+            Log.i(getClass().getSimpleName(), "HTTP cache size: " + cache.size() + " / "
+                    + cache.maxSize());
+            Log.i(getClass().getSimpleName(), "HTTP request count: " + cache.getRequestCount());
+            Log.i(getClass().getSimpleName(),
+                    "HTTP network requests: " + cache.getNetworkCount());
+            Log.i(getClass().getSimpleName(), "HTTP cache hits: " + cache.getHitCount());
         }
     }
 }

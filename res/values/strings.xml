@@ -32,6 +32,9 @@
     <string name="downloads" translatable="false">Downloads</string>
     <string name="started_download">Download started for</string>
     <string name="download_failed">Download failed.</string>
+    <string name="playlist" translatable="false">Playlist</string>
+    <string name="playlist_add">Add to Playlist</string>
+    <string name="playlist_remove">Remove from Playlist</string>
     <string name="load">Load</string>
     <string name="stop">Stop</string>
     <string name="parse">Read</string>

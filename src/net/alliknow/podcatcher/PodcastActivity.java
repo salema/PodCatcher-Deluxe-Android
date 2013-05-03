@@ -67,20 +67,18 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         if (((Podcatcher) getApplication()).isInDebugMode())
             StrictMode.enableDefaults();
 
-        // 1. Register listeners
-        // Register as listener to the podcast data manager
-        podcastManager.addLoadPodcastListListener(this);
-        podcastManager.addChangePodcastListListener(this);
-        // Make sure we are alerted on back stack changes
-        getFragmentManager().addOnBackStackChangedListener(this);
-
-        // 2. Create the UI via XML layouts and fragments
+        // 1. Create the UI via XML layouts and fragments
         // Inflate the main content view (depends on view mode)
         setContentView(R.layout.main);
         // Make sure all fragment member handles are properly set
         findFragments();
         // Add extra fragments needed in some view modes
         plugFragments();
+
+        // 2. Register listeners (done after the fragments are available so we
+        // do not end up getting call-backs without the possibility to act on
+        // them).
+        registerListeners();
 
         // 3. Init/restore the app as needed
         // If we are newly starting up and the podcast list is empty, show add
@@ -121,8 +119,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
      */
     private void plugFragments() {
         // On small screens, add the podcast list fragment
-        if ((viewMode == SMALL_PORTRAIT_VIEW || viewMode == SMALL_LANDSCAPE_VIEW)
-                && podcastListFragment == null) {
+        if (viewMode.isSmall() && podcastListFragment == null) {
             podcastListFragment = new PodcastListFragment();
             getFragmentManager()
                     .beginTransaction()
@@ -131,7 +128,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                     .commit();
         }
         // On small screens in landscape mode, add the episode list fragment
-        if (viewMode == SMALL_LANDSCAPE_VIEW && episodeListFragment == null) {
+        if (viewMode.isSmallLandscape() && episodeListFragment == null) {
             episodeListFragment = new EpisodeListFragment();
             getFragmentManager()
                     .beginTransaction()
@@ -140,6 +137,17 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                     .commit();
         }
     }
+
+    @Override
+    protected void registerListeners() {
+        super.registerListeners();
+
+        // Register as listener to the podcast data manager
+        podcastManager.addLoadPodcastListListener(this);
+        podcastManager.addChangePodcastListListener(this);
+        // Make sure we are alerted on back stack changes
+        getFragmentManager().addOnBackStackChangedListener(this);
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -154,6 +162,10 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         switch (item.getItemId()) {
             case R.id.downloads:
                 onDownloadsSelected();
+
+                return true;
+            case R.id.playlist:
+                onPlaylistSelected();
 
                 return true;
             default:
@@ -202,6 +214,8 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             onPodcastSelected(currentPodcast);
         else if (contentMode.equals(ContentMode.DOWNLOADS))
             onDownloadsSelected();
+        else if (contentMode.equals(ContentMode.PLAYLIST))
+            onPlaylistSelected();
         else
             onNoPodcastSelected();
 
@@ -213,21 +227,11 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-
-        // Load all podcasts? TODO Make this a preference
-
-        // Set podcast logo view mode
-        updateLogoViewMode();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
 
         // Reset podcast list fragment in small portrait mode
-        if (viewMode == SMALL_PORTRAIT_VIEW && contentMode.equals(ContentMode.ALL_PODCASTS))
+        if (viewMode.isSmallPortrait() && contentMode.equals(ContentMode.ALL_PODCASTS))
             podcastListFragment.selectNone();
 
         // Podcast list has been changed while we were stopped
@@ -247,10 +251,13 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                 if (currentPodcast == null)
                     onNoPodcastSelected();
                 // Show the last podcast added if not in small portrait mode
-                else if (viewMode != SMALL_PORTRAIT_VIEW)
+                else if (!viewMode.isSmallPortrait())
                     onPodcastSelected(currentPodcast);
             }
         }
+
+        // Set podcast logo view mode
+        updateLogoViewMode();
     }
 
     @Override
@@ -259,6 +266,14 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
         // Make sure we persist the podcast manager state
         podcastManager.saveState();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // Make sure our http cache is written to disk
+        ((Podcatcher) getApplication()).flushHttpCache();
     }
 
     @Override
@@ -286,7 +301,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     public void onBackStackChanged() {
         // This only needed in small landscape mode and in case
         // we go back to the episode list
-        if (viewMode == SMALL_LANDSCAPE_VIEW
+        if (viewMode.isSmallLandscape()
                 && getFragmentManager().getBackStackEntryCount() == 0) {
             onNoEpisodeSelected();
         }
@@ -332,37 +347,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         this.currentEpisodeList = null;
         this.contentMode = ContentMode.SINGLE_PODCAST;
 
-        switch (viewMode) {
-            case SMALL_LANDSCAPE_VIEW:
-                // This will go back to the list view in case we are showing
-                // episode details
-                getFragmentManager().popBackStackImmediate();
-                // There is no break here on purpose, we need to run the code
-                // below as well
-            case LARGE_PORTRAIT_VIEW:
-            case LARGE_LANDSCAPE_VIEW:
-                // List fragment is visible, make it show progress UI
-                episodeListFragment.resetAndSpin();
-                // Update other UI
-                updateLogoViewMode();
-                updateDivider();
-
-                // Load podcast
-                podcastManager.load(podcast);
-                // Select in podcast list
-                podcastListFragment.select(podcastManager.indexOf(podcast));
-
-                break;
-            case SMALL_PORTRAIT_VIEW:
-                // We need to launch a new activity to display the episode list
-                Intent intent = new Intent(this, ShowEpisodeListActivity.class);
-                intent.putExtra(EpisodeListActivity.PODCAST_URL_KEY,
-                        podcast.getUrl().toString());
-                intent.putExtra(MODE_KEY, contentMode);
-
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
-        }
+        processSelection();
     }
 
     @Override
@@ -371,37 +356,29 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         this.currentEpisodeList = new ArrayList<Episode>();
         this.contentMode = ContentMode.ALL_PODCASTS;
 
-        // Prepare podcast list fragment
-        podcastListFragment.selectAll();
+        processSelection();
+    }
 
-        switch (viewMode) {
-            case SMALL_LANDSCAPE_VIEW:
-                // This will go back to the list view in case we are showing
-                // episode details
-                getFragmentManager().popBackStackImmediate();
-                // There is no break here on purpose, we need to run the code
-                // below as well
-            case LARGE_PORTRAIT_VIEW:
-            case LARGE_LANDSCAPE_VIEW:
-                // List fragment is visible, make it show progress UI
-                episodeListFragment.resetAndSpin();
-                episodeListFragment.setShowPodcastNames(true);
-                // Update other UI
-                updateLogoViewMode();
-                updateDivider();
+    /**
+     * Content mode changed to <strong>Downloads</strong>.
+     */
+    public void onDownloadsSelected() {
+        this.currentPodcast = null;
+        this.currentEpisodeList = episodeManager.getDownloads();
+        this.contentMode = ContentMode.DOWNLOADS;
 
-                for (Podcast podcast : podcastManager.getPodcastList())
-                    podcastManager.load(podcast);
+        processSelection();
+    }
 
-                break;
-            case SMALL_PORTRAIT_VIEW:
-                // We need to launch a new activity to display the episode list
-                Intent intent = new Intent(this, ShowEpisodeListActivity.class);
-                intent.putExtra(MODE_KEY, contentMode);
+    /**
+     * Content mode changed to <strong>Playlist</strong>.
+     */
+    public void onPlaylistSelected() {
+        this.currentPodcast = null;
+        this.currentEpisodeList = episodeManager.getPlaylist();
+        this.contentMode = ContentMode.PLAYLIST;
 
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
-        }
+        processSelection();
     }
 
     @Override
@@ -414,9 +391,9 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         podcastListFragment.selectNone();
 
         switch (viewMode) {
-            case SMALL_LANDSCAPE_VIEW:
-            case LARGE_PORTRAIT_VIEW:
-            case LARGE_LANDSCAPE_VIEW:
+            case SMALL_LANDSCAPE:
+            case LARGE_PORTRAIT:
+            case LARGE_LANDSCAPE:
                 // If there is an episode list visible, reset it
                 episodeListFragment.selectNone();
                 episodeListFragment.resetUi();
@@ -426,55 +403,15 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                 updateLogoViewMode();
                 updateDivider();
                 break;
-        }
-    }
-
-    /**
-     * Content mode changed to <strong>Downloads</strong>.
-     */
-    public void onDownloadsSelected() {
-        this.currentPodcast = null;
-        this.currentEpisodeList = episodeManager.getDownloads();
-        this.contentMode = ContentMode.DOWNLOADS;
-
-        // Prepare podcast list fragment
-        podcastListFragment.selectNone();
-
-        switch (viewMode) {
-            case SMALL_LANDSCAPE_VIEW:
-                // This will go back to the list view in case we are showing
-                // episode details
-                getFragmentManager().popBackStack();
-                // There is no break here on purpose, we need to run the code
-                // below as well
-            case LARGE_PORTRAIT_VIEW:
-            case LARGE_LANDSCAPE_VIEW:
-                // List fragment is visible, make it show progress UI
-                episodeListFragment.resetAndSpin();
-                episodeListFragment.setShowPodcastNames(true);
-                // Update other UI
-                updateFilter();
-                updateLogoViewMode();
-                updateDivider();
-
-                setFilteredEpisodeList();
-
+            default:
                 break;
-            case SMALL_PORTRAIT_VIEW:
-                // We need to launch a new activity to display the list of
-                // downloads
-                Intent intent = new Intent(this, ShowEpisodeListActivity.class);
-                intent.putExtra(MODE_KEY, contentMode);
-
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
         }
     }
 
     @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
         // Only react on progress here, if the activity is visible
-        if (viewMode != SMALL_PORTRAIT_VIEW) {
+        if (!viewMode.isSmallPortrait()) {
             super.onPodcastLoadProgress(podcast, progress);
 
             // We are in select all mode, show progress in podcast list
@@ -492,7 +429,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         podcastManager.loadLogo(podcast);
 
         // In small portrait mode, work is done in separate activity
-        if (viewMode != SMALL_PORTRAIT_VIEW)
+        if (!viewMode.isSmallPortrait())
             super.onPodcastLoaded(podcast);
     }
 
@@ -501,7 +438,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         podcastListFragment.refresh();
 
         // In small portrait mode, work is done in separate activity
-        if (viewMode != SMALL_PORTRAIT_VIEW)
+        if (!viewMode.isSmallPortrait())
             super.onPodcastLoadFailed(failedPodcast);
     }
 
@@ -512,23 +449,15 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         updateLogoViewMode();
     }
 
-    @Override
-    public void onStateChanged(Episode episode) {
-        super.onStateChanged(episode);
-
-        if (podcastListFragment != null)
-            podcastListFragment.refresh();
-    }
-
     /**
      * Update the logo view mode according to current app state.
      */
     protected void updateLogoViewMode() {
         LogoViewMode logoViewMode = LogoViewMode.NONE;
 
-        if (viewMode == LARGE_LANDSCAPE_VIEW && contentMode.equals(ContentMode.SINGLE_PODCAST))
+        if (viewMode.isLargeLandscape() && contentMode.equals(ContentMode.SINGLE_PODCAST))
             logoViewMode = LogoViewMode.LARGE;
-        else if (viewMode == SMALL_PORTRAIT_VIEW)
+        else if (viewMode.isSmallPortrait())
             logoViewMode = LogoViewMode.SMALL;
 
         podcastListFragment.setLogoVisibility(logoViewMode);
@@ -552,12 +481,81 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     }
 
     @Override
-    protected void updatePlayer() {
-        super.updatePlayer();
+    protected void updateDownloadUi() {
+        if (!viewMode.isSmallPortrait())
+            super.updateDownloadUi();
+    }
 
-        if (viewMode == SMALL_PORTRAIT_VIEW && playerFragment != null) {
+    @Override
+    protected void updatePlaylistUi() {
+        if (!viewMode.isSmallPortrait())
+            super.updatePlaylistUi();
+    }
+
+    @Override
+    protected void updateStateUi() {
+        if (!viewMode.isSmallPortrait())
+            super.updateStateUi();
+
+        podcastListFragment.refresh();
+    }
+
+    @Override
+    protected void updatePlayerUi() {
+        super.updatePlayerUi();
+
+        if (viewMode.isSmallPortrait()) {
             playerFragment.setLoadMenuItemVisibility(false, false);
             playerFragment.setPlayerTitleVisibility(true);
+        }
+    }
+
+    private void processSelection() {
+        switch (viewMode) {
+            case SMALL_LANDSCAPE:
+                // This will go back to the list view in case we are showing
+                // episode details
+                getFragmentManager().popBackStackImmediate();
+                // There is no break here on purpose, we need to run the code
+                // below as well
+            case LARGE_PORTRAIT:
+            case LARGE_LANDSCAPE:
+                // List fragment is visible, make it show progress UI
+                episodeListFragment.resetAndSpin();
+                episodeListFragment.setShowPodcastNames(
+                        !ContentMode.SINGLE_PODCAST.equals(contentMode));
+                // Update other UI
+                updateFilter();
+                updateLogoViewMode();
+                updateDivider();
+
+                // Single podcast
+                if (ContentMode.SINGLE_PODCAST.equals(contentMode)) {
+                    podcastListFragment.select(podcastManager.indexOf(currentPodcast));
+                    podcastManager.load(currentPodcast);
+                } // All podcasts
+                else if (ContentMode.ALL_PODCASTS.equals(contentMode)) {
+                    podcastListFragment.selectAll();
+
+                    for (Podcast podcast : podcastManager.getPodcastList())
+                        podcastManager.load(podcast);
+                } // Download or Playlist
+                else {
+                    podcastListFragment.selectNone();
+                    setFilteredEpisodeList();
+                }
+
+                break;
+            case SMALL_PORTRAIT:
+                // We need to launch a new activity to display the list of
+                // episode according to the content mode selected
+                Intent intent = new Intent(this, ShowEpisodeListActivity.class);
+                intent.putExtra(MODE_KEY, contentMode);
+                if (currentPodcast != null)
+                    intent.putExtra(PODCAST_URL_KEY, currentPodcast.getUrl().toString());
+
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
         }
     }
 }

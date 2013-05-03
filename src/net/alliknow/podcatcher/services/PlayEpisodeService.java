@@ -55,6 +55,7 @@ import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -182,7 +183,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             else if (action.equals(ACTION_PREVIOUS))
                 seekTo(0);
             else if (action.equals(ACTION_SKIP))
-                ;
+                playNext();
             else if (action.equals(ACTION_REWIND)) {
                 final int newPosition = getCurrentPosition() - SKIP_AMOUNT;
                 seekTo(newPosition <= 0 ? 0 : newPosition);
@@ -284,6 +285,20 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             } catch (Exception e) {
                 Log.e(getClass().getSimpleName(), "Prepare/Play failed for episode: " + episode, e);
             }
+        }
+    }
+
+    /**
+     * Play the next episode in the playlist. Does nothing if there is none.
+     */
+    public void playNext() {
+        final List<Episode> playlist = episodeManager.getPlaylist();
+
+        if (!playlist.isEmpty()) {
+            Episode next = playlist.get(0);
+            episodeManager.removeFromPlaylist(next);
+
+            playEpisode(next);
         }
     }
 
@@ -417,6 +432,9 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             player.start();
             putForeground();
 
+            // Pop the episode off the playlist
+            episodeManager.removeFromPlaylist(currentEpisode);
+
             // Alert the listeners
             if (listeners.size() > 0)
                 for (PlayServiceListener listener : listeners)
@@ -462,15 +480,21 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     public void onCompletion(MediaPlayer mp) {
         updateRemoteControlPlaystate(PLAYSTATE_STOPPED);
 
-        // If there is anybody listening, alert and let them decide what to do
-        // next, if not we reset and possibly stop ourselves
-        if (listeners.size() > 0)
-            for (PlayServiceListener listener : listeners)
-                listener.onPlaybackComplete();
+        // Mark the episode old (needs to be done before resetting the service!)
+        episodeManager.setState(currentEpisode, true);
+
+        // If there is another episode on the playlist, play it.
+        if (!episodeManager.isPlaylistEmpty())
+            playNext();
         else {
             reset();
             stopSelfIfUnboundAndIdle();
         }
+
+        // Alert listeners
+        if (listeners.size() > 0)
+            for (PlayServiceListener listener : listeners)
+                listener.onPlaybackComplete();
     }
 
     @Override

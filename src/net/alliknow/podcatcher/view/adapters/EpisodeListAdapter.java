@@ -108,12 +108,11 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
     }
 
     private String createCaption(Episode episode) {
-        // This should not happen (but we cover it)
-        if (episode.getPubDate() == null && !showPodcastNames)
-            return NO_DATE;
+        String result = NO_DATE;
+
         // Episode has no date, should not happen
-        else if (episode.getPubDate() == null && showPodcastNames)
-            return episode.getPodcast().getName();
+        if (episode.getPubDate() == null && showPodcastNames)
+            result = episode.getPodcast().getName();
         // This is the interesting case
         else {
             // Get a nice time span string for the age of the episode
@@ -121,11 +120,18 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
 
             // Append podcast name
             if (showPodcastNames)
-                return dateString + SEPARATOR + episode.getPodcast().getName();
+                result = dateString + SEPARATOR + episode.getPodcast().getName();
             // Omit podcast name
             else
-                return dateString;
+                result = dateString;
         }
+
+        // Also put the playlist position
+        final int position = episodeManager.getPlaylistPosition(episode);
+        if (position >= 0)
+            result = "#" + (position + 1) + SEPARATOR + result;
+
+        return result;
     }
 
     private void updateIcons(View listItemView, Episode episode) {

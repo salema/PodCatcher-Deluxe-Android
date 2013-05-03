@@ -182,6 +182,8 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
                     result.resumeAt = Integer.parseInt(parser.nextText());
                 else if (tagName.equalsIgnoreCase(METADATA.EPISODE_STATE))
                     result.isOld = Boolean.parseBoolean(parser.nextText());
+                else if (tagName.equalsIgnoreCase(METADATA.PLAYLIST_POSITION))
+                    result.playlistPosition = Integer.parseInt(parser.nextText());
             }
 
             // Done, get next parsing event

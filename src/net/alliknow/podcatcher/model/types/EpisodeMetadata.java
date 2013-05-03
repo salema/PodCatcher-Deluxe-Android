@@ -39,6 +39,8 @@ public class EpisodeMetadata {
     public Integer resumeAt;
     /** The state information (old/new) for the episode */
     public Boolean isOld;
+    /** The playlist position for the episode */
+    public Integer playlistPosition;
 
     /**
      * Extra information to make it possible to actually display an episode not
@@ -63,7 +65,8 @@ public class EpisodeMetadata {
         return downloadId != null ||
                 filePath != null ||
                 resumeAt != null ||
-                isOld != null;
+                isOld != null ||
+                playlistPosition != null;
     }
 
     /**
