@@ -17,7 +17,6 @@
 
 package net.alliknow.podcatcher.model;
 
-import android.net.http.HttpResponseCache;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
@@ -99,17 +98,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     private Set<OnLoadPodcastListener> loadPodcastListeners = new HashSet<OnLoadPodcastListener>();
     /** The call-back set for the podcast logo load listeners */
     private Set<OnLoadPodcastLogoListener> loadPodcastLogoListeners = new HashSet<OnLoadPodcastLogoListener>();
-
-    /** Static inner thread class to pull flushing the cache off the main thread */
-    private static final Thread flushHttpCache = new Thread() {
-
-        @Override
-        public void run() {
-            final HttpResponseCache cache = HttpResponseCache.getInstalled();
-            if (cache != null)
-                cache.flush();
-        }
-    };
 
     /**
      * Init the podcast data.
@@ -255,7 +243,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             for (OnLoadPodcastListener listener : loadPodcastListeners)
                 listener.onPodcastLoaded(podcast);
 
-        flushHttpCache.start();
+        podcatcher.flushHttpCache();
     }
 
     @Override
@@ -304,7 +292,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             for (OnLoadPodcastLogoListener listener : loadPodcastLogoListeners)
                 listener.onPodcastLogoLoaded(podcast);
 
-        flushHttpCache.start();
+        podcatcher.flushHttpCache();
     }
 
     @Override
