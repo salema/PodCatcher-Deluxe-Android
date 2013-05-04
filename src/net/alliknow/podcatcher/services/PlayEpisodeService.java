@@ -141,11 +141,9 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
         // Get and enable broadcast receivers
         noisyReceiver = new ComponentName(this, BecomingNoisyReceiver.class);
-        getPackageManager().setComponentEnabledSetting(noisyReceiver,
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+        enableReceiver(noisyReceiver);
         mediaButtonReceiver = new ComponentName(this, MediaButtonReceiver.class);
-        getPackageManager().setComponentEnabledSetting(mediaButtonReceiver,
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+        enableReceiver(mediaButtonReceiver);
 
         // Get the audio manager handle
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -222,10 +220,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         reset();
 
         // Disable broadcast receivers
-        getPackageManager().setComponentEnabledSetting(noisyReceiver,
-                PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP);
-        getPackageManager().setComponentEnabledSetting(mediaButtonReceiver,
-                PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP);
+        disableReceiver(noisyReceiver);
+        disableReceiver(mediaButtonReceiver);
     }
 
     /**
@@ -542,6 +538,16 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             player.release();
             player = null;
         }
+    }
+
+    private void enableReceiver(ComponentName receiver) {
+        getPackageManager().setComponentEnabledSetting(receiver,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+    }
+
+    private void disableReceiver(ComponentName receiver) {
+        getPackageManager().setComponentEnabledSetting(receiver,
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
     }
 
     private void initPlayer() {
