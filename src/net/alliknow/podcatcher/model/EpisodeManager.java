@@ -451,7 +451,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      * @return Whether the current playlist has any entries.
      */
     public boolean isPlaylistEmpty() {
-        if (playlistSize == -1) {
+        if (playlistSize == -1 && metadata != null) {
             playlistSize = 0;
 
             for (EpisodeMetadata meta : metadata.values())
@@ -459,7 +459,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                     playlistSize++;
         }
 
-        return playlistSize == 0;
+        return playlistSize <= 0;
     }
 
     /**
