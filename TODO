@@ -7,4 +7,4 @@ Check again for memory leaks
 Do not put button into buffering state when seeking
 Make sure services thread heavy operations
 Loading podcast in AddPodcastFragment should be exclusive (other listeners should not be alerted) - maybe add small retained fragment to hold load task
-Cache podcast logos in download folders and use them instead of reloading them all the time
+Add menu items to switch content mode to ShowEpisodeListActivity (pull selection code up to EpisodeLIstAct.)
