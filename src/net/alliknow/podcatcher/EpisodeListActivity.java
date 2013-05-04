@@ -300,7 +300,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
      * Update the filter menu icon visibility.
      */
     protected void updateFilter() {
-        episodeListFragment.setFilterMenuItemVisibility(currentEpisodeList != null, filterActive);
+        episodeListFragment.setFilterMenuItemVisibility(
+                currentEpisodeList != null && !currentEpisodeList.isEmpty(), filterActive);
     }
 
     @Override
