@@ -22,7 +22,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.Gravity;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -364,36 +363,37 @@ public abstract class EpisodeActivity extends BaseActivity implements
      */
     protected void updatePlayerUi() {
         // Even though all the fragments should be present, the service might
-        // not have been connected to yet. Also, the episode manager might not
-        // be ready
-        try {
+        // not have been connected to yet.
+        if (service != null) {
             final boolean currentEpisodeIsShowing = service.isLoadedEpisode(currentEpisode);
 
             // Show/hide menu item
             playerFragment.setLoadMenuItemVisibility(currentEpisode != null,
                     !currentEpisodeIsShowing);
 
-            // Make sure error view is hidden
-            playerFragment.setErrorViewVisibility(false);
-            // Make sure player is shown if and as needed
-            playerFragment.setPlayerVisibilility(service.isPreparing() || service.isPrepared());
-            playerFragment.setPlayerTitleVisibility(
-                    !viewMode.isSmallLandscape() && !currentEpisodeIsShowing);
-            playerFragment.setPlayerSeekbarVisibility(!viewMode.isSmallLandscape());
+            // Make sure player is shown if and as needed (update the details
+            // only if they are actually visible)
+            final boolean showPlayer = service.isPreparing() || service.isPrepared();
+            playerFragment.setPlayerVisibilility(showPlayer);
+            if (showPlayer) {
+                // Make sure error view is hidden
+                playerFragment.setErrorViewVisibility(false);
+                // Show(hide episode title and seek bar
+                playerFragment.setPlayerTitleVisibility(
+                        !viewMode.isSmallLandscape() && !currentEpisodeIsShowing);
+                playerFragment.setPlayerSeekbarVisibility(!viewMode.isSmallLandscape());
+                // Enable/disable next button
+                final boolean playlistHasEntries = !episodeManager.isPlaylistEmpty();
+                playerFragment.setShowShortPosition(playlistHasEntries && viewMode.isSmall());
+                playerFragment.setNextButtonVisibility(playlistHasEntries);
 
-            // Enable/disable next button
-            final boolean playlistHasEntries = !episodeManager.isPlaylistEmpty();
-            playerFragment.setShowShortPosition(playlistHasEntries && viewMode.isSmall());
-            playerFragment.setNextButtonVisibility(playlistHasEntries);
-
-            // Update UI to reflect service status
-            playerFragment.updatePlayerTitle(service.getCurrentEpisode());
-            playerFragment.updateSeekBar(!service.isPreparing(), service.getDuration(),
-                    service.getCurrentPosition());
-            playerFragment.updateButton(service.isBuffering(), service.isPlaying(),
-                    service.getDuration(), service.getCurrentPosition());
-        } catch (NullPointerException nex) {
-            Log.d(getClass().getSimpleName(), "Update player failed!", nex);
+                // Update UI to reflect service status
+                playerFragment.updatePlayerTitle(service.getCurrentEpisode());
+                playerFragment.updateSeekBar(!service.isPreparing(), service.getDuration(),
+                        service.getCurrentPosition());
+                playerFragment.updateButton(service.isBuffering(), service.isPlaying(),
+                        service.getDuration(), service.getCurrentPosition());
+            }
         }
     }
 
