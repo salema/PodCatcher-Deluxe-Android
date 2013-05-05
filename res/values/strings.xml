@@ -76,5 +76,5 @@
     <string name="error_podcast_add">New podcast failed to load.</string>
     <string name="error_podcast_load">Cannot load podcast, please make sure you are online!</string>
     <string name="no_episode_description">No description available.</string>
-	<string name="ad">Try &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; for downloads, filters and other premium features!</string>
+	<string name="ad">Try &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; for downloads, playlists, filters, and other premium features!</string>
 </resources>
