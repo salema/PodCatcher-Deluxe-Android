@@ -292,6 +292,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
         if (!playlist.isEmpty()) {
             Episode next = playlist.get(0);
+            // This will be done again on onPrepared but we what the UI to
+            // update immediately on user action and it does no harm.
             episodeManager.removeFromPlaylist(next);
 
             playEpisode(next);

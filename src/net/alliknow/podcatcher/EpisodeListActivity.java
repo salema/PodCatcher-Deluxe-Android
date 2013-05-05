@@ -60,7 +60,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     public static final String MODE_KEY = "MODE_KEY";
 
     /** The options available for the content mode */
-    public enum ContentMode {
+    public static enum ContentMode {
         /** Show single podcast */
         SINGLE_PODCAST,
 
