@@ -268,20 +268,23 @@ public abstract class EpisodeActivity extends BaseActivity implements
             playerFragment.setLoadMenuItemVisibility(currentEpisode != null,
                     !currentEpisodeIsShowing);
 
-            // Make sure error view is hidden
-            playerFragment.setErrorViewVisibility(false);
-            // Make sure player is shown if and as needed
-            playerFragment.setPlayerVisibilility(service.isPreparing() || service.isPrepared());
-            playerFragment.setPlayerTitleVisibility(!viewMode.isSmallLandscape()
-                    && !currentEpisodeIsShowing);
-            playerFragment.setPlayerSeekbarVisibility(!viewMode.isSmallLandscape());
+            final boolean showPlayer = service.isPreparing() || service.isPrepared();
+            playerFragment.setPlayerVisibilility(showPlayer);
+            if (showPlayer) {
+                // Make sure error view is hidden
+                playerFragment.setErrorViewVisibility(false);
+                // Show/hide title and seek bar
+                playerFragment.setPlayerTitleVisibility(!viewMode.isSmallLandscape()
+                        && !currentEpisodeIsShowing);
+                playerFragment.setPlayerSeekbarVisibility(!viewMode.isSmallLandscape());
 
-            // Update UI to reflect service status
-            playerFragment.updatePlayerTitle(service.getCurrentEpisode());
-            playerFragment.updateSeekBar(!service.isPreparing(), service.getDuration(),
-                    service.getCurrentPosition());
-            playerFragment.updateButton(service.isBuffering(), service.isPlaying(),
-                    service.getDuration(), service.getCurrentPosition());
+                // Update UI to reflect service status
+                playerFragment.updatePlayerTitle(service.getCurrentEpisode());
+                playerFragment.updateSeekBar(!service.isPreparing(), service.getDuration(),
+                        service.getCurrentPosition());
+                playerFragment.updateButton(service.isBuffering(), service.isPlaying(),
+                        service.getDuration(), service.getCurrentPosition());
+            }
         }
     }
 
