@@ -35,6 +35,7 @@ import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
 import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.view.fragments.PlayerFragment;
 
+import java.lang.ref.WeakReference;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -70,18 +71,34 @@ public abstract class EpisodeActivity extends BaseActivity implements
     private boolean visible = false;
 
     /** The actual task to regularly update the UI on playback */
-    private class PlayProgressTask extends TimerTask {
+    private static class PlayProgressTask extends TimerTask {
+
+        /** Use weak reference to avoid any leaking of activities */
+        private final WeakReference<EpisodeActivity> activityReference;
+
+        /**
+         * Create a new update task.
+         * 
+         * @param episodeActivity Activity to call update player for.
+         */
+        public PlayProgressTask(EpisodeActivity episodeActivity) {
+            activityReference = new WeakReference<EpisodeActivity>(episodeActivity);
+        }
 
         @Override
         public void run() {
-            // Need to run on UI thread, since we want to update the play button
-            runOnUiThread(new Runnable() {
+            final EpisodeActivity episodeActivity = activityReference.get();
+            if (episodeActivity != null) {
+                // Need to run on UI thread, since we want to update the play
+                // button
+                episodeActivity.runOnUiThread(new Runnable() {
 
-                @Override
-                public void run() {
-                    updatePlayer();
-                }
-            });
+                    @Override
+                    public void run() {
+                        episodeActivity.updatePlayer();
+                    }
+                });
+            }
         }
     }
 
@@ -307,7 +324,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
             // Only start task if it isn't already running and
             // there is actually some progress to monitor
             if (playUpdateTimerTask == null && !seeking) {
-                PlayProgressTask task = new PlayProgressTask();
+                PlayProgressTask task = new PlayProgressTask(this);
 
                 try {
                     playUpdateTimer.schedule(task, 0, 1000);
