@@ -18,6 +18,7 @@
 package net.alliknow.podcatcher;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.SeekBar;
 
+import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.listeners.PlayerListener;
 import net.alliknow.podcatcher.model.types.Episode;
@@ -45,7 +47,7 @@ import java.util.TimerTask;
  * or simply show this layout.
  */
 public abstract class EpisodeActivity extends BaseActivity implements
-        PlayerListener, PlayServiceListener {
+        PlayerListener, PlayServiceListener, OnSelectEpisodeListener {
 
     /** The current episode fragment */
     protected EpisodeFragment episodeFragment;
@@ -159,6 +161,61 @@ public abstract class EpisodeActivity extends BaseActivity implements
             service.removePlayServiceListener(this);
             unbindService(connection);
         }
+    }
+
+    @Override
+    public void onEpisodeSelected(Episode selectedEpisode) {
+        this.currentEpisode = selectedEpisode;
+
+        switch (viewMode) {
+            case LARGE_PORTRAIT:
+            case LARGE_LANDSCAPE:
+                // Set episode in episode fragment
+                episodeFragment.setEpisode(selectedEpisode);
+
+                break;
+            case SMALL_LANDSCAPE:
+                // Find, and if not already done create, episode fragment
+                if (episodeFragment == null)
+                    episodeFragment = new EpisodeFragment();
+
+                // Add the fragment to the UI, replacing the list fragment if it
+                // is not already there
+                if (getFragmentManager().getBackStackEntryCount() == 0) {
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.right, episodeFragment,
+                            getString(R.string.episode_fragment_tag));
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
+
+                // Set the episode
+                episodeFragment.setEpisode(selectedEpisode);
+                episodeFragment.setShowEpisodeDate(true);
+
+                break;
+            case SMALL_PORTRAIT:
+                // This should be handled by sub-class
+                break;
+        }
+
+        updatePlayer();
+    }
+
+    @Override
+    public void onReturnToPlayingEpisode() {
+        if (service != null && service.getCurrentEpisode() != null) {
+            Episode playingEpisode = service.getCurrentEpisode();
+
+            onEpisodeSelected(playingEpisode);
+        }
+    }
+
+    @Override
+    public void onNoEpisodeSelected() {
+        this.currentEpisode = null;
+
+        updatePlayer();
     }
 
     @Override

@@ -17,18 +17,15 @@
 
 package net.alliknow.podcatcher;
 
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.view.View;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
-import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
-import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 
 import java.util.ArrayList;
@@ -42,8 +39,7 @@ import java.util.List;
  * simply show this layout.
  */
 public abstract class EpisodeListActivity extends EpisodeActivity implements
-        OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectPodcastListener,
-        OnSelectEpisodeListener {
+        OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectPodcastListener {
 
     /** The current episode list fragment */
     protected EpisodeListFragment episodeListFragment;
@@ -228,68 +224,28 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onEpisodeSelected(Episode selectedEpisode) {
-        this.currentEpisode = selectedEpisode;
+        super.onEpisodeSelected(selectedEpisode);
 
-        switch (viewMode) {
-            case LARGE_PORTRAIT:
-            case LARGE_LANDSCAPE:
-                // Set episode in episode fragment
-                episodeFragment.setEpisode(selectedEpisode);
-                // Make sure selection matches in list fragment
-                updateEpisodeListSelection();
+        if (!viewMode.isSmall())
+            // Make sure selection matches in list fragment
+            updateEpisodeListSelection();
+        else if (viewMode.isSmallPortrait()) {
+            // Send intent to open episode as a new activity
+            Intent intent = new Intent(this, ShowEpisodeActivity.class);
+            intent.putExtra(EPISODE_URL_KEY, selectedEpisode.getMediaUrl().toString());
 
-                break;
-            case SMALL_LANDSCAPE:
-                // Find, and if not already done create, episode fragment
-                if (episodeFragment == null)
-                    episodeFragment = new EpisodeFragment();
-
-                // Add the fragment to the UI, replacing the list fragment if it
-                // is not already there
-                if (getFragmentManager().getBackStackEntryCount() == 0) {
-                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                    transaction.replace(R.id.right, episodeFragment,
-                            getString(R.string.episode_fragment_tag));
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-                }
-
-                // Set the episode
-                episodeFragment.setEpisode(selectedEpisode);
-                episodeFragment.setShowEpisodeDate(true);
-
-                break;
-            case SMALL_PORTRAIT:
-                // Send intent to open episode as a new activity
-                Intent intent = new Intent(this, ShowEpisodeActivity.class);
-                intent.putExtra(EPISODE_URL_KEY, selectedEpisode.getMediaUrl().toString());
-
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
         }
 
-        updatePlayer();
         updateDivider();
     }
 
     @Override
-    public void onReturnToPlayingEpisode() {
-        if (service != null && service.getCurrentEpisode() != null) {
-            Episode playingEpisode = service.getCurrentEpisode();
-
-            onEpisodeSelected(playingEpisode);
-        }
-    }
-
-    @Override
     public void onNoEpisodeSelected() {
-        this.currentEpisode = null;
+        super.onNoEpisodeSelected();
 
-        // If there is a episode fragment, reset it
-        if (episodeListFragment != null)
-            episodeListFragment.selectNone();
-
-        updatePlayer();
+        episodeListFragment.selectNone();
         updateDivider();
     }
 
