@@ -19,8 +19,7 @@
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/podcast_add_menuitem"
-        android:icon="@drawable/ic_menu_add"
-        android:showAsAction="always|withText"
-        android:title="@string/add_podcast" />
+        android:id="@+id/podcast_select_all_menuitem"
+        android:showAsAction="never|withText"
+        android:title="@string/select_all_podcasts" />
 </menu>

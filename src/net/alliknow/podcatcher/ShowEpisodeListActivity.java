@@ -101,6 +101,18 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     }
 
     @Override
+    public void onAllPodcastsSelected() {
+        super.onAllPodcastsSelected();
+
+        // Init the list view...
+        episodeListFragment.resetAndSpin();
+        episodeListFragment.setShowPodcastNames(true);
+        // ...and go get the data
+        for (Podcast podcast : podcastManager.getPodcastList())
+            podcastManager.load(podcast);
+    }
+
+    @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
         super.onPodcastLoadProgress(podcast, progress);
 

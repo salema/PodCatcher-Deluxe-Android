@@ -24,6 +24,7 @@ import android.view.View;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
+import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
@@ -41,7 +42,8 @@ import java.util.List;
  * simply show this layout.
  */
 public abstract class EpisodeListActivity extends EpisodeActivity implements
-        OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectEpisodeListener {
+        OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectPodcastListener,
+        OnSelectEpisodeListener {
 
     /** The current episode list fragment */
     protected EpisodeListFragment episodeListFragment;
@@ -97,6 +99,83 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
         if (!multiplePodcastsMode && podcast.equals(currentPodcast))
             episodeListFragment.showProgress(progress);
+    }
+
+    @Override
+    public void onPodcastSelected(Podcast podcast) {
+        this.currentPodcast = podcast;
+        this.currentEpisodeList = null;
+        this.multiplePodcastsMode = false;
+
+        switch (viewMode) {
+            case SMALL_LANDSCAPE:
+                // This will go back to the list view in case we are showing
+                // episode details
+                getFragmentManager().popBackStackImmediate();
+                // There is no break here on purpose, we need to run the code
+                // below as well
+            case LARGE_PORTRAIT:
+            case LARGE_LANDSCAPE:
+                // List fragment is visible, make it show progress UI
+                episodeListFragment.resetAndSpin();
+                // Update other UI
+                updateDivider();
+
+                // Load podcast
+                podcastManager.load(podcast);
+
+                break;
+            case SMALL_PORTRAIT:
+                // This case should be handled by sub-classes
+                break;
+        }
+    }
+
+    @Override
+    public void onAllPodcastsSelected() {
+        this.currentPodcast = null;
+        this.currentEpisodeList = new ArrayList<Episode>();
+        this.multiplePodcastsMode = true;
+
+        switch (viewMode) {
+            case SMALL_LANDSCAPE:
+                // This will go back to the list view in case we are showing
+                // episode details
+                getFragmentManager().popBackStackImmediate();
+                // There is no break here on purpose, we need to run the code
+                // below as well
+            case LARGE_PORTRAIT:
+            case LARGE_LANDSCAPE:
+                // List fragment is visible, make it show progress UI
+                episodeListFragment.resetAndSpin();
+                episodeListFragment.setShowPodcastNames(true);
+                // Update other UI
+                updateDivider();
+
+                for (Podcast podcast : podcastManager.getPodcastList())
+                    podcastManager.load(podcast);
+
+                break;
+            case SMALL_PORTRAIT:
+                // This case should be handled by sub-classes
+                break;
+        }
+    }
+
+    @Override
+    public void onNoPodcastSelected() {
+        this.currentPodcast = null;
+        this.currentEpisodeList = null;
+        this.multiplePodcastsMode = false;
+
+        if (!viewMode.isSmallPortrait()) {
+            // If there is an episode list visible, reset it
+            episodeListFragment.selectNone();
+            episodeListFragment.resetUi();
+
+            // Update other UI
+            updateDivider();
+        }
     }
 
     @Override

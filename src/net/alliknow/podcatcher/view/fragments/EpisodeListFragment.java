@@ -40,7 +40,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     private List<Episode> currentEpisodeList;
 
     /** The activity we are in (listens to user selection) */
-    private OnSelectEpisodeListener selectionListener;
+    private OnSelectEpisodeListener episodeSelectionListener;
 
     /** Flag to indicate whether podcast names should be shown for episodes */
     private boolean showPodcastNames = false;
@@ -54,7 +54,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
         // Make sure our listener is present
         try {
-            this.selectionListener = (OnSelectEpisodeListener) activity;
+            this.episodeSelectionListener = (OnSelectEpisodeListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnSelectEpisodeListener");
@@ -84,7 +84,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     public void onListItemClick(ListView list, View view, int position, long id) {
         // Find selected episode and alert listener
         Episode selectedEpisode = (Episode) adapter.getItem(position);
-        selectionListener.onEpisodeSelected(selectedEpisode);
+        episodeSelectionListener.onEpisodeSelected(selectedEpisode);
     }
 
     @Override

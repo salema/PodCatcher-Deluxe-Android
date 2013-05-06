@@ -24,15 +24,12 @@ import android.os.StrictMode;
 
 import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
-import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
-import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment.LogoViewMode;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,7 +37,7 @@ import java.util.List;
  * state, other activities cooperate.
  */
 public class PodcastActivity extends EpisodeListActivity implements OnBackStackChangedListener,
-        OnLoadPodcastListListener, OnChangePodcastListListener, OnSelectPodcastListener {
+        OnLoadPodcastListListener, OnChangePodcastListListener {
 
     /** The current podcast list fragment */
     protected PodcastListFragment podcastListFragment;
@@ -309,104 +306,54 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
     @Override
     public void onPodcastSelected(Podcast podcast) {
-        this.currentPodcast = podcast;
-        this.currentEpisodeList = null;
-        this.multiplePodcastsMode = false;
+        super.onPodcastSelected(podcast);
 
-        switch (viewMode) {
-            case SMALL_LANDSCAPE:
-                // This will go back to the list view in case we are showing
-                // episode details
-                getFragmentManager().popBackStackImmediate();
-                // There is no break here on purpose, we need to run the code
-                // below as well
-            case LARGE_PORTRAIT:
-            case LARGE_LANDSCAPE:
-                // List fragment is visible, make it show progress UI
-                episodeListFragment.resetAndSpin();
-                // Update other UI
-                updateLogoViewMode();
-                updateDivider();
+        // Select in podcast list
+        podcastListFragment.select(podcastManager.indexOf(podcast));
 
-                // Load podcast
-                podcastManager.load(podcast);
-                // Select in podcast list
-                podcastListFragment.select(podcastManager.indexOf(podcast));
+        if (viewMode.isSmallPortrait()) {
+            // We need to launch a new activity to display the episode list
+            Intent intent = new Intent(this, ShowEpisodeListActivity.class);
+            intent.putExtra(EpisodeListActivity.PODCAST_URL_KEY,
+                    podcast.getUrl().toString());
+            intent.putExtra(MODE_KEY, false);
 
-                break;
-            case SMALL_PORTRAIT:
-                // We need to launch a new activity to display the episode list
-                Intent intent = new Intent(this, ShowEpisodeListActivity.class);
-                intent.putExtra(EpisodeListActivity.PODCAST_URL_KEY,
-                        podcast.getUrl().toString());
-                intent.putExtra(MODE_KEY, false);
-
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
         }
+
+        // Update UI
+        updateLogoViewMode();
     }
 
     @Override
     public void onAllPodcastsSelected() {
-        this.currentPodcast = null;
-        this.currentEpisodeList = new ArrayList<Episode>();
-        this.multiplePodcastsMode = true;
+        super.onAllPodcastsSelected();
 
         // Prepare podcast list fragment
         podcastListFragment.selectAll();
 
-        switch (viewMode) {
-            case SMALL_LANDSCAPE:
-                // This will go back to the list view in case we are showing
-                // episode details
-                getFragmentManager().popBackStackImmediate();
-                // There is no break here on purpose, we need to run the code
-                // below as well
-            case LARGE_PORTRAIT:
-            case LARGE_LANDSCAPE:
-                // List fragment is visible, make it show progress UI
-                episodeListFragment.resetAndSpin();
-                episodeListFragment.setShowPodcastNames(true);
-                // Update other UI
-                updateLogoViewMode();
-                updateDivider();
+        if (viewMode.isSmallPortrait()) {
+            // We need to launch a new activity to display the episode list
+            Intent intent = new Intent(this, ShowEpisodeListActivity.class);
+            intent.putExtra(MODE_KEY, true);
 
-                for (Podcast podcast : podcastManager.getPodcastList())
-                    podcastManager.load(podcast);
-
-                break;
-            case SMALL_PORTRAIT:
-                // We need to launch a new activity to display the episode list
-                Intent intent = new Intent(this, ShowEpisodeListActivity.class);
-                intent.putExtra(MODE_KEY, true);
-
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
         }
+
+        // Update UI
+        updateLogoViewMode();
     }
 
     @Override
     public void onNoPodcastSelected() {
-        this.currentPodcast = null;
-        this.currentEpisodeList = null;
-        this.multiplePodcastsMode = false;
+        super.onNoPodcastSelected();
 
         // Reset podcast list fragment
         podcastListFragment.selectNone();
-
-        switch (viewMode) {
-            case SMALL_LANDSCAPE:
-            case LARGE_PORTRAIT:
-            case LARGE_LANDSCAPE:
-                // If there is an episode list visible, reset it
-                episodeListFragment.selectNone();
-                episodeListFragment.resetUi();
-
-                // Update other UI
-                updateLogoViewMode();
-                updateDivider();
-                break;
-        }
+        // Update UI
+        updateLogoViewMode();
     }
 
     @Override
