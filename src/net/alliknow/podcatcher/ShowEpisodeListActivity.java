@@ -20,12 +20,8 @@ package net.alliknow.podcatcher;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
-import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
-
-import java.util.ArrayList;
 
 /**
  * Activity to show only the episode list and possibly the player. Used in small
@@ -56,32 +52,17 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
                         .commit();
             }
 
-            // Prepare UI
-            episodeListFragment.resetAndSpin();
-            processIntent();
-        }
-    }
+            // Get the load mode
+            multiplePodcastsMode = getIntent().getExtras().getBoolean(EpisodeListActivity.MODE_KEY);
+            // Get URL of podcast to load
+            String podcastUrl = getIntent().getExtras().getString(PODCAST_URL_KEY);
+            Podcast selectedPodcast = podcastManager.findPodcastForUrl(podcastUrl);
 
-    private void processIntent() {
-        // Get the load mode
-        multiplePodcastsMode = getIntent().getExtras().getBoolean(EpisodeListActivity.MODE_KEY);
-        episodeListFragment.setShowPodcastNames(multiplePodcastsMode);
-
-        // Get URL of podcast to load
-        String podcastUrl = getIntent().getExtras().getString(PODCAST_URL_KEY);
-        currentPodcast = podcastManager.findPodcastForUrl(podcastUrl);
-
-        // We are in select all mode
-        if (multiplePodcastsMode) {
-            currentEpisodeList = new ArrayList<Episode>();
-
-            for (Podcast podcast : podcastManager.getPodcastList())
-                podcastManager.load(podcast);
-        } // Single podcast to load
-        else {
-            // Go load it if found
-            if (currentPodcast != null)
-                podcastManager.load(currentPodcast);
+            // Act accordingly
+            if (multiplePodcastsMode)
+                onAllPodcastsSelected();
+            else if (selectedPodcast != null)
+                onPodcastSelected(selectedPodcast);
             else
                 episodeListFragment.showLoadFailed();
         }
@@ -101,6 +82,16 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     }
 
     @Override
+    public void onPodcastSelected(Podcast podcast) {
+        super.onPodcastSelected(podcast);
+
+        // Init the list view...
+        episodeListFragment.resetAndSpin();
+        // ...and start loading
+        podcastManager.load(currentPodcast);
+    }
+
+    @Override
     public void onAllPodcastsSelected() {
         super.onAllPodcastsSelected();
 
@@ -110,14 +101,15 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         // ...and go get the data
         for (Podcast podcast : podcastManager.getPodcastList())
             podcastManager.load(podcast);
+
+        updateActionBar();
     }
 
     @Override
-    public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
-        super.onPodcastLoadProgress(podcast, progress);
+    public void onPodcastLoaded(Podcast podcast) {
+        super.onPodcastLoaded(podcast);
 
-        if (multiplePodcastsMode)
-            updateActionBarSubtitleOnMultipleLoad();
+        updateActionBar();
     }
 
     @Override

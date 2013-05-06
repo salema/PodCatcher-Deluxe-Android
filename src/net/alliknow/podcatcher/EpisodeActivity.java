@@ -204,11 +204,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onReturnToPlayingEpisode() {
-        if (service != null && service.getCurrentEpisode() != null) {
-            Episode playingEpisode = service.getCurrentEpisode();
-
-            onEpisodeSelected(playingEpisode);
-        }
+        if (service != null && service.getCurrentEpisode() != null)
+            onEpisodeSelected(service.getCurrentEpisode());
     }
 
     @Override

@@ -56,21 +56,17 @@ public class ShowEpisodeActivity extends EpisodeActivity {
             // Set episode in fragment UI
             if (getIntent().getExtras() != null) {
                 String episodeUrl = getIntent().getExtras().getString(EPISODE_URL_KEY);
-                this.currentEpisode = podcastManager.findEpisodeForUrl(episodeUrl);
-
-                updateUi();
+                onEpisodeSelected(podcastManager.findEpisodeForUrl(episodeUrl));
             }
         }
     }
 
     @Override
-    public void onReturnToPlayingEpisode() {
-        if (service != null && service.getCurrentEpisode() != null) {
-            Episode playingEpisode = service.getCurrentEpisode();
-            this.currentEpisode = playingEpisode;
+    public void onEpisodeSelected(Episode selectedEpisode) {
+        super.onEpisodeSelected(selectedEpisode);
 
-            updateUi();
-        }
+        episodeFragment.setEpisode(this.currentEpisode);
+        episodeFragment.setShowEpisodeDate(true);
     }
 
     @Override
@@ -99,12 +95,5 @@ public class ShowEpisodeActivity extends EpisodeActivity {
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
-    }
-
-    private void updateUi() {
-        episodeFragment.setEpisode(this.currentEpisode);
-        episodeFragment.setShowEpisodeDate(true);
-
-        updatePlayer();
     }
 }
