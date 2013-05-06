@@ -181,27 +181,26 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
      * Set the action bar subtitle to reflect multiple podcast load progress
      */
     private void updateActionBarSubtitleOnMultipleLoad() {
-        if (podcastManager.getPodcastList() != null) {
-            final ActionBar bar = getActionBar();
+        final ActionBar bar = getActionBar();
 
-            final int podcastCount = podcastManager.size();
-            final int loadingPodcastCount = podcastManager.getLoadCount();
+        final int podcastCount = podcastManager.size();
+        final int loadingPodcastCount = podcastManager.getLoadCount();
 
-            final String onePodcast = getString(R.string.one_podcast_selected);
-            final String morePodcasts = getString(R.string.podcasts_selected);
-            final String of = getString(R.string.of);
-
-            if (loadingPodcastCount == 0 && currentEpisodeList != null) {
-                final int episodeCount = currentEpisodeList.size();
-                bar.setSubtitle(episodeCount == 1 ? getString(R.string.one_episode) :
-                        episodeCount + " " + getString(R.string.episodes));
-            }
-            else if (loadingPodcastCount == 0)
-                bar.setSubtitle(podcastCount == 1 ? onePodcast : podcastCount + " " + morePodcasts);
-            else
-                bar.setSubtitle((podcastCount - loadingPodcastCount) + " "
-                        + of + " " + podcastCount + " " + morePodcasts);
+        // Load finished for all popdcast and there are episode
+        if (loadingPodcastCount == 0 && currentEpisodeList != null) {
+            final int episodeCount = currentEpisodeList.size();
+            bar.setSubtitle(episodeCount == 1 ? getString(R.string.one_episode) :
+                    episodeCount + " " + getString(R.string.episodes));
         }
+        // Load finished but no episodes
+        else if (loadingPodcastCount == 0)
+            bar.setSubtitle(podcastCount == 1 ? getString(R.string.one_podcast_selected) :
+                    podcastCount + " " + getString(R.string.podcasts_selected));
+        // Load in progress
+        else
+            bar.setSubtitle((podcastCount - loadingPodcastCount) + " "
+                    + getString(R.string.of) + " " + podcastCount + " "
+                    + getString(R.string.podcasts_selected));
     }
 
     @Override
