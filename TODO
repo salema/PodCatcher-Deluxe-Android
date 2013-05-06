@@ -9,3 +9,4 @@ Make sure services thread heavy operations
 Loading podcast in AddPodcastFragment should be exclusive (other listeners should not be alerted) - maybe add small retained fragment to hold load task
 Disable play button if not online
 Show toast on select all if some podcasts fail to load
+Make sure podcast list is updated immediately on change not only after the adding activity is finished
