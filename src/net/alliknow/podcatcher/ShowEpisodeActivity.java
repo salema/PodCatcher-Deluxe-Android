@@ -43,7 +43,7 @@ public class ShowEpisodeActivity extends EpisodeActivity {
             // Set fragment members
             findFragments();
 
-            // During initial setup, plug in the details fragment.
+            // During initial setup, plug in the episode details fragment.
             if (savedInstanceState == null && episodeFragment == null) {
                 episodeFragment = new EpisodeFragment();
                 getFragmentManager()
@@ -53,11 +53,12 @@ public class ShowEpisodeActivity extends EpisodeActivity {
                         .commit();
             }
 
-            // Set episode in fragment UI
-            if (getIntent().getExtras() != null) {
-                String episodeUrl = getIntent().getExtras().getString(EPISODE_URL_KEY);
-                onEpisodeSelected(podcastManager.findEpisodeForUrl(episodeUrl));
-            }
+            // Find the episode to set in fragment UI
+            String episodeUrl = getIntent().getExtras().getString(EPISODE_URL_KEY);
+            Episode selectedEpisode = podcastManager.findEpisodeForUrl(episodeUrl);
+            // Set it
+            if (selectedEpisode != null)
+                onEpisodeSelected(selectedEpisode);
         }
     }
 
@@ -75,6 +76,7 @@ public class ShowEpisodeActivity extends EpisodeActivity {
             case android.R.id.home:
                 // This is called when the Home (Up) button is pressed
                 finish();
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
 
                 return true;
         }
@@ -89,11 +91,5 @@ public class ShowEpisodeActivity extends EpisodeActivity {
 
         // Enable navigation
         getActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
     }
 }

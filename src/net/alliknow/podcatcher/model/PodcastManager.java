@@ -440,14 +440,12 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     public Episode findEpisodeForUrl(String url) {
         // Make sure search only runs once the podcast list is actually
         // available.
-        if (podcastList != null) {
-
+        if (podcastList != null && url != null) {
             // Go try find the episode
             for (Podcast podcast : podcastList)
-                if (podcast.getEpisodeNumber() > 0)
-                    for (Episode episode : podcast.getEpisodes())
-                        if (episode.getMediaUrl().toString().equals(url))
-                            return episode;
+                for (Episode episode : podcast.getEpisodes())
+                    if (episode.getMediaUrl().toString().equals(url))
+                        return episode;
         }
 
         return null;
