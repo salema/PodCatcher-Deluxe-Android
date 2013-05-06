@@ -49,16 +49,16 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
     private MenuItem newMenuItem;
     /** The mark old menu item */
     private MenuItem oldMenuItem;
-
     /** The download menu item */
     private MenuItem downloadMenuItem;
     /** The delete menu item */
     private MenuItem deleteMenuItem;
-
     /** The add to playlist menu item */
     private MenuItem addToPlaylistMenuItem;
     /** The remove from playlist menu item */
     private MenuItem removeFromPlaylistMenuItem;
+    /** The select all menu item */
+    private MenuItem selectAllMenuItem;
 
     /**
      * Flag to indicate whether the mode should do potentially expensive UI
@@ -90,6 +90,7 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
                 .findItem(R.id.episode_add_to_playlist_contextmenuitem);
         removeFromPlaylistMenuItem = menu
                 .findItem(R.id.episode_remove_from_playlist_contextmenuitem);
+        selectAllMenuItem = menu.findItem(R.id.episode_select_all_contextmenuitem);
 
         return true;
     }
@@ -141,16 +142,6 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
                 // Action picked, so close the CAB
                 mode.finish();
                 return true;
-            case R.id.episode_select_all_contextmenuitem:
-                // Disable expensive UI updates
-                updateUi = false;
-                for (int index = 0; index < fragment.getListAdapter().getCount(); index++)
-                    fragment.getListView().setItemChecked(index, true);
-
-                // Re-enable UI updates
-                updateUi = true;
-                update(mode);
-                return true;
             case R.id.episode_add_to_playlist_contextmenuitem:
                 append = true;
                 // No break here, code blow should run
@@ -167,6 +158,16 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
 
                 // Action picked, so close the CAB
                 mode.finish();
+                return true;
+            case R.id.episode_select_all_contextmenuitem:
+                // Disable expensive UI updates
+                updateUi = false;
+                for (int index = 0; index < fragment.getListAdapter().getCount(); index++)
+                    fragment.getListView().setItemChecked(index, true);
+
+                // Re-enable UI updates
+                updateUi = true;
+                update(mode);
                 return true;
             default:
                 return false;
@@ -244,5 +245,8 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
             downloadMenuItem.setVisible(false);
         if (checkedItems.size() > MAX_TO_PLAYLIST)
             addToPlaylistMenuItem.setVisible(false);
+
+        // Hide the select all item if all items are selected
+        selectAllMenuItem.setVisible(checkedItems.size() != fragment.getListAdapter().getCount());
     }
 }
