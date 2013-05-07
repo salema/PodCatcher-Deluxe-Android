@@ -103,10 +103,13 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
     private String createTitle(Episode episode) {
         final String episodeName = episode.getName();
         final String redundantPrefix = episode.getPodcast().getName() + " ";
+        final String redundantPrefixAlt = episode.getPodcast().getName() + ": ";
         // Remove podcast name from the episode title because it takes to much
         // space and is redundant anyway
         if (episodeName.startsWith(redundantPrefix))
             return episodeName.substring(redundantPrefix.length(), episodeName.length());
+        else if (episodeName.startsWith(redundantPrefixAlt))
+            return episodeName.substring(redundantPrefixAlt.length(), episodeName.length());
         else
             return episodeName;
     }

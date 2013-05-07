@@ -190,7 +190,7 @@ public class Episode implements Comparable<Episode> {
                 pubDate = parsePubDate(parser.nextText());
             // Episode duration
             else if (tagName.equalsIgnoreCase(RSS.DURATION))
-                duration = parser.nextText();
+                duration = parseDuration(parser.nextText());
             // Episode description
             else if (tagName.equalsIgnoreCase(RSS.DESCRIPTION))
                 description = parser.nextText();
@@ -232,5 +232,14 @@ public class Episode implements Comparable<Episode> {
         }
 
         return null;
+    }
+
+    private String parseDuration(String durationString) {
+        try {
+            final int duration = Integer.parseInt(durationString);
+            return duration / 60 + ":" + duration % 60;
+        } catch (NumberFormatException e) {
+            return durationString;
+        }
     }
 }
