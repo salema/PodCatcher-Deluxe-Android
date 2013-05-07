@@ -180,8 +180,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     protected void onStart() {
         super.onStart();
 
-        // Load all podcasts? TODO Make this a preference
-
         // Set podcast logo view mode
         updateLogoViewMode();
     }
@@ -291,19 +289,17 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     public void onPodcastSelected(Podcast podcast) {
         super.onPodcastSelected(podcast);
 
-        // Select in podcast list
-        podcastListFragment.select(podcastManager.indexOf(podcast));
-
         if (viewMode.isSmallPortrait()) {
             // We need to launch a new activity to display the episode list
             Intent intent = new Intent(this, ShowEpisodeListActivity.class);
-            intent.putExtra(EpisodeListActivity.PODCAST_URL_KEY,
-                    podcast.getUrl().toString());
+            intent.putExtra(PODCAST_URL_KEY, podcast.getUrl().toString());
             intent.putExtra(MODE_KEY, ContentMode.SINGLE_PODCAST);
 
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
-        }
+        } else
+            // Select in podcast list
+            podcastListFragment.select(podcastManager.indexOf(podcast));
 
         // Update UI
         updateLogoViewMode();
