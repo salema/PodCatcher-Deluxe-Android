@@ -49,21 +49,16 @@ import java.util.TimerTask;
 public abstract class EpisodeActivity extends BaseActivity implements
         PlayerListener, PlayServiceListener, OnSelectEpisodeListener {
 
+    /** Key used to store episode URL in intent or bundle */
+    public static final String EPISODE_URL_KEY = "episode_url";
+
     /** The current episode fragment */
     protected EpisodeFragment episodeFragment;
     /** The current player fragment */
     protected PlayerFragment playerFragment;
 
-    /** The episode currently selected and displayed */
-    protected Episode currentEpisode;
-    /** Key used to store episode URL in intent or bundle */
-    public static final String EPISODE_URL_KEY = "episode_url";
-
     /** Play service */
     protected PlayEpisodeService service;
-
-    /** Whether a seek is currently active */
-    private boolean seeking = false;
 
     /** Play update timer task */
     private Timer playUpdateTimer = new Timer();
@@ -165,7 +160,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onEpisodeSelected(Episode selectedEpisode) {
-        this.currentEpisode = selectedEpisode;
+        selection.setEpisode(selectedEpisode);
 
         switch (viewMode) {
             case LARGE_PORTRAIT:
@@ -210,19 +205,19 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onNoEpisodeSelected() {
-        this.currentEpisode = null;
+        selection.setEpisode(null);
 
         updatePlayer();
     }
 
     @Override
     public void onToggleLoad() {
-        if (service.isLoadedEpisode(currentEpisode))
+        if (service.isLoadedEpisode(selection.getEpisode()))
             onPlaybackComplete();
-        else if (currentEpisode != null) {
+        else if (selection.getEpisode() != null) {
             stopPlayProgressTimer();
 
-            service.playEpisode(currentEpisode);
+            service.playEpisode(selection.getEpisode());
 
             // Update UI
             updatePlayer();
@@ -277,13 +272,11 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        seeking = true;
         stopPlayProgressTimer();
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        seeking = false;
         startPlayProgressTimer();
     }
 
@@ -333,10 +326,10 @@ public abstract class EpisodeActivity extends BaseActivity implements
      */
     protected void updatePlayer() {
         if (playerFragment != null && service != null) {
-            final boolean currentEpisodeIsShowing = service.isLoadedEpisode(currentEpisode);
+            final boolean currentEpisodeIsShowing = service.isLoadedEpisode(selection.getEpisode());
 
             // Show/hide menu item
-            playerFragment.setLoadMenuItemVisibility(currentEpisode != null,
+            playerFragment.setLoadMenuItemVisibility(selection.getEpisode() != null,
                     !currentEpisodeIsShowing);
 
             final boolean showPlayer = service.isPreparing() || service.isPrepared();
@@ -377,7 +370,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
         if (visible && service != null && service.isPlaying()) {
             // Only start task if it isn't already running and
             // there is actually some progress to monitor
-            if (playUpdateTimerTask == null && !seeking) {
+            if (playUpdateTimerTask == null) {
                 PlayProgressTask task = new PlayProgressTask(this);
 
                 try {

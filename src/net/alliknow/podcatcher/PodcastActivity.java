@@ -141,12 +141,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
      * @param savedInstanceState Restore information.
      */
     private void restoreState(Bundle savedInstanceState) {
-        // Recover members
-        multiplePodcastsMode = savedInstanceState.getBoolean(MODE_KEY);
-        currentPodcast = podcastManager.findPodcastForUrl(
-                savedInstanceState.getString(PODCAST_URL_KEY));
-        currentEpisode = podcastManager.findEpisodeForUrl(
-                savedInstanceState.getString(EPISODE_URL_KEY));
 
         restoreSelection();
     }
@@ -156,16 +150,16 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
      */
     private void restoreSelection() {
         // Re-select previously selected podcast(s)
-        if (multiplePodcastsMode)
+        if (selection.isAllMode())
             onAllPodcastsSelected();
-        else if (currentPodcast != null)
-            onPodcastSelected(currentPodcast);
+        else if (selection.getPodcast() != null)
+            onPodcastSelected(selection.getPodcast());
         else
             onNoPodcastSelected();
 
         // Re-select previously selected episode
-        if (currentEpisode != null)
-            onEpisodeSelected(currentEpisode);
+        if (selection.getEpisode() != null)
+            onEpisodeSelected(selection.getEpisode());
         else
             onNoEpisodeSelected();
     }
@@ -173,11 +167,11 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     @Override
     protected void onNewIntent(Intent intent) {
         // Recover members
-        multiplePodcastsMode = intent.getBooleanExtra(MODE_KEY, false);
-        currentPodcast = podcastManager.findPodcastForUrl(
-                intent.getStringExtra(PODCAST_URL_KEY));
-        currentEpisode = podcastManager.findEpisodeForUrl(
-                intent.getStringExtra(EPISODE_URL_KEY));
+        selection.setMode((ContentMode) intent.getSerializableExtra(MODE_KEY));
+        selection.setPodcast(podcastManager.findPodcastForUrl(
+                intent.getStringExtra(PODCAST_URL_KEY)));
+        selection.setEpisode(podcastManager.findEpisodeForUrl(
+                intent.getStringExtra(EPISODE_URL_KEY)));
 
         restoreSelection();
     }
@@ -197,7 +191,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         super.onResume();
 
         // Reset podcast list fragment in small portrait mode
-        if (viewMode.isSmallPortrait() && multiplePodcastsMode)
+        if (viewMode.isSmallPortrait() && selection.isAllMode())
             podcastListFragment.selectNone();
 
         // Podcast list has been changed while we were stopped
@@ -212,13 +206,13 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             updateActionBar();
 
             // Only act if we are not in select all mode
-            if (!multiplePodcastsMode) {
+            if (!selection.isAllMode()) {
                 // Selected podcast was deleted
-                if (currentPodcast == null)
+                if (selection.getPodcast() == null)
                     onNoPodcastSelected();
                 // Show the last podcast added if not in small portrait mode
                 else if (!viewMode.isSmallPortrait())
-                    onPodcastSelected(currentPodcast);
+                    onPodcastSelected(selection.getPodcast());
             }
         }
     }
@@ -237,17 +231,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
         // Make sure our http cache is written to disk
         ((Podcatcher) getApplication()).flushHttpCache();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putBoolean(MODE_KEY, multiplePodcastsMode);
-        if (currentPodcast != null)
-            outState.putString(PODCAST_URL_KEY, currentPodcast.getUrl().toString());
-        if (currentEpisode != null)
-            outState.putString(EPISODE_URL_KEY, currentEpisode.getMediaUrl().toString());
     }
 
     @Override
@@ -291,7 +274,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         podcastListChanged = true;
 
         // Set the member
-        currentPodcast = podcast;
+        selection.setPodcast(podcast);
     }
 
     @Override
@@ -300,8 +283,8 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         podcastListChanged = true;
 
         // Reset member if deleted
-        if (podcast.equals(currentPodcast))
-            currentPodcast = null;
+        if (podcast.equals(selection.getPodcast()))
+            selection.setPodcast(null);
     }
 
     @Override
@@ -316,7 +299,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             Intent intent = new Intent(this, ShowEpisodeListActivity.class);
             intent.putExtra(EpisodeListActivity.PODCAST_URL_KEY,
                     podcast.getUrl().toString());
-            intent.putExtra(MODE_KEY, false);
+            intent.putExtra(MODE_KEY, ContentMode.SINGLE_PODCAST);
 
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
@@ -336,7 +319,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         if (viewMode.isSmallPortrait()) {
             // We need to launch a new activity to display the episode list
             Intent intent = new Intent(this, ShowEpisodeListActivity.class);
-            intent.putExtra(MODE_KEY, true);
+            intent.putExtra(MODE_KEY, ContentMode.ALL_PODCASTS);
 
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
@@ -363,7 +346,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             super.onPodcastLoadProgress(podcast, progress);
 
             // We are in select all mode, show progress in podcast list
-            if (multiplePodcastsMode)
+            if (selection.isAllMode())
                 podcastListFragment.showProgress(podcastManager.indexOf(podcast), progress);
         }
     }
@@ -403,7 +386,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     protected void updateLogoViewMode() {
         LogoViewMode logoViewMode = LogoViewMode.NONE;
 
-        if (viewMode.isLargeLandscape() && !multiplePodcastsMode)
+        if (viewMode.isLargeLandscape() && !selection.isAllMode())
             logoViewMode = LogoViewMode.LARGE;
         else if (viewMode.isSmallPortrait())
             logoViewMode = LogoViewMode.SMALL;

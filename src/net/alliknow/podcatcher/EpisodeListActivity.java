@@ -41,22 +41,16 @@ import java.util.List;
 public abstract class EpisodeListActivity extends EpisodeActivity implements
         OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectPodcastListener {
 
-    /** The current episode list fragment */
-    protected EpisodeListFragment episodeListFragment;
-
     /**
      * Key used to save the current setting for
      * <code>multiplePodcastsMode</code> in bundle
      */
     public static final String MODE_KEY = "MODE_KEY";
-
-    /** Flag to indicate whether we are in multiple podcast mode */
-    protected boolean multiplePodcastsMode = false;
-
-    /** The podcast we are showing episodes for */
-    protected Podcast currentPodcast;
     /** Key used to store podcast URL in intent or bundle */
     public static final String PODCAST_URL_KEY = "podcast_url";
+
+    /** The current episode list fragment */
+    protected EpisodeListFragment episodeListFragment;
 
     /** The current episode list */
     protected List<Episode> currentEpisodeList;
@@ -93,15 +87,16 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
-        if (!multiplePodcastsMode && podcast.equals(currentPodcast))
+        if (!selection.isAllMode() && podcast.equals(selection.getPodcast()))
             episodeListFragment.showProgress(progress);
     }
 
     @Override
     public void onPodcastSelected(Podcast podcast) {
-        this.currentPodcast = podcast;
+        selection.setPodcast(podcast);
+        selection.setMode(ContentMode.SINGLE_PODCAST);
+
         this.currentEpisodeList = null;
-        this.multiplePodcastsMode = false;
 
         switch (viewMode) {
             case SMALL_LANDSCAPE:
@@ -129,9 +124,10 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onAllPodcastsSelected() {
-        this.currentPodcast = null;
+        selection.setPodcast(null);
+        selection.setMode(ContentMode.ALL_PODCASTS);
+
         this.currentEpisodeList = new ArrayList<Episode>();
-        this.multiplePodcastsMode = true;
 
         switch (viewMode) {
             case SMALL_LANDSCAPE:
@@ -160,9 +156,10 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onNoPodcastSelected() {
-        this.currentPodcast = null;
+        selection.setPodcast(null);
+        selection.setMode(ContentMode.SINGLE_PODCAST);
+
         this.currentEpisodeList = null;
-        this.multiplePodcastsMode = false;
 
         if (!viewMode.isSmallPortrait()) {
             // If there is an episode list visible, reset it
@@ -178,7 +175,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     public void onPodcastLoaded(Podcast podcast) {
         // Update list fragment to show episode list
         // Select all podcasts
-        if (multiplePodcastsMode) {
+        if (selection.isAllMode()) {
             // TODO decide on this: episodeList.addAll(list.subList(0,
             // list.size() > 100 ? 100 : list.size() - 1));
             if (podcast.getEpisodeNumber() > 0) {
@@ -188,7 +185,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 episodeListFragment.setEpisodeList(new ArrayList<Episode>(currentEpisodeList));
             }
         } // Select single podcast
-        else if (podcast.equals(currentPodcast)) {
+        else if (podcast.equals(selection.getPodcast())) {
             currentEpisodeList = podcast.getEpisodes();
             episodeListFragment.setEpisodeList(currentEpisodeList);
         }
@@ -203,11 +200,11 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     @Override
     public void onPodcastLoadFailed(Podcast failedPodcast) {
         // The podcast we are waiting for failed to load
-        if (!multiplePodcastsMode && failedPodcast.equals(currentPodcast))
+        if (!selection.isAllMode() && failedPodcast.equals(selection.getPodcast()))
             episodeListFragment.showLoadFailed();
         // The last podcast failed to load and none of the others had any
         // episodes to show in the list
-        else if (multiplePodcastsMode && podcastManager.getLoadCount() == 0
+        else if (selection.isAllMode() && podcastManager.getLoadCount() == 0
                 && (currentEpisodeList == null || currentEpisodeList.isEmpty()))
             episodeListFragment.showLoadFailed();
     }
@@ -257,8 +254,9 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             case LARGE_PORTRAIT:
             case LARGE_LANDSCAPE:
                 // Make sure the episode selection in the list is updated
-                if (currentEpisodeList != null && currentEpisodeList.contains(currentEpisode))
-                    episodeListFragment.select(currentEpisodeList.indexOf(currentEpisode));
+                if (currentEpisodeList != null
+                        && currentEpisodeList.contains(selection.getEpisode()))
+                    episodeListFragment.select(currentEpisodeList.indexOf(selection.getEpisode()));
                 else
                     episodeListFragment.selectNone();
 
@@ -272,9 +270,10 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
      * Update the divider views to reflect current selection state.
      */
     protected void updateDivider() {
-        colorDivider(R.id.divider_first, currentPodcast != null || multiplePodcastsMode);
+        colorDivider(R.id.divider_first, selection.getPodcast() != null || selection.isAllMode());
         colorDivider(R.id.divider_second,
-                currentEpisodeList != null && currentEpisodeList.indexOf(currentEpisode) >= 0);
+                currentEpisodeList != null
+                        && currentEpisodeList.indexOf(selection.getEpisode()) >= 0);
     }
 
     private void colorDivider(int dividerViewId, boolean colorId) {

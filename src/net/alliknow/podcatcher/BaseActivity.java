@@ -26,6 +26,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import net.alliknow.podcatcher.model.PodcastManager;
+import net.alliknow.podcatcher.model.types.Episode;
+import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.ViewMode;
 
 /**
@@ -34,16 +36,110 @@ import net.alliknow.podcatcher.view.ViewMode;
  */
 public abstract class BaseActivity extends Activity {
 
+    /** The podcatcher website URL */
+    public static final String PODCATCHER_WEBSITE = "http://www.podcatcher-deluxe.com";
+    /** The podcatcher help website URL */
+    public static final String PODCATCHER_HELPSITE = "http://www.podcatcher-deluxe.com/help";
+
     /** The podcast manager handle */
     protected PodcastManager podcastManager;
 
     /** The currently active view mode */
     protected ViewMode viewMode;
+    /** The currently active selection */
+    protected ContentSelection selection;
 
-    /** The podcatcher website URL */
-    private static final String PODCATCHER_WEBSITE = "http://www.podcatcher-deluxe.com";
-    /** The podcatcher help website URL */
-    private static final String PODCATCHER_HELPSITE = "http://www.podcatcher-deluxe.com/help";
+    /** The options available for the content mode */
+    public static enum ContentMode {
+        /** Show single podcast */
+        SINGLE_PODCAST,
+
+        /** Show all podcast */
+        ALL_PODCASTS,
+    };
+
+    /**
+     * Content selection singleton, makes the user selection of podcasts,
+     * episodes, etc. available to all activities across activity recreations.
+     */
+    protected static class ContentSelection {
+        /** The single instance */
+        private static ContentSelection instance;
+
+        /** Flag to indicate whether we are in single or multiple podcast mode */
+        private ContentMode mode = ContentMode.SINGLE_PODCAST;
+
+        /** The podcast we are showing episodes for */
+        private Podcast currentPodcast;
+        /** The selected episode */
+        private Episode currentEpisode;
+
+        private ContentSelection() {
+            // Nothing to do here
+        }
+
+        /**
+         * Get the single instance representing the current user selection in
+         * the app.
+         * 
+         * @return The single instance.
+         */
+        public static ContentSelection getInstance() {
+            if (instance == null)
+                instance = new ContentSelection();
+
+            return instance;
+        }
+
+        /**
+         * @return The currently selected mode.
+         */
+        public ContentMode getMode() {
+            return mode;
+        }
+
+        /**
+         * @param mode The mode to set.
+         */
+        public void setMode(ContentMode mode) {
+            this.mode = mode;
+        }
+
+        /**
+         * @return The currently selected podcast.
+         */
+        public Podcast getPodcast() {
+            return currentPodcast;
+        }
+
+        /**
+         * @param podcast The selected podcast to set.
+         */
+        public void setPodcast(Podcast podcast) {
+            this.currentPodcast = podcast;
+        }
+
+        /**
+         * @return The currently selected episode.
+         */
+        public Episode getEpisode() {
+            return currentEpisode;
+        }
+
+        /**
+         * @param episode The episode to set.
+         */
+        public void setEpisode(Episode episode) {
+            this.currentEpisode = episode;
+        }
+
+        /**
+         * @return Whether the app is currently in all podcasts mode.
+         */
+        public boolean isAllMode() {
+            return ContentMode.ALL_PODCASTS.equals(mode);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +149,13 @@ public abstract class BaseActivity extends Activity {
         // changed for this app (all its activities) is the music stream
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
-        // Set the data manager
-        podcastManager = PodcastManager.getInstance();
-
+        // Set the selection member
+        selection = ContentSelection.getInstance();
         // Set the view mode member
         viewMode = ViewMode.determineViewMode(getResources());
+
+        // Set the data manager
+        podcastManager = PodcastManager.getInstance();
     }
 
     @Override

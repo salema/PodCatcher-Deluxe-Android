@@ -45,6 +45,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 
+import net.alliknow.podcatcher.BaseActivity.ContentMode;
 import net.alliknow.podcatcher.EpisodeActivity;
 import net.alliknow.podcatcher.EpisodeListActivity;
 import net.alliknow.podcatcher.PodcastActivity;
@@ -567,7 +568,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 getApplicationContext(),
                 0,
                 new Intent(getApplicationContext(), PodcastActivity.class)
-                        .putExtra(EpisodeListActivity.MODE_KEY, false)
+                        .putExtra(EpisodeListActivity.MODE_KEY, ContentMode.SINGLE_PODCAST)
                         .putExtra(EpisodeListActivity.PODCAST_URL_KEY,
                                 currentEpisode.getPodcast().getUrl().toString())
                         .putExtra(EpisodeActivity.EPISODE_URL_KEY,

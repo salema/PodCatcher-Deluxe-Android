@@ -53,13 +53,13 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
             }
 
             // Get the load mode
-            multiplePodcastsMode = getIntent().getExtras().getBoolean(EpisodeListActivity.MODE_KEY);
+            selection.setMode((ContentMode) getIntent().getSerializableExtra(MODE_KEY));
             // Get URL of podcast to load
             String podcastUrl = getIntent().getExtras().getString(PODCAST_URL_KEY);
             Podcast selectedPodcast = podcastManager.findPodcastForUrl(podcastUrl);
 
             // Act accordingly
-            if (multiplePodcastsMode)
+            if (selection.isAllMode())
                 onAllPodcastsSelected();
             else if (selectedPodcast != null)
                 onPodcastSelected(selectedPodcast);
@@ -88,7 +88,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         // Init the list view...
         episodeListFragment.resetAndSpin();
         // ...and start loading
-        podcastManager.load(currentPodcast);
+        podcastManager.load(podcast);
     }
 
     @Override
@@ -122,19 +122,19 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     @Override
     protected void updateActionBar() {
         // Single podcast selected
-        if (currentPodcast != null) {
-            getActionBar().setTitle(currentPodcast.getName());
+        if (selection.getPodcast() != null) {
+            getActionBar().setTitle(selection.getPodcast().getName());
 
-            if (currentPodcast.getEpisodes().isEmpty())
+            if (selection.getPodcast().getEpisodes().isEmpty())
                 getActionBar().setSubtitle(null);
             else {
-                int episodeCount = currentPodcast.getEpisodeNumber();
+                int episodeCount = selection.getPodcast().getEpisodeNumber();
                 getActionBar().setSubtitle(
                         episodeCount == 1 ? getString(R.string.one_episode) :
                                 episodeCount + " " + getString(R.string.episodes));
             }
         } // Multiple podcast mode
-        else if (multiplePodcastsMode) {
+        else if (selection.isAllMode()) {
             getActionBar().setTitle(R.string.app_name);
 
             updateActionBarSubtitleOnMultipleLoad();

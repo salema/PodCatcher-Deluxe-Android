@@ -65,7 +65,7 @@ public class ShowEpisodeActivity extends EpisodeActivity {
     public void onEpisodeSelected(Episode selectedEpisode) {
         super.onEpisodeSelected(selectedEpisode);
 
-        episodeFragment.setEpisode(this.currentEpisode);
+        episodeFragment.setEpisode(selectedEpisode);
         episodeFragment.setShowEpisodeDate(true);
     }
 
