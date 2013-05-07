@@ -93,11 +93,22 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
         final Episode episode = list.get(position);
 
         // Set the text to display for title
-        setText(listItemView, R.id.list_item_title, episode.getName());
+        setText(listItemView, R.id.list_item_title, createTitle(episode));
         // Set the text to display as caption
         setText(listItemView, R.id.list_item_caption, createCaption(episode));
 
         return listItemView;
+    }
+
+    private String createTitle(Episode episode) {
+        final String episodeName = episode.getName();
+        final String redundantPrefix = episode.getPodcast().getName() + " ";
+        // Remove podcast name from the episode title because it takes to much
+        // space and is redundant anyway
+        if (episodeName.startsWith(redundantPrefix))
+            return episodeName.substring(redundantPrefix.length(), episodeName.length());
+        else
+            return episodeName;
     }
 
     private String createCaption(Episode episode) {
