@@ -19,12 +19,16 @@
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/downloads"
+        android:id="@+id/downloads_menuitem"
         android:icon="@drawable/ic_menu_download"
         android:showAsAction="never"
         android:title="@string/downloads" />
     <item
-        android:id="@+id/playlist"
+        android:id="@+id/playlist_menuitem"
         android:showAsAction="never"
         android:title="@string/playlist" />
+    <item
+        android:id="@+id/podcast_select_all_menuitem"
+        android:showAsAction="never"
+        android:title="@string/select_all_podcasts" />
 </menu>

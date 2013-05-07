@@ -45,9 +45,9 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 
+import net.alliknow.podcatcher.BaseActivity.ContentMode;
 import net.alliknow.podcatcher.EpisodeActivity;
 import net.alliknow.podcatcher.EpisodeListActivity;
-import net.alliknow.podcatcher.EpisodeListActivity.ContentMode;
 import net.alliknow.podcatcher.PodcastActivity;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;

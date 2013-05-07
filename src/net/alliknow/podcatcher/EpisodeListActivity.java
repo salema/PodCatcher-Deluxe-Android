@@ -17,18 +17,16 @@
 
 package net.alliknow.podcatcher;
 
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.view.View;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
-import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
+import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.listeners.OnToggleFilterListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
-import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 
 import java.util.ArrayList;
@@ -43,36 +41,16 @@ import java.util.List;
  * extend or simply show this layout.
  */
 public abstract class EpisodeListActivity extends EpisodeActivity implements
-        OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectEpisodeListener,
+        OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectPodcastListener,
         OnToggleFilterListener {
 
-    /** The current episode list fragment */
-    protected EpisodeListFragment episodeListFragment;
-
-    /** The podcast we are showing episodes for */
-    protected Podcast currentPodcast;
+    /** Key used to save the current content mode in bundle */
+    public static final String MODE_KEY = "MODE_KEY";
     /** Key used to store podcast URL in intent or bundle */
     public static final String PODCAST_URL_KEY = "podcast_url";
 
-    /** Member to indicate which mode we are in */
-    protected ContentMode contentMode = ContentMode.SINGLE_PODCAST;
-    /** Key used to save the current content mode in bundle */
-    public static final String MODE_KEY = "MODE_KEY";
-
-    /** The options available for the content mode */
-    public static enum ContentMode {
-        /** Show single podcast */
-        SINGLE_PODCAST,
-
-        /** Show all podcast */
-        ALL_PODCASTS,
-
-        /** Show downloads */
-        DOWNLOADS,
-
-        /** Show playlist */
-        PLAYLIST
-    };
+    /** The current episode list fragment */
+    protected EpisodeListFragment episodeListFragment;
 
     /** The current episode list */
     protected List<Episode> currentEpisodeList;
@@ -135,8 +113,157 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
+    public void onPodcastSelected(Podcast podcast) {
+        selection.setPodcast(podcast);
+        selection.setMode(ContentMode.SINGLE_PODCAST);
+
+        this.currentEpisodeList = null;
+
+        switch (view) {
+            case SMALL_LANDSCAPE:
+                // This will go back to the list view in case we are showing
+                // episode details
+                getFragmentManager().popBackStackImmediate();
+                // There is no break here on purpose, we need to run the code
+                // below as well
+            case LARGE_PORTRAIT:
+            case LARGE_LANDSCAPE:
+                // List fragment is visible, make it show progress UI
+                episodeListFragment.resetAndSpin();
+                // Update other UI
+                updateFilter();
+                updateDivider();
+
+                // Load podcast
+                podcastManager.load(podcast);
+
+                break;
+            case SMALL_PORTRAIT:
+                // This case should be handled by sub-classes
+                break;
+        }
+    }
+
+    @Override
+    public void onAllPodcastsSelected() {
+        selection.setPodcast(null);
+        selection.setMode(ContentMode.ALL_PODCASTS);
+
+        this.currentEpisodeList = new ArrayList<Episode>();
+
+        switch (view) {
+            case SMALL_LANDSCAPE:
+                // This will go back to the list view in case we are showing
+                // episode details
+                getFragmentManager().popBackStackImmediate();
+                // There is no break here on purpose, we need to run the code
+                // below as well
+            case LARGE_PORTRAIT:
+            case LARGE_LANDSCAPE:
+                // List fragment is visible, make it show progress UI
+                episodeListFragment.resetAndSpin();
+                episodeListFragment.setShowPodcastNames(true);
+                // Update other UI
+                updateFilter();
+                updateDivider();
+
+                // Go load all podcasts
+                for (Podcast podcast : podcastManager.getPodcastList())
+                    podcastManager.load(podcast);
+
+                break;
+            case SMALL_PORTRAIT:
+                // This case should be handled by sub-classes
+                break;
+        }
+    }
+
+    @Override
+    public void onDownloadsSelected() {
+        selection.setPodcast(null);
+        selection.setMode(ContentMode.DOWNLOADS);
+
+        this.currentEpisodeList = episodeManager.getDownloads();
+
+        switch (view) {
+            case SMALL_LANDSCAPE:
+                // This will go back to the list view in case we are showing
+                // episode details
+                getFragmentManager().popBackStackImmediate();
+                // There is no break here on purpose, we need to run the code
+                // below as well
+            case LARGE_PORTRAIT:
+            case LARGE_LANDSCAPE:
+                // List fragment is visible, make it show progress UI
+                episodeListFragment.resetAndSpin();
+                episodeListFragment.setShowPodcastNames(true);
+                // Update other UI
+                updateFilter();
+                updateDivider();
+
+                // Set the list of downloads
+                setFilteredEpisodeList();
+
+                break;
+            case SMALL_PORTRAIT:
+                // This case should be handled by sub-classes
+                break;
+        }
+    }
+
+    @Override
+    public void onPlaylistSelected() {
+        selection.setPodcast(null);
+        selection.setMode(ContentMode.PLAYLIST);
+
+        this.currentEpisodeList = episodeManager.getPlaylist();
+
+        switch (view) {
+            case SMALL_LANDSCAPE:
+                // This will go back to the list view in case we are showing
+                // episode details
+                getFragmentManager().popBackStackImmediate();
+                // There is no break here on purpose, we need to run the code
+                // below as well
+            case LARGE_PORTRAIT:
+            case LARGE_LANDSCAPE:
+                // List fragment is visible, make it show progress UI
+                episodeListFragment.resetAndSpin();
+                episodeListFragment.setShowPodcastNames(true);
+                // Update other UI
+                updateFilter();
+                updateDivider();
+
+                // Set the playlist
+                setFilteredEpisodeList();
+
+                break;
+            case SMALL_PORTRAIT:
+                // This case should be handled by sub-classes
+                break;
+        }
+    }
+
+    @Override
+    public void onNoPodcastSelected() {
+        selection.setPodcast(null);
+        selection.setMode(ContentMode.SINGLE_PODCAST);
+
+        this.currentEpisodeList = null;
+
+        if (!view.isSmallPortrait()) {
+            // If there is an episode list visible, reset it
+            episodeListFragment.selectNone();
+            episodeListFragment.resetUi();
+
+            // Update other UI
+            updateDivider();
+        }
+    }
+
+    @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
-        if (contentMode.equals(ContentMode.SINGLE_PODCAST) && podcast.equals(currentPodcast))
+        if (selection.isSingle() && podcast.equals(selection.getPodcast()))
             episodeListFragment.showProgress(progress);
     }
 
@@ -144,7 +271,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     public void onPodcastLoaded(Podcast podcast) {
         // Update list fragment to show episode list
         // Select all podcasts
-        if (contentMode.equals(ContentMode.ALL_PODCASTS)) {
+        if (selection.isAll()) {
             if (podcast.getEpisodeNumber() > 0) {
                 currentEpisodeList.addAll(podcast.getEpisodes());
                 Collections.sort(currentEpisodeList);
@@ -152,13 +279,13 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 setFilteredEpisodeList();
             }
         } // Select single podcast
-        else if (contentMode.equals(ContentMode.SINGLE_PODCAST) && podcast.equals(currentPodcast)) {
+        else if (selection.isSingle() && podcast.equals(selection.getPodcast())) {
             currentEpisodeList = podcast.getEpisodes();
             setFilteredEpisodeList();
         }
 
         // Additionally, if on large device, process clever selection update
-        if (!viewMode.isSmall()) {
+        if (!view.isSmall()) {
             updateEpisodeListSelection();
             updateDivider();
         }
@@ -170,11 +297,11 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     @Override
     public void onPodcastLoadFailed(Podcast failedPodcast) {
         // The podcast we are waiting for failed to load
-        if (contentMode.equals(ContentMode.SINGLE_PODCAST) && failedPodcast.equals(currentPodcast))
+        if (selection.isSingle() && failedPodcast.equals(selection.getPodcast()))
             episodeListFragment.showLoadFailed();
         // The last podcast failed to load and none of the others had any
         // episodes to show in the list
-        else if (contentMode.equals(ContentMode.ALL_PODCASTS) && podcastManager.getLoadCount() == 0
+        else if (selection.isAll() && podcastManager.getLoadCount() == 0
                 && (currentEpisodeList == null || currentEpisodeList.isEmpty()))
             episodeListFragment.showLoadFailed();
     }
@@ -191,75 +318,27 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onEpisodeSelected(Episode selectedEpisode) {
-        this.currentEpisode = selectedEpisode;
+        super.onEpisodeSelected(selectedEpisode);
 
-        switch (viewMode) {
-            case LARGE_PORTRAIT:
-            case LARGE_LANDSCAPE:
-                // Set episode in episode fragment
-                episodeFragment.setEpisode(selectedEpisode);
+        if (!view.isSmall())
+            // Make sure selection matches in list fragment
+            updateEpisodeListSelection();
+        else if (view.isSmallPortrait()) {
+            // Send intent to open episode as a new activity
+            Intent intent = new Intent(this, ShowEpisodeActivity.class);
 
-                // Make sure selection matches in list fragment and the UI is
-                // updated
-                updateEpisodeListSelection();
-                updateDownloadUi();
-                updateStateUi();
-
-                break;
-            case SMALL_LANDSCAPE:
-                // Find, and if not already done create, episode fragment
-                if (episodeFragment == null)
-                    episodeFragment = new EpisodeFragment();
-
-                // Add the fragment to the UI, replacing the list fragment if it
-                // is not already there
-                if (getFragmentManager().getBackStackEntryCount() == 0) {
-                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                    transaction.replace(R.id.right, episodeFragment,
-                            getString(R.string.episode_fragment_tag));
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-                }
-
-                // Set the episode and update the UI
-                episodeFragment.setEpisode(selectedEpisode);
-                episodeFragment.setShowEpisodeDate(true);
-
-                updateDownloadUi();
-                updateStateUi();
-
-                break;
-            case SMALL_PORTRAIT:
-                // Send intent to open episode as a new activity
-                Intent intent = new Intent(this, ShowEpisodeActivity.class);
-                intent.putExtra(EPISODE_URL_KEY, selectedEpisode.getMediaUrl().toString());
-
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
         }
 
-        updatePlayerUi();
         updateDivider();
     }
 
     @Override
-    public void onReturnToPlayingEpisode() {
-        if (service != null && service.getCurrentEpisode() != null) {
-            Episode playingEpisode = service.getCurrentEpisode();
-
-            onEpisodeSelected(playingEpisode);
-        }
-    }
-
-    @Override
     public void onNoEpisodeSelected() {
-        this.currentEpisode = null;
+        super.onNoEpisodeSelected();
 
-        // If there is a episode fragment, reset it
-        if (episodeListFragment != null)
-            episodeListFragment.selectNone();
-
-        updatePlayerUi();
+        episodeListFragment.selectNone();
         updateDivider();
     }
 
@@ -283,13 +362,13 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     /**
-     * 
+     * Make sure the episode list selection matches current state.
      */
     protected void updateEpisodeListSelection() {
-        if (!viewMode.isSmall()) {
+        if (!view.isSmall()) {
             // Make sure the episode selection in the list is updated
-            if (filteredEpisodeList != null && filteredEpisodeList.contains(currentEpisode))
-                episodeListFragment.select(filteredEpisodeList.indexOf(currentEpisode));
+            if (filteredEpisodeList != null && filteredEpisodeList.contains(selection.getEpisode()))
+                episodeListFragment.select(filteredEpisodeList.indexOf(selection.getEpisode()));
             else
                 episodeListFragment.selectNone();
         } else
@@ -306,7 +385,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     protected void updateDownloadUi() {
-        if (!viewMode.isSmallPortrait())
+        if (!view.isSmallPortrait())
             super.updateDownloadUi();
 
         episodeListFragment.refresh();
@@ -314,7 +393,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     protected void updatePlaylistUi() {
-        if (!viewMode.isSmallPortrait())
+        if (!view.isSmallPortrait())
             super.updatePlaylistUi();
 
         episodeListFragment.refresh();
@@ -322,7 +401,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     protected void updateStateUi() {
-        if (!viewMode.isSmallPortrait())
+        if (!view.isSmallPortrait())
             super.updateStateUi();
 
         episodeListFragment.refresh();
@@ -333,9 +412,10 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
      */
     protected void updateDivider() {
         colorDivider(R.id.divider_first,
-                currentPodcast != null || !contentMode.equals(ContentMode.SINGLE_PODCAST));
+                selection.getPodcast() != null || !selection.isSingle());
         colorDivider(R.id.divider_second,
-                currentEpisodeList != null && currentEpisodeList.indexOf(currentEpisode) >= 0);
+                currentEpisodeList != null
+                        && currentEpisodeList.indexOf(selection.getEpisode()) >= 0);
     }
 
     private void colorDivider(int dividerViewId, boolean colorId) {

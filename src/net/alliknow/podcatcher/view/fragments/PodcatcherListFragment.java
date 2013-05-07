@@ -20,13 +20,18 @@ package net.alliknow.podcatcher.view.fragments;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.ProgressView;
 import net.alliknow.podcatcher.view.adapters.PodcatcherBaseListAdapter;
@@ -37,9 +42,14 @@ import net.alliknow.podcatcher.view.adapters.PodcatcherBaseListAdapter;
  */
 public abstract class PodcatcherListFragment extends ListFragment {
 
+    /** The activity we are in (listens to user selection) */
+    protected OnSelectPodcastListener contentSelectionListener;
+
     /** The list adapter */
     protected PodcatcherBaseListAdapter adapter;
 
+    /** Select all podcasts menu item */
+    protected MenuItem selectAllMenuItem;
     /** The empty view */
     protected TextView emptyView;
     /** The progress bar */
@@ -58,6 +68,26 @@ public abstract class PodcatcherListFragment extends ListFragment {
     private boolean viewCreated = false;
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // Make sure our listener is present
+        try {
+            this.contentSelectionListener = (OnSelectPodcastListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnSelectPodcastListener");
+        }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -65,6 +95,36 @@ public abstract class PodcatcherListFragment extends ListFragment {
         progressView = (ProgressView) getView().findViewById(R.id.progress);
 
         viewCreated = true;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Prevent the menu item to be added multiple times if more then on
+        // sub-class fragment is showing
+        if (menu.findItem(R.id.podcast_select_all_menuitem) == null)
+            inflater.inflate(R.menu.content_modes, menu);
+
+        selectAllMenuItem = (MenuItem) menu.findItem(R.id.podcast_select_all_menuitem);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.podcast_select_all_menuitem:
+                contentSelectionListener.onAllPodcastsSelected();
+
+                return true;
+            case R.id.downloads_menuitem:
+                contentSelectionListener.onDownloadsSelected();
+
+                return true;
+            case R.id.playlist_menuitem:
+                contentSelectionListener.onPlaylistSelected();
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

@@ -42,9 +42,9 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
+import net.alliknow.podcatcher.BaseActivity.ContentMode;
 import net.alliknow.podcatcher.EpisodeActivity;
 import net.alliknow.podcatcher.EpisodeListActivity;
-import net.alliknow.podcatcher.EpisodeListActivity.ContentMode;
 import net.alliknow.podcatcher.PodcastActivity;
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;

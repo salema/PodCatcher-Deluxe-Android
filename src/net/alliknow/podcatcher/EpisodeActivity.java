@@ -17,6 +17,7 @@
 
 package net.alliknow.podcatcher;
 
+import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -30,6 +31,7 @@ import android.widget.Toast;
 import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
 import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
+import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.listeners.PlayerListener;
 import net.alliknow.podcatcher.model.types.Episode;
@@ -48,18 +50,16 @@ import java.util.TimerTask;
  * or simply show this layout.
  */
 public abstract class EpisodeActivity extends BaseActivity implements
-        OnDownloadEpisodeListener, OnChangePlaylistListener, OnChangeEpisodeStateListener,
-        PlayerListener, PlayServiceListener {
+        PlayerListener, PlayServiceListener, OnSelectEpisodeListener,
+        OnDownloadEpisodeListener, OnChangePlaylistListener, OnChangeEpisodeStateListener {
+
+    /** Key used to store episode URL in intent or bundle */
+    public static final String EPISODE_URL_KEY = "episode_url";
 
     /** The current episode fragment */
     protected EpisodeFragment episodeFragment;
     /** The current player fragment */
     protected PlayerFragment playerFragment;
-
-    /** The episode currently selected and displayed */
-    protected Episode currentEpisode;
-    /** Key used to store episode URL in intent or bundle */
-    public static final String EPISODE_URL_KEY = "episode_url";
 
     /** Play service */
     protected PlayEpisodeService service;
@@ -187,6 +187,60 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     @Override
+    public void onEpisodeSelected(Episode selectedEpisode) {
+        selection.setEpisode(selectedEpisode);
+
+        switch (view) {
+            case LARGE_PORTRAIT:
+            case LARGE_LANDSCAPE:
+                // Set episode in episode fragment
+                episodeFragment.setEpisode(selectedEpisode);
+
+                break;
+            case SMALL_LANDSCAPE:
+                // Find, and if not already done create, episode fragment
+                if (episodeFragment == null)
+                    episodeFragment = new EpisodeFragment();
+
+                // Add the fragment to the UI, replacing the list fragment if it
+                // is not already there
+                if (getFragmentManager().getBackStackEntryCount() == 0) {
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.right, episodeFragment,
+                            getString(R.string.episode_fragment_tag));
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
+
+                // Set the episode
+                episodeFragment.setEpisode(selectedEpisode);
+                episodeFragment.setShowEpisodeDate(true);
+
+                break;
+            case SMALL_PORTRAIT:
+                // This should be handled by sub-class
+                break;
+        }
+
+        updatePlayerUi();
+        updateDownloadUi();
+        updateStateUi();
+    }
+
+    @Override
+    public void onReturnToPlayingEpisode() {
+        if (service != null && service.getCurrentEpisode() != null)
+            onEpisodeSelected(service.getCurrentEpisode());
+    }
+
+    @Override
+    public void onNoEpisodeSelected() {
+        selection.setEpisode(null);
+
+        updatePlayerUi();
+    }
+
+    @Override
     public final void onDownloadSuccess() {
         updateDownloadUi();
     }
@@ -212,17 +266,17 @@ public abstract class EpisodeActivity extends BaseActivity implements
     @Override
     public void onToggleDownload() {
         // Check for action to perform
-        boolean download = !episodeManager.isDownloadingOrDownloaded(currentEpisode);
+        boolean download = !episodeManager.isDownloadingOrDownloaded(selection.getEpisode());
 
         // Kick off the appropriate action
         if (download) {
-            episodeManager.download(currentEpisode);
+            episodeManager.download(selection.getEpisode());
 
             showToast(getString(R.string.started_download) + "\n\""
-                    + currentEpisode.getName() + "\"");
+                    + selection.getEpisode().getName() + "\"");
         }
         else
-            episodeManager.deleteDownload(currentEpisode);
+            episodeManager.deleteDownload(selection.getEpisode());
 
         // Update the UI
         updateDownloadUi();
@@ -234,11 +288,11 @@ public abstract class EpisodeActivity extends BaseActivity implements
         stopPlayProgressTimer();
 
         // Stop called: unload episode
-        if (service.isLoadedEpisode(currentEpisode))
+        if (service.isLoadedEpisode(selection.getEpisode()))
             service.reset();
         // Play called on unloaded episode
-        else if (currentEpisode != null)
-            service.playEpisode(currentEpisode);
+        else if (selection.getEpisode() != null)
+            service.playEpisode(selection.getEpisode());
 
         // Update UI
         updatePlayerUi();
@@ -347,10 +401,10 @@ public abstract class EpisodeActivity extends BaseActivity implements
         // The episode fragment might be popped out if we are in small landscape
         // view mode and the episode list is currently visible
         if (episodeFragment != null) {
-            final boolean downloading = episodeManager.isDownloading(currentEpisode);
-            final boolean downloaded = episodeManager.isDownloaded(currentEpisode);
+            final boolean downloading = episodeManager.isDownloading(selection.getEpisode());
+            final boolean downloaded = episodeManager.isDownloaded(selection.getEpisode());
 
-            episodeFragment.setDownloadMenuItemVisibility(currentEpisode != null,
+            episodeFragment.setDownloadMenuItemVisibility(selection.getEpisode() != null,
                     !(downloading || downloaded));
             episodeFragment.setDownloadIconVisibility(downloading || downloaded, downloaded);
         }
@@ -372,7 +426,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
         // The episode fragment might be popped out if we are in small landscape
         // view mode and the episode list is currently visible
         if (episodeFragment != null)
-            episodeFragment.setNewIconVisibility(!episodeManager.getState(currentEpisode));
+            episodeFragment.setNewIconVisibility(!episodeManager.getState(selection.getEpisode()));
     }
 
     /**
@@ -382,10 +436,10 @@ public abstract class EpisodeActivity extends BaseActivity implements
         // Even though all the fragments should be present, the service might
         // not have been connected to yet.
         if (service != null) {
-            final boolean currentEpisodeIsShowing = service.isLoadedEpisode(currentEpisode);
+            final boolean currentEpisodeIsShowing = service.isLoadedEpisode(selection.getEpisode());
 
             // Show/hide menu item
-            playerFragment.setLoadMenuItemVisibility(currentEpisode != null,
+            playerFragment.setLoadMenuItemVisibility(selection.getEpisode() != null,
                     !currentEpisodeIsShowing);
 
             // Make sure player is shown if and as needed (update the details
@@ -397,11 +451,11 @@ public abstract class EpisodeActivity extends BaseActivity implements
                 playerFragment.setErrorViewVisibility(false);
                 // Show(hide episode title and seek bar
                 playerFragment.setPlayerTitleVisibility(
-                        !viewMode.isSmallLandscape() && !currentEpisodeIsShowing);
-                playerFragment.setPlayerSeekbarVisibility(!viewMode.isSmallLandscape());
+                        !view.isSmallLandscape() && !currentEpisodeIsShowing);
+                playerFragment.setPlayerSeekbarVisibility(!view.isSmallLandscape());
                 // Enable/disable next button
                 final boolean playlistHasEntries = !episodeManager.isPlaylistEmpty();
-                playerFragment.setShowShortPosition(playlistHasEntries && viewMode.isSmall());
+                playerFragment.setShowShortPosition(playlistHasEntries && view.isSmall());
                 playerFragment.setNextButtonVisibility(playlistHasEntries);
 
                 // Update UI to reflect service status

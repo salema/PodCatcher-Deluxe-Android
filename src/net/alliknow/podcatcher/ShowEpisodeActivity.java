@@ -35,12 +35,11 @@ public class ShowEpisodeActivity extends EpisodeActivity {
 
         // In large or landscape layouts we do not need this activity at
         // all, so finish it off
-        if (!viewMode.isSmallPortrait())
+        if (!view.isSmallPortrait())
             finish();
         else {
             // 1. Set the content view
             setContentView(R.layout.main);
-
             // 2. Set, find, create the fragments
             findFragments();
             // During initial setup, plug in the details fragment.
@@ -57,47 +56,31 @@ public class ShowEpisodeActivity extends EpisodeActivity {
             registerListeners();
 
             // 4. Set episode in fragment UI
-            if (getIntent().getExtras() != null) {
-                String episodeUrl = getIntent().getExtras().getString(EPISODE_URL_KEY);
-                // Try find episode from the podcast manager
-                this.currentEpisode = podcastManager.findEpisodeForUrl(episodeUrl);
-                // If that fails, it might be a download...
-                if (currentEpisode == null)
-                    for (Episode download : episodeManager.getDownloads())
-                        if (download.getMediaUrl().toString().equals(episodeUrl))
-                            this.currentEpisode = download;
-                // ... or a playlist entry
-                if (currentEpisode == null)
-                    for (Episode entry : episodeManager.getPlaylist())
-                        if (entry.getMediaUrl().toString().equals(episodeUrl))
-                            this.currentEpisode = entry;
-
-                updateUi();
-            }
+            if (selection.getEpisode() != null)
+                onEpisodeSelected(selection.getEpisode());
         }
     }
 
+ @Override
+    public void onEpisodeSelected(Episode selectedEpisode) {
+        super.onEpisodeSelected(selectedEpisode);
+
+        episodeFragment.setEpisode(selectedEpisode);
+        episodeFragment.setShowEpisodeDate(true);
+    }
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // This is called when the Home (Up) button is pressed
                 finish();
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
 
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onReturnToPlayingEpisode() {
-        if (service != null && service.getCurrentEpisode() != null) {
-            Episode playingEpisode = service.getCurrentEpisode();
-            this.currentEpisode = playingEpisode;
-
-            updateUi();
-        }
     }
 
     @Override
@@ -107,20 +90,5 @@ public class ShowEpisodeActivity extends EpisodeActivity {
 
         // Enable navigation
         getActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
-    }
-
-    private void updateUi() {
-        episodeFragment.setEpisode(this.currentEpisode);
-        episodeFragment.setShowEpisodeDate(true);
-
-        updateDownloadUi();
-        updateStateUi();
-        updatePlayerUi();
     }
 }

@@ -17,7 +17,6 @@
 
 package net.alliknow.podcatcher.view.fragments;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -31,7 +30,6 @@ import android.widget.ListView;
 
 import net.alliknow.podcatcher.AddPodcastActivity;
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.listeners.PodcastListContextListener;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
@@ -48,19 +46,13 @@ public class PodcastListFragment extends PodcatcherListFragment {
     /** The list of podcasts currently shown */
     private List<Podcast> currentPodcastList;
 
-    /** The activity we are in (listens to user selection) */
-    private OnSelectPodcastListener selectionListener;
-
-    /** Remove podcast menu item */
-    private MenuItem selectAllMenuItem;
-
     /** The logo view */
     private ImageView logoView;
     /** The current logo view mode */
     private LogoViewMode logoViewMode = LogoViewMode.SMALL;
 
     /** The options available for the logo view */
-    public enum LogoViewMode {
+    public static enum LogoViewMode {
         /**
          * Do not show the podcast logo
          */
@@ -79,19 +71,6 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
     /** Status flag indicating that our view is created */
     private boolean viewCreated = false;
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        // Make sure our listener is present
-        try {
-            this.selectionListener = (OnSelectPodcastListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnSelectPodcastListener");
-        }
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -133,9 +112,9 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.podcast_list, menu);
+        super.onCreateOptionsMenu(menu, inflater);
 
-        selectAllMenuItem = (MenuItem) menu.findItem(R.id.podcast_select_all_menuitem);
+        inflater.inflate(R.menu.podcast_list, menu);
     }
 
     @Override
@@ -143,10 +122,6 @@ public class PodcastListFragment extends PodcatcherListFragment {
         switch (item.getItemId()) {
             case R.id.podcast_add_menuitem:
                 startActivity(new Intent(getActivity(), AddPodcastActivity.class));
-
-                return true;
-            case R.id.podcast_select_all_menuitem:
-                selectionListener.onAllPodcastsSelected();
 
                 return true;
             default:
@@ -159,7 +134,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
         Podcast selectedPodcast = (Podcast) adapter.getItem(position);
 
         // Alert parent activity
-        selectionListener.onPodcastSelected(selectedPodcast);
+        contentSelectionListener.onPodcastSelected(selectedPodcast);
     }
 
     @Override
@@ -236,7 +211,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
         // Only act if the view is actually created
         if (viewCreated) {
-            // 1. Update according to logo view mode
+            // Update according to logo view mode
             switch (logoViewMode) {
                 case LARGE: // In large mode show single logo at the bottom
                     if (adapter != null)
@@ -270,11 +245,6 @@ public class PodcastListFragment extends PodcatcherListFragment {
                         ((PodcastListAdapter) adapter).setShowLogo(false);
                     logoView.setVisibility(View.GONE);
             }
-
-            // 2. Update menu items
-            // Menu items might be late to load
-            if (selectAllMenuItem != null && adapter != null)
-                selectAllMenuItem.setVisible(adapter.getCount() > 1 && !selectAll);
         }
     }
 }

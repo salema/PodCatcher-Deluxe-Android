@@ -38,6 +38,16 @@ public interface OnSelectPodcastListener {
     public void onAllPodcastsSelected();
 
     /**
+     * Called on listener to reflect that downloads are selected.
+     */
+    public void onDownloadsSelected();
+
+    /**
+     * Called on listener to reflect that the playlist is selected.
+     */
+    public void onPlaylistSelected();
+
+    /**
      * Called on listener to reflect that no podcast is selected anymore.
      */
     public void onNoPodcastSelected();

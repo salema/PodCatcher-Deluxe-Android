@@ -45,7 +45,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     private List<Episode> currentEpisodeList;
 
     /** The activity we are in (listens to user selection) */
-    private OnSelectEpisodeListener selectionListener;
+    private OnSelectEpisodeListener episodeSelectionListener;
     /** The activity we are in (listens to filter toggles) */
     private OnToggleFilterListener filterListener;
 
@@ -68,7 +68,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
         // Make sure our listener is present
         try {
-            this.selectionListener = (OnSelectEpisodeListener) activity;
+            this.episodeSelectionListener = (OnSelectEpisodeListener) activity;
             this.filterListener = (OnToggleFilterListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
@@ -107,6 +107,8 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
         inflater.inflate(R.menu.episode_list, menu);
 
         filterMenuItem = menu.findItem(R.id.filter_menuitem);
@@ -130,7 +132,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     public void onListItemClick(ListView list, View view, int position, long id) {
         // Find selected episode and alert listener
         Episode selectedEpisode = (Episode) adapter.getItem(position);
-        selectionListener.onEpisodeSelected(selectedEpisode);
+        episodeSelectionListener.onEpisodeSelected(selectedEpisode);
     }
 
     @Override
