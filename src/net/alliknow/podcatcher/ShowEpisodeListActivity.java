@@ -64,15 +64,15 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
 
     private void processIntent() {
         // Get the load mode
-        multiplePodcastsMode = getIntent().getExtras().getBoolean(EpisodeListActivity.MODE_KEY);
-        episodeListFragment.setShowPodcastNames(multiplePodcastsMode);
+        selection.setMode((ContentMode) getIntent().getSerializableExtra(MODE_KEY));
+        episodeListFragment.setShowPodcastNames(selection.isAllMode());
 
         // Get URL of podcast to load
         String podcastUrl = getIntent().getExtras().getString(PODCAST_URL_KEY);
-        currentPodcast = podcastManager.findPodcastForUrl(podcastUrl);
+        selection.setPodcast(podcastManager.findPodcastForUrl(podcastUrl));
 
         // We are in select all mode
-        if (multiplePodcastsMode) {
+        if (selection.isAllMode()) {
             currentEpisodeList = new ArrayList<Episode>();
 
             for (Podcast podcast : podcastManager.getPodcastList())
@@ -80,8 +80,8 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         } // Single podcast to load
         else {
             // Go load it if found
-            if (currentPodcast != null)
-                podcastManager.load(currentPodcast);
+            if (selection.getPodcast() != null)
+                podcastManager.load(selection.getPodcast());
             else
                 episodeListFragment.showLoadFailed();
         }
@@ -104,7 +104,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
         super.onPodcastLoadProgress(podcast, progress);
 
-        if (multiplePodcastsMode)
+        if (selection.isAllMode())
             updateActionBarSubtitleOnMultipleLoad();
     }
 
@@ -118,19 +118,19 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     @Override
     protected void updateActionBar() {
         // Single podcast selected
-        if (currentPodcast != null) {
-            getActionBar().setTitle(currentPodcast.getName());
+        if (selection.getPodcast() != null) {
+            getActionBar().setTitle(selection.getPodcast().getName());
 
-            if (currentPodcast.getEpisodes().isEmpty())
+            if (selection.getPodcast().getEpisodes().isEmpty())
                 getActionBar().setSubtitle(null);
             else {
-                int episodeCount = currentPodcast.getEpisodeNumber();
+                int episodeCount = selection.getPodcast().getEpisodeNumber();
                 getActionBar().setSubtitle(
                         episodeCount == 1 ? getString(R.string.one_episode) :
                                 episodeCount + " " + getString(R.string.episodes));
             }
         } // Multiple podcast mode
-        else if (multiplePodcastsMode) {
+        else if (selection.isAllMode()) {
             getActionBar().setTitle(R.string.app_name);
 
             updateActionBarSubtitleOnMultipleLoad();
