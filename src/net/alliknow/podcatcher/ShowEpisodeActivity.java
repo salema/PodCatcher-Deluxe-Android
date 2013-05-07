@@ -71,6 +71,9 @@ public class ShowEpisodeActivity extends EpisodeActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                // Unselect episode
+                selection.setEpisode(null);
+
                 // This is called when the Home (Up) button is pressed
                 finish();
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
@@ -79,6 +82,14 @@ public class ShowEpisodeActivity extends EpisodeActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Unselect episode
+        selection.setEpisode(null);
+
+        super.onBackPressed();
     }
 
     @Override
