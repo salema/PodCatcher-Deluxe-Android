@@ -92,7 +92,9 @@ public abstract class BaseActivity extends Activity {
         }
 
         /**
-         * @return The currently selected mode.
+         * @return The currently selected mode. Default and init state is single
+         *         podcast.
+         * @see ContentMode
          */
         public ContentMode getMode() {
             return mode;
@@ -100,13 +102,15 @@ public abstract class BaseActivity extends Activity {
 
         /**
          * @param mode The mode to set.
+         * @see ContentMode
          */
         public void setMode(ContentMode mode) {
             this.mode = mode;
         }
 
         /**
-         * @return The currently selected podcast.
+         * @return The currently selected podcast. Might be <code>null</code> to
+         *         indicate no selection.
          */
         public Podcast getPodcast() {
             return currentPodcast;
@@ -120,7 +124,8 @@ public abstract class BaseActivity extends Activity {
         }
 
         /**
-         * @return The currently selected episode.
+         * @return The currently selected episode. Might be <code>null</code>
+         *         indicating that no selection took place.
          */
         public Episode getEpisode() {
             return currentEpisode;

@@ -229,7 +229,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         else if (viewMode.isSmallPortrait()) {
             // Send intent to open episode as a new activity
             Intent intent = new Intent(this, ShowEpisodeActivity.class);
-            intent.putExtra(EPISODE_URL_KEY, selectedEpisode.getMediaUrl().toString());
 
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);

@@ -17,6 +17,7 @@
 
 package net.alliknow.podcatcher;
 
+import android.app.ActionBar;
 import android.app.FragmentManager.OnBackStackChangedListener;
 import android.content.Intent;
 import android.os.Bundle;
@@ -91,9 +92,9 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             // otherwise we will not be able to select anything.
             // There are two cases to cover here:
             // 1. We come back from a configuration change and restore from the
-            // bundle saved at onSaveInstanceState()
+            // content selection singleton
             if (savedInstanceState != null)
-                restoreState(savedInstanceState);
+                restoreSelection();
             // 2. We are (re)started and the intent might contain some
             // information we need to parse (this also works if it doesn't)
             else
@@ -133,16 +134,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                             getString(R.string.episode_list_fragment_tag))
                     .commit();
         }
-    }
-
-    /**
-     * Restore members and selection state from bundle.
-     * 
-     * @param savedInstanceState Restore information.
-     */
-    private void restoreState(Bundle savedInstanceState) {
-
-        restoreSelection();
     }
 
     /**
@@ -292,8 +283,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         if (viewMode.isSmallPortrait()) {
             // We need to launch a new activity to display the episode list
             Intent intent = new Intent(this, ShowEpisodeListActivity.class);
-            intent.putExtra(PODCAST_URL_KEY, podcast.getUrl().toString());
-            intent.putExtra(MODE_KEY, ContentMode.SINGLE_PODCAST);
 
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
@@ -315,7 +304,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         if (viewMode.isSmallPortrait()) {
             // We need to launch a new activity to display the episode list
             Intent intent = new Intent(this, ShowEpisodeListActivity.class);
-            intent.putExtra(MODE_KEY, ContentMode.ALL_PODCASTS);
 
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
@@ -392,18 +380,18 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
     @Override
     protected void updateActionBar() {
-        getActionBar().setTitle(R.string.app_name);
+        final ActionBar bar = getActionBar();
+        bar.setTitle(R.string.app_name);
 
         // Disable the home button (only used in overlaying activities)
-        getActionBar().setHomeButtonEnabled(false);
+        bar.setHomeButtonEnabled(false);
 
         if (podcastManager.getPodcastList() != null) {
             int podcastCount = podcastManager.size();
-            getActionBar().setSubtitle(
-                    podcastCount == 1 ? getString(R.string.one_podcast_selected) : podcastCount
-                            + " " + getString(R.string.podcasts_selected));
+            bar.setSubtitle(podcastCount == 1 ? getString(R.string.one_podcast_selected)
+                    : podcastCount + " " + getString(R.string.podcasts_selected));
         } else {
-            getActionBar().setSubtitle(null);
+            bar.setSubtitle(null);
         }
     }
 

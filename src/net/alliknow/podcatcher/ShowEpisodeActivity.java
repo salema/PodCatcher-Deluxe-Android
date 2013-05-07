@@ -53,12 +53,9 @@ public class ShowEpisodeActivity extends EpisodeActivity {
                         .commit();
             }
 
-            // Find the episode to set in fragment UI
-            String episodeUrl = getIntent().getExtras().getString(EPISODE_URL_KEY);
-            Episode selectedEpisode = podcastManager.findEpisodeForUrl(episodeUrl);
             // Set it
-            if (selectedEpisode != null)
-                onEpisodeSelected(selectedEpisode);
+            if (selection.getEpisode() != null)
+                onEpisodeSelected(selection.getEpisode());
         }
     }
 

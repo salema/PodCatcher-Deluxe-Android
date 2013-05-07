@@ -53,17 +53,11 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
                         .commit();
             }
 
-            // Get the load mode
-            selection.setMode((ContentMode) getIntent().getSerializableExtra(MODE_KEY));
-            // Get URL of podcast to load
-            String podcastUrl = getIntent().getExtras().getString(PODCAST_URL_KEY);
-            Podcast selectedPodcast = podcastManager.findPodcastForUrl(podcastUrl);
-
             // Act accordingly
             if (selection.isAllMode())
                 onAllPodcastsSelected();
-            else if (selectedPodcast != null)
-                onPodcastSelected(selectedPodcast);
+            else if (selection.getPodcast() != null)
+                onPodcastSelected(selection.getPodcast());
             else
                 episodeListFragment.showLoadFailed();
         }
