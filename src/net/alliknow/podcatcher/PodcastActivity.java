@@ -81,8 +81,10 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // 3. Init/restore the app as needed
         // If we are newly starting up and the podcast list is empty, show add
         // podcast dialog (this is used in onPodcastListLoaded(), since we only
-        // know then, whether the list is actually empty.
-        showAddPodcastOnEmptyPodcastList = savedInstanceState == null;
+        // know then, whether the list is actually empty. Also do not show it if
+        // we are given an URL in the intent, because this will trigger the
+        // dialog anyway
+        showAddPodcastOnEmptyPodcastList = (savedInstanceState == null && getIntent().getData() == null);
         // Check if podcast list is available - if so, set it
         List<Podcast> podcastList = podcastManager.getPodcastList();
         if (podcastList != null) {
@@ -95,11 +97,15 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             // content selection singleton
             if (savedInstanceState != null)
                 restoreSelection();
-            // 2. We are (re)started and the intent might contain some
-            // information we need to parse (this also works if it doesn't)
-            else
+            // 2. We are (re)started and the intent contains some
+            // information we need to parse
+            else if (getIntent().hasExtra(MODE_KEY))
                 onNewIntent(getIntent());
         }
+
+        // Finally we might also be called freshly with a podcast feed to add
+        if (getIntent().getData() != null)
+            onNewIntent(getIntent());
     }
 
     @Override
@@ -157,15 +163,23 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
     @Override
     protected void onNewIntent(Intent intent) {
-        // Recover members
-        if (intent.getSerializableExtra(MODE_KEY) != null)
-            selection.setMode((ContentMode) intent.getSerializableExtra(MODE_KEY));
-        selection.setPodcast(podcastManager.findPodcastForUrl(
-                intent.getStringExtra(PODCAST_URL_KEY)));
-        selection.setEpisode(podcastManager.findEpisodeForUrl(
-                intent.getStringExtra(EPISODE_URL_KEY)));
+        // This is an external call to add a new podcast
+        if (intent.getData() != null) {
+            Intent addPodcast = new Intent(this, AddPodcastActivity.class);
+            addPodcast.setData(intent.getData());
 
-        restoreSelection();
+            startActivity(addPodcast);
+        }
+        // This is an internal call to update the selection
+        else if (intent.hasExtra(MODE_KEY)) {
+            selection.setMode((ContentMode) intent.getSerializableExtra(MODE_KEY));
+            selection.setPodcast(podcastManager.findPodcastForUrl(
+                    intent.getStringExtra(PODCAST_URL_KEY)));
+            selection.setEpisode(podcastManager.findEpisodeForUrl(
+                    intent.getStringExtra(EPISODE_URL_KEY)));
+
+            restoreSelection();
+        }
     }
 
     @Override
