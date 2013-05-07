@@ -107,8 +107,11 @@ public class AddPodcastFragment extends DialogFragment {
             }
         });
 
+        // Put the URI given in the intent if any
+        if (getActivity().getIntent().getData() != null)
+            podcastUrlEditText.setText(getActivity().getIntent().getDataString());
         // This is for testing only
-        if (((Podcatcher) getActivity().getApplication()).isInDebugMode())
+        else if (((Podcatcher) getActivity().getApplication()).isInDebugMode())
             podcastUrlEditText.setText("richeisen.libsyn.com/rss");
 
         progressView = (HorizontalProgressView) view.findViewById(R.id.add_podcast_progress);

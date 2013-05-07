@@ -157,15 +157,23 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
     @Override
     protected void onNewIntent(Intent intent) {
-        // Recover members
-        if (intent.getSerializableExtra(MODE_KEY) != null)
-            selection.setMode((ContentMode) intent.getSerializableExtra(MODE_KEY));
-        selection.setPodcast(podcastManager.findPodcastForUrl(
-                intent.getStringExtra(PODCAST_URL_KEY)));
-        selection.setEpisode(podcastManager.findEpisodeForUrl(
-                intent.getStringExtra(EPISODE_URL_KEY)));
+        // This is an external call to add a new podcast
+        if (intent.getData() != null) {
+            Intent addPodcast = new Intent(this, AddPodcastActivity.class);
+            addPodcast.setData(intent.getData());
 
-        restoreSelection();
+            startActivity(addPodcast);
+        }
+        // This is an internal call to update the selection
+        else if (intent.hasExtra(MODE_KEY)) {
+            selection.setMode((ContentMode) intent.getSerializableExtra(MODE_KEY));
+            selection.setPodcast(podcastManager.findPodcastForUrl(
+                    intent.getStringExtra(PODCAST_URL_KEY)));
+            selection.setEpisode(podcastManager.findEpisodeForUrl(
+                    intent.getStringExtra(EPISODE_URL_KEY)));
+
+            restoreSelection();
+        }
     }
 
     @Override

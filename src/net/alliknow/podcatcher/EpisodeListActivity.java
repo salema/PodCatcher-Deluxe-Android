@@ -241,7 +241,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     public void onNoEpisodeSelected() {
         super.onNoEpisodeSelected();
 
-        episodeListFragment.selectNone();
+        if (episodeListFragment != null)
+            episodeListFragment.selectNone();
         updateDivider();
     }
 
