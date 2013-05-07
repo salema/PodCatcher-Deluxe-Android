@@ -9,4 +9,6 @@ Make sure services thread heavy operations
 Loading podcast in AddPodcastFragment should be exclusive (other listeners should not be alerted) - maybe add small retained fragment to hold load task
 Add menu items to switch content mode to ShowEpisodeListActivity (pull selection code up to EpisodeLIstAct.)
 Set more clever "No episodes" texts depending on the content mode and filter state of let the user know why there are no episodes.
-Fix "2 extra px on the right" problem with the player on tablet 
+Fix "2 extra px on the right" problem with the player on tablet
+Widget idea: Show "select all podcast" list result as a widget and update regularly
+Do not load all the episode metadata before showing the podcast list, let EpisodeActivity listen to load completion and update the UI when it is ready
