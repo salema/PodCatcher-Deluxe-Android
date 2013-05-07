@@ -231,7 +231,8 @@ public class Podcast implements Comparable<Podcast> {
      * @param attempt Time point of the last attempt.
      */
     public void setLastLoadLogoAttempt(Date attempt) {
-        this.lastLoadLogoAttempt = new Date(attempt.getTime());
+        if (attempt != null)
+            this.lastLoadLogoAttempt = new Date(attempt.getTime());
     }
 
     /**

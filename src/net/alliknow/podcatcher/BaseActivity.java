@@ -76,7 +76,7 @@ public abstract class BaseActivity extends Activity {
         /** The single instance */
         private static ContentSelection instance;
 
-        /** Flag to indicate whether we are in single or multiple podcast mode */
+        /** Flag to indicate the content mode */
         private ContentMode mode = ContentMode.SINGLE_PODCAST;
 
         /** The podcast we are showing episodes for */
@@ -120,7 +120,7 @@ public abstract class BaseActivity extends Activity {
 
         /**
          * @return The currently selected podcast. Might be <code>null</code> to
-         *         indicate no selection.
+         *         indicate "no selection".
          */
         public Podcast getPodcast() {
             return currentPodcast;
@@ -171,7 +171,7 @@ public abstract class BaseActivity extends Activity {
         // changed for this app (all its activities) is the music stream
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
-        // Set the selection member
+        // Set the selection mode member
         selection = ContentSelection.getInstance();
         // Set the view mode member
         view = ViewMode.determineViewMode(getResources());
