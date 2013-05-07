@@ -264,6 +264,10 @@ public class Episode implements Comparable<Episode> {
             final int duration = Integer.parseInt(durationString);
             return duration / 60 + ":" + duration % 60;
         } catch (NumberFormatException e) {
+            // Do not allow zero hours
+            if (durationString.startsWith("00:") && durationString.length() > 5)
+                durationString = durationString.substring(3);
+
             return durationString;
         }
     }

@@ -183,6 +183,9 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             addPodcast.setData(intent.getData());
 
             startActivity(addPodcast);
+            // We need to erase data here to prevent this from showing multiple
+            // times
+            intent.setData(null);
         }
         // This is an internal call to update the selection
         else if (intent.hasExtra(MODE_KEY)) {
