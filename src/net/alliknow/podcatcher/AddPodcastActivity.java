@@ -33,7 +33,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * Add new podcast(s) activity.
+ * Add new podcast(s) activity. This simply shows the add podcast fragment. To
+ * preset the feed url edittext, start this activity with an intent that has the
+ * feed URL set as its {@link Intent#getData()} return value.
  */
 public class AddPodcastActivity extends BaseActivity
         implements OnLoadPodcastListener, OnAddPodcastListener, OnCancelListener {
