@@ -50,6 +50,8 @@ public class Episode implements Comparable<Episode> {
     private URL mediaUrl;
     /** The episode's release date */
     private Date pubDate;
+    /** The episode duration */
+    private String duration;
     /** The episode's description */
     private String description;
     /** The episode's long content description */
@@ -97,6 +99,14 @@ public class Episode implements Comparable<Episode> {
             return null;
         else
             return new Date(pubDate.getTime());
+    }
+
+    /**
+     * @return The episode's duration as given by the podcast feed. This might
+     *         not be available and therefore <code>null</code>.
+     */
+    public String getDuration() {
+        return duration;
     }
 
     /**
@@ -178,6 +188,9 @@ public class Episode implements Comparable<Episode> {
                 pubDate = parsePubDate(parser.nextText());
             else if (tagName.equalsIgnoreCase(RSS.PUBDATE) && pubDate == null)
                 pubDate = parsePubDate(parser.nextText());
+            // Episode duration
+            else if (tagName.equalsIgnoreCase(RSS.DURATION))
+                duration = parser.nextText();
             // Episode description
             else if (tagName.equalsIgnoreCase(RSS.DESCRIPTION))
                 description = parser.nextText();
