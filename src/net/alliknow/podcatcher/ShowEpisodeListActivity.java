@@ -35,7 +35,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         super.onCreate(savedInstanceState);
 
         // Check if we need this activity at all
-        if (!viewMode.isSmallPortrait())
+        if (!view.isSmallPortrait())
             finish();
         else {
             // Set the content view
@@ -54,7 +54,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
             }
 
             // Act accordingly
-            if (selection.isAllMode())
+            if (selection.isAll())
                 onAllPodcastsSelected();
             else if (selection.isPodcastSet())
                 onPodcastSelected(selection.getPodcast());
@@ -142,7 +142,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
                         episodeCount + " " + getString(R.string.episodes));
             }
         } // Multiple podcast mode
-        else if (selection.isAllMode()) {
+        else if (selection.isAll()) {
             bar.setTitle(R.string.app_name);
             updateActionBarSubtitleOnMultipleLoad();
         } else

@@ -46,7 +46,7 @@ public abstract class BaseActivity extends Activity {
     protected PodcastManager podcastManager;
 
     /** The currently active view mode */
-    protected ViewMode viewMode;
+    protected ViewMode view;
     /** The currently active selection */
     protected ContentSelection selection;
 
@@ -142,7 +142,7 @@ public abstract class BaseActivity extends Activity {
         /**
          * @return Whether the app is currently in all podcasts mode.
          */
-        public boolean isAllMode() {
+        public boolean isAll() {
             return ContentMode.ALL_PODCASTS.equals(mode);
         }
 
@@ -187,7 +187,7 @@ public abstract class BaseActivity extends Activity {
         // Set the selection member
         selection = ContentSelection.getInstance();
         // Set the view mode member
-        viewMode = ViewMode.determineViewMode(getResources());
+        view = ViewMode.determineViewMode(getResources());
 
         // Set the data manager
         podcastManager = PodcastManager.getInstance();

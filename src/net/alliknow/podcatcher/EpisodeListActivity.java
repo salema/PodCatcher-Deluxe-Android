@@ -87,7 +87,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
-        if (!selection.isAllMode() && podcast.equals(selection.getPodcast()))
+        if (!selection.isAll() && podcast.equals(selection.getPodcast()))
             episodeListFragment.showProgress(progress);
     }
 
@@ -98,7 +98,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
         this.currentEpisodeList = null;
 
-        switch (viewMode) {
+        switch (view) {
             case SMALL_LANDSCAPE:
                 // This will go back to the list view in case we are showing
                 // episode details
@@ -129,7 +129,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
         this.currentEpisodeList = new ArrayList<Episode>();
 
-        switch (viewMode) {
+        switch (view) {
             case SMALL_LANDSCAPE:
                 // This will go back to the list view in case we are showing
                 // episode details
@@ -161,7 +161,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
         this.currentEpisodeList = null;
 
-        if (!viewMode.isSmallPortrait()) {
+        if (!view.isSmallPortrait()) {
             // If there is an episode list visible, reset it
             episodeListFragment.selectNone();
             episodeListFragment.resetUi();
@@ -175,7 +175,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     public void onPodcastLoaded(Podcast podcast) {
         // Update list fragment to show episode list
         // Select all podcasts
-        if (selection.isAllMode()) {
+        if (selection.isAll()) {
             // TODO decide on this: episodeList.addAll(list.subList(0,
             // list.size() > 100 ? 100 : list.size() - 1));
             if (podcast.getEpisodeNumber() > 0) {
@@ -200,15 +200,15 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     @Override
     public void onPodcastLoadFailed(Podcast failedPodcast) {
         // The podcast we are waiting for failed to load
-        if (!selection.isAllMode() && failedPodcast.equals(selection.getPodcast()))
+        if (!selection.isAll() && failedPodcast.equals(selection.getPodcast()))
             episodeListFragment.showLoadFailed();
         // The last podcast failed to load and none of the others had any
         // episodes to show in the list
-        else if (selection.isAllMode() && podcastManager.getLoadCount() == 0
+        else if (selection.isAll() && podcastManager.getLoadCount() == 0
                 && (currentEpisodeList == null || currentEpisodeList.isEmpty()))
             episodeListFragment.showLoadFailed();
         // One of many podcasts failed to load
-        else if (selection.isAllMode())
+        else if (selection.isAll())
             showToast("Podcast\n\"" + failedPodcast.getName() + "\"\n"
                     + getString(R.string.error_podcast_load_multiple));
     }
@@ -227,10 +227,10 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     public void onEpisodeSelected(Episode selectedEpisode) {
         super.onEpisodeSelected(selectedEpisode);
 
-        if (!viewMode.isSmall())
+        if (!view.isSmall())
             // Make sure selection matches in list fragment
             updateEpisodeListSelection();
-        else if (viewMode.isSmallPortrait()) {
+        else if (view.isSmallPortrait()) {
             // Send intent to open episode as a new activity
             Intent intent = new Intent(this, ShowEpisodeActivity.class);
 
@@ -254,7 +254,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
      * Update the episode list to select the correct episode
      */
     protected void updateEpisodeListSelection() {
-        switch (viewMode) {
+        switch (view) {
             case LARGE_PORTRAIT:
             case LARGE_LANDSCAPE:
                 // Make sure the episode selection in the list is updated
@@ -274,7 +274,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
      * Update the divider views to reflect current selection state.
      */
     protected void updateDivider() {
-        colorDivider(R.id.divider_first, selection.isPodcastSet() || selection.isAllMode());
+        colorDivider(R.id.divider_first, selection.isPodcastSet() || selection.isAll());
         colorDivider(R.id.divider_second,
                 currentEpisodeList != null
                         && currentEpisodeList.indexOf(selection.getEpisode()) >= 0);

@@ -164,7 +164,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
     public void onEpisodeSelected(Episode selectedEpisode) {
         selection.setEpisode(selectedEpisode);
 
-        switch (viewMode) {
+        switch (view) {
             case LARGE_PORTRAIT:
             case LARGE_LANDSCAPE:
                 // Set episode in episode fragment
@@ -340,9 +340,9 @@ public abstract class EpisodeActivity extends BaseActivity implements
                 // Make sure error view is hidden
                 playerFragment.setErrorViewVisibility(false);
                 // Show/hide title and seek bar
-                playerFragment.setPlayerTitleVisibility(!viewMode.isSmallLandscape()
+                playerFragment.setPlayerTitleVisibility(!view.isSmallLandscape()
                         && !currentEpisodeIsShowing);
-                playerFragment.setPlayerSeekbarVisibility(!viewMode.isSmallLandscape());
+                playerFragment.setPlayerSeekbarVisibility(!view.isSmallLandscape());
 
                 // Update UI to reflect service status
                 playerFragment.updatePlayerTitle(service.getCurrentEpisode());

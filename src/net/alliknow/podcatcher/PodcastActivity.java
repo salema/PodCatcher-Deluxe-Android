@@ -123,7 +123,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
      */
     private void plugFragments() {
         // On small screens, add the podcast list fragment
-        if (viewMode.isSmall() && podcastListFragment == null) {
+        if (view.isSmall() && podcastListFragment == null) {
             podcastListFragment = new PodcastListFragment();
             getFragmentManager()
                     .beginTransaction()
@@ -132,7 +132,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                     .commit();
         }
         // On small screens in landscape mode, add the episode list fragment
-        if (viewMode.isSmallLandscape() && episodeListFragment == null) {
+        if (view.isSmallLandscape() && episodeListFragment == null) {
             episodeListFragment = new EpisodeListFragment();
             getFragmentManager()
                     .beginTransaction()
@@ -147,7 +147,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
      */
     private void restoreSelection() {
         // Re-select previously selected podcast(s)
-        if (selection.isAllMode())
+        if (selection.isAll())
             onAllPodcastsSelected();
         else if (selection.isPodcastSet())
             onPodcastSelected(selection.getPodcast());
@@ -195,7 +195,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         super.onResume();
 
         // Reset podcast list fragment in small portrait mode
-        if (viewMode.isSmallPortrait() && selection.isAllMode())
+        if (view.isSmallPortrait() && selection.isAll())
             podcastListFragment.selectNone();
 
         // Podcast list has been changed while we were stopped
@@ -210,12 +210,12 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             updateActionBar();
 
             // Only act if we are not in select all mode
-            if (!selection.isAllMode()) {
+            if (!selection.isAll()) {
                 // Selected podcast was deleted
                 if (!selection.isPodcastSet())
                     onNoPodcastSelected();
                 // Show the last podcast added if not in small portrait mode
-                else if (!viewMode.isSmallPortrait())
+                else if (!view.isSmallPortrait())
                     onPodcastSelected(selection.getPodcast());
             }
         }
@@ -251,7 +251,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     public void onBackStackChanged() {
         // This only needed in small landscape mode and in case
         // we go back to the episode list
-        if (viewMode.isSmallLandscape()
+        if (view.isSmallLandscape()
                 && getFragmentManager().getBackStackEntryCount() == 0) {
             onNoEpisodeSelected();
         }
@@ -295,7 +295,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     public void onPodcastSelected(Podcast podcast) {
         super.onPodcastSelected(podcast);
 
-        if (viewMode.isSmallPortrait()) {
+        if (view.isSmallPortrait()) {
             // We need to launch a new activity to display the episode list
             Intent intent = new Intent(this, ShowEpisodeListActivity.class);
 
@@ -316,7 +316,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // Prepare podcast list fragment
         podcastListFragment.selectAll();
 
-        if (viewMode.isSmallPortrait()) {
+        if (view.isSmallPortrait()) {
             // We need to launch a new activity to display the episode list
             Intent intent = new Intent(this, ShowEpisodeListActivity.class);
 
@@ -341,11 +341,11 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
         // Only react on progress here, if the activity is visible
-        if (!viewMode.isSmallPortrait()) {
+        if (!view.isSmallPortrait()) {
             super.onPodcastLoadProgress(podcast, progress);
 
             // We are in select all mode, show progress in podcast list
-            if (selection.isAllMode())
+            if (selection.isAll())
                 podcastListFragment.showProgress(podcastManager.indexOf(podcast), progress);
         }
     }
@@ -359,7 +359,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         podcastManager.loadLogo(podcast);
 
         // In small portrait mode, work is done in separate activity
-        if (!viewMode.isSmallPortrait())
+        if (!view.isSmallPortrait())
             super.onPodcastLoaded(podcast);
     }
 
@@ -368,7 +368,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         podcastListFragment.refresh();
 
         // In small portrait mode, work is done in separate activity
-        if (!viewMode.isSmallPortrait())
+        if (!view.isSmallPortrait())
             super.onPodcastLoadFailed(failedPodcast);
     }
 
@@ -385,9 +385,9 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     protected void updateLogoViewMode() {
         LogoViewMode logoViewMode = LogoViewMode.NONE;
 
-        if (viewMode.isLargeLandscape() && !selection.isAllMode())
+        if (view.isLargeLandscape() && !selection.isAll())
             logoViewMode = LogoViewMode.LARGE;
-        else if (viewMode.isSmallPortrait())
+        else if (view.isSmallPortrait())
             logoViewMode = LogoViewMode.SMALL;
 
         podcastListFragment.setLogoVisibility(logoViewMode);
@@ -414,7 +414,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     protected void updatePlayer() {
         super.updatePlayer();
 
-        if (viewMode.isSmallPortrait() && playerFragment != null) {
+        if (view.isSmallPortrait() && playerFragment != null) {
             playerFragment.setLoadMenuItemVisibility(false, false);
             playerFragment.setPlayerTitleVisibility(true);
         }

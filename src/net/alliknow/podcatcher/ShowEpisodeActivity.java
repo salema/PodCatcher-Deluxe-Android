@@ -35,7 +35,7 @@ public class ShowEpisodeActivity extends EpisodeActivity {
 
         // In large or landscape layouts we do not need this activity at
         // all, so finish it off
-        if (!viewMode.isSmallPortrait())
+        if (!view.isSmallPortrait())
             finish();
         else {
             // Set the content view
