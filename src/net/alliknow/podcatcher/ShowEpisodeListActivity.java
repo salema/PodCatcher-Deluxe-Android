@@ -62,7 +62,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
                 onDownloadsSelected();
             else if (ContentMode.PLAYLIST.equals(selection.getMode()))
                 onPlaylistSelected();
-            else if (selection.isSingle() && selection.getPodcast() != null)
+            else if (selection.isSingle() && selection.isPodcastSet())
                 onPodcastSelected(selection.getPodcast());
             else
                 episodeListFragment.showLoadFailed();
@@ -82,7 +82,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // Unselect podcast
-                selection.setPodcast(null);
+                selection.resetPodcast();
 
                 // This is called when the Home (Up) button is pressed
                 finish();
@@ -96,8 +96,8 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
 
     @Override
     public void onBackPressed() {
-        // Unselect episode
-        selection.setPodcast(null);
+        // Unselect podcast
+        selection.resetPodcast();
 
         super.onBackPressed();
     }
@@ -168,7 +168,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
 
         switch (selection.getMode()) {
             case SINGLE_PODCAST:
-                if (selection.getPodcast() == null) {
+                if (!selection.isPodcastSet()) {
                     bar.setTitle(R.string.app_name);
                     bar.setSubtitle(null);
                 }

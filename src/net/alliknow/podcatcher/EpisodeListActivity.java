@@ -146,7 +146,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onAllPodcastsSelected() {
-        selection.setPodcast(null);
+        selection.resetPodcast();
         selection.setMode(ContentMode.ALL_PODCASTS);
 
         this.currentEpisodeList = new ArrayList<Episode>();
@@ -180,7 +180,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onDownloadsSelected() {
-        selection.setPodcast(null);
+        selection.resetPodcast();
         selection.setMode(ContentMode.DOWNLOADS);
 
         this.currentEpisodeList = episodeManager.getDownloads();
@@ -213,7 +213,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onPlaylistSelected() {
-        selection.setPodcast(null);
+        selection.resetPodcast();
         selection.setMode(ContentMode.PLAYLIST);
 
         this.currentEpisodeList = episodeManager.getPlaylist();
@@ -246,7 +246,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onNoPodcastSelected() {
-        selection.setPodcast(null);
+        selection.resetPodcast();
         selection.setMode(ContentMode.SINGLE_PODCAST);
 
         this.currentEpisodeList = null;
@@ -304,6 +304,10 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         else if (selection.isAll() && podcastManager.getLoadCount() == 0
                 && (currentEpisodeList == null || currentEpisodeList.isEmpty()))
             episodeListFragment.showLoadFailed();
+        // One of many podcasts failed to load
+        else if (selection.isAll())
+            showToast("Podcast\n\"" + failedPodcast.getName() + "\"\n"
+                    + getString(R.string.error_podcast_load_multiple));
     }
 
     @Override
@@ -412,11 +416,9 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
      * Update the divider views to reflect current selection state.
      */
     protected void updateDivider() {
-        colorDivider(R.id.divider_first,
-                selection.getPodcast() != null || !selection.isSingle());
-        colorDivider(R.id.divider_second,
-                currentEpisodeList != null
-                        && currentEpisodeList.indexOf(selection.getEpisode()) >= 0);
+        colorDivider(R.id.divider_first, selection.isPodcastSet() || !selection.isSingle());
+        colorDivider(R.id.divider_second, currentEpisodeList != null
+                && currentEpisodeList.indexOf(selection.getEpisode()) >= 0);
     }
 
     private void colorDivider(int dividerViewId, boolean colorId) {

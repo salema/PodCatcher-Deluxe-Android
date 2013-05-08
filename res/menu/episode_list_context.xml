@@ -29,16 +29,6 @@
         android:showAsAction="always"
         android:title="@string/old" />
     <item
-        android:id="@+id/episode_download_contextmenuitem"
-        android:icon="@drawable/ic_menu_download"
-        android:showAsAction="ifRoom"
-        android:title="@string/download" />
-    <item
-        android:id="@+id/episode_remove_contextmenuitem"
-        android:icon="@drawable/ic_menu_delete"
-        android:showAsAction="ifRoom"
-        android:title="@string/remove" />
-    <item
         android:id="@+id/episode_add_to_playlist_contextmenuitem"
         android:icon="@drawable/ic_menu_playlist_add"
         android:showAsAction="always"
@@ -48,6 +38,16 @@
         android:icon="@drawable/ic_menu_playlist_remove"
         android:showAsAction="always"
         android:title="@string/playlist_remove" />
+    <item
+        android:id="@+id/episode_download_contextmenuitem"
+        android:icon="@drawable/ic_menu_download"
+        android:showAsAction="ifRoom"
+        android:title="@string/download" />
+    <item
+        android:id="@+id/episode_remove_contextmenuitem"
+        android:icon="@drawable/ic_menu_delete"
+        android:showAsAction="ifRoom"
+        android:title="@string/remove" />
     <item
         android:id="@+id/episode_select_all_contextmenuitem"
         android:showAsAction="never"

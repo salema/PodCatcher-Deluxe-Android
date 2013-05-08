@@ -235,7 +235,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onNoEpisodeSelected() {
-        selection.setEpisode(null);
+        selection.resetEpisode();
 
         updatePlayerUi();
     }
@@ -291,7 +291,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
         if (service.isLoadedEpisode(selection.getEpisode()))
             service.reset();
         // Play called on unloaded episode
-        else if (selection.getEpisode() != null)
+        else if (selection.isEpisodeSet())
             service.playEpisode(selection.getEpisode());
 
         // Update UI
@@ -404,7 +404,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
             final boolean downloading = episodeManager.isDownloading(selection.getEpisode());
             final boolean downloaded = episodeManager.isDownloaded(selection.getEpisode());
 
-            episodeFragment.setDownloadMenuItemVisibility(selection.getEpisode() != null,
+            episodeFragment.setDownloadMenuItemVisibility(selection.isEpisodeSet(),
                     !(downloading || downloaded));
             episodeFragment.setDownloadIconVisibility(downloading || downloaded, downloaded);
         }
@@ -439,7 +439,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
             final boolean currentEpisodeIsShowing = service.isLoadedEpisode(selection.getEpisode());
 
             // Show/hide menu item
-            playerFragment.setLoadMenuItemVisibility(selection.getEpisode() != null,
+            playerFragment.setLoadMenuItemVisibility(selection.isEpisodeSet(),
                     !currentEpisodeIsShowing);
 
             // Make sure player is shown if and as needed (update the details
@@ -468,6 +468,20 @@ public abstract class EpisodeActivity extends BaseActivity implements
         }
     }
 
+    /**
+     * Show a short, centered toast.
+     * 
+     * @param text Toast message text to show.
+     */
+    protected void showToast(String text) {
+        Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
+
+        TextView textView = (TextView) toast.getView().findViewById(android.R.id.message);
+        textView.setGravity(Gravity.CENTER);
+
+        toast.show();
+    }
+
     private void startPlayProgressTimer() {
         // Do not start the task if there is no progress to monitor and we are
         // visible (this fixes the case of stacked activities running the timer)
@@ -493,15 +507,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
             playUpdateTimerTask.cancel();
             playUpdateTimerTask = null;
         }
-    }
-
-    private void showToast(String text) {
-        Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
-
-        TextView textView = (TextView) toast.getView().findViewById(android.R.id.message);
-        textView.setGravity(Gravity.CENTER);
-
-        toast.show();
     }
 
     /** Defines callbacks for service binding, passed to bindService() */

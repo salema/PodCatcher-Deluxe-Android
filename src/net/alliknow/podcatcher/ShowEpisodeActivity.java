@@ -56,7 +56,7 @@ public class ShowEpisodeActivity extends EpisodeActivity {
             registerListeners();
 
             // 4. Set episode in fragment UI
-            if (selection.getEpisode() != null)
+            if (selection.isEpisodeSet())
                 onEpisodeSelected(selection.getEpisode());
         }
     }
@@ -74,7 +74,7 @@ public class ShowEpisodeActivity extends EpisodeActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // Unselect episode
-                selection.setEpisode(null);
+                selection.resetEpisode();
 
                 // This is called when the Home (Up) button is pressed
                 finish();
@@ -89,7 +89,7 @@ public class ShowEpisodeActivity extends EpisodeActivity {
     @Override
     public void onBackPressed() {
         // Unselect episode
-        selection.setEpisode(null);
+        selection.resetEpisode();
 
         super.onBackPressed();
     }
