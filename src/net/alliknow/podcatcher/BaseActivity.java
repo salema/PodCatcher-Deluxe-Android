@@ -18,6 +18,7 @@
 package net.alliknow.podcatcher;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -45,7 +46,7 @@ public abstract class BaseActivity extends Activity {
     protected PodcastManager podcastManager;
 
     /** The currently active view mode */
-    protected ViewMode viewMode;
+    protected ViewMode view;
     /** The currently active selection */
     protected ContentSelection selection;
 
@@ -141,8 +142,46 @@ public abstract class BaseActivity extends Activity {
         /**
          * @return Whether the app is currently in all podcasts mode.
          */
-        public boolean isAllMode() {
+        public boolean isAll() {
             return ContentMode.ALL_PODCASTS.equals(mode);
+        }
+
+        /**
+         * @return Whether a specific podcast is selected.
+         */
+        public boolean isPodcastSet() {
+            return currentPodcast != null;
+        }
+
+        /**
+         * @return Whether a specific episode is selected.
+         */
+        public boolean isEpisodeSet() {
+            return currentEpisode != null;
+        }
+
+        /**
+         * Completely reset the selection to its initial state.
+         */
+        public void reset() {
+            this.mode = ContentMode.SINGLE_PODCAST;
+            resetPodcast();
+            resetEpisode();
+        }
+
+        /**
+         * Reset the podcast selection.
+         */
+        public void resetPodcast() {
+            this.currentPodcast = null;
+            this.mode = ContentMode.SINGLE_PODCAST;
+        }
+
+        /**
+         * Reset the episode selection.
+         */
+        public void resetEpisode() {
+            this.currentEpisode = null;
         }
     }
 
@@ -157,7 +196,7 @@ public abstract class BaseActivity extends Activity {
         // Set the selection member
         selection = ContentSelection.getInstance();
         // Set the view mode member
-        viewMode = ViewMode.determineViewMode(getResources());
+        view = ViewMode.determineViewMode(getResources());
 
         // Set the data manager
         podcastManager = PodcastManager.getInstance();
@@ -185,5 +224,17 @@ public abstract class BaseActivity extends Activity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /**
+     * Gets the fragment for a given tag string id (resolved via app's
+     * resources) from the fragment manager.
+     * 
+     * @param tagId Id of the tag string in resources.
+     * @return The fragment stored under the given tag or <code>null</code> if
+     *         not added to the fragment manager.
+     */
+    protected Fragment findByTagId(int tagId) {
+        return getFragmentManager().findFragmentByTag(getString(tagId));
     }
 }

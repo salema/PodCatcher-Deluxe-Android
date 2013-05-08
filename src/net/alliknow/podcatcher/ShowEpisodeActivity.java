@@ -35,7 +35,7 @@ public class ShowEpisodeActivity extends EpisodeActivity {
 
         // In large or landscape layouts we do not need this activity at
         // all, so finish it off
-        if (!viewMode.isSmallPortrait())
+        if (!view.isSmallPortrait())
             finish();
         else {
             // Set the content view
@@ -54,7 +54,7 @@ public class ShowEpisodeActivity extends EpisodeActivity {
             }
 
             // Set it
-            if (selection.getEpisode() != null)
+            if (selection.isEpisodeSet())
                 onEpisodeSelected(selection.getEpisode());
         }
     }
@@ -72,7 +72,7 @@ public class ShowEpisodeActivity extends EpisodeActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // Unselect episode
-                selection.setEpisode(null);
+                selection.resetEpisode();
 
                 // This is called when the Home (Up) button is pressed
                 finish();
@@ -87,7 +87,7 @@ public class ShowEpisodeActivity extends EpisodeActivity {
     @Override
     public void onBackPressed() {
         // Unselect episode
-        selection.setEpisode(null);
+        selection.resetEpisode();
 
         super.onBackPressed();
     }

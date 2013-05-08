@@ -17,7 +17,6 @@
 
 package net.alliknow.podcatcher;
 
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Context;
@@ -26,7 +25,10 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
@@ -162,7 +164,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
     public void onEpisodeSelected(Episode selectedEpisode) {
         selection.setEpisode(selectedEpisode);
 
-        switch (viewMode) {
+        switch (view) {
             case LARGE_PORTRAIT:
             case LARGE_LANDSCAPE:
                 // Set episode in episode fragment
@@ -205,7 +207,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onNoEpisodeSelected() {
-        selection.setEpisode(null);
+        selection.resetEpisode();
 
         updatePlayer();
     }
@@ -214,7 +216,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
     public void onToggleLoad() {
         if (service.isLoadedEpisode(selection.getEpisode()))
             onPlaybackComplete();
-        else if (selection.getEpisode() != null) {
+        else if (selection.isEpisodeSet()) {
             stopPlayProgressTimer();
 
             service.playEpisode(selection.getEpisode());
@@ -329,7 +331,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
             final boolean currentEpisodeIsShowing = service.isLoadedEpisode(selection.getEpisode());
 
             // Show/hide menu item
-            playerFragment.setLoadMenuItemVisibility(selection.getEpisode() != null,
+            playerFragment.setLoadMenuItemVisibility(selection.isEpisodeSet(),
                     !currentEpisodeIsShowing);
 
             final boolean showPlayer = service.isPreparing() || service.isPrepared();
@@ -338,9 +340,9 @@ public abstract class EpisodeActivity extends BaseActivity implements
                 // Make sure error view is hidden
                 playerFragment.setErrorViewVisibility(false);
                 // Show/hide title and seek bar
-                playerFragment.setPlayerTitleVisibility(!viewMode.isSmallLandscape()
+                playerFragment.setPlayerTitleVisibility(!view.isSmallLandscape()
                         && !currentEpisodeIsShowing);
-                playerFragment.setPlayerSeekbarVisibility(!viewMode.isSmallLandscape());
+                playerFragment.setPlayerSeekbarVisibility(!view.isSmallLandscape());
 
                 // Update UI to reflect service status
                 playerFragment.updatePlayerTitle(service.getCurrentEpisode());
@@ -353,15 +355,17 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     /**
-     * Gets the fragment for a given tag string id (resolved via app's
-     * resources) from the fragment manager.
+     * Show a short, centered toast.
      * 
-     * @param tagId Id of the tag string in resources.
-     * @return The fragment stored under the given tag or <code>null</code> if
-     *         not added to the fragment manager.
+     * @param text Toast message text to show.
      */
-    protected Fragment findByTagId(int tagId) {
-        return getFragmentManager().findFragmentByTag(getString(tagId));
+    protected void showToast(String text) {
+        Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
+
+        TextView textView = (TextView) toast.getView().findViewById(android.R.id.message);
+        textView.setGravity(Gravity.CENTER);
+
+        toast.show();
     }
 
     private void startPlayProgressTimer() {

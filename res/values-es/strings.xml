@@ -70,6 +70,7 @@
     <string name="enter_podcast_url_here">Insertar URL del podcast</string>
     <string name="error_podcast_add">El podcast no se pudo cargar.</string>
     <string name="error_podcast_load">El podcast no se pudo cargar. Comprueba la URL y asegúrate de que estás conectado.</string>
+    <string name="error_podcast_load_multiple">no se pudo cargar.</string>
     <string name="no_episode_description">No hay ninguna descripción disponible.</string>
     <string name="ad">Trate &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt;: Descargas, listas, filtros y mucho más!</string>
 </resources>

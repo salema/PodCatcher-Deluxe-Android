@@ -46,7 +46,9 @@
         android:minHeight="20dp"
         android:paddingLeft="@dimen/episode_view_padding"
         android:textSize="@dimen/font_size_small"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:singleLine="true"
+        android:ellipsize="end" />
     <ImageView
         android:id="@+id/episode_divider"
         android:layout_width="match_parent"
