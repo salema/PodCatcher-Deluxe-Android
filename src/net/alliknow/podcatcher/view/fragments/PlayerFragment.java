@@ -292,6 +292,7 @@ public class PlayerFragment extends Fragment {
             // Buffering...
             if (buffering) {
                 button.setText(R.string.buffering);
+                button.setBackgroundResource(R.drawable.button_red);
                 button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_rotate, 0, 0, 0);
             } // Playing or paused
             else {
