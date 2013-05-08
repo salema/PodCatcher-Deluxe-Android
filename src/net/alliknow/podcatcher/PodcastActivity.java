@@ -159,7 +159,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // Re-select previously selected podcast(s)
         if (selection.isAll())
             onAllPodcastsSelected();
-        else if (selection.isSingle() && selection.getPodcast() != null)
+        else if (selection.isSingle() && selection.isPodcastSet())
             onPodcastSelected(selection.getPodcast());
         else if (ContentMode.DOWNLOADS.equals(selection.getMode()))
             onDownloadsSelected();
@@ -169,7 +169,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             onNoPodcastSelected();
 
         // Re-select previously selected episode
-        if (selection.getEpisode() != null)
+        if (selection.isEpisodeSet())
             onEpisodeSelected(selection.getEpisode());
         else
             onNoEpisodeSelected();
@@ -217,7 +217,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             // Only act if we are not in select all mode
             if (selection.isSingle()) {
                 // Selected podcast was deleted
-                if (selection.getPodcast() == null)
+                if (!selection.isPodcastSet())
                     onNoPodcastSelected();
                 // Show the last podcast added if not in small portrait mode
                 else if (!view.isSmallPortrait())

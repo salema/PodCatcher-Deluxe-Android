@@ -291,7 +291,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
         if (service.isLoadedEpisode(selection.getEpisode()))
             service.reset();
         // Play called on unloaded episode
-        else if (selection.getEpisode() != null)
+        else if (selection.isEpisodeSet())
             service.playEpisode(selection.getEpisode());
 
         // Update UI
@@ -404,7 +404,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
             final boolean downloading = episodeManager.isDownloading(selection.getEpisode());
             final boolean downloaded = episodeManager.isDownloaded(selection.getEpisode());
 
-            episodeFragment.setDownloadMenuItemVisibility(selection.getEpisode() != null,
+            episodeFragment.setDownloadMenuItemVisibility(selection.isEpisodeSet(),
                     !(downloading || downloaded));
             episodeFragment.setDownloadIconVisibility(downloading || downloaded, downloaded);
         }
@@ -439,7 +439,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
             final boolean currentEpisodeIsShowing = service.isLoadedEpisode(selection.getEpisode());
 
             // Show/hide menu item
-            playerFragment.setLoadMenuItemVisibility(selection.getEpisode() != null,
+            playerFragment.setLoadMenuItemVisibility(selection.isEpisodeSet(),
                     !currentEpisodeIsShowing);
 
             // Make sure player is shown if and as needed (update the details
