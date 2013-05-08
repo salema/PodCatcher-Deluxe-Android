@@ -144,6 +144,35 @@ public abstract class BaseActivity extends Activity {
         public boolean isAllMode() {
             return ContentMode.ALL_PODCASTS.equals(mode);
         }
+
+        /**
+         * @return Whether a specific podcast is selected.
+         */
+        public boolean isPodcastSet() {
+            return currentPodcast != null;
+        }
+
+        /**
+         * @return Whether a specific episode is selected.
+         */
+        public boolean isEpisodeSet() {
+            return currentEpisode != null;
+        }
+
+        /**
+         * Reset the podcast selection.
+         */
+        public void resetPodcast() {
+            this.currentPodcast = null;
+            this.mode = ContentMode.SINGLE_PODCAST;
+        }
+
+        /**
+         * Reset the episode selection.
+         */
+        public void resetEpisode() {
+            this.currentEpisode = null;
+        }
     }
 
     @Override

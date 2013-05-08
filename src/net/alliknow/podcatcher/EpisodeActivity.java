@@ -214,7 +214,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
     public void onToggleLoad() {
         if (service.isLoadedEpisode(selection.getEpisode()))
             onPlaybackComplete();
-        else if (selection.getEpisode() != null) {
+        else if (selection.isEpisodeSet()) {
             stopPlayProgressTimer();
 
             service.playEpisode(selection.getEpisode());
@@ -329,7 +329,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
             final boolean currentEpisodeIsShowing = service.isLoadedEpisode(selection.getEpisode());
 
             // Show/hide menu item
-            playerFragment.setLoadMenuItemVisibility(selection.getEpisode() != null,
+            playerFragment.setLoadMenuItemVisibility(selection.isEpisodeSet(),
                     !currentEpisodeIsShowing);
 
             final boolean showPlayer = service.isPreparing() || service.isPrepared();

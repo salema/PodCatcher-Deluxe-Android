@@ -56,7 +56,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
             // Act accordingly
             if (selection.isAllMode())
                 onAllPodcastsSelected();
-            else if (selection.getPodcast() != null)
+            else if (selection.isPodcastSet())
                 onPodcastSelected(selection.getPodcast());
             else
                 episodeListFragment.showLoadFailed();
@@ -68,7 +68,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // Unselect podcast
-                selection.setPodcast(null);
+                selection.resetPodcast();
 
                 // This is called when the Home (Up) button is pressed
                 finish();
@@ -82,8 +82,8 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
 
     @Override
     public void onBackPressed() {
-        // Unselect episode
-        selection.setPodcast(null);
+        // Unselect podcast
+        selection.resetPodcast();
 
         super.onBackPressed();
     }
@@ -131,7 +131,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         final ActionBar bar = getActionBar();
 
         // Single podcast selected
-        if (selection.getPodcast() != null) {
+        if (selection.isPodcastSet()) {
             bar.setTitle(selection.getPodcast().getName());
 
             if (selection.getPodcast().getEpisodes().isEmpty())

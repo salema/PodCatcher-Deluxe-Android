@@ -270,7 +270,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
      * Update the divider views to reflect current selection state.
      */
     protected void updateDivider() {
-        colorDivider(R.id.divider_first, selection.getPodcast() != null || selection.isAllMode());
+        colorDivider(R.id.divider_first, selection.isPodcastSet() || selection.isAllMode());
         colorDivider(R.id.divider_second,
                 currentEpisodeList != null
                         && currentEpisodeList.indexOf(selection.getEpisode()) >= 0);
