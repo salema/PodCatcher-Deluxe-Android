@@ -146,7 +146,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onAllPodcastsSelected() {
-        selection.setPodcast(null);
+        selection.resetPodcast();
         selection.setMode(ContentMode.ALL_PODCASTS);
 
         this.currentEpisodeList = new ArrayList<Episode>();
@@ -180,7 +180,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onDownloadsSelected() {
-        selection.setPodcast(null);
+        selection.resetPodcast();
         selection.setMode(ContentMode.DOWNLOADS);
 
         this.currentEpisodeList = episodeManager.getDownloads();
@@ -213,7 +213,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onPlaylistSelected() {
-        selection.setPodcast(null);
+        selection.resetPodcast();
         selection.setMode(ContentMode.PLAYLIST);
 
         this.currentEpisodeList = episodeManager.getPlaylist();
@@ -246,7 +246,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onNoPodcastSelected() {
-        selection.setPodcast(null);
+        selection.resetPodcast();
         selection.setMode(ContentMode.SINGLE_PODCAST);
 
         this.currentEpisodeList = null;
