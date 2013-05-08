@@ -54,7 +54,9 @@
                 android:minHeight="20dp"
                 android:paddingLeft="@dimen/episode_view_padding"
                 android:textSize="@dimen/font_size_small"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:singleLine="true"
+                android:ellipsize="end" />
         </LinearLayout>
         <RelativeLayout
             android:layout_width="wrap_content"
