@@ -207,7 +207,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onNoEpisodeSelected() {
-        selection.setEpisode(null);
+        selection.resetEpisode();
 
         updatePlayer();
     }
