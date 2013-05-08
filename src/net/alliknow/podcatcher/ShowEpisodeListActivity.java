@@ -168,7 +168,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
 
         switch (selection.getMode()) {
             case SINGLE_PODCAST:
-                if (selection.isPodcastSet()) {
+                if (!selection.isPodcastSet()) {
                     bar.setTitle(R.string.app_name);
                     bar.setSubtitle(null);
                 }
