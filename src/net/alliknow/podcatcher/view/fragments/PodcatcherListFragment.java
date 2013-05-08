@@ -48,8 +48,6 @@ public abstract class PodcatcherListFragment extends ListFragment {
     /** The list adapter */
     protected PodcatcherBaseListAdapter adapter;
 
-    /** Select all podcasts menu item */
-    protected MenuItem selectAllMenuItem;
     /** The empty view */
     protected TextView emptyView;
     /** The progress bar */
@@ -103,8 +101,6 @@ public abstract class PodcatcherListFragment extends ListFragment {
         // sub-class fragment is showing
         if (menu.findItem(R.id.podcast_select_all_menuitem) == null)
             inflater.inflate(R.menu.content_modes, menu);
-
-        selectAllMenuItem = (MenuItem) menu.findItem(R.id.podcast_select_all_menuitem);
     }
 
     @Override
