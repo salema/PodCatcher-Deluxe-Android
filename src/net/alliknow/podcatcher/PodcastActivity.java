@@ -208,12 +208,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             // Reset flag
             podcastListChanged = false;
 
-            // Update podcast list
-            podcastListFragment.setPodcastList(podcastManager.getPodcastList());
-
-            // Update UI
-            updateActionBar();
-
             // Only act if we are not in select all mode
             if (selection.isSingle()) {
                 // Selected podcast was deleted
@@ -285,6 +279,11 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // Pick up the change in onRestart()
         podcastListChanged = true;
 
+        // Update podcast list
+        podcastListFragment.setPodcastList(podcastManager.getPodcastList());
+        // Update UI
+        updateActionBar();
+
         // Set the member
         selection.setPodcast(podcast);
     }
@@ -293,6 +292,11 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     public void onPodcastRemoved(Podcast podcast) {
         // Pick up the change in onRestart()
         podcastListChanged = true;
+
+        // Update podcast list
+        podcastListFragment.setPodcastList(podcastManager.getPodcastList());
+        // Update UI
+        updateActionBar();
 
         // Reset member if deleted
         if (podcast.equals(selection.getPodcast()))
