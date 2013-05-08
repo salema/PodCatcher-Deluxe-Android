@@ -192,6 +192,9 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     public void onEpisodeMetadataLoaded(Map<URL, EpisodeMetadata> metadata) {
         this.metadata = metadata;
         this.metadataChanged = false;
+
+        // Here we need to release all threads (AsyncTasks) waiting for the
+        // episode metadata to finally load
     }
 
     /**

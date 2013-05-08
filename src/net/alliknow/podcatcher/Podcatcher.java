@@ -102,12 +102,15 @@ public class Podcatcher extends Application implements OnLoadEpisodeMetadataList
         SuggestionManager.getInstance(this);
 
         // Now we will trigger the preparation on start-up, steps include:
-        // 1. Load episode metadata from file
+        // 1. Load episode metadata from file (do not wait for this to finish)
         // 2. Load podcast list from file
         // 3. Tell the UI to start
 
         // This starts step 1
         new LoadEpisodeMetadataTask(this, this).execute((Void) null);
+        // This is step 2
+        // Load list of podcasts from OPML file on start-up
+        new LoadPodcastListTask(this, this).execute((Void) null);
     }
 
     @Override
@@ -115,10 +118,6 @@ public class Podcatcher extends Application implements OnLoadEpisodeMetadataList
         // Step 1 finished
         // Make episode manager aware
         EpisodeManager.getInstance().onEpisodeMetadataLoaded(result);
-
-        // This is step 2
-        // Load list of podcasts from OPML file on start-up
-        new LoadPodcastListTask(this, this).execute((Void) null);
     }
 
     @Override
