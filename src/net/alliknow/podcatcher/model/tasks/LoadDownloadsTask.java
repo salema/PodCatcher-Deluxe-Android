@@ -27,7 +27,7 @@ import net.alliknow.podcatcher.model.types.Episode;
 import java.util.List;
 
 /**
- * Get the list of downloads from the episode manager
+ * Get the list of downloads from the episode manager.
  */
 public class LoadDownloadsTask extends AsyncTask<Void, Void, List<Episode>> {
 

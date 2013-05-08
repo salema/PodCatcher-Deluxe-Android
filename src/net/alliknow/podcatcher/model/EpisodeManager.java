@@ -83,6 +83,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     /** The application itself */
     private Podcatcher podcatcher;
 
+    /** Latch we use to block all threads until we have our data */
     private CountDownLatch latch = new CountDownLatch(1);
 
     /** Helper to make playlist methods more efficient */
@@ -204,7 +205,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     /**
      * This blocks the calling thread until the episode metadata has become
      * available on the application's start-up. Once the metadata is read, the
-     * method return immediately.
+     * method returns immediately.
      * 
      * @throws InterruptedException When the thread is interrupted while
      *             waiting.
