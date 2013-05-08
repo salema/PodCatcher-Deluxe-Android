@@ -68,6 +68,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Manager to handle episode specific activities.
@@ -81,6 +82,8 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     private static EpisodeManager manager;
     /** The application itself */
     private Podcatcher podcatcher;
+
+    private CountDownLatch latch = new CountDownLatch(1);
 
     /** Helper to make playlist methods more efficient */
     private int playlistSize = -1;
@@ -195,6 +198,19 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
         // Here we need to release all threads (AsyncTasks) waiting for the
         // episode metadata to finally load
+        latch.countDown();
+    }
+
+    /**
+     * This blocks the calling thread until the episode metadata has become
+     * available on the application's start-up. Once the metadata is read, the
+     * method return immediately.
+     * 
+     * @throws InterruptedException When the thread is interrupted while
+     *             waiting.
+     */
+    public void blockUntilEpisodeMetadataIsLoaded() throws InterruptedException {
+        latch.await();
     }
 
     /**

@@ -275,7 +275,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             LoadPodcastLogoTask task = new LoadPodcastLogoTask(this, LOGO_DIMENSION, LOGO_DIMENSION);
             task.setOnlyIfCached(!podcatcher.isOnline());
             task.setLoadLimit(MAX_LOGO_SIZE);
-            task.execute(podcast);
+            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
 
             loadPodcastLogoTasks.put(podcast, task);
         }

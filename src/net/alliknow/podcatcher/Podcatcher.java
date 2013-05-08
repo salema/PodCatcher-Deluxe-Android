@@ -23,23 +23,20 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.http.HttpResponseCache;
+import android.os.AsyncTask;
 import android.util.Log;
 
-import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.SuggestionManager;
 import net.alliknow.podcatcher.model.tasks.LoadEpisodeMetadataTask;
 import net.alliknow.podcatcher.model.tasks.LoadPodcastListTask;
-import net.alliknow.podcatcher.model.types.EpisodeMetadata;
 import net.alliknow.podcatcher.model.types.Podcast;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Our application subclass. Holds global state and model. The Podcatcher
@@ -48,8 +45,7 @@ import java.util.Map;
  * instances of our model data and data managers. In addition, it provides some
  * generic convenience methods.
  */
-public class Podcatcher extends Application implements OnLoadEpisodeMetadataListener,
-        OnLoadPodcastListListener {
+public class Podcatcher extends Application implements OnLoadPodcastListListener {
 
     /**
      * The amount of dp establishing the border between small and large screen
@@ -107,17 +103,12 @@ public class Podcatcher extends Application implements OnLoadEpisodeMetadataList
         // 3. Tell the UI to start
 
         // This starts step 1
-        new LoadEpisodeMetadataTask(this, this).execute((Void) null);
+        new LoadEpisodeMetadataTask(this, EpisodeManager.getInstance())
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
         // This is step 2
         // Load list of podcasts from OPML file on start-up
-        new LoadPodcastListTask(this, this).execute((Void) null);
-    }
-
-    @Override
-    public void onEpisodeMetadataLoaded(Map<URL, EpisodeMetadata> result) {
-        // Step 1 finished
-        // Make episode manager aware
-        EpisodeManager.getInstance().onEpisodeMetadataLoaded(result);
+        new LoadPodcastListTask(this, this)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
     }
 
     @Override
