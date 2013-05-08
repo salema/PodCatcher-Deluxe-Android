@@ -177,6 +177,15 @@ public abstract class BaseActivity extends Activity {
         }
 
         /**
+         * Completely reset the selection to its initial state.
+         */
+        public void reset() {
+            this.mode = ContentMode.SINGLE_PODCAST;
+            resetPodcast();
+            resetEpisode();
+        }
+
+        /**
          * Reset the podcast selection.
          */
         public void resetPodcast() {

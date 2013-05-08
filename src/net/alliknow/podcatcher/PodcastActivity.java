@@ -45,12 +45,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     protected PodcastListFragment podcastListFragment;
 
     /**
-     * Flag indicating whether the podcast list changed while the activity was
-     * paused or stopped.
-     */
-    private boolean podcastListChanged = false;
-
-    /**
      * Flag indicating whether the app should show the add podcast dialog if the
      * list of podcasts is empty.
      */
@@ -83,7 +77,8 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // know then, whether the list is actually empty. Also do not show it if
         // we are given an URL in the intent, because this will trigger the
         // dialog anyway
-        showAddPodcastOnEmptyPodcastList = (savedInstanceState == null && getIntent().getData() == null);
+        showAddPodcastOnEmptyPodcastList =
+                (savedInstanceState == null && getIntent().getData() == null);
         // Check if podcast list is available - if so, set it
         List<Podcast> podcastList = podcastManager.getPodcastList();
         if (podcastList != null) {
@@ -91,14 +86,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
             // We only reset our state if the podcast list is available, because
             // otherwise we will not be able to select anything.
-            // There are two cases to cover here:
-            // 1. We come back from a configuration change and restore from the
-            // bundle saved at onSaveInstanceState()
-            if (savedInstanceState != null)
-                restoreSelection();
-            // 2. We are (re)started and the intent contains some
-            // information we need to parse
-            else if (getIntent().hasExtra(MODE_KEY))
+            if (getIntent().hasExtra(MODE_KEY))
                 onNewIntent(getIntent());
         }
 
@@ -152,10 +140,40 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         getFragmentManager().addOnBackStackChangedListener(this);
     };
 
-    /**
-     * Restore selection to match member variables
-     */
-    private void restoreSelection() {
+    @Override
+    protected void onNewIntent(Intent intent) {
+        // This is an external call to add a new podcast
+        if (intent.getData() != null) {
+            Intent addPodcast = new Intent(this, AddPodcastActivity.class);
+            addPodcast.setData(intent.getData());
+
+            // We need to cut back the selection here when is small portrait
+            // mode to prevent other activities from covering the add podcast
+            // dialog
+            if (view.isSmallPortrait())
+                selection.reset();
+
+            startActivity(addPodcast);
+            // Reset data to prevent this intent from fire again on the next
+            // configuration change
+            intent.setData(null);
+        }
+        // This is an internal call to update the selection
+        else if (intent.hasExtra(MODE_KEY)) {
+            selection.setMode((ContentMode) intent.getSerializableExtra(MODE_KEY));
+            selection.setPodcast(podcastManager.findPodcastForUrl(
+                    intent.getStringExtra(PODCAST_URL_KEY)));
+            selection.setEpisode(podcastManager.findEpisodeForUrl(
+                    intent.getStringExtra(EPISODE_URL_KEY)));
+
+            // onResume() will be called after this and do the actual selection
+        }
+    }
+
+    protected void onResume() {
+        super.onResume();
+
+        // Restore UI to match selection:
         // Re-select previously selected podcast(s)
         if (selection.isAll())
             onAllPodcastsSelected();
@@ -173,51 +191,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             onEpisodeSelected(selection.getEpisode());
         else
             onNoEpisodeSelected();
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        // This is an external call to add a new podcast
-        if (intent.getData() != null) {
-            Intent addPodcast = new Intent(this, AddPodcastActivity.class);
-            addPodcast.setData(intent.getData());
-
-            startActivity(addPodcast);
-        }
-        // This is an internal call to update the selection
-        else if (intent.hasExtra(MODE_KEY)) {
-            selection.setMode((ContentMode) intent.getSerializableExtra(MODE_KEY));
-            selection.setPodcast(podcastManager.findPodcastForUrl(
-                    intent.getStringExtra(PODCAST_URL_KEY)));
-            selection.setEpisode(podcastManager.findEpisodeForUrl(
-                    intent.getStringExtra(EPISODE_URL_KEY)));
-
-            restoreSelection();
-        }
-    }
-
-    protected void onResume() {
-        super.onResume();
-
-        // Reset podcast list fragment in small portrait mode
-        if (view.isSmallPortrait() && selection.isAll())
-            podcastListFragment.selectNone();
-
-        // Podcast list has been changed while we were stopped
-        if (podcastListChanged) {
-            // Reset flag
-            podcastListChanged = false;
-
-            // Only act if we are not in select all mode
-            if (selection.isSingle()) {
-                // Selected podcast was deleted
-                if (!selection.isPodcastSet())
-                    onNoPodcastSelected();
-                // Show the last podcast added if not in small portrait mode
-                else if (!view.isSmallPortrait())
-                    onPodcastSelected(selection.getPodcast());
-            }
-        }
 
         // Set podcast logo view mode
         updateLogoViewMode();
@@ -276,31 +249,32 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
     @Override
     public void onPodcastAdded(Podcast podcast) {
-        // Pick up the change in onRestart()
-        podcastListChanged = true;
-
         // Update podcast list
         podcastListFragment.setPodcastList(podcastManager.getPodcastList());
         // Update UI
         updateActionBar();
 
-        // Set the member
-        selection.setPodcast(podcast);
+        // Set the selection to the new podcast
+        if (view.isSmallPortrait())
+            selection.reset();
+        else {
+            selection.setMode(ContentMode.SINGLE_PODCAST);
+            selection.setPodcast(podcast);
+            if (view.isSmallLandscape())
+                selection.resetEpisode();
+        }
     }
 
     @Override
     public void onPodcastRemoved(Podcast podcast) {
-        // Pick up the change in onRestart()
-        podcastListChanged = true;
-
         // Update podcast list
         podcastListFragment.setPodcastList(podcastManager.getPodcastList());
         // Update UI
         updateActionBar();
 
-        // Reset member if deleted
+        // Reset selection if deleted
         if (podcast.equals(selection.getPodcast()))
-            selection.setPodcast(null);
+            selection.resetPodcast();
     }
 
     @Override
