@@ -304,6 +304,10 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         else if (selection.isAll() && podcastManager.getLoadCount() == 0
                 && (currentEpisodeList == null || currentEpisodeList.isEmpty()))
             episodeListFragment.showLoadFailed();
+        // One of many podcasts failed to load
+        else if (selection.isAll())
+            showToast("Podcast\n\"" + failedPodcast.getName() + "\"\n"
+                    + getString(R.string.error_podcast_load_multiple));
     }
 
     @Override

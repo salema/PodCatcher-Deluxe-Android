@@ -81,5 +81,6 @@
     <string name="enter_podcast_url_here">Insérez l\'URL du podcast ici</string>
     <string name="error_podcast_add">Le téléchargement du podcast a échoué.</string>
     <string name="error_podcast_load">Le téléchargement du podcast a échoué. Assurez-vous que vous êtes en ligne.</string>
+    <string name="error_podcast_load_multiple">ne peut pas être mis à jour.</string>
     <string name="no_episode_description">Aucune description disponible.</string>
 </resources>

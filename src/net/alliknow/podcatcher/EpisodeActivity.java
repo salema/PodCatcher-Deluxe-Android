@@ -468,6 +468,20 @@ public abstract class EpisodeActivity extends BaseActivity implements
         }
     }
 
+    /**
+     * Show a short, centered toast.
+     * 
+     * @param text Toast message text to show.
+     */
+    protected void showToast(String text) {
+        Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
+
+        TextView textView = (TextView) toast.getView().findViewById(android.R.id.message);
+        textView.setGravity(Gravity.CENTER);
+
+        toast.show();
+    }
+
     private void startPlayProgressTimer() {
         // Do not start the task if there is no progress to monitor and we are
         // visible (this fixes the case of stacked activities running the timer)
@@ -493,15 +507,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
             playUpdateTimerTask.cancel();
             playUpdateTimerTask = null;
         }
-    }
-
-    private void showToast(String text) {
-        Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
-
-        TextView textView = (TextView) toast.getView().findViewById(android.R.id.message);
-        textView.setGravity(Gravity.CENTER);
-
-        toast.show();
     }
 
     /** Defines callbacks for service binding, passed to bindService() */

@@ -89,5 +89,6 @@
     <string name="enter_podcast_url_here">Copy podcast address here</string>
     <string name="error_podcast_add">New podcast failed to load.</string>
     <string name="error_podcast_load">Cannot load podcast, please make sure you are online!</string>
+    <string name="error_podcast_load_multiple">failed to load.</string>
     <string name="no_episode_description">No description available.</string>
 </resources>
