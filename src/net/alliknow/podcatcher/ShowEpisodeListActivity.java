@@ -100,6 +100,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         selection.resetPodcast();
 
         super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
     }
 
     @Override
