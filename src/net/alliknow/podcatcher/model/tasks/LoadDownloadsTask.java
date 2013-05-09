@@ -24,6 +24,7 @@ import net.alliknow.podcatcher.listeners.OnLoadDownloadsListener;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
@@ -32,15 +33,17 @@ import java.util.List;
 public class LoadDownloadsTask extends AsyncTask<Void, Void, List<Episode>> {
 
     /** Call back */
-    private OnLoadDownloadsListener listener;
+    private WeakReference<OnLoadDownloadsListener> listener;
 
     /**
      * Create new task.
      * 
-     * @param listener Callback to be alerted on completion.
+     * @param listener Callback to be alerted on completion. The listener is
+     *            held as a weak reference, so you can safely call this from an
+     *            activity without leaking it.
      */
     public LoadDownloadsTask(OnLoadDownloadsListener listener) {
-        this.listener = listener;
+        this.listener = new WeakReference<OnLoadDownloadsListener>(listener);
     }
 
     @Override
@@ -61,9 +64,9 @@ public class LoadDownloadsTask extends AsyncTask<Void, Void, List<Episode>> {
 
     @Override
     protected void onPostExecute(List<Episode> downloads) {
-        // List of download available
-        if (listener != null)
-            listener.onDownloadsLoaded(downloads);
+        // List of downloads available
+        if (listener.get() != null)
+            listener.get().onDownloadsLoaded(downloads);
         else
             Log.w(getClass().getSimpleName(),
                     "List of downloads available loaded, but no listener attached");

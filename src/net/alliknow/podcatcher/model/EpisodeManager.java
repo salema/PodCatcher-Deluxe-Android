@@ -50,7 +50,11 @@ import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
 import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
+import net.alliknow.podcatcher.listeners.OnLoadDownloadsListener;
 import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
+import net.alliknow.podcatcher.listeners.OnLoadPlaylistListener;
+import net.alliknow.podcatcher.model.tasks.LoadDownloadsTask;
+import net.alliknow.podcatcher.model.tasks.LoadPlaylistTask;
 import net.alliknow.podcatcher.model.tasks.StoreEpisodeMetadataTask;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
@@ -373,10 +377,14 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
     /**
      * Get the list of downloaded episodes. Returns only episodes fully
-     * available locally. The episodes are sorted by date, latest first.
+     * available locally. The episodes are sorted by date, latest first. Only
+     * call this if you are sure the metadata is already available, if in doubt
+     * use {@link LoadDownloadsTask}.
      * 
      * @return The list of downloaded episodes (might be empty, but not
-     *         <code>null</code>)
+     *         <code>null</code>).
+     * @see LoadDownloadsTask
+     * @see OnLoadDownloadsListener
      */
     public List<Episode> getDownloads() {
         // Create empty result list
@@ -442,6 +450,10 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
     /**
      * @return The current playlist. Might be empty but not <code>null</code>.
+     *         Only call this if you are sure the metadata is already available,
+     *         if in doubt use {@link LoadPlaylistTask}.
+     * @see LoadPlaylistTask
+     * @see OnLoadPlaylistListener
      */
     public List<Episode> getPlaylist() {
         // The resulting playlist
@@ -769,8 +781,6 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     }
 
     private void processDownloadComplete(long downloadId) {
-        // TODO we might face some need for synchronization / concurrent
-        // modification here?
         // Check if this was a download we care for
         for (EpisodeMetadata meta : metadata.values())
             if (meta.downloadId != null && meta.downloadId == downloadId) {

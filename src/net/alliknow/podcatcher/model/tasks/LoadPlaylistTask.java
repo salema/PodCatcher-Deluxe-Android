@@ -24,6 +24,7 @@ import net.alliknow.podcatcher.listeners.OnLoadPlaylistListener;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
@@ -32,15 +33,17 @@ import java.util.List;
 public class LoadPlaylistTask extends AsyncTask<Void, Void, List<Episode>> {
 
     /** Call back */
-    private OnLoadPlaylistListener listener;
+    private WeakReference<OnLoadPlaylistListener> listener;
 
     /**
      * Create new task.
      * 
-     * @param listener Callback to be alerted on completion.
+     * @param listener Callback to be alerted on completion. The listener is
+     *            held as a weak reference, so you can safely call this from an
+     *            activity without leaking it.
      */
     public LoadPlaylistTask(OnLoadPlaylistListener listener) {
-        this.listener = listener;
+        this.listener = new WeakReference<OnLoadPlaylistListener>(listener);
     }
 
     @Override
@@ -48,7 +51,7 @@ public class LoadPlaylistTask extends AsyncTask<Void, Void, List<Episode>> {
         try {
             // Block if episode metadata not yet available
             EpisodeManager.getInstance().blockUntilEpisodeMetadataIsLoaded();
-            // Get the list of downloads
+            // Get the playlist
             return EpisodeManager.getInstance().getPlaylist();
         } catch (Exception e) {
             Log.w(getClass().getSimpleName(), "Load failed for playlist", e);
@@ -61,9 +64,9 @@ public class LoadPlaylistTask extends AsyncTask<Void, Void, List<Episode>> {
 
     @Override
     protected void onPostExecute(List<Episode> playlist) {
-        // List of download available
-        if (listener != null)
-            listener.onPlaylistLoaded(playlist);
+        // Playlist available
+        if (listener.get() != null)
+            listener.get().onPlaylistLoaded(playlist);
         else
             Log.w(getClass().getSimpleName(), "Playlist loaded, but no listener attached");
     }
