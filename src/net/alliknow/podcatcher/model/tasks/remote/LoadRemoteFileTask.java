@@ -140,7 +140,7 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
                 result.write(buffer, 0, bytesRead);
 
                 if (sendLoadProgress)
-                    publishProgress(new Progress(totalBytes, connection.getContentLength()));
+                    publishProgress(new Progress(totalBytes, contentLength));
             }
 
             Log.i(getClass().getSimpleName(), "Load finished after "
