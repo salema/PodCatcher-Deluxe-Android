@@ -205,7 +205,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             // Download podcast RSS feed (async)
             LoadPodcastTask task = new LoadPodcastTask(this);
             task.setOnlyIfCached(!podcatcher.isOnline());
-            task.preventZippedTransfer(podcatcher.isOnFastConnection());
             task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
 
             // Keep task reference, so we can cancel the load and determine
