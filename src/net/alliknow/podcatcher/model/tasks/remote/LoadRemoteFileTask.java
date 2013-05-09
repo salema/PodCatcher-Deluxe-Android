@@ -31,6 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Date;
 
 /**
  * Abstract super class for file download tasks.
@@ -51,8 +52,6 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
     protected int loadLimit = -1;
     /** Flag whether only use cached content */
     protected boolean onlyIfCached = false;
-    /** Whether we prevent zipping on server side */
-    protected boolean preventZippedTransfer = false;
 
     /**
      * Set a load limit for the actual download of the file. The default is a
@@ -77,16 +76,6 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
     }
 
     /**
-     * Whether the load task should prevent server side zipping of transfered
-     * file (improves progress information).
-     * 
-     * @param prevent The flag (default is <code>false</code>).
-     */
-    public void preventZippedTransfer(boolean prevent) {
-        this.preventZippedTransfer = prevent;
-    }
-
-    /**
      * Download the file and return it as a byte array. Will feed
      * {@link #publishProgress(Object...)}.
      * 
@@ -95,6 +84,8 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
      * @throws IOException If something goes wrong.
      */
     protected byte[] loadFile(URL remote) throws IOException {
+        Date start = new Date();
+
         HttpURLConnection connection = (HttpURLConnection) remote.openConnection();
         connection.setConnectTimeout(CONNECT_TIMEOUT);
         connection.setReadTimeout(READ_TIMEOUT);
@@ -104,8 +95,6 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
         connection.setRequestProperty(USER_AGENT_KEY, USER_AGENT_VALUE);
         if (onlyIfCached)
             connection.addRequestProperty("Cache-Control", "only-if-cached");
-        if (preventZippedTransfer)
-            connection.setRequestProperty("Accept-Encoding", "identity");
 
         // TODO allow for password protected feeds
         // String userpass = username + ":" + password;
@@ -119,14 +108,16 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
         try {
             // 1. Open stream and check whether we know its length
             bufferedRemoteStream = new BufferedInputStream(connection.getInputStream());
+            final int contentLength = connection.getContentLength();
             // Check whether we should abort load since we have a load limit set
             // and the content length is higher.
-            final int contentLength = connection.getContentLength();
             if (loadLimit >= 0 && contentLength != -1 && contentLength > loadLimit)
                 throw new IOException("Load limit exceeded (content length reported by remote is "
                         + contentLength + " bytes, limit was " + loadLimit + " bytes)!");
             // Check whether we could calculate the percentage of completion
-            boolean sendLoadProgress = contentLength > 0;
+            final boolean isZippedResponse = connection.getContentEncoding() != null
+                    && connection.getContentEncoding().equals("gzip");
+            final boolean sendLoadProgress = contentLength > 0 && isZippedResponse;
 
             // 2. Create the byte buffer to write to
             result = new ByteArrayOutputStream();
@@ -151,6 +142,9 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
                 if (sendLoadProgress)
                     publishProgress(new Progress(totalBytes, connection.getContentLength()));
             }
+
+            Log.i(getClass().getSimpleName(), "Load finished after "
+                    + (new Date().getTime() - start.getTime()) + "ms");
 
             // 4. Return result as a byte array
             return result.toByteArray();
