@@ -204,7 +204,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         else if (!loadPodcastTasks.containsKey(podcast)) {
             // Download podcast RSS feed (async)
             LoadPodcastTask task = new LoadPodcastTask(this);
-            task.setOnlyIfCached(!podcatcher.isOnline());
             task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
 
             // Keep task reference, so we can cancel the load and determine
@@ -281,7 +280,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             podcast.setLastLoadLogoAttempt(new Date());
             // Start logo download
             LoadPodcastLogoTask task = new LoadPodcastLogoTask(this, LOGO_DIMENSION, LOGO_DIMENSION);
-            task.setOnlyIfCached(!podcatcher.isOnline());
             task.setLoadLimit(MAX_LOGO_SIZE);
             task.execute(podcast);
 

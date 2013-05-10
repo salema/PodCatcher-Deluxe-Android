@@ -32,6 +32,9 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
 
 /**
  * Abstract super class for file download tasks.
@@ -50,29 +53,17 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
 
     /** A file size limit in bytes for the download */
     protected int loadLimit = -1;
-    /** Flag whether only use cached content */
-    protected boolean onlyIfCached = false;
 
     /**
      * Set a load limit for the actual download of the file. The default is a
      * negative number, turning off the limit evaluation. If positive and
-     * reached {@link #loadFile(URL)} below will return <code>null</code>
+     * reached, {@link #loadFile(URL)} below will return <code>null</code>
      * immediately.
      * 
      * @param limit The limit to set in bytes.
      */
     public void setLoadLimit(int limit) {
         this.loadLimit = limit;
-    }
-
-    /**
-     * Sets whether the file should only be taken from local cache, there will
-     * be no attempt to reach the server if <code>true</code>.
-     * 
-     * @param onlyIfCached Use cached content only?
-     */
-    public void setOnlyIfCached(boolean onlyIfCached) {
-        this.onlyIfCached = onlyIfCached;
     }
 
     /**
@@ -93,8 +84,6 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
         // redirect connections from mobile devices to servers where the content
         // we are looking for might not be available.
         connection.setRequestProperty(USER_AGENT_KEY, USER_AGENT_VALUE);
-        if (onlyIfCached)
-            connection.addRequestProperty("Cache-Control", "only-if-cached");
 
         // TODO allow for password protected feeds
         // String userpass = username + ":" + password;
@@ -111,13 +100,26 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
             final int contentLength = connection.getContentLength();
             // Check whether we should abort load since we have a load limit set
             // and the content length is higher.
-            if (loadLimit >= 0 && contentLength != -1 && contentLength > loadLimit)
+            if (loadLimit >= 0 && contentLength >= 0 && contentLength > loadLimit)
                 throw new IOException("Load limit exceeded (content length reported by remote is "
                         + contentLength + " bytes, limit was " + loadLimit + " bytes)!");
-            // Check whether we could calculate the percentage of completion
+            // Check whether we could calculate the percentage of completion,
+            // this only works if a content length is given and the content is
+            // not gzipped
             final boolean isZippedResponse = connection.getContentEncoding() != null
                     && connection.getContentEncoding().equals("gzip");
-            final boolean sendLoadProgress = contentLength > 0 && isZippedResponse;
+            final boolean sendLoadProgress = contentLength > 0 && !isZippedResponse;
+
+            Iterator<Entry<String, List<String>>> iterator = connection.getHeaderFields()
+                    .entrySet().iterator();
+
+            while (iterator.hasNext()) {
+                final Entry<String, List<String>> entry = iterator.next();
+
+                Log.i(getClass().getSimpleName(), "Header: " + entry.getKey());
+                for (String value : entry.getValue())
+                    Log.i(getClass().getSimpleName(), " " + value);
+            }
 
             // 2. Create the byte buffer to write to
             result = new ByteArrayOutputStream();
@@ -176,12 +178,14 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
     private void reportCacheStats() {
         HttpResponseCache cache = HttpResponseCache.getInstalled();
         if (cache != null) {
-            Log.i(getClass().getSimpleName(), "HTTP cache size: " + cache.size() + " / "
-                    + cache.maxSize());
-            Log.i(getClass().getSimpleName(), "HTTP request count: " + cache.getRequestCount());
+            Log.i(getClass().getSimpleName(),
+                    "HTTP cache size: " + cache.size() + " / " + cache.maxSize());
+            Log.i(getClass().getSimpleName(),
+                    "HTTP request count: " + cache.getRequestCount());
             Log.i(getClass().getSimpleName(),
                     "HTTP network requests: " + cache.getNetworkCount());
-            Log.i(getClass().getSimpleName(), "HTTP cache hits: " + cache.getHitCount());
+            Log.i(getClass().getSimpleName(),
+                    "HTTP cache hits: " + cache.getHitCount());
         }
     }
 }
