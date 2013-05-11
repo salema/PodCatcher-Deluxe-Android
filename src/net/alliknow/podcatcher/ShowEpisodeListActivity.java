@@ -21,8 +21,13 @@ import android.app.ActionBar;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import net.alliknow.podcatcher.model.tasks.LoadDownloadsTask;
+import net.alliknow.podcatcher.model.tasks.LoadPlaylistTask;
+import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
+
+import java.util.List;
 
 /**
  * Activity to show only the episode list and possibly the player. Used in small
@@ -134,7 +139,13 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         episodeListFragment.resetAndSpin();
         episodeListFragment.setShowPodcastNames(true);
 
-        setFilteredEpisodeList();
+        new LoadDownloadsTask(this).execute((Void) null);
+    }
+
+    @Override
+    public void onDownloadsLoaded(List<Episode> downloads) {
+        super.onDownloadsLoaded(downloads);
+
         updateActionBar();
     }
 
@@ -145,7 +156,13 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         episodeListFragment.resetAndSpin();
         episodeListFragment.setShowPodcastNames(true);
 
-        setFilteredEpisodeList();
+        new LoadPlaylistTask(this).execute((Void) null);
+    }
+
+    @Override
+    public void onPlaylistLoaded(List<Episode> playlist) {
+        super.onPlaylistLoaded(playlist);
+
         updateActionBar();
     }
 

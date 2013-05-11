@@ -20,10 +20,14 @@ package net.alliknow.podcatcher;
 import android.content.Intent;
 import android.view.View;
 
+import net.alliknow.podcatcher.listeners.OnLoadDownloadsListener;
+import net.alliknow.podcatcher.listeners.OnLoadPlaylistListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.listeners.OnToggleFilterListener;
+import net.alliknow.podcatcher.model.tasks.LoadDownloadsTask;
+import net.alliknow.podcatcher.model.tasks.LoadPlaylistTask;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
@@ -42,7 +46,7 @@ import java.util.List;
  */
 public abstract class EpisodeListActivity extends EpisodeActivity implements
         OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectPodcastListener,
-        OnToggleFilterListener {
+        OnLoadDownloadsListener, OnLoadPlaylistListener, OnToggleFilterListener {
 
     /** Key used to save the current content mode in bundle */
     public static final String MODE_KEY = "MODE_KEY";
@@ -183,8 +187,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         selection.resetPodcast();
         selection.setMode(ContentMode.DOWNLOADS);
 
-        this.currentEpisodeList = episodeManager.getDownloads();
-
         switch (view) {
             case SMALL_LANDSCAPE:
                 // This will go back to the list view in case we are showing
@@ -201,14 +203,19 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 updateFilter();
                 updateDivider();
 
-                // Set the list of downloads
-                setFilteredEpisodeList();
+                new LoadDownloadsTask(this).execute((Void) null);
 
                 break;
             case SMALL_PORTRAIT:
                 // This case should be handled by sub-classes
                 break;
         }
+    }
+
+    @Override
+    public void onDownloadsLoaded(List<Episode> downloads) {
+        this.currentEpisodeList = downloads;
+        setFilteredEpisodeList();
     }
 
     @Override
@@ -234,14 +241,19 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 updateFilter();
                 updateDivider();
 
-                // Set the playlist
-                setFilteredEpisodeList();
+                new LoadPlaylistTask(this).execute((Void) null);
 
                 break;
             case SMALL_PORTRAIT:
                 // This case should be handled by sub-classes
                 break;
         }
+    }
+
+    @Override
+    public void onPlaylistLoaded(List<Episode> playlist) {
+        this.currentEpisodeList = playlist;
+        setFilteredEpisodeList();
     }
 
     @Override

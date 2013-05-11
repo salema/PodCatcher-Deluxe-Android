@@ -50,7 +50,11 @@ import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
 import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
+import net.alliknow.podcatcher.listeners.OnLoadDownloadsListener;
 import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
+import net.alliknow.podcatcher.listeners.OnLoadPlaylistListener;
+import net.alliknow.podcatcher.model.tasks.LoadDownloadsTask;
+import net.alliknow.podcatcher.model.tasks.LoadPlaylistTask;
 import net.alliknow.podcatcher.model.tasks.StoreEpisodeMetadataTask;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
@@ -68,6 +72,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Manager to handle episode specific activities.
@@ -81,6 +86,9 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     private static EpisodeManager manager;
     /** The application itself */
     private Podcatcher podcatcher;
+
+    /** Latch we use to block all threads until we have our data */
+    private CountDownLatch latch = new CountDownLatch(1);
 
     /** Helper to make playlist methods more efficient */
     private int playlistSize = -1;
@@ -192,6 +200,22 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     public void onEpisodeMetadataLoaded(Map<URL, EpisodeMetadata> metadata) {
         this.metadata = metadata;
         this.metadataChanged = false;
+
+        // Here we need to release all threads (AsyncTasks) waiting for the
+        // episode metadata to finally load
+        latch.countDown();
+    }
+
+    /**
+     * This blocks the calling thread until the episode metadata has become
+     * available on the application's start-up. Once the metadata is read, the
+     * method returns immediately.
+     * 
+     * @throws InterruptedException When the thread is interrupted while
+     *             waiting.
+     */
+    public void blockUntilEpisodeMetadataIsLoaded() throws InterruptedException {
+        latch.await();
     }
 
     /**
@@ -353,10 +377,14 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
     /**
      * Get the list of downloaded episodes. Returns only episodes fully
-     * available locally. The episodes are sorted by date, latest first.
+     * available locally. The episodes are sorted by date, latest first. Only
+     * call this if you are sure the metadata is already available, if in doubt
+     * use {@link LoadDownloadsTask}.
      * 
      * @return The list of downloaded episodes (might be empty, but not
-     *         <code>null</code>)
+     *         <code>null</code>).
+     * @see LoadDownloadsTask
+     * @see OnLoadDownloadsListener
      */
     public List<Episode> getDownloads() {
         // Create empty result list
@@ -422,6 +450,10 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
     /**
      * @return The current playlist. Might be empty but not <code>null</code>.
+     *         Only call this if you are sure the metadata is already available,
+     *         if in doubt use {@link LoadPlaylistTask}.
+     * @see LoadPlaylistTask
+     * @see OnLoadPlaylistListener
      */
     public List<Episode> getPlaylist() {
         // The resulting playlist
@@ -749,8 +781,6 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     }
 
     private void processDownloadComplete(long downloadId) {
-        // TODO we might face some need for synchronization / concurrent
-        // modification here?
         // Check if this was a download we care for
         for (EpisodeMetadata meta : metadata.values())
             if (meta.downloadId != null && meta.downloadId == downloadId) {

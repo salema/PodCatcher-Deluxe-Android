@@ -41,10 +41,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Load the episode metadata from the file system.
@@ -79,7 +79,7 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
         this.startTime = new Date();
 
         // Create resulting data structure and file stream
-        Map<URL, EpisodeMetadata> result = new HashMap<URL, EpisodeMetadata>();
+        Map<URL, EpisodeMetadata> result = new ConcurrentHashMap<URL, EpisodeMetadata>();
         InputStream fileStream = null;
 
         try {

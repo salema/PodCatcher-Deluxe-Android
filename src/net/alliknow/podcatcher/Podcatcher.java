@@ -23,23 +23,17 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.http.HttpResponseCache;
+import android.os.AsyncTask;
 import android.util.Log;
 
-import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
-import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.SuggestionManager;
 import net.alliknow.podcatcher.model.tasks.LoadEpisodeMetadataTask;
 import net.alliknow.podcatcher.model.tasks.LoadPodcastListTask;
-import net.alliknow.podcatcher.model.types.EpisodeMetadata;
-import net.alliknow.podcatcher.model.types.Podcast;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Our application subclass. Holds global state and model. The Podcatcher
@@ -48,8 +42,7 @@ import java.util.Map;
  * instances of our model data and data managers. In addition, it provides some
  * generic convenience methods.
  */
-public class Podcatcher extends Application implements OnLoadEpisodeMetadataListener,
-        OnLoadPodcastListListener {
+public class Podcatcher extends Application {
 
     /**
      * The amount of dp establishing the border between small and large screen
@@ -84,14 +77,6 @@ public class Podcatcher extends Application implements OnLoadEpisodeMetadataList
     public void onCreate() {
         super.onCreate();
 
-        // Enabled caching for our HTTP connections
-        try {
-            File httpCacheDir = new File(getCacheDir(), "http");
-            HttpResponseCache.install(httpCacheDir, HTTP_CACHE_SIZE);
-        } catch (IOException ioe) {
-            Log.i(getClass().getSimpleName(), "HTTP response cache installation failed:" + ioe);
-        }
-
         // This will only run once in the lifetime of the app
         // since the application is an implicit singleton. We create the other
         // singletons here to make sure they know their application instance.
@@ -101,31 +86,27 @@ public class Podcatcher extends Application implements OnLoadEpisodeMetadataList
         // dito
         SuggestionManager.getInstance(this);
 
+        // Enabled caching for our HTTP connections
+        try {
+            File httpCacheDir = new File(getCacheDir(), "http");
+            HttpResponseCache.install(httpCacheDir, HTTP_CACHE_SIZE);
+        } catch (IOException ioe) {
+            Log.w(getClass().getSimpleName(), "HTTP response cache installation failed:" + ioe);
+        }
+
         // Now we will trigger the preparation on start-up, steps include:
-        // 1. Load episode metadata from file
-        // 2. Load podcast list from file
-        // 3. Tell the UI to start
-
-        // This starts step 1
-        new LoadEpisodeMetadataTask(this, this).execute((Void) null);
-    }
-
-    @Override
-    public void onEpisodeMetadataLoaded(Map<URL, EpisodeMetadata> result) {
-        // Step 1 finished
-        // Make episode manager aware
-        EpisodeManager.getInstance().onEpisodeMetadataLoaded(result);
-
-        // This is step 2
-        // Load list of podcasts from OPML file on start-up
-        new LoadPodcastListTask(this, this).execute((Void) null);
-    }
-
-    @Override
-    public void onPodcastListLoaded(List<Podcast> podcastList) {
-        // Step 2 finished
-        // Make episode manager aware (it will notify the UI, step 3)
-        PodcastManager.getInstance().onPodcastListLoaded(podcastList);
+        // 1. Load podcast list from file async, once this is finished the
+        // podcast manager is alerted and in turn tells the controller activity.
+        // Then the UI can show the list and we are ready to go
+        new LoadPodcastListTask(this, PodcastManager.getInstance())
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
+        // 2. At the same time we load episode metadata from file async (this
+        // has the potential to take a lot of time, since the amount of data
+        // might be quite big). The UI is functional without this having
+        // completed, but loading of podcasts, downloads or the playlist will
+        // block until the data is available.
+        new LoadEpisodeMetadataTask(this, EpisodeManager.getInstance())
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
     }
 
     /**

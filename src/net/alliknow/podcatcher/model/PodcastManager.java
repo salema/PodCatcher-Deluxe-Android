@@ -182,10 +182,12 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     /**
      * Load data for given podcast from its URL. This is an async load, so this
      * method will return immediately. Implement the appropriate call-back to
-     * monitor the load process and to get its result.
+     * monitor the load process and to get its result. Note that the async task
+     * might be held back until the episode metadata has finished loading.
      * 
      * @param podcast Podcast to load.
      * @see OnLoadPodcastListener
+     * @see EpisodeManager#blockUntilEpisodeMetadataIsLoaded()
      */
     public void load(Podcast podcast) {
         // Only load podcast if not too old
@@ -272,7 +274,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             // Start logo download
             LoadPodcastLogoTask task = new LoadPodcastLogoTask(this, LOGO_DIMENSION, LOGO_DIMENSION);
             task.setLoadLimit(MAX_LOGO_SIZE);
-            task.execute(podcast);
+            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
 
             loadPodcastLogoTasks.put(podcast, task);
         }
