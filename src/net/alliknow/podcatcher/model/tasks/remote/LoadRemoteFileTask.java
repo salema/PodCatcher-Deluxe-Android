@@ -75,8 +75,6 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
      * @throws IOException If something goes wrong.
      */
     protected byte[] loadFile(URL remote) throws IOException {
-        Date start = new Date();
-
         HttpURLConnection connection = (HttpURLConnection) remote.openConnection();
         connection.setConnectTimeout(CONNECT_TIMEOUT);
         connection.setReadTimeout(READ_TIMEOUT);
@@ -110,16 +108,7 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
                     && connection.getContentEncoding().equals("gzip");
             final boolean sendLoadProgress = contentLength > 0 && !isZippedResponse;
 
-            Iterator<Entry<String, List<String>>> iterator = connection.getHeaderFields()
-                    .entrySet().iterator();
-
-            while (iterator.hasNext()) {
-                final Entry<String, List<String>> entry = iterator.next();
-
-                Log.i(getClass().getSimpleName(), "Header: " + entry.getKey());
-                for (String value : entry.getValue())
-                    Log.i(getClass().getSimpleName(), " " + value);
-            }
+            //showResponseHeaderDetails(connection);
 
             // 2. Create the byte buffer to write to
             result = new ByteArrayOutputStream();
@@ -145,9 +134,6 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
                     publishProgress(new Progress(totalBytes, contentLength));
             }
 
-            Log.i(getClass().getSimpleName(), "Load finished after "
-                    + (new Date().getTime() - start.getTime()) + "ms");
-
             // 4. Return result as a byte array
             return result.toByteArray();
         } finally {
@@ -172,6 +158,19 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
             connection.disconnect();
 
             // reportCacheStats();
+        }
+    }
+
+    private void showResponseHeaderDetails(HttpURLConnection connection) {
+        Iterator<Entry<String, List<String>>> iterator = connection.getHeaderFields()
+                .entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            final Entry<String, List<String>> entry = iterator.next();
+
+            Log.i(getClass().getSimpleName(), "Header: " + entry.getKey());
+            for (String value : entry.getValue())
+                Log.i(getClass().getSimpleName(), " " + value);
         }
     }
 
