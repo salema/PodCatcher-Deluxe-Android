@@ -17,6 +17,7 @@
 
 package net.alliknow.podcatcher.view.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -30,6 +31,7 @@ import android.widget.ListView;
 
 import net.alliknow.podcatcher.AddPodcastActivity;
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.listeners.PodcastListContextListener;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
@@ -42,6 +44,9 @@ import java.util.List;
  * List fragment to display the list of podcasts.
  */
 public class PodcastListFragment extends PodcatcherListFragment {
+
+    /** The listener call-back to alert on podcast selection */
+    private OnSelectPodcastListener podcastSelectionListener;
 
     /** The list of podcasts currently shown */
     private List<Podcast> currentPodcastList;
@@ -71,6 +76,19 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
     /** Status flag indicating that our view is created */
     private boolean viewCreated = false;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // Make sure our listener is present
+        try {
+            this.podcastSelectionListener = (OnSelectPodcastListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnSelectPodcastListener");
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -134,14 +152,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
         Podcast selectedPodcast = (Podcast) adapter.getItem(position);
 
         // Alert parent activity
-        contentSelectionListener.onPodcastSelected(selectedPodcast);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putLongArray("test", getListView().getCheckedItemIds());
+        podcastSelectionListener.onPodcastSelected(selectedPodcast);
     }
 
     @Override
