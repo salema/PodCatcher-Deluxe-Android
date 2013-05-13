@@ -17,7 +17,6 @@
 
 package net.alliknow.podcatcher;
 
-import android.app.ActionBar;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -104,7 +103,10 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         super.onAllPodcastsSelected();
 
         // Init the list view...
-        episodeListFragment.resetAndSpin();
+        if (podcastManager.size() > 0)
+            episodeListFragment.resetAndSpin();
+        else
+            episodeListFragment.resetUi();
         episodeListFragment.setShowPodcastNames(true);
         // ...and go get the data
         for (Podcast podcast : podcastManager.getPodcastList())
@@ -129,28 +131,23 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
 
     @Override
     protected void updateActionBar() {
-        final ActionBar bar = getActionBar();
+        contentSpinner.setTitle(getString(R.string.app_name));
 
         // Single podcast selected
         if (selection.isPodcastSet()) {
-            bar.setTitle(selection.getPodcast().getName());
-
             if (selection.getPodcast().getEpisodes().isEmpty())
-                bar.setSubtitle(null);
+                contentSpinner.setSubtitle(null);
             else {
                 int episodeCount = selection.getPodcast().getEpisodeNumber();
-                bar.setSubtitle(episodeCount == 1 ? getString(R.string.one_episode) :
+                contentSpinner.setSubtitle(episodeCount == 1 ? getString(R.string.one_episode) :
                         episodeCount + " " + getString(R.string.episodes));
             }
         } // Multiple podcast mode
-        else if (selection.isAll()) {
-            bar.setTitle(R.string.app_name);
+        else if (selection.isAll())
             updateActionBarSubtitleOnMultipleLoad();
-        } else
-            bar.setTitle(R.string.app_name);
 
         // Enable navigation
-        bar.setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -168,24 +165,27 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
      * Set the action bar subtitle to reflect multiple podcast load progress
      */
     private void updateActionBarSubtitleOnMultipleLoad() {
-        final ActionBar bar = getActionBar();
-
         final int podcastCount = podcastManager.size();
         final int loadingPodcastCount = podcastManager.getLoadCount();
 
-        // Load finished for all popdcast and there are episode
+        // Load finished for all podcasts and there are episode
         if (loadingPodcastCount == 0 && currentEpisodeList != null) {
             final int episodeCount = currentEpisodeList.size();
-            bar.setSubtitle(episodeCount == 1 ? getString(R.string.one_episode) :
-                    episodeCount + " " + getString(R.string.episodes));
+
+            if (episodeCount == 0)
+                contentSpinner.setSubtitle(null);
+            else if (episodeCount == 1)
+                contentSpinner.setSubtitle(getString(R.string.one_episode));
+            else
+                contentSpinner.setSubtitle(episodeCount + " " + getString(R.string.episodes));
         }
         // Load finished but no episodes
         else if (loadingPodcastCount == 0)
-            bar.setSubtitle(podcastCount == 1 ? getString(R.string.one_podcast_selected) :
-                    podcastCount + " " + getString(R.string.podcasts_selected));
+            contentSpinner.setSubtitle(podcastCount == 1 ? getString(R.string.one_podcast_selected)
+                    : podcastCount + " " + getString(R.string.podcasts_selected));
         // Load in progress
         else
-            bar.setSubtitle((podcastCount - loadingPodcastCount) + " "
+            contentSpinner.setSubtitle((podcastCount - loadingPodcastCount) + " "
                     + getString(R.string.of) + " " + podcastCount + " "
                     + getString(R.string.podcasts_selected));
     }

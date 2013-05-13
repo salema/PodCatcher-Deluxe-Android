@@ -45,6 +45,9 @@ import java.util.List;
  */
 public class PodcastListFragment extends PodcatcherListFragment {
 
+    /** The listener call-back to alert on podcast selection */
+    private OnSelectPodcastListener podcastSelectionListener;
+
     /** The list of podcasts currently shown */
     private List<Podcast> currentPodcastList;
 
@@ -80,7 +83,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
         // Make sure our listener is present
         try {
-            this.contentSelectionListener = (OnSelectPodcastListener) activity;
+            this.podcastSelectionListener = (OnSelectPodcastListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnSelectPodcastListener");
@@ -149,14 +152,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
         Podcast selectedPodcast = (Podcast) adapter.getItem(position);
 
         // Alert parent activity
-        contentSelectionListener.onPodcastSelected(selectedPodcast);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putLongArray("test", getListView().getCheckedItemIds());
+        podcastSelectionListener.onPodcastSelected(selectedPodcast);
     }
 
     @Override

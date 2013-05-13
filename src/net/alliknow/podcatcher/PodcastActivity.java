@@ -17,7 +17,6 @@
 
 package net.alliknow.podcatcher;
 
-import android.app.ActionBar;
 import android.app.FragmentManager.OnBackStackChangedListener;
 import android.content.Intent;
 import android.os.Bundle;
@@ -373,19 +372,8 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
     @Override
     protected void updateActionBar() {
-        final ActionBar bar = getActionBar();
-        bar.setTitle(R.string.app_name);
-
         // Disable the home button (only used in overlaying activities)
-        bar.setHomeButtonEnabled(false);
-
-        if (podcastManager.getPodcastList() != null) {
-            int podcastCount = podcastManager.size();
-            bar.setSubtitle(podcastCount == 1 ? getString(R.string.one_podcast_selected)
-                    : podcastCount + " " + getString(R.string.podcasts_selected));
-        } else {
-            bar.setSubtitle(null);
-        }
+        getActionBar().setHomeButtonEnabled(false);
     }
 
     @Override

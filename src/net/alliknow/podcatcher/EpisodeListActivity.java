@@ -17,7 +17,9 @@
 
 package net.alliknow.podcatcher;
 
+import android.app.ActionBar;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
@@ -26,6 +28,7 @@ import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
+import net.alliknow.podcatcher.view.ContentSpinner;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 
 import java.util.ArrayList;
@@ -51,9 +54,23 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     /** The current episode list fragment */
     protected EpisodeListFragment episodeListFragment;
+    /** The content mode selection spinner view */
+    protected ContentSpinner contentSpinner;
 
     /** The current episode list */
     protected List<Episode> currentEpisodeList;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Create the content mode spinner and add it to the action bar
+        contentSpinner = new ContentSpinner(this, this);
+        getActionBar().setCustomView(contentSpinner);
+        // Make sure the action bar has the right display options set
+        getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM
+                | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_USE_LOGO);
+    }
 
     @Override
     protected void findFragments() {
@@ -139,7 +156,10 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             case LARGE_PORTRAIT:
             case LARGE_LANDSCAPE:
                 // List fragment is visible, make it show progress UI
-                episodeListFragment.resetAndSpin();
+                if (podcastManager.size() > 0)
+                    episodeListFragment.resetAndSpin();
+                else
+                    episodeListFragment.resetUi();
                 episodeListFragment.setShowPodcastNames(true);
                 // Update other UI
                 updateDivider();
