@@ -22,11 +22,8 @@ import android.view.MenuItem;
 
 import net.alliknow.podcatcher.model.tasks.LoadDownloadsTask;
 import net.alliknow.podcatcher.model.tasks.LoadPlaylistTask;
-import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
-
-import java.util.List;
 
 /**
  * Activity to show only the episode list and possibly the player. Used in small
@@ -145,13 +142,6 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     }
 
     @Override
-    public void onDownloadsLoaded(List<Episode> downloads) {
-        super.onDownloadsLoaded(downloads);
-
-        updateActionBar();
-    }
-
-    @Override
     public void onPlaylistSelected() {
         super.onPlaylistSelected();
 
@@ -159,27 +149,6 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         episodeListFragment.setShowPodcastNames(true);
 
         new LoadPlaylistTask(this).execute((Void) null);
-    }
-
-    @Override
-    public void onPlaylistLoaded(List<Episode> playlist) {
-        super.onPlaylistLoaded(playlist);
-
-        updateActionBar();
-    }
-
-    @Override
-    public void onPodcastLoaded(Podcast podcast) {
-        super.onPodcastLoaded(podcast);
-
-        updateActionBar();
-    }
-
-    @Override
-    public void onPodcastLoadFailed(Podcast failedPodcast) {
-        super.onPodcastLoadFailed(failedPodcast);
-
-        updateActionBar();
     }
 
     @Override
@@ -224,34 +193,5 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         // Make sure to show episode title in player
         playerFragment.setLoadMenuItemVisibility(false, false);
         playerFragment.setPlayerTitleVisibility(true);
-    }
-
-    /**
-     * Set the action bar subtitle to reflect multiple podcast load progress
-     */
-    private void updateActionBarSubtitleOnMultipleLoad() {
-        final int podcastCount = podcastManager.size();
-        final int loadingPodcastCount = podcastManager.getLoadCount();
-
-        // Load finished for all podcasts and there are episode
-        if (loadingPodcastCount == 0 && currentEpisodeList != null) {
-            final int episodeCount = currentEpisodeList.size();
-
-            if (episodeCount == 0)
-                contentSpinner.setSubtitle(null);
-            else if (episodeCount == 1)
-                contentSpinner.setSubtitle(getString(R.string.one_episode));
-            else
-                contentSpinner.setSubtitle(episodeCount + " " + getString(R.string.episodes));
-        }
-        // Load finished but no episodes
-        else if (loadingPodcastCount == 0)
-            contentSpinner.setSubtitle(podcastCount == 1 ? getString(R.string.one_podcast_selected)
-                    : podcastCount + " " + getString(R.string.podcasts_selected));
-        // Load in progress
-        else
-            contentSpinner.setSubtitle((podcastCount - loadingPodcastCount) + " "
-                    + getString(R.string.of) + " " + podcastCount + " "
-                    + getString(R.string.podcasts_selected));
     }
 }

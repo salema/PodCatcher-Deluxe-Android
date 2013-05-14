@@ -401,6 +401,11 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     protected void updateActionBar() {
         // Disable the home button (only used in overlaying activities)
         getActionBar().setHomeButtonEnabled(false);
+
+        if (!view.isSmall() && selection.isAll())
+            updateActionBarSubtitleOnMultipleLoad();
+        else
+            contentSpinner.setSubtitle(null);
     }
 
     @Override
