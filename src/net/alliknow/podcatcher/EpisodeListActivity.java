@@ -166,7 +166,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
                 for (Podcast podcast : podcastManager.getPodcastList())
                     podcastManager.load(podcast);
-
+                // Action bar needs update after loading has started
+                updateActionBar();
                 break;
             case SMALL_PORTRAIT:
                 // This case should be handled by sub-classes
@@ -231,6 +232,9 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         else if (selection.isAll())
             showToast("Podcast\n\"" + failedPodcast.getName() + "\"\n"
                     + getString(R.string.error_podcast_load_multiple));
+
+        // Update UI
+        updateActionBar();
     }
 
     @Override
@@ -305,5 +309,34 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             View divider = getWindow().findViewById(dividerViewId);
             divider.setBackgroundResource(colorId ? R.color.divider_on : R.color.divider_off);
         }
+    }
+
+    /**
+     * Set the action bar subtitle to reflect multiple podcast load progress
+     */
+    protected void updateActionBarSubtitleOnMultipleLoad() {
+        final int podcastCount = podcastManager.size();
+        final int loadingPodcastCount = podcastManager.getLoadCount();
+
+        // Load finished for all podcasts and there are episode
+        if (loadingPodcastCount == 0 && currentEpisodeList != null) {
+            final int episodeCount = currentEpisodeList.size();
+
+            if (episodeCount == 0)
+                contentSpinner.setSubtitle(null);
+            else if (episodeCount == 1)
+                contentSpinner.setSubtitle(getString(R.string.one_episode));
+            else
+                contentSpinner.setSubtitle(episodeCount + " " + getString(R.string.episodes));
+        }
+        // Load finished but no episodes
+        else if (loadingPodcastCount == 0)
+            contentSpinner.setSubtitle(podcastCount == 1 ? getString(R.string.one_podcast_selected)
+                    : podcastCount + " " + getString(R.string.podcasts_selected));
+        // Load in progress
+        else
+            contentSpinner.setSubtitle((podcastCount - loadingPodcastCount) + " "
+                    + getString(R.string.of) + " " + podcastCount + " "
+                    + getString(R.string.podcasts_selected));
     }
 }

@@ -22,7 +22,7 @@
     android:layout_width="match_parent"
     android:layout_height="48dp"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/list_item_padding">
+    android:paddingLeft="6dp">
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"

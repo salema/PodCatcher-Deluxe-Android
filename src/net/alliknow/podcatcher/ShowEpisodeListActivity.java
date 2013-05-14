@@ -116,20 +116,6 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     }
 
     @Override
-    public void onPodcastLoaded(Podcast podcast) {
-        super.onPodcastLoaded(podcast);
-
-        updateActionBar();
-    }
-
-    @Override
-    public void onPodcastLoadFailed(Podcast failedPodcast) {
-        super.onPodcastLoadFailed(failedPodcast);
-
-        updateActionBar();
-    }
-
-    @Override
     protected void updateActionBar() {
         contentSpinner.setTitle(getString(R.string.app_name));
 
@@ -159,34 +145,5 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
             playerFragment.setLoadMenuItemVisibility(false, false);
             playerFragment.setPlayerTitleVisibility(true);
         }
-    }
-
-    /**
-     * Set the action bar subtitle to reflect multiple podcast load progress
-     */
-    private void updateActionBarSubtitleOnMultipleLoad() {
-        final int podcastCount = podcastManager.size();
-        final int loadingPodcastCount = podcastManager.getLoadCount();
-
-        // Load finished for all podcasts and there are episode
-        if (loadingPodcastCount == 0 && currentEpisodeList != null) {
-            final int episodeCount = currentEpisodeList.size();
-
-            if (episodeCount == 0)
-                contentSpinner.setSubtitle(null);
-            else if (episodeCount == 1)
-                contentSpinner.setSubtitle(getString(R.string.one_episode));
-            else
-                contentSpinner.setSubtitle(episodeCount + " " + getString(R.string.episodes));
-        }
-        // Load finished but no episodes
-        else if (loadingPodcastCount == 0)
-            contentSpinner.setSubtitle(podcastCount == 1 ? getString(R.string.one_podcast_selected)
-                    : podcastCount + " " + getString(R.string.podcasts_selected));
-        // Load in progress
-        else
-            contentSpinner.setSubtitle((podcastCount - loadingPodcastCount) + " "
-                    + getString(R.string.of) + " " + podcastCount + " "
-                    + getString(R.string.podcasts_selected));
     }
 }
