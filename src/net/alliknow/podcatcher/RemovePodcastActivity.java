@@ -26,9 +26,6 @@ import java.util.ListIterator;
  */
 public class RemovePodcastActivity extends BaseActivity {
 
-    /** Key to find the podcast positions under */
-    public static final String PODCAST_POSITION_LIST_KEY = "position_list_key";
-
     @Override
     protected void onStart() {
         super.onStart();
