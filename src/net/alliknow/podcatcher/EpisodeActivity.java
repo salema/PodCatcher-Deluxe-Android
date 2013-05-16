@@ -238,6 +238,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
         selection.resetEpisode();
 
         updatePlayerUi();
+        updateDownloadUi();
     }
 
     @Override
