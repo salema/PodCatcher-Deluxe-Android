@@ -152,7 +152,7 @@ public class ContentSpinner extends Spinner implements
 
                     break;
                 case 2:
-                    imageView.setImageResource(R.drawable.ic_menu_playlist_add);
+                    imageView.setImageResource(R.drawable.ic_menu_playlist);
                     titleView.setText(R.string.playlist);
 
                     // Set the subtitle
