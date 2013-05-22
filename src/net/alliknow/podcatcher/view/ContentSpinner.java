@@ -1,4 +1,4 @@
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -72,6 +73,9 @@ public class ContentSpinner extends Spinner implements
             // Set the initial name and status
             ((TextView) closedView.findViewById(R.id.title)).setText(R.string.app_name);
             ((TextView) closedView.findViewById(R.id.subtitle)).setVisibility(View.GONE);
+
+            // Hide icon view for the closed view
+            closedView.findViewById(R.id.icon).setVisibility(View.GONE);
         }
 
         /**
@@ -118,11 +122,14 @@ public class ContentSpinner extends Spinner implements
             final View spinnerItemView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.content_spinner_item, parent, false);
 
+            // Get handles on the view we need to update
+            final ImageView imageView = (ImageView) spinnerItemView.findViewById(R.id.icon);
             final TextView titleView = (TextView) spinnerItemView.findViewById(R.id.title);
             final TextView subtitleView = (TextView) spinnerItemView.findViewById(R.id.subtitle);
 
             switch (position) {
                 case 0:
+                    imageView.setImageResource(R.drawable.ic_menu_select_all);
                     titleView.setText(R.string.select_all_podcasts);
 
                     // Set the subtitle
@@ -136,6 +143,7 @@ public class ContentSpinner extends Spinner implements
                                 parent.getContext().getString(R.string.podcasts_selected));
                     break;
                 case 1:
+                    imageView.setImageResource(R.drawable.ic_menu_download);
                     titleView.setText(R.string.downloads);
 
                     // Set the subtitle
@@ -144,6 +152,7 @@ public class ContentSpinner extends Spinner implements
 
                     break;
                 case 2:
+                    imageView.setImageResource(R.drawable.ic_menu_playlist_add);
                     titleView.setText(R.string.playlist);
 
                     // Set the subtitle

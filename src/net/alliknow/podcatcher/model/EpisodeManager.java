@@ -390,18 +390,21 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
         // Create empty result list
         List<Episode> result = new ArrayList<Episode>();
 
-        // Find downloads from metadata
-        Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Entry<URL, EpisodeMetadata> entry = iterator.next();
+        // This is only possible if the metadata is available
+        if (metadata != null) {
+            // Find downloads from metadata
+            Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Entry<URL, EpisodeMetadata> entry = iterator.next();
 
-            // Find records for downloaded episodes
-            if (isDownloaded(entry.getValue())) {
-                // Create and add the downloaded episode
-                Episode download = entry.getValue().marshalEpisode(entry.getKey());
+                // Find records for downloaded episodes
+                if (isDownloaded(entry.getValue())) {
+                    // Create and add the downloaded episode
+                    Episode download = entry.getValue().marshalEpisode(entry.getKey());
 
-                if (download != null)
-                    result.add(download);
+                    if (download != null)
+                        result.add(download);
+                }
             }
         }
 
@@ -459,22 +462,25 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
         // The resulting playlist
         TreeMap<Integer, Episode> playlist = new TreeMap<Integer, Episode>();
 
-        // Find playlist entries from metadata
-        Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Entry<URL, EpisodeMetadata> entry = iterator.next();
+        // This is only possible if the metadata is available
+        if (metadata != null) {
+            // Find playlist entries from metadata
+            Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Entry<URL, EpisodeMetadata> entry = iterator.next();
 
-            // Find records for playlist entries
-            if (entry.getValue().playlistPosition != null) {
-                // Create and add the downloaded episode
-                Episode playlistEntry = entry.getValue().marshalEpisode(entry.getKey());
-                playlist.put(entry.getValue().playlistPosition, playlistEntry);
+                // Find records for playlist entries
+                if (entry.getValue().playlistPosition != null) {
+                    // Create and add the downloaded episode
+                    Episode playlistEntry = entry.getValue().marshalEpisode(entry.getKey());
+                    playlist.put(entry.getValue().playlistPosition, playlistEntry);
+                }
             }
-        }
 
-        // Since we have the playlist here, we could just as well set this and
-        // make the other methods return faster
-        this.playlistSize = playlist.size();
+            // Since we have the playlist here, we could just as well set this
+            // and make the other methods return faster
+            this.playlistSize = playlist.size();
+        }
 
         return new ArrayList<Episode>(playlist.values());
     }
