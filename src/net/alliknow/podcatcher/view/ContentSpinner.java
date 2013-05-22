@@ -1,4 +1,4 @@
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -71,6 +72,9 @@ public class ContentSpinner extends Spinner implements
             // Set the initial name and status
             ((TextView) closedView.findViewById(R.id.title)).setText(R.string.app_name);
             ((TextView) closedView.findViewById(R.id.subtitle)).setVisibility(View.GONE);
+
+            // Hide icon view for the closed view
+            closedView.findViewById(R.id.icon).setVisibility(View.GONE);
         }
 
         /**
@@ -107,6 +111,10 @@ public class ContentSpinner extends Spinner implements
             // Create the return view (this should not be recycled)
             final View spinnerItemView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.content_spinner_item, parent, false);
+
+            // Set the icon
+            final ImageView imageView = (ImageView) spinnerItemView.findViewById(R.id.icon);
+            imageView.setImageResource(R.drawable.ic_menu_select_all);
 
             // Set the title view
             final TextView titleView = (TextView) spinnerItemView.findViewById(R.id.title);
