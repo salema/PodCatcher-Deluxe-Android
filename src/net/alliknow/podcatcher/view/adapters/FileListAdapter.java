@@ -20,6 +20,10 @@ package net.alliknow.podcatcher.view.adapters;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import net.alliknow.podcatcher.R;
 
 import java.io.File;
 
@@ -53,7 +57,16 @@ public class FileListAdapter extends PodcatcherBaseListAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // TODO Auto-generated method stub
-        return null;
+        // Get the return view (possibly recycle a used one)
+        View fileView = findReturnView(convertView, parent, R.layout.file_list_item);
+        // Get the file object to represent
+        final File file = (File) getItem(position);
+
+        ((ImageView) fileView.findViewById(R.id.icon)).setImageResource(
+                file.isDirectory() ? R.drawable.ic_file_folder : R.drawable.ic_file);
+
+        ((TextView) fileView.findViewById(R.id.file_name)).setText(file.getName());
+
+        return fileView;
     }
 }

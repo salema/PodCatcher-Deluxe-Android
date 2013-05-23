@@ -24,7 +24,12 @@ import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -41,11 +46,17 @@ public class SelectFileFragment extends DialogFragment {
 
     /** The call back we work on */
     private OnSelectFileListener listener;
+    /** The path we are currently showing */
+    private File currentPath;
 
     /** The current path view */
     private TextView currentPathView;
+    /** The up button */
+    private ImageButton upButton;
     /** The file list view */
     private ListView fileListView;
+    /** The select button */
+    private Button selectButton;
 
     @Override
     public void onAttach(Activity activity) {
@@ -69,10 +80,35 @@ public class SelectFileFragment extends DialogFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        // getDialog().setTitle(R.string.select_folder/file);
+        getDialog().setTitle("Select Folder");
 
         currentPathView = (TextView) view.findViewById(R.id.current_path);
+        upButton = (ImageButton) view.findViewById(R.id.path_up);
+        upButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                setPath(currentPath.getParentFile());
+            }
+        });
+
         fileListView = (ListView) view.findViewById(R.id.files);
+        fileListView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                setPath((File) fileListView.getAdapter().getItem(position));
+            }
+        });
+        selectButton = (Button) view.findViewById(R.id.select_file);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (currentPath != null)
+            setPath(currentPath);
     }
 
     @Override
@@ -83,8 +119,11 @@ public class SelectFileFragment extends DialogFragment {
     }
 
     public void setPath(File path) {
+        this.currentPath = path;
+
         if (isResumed() && path != null) {
             currentPathView.setText(path.getAbsolutePath());
+            upButton.setEnabled(path.getParent() != null);
             fileListView.setAdapter(new FileListAdapter(getActivity(), path));
         }
     }
