@@ -96,6 +96,9 @@
         <activity
             android:name=".RemovePodcastActivity"
             android:theme="@android:style/Theme.NoDisplay" />
+        <activity
+            android:name=".SelectFileActivity"
+            android:theme="@android:style/Theme.NoDisplay" />
         <service
             android:name=".services.PlayEpisodeService"
             android:exported="false">
