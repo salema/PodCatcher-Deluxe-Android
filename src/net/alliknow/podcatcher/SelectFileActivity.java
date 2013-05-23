@@ -22,7 +22,9 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.os.Environment;
 
+import net.alliknow.podcatcher.listeners.OnSelectFileListener;
 import net.alliknow.podcatcher.view.fragments.SelectFileFragment;
 
 /**
@@ -31,7 +33,8 @@ import net.alliknow.podcatcher.view.fragments.SelectFileFragment;
  * {@link Activity#startActivityForResult(Intent, int)} to be alerted on
  * selection.
  */
-public class SelectFileActivity extends BaseActivity implements OnCancelListener {
+public class SelectFileActivity extends BaseActivity implements OnSelectFileListener,
+        OnCancelListener {
 
     /** The tag we identify our file selection fragment with */
     private static final String SELECT_FILE_FRAGMENT_TAG = "select_file";
@@ -55,10 +58,13 @@ public class SelectFileActivity extends BaseActivity implements OnCancelListener
             selectFileFragment = new SelectFileFragment();
             selectFileFragment.setStyle(DialogFragment.STYLE_NORMAL,
                     android.R.style.Theme_Holo_Light_Dialog);
-
-            // Show the fragment
-            selectFileFragment.show(getFragmentManager(), SELECT_FILE_FRAGMENT_TAG);
         }
+
+        selectFileFragment.setPath(Environment
+                .getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS));
+
+        // Show the fragment
+        selectFileFragment.show(getFragmentManager(), SELECT_FILE_FRAGMENT_TAG);
     }
 
     @Override
