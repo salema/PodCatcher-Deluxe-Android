@@ -17,11 +17,10 @@
 
 package net.alliknow.podcatcher;
 
-import static android.os.Environment.DIRECTORY_PODCASTS;
-
-import android.os.Environment;
+import android.content.Intent;
 import android.widget.Toast;
 
+import net.alliknow.podcatcher.SelectFileActivity.SelectionMode;
 import net.alliknow.podcatcher.listeners.OnStorePodcastListListener;
 import net.alliknow.podcatcher.model.tasks.StorePodcastListTask;
 import net.alliknow.podcatcher.model.types.Podcast;
@@ -44,22 +43,41 @@ public class ExportOpmlActivity extends BaseActivity implements OnStorePodcastLi
 
         // If list is there, export podcasts at given positions
         if (positions != null) {
-            List<Podcast> podcasts = new ArrayList<Podcast>();
+            Intent selectFolderIntent = new Intent(this, SelectFileActivity.class);
+            selectFolderIntent
+                    .putExtra(SelectFileActivity.SELECTION_MODE_KEY, SelectionMode.FOLDER);
 
-            for (Integer position : positions)
-                podcasts.add(podcastManager.getPodcastList().get(position));
+            startActivityForResult(selectFolderIntent, 1);
+        } else
+            // Nothing to do
+            finish();
+    }
 
-            // TODO popup a folder selection dialog instead of simply exporting
-            // to the podcasts directory
-            StorePodcastListTask exportTask = new StorePodcastListTask(this, this);
-            // Determine and set output folder
-            File exportFolder = Environment.getExternalStoragePublicDirectory(DIRECTORY_PODCASTS);
-            exportTask.setCustomLocation(exportFolder);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (RESULT_OK == resultCode && data != null) {
+            // Get the list of positions to export
+            List<Integer> positions = getIntent()
+                    .getIntegerArrayListExtra(PODCAST_POSITION_LIST_KEY);
 
-            exportTask.execute(podcasts);
+            // If list is there, export podcasts at given positions
+            if (positions != null) {
+                List<Podcast> podcasts = new ArrayList<Podcast>();
+
+                for (Integer position : positions)
+                    podcasts.add(podcastManager.getPodcastList().get(position));
+
+                StorePodcastListTask exportTask = new StorePodcastListTask(this, this);
+                // Determine and set output folder
+                File exportFolder = new File(
+                        data.getStringExtra(SelectFileActivity.RESULT_PATH_KEY));
+                exportTask.setCustomLocation(exportFolder);
+
+                exportTask.execute(podcasts);
+            }
         }
 
-        // Make sure we stop here
+        // Make sure we finish here
         finish();
     }
 
@@ -74,5 +92,4 @@ public class ExportOpmlActivity extends BaseActivity implements OnStorePodcastLi
             Exception exception) {
         showToast(getString(R.string.export_opml_failed));
     }
-
 }

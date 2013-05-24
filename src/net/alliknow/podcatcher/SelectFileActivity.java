@@ -123,7 +123,6 @@ public class SelectFileActivity extends BaseActivity implements OnSelectFileList
 
     @Override
     public void onAccessDenied(File path) {
-        // show toast
-        System.out.println(getString(R.string.access_denied));
+        showToast(getString(R.string.access_denied));
     }
 }

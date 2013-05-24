@@ -96,7 +96,6 @@ public class StorePodcastListTask extends StoreFileTask<List<Podcast>> {
     @Override
     protected Void doInBackground(List<Podcast>... params) {
         this.podcastList = params[0];
-        BufferedWriter writer = null;
 
         try {
             // 1. Open the file and get a writer
