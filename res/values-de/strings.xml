@@ -86,4 +86,8 @@
     <string name="error_podcast_load">Podcast kann nicht geladen werden, bitte prüfen Sie Ihre Internetverbindung!</string>
     <string name="error_podcast_load_multiple">konnte nicht geladen werden.</string>
     <string name="no_episode_description">Keine Beschreibung verfügbar.</string>
+    <string name="select">Auswählen</string>
+    <string name="select_file">Datei wählen</string>
+    <string name="select_folder">Ordner wählen</string>
+    <string name="access_denied">Zugang verweigert!</string>
 </resources>

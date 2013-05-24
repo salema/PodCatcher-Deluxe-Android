@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.SelectFileActivity.SelectionMode;
 import net.alliknow.podcatcher.listeners.OnSelectFileListener;
 import net.alliknow.podcatcher.view.adapters.FileListAdapter;
 
@@ -48,6 +50,10 @@ public class SelectFileFragment extends DialogFragment {
     private OnSelectFileListener listener;
     /** The path we are currently showing */
     private File currentPath;
+    /** The current selection mode */
+    private SelectionMode selectionMode = SelectionMode.FILE;
+    /** The currently selected position in list (used only for file selection) */
+    private int selectedPosition = -1;
 
     /** The current path view */
     private TextView currentPathView;
@@ -74,13 +80,23 @@ public class SelectFileFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+        // Inflate the layout
+        final View layout = inflater.inflate(R.layout.file_dialog, container, false);
 
-        return inflater.inflate(R.layout.file_dialog, container, false);
+        // Get the display dimensions
+        Rect displayRectangle = new Rect();
+        getActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+
+        // Adjust the layout minimum height so the dialog always has the same
+        // height and does not bounce around depending on the list content
+        layout.setMinimumHeight((int) (displayRectangle.height() * 0.9f));
+
+        return layout;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        getDialog().setTitle("Select Folder");
+        updateDialogTitle();
 
         currentPathView = (TextView) view.findViewById(R.id.current_path);
         upButton = (ImageButton) view.findViewById(R.id.path_up);
@@ -88,7 +104,11 @@ public class SelectFileFragment extends DialogFragment {
 
             @Override
             public void onClick(View v) {
-                setPath(currentPath.getParentFile());
+                final File up = currentPath.getParentFile();
+
+                // Switch to parent if not root
+                if (up != null)
+                    setPath(up);
             }
         });
 
@@ -97,15 +117,40 @@ public class SelectFileFragment extends DialogFragment {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                setPath((File) fileListView.getAdapter().getItem(position));
+                final File subFile = (File) fileListView.getAdapter().getItem(position);
+
+                // Switch down to sub directory
+                if (subFile.isDirectory())
+                    setPath(subFile);
+                else {
+                    // Mark file as selected
+                    selectedPosition = position;
+
+                    selectButton.setEnabled(true);
+                    ((FileListAdapter) fileListView.getAdapter()).setSelectedPosition(position);
+                }
             }
         });
+
         selectButton = (Button) view.findViewById(R.id.select_file);
+        selectButton.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (SelectionMode.FOLDER.equals(selectionMode))
+                    listener.onFileSelected(currentPath);
+                else if (selectedPosition >= 0)
+                    listener.onFileSelected(
+                            (File) fileListView.getAdapter().getItem(selectedPosition));
+            }
+        });
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        updateDialogTitle();
 
         if (currentPath != null)
             setPath(currentPath);
@@ -118,13 +163,53 @@ public class SelectFileFragment extends DialogFragment {
             ((OnCancelListener) listener).onCancel(dialog);
     }
 
+    /**
+     * Set the directory path for the fragment to show. You can call this
+     * anytime and assume the latest call to take effect {@link #onResume()}.
+     * 
+     * @param path The directory to show content for. Cannot be a file and has
+     *            to exist. Do not set to <code>null</code>.
+     */
     public void setPath(File path) {
         this.currentPath = path;
 
-        if (isResumed() && path != null) {
-            currentPathView.setText(path.getAbsolutePath());
-            upButton.setEnabled(path.getParent() != null);
-            fileListView.setAdapter(new FileListAdapter(getActivity(), path));
+        if (isResumed() && path != null && path.isDirectory() && path.exists()) {
+            if (path.canRead()) {
+                selectedPosition = -1;
+
+                currentPathView.setText(path.getAbsolutePath());
+                upButton.setEnabled(path.getParent() != null);
+
+                fileListView.setAdapter(new FileListAdapter(getActivity(), path));
+
+                if (SelectionMode.FOLDER.equals(selectionMode))
+                    selectButton.setEnabled(true);
+                else
+                    selectButton.setEnabled(false);
+            }
+            else
+                listener.onAccessDenied(path);
         }
+    }
+
+    /**
+     * Set the selection mode. You can call this anytime and assume the latest
+     * call to take effect {@link #onResume()}.
+     * 
+     * @param selectionMode The selection mode to use (file or folder)
+     * @see SelectionMode
+     */
+    public void setSelectionMode(SelectionMode selectionMode) {
+        this.selectionMode = selectionMode;
+
+        if (isResumed())
+            updateDialogTitle();
+    }
+
+    private void updateDialogTitle() {
+        if (SelectionMode.FOLDER.equals(selectionMode))
+            getDialog().setTitle(R.string.select_folder);
+        else
+            getDialog().setTitle(R.string.select_file);
     }
 }

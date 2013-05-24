@@ -86,4 +86,8 @@
     <string name="error_podcast_load">El podcast no se pudo cargar. Comprueba la URL y asegúrate de que estás conectado.</string>
     <string name="error_podcast_load_multiple">no se pudo cargar.</string>
     <string name="no_episode_description">No hay ninguna descripción disponible.</string>
+    <string name="select">Seleccionar</string>
+    <string name="select_file">Seleccionar un archivo</string>
+    <string name="select_folder">Seleccionar una carpeta</string>
+    <string name="access_denied">Acceso denegado!</string>
 </resources>

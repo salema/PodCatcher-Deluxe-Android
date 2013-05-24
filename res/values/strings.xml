@@ -94,4 +94,8 @@
     <string name="error_podcast_load">Cannot load podcast, please make sure you are online!</string>
     <string name="error_podcast_load_multiple">failed to load.</string>
     <string name="no_episode_description">No description available.</string>
+    <string name="select">Select</string>
+    <string name="select_file">Select File</string>
+    <string name="select_folder">Select Folder</string>
+    <string name="access_denied">Access denied!</string>
 </resources>

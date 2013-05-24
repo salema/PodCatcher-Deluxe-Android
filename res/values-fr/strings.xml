@@ -86,4 +86,8 @@
     <string name="error_podcast_load">Le téléchargement du podcast a échoué. Assurez-vous que vous êtes en ligne.</string>
     <string name="error_podcast_load_multiple">ne peut pas être mis à jour.</string>
     <string name="no_episode_description">Aucune description disponible.</string>
+    <string name="select">Sélectionner</string>
+    <string name="select_file">Sélectionner un fichier</string>
+    <string name="select_folder">Sélectionner un dossier</string>
+    <string name="access_denied">Accès refusé!</string>
 </resources>

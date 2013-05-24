@@ -27,6 +27,8 @@ import android.os.Environment;
 import net.alliknow.podcatcher.listeners.OnSelectFileListener;
 import net.alliknow.podcatcher.view.fragments.SelectFileFragment;
 
+import java.io.File;
+
 /**
  * Non-UI activity to select files and folders. Use the intent and constants
  * defined here to configure its behavior. Start the activity with
@@ -39,6 +41,25 @@ public class SelectFileActivity extends BaseActivity implements OnSelectFileList
     /** The tag we identify our file selection fragment with */
     private static final String SELECT_FILE_FRAGMENT_TAG = "select_file";
 
+    /** The key to store initial path under in intent */
+    public static final String INITIAL_PATH_KEY = "initial_path";
+    /** The key to store result path under in intent */
+    public static final String RESULT_PATH_KEY = "result_path";
+
+    /** The key to store wanted selection mode under in intent */
+    public static final String SELECTION_MODE_KEY = "file_selection_mode";
+    /** The current selection mode */
+    private SelectionMode selectionMode = SelectionMode.FILE;
+
+    /** The selection mode options */
+    public static enum SelectionMode {
+        /** File selection */
+        FILE,
+
+        /** Folder selection */
+        FOLDER
+    }
+
     /** The fragment containing the select file UI */
     private SelectFileFragment selectFileFragment;
 
@@ -46,9 +67,6 @@ public class SelectFileActivity extends BaseActivity implements OnSelectFileList
     protected void onStart() {
         super.onStart();
 
-        // use getIntent() to configure
-
-        // Show the dialog fragment
         // Try to find existing fragment
         selectFileFragment = (SelectFileFragment) getFragmentManager().findFragmentByTag(
                 SELECT_FILE_FRAGMENT_TAG);
@@ -60,8 +78,27 @@ public class SelectFileActivity extends BaseActivity implements OnSelectFileList
                     android.R.style.Theme_Holo_Light_Dialog);
         }
 
-        selectFileFragment.setPath(Environment
-                .getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS));
+        // Use getIntent() to configure selection mode
+        final SelectionMode modeFromIntent =
+                (SelectionMode) getIntent().getSerializableExtra(SELECTION_MODE_KEY);
+        if (modeFromIntent != null)
+            selectionMode = modeFromIntent;
+        // Set the selection mode
+        selectFileFragment.setSelectionMode(selectionMode);
+
+        // Use getIntent() to configure initial path
+        final String initialPathString = getIntent().getStringExtra(INITIAL_PATH_KEY);
+        // Set the initial path
+        if (initialPathString != null && new File(initialPathString).exists())
+            selectFileFragment.setPath(new File(initialPathString));
+        else {
+            // No path set, use default
+            final File podcastDir = Environment
+                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS);
+            podcastDir.mkdirs();
+
+            selectFileFragment.setPath(podcastDir);
+        }
 
         // Show the fragment
         selectFileFragment.show(getFragmentManager(), SELECT_FILE_FRAGMENT_TAG);
@@ -69,6 +106,24 @@ public class SelectFileActivity extends BaseActivity implements OnSelectFileList
 
     @Override
     public void onCancel(DialogInterface dialog) {
-        // TODO Auto-generated method stub
+        setResult(RESULT_CANCELED);
+        finish();
+    }
+
+    @Override
+    public void onFileSelected(File selectedFile) {
+        selectFileFragment.dismiss();
+
+        Intent result = new Intent();
+        result.putExtra(RESULT_PATH_KEY, selectedFile.getAbsolutePath());
+
+        setResult(RESULT_OK, result);
+        finish();
+    }
+
+    @Override
+    public void onAccessDenied(File path) {
+        // show toast
+        System.out.println(getString(R.string.access_denied));
     }
 }

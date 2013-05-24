@@ -17,11 +17,16 @@
 
 package net.alliknow.podcatcher.listeners;
 
+import java.io.File;
 
 /**
  * Interface definition for a callback to be invoked when an file or folder is
  * selected.
  */
 public interface OnSelectFileListener {
+
+    public void onFileSelected(File selectedFile);
+
+    public void onAccessDenied(File path);
 
 }
