@@ -44,6 +44,10 @@
 	        android:background="@drawable/button_orange"
 	        android:src="@drawable/ic_file_up" />
 	</LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_off" />
     <ListView
         android:id="@+id/files"
         android:layout_width="match_parent"
@@ -54,6 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_margin="3dp"
+        android:textColor="@drawable/button_label"
         android:background="@drawable/button_green"
-        android:text="Select" />
+        android:text="@string/select" />
 </LinearLayout>
