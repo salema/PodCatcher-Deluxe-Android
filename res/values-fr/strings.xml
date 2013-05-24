@@ -76,4 +76,8 @@
     <string name="error_podcast_load_multiple">ne peut pas être mis à jour.</string>
     <string name="no_episode_description">Aucune description disponible.</string>
     <string name="ad">Essayez &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt;: Téléchargements, Listes de lecture, Filtres et bien plus encore!</string>
+    <string name="select">Sélectionner</string>
+    <string name="select_file">Sélectionner un fichier</string>
+    <string name="select_folder">Sélectionner un dossier</string>
+    <string name="access_denied">Accès refusé!</string>
 </resources>

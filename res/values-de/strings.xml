@@ -76,4 +76,8 @@
     <string name="error_podcast_load_multiple">konnte nicht geladen werden.</string>
     <string name="no_episode_description">Keine Beschreibung verfügbar.</string>
     <string name="ad">Testen Sie &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt;: Downloads, Playlists, Filter und viele weitere Komfortfunktionen!</string>
+    <string name="select">Auswählen</string>
+    <string name="select_file">Datei wählen</string>
+    <string name="select_folder">Ordner wählen</string>
+    <string name="access_denied">Zugang verweigert!</string>
 </resources>

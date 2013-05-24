@@ -81,4 +81,8 @@
     <string name="error_podcast_load_multiple">failed to load.</string>
     <string name="no_episode_description">No description available.</string>
 	<string name="ad">Try &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; for downloads, playlists, filters, and other premium features!</string>
+    <string name="select">Select</string>
+    <string name="select_file">Select File</string>
+    <string name="select_folder">Select Folder</string>
+    <string name="access_denied">Access denied!</string>
 </resources>

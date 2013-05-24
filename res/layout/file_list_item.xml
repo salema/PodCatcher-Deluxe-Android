@@ -21,33 +21,20 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:background="@drawable/list_item_background">
     <ImageView
         android:id="@+id/icon"
         android:layout_width="48dp"
         android:layout_height="match_parent"
         android:scaleType="centerInside" />
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:singleLine="true"
-                android:textSize="@dimen/font_size_default"
-                android:textColor="@android:color/primary_text_dark" />
-            <TextView
-                android:id="@+id/subtitle"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:singleLine="true"
-                android:textSize="@dimen/font_size_small"
-                android:textColor="@android:color/primary_text_dark" />
-        </LinearLayout>
+    <TextView
+        android:id="@+id/file:name"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:textSize="@dimen/font_size_default"
+        android:singleLine="true"
+        android:ellipsize="middle" />
 </LinearLayout>
