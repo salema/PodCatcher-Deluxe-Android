@@ -23,8 +23,11 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.PodcastManager;
@@ -42,6 +45,9 @@ public abstract class BaseActivity extends Activity {
     public static final String PODCATCHER_WEBSITE = "http://www.podcatcher-deluxe.com";
     /** The podcatcher help website URL */
     public static final String PODCATCHER_HELPSITE = "http://www.podcatcher-deluxe.com/help";
+
+    /** Key to find the podcast positions under */
+    public static final String PODCAST_POSITION_LIST_KEY = "position_list_key";
 
     /** The podcast manager handle */
     protected PodcastManager podcastManager;
@@ -253,5 +259,29 @@ public abstract class BaseActivity extends Activity {
      */
     protected Fragment findByTagId(int tagId) {
         return getFragmentManager().findFragmentByTag(getString(tagId));
+    }
+
+    /**
+     * Show a short, centered toast.
+     * 
+     * @param text Toast message text to show.
+     */
+    protected void showToast(String text) {
+        showToast(text, Toast.LENGTH_SHORT);
+    }
+
+    /**
+     * Show a centered toast.
+     * 
+     * @param text Toast message text to show.
+     * @param length The duration for the toast to show.
+     */
+    protected void showToast(String text, int length) {
+        Toast toast = Toast.makeText(this, text, length);
+
+        TextView textView = (TextView) toast.getView().findViewById(android.R.id.message);
+        textView.setGravity(Gravity.CENTER);
+
+        toast.show();
     }
 }

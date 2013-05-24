@@ -76,6 +76,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
 
     /** The name of the file we store our saved podcasts in (as OPML) */
     public static final String OPML_FILENAME = "podcasts.opml";
+    /** The OPML file encoding */
+    public static final String OPML_FILE_ENCODING = "utf8";
 
     /** The list of podcasts we know */
     private List<Podcast> podcastList;

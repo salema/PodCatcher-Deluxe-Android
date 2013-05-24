@@ -23,10 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.view.Gravity;
 import android.widget.SeekBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
 import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
@@ -467,20 +464,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
                         service.getDuration(), service.getCurrentPosition());
             }
         }
-    }
-
-    /**
-     * Show a short, centered toast.
-     * 
-     * @param text Toast message text to show.
-     */
-    protected void showToast(String text) {
-        Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
-
-        TextView textView = (TextView) toast.getView().findViewById(android.R.id.message);
-        textView.setGravity(Gravity.CENTER);
-
-        toast.show();
     }
 
     private void startPlayProgressTimer() {

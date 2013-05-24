@@ -23,4 +23,9 @@
         android:icon="@drawable/ic_menu_delete"
         android:showAsAction="always"
         android:title="@string/remove" />
+    <item
+        android:id="@+id/opml_export_contextmenuitem"
+        android:icon="@drawable/ic_menu_export"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/export_opml" />
 </menu>
