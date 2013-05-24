@@ -79,5 +79,5 @@
     <string name="select">Auswählen</string>
     <string name="select_file">Datei wählen</string>
     <string name="select_folder">Ordner wählen</string>
-    <string name="access_denied">Zugang verweigert!</string>
+    <string name="access_denied">Zugriff verweigert!</string>
 </resources>

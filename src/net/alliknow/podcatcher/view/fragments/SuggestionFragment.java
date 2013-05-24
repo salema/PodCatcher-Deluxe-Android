@@ -24,6 +24,7 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -123,8 +124,18 @@ public class SuggestionFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+        // Inflate the layout
+        final View layout = inflater.inflate(R.layout.suggestions, container, false);
 
-        return inflater.inflate(R.layout.suggestions, container, false);
+        // Get the display dimensions
+        Rect displayRectangle = new Rect();
+        getActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+
+        // Adjust the layout minimum height so the dialog always has the same
+        // height and does not bounce around depending on the list content
+        layout.setMinimumHeight((int) (displayRectangle.height() * 0.9f));
+
+        return layout;
     }
 
     @Override
