@@ -29,8 +29,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import net.alliknow.podcatcher.AddPodcastActivity;
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.SelectFileActivity;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.listeners.PodcastListContextListener;
 import net.alliknow.podcatcher.model.types.Podcast;
@@ -139,7 +139,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.podcast_add_menuitem:
-                startActivity(new Intent(getActivity(), SelectFileActivity.class));
+                startActivity(new Intent(getActivity(), AddPodcastActivity.class));
 
                 return true;
             default:
