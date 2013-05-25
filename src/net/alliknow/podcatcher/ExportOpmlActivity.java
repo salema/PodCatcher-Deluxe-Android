@@ -18,6 +18,7 @@
 package net.alliknow.podcatcher;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.widget.Toast;
 
 import net.alliknow.podcatcher.SelectFileActivity.SelectionMode;
@@ -35,19 +36,23 @@ import java.util.List;
 public class ExportOpmlActivity extends BaseActivity implements OnStorePodcastListListener {
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         // Get the list of positions to export
         List<Integer> positions = getIntent().getIntegerArrayListExtra(PODCAST_POSITION_LIST_KEY);
 
         // If list is there, export podcasts at given positions
         if (positions != null) {
-            Intent selectFolderIntent = new Intent(this, SelectFileActivity.class);
-            selectFolderIntent
-                    .putExtra(SelectFileActivity.SELECTION_MODE_KEY, SelectionMode.FOLDER);
+            // Only do this inital creation to avoid multiple folder selection
+            // dialogs
+            if (savedInstanceState == null) {
+                Intent selectFolderIntent = new Intent(this, SelectFileActivity.class);
+                selectFolderIntent
+                        .putExtra(SelectFileActivity.SELECTION_MODE_KEY, SelectionMode.FOLDER);
 
-            startActivityForResult(selectFolderIntent, 1);
+                startActivityForResult(selectFolderIntent, 1);
+            }
         } else
             // Nothing to do
             finish();
