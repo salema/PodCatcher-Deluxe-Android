@@ -122,6 +122,11 @@ public class SelectFileActivity extends BaseActivity implements OnSelectFileList
     }
 
     @Override
+    public void onDirectoryChanged(File path) {
+        getIntent().putExtra(INITIAL_PATH_KEY, path.getAbsolutePath());
+    }
+
+    @Override
     public void onAccessDenied(File path) {
         showToast(getString(R.string.access_denied));
     }

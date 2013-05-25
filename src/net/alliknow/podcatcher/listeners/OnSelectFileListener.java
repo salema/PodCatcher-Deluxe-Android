@@ -25,8 +25,24 @@ import java.io.File;
  */
 public interface OnSelectFileListener {
 
+    /**
+     * A file/folder was selected by the user in the dialog.
+     * 
+     * @param selectedFile The file/folder selected.
+     */
     public void onFileSelected(File selectedFile);
 
-    public void onAccessDenied(File path);
+    /**
+     * The current folder set in the file dialog changed.
+     * 
+     * @param path The new path.
+     */
+    public void onDirectoryChanged(File path);
 
+    /**
+     * The user tried to navigate to an unavailable path.
+     * 
+     * @param path The path.
+     */
+    public void onAccessDenied(File path);
 }

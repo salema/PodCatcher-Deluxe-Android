@@ -122,7 +122,7 @@ public class SelectFileFragment extends DialogFragment {
                 // Switch down to sub directory
                 if (subFile.isDirectory())
                     setPath(subFile);
-                else {
+                else if (SelectionMode.FILE.equals(selectionMode)) {
                     // Mark file as selected
                     selectedPosition = position;
 
@@ -186,6 +186,8 @@ public class SelectFileFragment extends DialogFragment {
                     selectButton.setEnabled(true);
                 else
                     selectButton.setEnabled(false);
+
+                listener.onDirectoryChanged(path);
             }
             else
                 listener.onAccessDenied(path);
