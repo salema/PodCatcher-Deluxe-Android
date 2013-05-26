@@ -33,6 +33,8 @@
     <color name="button_red_dark_disabled">#ffff6c6c</color>
     <color name="button_orange_light">@android:color/holo_orange_light</color>
     <color name="button_orange_dark">@android:color/holo_orange_dark</color>
+    <color name="button_blue_light">@android:color/holo_blue_light</color>
+    <color name="button_blue_dark">@android:color/holo_blue_dark</color>
     <color name="text_error">@android:color/holo_red_dark</color>
     <color name="text_secondary">@android:color/darker_gray</color>
     <color name="divider_off">@android:color/darker_gray</color>

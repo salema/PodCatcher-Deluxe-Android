@@ -34,4 +34,9 @@ public interface OnAddPodcastListener {
      * add.
      */
     public void onShowSuggestions();
+
+    /**
+     * Called on listener if the user wants to import an OPML file.
+     */
+    public void onImportOpml();
 }

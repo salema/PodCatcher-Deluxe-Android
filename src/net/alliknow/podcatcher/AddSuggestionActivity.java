@@ -39,7 +39,7 @@ public class AddSuggestionActivity extends BaseActivity implements
         OnLoadSuggestionListener, OnAddSuggestionListener, OnCancelListener {
 
     /** The tag we identify our show suggestions fragment with */
-    private static final String SHOW_SUGGESTIONS_FRAGMENT_TAG = "show_suggestions";
+    public static final String SHOW_SUGGESTIONS_FRAGMENT_TAG = "show_suggestions";
 
     /** The fragment containing the add suggestion UI */
     private SuggestionFragment suggestionFragment;

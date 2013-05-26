@@ -157,6 +157,15 @@ public class AddPodcastActivity extends BaseActivity
     }
 
     @Override
+    public void onImportOpml() {
+        addPodcastFragment.dismiss();
+        finish();
+
+        // TODO what happens if we are currently loading?
+        startActivity(new Intent(this, ImportOpmlActivity.class));
+    }
+
+    @Override
     public void onCancel(DialogInterface dialog) {
         // TODO Cancel the load task in podcast manager if running
         finish();
