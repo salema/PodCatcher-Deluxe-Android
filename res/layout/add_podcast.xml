@@ -42,9 +42,10 @@
         <Button
             android:id="@+id/suggestion_add_button"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_margin="3dp"
             android:layout_weight="1"
+            android:layout_gravity="center_vertical"
             android:background="@drawable/button_orange"
             android:gravity="center"
             android:text="@string/suggestions"
@@ -53,9 +54,10 @@
         <Button
             android:id="@+id/podcast_add_button"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_margin="3dp"
             android:layout_weight="1"
+            android:layout_gravity="center_vertical"
             android:background="@drawable/button_green"
             android:gravity="center"
             android:text="@string/add_podcast_button"
