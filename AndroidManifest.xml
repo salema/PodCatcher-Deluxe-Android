@@ -99,7 +99,7 @@
             android:theme="@android:style/Theme.NoDisplay" />
         <activity
             android:name=".ExportOpmlActivity"
-            android:theme="@android:style/Theme.NoDisplay" />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name=".SelectFileActivity"
             android:theme="@android:style/Theme.NoDisplay" />

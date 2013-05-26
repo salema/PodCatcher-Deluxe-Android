@@ -44,7 +44,7 @@ public class ExportOpmlActivity extends BaseActivity implements OnStorePodcastLi
 
         // If list is there, export podcasts at given positions
         if (positions != null) {
-            // Only do this inital creation to avoid multiple folder selection
+            // Only do this initial creation to avoid multiple folder selection
             // dialogs
             if (savedInstanceState == null) {
                 Intent selectFolderIntent = new Intent(this, SelectFileActivity.class);
