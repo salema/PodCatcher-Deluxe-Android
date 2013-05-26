@@ -62,4 +62,17 @@
             android:textColor="@drawable/button_label"
             android:singleLine="true" />
     </LinearLayout>
+    <Button
+        android:id="@+id/import_opml_button"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_margin="3dp"
+        android:background="@drawable/button_blue"
+        android:drawableStart="@drawable/ic_menu_import"
+        android:gravity="center"
+        android:paddingLeft="8dp"
+        android:paddingRight="40dp"
+        android:text="@string/import_opml"
+        android:textColor="@drawable/button_label"
+        android:singleLine="true" />
 </LinearLayout>
