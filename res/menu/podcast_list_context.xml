@@ -19,13 +19,13 @@
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/podcast_remove_contextmenuitem"
-        android:icon="@drawable/ic_menu_delete"
-        android:showAsAction="always|withText"
-        android:title="@string/remove" />
-    <item
         android:id="@+id/opml_export_contextmenuitem"
         android:icon="@drawable/ic_menu_export"
         android:showAsAction="ifRoom|withText"
         android:title="@string/export_opml" />
+    <item
+        android:id="@+id/podcast_remove_contextmenuitem"
+        android:icon="@drawable/ic_menu_delete"
+        android:showAsAction="always|withText"
+        android:title="@string/remove" />
 </menu>
