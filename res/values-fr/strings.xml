@@ -77,6 +77,8 @@
     <string name="add_podcast_button">Ajouter</string>
     <string name="remove">Supprimer</string>
     <string name="remove_podcast">Supprimer podcast</string>
+    <string name="import_opml">Import OPML</string>
+    <string name="import_opml_failed">Import a échoué</string>
     <string name="export_opml">Export OPML</string>
     <string name="export_opml_success">Fichier OPML stocké à</string>
     <string name="export_opml_failed">Export échoué</string>

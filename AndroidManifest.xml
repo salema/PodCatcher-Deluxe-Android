@@ -98,6 +98,9 @@
             android:name=".RemovePodcastActivity"
             android:theme="@android:style/Theme.NoDisplay" />
         <activity
+            android:name=".ImportOpmlActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity
             android:name=".ExportOpmlActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity

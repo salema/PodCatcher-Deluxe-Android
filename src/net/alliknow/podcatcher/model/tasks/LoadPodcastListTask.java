@@ -32,6 +32,8 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -55,6 +57,11 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
     /** Member to measure performance */
     private Date startTime;
 
+    /** The file that we read from. */
+    protected File importFile;
+    /** The exception that might have been occured */
+    protected Exception exception;
+
     /**
      * Create new task.
      * 
@@ -69,6 +76,17 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
         this.listener = listener;
     }
 
+    /**
+     * Define where the task should read the podcast OPML file from. Not setting
+     * this (or given <code>null</code> here) will result in the file being read
+     * from the private app directory.
+     * 
+     * @param location The location to read from.
+     */
+    public void setCustomLocation(File opmlFile) {
+        this.importFile = opmlFile;
+    }
+
     @Override
     protected List<Podcast> doInBackground(Void... params) {
         // Record start time
@@ -79,17 +97,20 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
         InputStream fileStream = null;
 
         try {
-            // 1. Build parser
+            // 1. Open the podcast file
+            if (importFile == null)
+                fileStream = context.openFileInput(PodcastManager.OPML_FILENAME);
+            else
+                fileStream = new FileInputStream(importFile);
+
+            // 2. Build parser
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             // Create the parser to use
             XmlPullParser parser = factory.newPullParser();
 
-            // 2. Open default podcast file
-            fileStream = context.openFileInput(PodcastManager.OPML_FILENAME);
-            parser.setInput(fileStream, StoreFileTask.FILE_ENCODING);
-
             // 3. Parse the OPML file
+            parser.setInput(fileStream, PodcastManager.OPML_FILE_ENCODING);
             int eventType = parser.next();
 
             // Read complete document

@@ -61,6 +61,8 @@ public class AddPodcastFragment extends DialogFragment {
     private Button showSuggestionsButton;
     /** The add podcast button */
     private Button addPodcastButton;
+    /** The import OPML button */
+    private Button importOpmlButton;
 
     @Override
     public void onAttach(Activity activity) {
@@ -131,6 +133,15 @@ public class AddPodcastFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 addPodcast();
+            }
+        });
+
+        importOpmlButton = (Button) view.findViewById(R.id.import_opml_button);
+        importOpmlButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                listener.onImportOpml();
             }
         });
 
