@@ -89,6 +89,8 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".SettingsActivity" />
+        <activity
             android:name=".AddPodcastActivity"
             android:theme="@android:style/Theme.NoDisplay" />
         <activity

@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
 /** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
@@ -16,22 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
--->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/settings_menuitem"
-        android:orderInCategory="98"
-        android:showAsAction="never"
-        android:title="Preferences" />
-    <item
-        android:id="@+id/help_menuitem"
-        android:orderInCategory="99"
-        android:showAsAction="never"
-        android:title="@string/help" />
-    <item
-        android:id="@+id/about_menuitem"
-        android:icon="@drawable/launcher"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/about" />
-</menu>
+
+package net.alliknow.podcatcher.view.fragments;
+
+import android.os.Bundle;
+import android.preference.PreferenceFragment;
+
+import net.alliknow.podcatcher.R;
+
+/**
+ * Fragment for settings.
+ */
+public class SettingsFragment extends PreferenceFragment {
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Load the preferences from an XML resource
+        addPreferencesFromResource(R.xml.preferences);
+    }
+}

@@ -236,6 +236,10 @@ public abstract class BaseActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.settings_menuitem:
+                startActivity(new Intent(this, SettingsActivity.class));
+
+                return true;
             case R.id.about_menuitem:
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_WEBSITE)));
 
