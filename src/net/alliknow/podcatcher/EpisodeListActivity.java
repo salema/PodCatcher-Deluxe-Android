@@ -20,6 +20,7 @@ package net.alliknow.podcatcher;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 
 import net.alliknow.podcatcher.listeners.OnLoadDownloadsListener;
@@ -327,6 +328,10 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             updateDivider();
         }
 
+        // We may want to auto-download the latest episode
+        if (shouldAutoDownloadLatestEpisode(podcast))
+            episodeManager.download(podcast.getEpisodes().get(0));
+
         updateFilter();
         updateActionBar();
     }
@@ -495,5 +500,18 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             contentSpinner.setSubtitle((podcastCount - loadingPodcastCount) + " "
                     + getString(R.string.of) + " " + podcastCount + " "
                     + getString(R.string.podcasts_selected));
+    }
+
+    private boolean shouldAutoDownloadLatestEpisode(Podcast podcast) {
+        if (podcast == null || podcast.getEpisodeNumber() == 0)
+            return false;
+        else {
+            final Episode latestEpisode = podcast.getEpisodes().get(0);
+
+            return PreferenceManager.getDefaultSharedPreferences(this)
+                    .getBoolean(SettingsActivity.AUTO_DOWNLOAD_KEY, false)
+                    && ((Podcatcher) getApplication()).isOnFastConnection()
+                    && !episodeManager.getState(latestEpisode);
+        }
     }
 }

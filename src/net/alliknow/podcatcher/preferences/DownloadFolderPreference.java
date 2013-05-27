@@ -20,34 +20,54 @@ package net.alliknow.podcatcher.preferences;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.preference.Preference;
 import android.util.AttributeSet;
 
 import net.alliknow.podcatcher.SelectFileActivity;
 import net.alliknow.podcatcher.SelectFileActivity.SelectionMode;
 
+import java.io.File;
+
 /**
  * @author Kevin Hausmann
  */
 public class DownloadFolderPreference extends Preference {
 
+    public static final int REQUEST_CODE = 99;
+
+    private File downloadFolder;
+
     public DownloadFolderPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-        // TODO Auto-generated constructor stub
+
+        onSetInitialValue(false, null);
+    }
+
+    @Override
+    protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
+        downloadFolder = new File(getPersistedString(Environment
+                .getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS)
+                .getAbsolutePath()));
     }
 
     @Override
     protected void onClick() {
-
         Intent selectFolderIntent = new Intent(getContext(), SelectFileActivity.class);
         selectFolderIntent
                 .putExtra(SelectFileActivity.SELECTION_MODE_KEY, SelectionMode.FOLDER);
 
-        ((Activity) getContext()).startActivityForResult(selectFolderIntent, 99);
+        ((Activity) getContext()).startActivityForResult(selectFolderIntent, REQUEST_CODE);
     }
 
     @Override
     public CharSequence getSummary() {
-        return "/usr/test/Podcasts";
+        return downloadFolder.getAbsolutePath();
+    }
+
+    public void update(File newFolder) {
+        this.downloadFolder = newFolder;
+
+        persistString(newFolder.getAbsolutePath());
     }
 }

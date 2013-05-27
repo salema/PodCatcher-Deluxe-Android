@@ -43,6 +43,7 @@ import android.net.wifi.WifiManager.WifiLock;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import net.alliknow.podcatcher.BaseActivity.ContentMode;
@@ -50,6 +51,7 @@ import net.alliknow.podcatcher.EpisodeActivity;
 import net.alliknow.podcatcher.EpisodeListActivity;
 import net.alliknow.podcatcher.PodcastActivity;
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.SettingsActivity;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
@@ -480,6 +482,9 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
         // Mark the episode old (needs to be done before resetting the service!)
         episodeManager.setState(currentEpisode, true);
+        // Delete download if auto delete is enabled
+        if (shouldAutoDeleteCompletedEpisode(currentEpisode))
+            episodeManager.deleteDownload(currentEpisode);
 
         // If there is another episode on the playlist, play it.
         if (!episodeManager.isPlaylistEmpty())
@@ -674,5 +679,10 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     private void updateRemoteControlPlaystate(int state) {
         if (remoteControlClient != null)
             remoteControlClient.setPlaybackState(state);
+    }
+
+    private boolean shouldAutoDeleteCompletedEpisode(Episode episode) {
+        return PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(SettingsActivity.AUTO_DELETE_KEY, false);
     }
 }

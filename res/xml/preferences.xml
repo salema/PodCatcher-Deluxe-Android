@@ -21,16 +21,14 @@
     <CheckBoxPreference
         android:key="auto_download"
         android:title="Auto download"
-        android:summary="Download new episodes"
+        android:summary="Make new episodes available offline"
         android:defaultValue="false" />
     <CheckBoxPreference
         android:key="auto_delete"
         android:title="Auto delete"
-        android:summary="Delete old episode"
+        android:summary="Remove downloaded episode when playback completes"
         android:defaultValue="false" />
     <net.alliknow.podcatcher.preferences.DownloadFolderPreference 
         android:key="download_folder"
-        android:title="Download folder"
-        android:summary="Delete old episode"
-        android:defaultValue="test" />
+        android:title="Download folder" />
 </PreferenceScreen>

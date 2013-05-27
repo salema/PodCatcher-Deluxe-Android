@@ -25,7 +25,6 @@ import static android.app.DownloadManager.COLUMN_STATUS;
 import static android.app.DownloadManager.EXTRA_DOWNLOAD_ID;
 import static android.app.DownloadManager.EXTRA_NOTIFICATION_CLICK_DOWNLOAD_IDS;
 import static android.app.DownloadManager.STATUS_SUCCESSFUL;
-import static android.os.Environment.getExternalStoragePublicDirectory;
 import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_KEY;
 import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_VALUE;
 import static net.alliknow.podcatcher.Podcatcher.sanitizeAsFilename;
@@ -39,7 +38,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import net.alliknow.podcatcher.BaseActivity.ContentMode;
@@ -47,6 +46,7 @@ import net.alliknow.podcatcher.EpisodeActivity;
 import net.alliknow.podcatcher.EpisodeListActivity;
 import net.alliknow.podcatcher.PodcastActivity;
 import net.alliknow.podcatcher.Podcatcher;
+import net.alliknow.podcatcher.SettingsActivity;
 import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
 import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
@@ -246,7 +246,8 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     public void download(Episode episode) {
         if (episode != null && !isDownloadingOrDownloaded(episode)) {
             // Find the podcast directory and the path to store episode under
-            File podcastDir = getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS);
+            File podcastDir = new File(PreferenceManager.getDefaultSharedPreferences(podcatcher)
+                    .getString(SettingsActivity.DOWNLOAD_FOLDER_KEY, null));
             String subPath = getSubPath(episode);
             // We need to put a download id. If the episode is already
             // downloaded (i.e. the file exists) and we somehow missed to catch
@@ -266,7 +267,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
                 // Create the request
                 Request download = new Request(Uri.parse(episode.getMediaUrl().toString()))
-                        .setDestinationInExternalPublicDir(Environment.DIRECTORY_PODCASTS, subPath)
+                        .setDestinationUri(Uri.fromFile(new File(podcastDir, subPath)))
                         .setTitle(episode.getName())
                         .setDescription(episode.getPodcast().getName())
                         // We overwrite the AndroidDownloadManager user agent
@@ -309,6 +310,9 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
             if (meta != null) {
                 // This should delete the download and remove any information
                 downloadManager.remove(meta.downloadId);
+                // Make sure the file is deleted since this might not have taken
+                // care of by remove() above
+                new File(meta.filePath).delete();
 
                 meta.downloadId = null;
                 meta.filePath = null;
@@ -316,14 +320,6 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                 // Mark metadata record as dirty
                 metadataChanged = true;
             }
-
-            // Find the podcast directory and the path the episode is stored
-            // under
-            File podcastDir = getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS);
-            String subPath = getSubPath(episode);
-            // Make sure the file is deleted since this might not have taken
-            // care of by remove() above
-            new File(podcastDir, subPath).delete();
         }
     }
 

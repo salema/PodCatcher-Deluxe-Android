@@ -19,8 +19,13 @@ package net.alliknow.podcatcher.view.fragments;
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.widget.BaseAdapter;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.SettingsActivity;
+import net.alliknow.podcatcher.preferences.DownloadFolderPreference;
+
+import java.io.File;
 
 /**
  * Fragment for settings.
@@ -33,5 +38,15 @@ public class SettingsFragment extends PreferenceFragment {
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
+    }
+
+    public void updateDownloadFolder(File newFolder) {
+        DownloadFolderPreference folderPreference =
+                (DownloadFolderPreference) findPreference(SettingsActivity.DOWNLOAD_FOLDER_KEY);
+
+        if (folderPreference != null) {
+            folderPreference.update(newFolder);
+            ((BaseAdapter) getPreferenceScreen().getRootAdapter()).notifyDataSetChanged();
+        }
     }
 }
