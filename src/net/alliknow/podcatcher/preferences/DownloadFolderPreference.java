@@ -1,4 +1,4 @@
-/** Copyright 2012 Kevin Hausmann
+/** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
@@ -56,6 +56,8 @@ public class DownloadFolderPreference extends Preference {
         Intent selectFolderIntent = new Intent(getContext(), SelectFileActivity.class);
         selectFolderIntent
                 .putExtra(SelectFileActivity.SELECTION_MODE_KEY, SelectionMode.FOLDER);
+        selectFolderIntent
+                .putExtra(SelectFileActivity.INITIAL_PATH_KEY, downloadFolder.getAbsolutePath());
 
         ((Activity) getContext()).startActivityForResult(selectFolderIntent, REQUEST_CODE);
     }

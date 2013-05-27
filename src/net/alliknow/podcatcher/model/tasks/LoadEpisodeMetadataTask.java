@@ -17,15 +17,15 @@
 
 package net.alliknow.podcatcher.model.tasks;
 
-import static android.os.Environment.getExternalStoragePublicDirectory;
 import static net.alliknow.podcatcher.Podcatcher.sanitizeAsFilename;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
+import net.alliknow.podcatcher.SettingsActivity;
 import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.tags.METADATA;
@@ -233,7 +233,8 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
     }
 
     private File getDownloadLocationFor(Entry<URL, EpisodeMetadata> entry) {
-        File podcastDir = getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS);
+        File podcastDir = new File(PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(SettingsActivity.DOWNLOAD_FOLDER_KEY, null));
 
         // Extract file ending
         String remoteFile = Uri.parse(entry.getKey().toString()).getPath();

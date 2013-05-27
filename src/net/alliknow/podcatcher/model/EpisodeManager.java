@@ -312,7 +312,8 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                 downloadManager.remove(meta.downloadId);
                 // Make sure the file is deleted since this might not have taken
                 // care of by remove() above
-                new File(meta.filePath).delete();
+                if (meta.filePath != null)
+                    new File(meta.filePath).delete();
 
                 meta.downloadId = null;
                 meta.filePath = null;
