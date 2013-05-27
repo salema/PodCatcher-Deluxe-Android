@@ -222,10 +222,8 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
             if (entry.getValue().downloadId == null)
                 continue;
 
-            File downloadPath = getDownloadLocationFor(entry);
-
             // Invalidate file path and download id data
-            if (entry.getValue().filePath != null && !downloadPath.exists()) {
+            if (entry.getValue().filePath != null && !new File(entry.getValue().filePath).exists()) {
                 entry.getValue().downloadId = null;
                 entry.getValue().filePath = null;
             }
