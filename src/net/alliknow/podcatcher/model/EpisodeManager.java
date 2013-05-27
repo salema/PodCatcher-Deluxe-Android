@@ -318,8 +318,9 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                 meta.downloadId = null;
                 meta.filePath = null;
 
+                // Alert listeners
                 for (OnDownloadEpisodeListener listener : downloadListeners)
-                    listener.onDownloadDeleted(episode);
+                    listener.onDownloadDeleted();
 
                 // Mark metadata record as dirty
                 metadataChanged = true;

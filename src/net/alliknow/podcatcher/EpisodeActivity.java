@@ -244,9 +244,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     @Override
-    public void onDownloadDeleted(Episode episode) {
-        if (episode != null && episode.equals(selection.getEpisode()))
-            updateDownloadUi();
+    public final void onDownloadDeleted() {
+        updateDownloadUi();
     }
 
     @Override

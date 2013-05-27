@@ -17,7 +17,6 @@
 
 package net.alliknow.podcatcher.listeners;
 
-import net.alliknow.podcatcher.model.types.Episode;
 
 /**
  * Interface for the controller to implement when the user requests an episode
@@ -42,8 +41,6 @@ public interface OnDownloadEpisodeListener {
 
     /**
      * Called on the listener if a download is removed.
-     * 
-     * @param episode Episode download is removed for.
      */
-    public void onDownloadDeleted(Episode episode);
+    public void onDownloadDeleted();
 }
