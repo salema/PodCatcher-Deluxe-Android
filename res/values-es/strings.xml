@@ -25,7 +25,7 @@
     <string name="pref_auto_download_title">Descargas automáticas</string>
     <string name="pref_auto_download_summary">Make new episodes available offline</string>
     <string name="pref_auto_delete_title">Eliminación automática</string>
-    <string name="pref_auto_delete_summary">Remove downloaded episode when playback completes</string>
+    <string name="pref_auto_delete_summary">Remove downloaded episodes when playback completes</string>
     <string name="pref_download_folder_title">Carpeta de descargas</string>
     <string name="wait">Esperar</string>
     <string name="connect">Conectar</string>
