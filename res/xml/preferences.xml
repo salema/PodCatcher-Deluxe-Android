@@ -20,15 +20,15 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     <CheckBoxPreference
         android:key="auto_download"
-        android:title="Auto download"
-        android:summary="Make new episodes available offline"
+        android:title="@string/pref_auto_download_title"
+        android:summary="@string/pref_auto_download_summary"
         android:defaultValue="false" />
     <CheckBoxPreference
         android:key="auto_delete"
-        android:title="Auto delete"
-        android:summary="Remove downloaded episode when playback completes"
+        android:title="@string/pref_auto_delete_title"
+        android:summary="@string/pref_auto_delete_summary"
         android:defaultValue="false" />
     <net.alliknow.podcatcher.preferences.DownloadFolderPreference 
         android:key="download_folder"
-        android:title="Download folder" />
+        android:title="@string/pref_download_folder_title" />
 </PreferenceScreen>

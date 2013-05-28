@@ -22,6 +22,7 @@ import static net.alliknow.podcatcher.Podcatcher.sanitizeAsFilename;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -194,6 +195,17 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
     }
 
     private void cleanMetadata(Map<URL, EpisodeMetadata> result) {
+        // Find download folder
+        String podcastDirPath = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(SettingsActivity.DOWNLOAD_FOLDER_KEY, null);
+        File podcastDir;
+
+        if (podcastDirPath == null)
+            podcastDir = Environment
+                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS);
+        else
+            podcastDir = new File(podcastDirPath);
+
         // Handle the case where the download finished while the application was
         // not running. In this case, there would be a downloadId but no
         // filePath while the episode media file is actually there.
@@ -205,7 +217,7 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
             if (entry.getValue().downloadId == null)
                 continue;
 
-            File downloadPath = getDownloadLocationFor(entry);
+            File downloadPath = getDownloadLocationFor(podcastDir, entry);
 
             if (entry.getValue().filePath == null && downloadPath.exists())
                 entry.getValue().filePath = downloadPath.getAbsolutePath();
@@ -230,10 +242,7 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
         }
     }
 
-    private File getDownloadLocationFor(Entry<URL, EpisodeMetadata> entry) {
-        File podcastDir = new File(PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(SettingsActivity.DOWNLOAD_FOLDER_KEY, null));
-
+    private File getDownloadLocationFor(File podcastDir, Entry<URL, EpisodeMetadata> entry) {
         // Extract file ending
         String remoteFile = Uri.parse(entry.getKey().toString()).getPath();
         String fileEnding = remoteFile.substring(remoteFile.lastIndexOf('.'));

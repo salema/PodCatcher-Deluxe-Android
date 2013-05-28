@@ -37,13 +37,14 @@ public class SettingsActivity extends BaseActivity {
     /** The key for the download folder preference */
     public static final String DOWNLOAD_FOLDER_KEY = "download_folder";
 
+    /** The settings fragment we display */
     private SettingsFragment settingsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setTitle("Settings");
+        setTitle(R.string.preferences);
 
         // Create the fragment to show
         this.settingsFragment = new SettingsFragment();
@@ -55,11 +56,14 @@ public class SettingsActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // This is used to fetch the result from the select folder dialog. The
+        // result is forwarded to the preference object via the fragment.
         if (resultCode == RESULT_OK && requestCode == DownloadFolderPreference.REQUEST_CODE)
             if (settingsFragment != null && data != null) {
                 final File folder = new File(data
                         .getStringExtra(SelectFileActivity.RESULT_PATH_KEY));
 
+                // Only accept folder we can write to.
                 if (folder.canWrite())
                     settingsFragment.updateDownloadFolder(folder);
                 else

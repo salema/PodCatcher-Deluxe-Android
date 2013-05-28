@@ -21,6 +21,12 @@
     <string name="app_name">Podcatcher Deluxe</string>
     <string name="about">A propos Podcatcher Deluxe</string>
     <string name="help">Aide</string>
+    <string name="preferences">Préférences</string>
+    <string name="pref_auto_download_title">Téléchargement automatique</string>
+    <string name="pref_auto_download_summary">Make new episodes available offline</string>
+    <string name="pref_auto_delete_title">Suppression automatique</string>
+    <string name="pref_auto_delete_summary">Remove downloaded episode when playback completes</string>
+    <string name="pref_download_folder_title">Dossier de téléchargement</string>
     <string name="wait">Attendre</string>
     <string name="connect">Connecter</string>
     <string name="started_download">Téléchargements actifs: </string>

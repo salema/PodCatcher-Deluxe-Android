@@ -40,12 +40,21 @@ public class SettingsFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.preferences);
     }
 
+    /**
+     * Update the download folder preference to given folder.
+     * 
+     * @param newFolder The new folder to store downloads in. Needs to be
+     *            writable.
+     */
     public void updateDownloadFolder(File newFolder) {
+        // Get the corresponding preference
         DownloadFolderPreference folderPreference =
                 (DownloadFolderPreference) findPreference(SettingsActivity.DOWNLOAD_FOLDER_KEY);
 
-        if (folderPreference != null) {
+        if (folderPreference != null && newFolder != null && newFolder.canWrite()) {
             folderPreference.update(newFolder);
+
+            // Make sure the summary shows the folder path
             ((BaseAdapter) getPreferenceScreen().getRootAdapter()).notifyDataSetChanged();
         }
     }
