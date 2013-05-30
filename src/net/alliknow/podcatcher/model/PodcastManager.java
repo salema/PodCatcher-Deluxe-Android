@@ -574,8 +574,12 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         podcastList.add(createPodcast("Linux' Outlaws",
                 "http://feeds.feedburner.com/linuxoutlaws"));
         podcastList.add(createPodcast("GEO", "http://www.geo.de/GEOaudio/index.xml"));
-        podcastList.add(createPodcast("Mäuse", "http://podcast.wdr.de/maus.xml"));
-        podcastList.add(createPodcast("D&uuml;de", "http://feeds.feedburner.com/UhhYeahDude"));
+        podcastList.add(createPodcast("All Politics",
+                "http://www.npr.org/rss/podcast.php?id=510068"));
+        podcastList.add(createPodcast("Planet Money",
+                "http://www.npr.org/rss/podcast.php?id=510289"));
+        podcastList.add(createPodcast("Freakonomics",
+                "http://feeds.feedburner.com/freakonomicsradio"));
         podcastList.add(createPodcast("neo",
                 "http://www.zdf.de/ZDFmediathek/podcast/1446344?view=podcast"));
         podcastList.add(createPodcast("Little Letter for Gaelic Learners",
