@@ -22,9 +22,9 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
-import android.os.Environment;
 
 import net.alliknow.podcatcher.listeners.OnSelectFileListener;
+import net.alliknow.podcatcher.preferences.DownloadFolderPreference;
 import net.alliknow.podcatcher.view.fragments.SelectFileFragment;
 
 import java.io.File;
@@ -93,8 +93,7 @@ public class SelectFileActivity extends BaseActivity implements OnSelectFileList
             selectFileFragment.setPath(new File(initialPathString));
         else {
             // No path set, use default
-            final File podcastDir = Environment
-                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS);
+            final File podcastDir = DownloadFolderPreference.getDefaultDownloadFolder();
             podcastDir.mkdirs();
 
             selectFileFragment.setPath(podcastDir);
