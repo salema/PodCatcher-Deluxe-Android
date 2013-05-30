@@ -22,7 +22,6 @@ import static net.alliknow.podcatcher.Podcatcher.sanitizeAsFilename;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -32,6 +31,7 @@ import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.tags.METADATA;
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
 import net.alliknow.podcatcher.model.types.Progress;
+import net.alliknow.podcatcher.preferences.DownloadFolderPreference;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -196,15 +196,9 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
 
     private void cleanMetadata(Map<URL, EpisodeMetadata> result) {
         // Find download folder
-        String podcastDirPath = PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(SettingsActivity.DOWNLOAD_FOLDER_KEY, null);
-        File podcastDir;
-
-        if (podcastDirPath == null)
-            podcastDir = Environment
-                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS);
-        else
-            podcastDir = new File(podcastDirPath);
+        File podcastDir = new File(PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(SettingsActivity.DOWNLOAD_FOLDER_KEY,
+                        DownloadFolderPreference.getDefaultDownloadFolder().getAbsolutePath()));
 
         // Handle the case where the download finished while the application was
         // not running. In this case, there would be a downloadId but no

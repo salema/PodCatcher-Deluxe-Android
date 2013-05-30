@@ -58,9 +58,7 @@ public class DownloadFolderPreference extends Preference {
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
         // The default is the public podcast directory
-        downloadFolder = new File(getPersistedString(Environment
-                .getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS)
-                .getAbsolutePath()));
+        downloadFolder = new File(getPersistedString(getDefaultDownloadFolder().getAbsolutePath()));
     }
 
     @Override
@@ -91,5 +89,12 @@ public class DownloadFolderPreference extends Preference {
 
         if (newFolder != null)
             persistString(newFolder.getAbsolutePath());
+    }
+
+    /**
+     * @return The default podcast episode download folder.
+     */
+    public static File getDefaultDownloadFolder() {
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS);
     }
 }

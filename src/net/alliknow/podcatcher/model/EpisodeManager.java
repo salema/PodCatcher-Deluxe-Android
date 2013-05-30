@@ -59,6 +59,7 @@ import net.alliknow.podcatcher.model.tasks.StoreEpisodeMetadataTask;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
 import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.preferences.DownloadFolderPreference;
 
 import java.io.File;
 import java.net.URL;
@@ -247,7 +248,8 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
         if (episode != null && !isDownloadingOrDownloaded(episode)) {
             // Find the podcast directory and the path to store episode under
             File podcastDir = new File(PreferenceManager.getDefaultSharedPreferences(podcatcher)
-                    .getString(SettingsActivity.DOWNLOAD_FOLDER_KEY, null));
+                    .getString(SettingsActivity.DOWNLOAD_FOLDER_KEY,
+                            DownloadFolderPreference.getDefaultDownloadFolder().getAbsolutePath()));
             String subPath = getSubPath(episode);
             // We need to put a download id. If the episode is already
             // downloaded (i.e. the file exists) and we somehow missed to catch
