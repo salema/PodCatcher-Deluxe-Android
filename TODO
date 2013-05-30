@@ -1,9 +1,0 @@
-Add an AppWidget: http://developer.android.com/guide/topics/appwidgets
-Check performance tips: http://developer.android.com/training/articles/perf-tips.html
-Try layout tweaks with list item "arrows" (use RelativeLayout)
-Read up on sizes and densities again: http://developer.android.com/design/style/metrics-grids.html#48dp-rhythm
-Check again for memory leaks
-Do not put button into buffering state when seeking
-Make sure services thread heavy operations
-Loading podcast in AddPodcastFragment should be exclusive (other listeners should not be alerted) - maybe add small retained fragment to hold load task
-Disable play button if not online
