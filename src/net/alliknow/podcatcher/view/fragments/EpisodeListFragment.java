@@ -77,7 +77,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
         // This will make sure we show the right information once the view
         // controls are established (the list might have been set earlier)
         if (currentEpisodeList != null)
-            setEpisodeList(currentEpisodeList);
+            setEpisodeList(currentEpisodeList, true);
     }
 
     @Override
@@ -96,35 +96,44 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
     /**
      * Set the list of episodes to show in this fragment. You can call this any
-     * time and the view will catch up as soon as it is created.
+     * time and the view will catch up as soon as it is created. Only has any
+     * effect if the list given is not <code>null</code> and different from the
+     * episode list currently displayed.
      * 
      * @param episodeList List of episodes to show.
      */
     public void setEpisodeList(List<Episode> episodeList) {
-        this.currentEpisodeList = episodeList;
+        setEpisodeList(episodeList, false);
+    }
 
-        showProgress = false;
-        showLoadFailed = false;
+    private void setEpisodeList(List<Episode> episodeList, boolean forceReload) {
+        if (forceReload || (episodeList != null && !episodeList.equals(currentEpisodeList))) {
 
-        // Update UI
-        if (viewCreated) {
-            // Update the list
-            EpisodeListAdapter adapter = new EpisodeListAdapter(getActivity(), episodeList);
-            adapter.setShowPodcastNames(showPodcastNames);
+            this.currentEpisodeList = episodeList;
 
-            setListAdapter(adapter);
+            showProgress = false;
+            showLoadFailed = false;
 
-            // Update other UI elements
-            if (episodeList.isEmpty())
-                emptyView.setText(R.string.no_episodes);
+            // Update UI
+            if (viewCreated) {
+                // Update the list
+                EpisodeListAdapter adapter = new EpisodeListAdapter(getActivity(), episodeList);
+                adapter.setShowPodcastNames(showPodcastNames);
 
-            // Make sure to match selection state
-            if (selectAll)
-                selectAll();
-            else if (selectedPosition >= 0 && selectedPosition < episodeList.size())
-                select(selectedPosition);
-            else
-                selectNone();
+                setListAdapter(adapter);
+
+                // Update other UI elements
+                if (episodeList.isEmpty())
+                    emptyView.setText(R.string.no_episodes);
+
+                // Make sure to match selection state
+                if (selectAll)
+                    selectAll();
+                else if (selectedPosition >= 0 && selectedPosition < episodeList.size())
+                    select(selectedPosition);
+                else
+                    selectNone();
+            }
         }
     }
 
@@ -144,6 +153,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
         if (viewCreated)
             emptyView.setText(R.string.no_podcast_selected);
 
+        currentEpisodeList = null;
         showPodcastNames = false;
 
         super.reset();
