@@ -160,7 +160,8 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
             String opmlString = "<" + OPML.OUTLINE + " " + OPML.TEXT + "=\"" +
                     TextUtils.htmlEncode(podcast.getName()) + "\" " +
                     OPML.TYPE + "=\"" + OPML.RSS_TYPE + "\" " +
-                    OPML.XMLURL + "=\"" + podcast.getUrl() + "\"/>";
+                    OPML.XMLURL + "=\"" +
+                    TextUtils.htmlEncode(podcast.getUrl().toString()) + "\"/>";
 
             writeLine(writer, 2, opmlString);
         }
