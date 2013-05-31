@@ -130,7 +130,7 @@ public class EpisodeFragment extends Fragment {
         // This will make sure we show the right information once the view
         // controls are established (the episode might have been set earlier)
         if (currentEpisode != null) {
-            setEpisode(currentEpisode);
+            setEpisode(currentEpisode, true);
             setNewIconVisibility(showNewStateIcon);
             setDownloadIconVisibility(showDownloadIcon, downloadIconState);
         }
@@ -165,40 +165,49 @@ public class EpisodeFragment extends Fragment {
     }
 
     /**
-     * Set the displayed episode, all UI will be updated.
+     * Set the displayed episode, all UI will be updated. Only has any effect if
+     * the episode given is not <code>null</code> and different from the episode
+     * currently displayed.
      * 
      * @param selectedEpisode Episode to show.
      */
     public void setEpisode(Episode selectedEpisode) {
-        // Set handle to episode in case we are not resumed
-        this.currentEpisode = selectedEpisode;
+        setEpisode(selectedEpisode, false);
+    }
 
-        // If the fragment's view is actually visible and the episode is valid,
-        // show episode information
-        if (viewCreated && currentEpisode != null) {
-            // Title and sub-title
-            titleView.setText(currentEpisode.getName());
-            subtitleView.setText(currentEpisode.getPodcast().getName());
-            // Episode publication data
-            if (showEpisodeDate && currentEpisode.getPubDate() != null)
-                subtitleView.setText(subtitleView.getText() + SEPARATOR
-                        + Utils.getRelativePubDate(currentEpisode));
-            // Episode duration
-            if (currentEpisode.getDuration() != null)
-                subtitleView.setText(subtitleView.getText() + SEPARATOR
-                        + currentEpisode.getDuration());
-            // Find valid episode description
-            String description = currentEpisode.getLongDescription();
-            if (description == null)
-                description = currentEpisode.getDescription();
-            if (description == null)
-                description = getString(R.string.no_episode_description);
-            // Set episode description
-            descriptionView.loadDataWithBaseURL(null, description, "text/html", "utf-8", null);
+    private void setEpisode(Episode selectedEpisode, boolean forceReload) {
+        if (forceReload || (selectedEpisode != null && !selectedEpisode.equals(currentEpisode))) {
+            // Set handle to episode in case we are not resumed
+            this.currentEpisode = selectedEpisode;
+
+            // If the fragment's view is actually visible and the episode is
+            // valid,
+            // show episode information
+            if (viewCreated && currentEpisode != null) {
+                // Title and sub-title
+                titleView.setText(currentEpisode.getName());
+                subtitleView.setText(currentEpisode.getPodcast().getName());
+                // Episode publication data
+                if (showEpisodeDate && currentEpisode.getPubDate() != null)
+                    subtitleView.setText(subtitleView.getText() + SEPARATOR
+                            + Utils.getRelativePubDate(currentEpisode));
+                // Episode duration
+                if (currentEpisode.getDuration() != null)
+                    subtitleView.setText(subtitleView.getText() + SEPARATOR
+                            + currentEpisode.getDuration());
+                // Find valid episode description
+                String description = currentEpisode.getLongDescription();
+                if (description == null)
+                    description = currentEpisode.getDescription();
+                if (description == null)
+                    description = getString(R.string.no_episode_description);
+                // Set episode description
+                descriptionView.loadDataWithBaseURL(null, description, "text/html", "utf-8", null);
+            }
+
+            // Update the UI widget's visibility to reflect state
+            updateUiElementVisibility();
         }
-
-        // Update the UI widget's visibility to reflect state
-        updateUiElementVisibility();
     }
 
     /**
