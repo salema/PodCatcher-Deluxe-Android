@@ -185,7 +185,11 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
     }
 
     private void update(ActionMode mode) {
-        if (updateUi) {
+        // This also avoids crashed when the app has been hidden for some time
+        // while the context mode was activated and (parts of) the fragment is
+        // (are) gone
+        if (updateUi && fragment != null &&
+                fragment.getListAdapter() != null && fragment.getListView() != null) {
             updateMenuItems();
 
             // Let list adapter know which items to mark checked (row color)
