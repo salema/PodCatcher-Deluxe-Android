@@ -99,7 +99,8 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMeta
     }
 
     private void writeRecord(URL key, EpisodeMetadata value) throws IOException {
-        writeLine(1, "<" + METADATA + " " + EPISODE_URL + "=\"" + key.toString() + "\">");
+        writeLine(1, "<" + METADATA + " " + EPISODE_URL
+                + "=\"" + TextUtils.htmlEncode(key.toString()) + "\">");
 
         writeData(value.episodeName, EPISODE_NAME);
         if (value.episodePubDate != null)
