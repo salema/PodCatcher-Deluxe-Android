@@ -19,6 +19,7 @@ package net.alliknow.podcatcher.view.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,6 +35,7 @@ import net.alliknow.podcatcher.listeners.OnToggleFilterListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.view.adapters.EpisodeListAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -164,11 +166,27 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
             // Update UI
             if (viewCreated) {
+                // We need to store any currently check items here because
+                // setting the adapter will override their status and the
+                // relevant positions in the list might change
+                List<Episode> checkedEpisodes = getCheckedEpisodes();
+                // Clear all checked states here
+                getListView().clearChoices();
+
                 // Update the list
                 EpisodeListAdapter adapter = new EpisodeListAdapter(getActivity(), episodeList);
                 adapter.setShowPodcastNames(showPodcastNames);
 
                 setListAdapter(adapter);
+
+                // Restore checked items
+                if (checkedEpisodes != null)
+                    for (Episode episode : checkedEpisodes) {
+                        final int newPosition = currentEpisodeList.indexOf(episode);
+
+                        if (newPosition >= 0)
+                            getListView().setItemChecked(newPosition, true);
+                    }
 
                 // Update other UI elements
                 if (episodeList.isEmpty())
@@ -239,5 +257,20 @@ public class EpisodeListFragment extends PodcatcherListFragment {
             progressView.showError(R.string.error_podcast_load);
 
         super.showLoadFailed();
+    }
+
+    private List<Episode> getCheckedEpisodes() {
+        List<Episode> result = null;
+
+        SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
+        if (checkedItems.size() > 0) {
+            result = new ArrayList<Episode>();
+
+            for (int position = 0; position < getListAdapter().getCount(); position++)
+                if (checkedItems.get(position))
+                    result.add((Episode) getListAdapter().getItem(position));
+        }
+
+        return result;
     }
 }
