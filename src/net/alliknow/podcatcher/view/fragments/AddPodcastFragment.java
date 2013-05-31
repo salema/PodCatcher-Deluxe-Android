@@ -115,6 +115,10 @@ public class AddPodcastFragment extends DialogFragment {
         // This is for testing only
         else if (((Podcatcher) getActivity().getApplication()).isInDebugMode())
             podcastUrlEditText.setText("richeisen.libsyn.com/rss");
+        // This checks for a potential podcast URL in the clipboard
+        // and presets it in the text field if available
+        else
+            checkClipboardForPodcastUrl();
 
         progressView = (HorizontalProgressView) view.findViewById(R.id.add_podcast_progress);
 
@@ -144,10 +148,6 @@ public class AddPodcastFragment extends DialogFragment {
                 listener.onImportOpml();
             }
         });
-
-        // This checks for a potential podcast URL in the clipboard
-        // and presets the text field if available
-        checkClipboardForPodcastUrl();
     }
 
     @Override
