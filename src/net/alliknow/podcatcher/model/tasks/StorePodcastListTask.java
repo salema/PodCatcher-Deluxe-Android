@@ -155,7 +155,8 @@ public class StorePodcastListTask extends StoreFileTask<List<Podcast>> {
             String opmlString = "<" + OPML.OUTLINE + " " + OPML.TEXT + "=\"" +
                     TextUtils.htmlEncode(podcast.getName()) + "\" " +
                     OPML.TYPE + "=\"" + OPML.RSS_TYPE + "\" " +
-                    OPML.XMLURL + "=\"" + podcast.getUrl() + "\"/>";
+                    OPML.XMLURL + "=\"" +
+                    TextUtils.htmlEncode(podcast.getUrl().toString()) + "\"/>";
 
             writeLine(2, opmlString);
         }
