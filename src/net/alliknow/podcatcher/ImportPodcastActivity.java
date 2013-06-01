@@ -35,6 +35,9 @@ public class ImportPodcastActivity extends BaseActivity {
 
     private static final String HTTP = "http";
     private static final String ITPC = "itpc";
+    private static final String PCAST = "pcast";
+    private static final String FEED = "feed";
+    private static final String RSS = "rss";
 
     @Override
     protected void onStart() {
@@ -49,6 +52,12 @@ public class ImportPodcastActivity extends BaseActivity {
             String uri = getIntent().getDataString();
             if (uri.startsWith(ITPC))
                 uri = uri.replaceFirst(ITPC, HTTP);
+            else if (uri.startsWith(PCAST))
+                uri = uri.replaceFirst(PCAST, HTTP);
+            else if (uri.startsWith(FEED))
+                uri = uri.replaceFirst(FEED, HTTP);
+            else if (uri.startsWith(RSS))
+                uri = uri.replaceFirst(RSS, HTTP);
 
             // Make the new intent work as intended
             intent.setData(Uri.parse(uri));
