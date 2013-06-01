@@ -23,5 +23,5 @@
         android:icon="@drawable/ic_media_play"
         android:showAsAction="always"
         android:title="@string/play"
-        android:orderInCategory="5" />
+        android:orderInCategory="10" />
 </menu>

@@ -23,5 +23,5 @@
         android:icon="@drawable/ic_menu_download"
         android:showAsAction="always"
         android:title="@string/download"
-        android:orderInCategory="10" />
+        android:orderInCategory="5" />
 </menu>
