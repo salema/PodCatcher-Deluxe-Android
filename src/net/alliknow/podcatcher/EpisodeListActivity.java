@@ -221,9 +221,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 // List fragment is visible, make it show progress UI
                 episodeListFragment.resetAndSpin();
                 episodeListFragment.setShowPodcastNames(true);
-                // Update other UI
-                updateFilter();
-                updateDivider();
 
                 new LoadDownloadsTask(this).execute((Void) null);
 
@@ -240,14 +237,14 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         setFilteredEpisodeList();
 
         updateActionBar();
+        updateFilter();
+        updateDivider();
     }
 
     @Override
     public void onPlaylistSelected() {
         selection.resetPodcast();
         selection.setMode(ContentMode.PLAYLIST);
-
-        this.currentEpisodeList = episodeManager.getPlaylist();
 
         switch (view) {
             case SMALL_LANDSCAPE:
@@ -261,9 +258,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 // List fragment is visible, make it show progress UI
                 episodeListFragment.resetAndSpin();
                 episodeListFragment.setShowPodcastNames(true);
-                // Update other UI
-                updateFilter();
-                updateDivider();
 
                 new LoadPlaylistTask(this).execute((Void) null);
 
@@ -280,6 +274,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         setFilteredEpisodeList();
 
         updateActionBar();
+        updateFilter();
+        updateDivider();
     }
 
     @Override
