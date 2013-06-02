@@ -22,6 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.TreeMap;
+
 /**
  * Abstract base for spinner adapters. The default implementation will use
  * simple text views and string resources named ("keyed")
@@ -29,6 +31,12 @@ import android.widget.TextView;
  * resources do not exist!)
  */
 public abstract class PodcatcherBaseSpinnerAdapter extends PodcatcherBaseAdapter {
+
+    /**
+     * The sorted map to store our values in, this is needed to account for the
+     * sorting in different languages.
+     */
+    protected TreeMap<String, Object> values = new TreeMap<String, Object>();
 
     /**
      * Create the adapter.

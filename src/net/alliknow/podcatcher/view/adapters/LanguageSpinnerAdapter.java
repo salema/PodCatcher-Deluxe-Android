@@ -34,6 +34,13 @@ public class LanguageSpinnerAdapter extends PodcatcherBaseSpinnerAdapter {
      */
     public LanguageSpinnerAdapter(Context context) {
         super(context);
+
+        // Put all languages into the value map where they are sorted by
+        // language because we are using the corresponding resources as keys
+        for (int index = 0; index < Language.values().length; index++) {
+            final int stringId = getStringIdentifier(Language.values()[index]);
+            values.put(context.getString(stringId), Language.values()[index]);
+        }
     }
 
     @Override
@@ -41,7 +48,7 @@ public class LanguageSpinnerAdapter extends PodcatcherBaseSpinnerAdapter {
         if (position == 0)
             return SuggestionFragment.FILTER_WILDCARD;
         else
-            return Language.values()[position - 1];
+            return values.values().toArray()[position - 1];
     }
 
     @Override

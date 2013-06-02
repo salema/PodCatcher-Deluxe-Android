@@ -34,6 +34,13 @@ public class GenreSpinnerAdapter extends PodcatcherBaseSpinnerAdapter {
      */
     public GenreSpinnerAdapter(Context context) {
         super(context);
+
+        // Put all genres into the value map where they are sorted by language
+        // because we are using the corresponding resources as keys
+        for (int index = 0; index < Genre.values().length; index++) {
+            final int stringId = getStringIdentifier(Genre.values()[index]);
+            values.put(context.getString(stringId), Genre.values()[index]);
+        }
     }
 
     @Override
@@ -41,7 +48,7 @@ public class GenreSpinnerAdapter extends PodcatcherBaseSpinnerAdapter {
         if (position == 0)
             return SuggestionFragment.FILTER_WILDCARD;
         else
-            return Genre.values()[position - 1];
+            return values.values().toArray()[position - 1];
     }
 
     @Override

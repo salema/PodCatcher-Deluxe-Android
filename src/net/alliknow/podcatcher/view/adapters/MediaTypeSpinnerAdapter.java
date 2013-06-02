@@ -34,6 +34,13 @@ public class MediaTypeSpinnerAdapter extends PodcatcherBaseSpinnerAdapter {
      */
     public MediaTypeSpinnerAdapter(Context context) {
         super(context);
+
+        // Put all types into the value map where they are sorted by language
+        // because we are using the corresponding resources as keys
+        for (int index = 0; index < MediaType.values().length; index++) {
+            final int stringId = getStringIdentifier(MediaType.values()[index]);
+            values.put(context.getString(stringId), MediaType.values()[index]);
+        }
     }
 
     @Override
@@ -41,7 +48,7 @@ public class MediaTypeSpinnerAdapter extends PodcatcherBaseSpinnerAdapter {
         if (position == 0)
             return SuggestionFragment.FILTER_WILDCARD;
         else
-            return MediaType.values()[position - 1];
+            return values.values().toArray()[position - 1];
     }
 
     @Override
