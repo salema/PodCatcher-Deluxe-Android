@@ -71,8 +71,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      * milliseconds). If older, we will to reload.
      */
     public static final int TIME_TO_LIFE_MOBILE = 60 * 60 * 1000;
-    /** Maximum byte size for the logo to load */
-    public static final int MAX_LOGO_SIZE = 500000;
+    /** Maximum byte size for the logo to load when on mobile connection */
+    public static final int MAX_LOGO_SIZE_MOBILE = 500000;
 
     /** The name of the file we store our saved podcasts in (as OPML) */
     public static final String OPML_FILENAME = "podcasts.opml";
@@ -275,7 +275,9 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             podcast.setLastLoadLogoAttempt(new Date());
             // Start logo download
             LoadPodcastLogoTask task = new LoadPodcastLogoTask(this, LOGO_DIMENSION, LOGO_DIMENSION);
-            task.setLoadLimit(MAX_LOGO_SIZE);
+            if (!podcatcher.isOnFastConnection())
+                task.setLoadLimit(MAX_LOGO_SIZE_MOBILE);
+
             task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
 
             loadPodcastLogoTasks.put(podcast, task);
