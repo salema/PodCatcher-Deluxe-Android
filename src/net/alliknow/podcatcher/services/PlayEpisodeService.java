@@ -23,7 +23,6 @@ import static android.media.RemoteControlClient.PLAYSTATE_PAUSED;
 import static android.media.RemoteControlClient.PLAYSTATE_PLAYING;
 import static android.media.RemoteControlClient.PLAYSTATE_STOPPED;
 
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ComponentName;
@@ -44,6 +43,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import net.alliknow.podcatcher.BaseActivity.ContentMode;
@@ -114,6 +114,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     private PodcatcherRCClient remoteControlClient;
     /** Our wifi lock */
     private WifiLock wifiLock;
+    private NotificationCompat.Builder notificationBuilder;
 
     /** Our notification id (does not really matter) */
     private static final int NOTIFICATION_ID = 123;
@@ -393,6 +394,13 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
      *         not throw any exception but returns at least zero.
      */
     public int getCurrentPosition() {
+        // if (notificationBuilder != null) {
+        // notificationBuilder.setProgress(getDuration(),
+        // player.getCurrentPosition() / 1000,
+        // false);
+        // startForeground(NOTIFICATION_ID, notificationBuilder.build());
+        // }
+
         if (player == null || !prepared)
             return 0;
         else
@@ -638,18 +646,29 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                                 Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
+        PendingIntent pauseIntent = PendingIntent.getService(getApplicationContext(), 0,
+                new Intent(ACTION_TOGGLE), PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent nextIntent = PendingIntent.getService(getApplicationContext(), 0,
+                new Intent(ACTION_SKIP), PendingIntent.FLAG_UPDATE_CURRENT);
+
         // Prepare the notification
-        Notification notification = new Notification.Builder(getApplicationContext())
+        notificationBuilder = new NotificationCompat.Builder(getApplicationContext())
                 .setContentIntent(pendingIntent)
                 .setTicker(currentEpisode.getName())
                 .setSmallIcon(R.drawable.ic_stat)
                 .setContentTitle(currentEpisode.getName())
                 .setContentText(currentEpisode.getPodcast().getName())
                 .setContentInfo(getString(R.string.app_name))
+                .addAction(R.drawable.ic_media_pause, null, pauseIntent)
+                .addAction(R.drawable.ic_media_next, null, nextIntent)
                 .setWhen(0)
-                .setOngoing(true).getNotification();
+                .setProgress(getDuration(), getCurrentPosition(), false)
+                .setOngoing(true);
 
-        startForeground(NOTIFICATION_ID, notification);
+        startForeground(
+                NOTIFICATION_ID,
+                new NotificationCompat.BigPictureStyle(notificationBuilder).bigPicture(
+                        currentEpisode.getPodcast().getLogo()).build());
     }
 
     private void stopSelfIfUnboundAndIdle() {
