@@ -66,8 +66,11 @@
     <string name="error_player">Wiedergabe fehlgeschlagen</string>
     <string name="podcast_image">Podcast Logo</string>
     <string name="no_podcast">Kein Podcast vorhanden</string>
+    <string name="no_podcast_long">Keine Podcasts vorhanden. Bitte benutzen Sie das Plus-Zeichen im Menü um Podcasts hinzuzufügen.</string>
     <string name="no_podcast_selected">Kein Podcast ausgewählt</string>
     <string name="no_episodes">Keine Episoden</string>
+    <string name="no_episodes_playlist">Ihre Playlist ist leer. Bitte benutzen Sie das Kontextmenü der Episodenliste (zum Öffnen eine beliebige Episode drücken und halten) um Einträge hinzuzufügen.</string>
+    <string name="no_episodes_downloads">Keine Downloads vorhanden. Benutzen Sie das Download-Zeichen im Menü um Episoden auf dem Gerät zu speichern.</string>
     <string name="one_podcast_selected">Ein Podcast</string>
     <string name="podcasts_selected">Podcasts</string>
     <string name="no_episode_selected">Keine Episode ausgewählt</string>

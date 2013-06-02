@@ -74,8 +74,11 @@
     <string name="error_player">Playback failed</string>
     <string name="podcast_image">Podcast logo</string>
     <string name="no_podcast">No podcast added</string>
+    <string name="no_podcast_long">No podcasts added. Please use the plus icon in the menu to add subscriptions to this list.</string>
     <string name="no_podcast_selected">No podcast selected</string>
     <string name="no_episodes">No episodes</string>
+    <string name="no_episodes_playlist">Your playlist is empty. Use the episode list\'s context menu (press and hold any episode to enter) to add episodes to the playlist.</string>
+    <string name="no_episodes_downloads">No downloads. Use the download icon in the menu to make episodes available offline.</string>
     <string name="one_podcast_selected">One podcast</string>
     <string name="podcasts_selected">podcasts</string>
     <string name="no_episode_selected">No episode selected</string>

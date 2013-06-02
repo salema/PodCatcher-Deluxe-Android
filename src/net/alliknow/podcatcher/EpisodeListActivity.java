@@ -403,6 +403,14 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                     iterator.remove();
         }
 
+        // Make sure the episode list fragment show the right empty view
+        if (ContentMode.DOWNLOADS.equals(selection.getMode()))
+            episodeListFragment.setEmptyStringId(R.string.no_episodes_downloads);
+        else if (ContentMode.PLAYLIST.equals(selection.getMode()))
+            episodeListFragment.setEmptyStringId(R.string.no_episodes_playlist);
+        else
+            episodeListFragment.setEmptyStringId(R.string.no_episodes);
+
         episodeListFragment.setEpisodeList(filteredEpisodeList);
         updateEpisodeListSelection();
     }

@@ -58,6 +58,9 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     /** Flag to indicate whether podcast names should be shown for episodes */
     private boolean showPodcastNames = false;
 
+    /** Identifier for the string the empty view shows. */
+    private int emptyStringId = R.string.no_episodes;
+
     /** Status flag indicating that our view is created */
     private boolean viewCreated = false;
 
@@ -190,7 +193,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
                 // Update other UI elements
                 if (episodeList.isEmpty())
-                    emptyView.setText(R.string.no_episodes);
+                    emptyView.setText(emptyStringId);
 
                 // Make sure to match selection state
                 if (selectAll)
@@ -235,6 +238,17 @@ public class EpisodeListFragment extends PodcatcherListFragment {
      */
     public void setShowPodcastNames(boolean show) {
         this.showPodcastNames = show;
+    }
+
+    /**
+     * Define which text label the list's empty view shows. Will only have an
+     * effect if you call {@link #setEpisodeList(List)} with an empty list
+     * afterwards.
+     * 
+     * @param id The empty string resource identifier.
+     */
+    public void setEmptyStringId(int id) {
+        this.emptyStringId = id;
     }
 
     @Override
