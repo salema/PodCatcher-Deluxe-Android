@@ -52,7 +52,6 @@ import net.alliknow.podcatcher.view.adapters.SuggestionListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Fragment to show podcast suggestions.
@@ -232,8 +231,15 @@ public class SuggestionFragment extends DialogFragment {
 
     private void setInitialFilterSelection() {
         // Set according to locale
-        Locale current = getActivity().getResources().getConfiguration().locale;
-        languageFilter.setSelection(current.getLanguage().equalsIgnoreCase("de") ? 2 : 1);
+        // Locale current =
+        // getActivity().getResources().getConfiguration().locale;
+        // languageFilter.setSelection(current.getLanguage().equalsIgnoreCase("de")
+        // ? 2 : 1);
+
+        // For now the second item is always the right on, because we are
+        // sorting and "Deutsch" is before "Englisch" and "English" is before
+        // "German"
+        languageFilter.setSelection(1);
         // Set to "all"
         genreFilter.setSelection(0);
         // Set to audio, since this is an audio version
