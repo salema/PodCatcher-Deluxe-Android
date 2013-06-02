@@ -80,6 +80,8 @@
     <string name="one_new_episode">Une nouvel épisode</string>
     <string name="new_episodes">nouveaux épisodes</string>
     <string name="total_episodes">total</string>
+    <string name="one_filtered_episode">Filtre actif</string>
+    <string name="filtered_episodes">Filtre actif</string>
     <string name="select_all">Sélectionner tous</string>
     <string name="old">Vieux</string>
     <string name="new_only">Nouveaux</string>

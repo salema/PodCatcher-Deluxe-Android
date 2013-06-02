@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.EpisodeListContextListener;
@@ -61,11 +62,15 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     /** Identifier for the string the empty view shows. */
     private int emptyStringId = R.string.no_episodes;
 
+    /** The filter warning label */
+    private TextView filterWarningLabel;
+    /** The filter warning label divider */
+    private View filterWarningDivider;
+    /** The filter episodes menu bar item */
+    private MenuItem filterMenuItem;
+
     /** Status flag indicating that our view is created */
     private boolean viewCreated = false;
-
-    /** The download episode menu bar item */
-    private MenuItem filterMenuItem;
 
     @Override
     public void onAttach(Activity activity) {
@@ -98,6 +103,9 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        this.filterWarningLabel = (TextView) view.findViewById(R.id.filtered_warning);
+        this.filterWarningDivider = view.findViewById(R.id.warning_divider);
 
         viewCreated = true;
 
@@ -226,6 +234,25 @@ public class EpisodeListFragment extends PodcatcherListFragment {
             filterMenuItem.setTitle(filterMenuItemState ? R.string.all : R.string.new_only);
             filterMenuItem.setIcon(filterMenuItemState ?
                     R.drawable.ic_menu_filter_back : R.drawable.ic_menu_filter);
+        }
+    }
+
+    /**
+     * Configure whether the fragment should show the filter warning. This will
+     * only work once the view is created.
+     * 
+     * @param show Whether to show the warning at all.
+     * @param count The amount of episodes filtered.
+     */
+    public void setFilterWarning(boolean show, int count) {
+        if (viewCreated) {
+            filterWarningLabel.setVisibility(show ? View.VISIBLE : View.GONE);
+            filterWarningDivider.setVisibility(show ? View.VISIBLE : View.GONE);
+
+            if (count == 1)
+                filterWarningLabel.setText(R.string.one_filtered_episode);
+            else
+                filterWarningLabel.setText(count + " " + getString(R.string.filtered_episodes));
         }
     }
 

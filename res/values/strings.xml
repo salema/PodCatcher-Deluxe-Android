@@ -88,6 +88,8 @@
     <string name="one_new_episode">1 new episode</string>
     <string name="new_episodes">new episodes</string>
     <string name="total_episodes">total</string>
+    <string name="one_filtered_episode">One old episode filtered</string>
+    <string name="filtered_episodes">old episodes filtered</string>
     <string name="select_all">Select all</string>
     <string name="old">Old</string>
     <string name="new_only">New</string>
