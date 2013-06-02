@@ -53,6 +53,7 @@
     <string name="science">Science</string>
     <string name="sports">Deportes</string>
     <string name="technology">Tecnología</string>
+    <string name="kids">Niños</string>
     <string name="no_suggestions">No hay podcasts recomendados.</string>
     <string name="error_suggestions_load">No se pudo cargar. Asegúrate de que estás conectado.</string>
     <string name="send_suggestion">Envia una propuesta para incluirla en esta lista&#8230;</string>

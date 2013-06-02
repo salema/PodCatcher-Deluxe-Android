@@ -61,6 +61,7 @@
     <string name="science">Science</string>
     <string name="sports">Sports</string>
     <string name="technology">Technology</string>
+    <string name="kids">Kids</string>
     <string name="no_suggestions">No suggestions, please change your filters.</string>
     <string name="error_suggestions_load">Suggestions failed to load, please check your internet connection!</string>
     <string name="send_suggestion">Submit a podcast suggestion&#8230;</string>

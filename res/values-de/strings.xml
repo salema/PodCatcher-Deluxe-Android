@@ -53,6 +53,7 @@
     <string name="science">Wissenschaft</string>
     <string name="sports">Sport</string>
     <string name="technology">Technik</string>
+    <string name="kids">Kinder</string>
     <string name="no_suggestions">Keine Empfehlungen, bitte ändern Sie Ihre Filter.</string>
     <string name="error_suggestions_load">Empfehlungen können nicht geladen werden, bitte prüfen Sie Ihre Internetverbindung!</string>
     <string name="send_suggestion">Ich möchte einen Podcast empfehlen&#8230;</string>
