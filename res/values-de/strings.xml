@@ -56,6 +56,7 @@
     <string name="error_player">Wiedergabe fehlgeschlagen</string>
     <string name="podcast_image">Podcast Logo</string>
     <string name="no_podcast">Kein Podcast vorhanden</string>
+    <string name="no_podcast_long">Keine Podcast vorhanden. Bitte benutzen Sie das Plus-Zeichen im Menü um Podcasts hinzuzufügen.</string>
     <string name="no_podcast_selected">Kein Podcast ausgewählt</string>
     <string name="no_episodes">Dieser Podcast enthält keine Episoden</string>
     <string name="one_podcast_selected">Ein Podcast</string>

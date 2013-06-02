@@ -56,6 +56,7 @@
     <string name="error_player">Error de reproducción</string>
     <string name="podcast_image">Logo</string>
     <string name="no_podcast">No hay podcast</string>
+    <string name="no_podcast_long">No hay podcast</string>
     <string name="no_podcast_selected">No hay episodios</string>
     <string name="no_episodes">No hay episodios</string>
     <string name="one_podcast_selected">Un podcast</string>

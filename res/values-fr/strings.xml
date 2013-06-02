@@ -56,6 +56,7 @@
     <string name="error_player">Lecture a échoué</string>
     <string name="podcast_image">Logo</string>
     <string name="no_podcast">Ajouter un podcast</string>
+    <string name="no_podcast_long">Ajouter un podcast</string>
     <string name="no_podcast_selected">Pas d\'épisodes</string>
     <string name="no_episodes">Pas d\'épisodes</string>
     <string name="one_podcast_selected">Un podcast</string>
