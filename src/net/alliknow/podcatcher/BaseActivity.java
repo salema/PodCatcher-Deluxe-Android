@@ -90,6 +90,9 @@ public abstract class BaseActivity extends Activity {
         /** The selected episode */
         private Episode currentEpisode;
 
+        /** The filter active flag */
+        private boolean filterEnabled = false;
+
         private ContentSelection() {
             // Nothing to do here
         }
@@ -152,6 +155,22 @@ public abstract class BaseActivity extends Activity {
          */
         public void setEpisode(Episode episode) {
             this.currentEpisode = episode;
+        }
+
+        /**
+         * @return Whether the filter is set to hide old episodes.
+         */
+        public boolean isEpisodeFilterEnabled() {
+            return filterEnabled;
+        }
+
+        /**
+         * Update the episode list filter setting.
+         * 
+         * @param active Give <code>true</code> to mark filter enabled.
+         */
+        public void setEpisodeFilterEnabled(boolean active) {
+            this.filterEnabled = active;
         }
 
         /**

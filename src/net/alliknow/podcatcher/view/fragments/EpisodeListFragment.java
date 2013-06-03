@@ -56,6 +56,10 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     private boolean showFilterMenuItem = false;
     /** Flag for the state of the filter menu item */
     private boolean filterMenuItemState = false;
+    /** Flag for show filter warning state */
+    private boolean showFilterWarning = false;
+    /** The number of episodes filtered */
+    private int filteredEpisodesCount = 0;
     /** Flag to indicate whether podcast names should be shown for episodes */
     private boolean showPodcastNames = false;
 
@@ -114,8 +118,10 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
         // This will make sure we show the right information once the view
         // controls are established (the list might have been set earlier)
-        if (currentEpisodeList != null)
+        if (currentEpisodeList != null) {
             setEpisodeList(currentEpisodeList, true);
+            setFilterWarning(showFilterWarning, filteredEpisodesCount);
+        }
     }
 
     @Override
@@ -245,6 +251,9 @@ public class EpisodeListFragment extends PodcatcherListFragment {
      * @param count The amount of episodes filtered.
      */
     public void setFilterWarning(boolean show, int count) {
+        this.showFilterWarning = show;
+        this.filteredEpisodesCount = count;
+
         if (viewCreated) {
             filterWarningLabel.setVisibility(show ? View.VISIBLE : View.GONE);
             filterWarningDivider.setVisibility(show ? View.VISIBLE : View.GONE);

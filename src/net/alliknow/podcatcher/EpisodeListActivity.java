@@ -66,8 +66,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     protected List<Episode> currentEpisodeList;
     /** The filtered episode list */
     protected List<Episode> filteredEpisodeList;
-    /** Flag indicating whether we filter the episode list */
-    protected boolean filterActive = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +124,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onToggleFilter() {
-        filterActive = !filterActive;
+        selection.setEpisodeFilterEnabled(!selection.isEpisodeFilterEnabled());
 
         if (currentEpisodeList != null)
             setFilteredEpisodeList();
@@ -395,7 +393,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     protected void setFilteredEpisodeList() {
         filteredEpisodeList = new ArrayList<Episode>(currentEpisodeList);
 
-        if (filterActive) {
+        if (selection.isEpisodeFilterEnabled()) {
             Iterator<Episode> iterator = filteredEpisodeList.iterator();
 
             while (iterator.hasNext())
@@ -408,14 +406,16 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             episodeListFragment.setEmptyStringId(R.string.no_episodes_downloads);
         else if (ContentMode.PLAYLIST.equals(selection.getMode()))
             episodeListFragment.setEmptyStringId(R.string.no_episodes_playlist);
-        else if (filterActive && filteredEpisodeList.isEmpty() && !currentEpisodeList.isEmpty())
+        else if (selection.isEpisodeFilterEnabled()
+                && filteredEpisodeList.isEmpty() && !currentEpisodeList.isEmpty())
             episodeListFragment.setEmptyStringId(R.string.no_new_episodes);
         else
             episodeListFragment.setEmptyStringId(R.string.no_episodes);
 
         // Make sure the episode list fragment show the right filter warning
         final int filteredCount = currentEpisodeList.size() - filteredEpisodeList.size();
-        episodeListFragment.setFilterWarning(filterActive && filteredCount > 0, filteredCount);
+        episodeListFragment.setFilterWarning(selection.isEpisodeFilterEnabled()
+                && filteredCount > 0, filteredCount);
 
         episodeListFragment.setEpisodeList(filteredEpisodeList);
         updateEpisodeListSelection();
@@ -440,7 +440,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
      */
     protected void updateFilter() {
         episodeListFragment.setFilterMenuItemVisibility(
-                currentEpisodeList != null && !currentEpisodeList.isEmpty(), filterActive);
+                currentEpisodeList != null && !currentEpisodeList.isEmpty(),
+                selection.isEpisodeFilterEnabled());
     }
 
     @Override
