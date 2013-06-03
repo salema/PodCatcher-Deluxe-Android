@@ -18,6 +18,7 @@
 package net.alliknow.podcatcher.model.types;
 
 import net.alliknow.podcatcher.model.EpisodeManager;
+import net.alliknow.podcatcher.model.PodcastManager;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -76,15 +77,27 @@ public class EpisodeMetadata {
      * @return An episode object or <code>null</code> if something goes wrong.
      */
     public Episode marshalEpisode(URL episodeUrl) {
-        // Create the corresponding podcast
-        Podcast podcast;
-        try {
-            podcast = new Podcast(podcastName, new URL(podcastUrl));
-        } catch (MalformedURLException e) {
-            return null;
+        PodcastManager manager = PodcastManager.getInstance();
+
+        // Try to get episode from the podcast manager
+        Episode result = manager.findEpisodeForUrl(episodeUrl.toString());
+        // No luck, create episode
+        if (result == null) {
+            // Try to get podcast from the podcast manager
+            Podcast podcast = manager.findPodcastForUrl(podcastUrl.toString());
+            // No luck, create podcast
+            if (podcast == null)
+                try {
+                    podcast = new Podcast(podcastName, new URL(podcastUrl));
+                } catch (MalformedURLException e) {
+                    return null;
+                }
+
+            // Create the episode
+            result = new Episode(podcast, episodeName, episodeUrl, episodePubDate,
+                    episodeDescription);
         }
 
-        // Create and return the episode
-        return new Episode(podcast, episodeName, episodeUrl, episodePubDate, episodeDescription);
+        return result;
     }
 }
