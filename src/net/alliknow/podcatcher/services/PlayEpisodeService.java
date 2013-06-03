@@ -315,7 +315,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
     @Override
     public void onPlaylistChanged() {
-        updateNotification();
+        rebuildNotification();
     }
 
     /**
@@ -329,7 +329,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
             stopPlayProgressTimer();
             updateRemoteControlPlaystate(PLAYSTATE_PAUSED);
-            updateNotification();
+            rebuildNotification();
         }
     }
 
@@ -346,7 +346,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
             startPlayProgressTimer();
             updateRemoteControlPlaystate(PLAYSTATE_PLAYING);
-            updateNotification();
+            rebuildNotification();
         }
     }
 
@@ -359,7 +359,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         if (prepared && seconds >= 0 && seconds <= getDuration()) {
             player.seekTo(seconds * 1000); // multiply to get millis
 
-            updateNotification();
+            startForeground(NOTIFICATION_ID,
+                    notification.updateProgress(getCurrentPosition(), getDuration()));
         }
     }
 
@@ -416,13 +417,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
      *         not throw any exception but returns at least zero.
      */
     public int getCurrentPosition() {
-        // if (notificationBuilder != null) {
-        // notificationBuilder.setProgress(getDuration(),
-        // player.getCurrentPosition() / 1000,
-        // false);
-        // startForeground(NOTIFICATION_ID, notificationBuilder.build());
-        // }
-
         if (player == null || !prepared)
             return 0;
         else
@@ -663,7 +657,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
                 @Override
                 public void run() {
-                    updateNotification();
+                    startForeground(NOTIFICATION_ID,
+                            notification.updateProgress(getCurrentPosition(), getDuration()));
                 }
             };
 
@@ -677,7 +672,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         }
     }
 
-    private void updateNotification() {
+    private void rebuildNotification() {
         if (isPrepared() && currentEpisode != null)
             startForeground(NOTIFICATION_ID,
                     notification.build(currentEpisode, !isPlaying(), getCurrentPosition(),

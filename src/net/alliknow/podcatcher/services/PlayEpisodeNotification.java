@@ -24,6 +24,8 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.support.v4.app.NotificationCompat;
 
 import net.alliknow.podcatcher.BaseActivity.ContentMode;
@@ -47,7 +49,9 @@ public class PlayEpisodeNotification {
     private final Intent appIntent;
 
     private final PendingIntent tooglePlayIntent;
-    private final PendingIntent nextIntent;
+    private final PendingIntent playNextIntent;
+
+    private NotificationCompat.Builder notificationBuilder;
 
     private PlayEpisodeNotification(Context context) {
         this.context = context;
@@ -57,11 +61,15 @@ public class PlayEpisodeNotification {
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                         Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
+        Intent toogleIntent = new Intent(context, PlayEpisodeService.class);
+        toogleIntent.setAction(PlayEpisodeService.ACTION_TOGGLE);
         tooglePlayIntent = PendingIntent.getService(context, 0,
-                new Intent(PlayEpisodeService.ACTION_TOGGLE), PendingIntent.FLAG_UPDATE_CURRENT);
+                toogleIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        nextIntent = PendingIntent.getService(context, 0,
-                new Intent(PlayEpisodeService.ACTION_SKIP), PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent nextIntent = new Intent(context, PlayEpisodeService.class);
+        nextIntent.setAction(PlayEpisodeService.ACTION_SKIP);
+        playNextIntent = PendingIntent.getService(context, 0,
+                nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     /**
@@ -88,7 +96,7 @@ public class PlayEpisodeNotification {
         final PendingIntent backToAppIntent = PendingIntent.getActivity(context, 0,
                 appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
+        notificationBuilder = new NotificationCompat.Builder(context)
                 .setContentIntent(backToAppIntent)
                 .setTicker(episode.getName())
                 .setSmallIcon(R.drawable.ic_stat)
@@ -104,17 +112,35 @@ public class PlayEpisodeNotification {
             notificationBuilder.addAction(R.drawable.ic_media_pause, "Pause", tooglePlayIntent);
 
         if (!EpisodeManager.getInstance().isPlaylistEmpty())
-            notificationBuilder.addAction(R.drawable.ic_media_next, "Next", nextIntent);
+            notificationBuilder.addAction(R.drawable.ic_media_next, "Next", playNextIntent);
 
-        if (!isLargeDeviceAndPodcastLogoAvailable(episode))
-            return notificationBuilder.build();
-        else
-            return new NotificationCompat.BigPictureStyle(notificationBuilder).bigPicture(
-                    episode.getPodcast().getLogo()).build();
+        if (isLargeDevice() && isPodcastLogoAvailable(episode)) {
+            notificationBuilder.setStyle(new NotificationCompat.BigPictureStyle()
+                    .bigPicture(episode.getPodcast().getLogo()));
+        } else if (isPodcastLogoAvailable(episode)) {
+            Resources res = context.getResources();
+            int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
+            int width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
+            Bitmap scaled = Bitmap.createScaledBitmap(episode.getPodcast().getLogo(), width,
+                    height, false);
+
+            notificationBuilder.setLargeIcon(scaled);
+        }
+
+        return notificationBuilder.build();
     }
 
-    private boolean isLargeDeviceAndPodcastLogoAvailable(Episode episode) {
-        return episode.getPodcast().getLogo() != null
-                && context.getResources().getConfiguration().smallestScreenWidthDp >= Podcatcher.MIN_PIXEL_LARGE;
+    public Notification updateProgress(int position, int duration) {
+        notificationBuilder.setProgress(duration, position, false);
+
+        return notificationBuilder.build();
+    }
+
+    private boolean isPodcastLogoAvailable(Episode episode) {
+        return episode.getPodcast().getLogo() != null;
+    }
+
+    private boolean isLargeDevice() {
+        return context.getResources().getConfiguration().smallestScreenWidthDp >= Podcatcher.MIN_PIXEL_LARGE;
     }
 }
