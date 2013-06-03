@@ -650,8 +650,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     }
 
     private void startPlayProgressTimer() {
-        // Only start task if it isn't already running and
-        // there is actually some progress to monitor
+        // Only start task if it isn't already running
         if (playUpdateTimerTask == null) {
             final TimerTask task = new TimerTask() {
 
@@ -662,13 +661,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 }
             };
 
-            try {
-                playUpdateTimer.schedule(task, 1000, 1000);
-                playUpdateTimerTask = task;
-            } catch (IllegalStateException e) {
-                // In rare cases, the timer might be canceled (the activity
-                // is going down) while schedule() is called, skip...
-            }
+            playUpdateTimer.schedule(task, 1000, 1000);
+            playUpdateTimerTask = task;
         }
     }
 

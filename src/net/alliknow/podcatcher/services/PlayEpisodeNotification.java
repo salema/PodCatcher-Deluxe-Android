@@ -17,6 +17,7 @@
 
 package net.alliknow.podcatcher.services;
 
+import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static net.alliknow.podcatcher.EpisodeActivity.EPISODE_URL_KEY;
 import static net.alliknow.podcatcher.EpisodeListActivity.PODCAST_URL_KEY;
 
@@ -35,41 +36,50 @@ import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
+import net.alliknow.podcatcher.model.types.Podcast;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Helper class for the {@link PlayEpisodeService} to encapsulate the complexity
  * of notifications.
  */
 public class PlayEpisodeNotification {
+
     /** The single instance */
     private static PlayEpisodeNotification instance;
-
+    /** The context the notifications live in */
     private Context context;
 
+    /** The actual intent that brings back the app */
     private final Intent appIntent;
+    /** The pending intents for the actions */
+    private final PendingIntent tooglePendingIntent;
+    private final PendingIntent nextPendingIntent;
 
-    private final PendingIntent tooglePlayIntent;
-    private final PendingIntent playNextIntent;
-
+    /** Our builder */
     private NotificationCompat.Builder notificationBuilder;
+    /** The cache for the scaled bitmaps */
+    private Map<String, Bitmap> bitmapCache = new HashMap<String, Bitmap>();
 
     private PlayEpisodeNotification(Context context) {
         this.context = context;
 
+        // Create all the static intents we need for every build
         appIntent = new Intent(context, PodcastActivity.class)
                 .putExtra(EpisodeListActivity.MODE_KEY, ContentMode.SINGLE_PODCAST)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                         Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-        Intent toogleIntent = new Intent(context, PlayEpisodeService.class);
+        final Intent toogleIntent = new Intent(context, PlayEpisodeService.class);
         toogleIntent.setAction(PlayEpisodeService.ACTION_TOGGLE);
-        tooglePlayIntent = PendingIntent.getService(context, 0,
-                toogleIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        tooglePendingIntent = PendingIntent.getService(context, 0, toogleIntent,
+                FLAG_UPDATE_CURRENT);
 
-        Intent nextIntent = new Intent(context, PlayEpisodeService.class);
+        final Intent nextIntent = new Intent(context, PlayEpisodeService.class);
         nextIntent.setAction(PlayEpisodeService.ACTION_SKIP);
-        playNextIntent = PendingIntent.getService(context, 0,
-                nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        nextPendingIntent = PendingIntent.getService(context, 0, nextIntent, FLAG_UPDATE_CURRENT);
     }
 
     /**
@@ -85,17 +95,35 @@ public class PlayEpisodeNotification {
         return instance;
     }
 
+    /**
+     * Build a new notification using default values for all but the episode.
+     * 
+     * @param episode The episode playing.
+     * @return The notification to display.
+     * @see #build(Episode, boolean, int, int)
+     */
     public Notification build(Episode episode) {
         return build(episode, false, 0, 0);
     }
 
+    /**
+     * Build a new notification. To update the progress on the notification, use
+     * {@link #updateProgress(int, int)} instead.
+     * 
+     * @param episode The episode playing.
+     * @param paused Playback state, <code>true</code> for paused.
+     * @param position The current playback progress.
+     * @param duration The length of the current episode.
+     * @return The notification to display.
+     */
     public Notification build(Episode episode, boolean paused, int position, int duration) {
+        // Prepare the main intent (leading back to the app)
         appIntent.putExtra(PODCAST_URL_KEY, episode.getPodcast().getUrl().toString());
         appIntent.putExtra(EPISODE_URL_KEY, episode.getMediaUrl().toString());
-
         final PendingIntent backToAppIntent = PendingIntent.getActivity(context, 0,
                 appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        // Create the notification builder and set values
         notificationBuilder = new NotificationCompat.Builder(context)
                 .setContentIntent(backToAppIntent)
                 .setTicker(episode.getName())
@@ -106,30 +134,34 @@ public class PlayEpisodeNotification {
                 .setProgress(duration, position, false)
                 .setOngoing(true);
 
+        // Add actions according to playback state
         if (paused)
-            notificationBuilder.addAction(R.drawable.ic_media_play, "Play", tooglePlayIntent);
+            notificationBuilder.addAction(R.drawable.ic_media_play, "Play", tooglePendingIntent);
         else
-            notificationBuilder.addAction(R.drawable.ic_media_pause, "Pause", tooglePlayIntent);
+            notificationBuilder.addAction(R.drawable.ic_media_pause, "Pause", tooglePendingIntent);
 
         if (!EpisodeManager.getInstance().isPlaylistEmpty())
-            notificationBuilder.addAction(R.drawable.ic_media_next, "Next", playNextIntent);
+            notificationBuilder.addAction(R.drawable.ic_media_next, "Next", nextPendingIntent);
 
-        if (isLargeDevice() && isPodcastLogoAvailable(episode)) {
+        // Apply the notification style
+        if (isLargeDevice() && isPodcastLogoAvailable(episode))
             notificationBuilder.setStyle(new NotificationCompat.BigPictureStyle()
                     .bigPicture(episode.getPodcast().getLogo()));
-        } else if (isPodcastLogoAvailable(episode)) {
-            Resources res = context.getResources();
-            int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
-            int width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
-            Bitmap scaled = Bitmap.createScaledBitmap(episode.getPodcast().getLogo(), width,
-                    height, false);
-
-            notificationBuilder.setLargeIcon(scaled);
-        }
+        else if (isPodcastLogoAvailable(episode))
+            notificationBuilder.setLargeIcon(getScaledBitmap(episode.getPodcast()));
 
         return notificationBuilder.build();
     }
 
+    /**
+     * Update the last notification build with a new progress and duration and
+     * rebuild it leaving all the other data intact. Only call this after having
+     * called one of the build() methods before.
+     * 
+     * @param position The new progrss position.
+     * @param duration The length of the current episode.
+     * @return The updated notification to display.
+     */
     public Notification updateProgress(int position, int duration) {
         notificationBuilder.setProgress(duration, position, false);
 
@@ -142,5 +174,20 @@ public class PlayEpisodeNotification {
 
     private boolean isLargeDevice() {
         return context.getResources().getConfiguration().smallestScreenWidthDp >= Podcatcher.MIN_PIXEL_LARGE;
+    }
+
+    private Bitmap getScaledBitmap(Podcast podcast) {
+        final String cacheKey = podcast.getUrl().toString();
+
+        if (!bitmapCache.containsKey(cacheKey)) {
+            final Resources res = context.getResources();
+            int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
+            int width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
+
+            bitmapCache.put(cacheKey,
+                    Bitmap.createScaledBitmap(podcast.getLogo(), width, height, false));
+        }
+
+        return bitmapCache.get(cacheKey);
     }
 }
