@@ -43,14 +43,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import net.alliknow.podcatcher.BaseActivity.ContentMode;
-import net.alliknow.podcatcher.EpisodeActivity;
-import net.alliknow.podcatcher.EpisodeListActivity;
-import net.alliknow.podcatcher.PodcastActivity;
-import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.SettingsActivity;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.model.EpisodeManager;
@@ -59,6 +53,8 @@ import net.alliknow.podcatcher.model.types.Episode;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Play an episode service, wraps media player. This class implements an Android
@@ -114,7 +110,13 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     private PodcatcherRCClient remoteControlClient;
     /** Our wifi lock */
     private WifiLock wifiLock;
-    private NotificationCompat.Builder notificationBuilder;
+    /** Our notification helper */
+    private PlayEpisodeNotification notification;
+
+    /** Play update timer for notification */
+    private Timer playUpdateTimer = new Timer();
+    /** Play update timer task for notification */
+    private TimerTask playUpdateTimerTask;
 
     /** Our notification id (does not really matter) */
     private static final int NOTIFICATION_ID = 123;
@@ -162,6 +164,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
         // Get our episode manager handle
         episodeManager = EpisodeManager.getInstance();
+        // Our notification helper
+        notification = PlayEpisodeNotification.getInstance(this);
     }
 
     @Override
@@ -229,6 +233,9 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     @Override
     public void onDestroy() {
         reset();
+
+        // Stop the timer
+        playUpdateTimer.cancel();
 
         // Disable broadcast receivers
         disableReceiver(noisyReceiver);
@@ -438,7 +445,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             // Go start and show the notification
             player.seekTo(episodeManager.getResumeAt(currentEpisode));
             player.start();
-            putForeground();
+            startForeground(NOTIFICATION_ID, notification.build(currentEpisode));
+            startPlayProgressTimer();
 
             // Pop the episode off the playlist
             episodeManager.removeFromPlaylist(currentEpisode);
@@ -589,6 +597,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
         // Remove notification
         stopForeground(true);
+        stopPlayProgressTimer();
 
         // Release player
         if (player != null) {
@@ -631,44 +640,34 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         player.setOnBufferingUpdateListener(this);
     }
 
-    private void putForeground() {
-        // This will bring back to app
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                getApplicationContext(),
-                0,
-                new Intent(getApplicationContext(), PodcastActivity.class)
-                        .putExtra(EpisodeListActivity.MODE_KEY, ContentMode.SINGLE_PODCAST)
-                        .putExtra(EpisodeListActivity.PODCAST_URL_KEY,
-                                currentEpisode.getPodcast().getUrl().toString())
-                        .putExtra(EpisodeActivity.EPISODE_URL_KEY,
-                                currentEpisode.getMediaUrl().toString())
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                                Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP),
-                PendingIntent.FLAG_UPDATE_CURRENT);
+    private void startPlayProgressTimer() {
+        // Only start task if it isn't already running and
+        // there is actually some progress to monitor
+        if (playUpdateTimerTask == null) {
+            final TimerTask task = new TimerTask() {
 
-        PendingIntent pauseIntent = PendingIntent.getService(getApplicationContext(), 0,
-                new Intent(ACTION_TOGGLE), PendingIntent.FLAG_UPDATE_CURRENT);
-        PendingIntent nextIntent = PendingIntent.getService(getApplicationContext(), 0,
-                new Intent(ACTION_SKIP), PendingIntent.FLAG_UPDATE_CURRENT);
+                @Override
+                public void run() {
+                    startForeground(NOTIFICATION_ID,
+                            notification.build(currentEpisode, getCurrentPosition(), getDuration()));
+                }
+            };
 
-        // Prepare the notification
-        notificationBuilder = new NotificationCompat.Builder(getApplicationContext())
-                .setContentIntent(pendingIntent)
-                .setTicker(currentEpisode.getName())
-                .setSmallIcon(R.drawable.ic_stat)
-                .setContentTitle(currentEpisode.getName())
-                .setContentText(currentEpisode.getPodcast().getName())
-                .setContentInfo(getString(R.string.app_name))
-                .addAction(R.drawable.ic_media_pause, null, pauseIntent)
-                .addAction(R.drawable.ic_media_next, null, nextIntent)
-                .setWhen(0)
-                .setProgress(getDuration(), getCurrentPosition(), false)
-                .setOngoing(true);
+            try {
+                playUpdateTimer.schedule(task, 1000, 1000);
+                playUpdateTimerTask = task;
+            } catch (IllegalStateException e) {
+                // In rare cases, the timer might be canceled (the activity
+                // is going down) while schedule() is called, skip...
+            }
+        }
+    }
 
-        startForeground(
-                NOTIFICATION_ID,
-                new NotificationCompat.BigPictureStyle(notificationBuilder).bigPicture(
-                        currentEpisode.getPodcast().getLogo()).build());
+    private void stopPlayProgressTimer() {
+        if (playUpdateTimerTask != null) {
+            playUpdateTimerTask.cancel();
+            playUpdateTimerTask = null;
+        }
     }
 
     private void stopSelfIfUnboundAndIdle() {
