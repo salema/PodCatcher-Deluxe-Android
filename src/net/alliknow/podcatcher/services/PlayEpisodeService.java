@@ -46,6 +46,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import net.alliknow.podcatcher.SettingsActivity;
+import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
@@ -66,7 +67,7 @@ import java.util.TimerTask;
  */
 public class PlayEpisodeService extends Service implements OnPreparedListener,
         OnCompletionListener, OnErrorListener, OnBufferingUpdateListener,
-        OnInfoListener, OnAudioFocusChangeListener {
+        OnInfoListener, OnAudioFocusChangeListener, OnChangePlaylistListener {
 
     /** Action to send to service to toggle play/pause */
     public static final String ACTION_TOGGLE = "com.podcatcher.deluxe.action.TOGGLE";
@@ -164,6 +165,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
         // Get our episode manager handle
         episodeManager = EpisodeManager.getInstance();
+        // We need to listen to playlist updates to update the notification
+        episodeManager.addPlaylistListener(this);
         // Our notification helper
         notification = PlayEpisodeNotification.getInstance(this);
     }
@@ -310,6 +313,11 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         }
     }
 
+    @Override
+    public void onPlaylistChanged() {
+        updateNotification();
+    }
+
     /**
      * Pause current playback.
      */
@@ -319,7 +327,9 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         else if (prepared && isPlaying()) {
             player.pause();
 
+            stopPlayProgressTimer();
             updateRemoteControlPlaystate(PLAYSTATE_PAUSED);
+            updateNotification();
         }
     }
 
@@ -334,7 +344,9 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         else if (prepared && !isPlaying()) {
             player.start();
 
+            startPlayProgressTimer();
             updateRemoteControlPlaystate(PLAYSTATE_PLAYING);
+            updateNotification();
         }
     }
 
@@ -344,8 +356,11 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
      * @param seconds Seconds from the start to seek to.
      */
     public void seekTo(int seconds) {
-        if (prepared && seconds >= 0 && seconds <= getDuration())
+        if (prepared && seconds >= 0 && seconds <= getDuration()) {
             player.seekTo(seconds * 1000); // multiply to get millis
+
+            updateNotification();
+        }
     }
 
     /**
@@ -648,8 +663,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
                 @Override
                 public void run() {
-                    startForeground(NOTIFICATION_ID,
-                            notification.build(currentEpisode, getCurrentPosition(), getDuration()));
+                    updateNotification();
                 }
             };
 
@@ -661,6 +675,13 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 // is going down) while schedule() is called, skip...
             }
         }
+    }
+
+    private void updateNotification() {
+        if (isPrepared() && currentEpisode != null)
+            startForeground(NOTIFICATION_ID,
+                    notification.build(currentEpisode, !isPlaying(), getCurrentPosition(),
+                            getDuration()));
     }
 
     private void stopPlayProgressTimer() {
