@@ -136,12 +136,15 @@ public class PlayEpisodeNotification {
 
         // Add actions according to playback state
         if (paused)
-            notificationBuilder.addAction(R.drawable.ic_media_play, "Play", tooglePendingIntent);
+            notificationBuilder.addAction(R.drawable.ic_media_play,
+                    context.getString(R.string.resume), tooglePendingIntent);
         else
-            notificationBuilder.addAction(R.drawable.ic_media_pause, "Pause", tooglePendingIntent);
+            notificationBuilder.addAction(R.drawable.ic_media_pause,
+                    context.getString(R.string.pause), tooglePendingIntent);
 
         if (!EpisodeManager.getInstance().isPlaylistEmpty())
-            notificationBuilder.addAction(R.drawable.ic_media_next, "Next", nextPendingIntent);
+            notificationBuilder.addAction(R.drawable.ic_media_next,
+                    context.getString(R.string.next), nextPendingIntent);
 
         // Apply the notification style
         if (isLargeDevice() && isPodcastLogoAvailable(episode))

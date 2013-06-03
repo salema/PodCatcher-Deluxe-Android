@@ -60,6 +60,7 @@
     <string name="buffering">Buffering&#8230;</string>
     <string name="pause">Pause</string>
     <string name="resume">Reprendre</string>
+    <string name="next">Prochaine</string>
     <string name="at">à</string>
     <string name="of">de</string>
     <string name="error_player">Lecture a échoué</string>

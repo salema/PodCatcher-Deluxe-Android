@@ -60,6 +60,7 @@
     <string name="buffering">Puffer füllen&#8230;</string>
     <string name="pause">Pause</string>
     <string name="resume">Abspielen</string>
+    <string name="next">Nächste</string>
     <string name="at">bei</string>
     <string name="of">von</string>
     <string name="error_player">Wiedergabe fehlgeschlagen</string>

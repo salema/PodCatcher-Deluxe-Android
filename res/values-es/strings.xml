@@ -60,6 +60,7 @@
     <string name="buffering">Buffering&#8230;</string>
     <string name="pause">Pausa</string>
     <string name="resume">Continuar</string>
+    <string name="next">Próximo</string>
     <string name="at">en</string>
     <string name="of">de</string>
     <string name="error_player">Error de reproducción</string>
