@@ -23,7 +23,6 @@ import static android.media.RemoteControlClient.PLAYSTATE_PAUSED;
 import static android.media.RemoteControlClient.PLAYSTATE_PLAYING;
 import static android.media.RemoteControlClient.PLAYSTATE_STOPPED;
 
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ComponentName;
@@ -46,12 +45,8 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import net.alliknow.podcatcher.BaseActivity.ContentMode;
-import net.alliknow.podcatcher.EpisodeActivity;
-import net.alliknow.podcatcher.EpisodeListActivity;
-import net.alliknow.podcatcher.PodcastActivity;
-import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.SettingsActivity;
+import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
@@ -59,6 +54,8 @@ import net.alliknow.podcatcher.model.types.Episode;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Play an episode service, wraps media player. This class implements an Android
@@ -70,7 +67,7 @@ import java.util.Set;
  */
 public class PlayEpisodeService extends Service implements OnPreparedListener,
         OnCompletionListener, OnErrorListener, OnBufferingUpdateListener,
-        OnInfoListener, OnAudioFocusChangeListener {
+        OnInfoListener, OnAudioFocusChangeListener, OnChangePlaylistListener {
 
     /** Action to send to service to toggle play/pause */
     public static final String ACTION_TOGGLE = "com.podcatcher.deluxe.action.TOGGLE";
@@ -114,6 +111,13 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     private PodcatcherRCClient remoteControlClient;
     /** Our wifi lock */
     private WifiLock wifiLock;
+    /** Our notification helper */
+    private PlayEpisodeNotification notification;
+
+    /** Play update timer for notification */
+    private Timer playUpdateTimer = new Timer();
+    /** Play update timer task for notification */
+    private TimerTask playUpdateTimerTask;
 
     /** Our notification id (does not really matter) */
     private static final int NOTIFICATION_ID = 123;
@@ -161,6 +165,10 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
         // Get our episode manager handle
         episodeManager = EpisodeManager.getInstance();
+        // We need to listen to playlist updates to update the notification
+        episodeManager.addPlaylistListener(this);
+        // Our notification helper
+        notification = PlayEpisodeNotification.getInstance(this);
     }
 
     @Override
@@ -228,6 +236,9 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     @Override
     public void onDestroy() {
         reset();
+
+        // Stop the timer
+        playUpdateTimer.cancel();
 
         // Disable broadcast receivers
         disableReceiver(noisyReceiver);
@@ -302,6 +313,11 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         }
     }
 
+    @Override
+    public void onPlaylistChanged() {
+        rebuildNotification();
+    }
+
     /**
      * Pause current playback.
      */
@@ -311,7 +327,9 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         else if (prepared && isPlaying()) {
             player.pause();
 
+            stopPlayProgressTimer();
             updateRemoteControlPlaystate(PLAYSTATE_PAUSED);
+            rebuildNotification();
         }
     }
 
@@ -326,7 +344,9 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         else if (prepared && !isPlaying()) {
             player.start();
 
+            startPlayProgressTimer();
             updateRemoteControlPlaystate(PLAYSTATE_PLAYING);
+            rebuildNotification();
         }
     }
 
@@ -336,8 +356,12 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
      * @param seconds Seconds from the start to seek to.
      */
     public void seekTo(int seconds) {
-        if (prepared && seconds >= 0 && seconds <= getDuration())
+        if (prepared && seconds >= 0 && seconds <= getDuration()) {
             player.seekTo(seconds * 1000); // multiply to get millis
+
+            startForeground(NOTIFICATION_ID,
+                    notification.updateProgress(getCurrentPosition(), getDuration()));
+        }
     }
 
     /**
@@ -430,7 +454,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             // Go start and show the notification
             player.seekTo(episodeManager.getResumeAt(currentEpisode));
             player.start();
-            putForeground();
+            startForeground(NOTIFICATION_ID, notification.build(currentEpisode));
+            startPlayProgressTimer();
 
             // Pop the episode off the playlist
             episodeManager.removeFromPlaylist(currentEpisode);
@@ -581,6 +606,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
         // Remove notification
         stopForeground(true);
+        stopPlayProgressTimer();
 
         // Release player
         if (player != null) {
@@ -623,33 +649,35 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         player.setOnBufferingUpdateListener(this);
     }
 
-    private void putForeground() {
-        // This will bring back to app
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                getApplicationContext(),
-                0,
-                new Intent(getApplicationContext(), PodcastActivity.class)
-                        .putExtra(EpisodeListActivity.MODE_KEY, ContentMode.SINGLE_PODCAST)
-                        .putExtra(EpisodeListActivity.PODCAST_URL_KEY,
-                                currentEpisode.getPodcast().getUrl().toString())
-                        .putExtra(EpisodeActivity.EPISODE_URL_KEY,
-                                currentEpisode.getMediaUrl().toString())
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                                Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP),
-                PendingIntent.FLAG_UPDATE_CURRENT);
+    private void startPlayProgressTimer() {
+        // Only start task if it isn't already running
+        if (playUpdateTimerTask == null) {
+            final TimerTask task = new TimerTask() {
 
-        // Prepare the notification
-        Notification notification = new Notification.Builder(getApplicationContext())
-                .setContentIntent(pendingIntent)
-                .setTicker(currentEpisode.getName())
-                .setSmallIcon(R.drawable.ic_stat)
-                .setContentTitle(currentEpisode.getName())
-                .setContentText(currentEpisode.getPodcast().getName())
-                .setContentInfo(getString(R.string.app_name))
-                .setWhen(0)
-                .setOngoing(true).getNotification();
+                @Override
+                public void run() {
+                    startForeground(NOTIFICATION_ID,
+                            notification.updateProgress(getCurrentPosition(), getDuration()));
+                }
+            };
 
-        startForeground(NOTIFICATION_ID, notification);
+            playUpdateTimer.schedule(task, 1000, 1000);
+            playUpdateTimerTask = task;
+        }
+    }
+
+    private void rebuildNotification() {
+        if (isPrepared() && currentEpisode != null)
+            startForeground(NOTIFICATION_ID,
+                    notification.build(currentEpisode, !isPlaying(), getCurrentPosition(),
+                            getDuration()));
+    }
+
+    private void stopPlayProgressTimer() {
+        if (playUpdateTimerTask != null) {
+            playUpdateTimerTask.cancel();
+            playUpdateTimerTask = null;
+        }
     }
 
     private void stopSelfIfUnboundAndIdle() {
