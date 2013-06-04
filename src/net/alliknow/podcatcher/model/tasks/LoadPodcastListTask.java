@@ -59,8 +59,6 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
 
     /** The file that we read from. */
     protected File importFile;
-    /** The exception that might have been occured */
-    protected Exception exception;
 
     /**
      * Create new task.

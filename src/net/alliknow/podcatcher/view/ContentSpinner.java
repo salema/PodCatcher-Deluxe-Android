@@ -58,7 +58,7 @@ public class ContentSpinner extends Spinner implements
     private NavigationSpinnerAdapter spinnerAdapter;
 
     /** The data adapter used to populate the spinner */
-    private class NavigationSpinnerAdapter extends BaseAdapter {
+    private static class NavigationSpinnerAdapter extends BaseAdapter {
 
         /** The view we return for a closed spinner */
         private View closedView;
