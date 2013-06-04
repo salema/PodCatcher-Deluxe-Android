@@ -56,6 +56,7 @@
     <string name="buffering">Buffering&#8230;</string>
     <string name="pause">Pause</string>
     <string name="resume">Resume</string>
+    <string name="next">Next</string>
     <string name="at">at</string>
     <string name="of">of</string>
     <string name="error_player">Playback failed</string>

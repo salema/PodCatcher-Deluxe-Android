@@ -59,7 +59,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
     /** Play service */
     protected PlayEpisodeService service;
 
-    /** Play update timer task */
+    /** Play update timer */
     private Timer playUpdateTimer = new Timer();
     /** Play update timer task */
     private TimerTask playUpdateTimerTask;
