@@ -237,6 +237,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     public void onDestroy() {
         reset();
 
+        // Unregister listener
+        episodeManager.removePlaylistListener(this);
         // Stop the timer
         playUpdateTimer.cancel();
 
