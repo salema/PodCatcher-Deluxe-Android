@@ -1,0 +1,2225 @@
+android.support.v4.app.ActivityCompatHoneycomb -> android.support.v4.app.a:
+    void invalidateOptionsMenu(android.app.Activity) -> a
+android.support.v4.app.BackStackRecord -> android.support.v4.app.b:
+    android.support.v4.app.FragmentManagerImpl mManager -> a
+    android.support.v4.app.BackStackRecord$Op mHead -> b
+    android.support.v4.app.BackStackRecord$Op mTail -> c
+    int mNumOp -> d
+    int mEnterAnim -> e
+    int mExitAnim -> f
+    int mPopEnterAnim -> g
+    int mPopExitAnim -> h
+    int mTransition -> i
+    int mTransitionStyle -> j
+    boolean mAddToBackStack -> k
+    boolean mAllowAddToBackStack -> l
+    java.lang.String mName -> m
+    boolean mCommitted -> n
+    int mIndex -> o
+    int mBreadCrumbTitleRes -> p
+    java.lang.CharSequence mBreadCrumbTitleText -> q
+    int mBreadCrumbShortTitleRes -> r
+    java.lang.CharSequence mBreadCrumbShortTitleText -> s
+    java.lang.String toString() -> toString
+    void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
+    void dump(java.lang.String,java.io.PrintWriter,boolean) -> a
+    void addOp(android.support.v4.app.BackStackRecord$Op) -> a
+    android.support.v4.app.FragmentTransaction add(int,android.support.v4.app.Fragment,java.lang.String) -> a
+    void doAddOp(int,android.support.v4.app.Fragment,java.lang.String,int) -> a
+    android.support.v4.app.FragmentTransaction detach(android.support.v4.app.Fragment) -> a
+    android.support.v4.app.FragmentTransaction attach(android.support.v4.app.Fragment) -> b
+    void bumpBackStackNesting(int) -> a
+    int commit() -> a
+    int commitInternal(boolean) -> a
+    void run() -> run
+    void popFromBackStack(boolean) -> b
+    java.lang.String getName() -> b
+android.support.v4.app.BackStackRecord$Op -> android.support.v4.app.c:
+    android.support.v4.app.BackStackRecord$Op next -> a
+    android.support.v4.app.BackStackRecord$Op prev -> b
+    int cmd -> c
+    android.support.v4.app.Fragment fragment -> d
+    int enterAnim -> e
+    int exitAnim -> f
+    int popEnterAnim -> g
+    int popExitAnim -> h
+    java.util.ArrayList removed -> i
+android.support.v4.app.BackStackState -> android.support.v4.app.BackStackState:
+    int[] mOps -> a
+    int mTransition -> b
+    int mTransitionStyle -> c
+    java.lang.String mName -> d
+    int mIndex -> e
+    int mBreadCrumbTitleRes -> f
+    java.lang.CharSequence mBreadCrumbTitleText -> g
+    int mBreadCrumbShortTitleRes -> h
+    java.lang.CharSequence mBreadCrumbShortTitleText -> i
+    android.os.Parcelable$Creator CREATOR -> CREATOR
+    android.support.v4.app.BackStackRecord instantiate(android.support.v4.app.FragmentManagerImpl) -> a
+    int describeContents() -> describeContents
+    void writeToParcel(android.os.Parcel,int) -> writeToParcel
+android.support.v4.app.BackStackState$1 -> android.support.v4.app.d:
+    android.support.v4.app.BackStackState createFromParcel(android.os.Parcel) -> a
+    android.support.v4.app.BackStackState[] newArray(int) -> a
+    java.lang.Object[] newArray(int) -> newArray
+    java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
+android.support.v4.app.Fragment -> android.support.v4.app.Fragment:
+    java.util.HashMap sClassMap -> P
+    int mState -> a
+    android.view.View mAnimatingAway -> b
+    int mStateAfterAnimating -> c
+    android.os.Bundle mSavedFragmentState -> d
+    android.util.SparseArray mSavedViewState -> e
+    int mIndex -> f
+    java.lang.String mWho -> g
+    android.os.Bundle mArguments -> h
+    android.support.v4.app.Fragment mTarget -> i
+    int mTargetIndex -> j
+    int mTargetRequestCode -> k
+    boolean mAdded -> l
+    boolean mRemoving -> m
+    boolean mResumed -> n
+    boolean mFromLayout -> o
+    boolean mInLayout -> p
+    boolean mRestored -> q
+    int mBackStackNesting -> r
+    android.support.v4.app.FragmentManagerImpl mFragmentManager -> s
+    android.support.v4.app.FragmentActivity mActivity -> t
+    android.support.v4.app.FragmentManagerImpl mChildFragmentManager -> u
+    android.support.v4.app.Fragment mParentFragment -> v
+    int mFragmentId -> w
+    int mContainerId -> x
+    java.lang.String mTag -> y
+    boolean mHidden -> z
+    boolean mDetached -> A
+    boolean mRetainInstance -> B
+    boolean mRetaining -> C
+    boolean mHasMenu -> D
+    boolean mMenuVisible -> E
+    boolean mCalled -> F
+    int mNextAnim -> G
+    android.view.ViewGroup mContainer -> H
+    android.view.View mView -> I
+    android.view.View mInnerView -> J
+    boolean mDeferStart -> K
+    boolean mUserVisibleHint -> L
+    android.support.v4.app.LoaderManagerImpl mLoaderManager -> M
+    boolean mLoadersStarted -> N
+    boolean mCheckedForLoaderManager -> O
+    android.support.v4.app.Fragment instantiate(android.content.Context,java.lang.String) -> a
+    android.support.v4.app.Fragment instantiate(android.content.Context,java.lang.String,android.os.Bundle) -> a
+    void restoreViewState(android.os.Bundle) -> a
+    void setIndex(int,android.support.v4.app.Fragment) -> a
+    boolean isInBackStack() -> a
+    boolean equals(java.lang.Object) -> equals
+    int hashCode() -> hashCode
+    java.lang.String toString() -> toString
+    android.support.v4.app.FragmentActivity getActivity() -> b
+    android.content.res.Resources getResources() -> c
+    boolean isDetached() -> d
+    void onHiddenChanged(boolean) -> a
+    void onActivityResult(int,int,android.content.Intent) -> a
+    android.view.LayoutInflater getLayoutInflater(android.os.Bundle) -> b
+    void onInflate(android.app.Activity,android.util.AttributeSet,android.os.Bundle) -> a
+    void onAttach(android.app.Activity) -> a
+    android.view.animation.Animation onCreateAnimation(int,boolean,int) -> a
+    void onCreate(android.os.Bundle) -> c
+    android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> a
+    void onViewCreated(android.view.View,android.os.Bundle) -> a
+    void onActivityCreated(android.os.Bundle) -> d
+    void onViewStateRestored(android.os.Bundle) -> e
+    void onStart() -> e
+    void onResume() -> f
+    void onSaveInstanceState(android.os.Bundle) -> f
+    void onConfigurationChanged(android.content.res.Configuration) -> onConfigurationChanged
+    void onPause() -> g
+    void onStop() -> h
+    void onLowMemory() -> onLowMemory
+    void onDestroyView() -> i
+    void onDestroy() -> j
+    void initState() -> k
+    void onDetach() -> l
+    void onCreateOptionsMenu(android.view.Menu,android.view.MenuInflater) -> a
+    void onPrepareOptionsMenu(android.view.Menu) -> a
+    void onDestroyOptionsMenu() -> m
+    boolean onOptionsItemSelected(android.view.MenuItem) -> a
+    void onOptionsMenuClosed(android.view.Menu) -> b
+    void onCreateContextMenu(android.view.ContextMenu,android.view.View,android.view.ContextMenu$ContextMenuInfo) -> onCreateContextMenu
+    boolean onContextItemSelected(android.view.MenuItem) -> b
+    void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
+    void instantiateChildFragmentManager() -> n
+    void performCreate(android.os.Bundle) -> g
+    android.view.View performCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> b
+    void performActivityCreated(android.os.Bundle) -> h
+    void performStart() -> o
+    void performResume() -> p
+    void performConfigurationChanged(android.content.res.Configuration) -> a
+    void performLowMemory() -> q
+    boolean performCreateOptionsMenu(android.view.Menu,android.view.MenuInflater) -> b
+    boolean performPrepareOptionsMenu(android.view.Menu) -> c
+    boolean performOptionsItemSelected(android.view.MenuItem) -> c
+    boolean performContextItemSelected(android.view.MenuItem) -> d
+    void performOptionsMenuClosed(android.view.Menu) -> d
+    void performSaveInstanceState(android.os.Bundle) -> i
+    void performPause() -> r
+    void performStop() -> s
+    void performReallyStop() -> t
+    void performDestroyView() -> u
+    void performDestroy() -> v
+android.support.v4.app.Fragment$1 -> android.support.v4.app.e:
+    android.support.v4.app.Fragment this$0 -> a
+    android.view.View findViewById(int) -> a
+android.support.v4.app.Fragment$InstantiationException -> android.support.v4.app.f:
+android.support.v4.app.Fragment$SavedState -> android.support.v4.app.Fragment$SavedState:
+    android.os.Bundle mState -> a
+    android.os.Parcelable$Creator CREATOR -> CREATOR
+    int describeContents() -> describeContents
+    void writeToParcel(android.os.Parcel,int) -> writeToParcel
+android.support.v4.app.Fragment$SavedState$1 -> android.support.v4.app.g:
+    android.support.v4.app.Fragment$SavedState createFromParcel(android.os.Parcel) -> a
+    android.support.v4.app.Fragment$SavedState[] newArray(int) -> a
+    java.lang.Object[] newArray(int) -> newArray
+    java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
+android.support.v4.app.FragmentActivity -> android.support.v4.app.h:
+    android.os.Handler mHandler -> a
+    android.support.v4.app.FragmentManagerImpl mFragments -> b
+    android.support.v4.app.FragmentContainer mContainer -> c
+    boolean mCreated -> d
+    boolean mResumed -> e
+    boolean mStopped -> f
+    boolean mReallyStopped -> g
+    boolean mRetaining -> h
+    boolean mOptionsMenuInvalidated -> i
+    boolean mCheckedForLoaderManager -> j
+    boolean mLoadersStarted -> k
+    java.util.HashMap mAllLoaderManagers -> l
+    android.support.v4.app.LoaderManagerImpl mLoaderManager -> m
+    void onActivityResult(int,int,android.content.Intent) -> onActivityResult
+    void onBackPressed() -> onBackPressed
+    void onConfigurationChanged(android.content.res.Configuration) -> onConfigurationChanged
+    void onCreate(android.os.Bundle) -> onCreate
+    boolean onCreatePanelMenu(int,android.view.Menu) -> onCreatePanelMenu
+    android.view.View onCreateView(java.lang.String,android.content.Context,android.util.AttributeSet) -> onCreateView
+    void onDestroy() -> onDestroy
+    boolean onKeyDown(int,android.view.KeyEvent) -> onKeyDown
+    void onLowMemory() -> onLowMemory
+    boolean onMenuItemSelected(int,android.view.MenuItem) -> onMenuItemSelected
+    void onPanelClosed(int,android.view.Menu) -> onPanelClosed
+    void onPause() -> onPause
+    void onNewIntent(android.content.Intent) -> onNewIntent
+    void onResume() -> onResume
+    void onPostResume() -> onPostResume
+    void onResumeFragments() -> a
+    boolean onPreparePanel(int,android.view.View,android.view.Menu) -> onPreparePanel
+    java.lang.Object onRetainNonConfigurationInstance() -> onRetainNonConfigurationInstance
+    void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
+    void onStart() -> onStart
+    void onStop() -> onStop
+    java.lang.Object onRetainCustomNonConfigurationInstance() -> b
+    void supportInvalidateOptionsMenu() -> c
+    void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> dump
+    java.lang.String viewToString(android.view.View) -> a
+    void dumpViewHierarchy(java.lang.String,java.io.PrintWriter,android.view.View) -> a
+    void doReallyStop(boolean) -> a
+    void onReallyStop() -> d
+    void onAttachFragment(android.support.v4.app.Fragment) -> a
+    void startActivityForResult(android.content.Intent,int) -> startActivityForResult
+    void invalidateSupportFragment(java.lang.String) -> a
+    android.support.v4.app.LoaderManagerImpl getLoaderManager(java.lang.String,boolean,boolean) -> a
+android.support.v4.app.FragmentActivity$FragmentTag -> android.support.v4.app.i:
+    int[] Fragment -> a
+android.support.v4.app.FragmentActivity$NonConfigurationInstances -> android.support.v4.app.j:
+    java.lang.Object activity -> a
+    java.lang.Object custom -> b
+    java.util.HashMap children -> c
+    java.util.ArrayList fragments -> d
+    java.util.HashMap loaders -> e
+android.support.v4.app.FragmentContainer -> android.support.v4.app.k:
+    android.view.View findViewById(int) -> a
+android.support.v4.app.FragmentManager -> android.support.v4.app.l:
+    android.support.v4.app.FragmentTransaction beginTransaction() -> a
+    boolean executePendingTransactions() -> b
+    android.support.v4.app.Fragment findFragmentByTag(java.lang.String) -> a
+android.support.v4.app.FragmentManager$OnBackStackChangedListener -> android.support.v4.app.m:
+    void onBackStackChanged() -> a
+android.support.v4.app.FragmentManagerImpl -> android.support.v4.app.n:
+    boolean DEBUG -> a
+    boolean HONEYCOMB -> b
+    java.util.ArrayList mPendingActions -> c
+    java.lang.Runnable[] mTmpActions -> d
+    boolean mExecutingActions -> e
+    java.util.ArrayList mActive -> f
+    java.util.ArrayList mAdded -> g
+    java.util.ArrayList mAvailIndices -> h
+    java.util.ArrayList mBackStack -> i
+    java.util.ArrayList mCreatedMenus -> j
+    java.util.ArrayList mBackStackIndices -> k
+    java.util.ArrayList mAvailBackStackIndices -> l
+    java.util.ArrayList mBackStackChangeListeners -> m
+    int mCurState -> n
+    android.support.v4.app.FragmentActivity mActivity -> o
+    android.support.v4.app.FragmentContainer mContainer -> p
+    android.support.v4.app.Fragment mParent -> q
+    boolean mNeedMenuInvalidate -> r
+    boolean mStateSaved -> s
+    boolean mDestroyed -> t
+    java.lang.String mNoTransactionsBecause -> u
+    boolean mHavePendingDeferredStart -> v
+    android.os.Bundle mStateBundle -> w
+    android.util.SparseArray mStateArray -> x
+    java.lang.Runnable mExecCommit -> y
+    android.view.animation.Interpolator DECELERATE_QUINT -> z
+    android.view.animation.Interpolator DECELERATE_CUBIC -> A
+    android.view.animation.Interpolator ACCELERATE_QUINT -> B
+    android.view.animation.Interpolator ACCELERATE_CUBIC -> C
+    void throwException(java.lang.RuntimeException) -> a
+    android.support.v4.app.FragmentTransaction beginTransaction() -> a
+    boolean executePendingTransactions() -> b
+    boolean popBackStackImmediate() -> c
+    void putFragment(android.os.Bundle,java.lang.String,android.support.v4.app.Fragment) -> a
+    android.support.v4.app.Fragment getFragment(android.os.Bundle,java.lang.String) -> a
+    java.lang.String toString() -> toString
+    void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
+    android.view.animation.Animation makeOpenCloseAnimation(android.content.Context,float,float,float,float) -> a
+    android.view.animation.Animation makeFadeAnimation(android.content.Context,float,float) -> a
+    android.view.animation.Animation loadAnimation(android.support.v4.app.Fragment,int,boolean,int) -> a
+    void performPendingDeferredStart(android.support.v4.app.Fragment) -> a
+    void moveToState(android.support.v4.app.Fragment,int,int,int,boolean) -> a
+    void moveToState(android.support.v4.app.Fragment) -> b
+    void moveToState(int,boolean) -> a
+    void moveToState(int,int,int,boolean) -> a
+    void startPendingDeferredFragments() -> d
+    void makeActive(android.support.v4.app.Fragment) -> c
+    void makeInactive(android.support.v4.app.Fragment) -> d
+    void addFragment(android.support.v4.app.Fragment,boolean) -> a
+    void removeFragment(android.support.v4.app.Fragment,int,int) -> a
+    void hideFragment(android.support.v4.app.Fragment,int,int) -> b
+    void showFragment(android.support.v4.app.Fragment,int,int) -> c
+    void detachFragment(android.support.v4.app.Fragment,int,int) -> d
+    void attachFragment(android.support.v4.app.Fragment,int,int) -> e
+    android.support.v4.app.Fragment findFragmentById(int) -> a
+    android.support.v4.app.Fragment findFragmentByTag(java.lang.String) -> a
+    void checkStateLoss() -> t
+    void enqueueAction(java.lang.Runnable,boolean) -> a
+    int allocBackStackIndex(android.support.v4.app.BackStackRecord) -> a
+    void setBackStackIndex(int,android.support.v4.app.BackStackRecord) -> a
+    void freeBackStackIndex(int) -> b
+    boolean execPendingActions() -> e
+    void reportBackStackChanged() -> f
+    void addBackStackState(android.support.v4.app.BackStackRecord) -> b
+    boolean popBackStackState(android.os.Handler,java.lang.String,int,int) -> a
+    java.util.ArrayList retainNonConfig() -> g
+    void saveFragmentViewState(android.support.v4.app.Fragment) -> e
+    android.os.Bundle saveFragmentBasicState(android.support.v4.app.Fragment) -> f
+    android.os.Parcelable saveAllState() -> h
+    void restoreAllState(android.os.Parcelable,java.util.ArrayList) -> a
+    void attachActivity(android.support.v4.app.FragmentActivity,android.support.v4.app.FragmentContainer,android.support.v4.app.Fragment) -> a
+    void noteStateNotSaved() -> i
+    void dispatchCreate() -> j
+    void dispatchActivityCreated() -> k
+    void dispatchStart() -> l
+    void dispatchResume() -> m
+    void dispatchPause() -> n
+    void dispatchStop() -> o
+    void dispatchReallyStop() -> p
+    void dispatchDestroyView() -> q
+    void dispatchDestroy() -> r
+    void dispatchConfigurationChanged(android.content.res.Configuration) -> a
+    void dispatchLowMemory() -> s
+    boolean dispatchCreateOptionsMenu(android.view.Menu,android.view.MenuInflater) -> a
+    boolean dispatchPrepareOptionsMenu(android.view.Menu) -> a
+    boolean dispatchOptionsItemSelected(android.view.MenuItem) -> a
+    boolean dispatchContextItemSelected(android.view.MenuItem) -> b
+    void dispatchOptionsMenuClosed(android.view.Menu) -> b
+    int reverseTransit(int) -> c
+    int transitToStyleIndex(int,boolean) -> b
+android.support.v4.app.FragmentManagerImpl$1 -> android.support.v4.app.o:
+    android.support.v4.app.FragmentManagerImpl this$0 -> a
+    void run() -> run
+android.support.v4.app.FragmentManagerImpl$5 -> android.support.v4.app.p:
+    android.support.v4.app.Fragment val$fragment -> a
+    android.support.v4.app.FragmentManagerImpl this$0 -> b
+    void onAnimationEnd(android.view.animation.Animation) -> onAnimationEnd
+    void onAnimationRepeat(android.view.animation.Animation) -> onAnimationRepeat
+    void onAnimationStart(android.view.animation.Animation) -> onAnimationStart
+android.support.v4.app.FragmentManagerState -> android.support.v4.app.FragmentManagerState:
+    android.support.v4.app.FragmentState[] mActive -> a
+    int[] mAdded -> b
+    android.support.v4.app.BackStackState[] mBackStack -> c
+    android.os.Parcelable$Creator CREATOR -> CREATOR
+    int describeContents() -> describeContents
+    void writeToParcel(android.os.Parcel,int) -> writeToParcel
+android.support.v4.app.FragmentManagerState$1 -> android.support.v4.app.q:
+    android.support.v4.app.FragmentManagerState createFromParcel(android.os.Parcel) -> a
+    android.support.v4.app.FragmentManagerState[] newArray(int) -> a
+    java.lang.Object[] newArray(int) -> newArray
+    java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
+android.support.v4.app.FragmentState -> android.support.v4.app.FragmentState:
+    java.lang.String mClassName -> a
+    int mIndex -> b
+    boolean mFromLayout -> c
+    int mFragmentId -> d
+    int mContainerId -> e
+    java.lang.String mTag -> f
+    boolean mRetainInstance -> g
+    boolean mDetached -> h
+    android.os.Bundle mArguments -> i
+    android.os.Bundle mSavedFragmentState -> j
+    android.support.v4.app.Fragment mInstance -> k
+    android.os.Parcelable$Creator CREATOR -> CREATOR
+    android.support.v4.app.Fragment instantiate(android.support.v4.app.FragmentActivity,android.support.v4.app.Fragment) -> a
+    int describeContents() -> describeContents
+    void writeToParcel(android.os.Parcel,int) -> writeToParcel
+android.support.v4.app.FragmentState$1 -> android.support.v4.app.r:
+    android.support.v4.app.FragmentState createFromParcel(android.os.Parcel) -> a
+    android.support.v4.app.FragmentState[] newArray(int) -> a
+    java.lang.Object[] newArray(int) -> newArray
+    java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
+android.support.v4.app.FragmentTabHost -> android.support.v4.app.FragmentTabHost:
+    java.util.ArrayList mTabs -> a
+    android.content.Context mContext -> b
+    android.support.v4.app.FragmentManager mFragmentManager -> c
+    int mContainerId -> d
+    android.widget.TabHost$OnTabChangeListener mOnTabChangeListener -> e
+    android.support.v4.app.FragmentTabHost$TabInfo mLastTab -> f
+    boolean mAttached -> g
+    void setup() -> setup
+    void setOnTabChangedListener(android.widget.TabHost$OnTabChangeListener) -> setOnTabChangedListener
+    void onAttachedToWindow() -> onAttachedToWindow
+    void onDetachedFromWindow() -> onDetachedFromWindow
+    android.os.Parcelable onSaveInstanceState() -> onSaveInstanceState
+    void onRestoreInstanceState(android.os.Parcelable) -> onRestoreInstanceState
+    void onTabChanged(java.lang.String) -> onTabChanged
+    android.support.v4.app.FragmentTransaction doTabChanged(java.lang.String,android.support.v4.app.FragmentTransaction) -> a
+android.support.v4.app.FragmentTabHost$1 -> android.support.v4.app.s:
+android.support.v4.app.FragmentTabHost$SavedState -> android.support.v4.app.FragmentTabHost$SavedState:
+    java.lang.String curTab -> a
+    android.os.Parcelable$Creator CREATOR -> CREATOR
+    void writeToParcel(android.os.Parcel,int) -> writeToParcel
+    java.lang.String toString() -> toString
+android.support.v4.app.FragmentTabHost$SavedState$1 -> android.support.v4.app.t:
+    android.support.v4.app.FragmentTabHost$SavedState createFromParcel(android.os.Parcel) -> a
+    android.support.v4.app.FragmentTabHost$SavedState[] newArray(int) -> a
+    java.lang.Object[] newArray(int) -> newArray
+    java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
+android.support.v4.app.FragmentTabHost$TabInfo -> android.support.v4.app.u:
+    java.lang.String tag -> a
+    java.lang.Class clss -> b
+    android.os.Bundle args -> c
+    android.support.v4.app.Fragment fragment -> d
+    android.support.v4.app.Fragment access$102(android.support.v4.app.FragmentTabHost$TabInfo,android.support.v4.app.Fragment) -> a
+    android.support.v4.app.Fragment access$100(android.support.v4.app.FragmentTabHost$TabInfo) -> a
+    java.lang.String access$200(android.support.v4.app.FragmentTabHost$TabInfo) -> b
+    java.lang.Class access$300(android.support.v4.app.FragmentTabHost$TabInfo) -> c
+    android.os.Bundle access$400(android.support.v4.app.FragmentTabHost$TabInfo) -> d
+android.support.v4.app.FragmentTransaction -> android.support.v4.app.v:
+    android.support.v4.app.FragmentTransaction add(int,android.support.v4.app.Fragment,java.lang.String) -> a
+    android.support.v4.app.FragmentTransaction detach(android.support.v4.app.Fragment) -> a
+    android.support.v4.app.FragmentTransaction attach(android.support.v4.app.Fragment) -> b
+    int commit() -> a
+android.support.v4.app.LoaderManager -> android.support.v4.app.w:
+    boolean hasRunningLoaders() -> a
+android.support.v4.app.LoaderManager$LoaderCallbacks -> android.support.v4.app.x:
+    android.support.v4.content.Loader onCreateLoader(int,android.os.Bundle) -> a
+    void onLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> a
+    void onLoaderReset(android.support.v4.content.Loader) -> a
+android.support.v4.app.LoaderManagerImpl -> android.support.v4.app.y:
+    boolean DEBUG -> a
+    android.support.v4.util.SparseArrayCompat mLoaders -> b
+    android.support.v4.util.SparseArrayCompat mInactiveLoaders -> c
+    java.lang.String mWho -> d
+    android.support.v4.app.FragmentActivity mActivity -> e
+    boolean mStarted -> f
+    boolean mRetaining -> g
+    void updateActivity(android.support.v4.app.FragmentActivity) -> a
+    void doStart() -> b
+    void doStop() -> c
+    void doRetain() -> d
+    void finishRetain() -> e
+    void doReportNextStart() -> f
+    void doReportStart() -> g
+    void doDestroy() -> h
+    java.lang.String toString() -> toString
+    void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
+    boolean hasRunningLoaders() -> a
+android.support.v4.app.LoaderManagerImpl$LoaderInfo -> android.support.v4.app.z:
+    int mId -> a
+    android.os.Bundle mArgs -> b
+    android.support.v4.app.LoaderManager$LoaderCallbacks mCallbacks -> c
+    android.support.v4.content.Loader mLoader -> d
+    boolean mHaveData -> e
+    boolean mDeliveredData -> f
+    java.lang.Object mData -> g
+    boolean mStarted -> h
+    boolean mRetaining -> i
+    boolean mRetainingStarted -> j
+    boolean mReportNextStart -> k
+    boolean mDestroyed -> l
+    boolean mListenerRegistered -> m
+    android.support.v4.app.LoaderManagerImpl$LoaderInfo mPendingLoader -> n
+    android.support.v4.app.LoaderManagerImpl this$0 -> o
+    void start() -> a
+    void retain() -> b
+    void finishRetain() -> c
+    void reportStart() -> d
+    void stop() -> e
+    void destroy() -> f
+    void callOnLoadFinished(android.support.v4.content.Loader,java.lang.Object) -> a
+    java.lang.String toString() -> toString
+    void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
+android.support.v4.app.NoSaveStateFrameLayout -> android.support.v4.app.aa:
+    android.view.ViewGroup wrap(android.view.View) -> a
+    void dispatchSaveInstanceState(android.util.SparseArray) -> dispatchSaveInstanceState
+    void dispatchRestoreInstanceState(android.util.SparseArray) -> dispatchRestoreInstanceState
+android.support.v4.app.NotificationCompat -> android.support.v4.app.ab:
+    android.support.v4.app.NotificationCompat$NotificationCompatImpl IMPL -> a
+    android.support.v4.app.NotificationCompat$NotificationCompatImpl access$000() -> a
+android.support.v4.app.NotificationCompat$Action -> android.support.v4.app.ac:
+    int icon -> a
+    java.lang.CharSequence title -> b
+    android.app.PendingIntent actionIntent -> c
+android.support.v4.app.NotificationCompat$BigPictureStyle -> android.support.v4.app.ad:
+    android.graphics.Bitmap mPicture -> a
+    android.graphics.Bitmap mBigLargeIcon -> b
+    boolean mBigLargeIconSet -> c
+    android.support.v4.app.NotificationCompat$BigPictureStyle bigPicture(android.graphics.Bitmap) -> a
+android.support.v4.app.NotificationCompat$BigTextStyle -> android.support.v4.app.ae:
+    java.lang.CharSequence mBigText -> a
+android.support.v4.app.NotificationCompat$Builder -> android.support.v4.app.af:
+    android.content.Context mContext -> a
+    java.lang.CharSequence mContentTitle -> b
+    java.lang.CharSequence mContentText -> c
+    android.app.PendingIntent mContentIntent -> d
+    android.app.PendingIntent mFullScreenIntent -> e
+    android.widget.RemoteViews mTickerView -> f
+    android.graphics.Bitmap mLargeIcon -> g
+    java.lang.CharSequence mContentInfo -> h
+    int mNumber -> i
+    int mPriority -> j
+    boolean mUseChronometer -> k
+    android.support.v4.app.NotificationCompat$Style mStyle -> l
+    java.lang.CharSequence mSubText -> m
+    int mProgressMax -> n
+    int mProgress -> o
+    boolean mProgressIndeterminate -> p
+    java.util.ArrayList mActions -> q
+    android.app.Notification mNotification -> r
+    android.support.v4.app.NotificationCompat$Builder setWhen(long) -> a
+    android.support.v4.app.NotificationCompat$Builder setSmallIcon(int) -> a
+    android.support.v4.app.NotificationCompat$Builder setContentTitle(java.lang.CharSequence) -> a
+    android.support.v4.app.NotificationCompat$Builder setContentText(java.lang.CharSequence) -> b
+    android.support.v4.app.NotificationCompat$Builder setProgress(int,int,boolean) -> a
+    android.support.v4.app.NotificationCompat$Builder setContentIntent(android.app.PendingIntent) -> a
+    android.support.v4.app.NotificationCompat$Builder setTicker(java.lang.CharSequence) -> c
+    android.support.v4.app.NotificationCompat$Builder setLargeIcon(android.graphics.Bitmap) -> a
+    android.support.v4.app.NotificationCompat$Builder setOngoing(boolean) -> a
+    void setFlag(int,boolean) -> a
+    android.support.v4.app.NotificationCompat$Builder addAction(int,java.lang.CharSequence,android.app.PendingIntent) -> a
+    android.support.v4.app.NotificationCompat$Builder setStyle(android.support.v4.app.NotificationCompat$Style) -> a
+    android.app.Notification build() -> a
+android.support.v4.app.NotificationCompat$InboxStyle -> android.support.v4.app.ag:
+    java.util.ArrayList mTexts -> a
+android.support.v4.app.NotificationCompat$NotificationCompatImpl -> android.support.v4.app.ah:
+    android.app.Notification build(android.support.v4.app.NotificationCompat$Builder) -> a
+android.support.v4.app.NotificationCompat$NotificationCompatImplBase -> android.support.v4.app.ai:
+    android.app.Notification build(android.support.v4.app.NotificationCompat$Builder) -> a
+android.support.v4.app.NotificationCompat$NotificationCompatImplHoneycomb -> android.support.v4.app.aj:
+    android.app.Notification build(android.support.v4.app.NotificationCompat$Builder) -> a
+android.support.v4.app.NotificationCompat$NotificationCompatImplIceCreamSandwich -> android.support.v4.app.ak:
+    android.app.Notification build(android.support.v4.app.NotificationCompat$Builder) -> a
+android.support.v4.app.NotificationCompat$NotificationCompatImplJellybean -> android.support.v4.app.al:
+    android.app.Notification build(android.support.v4.app.NotificationCompat$Builder) -> a
+android.support.v4.app.NotificationCompat$Style -> android.support.v4.app.am:
+    android.support.v4.app.NotificationCompat$Builder mBuilder -> d
+    java.lang.CharSequence mBigContentTitle -> e
+    java.lang.CharSequence mSummaryText -> f
+    boolean mSummaryTextSet -> g
+    void setBuilder(android.support.v4.app.NotificationCompat$Builder) -> a
+android.support.v4.app.NotificationCompatHoneycomb -> android.support.v4.app.an:
+    android.app.Notification add(android.content.Context,android.app.Notification,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,android.widget.RemoteViews,int,android.app.PendingIntent,android.app.PendingIntent,android.graphics.Bitmap) -> a
+android.support.v4.app.NotificationCompatIceCreamSandwich -> android.support.v4.app.ao:
+    android.app.Notification add(android.content.Context,android.app.Notification,java.lang.CharSequence,java.lang.CharSequence,java.lang.CharSequence,android.widget.RemoteViews,int,android.app.PendingIntent,android.app.PendingIntent,android.graphics.Bitmap,int,int,boolean) -> a
+android.support.v4.app.NotificationCompatJellybean -> android.support.v4.app.ap:
+    android.app.Notification$Builder b -> a
+    void addAction(int,java.lang.CharSequence,android.app.PendingIntent) -> a
+    void addBigTextStyle(java.lang.CharSequence,boolean,java.lang.CharSequence,java.lang.CharSequence) -> a
+    void addBigPictureStyle(java.lang.CharSequence,boolean,java.lang.CharSequence,android.graphics.Bitmap,android.graphics.Bitmap,boolean) -> a
+    void addInboxStyle(java.lang.CharSequence,boolean,java.lang.CharSequence,java.util.ArrayList) -> a
+    android.app.Notification build() -> a
+android.support.v4.app.SuperNotCalledException -> android.support.v4.app.aq:
+android.support.v4.content.Loader -> android.support.v4.a.a:
+    int mId -> a
+    android.support.v4.content.Loader$OnLoadCompleteListener mListener -> b
+    boolean mStarted -> c
+    boolean mAbandoned -> d
+    boolean mReset -> e
+    boolean mContentChanged -> f
+    void registerListener(int,android.support.v4.content.Loader$OnLoadCompleteListener) -> a
+    void unregisterListener(android.support.v4.content.Loader$OnLoadCompleteListener) -> a
+    void startLoading() -> a
+    void onStartLoading() -> b
+    void stopLoading() -> c
+    void onStopLoading() -> d
+    void reset() -> e
+    void onReset() -> f
+    java.lang.String dataToString(java.lang.Object) -> a
+    java.lang.String toString() -> toString
+    void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> a
+android.support.v4.content.Loader$OnLoadCompleteListener -> android.support.v4.a.b:
+android.support.v4.os.ParcelableCompat -> android.support.v4.b.a:
+    android.os.Parcelable$Creator newCreator(android.support.v4.os.ParcelableCompatCreatorCallbacks) -> a
+android.support.v4.os.ParcelableCompat$CompatCreator -> android.support.v4.b.b:
+    android.support.v4.os.ParcelableCompatCreatorCallbacks mCallbacks -> a
+    java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
+    java.lang.Object[] newArray(int) -> newArray
+android.support.v4.os.ParcelableCompatCreatorCallbacks -> android.support.v4.b.c:
+    java.lang.Object createFromParcel(android.os.Parcel,java.lang.ClassLoader) -> a
+    java.lang.Object[] newArray(int) -> a
+android.support.v4.os.ParcelableCompatCreatorHoneycombMR2 -> android.support.v4.b.d:
+    android.support.v4.os.ParcelableCompatCreatorCallbacks mCallbacks -> a
+    java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
+    java.lang.Object createFromParcel(android.os.Parcel,java.lang.ClassLoader) -> createFromParcel
+    java.lang.Object[] newArray(int) -> newArray
+android.support.v4.os.ParcelableCompatCreatorHoneycombMR2Stub -> android.support.v4.b.e:
+    android.os.Parcelable$Creator instantiate(android.support.v4.os.ParcelableCompatCreatorCallbacks) -> a
+android.support.v4.util.DebugUtils -> android.support.v4.c.a:
+    void buildShortClassTag(java.lang.Object,java.lang.StringBuilder) -> a
+android.support.v4.util.LogWriter -> android.support.v4.c.b:
+    java.lang.String mTag -> a
+    java.lang.StringBuilder mBuilder -> b
+    void close() -> close
+    void flush() -> flush
+    void write(char[],int,int) -> write
+    void flushBuilder() -> a
+android.support.v4.util.SparseArrayCompat -> android.support.v4.c.c:
+    java.lang.Object DELETED -> a
+    boolean mGarbage -> b
+    int[] mKeys -> c
+    java.lang.Object[] mValues -> d
+    int mSize -> e
+    void gc() -> c
+    int size() -> a
+    int keyAt(int) -> a
+    java.lang.Object valueAt(int) -> b
+    void clear() -> b
+    int idealByteArraySize(int) -> c
+    int idealIntArraySize(int) -> d
+android.support.v4.view.GravityCompat -> android.support.v4.view.a:
+    android.support.v4.view.GravityCompat$GravityCompatImpl IMPL -> a
+    int getAbsoluteGravity(int,int) -> a
+android.support.v4.view.GravityCompat$GravityCompatImpl -> android.support.v4.view.b:
+    int getAbsoluteGravity(int,int) -> a
+android.support.v4.view.GravityCompat$GravityCompatImplBase -> android.support.v4.view.c:
+    int getAbsoluteGravity(int,int) -> a
+android.support.v4.view.GravityCompat$GravityCompatImplJellybeanMr1 -> android.support.v4.view.d:
+    int getAbsoluteGravity(int,int) -> a
+android.support.v4.view.GravityCompatJellybeanMr1 -> android.support.v4.view.e:
+    int getAbsoluteGravity(int,int) -> a
+android.support.v4.view.KeyEventCompat -> android.support.v4.view.f:
+    android.support.v4.view.KeyEventCompat$KeyEventVersionImpl IMPL -> a
+    boolean hasModifiers(android.view.KeyEvent,int) -> a
+    boolean hasNoModifiers(android.view.KeyEvent) -> a
+    void startTracking(android.view.KeyEvent) -> b
+android.support.v4.view.KeyEventCompat$BaseKeyEventVersionImpl -> android.support.v4.view.g:
+    int metaStateFilterDirectionalModifiers(int,int,int,int,int) -> a
+    int normalizeMetaState(int) -> a
+    boolean metaStateHasModifiers(int,int) -> a
+    boolean metaStateHasNoModifiers(int) -> b
+    void startTracking(android.view.KeyEvent) -> a
+android.support.v4.view.KeyEventCompat$EclairKeyEventVersionImpl -> android.support.v4.view.h:
+    void startTracking(android.view.KeyEvent) -> a
+android.support.v4.view.KeyEventCompat$HoneycombKeyEventVersionImpl -> android.support.v4.view.i:
+    int normalizeMetaState(int) -> a
+    boolean metaStateHasModifiers(int,int) -> a
+    boolean metaStateHasNoModifiers(int) -> b
+android.support.v4.view.KeyEventCompat$KeyEventVersionImpl -> android.support.v4.view.j:
+    boolean metaStateHasModifiers(int,int) -> a
+    boolean metaStateHasNoModifiers(int) -> b
+    void startTracking(android.view.KeyEvent) -> a
+android.support.v4.view.KeyEventCompatEclair -> android.support.v4.view.k:
+    void startTracking(android.view.KeyEvent) -> a
+android.support.v4.view.KeyEventCompatHoneycomb -> android.support.v4.view.l:
+    int normalizeMetaState(int) -> a
+    boolean metaStateHasModifiers(int,int) -> a
+    boolean metaStateHasNoModifiers(int) -> b
+android.support.v4.view.MotionEventCompat -> android.support.v4.view.m:
+    android.support.v4.view.MotionEventCompat$MotionEventVersionImpl IMPL -> a
+    int getActionMasked(android.view.MotionEvent) -> a
+    int getActionIndex(android.view.MotionEvent) -> b
+    int findPointerIndex(android.view.MotionEvent,int) -> a
+    int getPointerId(android.view.MotionEvent,int) -> b
+    float getX(android.view.MotionEvent,int) -> c
+    float getY(android.view.MotionEvent,int) -> d
+    int getPointerCount(android.view.MotionEvent) -> c
+android.support.v4.view.MotionEventCompat$BaseMotionEventVersionImpl -> android.support.v4.view.n:
+    int findPointerIndex(android.view.MotionEvent,int) -> a
+    int getPointerId(android.view.MotionEvent,int) -> b
+    float getX(android.view.MotionEvent,int) -> c
+    float getY(android.view.MotionEvent,int) -> d
+    int getPointerCount(android.view.MotionEvent) -> a
+android.support.v4.view.MotionEventCompat$EclairMotionEventVersionImpl -> android.support.v4.view.o:
+    int findPointerIndex(android.view.MotionEvent,int) -> a
+    int getPointerId(android.view.MotionEvent,int) -> b
+    float getX(android.view.MotionEvent,int) -> c
+    float getY(android.view.MotionEvent,int) -> d
+    int getPointerCount(android.view.MotionEvent) -> a
+android.support.v4.view.MotionEventCompat$MotionEventVersionImpl -> android.support.v4.view.p:
+    int findPointerIndex(android.view.MotionEvent,int) -> a
+    int getPointerId(android.view.MotionEvent,int) -> b
+    float getX(android.view.MotionEvent,int) -> c
+    float getY(android.view.MotionEvent,int) -> d
+    int getPointerCount(android.view.MotionEvent) -> a
+android.support.v4.view.MotionEventCompatEclair -> android.support.v4.view.q:
+    int findPointerIndex(android.view.MotionEvent,int) -> a
+    int getPointerId(android.view.MotionEvent,int) -> b
+    float getX(android.view.MotionEvent,int) -> c
+    float getY(android.view.MotionEvent,int) -> d
+    int getPointerCount(android.view.MotionEvent) -> a
+android.support.v4.view.PagerAdapter -> android.support.v4.view.r:
+    android.database.DataSetObservable mObservable -> a
+    int getCount() -> a
+    void startUpdate(android.view.ViewGroup) -> a
+    java.lang.Object instantiateItem(android.view.ViewGroup,int) -> a
+    void destroyItem(android.view.ViewGroup,int,java.lang.Object) -> a
+    void setPrimaryItem(android.view.ViewGroup,int,java.lang.Object) -> b
+    void finishUpdate(android.view.ViewGroup) -> b
+    void startUpdate(android.view.View) -> a
+    java.lang.Object instantiateItem(android.view.View,int) -> a
+    void destroyItem(android.view.View,int,java.lang.Object) -> a
+    void setPrimaryItem(android.view.View,int,java.lang.Object) -> b
+    void finishUpdate(android.view.View) -> b
+    boolean isViewFromObject(android.view.View,java.lang.Object) -> a
+    android.os.Parcelable saveState() -> b
+    void restoreState(android.os.Parcelable,java.lang.ClassLoader) -> a
+    int getItemPosition(java.lang.Object) -> a
+    void registerDataSetObserver(android.database.DataSetObserver) -> a
+    void unregisterDataSetObserver(android.database.DataSetObserver) -> b
+    float getPageWidth(int) -> a
+android.support.v4.view.VelocityTrackerCompat -> android.support.v4.view.s:
+    android.support.v4.view.VelocityTrackerCompat$VelocityTrackerVersionImpl IMPL -> a
+    float getXVelocity(android.view.VelocityTracker,int) -> a
+    float getYVelocity(android.view.VelocityTracker,int) -> b
+android.support.v4.view.VelocityTrackerCompat$BaseVelocityTrackerVersionImpl -> android.support.v4.view.t:
+    float getXVelocity(android.view.VelocityTracker,int) -> a
+    float getYVelocity(android.view.VelocityTracker,int) -> b
+android.support.v4.view.VelocityTrackerCompat$HoneycombVelocityTrackerVersionImpl -> android.support.v4.view.u:
+    float getXVelocity(android.view.VelocityTracker,int) -> a
+    float getYVelocity(android.view.VelocityTracker,int) -> b
+android.support.v4.view.VelocityTrackerCompat$VelocityTrackerVersionImpl -> android.support.v4.view.v:
+    float getXVelocity(android.view.VelocityTracker,int) -> a
+    float getYVelocity(android.view.VelocityTracker,int) -> b
+android.support.v4.view.VelocityTrackerCompatHoneycomb -> android.support.v4.view.w:
+    float getXVelocity(android.view.VelocityTracker,int) -> a
+    float getYVelocity(android.view.VelocityTracker,int) -> b
+android.support.v4.view.ViewCompat -> android.support.v4.view.x:
+    android.support.v4.view.ViewCompat$ViewCompatImpl IMPL -> a
+    boolean canScrollHorizontally(android.view.View,int) -> a
+    int getOverScrollMode(android.view.View) -> a
+    void postInvalidateOnAnimation(android.view.View) -> b
+    void postInvalidateOnAnimation(android.view.View,int,int,int,int) -> a
+    void postOnAnimation(android.view.View,java.lang.Runnable) -> a
+    void setLayerType(android.view.View,int,android.graphics.Paint) -> a
+    int getLayerType(android.view.View) -> c
+    void setLayerPaint(android.view.View,android.graphics.Paint) -> a
+    int getLayoutDirection(android.view.View) -> d
+android.support.v4.view.ViewCompat$BaseViewCompatImpl -> android.support.v4.view.y:
+    boolean canScrollHorizontally(android.view.View,int) -> a
+    int getOverScrollMode(android.view.View) -> a
+    void postInvalidateOnAnimation(android.view.View) -> b
+    void postInvalidateOnAnimation(android.view.View,int,int,int,int) -> a
+    void postOnAnimation(android.view.View,java.lang.Runnable) -> a
+    long getFrameTime() -> a
+    void setLayerType(android.view.View,int,android.graphics.Paint) -> a
+    int getLayerType(android.view.View) -> c
+    void setLayerPaint(android.view.View,android.graphics.Paint) -> a
+    int getLayoutDirection(android.view.View) -> d
+android.support.v4.view.ViewCompat$GBViewCompatImpl -> android.support.v4.view.z:
+    int getOverScrollMode(android.view.View) -> a
+android.support.v4.view.ViewCompat$HCViewCompatImpl -> android.support.v4.view.aa:
+    long getFrameTime() -> a
+    void setLayerType(android.view.View,int,android.graphics.Paint) -> a
+    int getLayerType(android.view.View) -> c
+    void setLayerPaint(android.view.View,android.graphics.Paint) -> a
+android.support.v4.view.ViewCompat$ICSViewCompatImpl -> android.support.v4.view.ab:
+    boolean canScrollHorizontally(android.view.View,int) -> a
+android.support.v4.view.ViewCompat$JBViewCompatImpl -> android.support.v4.view.ac:
+    void postInvalidateOnAnimation(android.view.View) -> b
+    void postInvalidateOnAnimation(android.view.View,int,int,int,int) -> a
+    void postOnAnimation(android.view.View,java.lang.Runnable) -> a
+android.support.v4.view.ViewCompat$JbMr1ViewCompatImpl -> android.support.v4.view.ad:
+    void setLayerPaint(android.view.View,android.graphics.Paint) -> a
+    int getLayoutDirection(android.view.View) -> d
+android.support.v4.view.ViewCompat$ViewCompatImpl -> android.support.v4.view.ae:
+    boolean canScrollHorizontally(android.view.View,int) -> a
+    int getOverScrollMode(android.view.View) -> a
+    void postInvalidateOnAnimation(android.view.View) -> b
+    void postInvalidateOnAnimation(android.view.View,int,int,int,int) -> a
+    void postOnAnimation(android.view.View,java.lang.Runnable) -> a
+    void setLayerType(android.view.View,int,android.graphics.Paint) -> a
+    int getLayerType(android.view.View) -> c
+    void setLayerPaint(android.view.View,android.graphics.Paint) -> a
+    int getLayoutDirection(android.view.View) -> d
+android.support.v4.view.ViewCompatGingerbread -> android.support.v4.view.af:
+    int getOverScrollMode(android.view.View) -> a
+android.support.v4.view.ViewCompatHC -> android.support.v4.view.ag:
+    long getFrameTime() -> a
+    void setLayerType(android.view.View,int,android.graphics.Paint) -> a
+    int getLayerType(android.view.View) -> a
+android.support.v4.view.ViewCompatICS -> android.support.v4.view.ah:
+    boolean canScrollHorizontally(android.view.View,int) -> a
+android.support.v4.view.ViewCompatJB -> android.support.v4.view.ai:
+    void postInvalidateOnAnimation(android.view.View) -> a
+    void postInvalidateOnAnimation(android.view.View,int,int,int,int) -> a
+    void postOnAnimation(android.view.View,java.lang.Runnable) -> a
+android.support.v4.view.ViewCompatJellybeanMr1 -> android.support.v4.view.aj:
+    void setLayerPaint(android.view.View,android.graphics.Paint) -> a
+    int getLayoutDirection(android.view.View) -> a
+android.support.v4.view.ViewPager -> android.support.v4.view.ViewPager:
+    int[] LAYOUT_ATTRS -> a
+    int mExpectedAdapterCount -> b
+    java.util.Comparator COMPARATOR -> c
+    android.view.animation.Interpolator sInterpolator -> d
+    java.util.ArrayList mItems -> e
+    android.support.v4.view.ViewPager$ItemInfo mTempItem -> f
+    android.graphics.Rect mTempRect -> g
+    android.support.v4.view.PagerAdapter mAdapter -> h
+    int mCurItem -> i
+    int mRestoredCurItem -> j
+    android.os.Parcelable mRestoredAdapterState -> k
+    java.lang.ClassLoader mRestoredClassLoader -> l
+    android.widget.Scroller mScroller -> m
+    android.support.v4.view.ViewPager$PagerObserver mObserver -> n
+    int mPageMargin -> o
+    android.graphics.drawable.Drawable mMarginDrawable -> p
+    int mTopPageBounds -> q
+    int mBottomPageBounds -> r
+    float mFirstOffset -> s
+    float mLastOffset -> t
+    int mChildWidthMeasureSpec -> u
+    int mChildHeightMeasureSpec -> v
+    boolean mInLayout -> w
+    boolean mScrollingCacheEnabled -> x
+    boolean mPopulatePending -> y
+    int mOffscreenPageLimit -> z
+    boolean mIsBeingDragged -> A
+    boolean mIsUnableToDrag -> B
+    int mDefaultGutterSize -> C
+    int mGutterSize -> D
+    int mTouchSlop -> E
+    float mLastMotionX -> F
+    float mLastMotionY -> G
+    float mInitialMotionX -> H
+    float mInitialMotionY -> I
+    int mActivePointerId -> J
+    android.view.VelocityTracker mVelocityTracker -> K
+    int mMinimumVelocity -> L
+    int mMaximumVelocity -> M
+    int mFlingDistance -> N
+    int mCloseEnough -> O
+    boolean mFakeDragging -> P
+    android.support.v4.widget.EdgeEffectCompat mLeftEdge -> Q
+    android.support.v4.widget.EdgeEffectCompat mRightEdge -> R
+    boolean mFirstLayout -> S
+    boolean mNeedCalculatePageOffsets -> T
+    boolean mCalledSuper -> U
+    int mDecorChildCount -> V
+    android.support.v4.view.ViewPager$OnPageChangeListener mOnPageChangeListener -> W
+    android.support.v4.view.ViewPager$OnPageChangeListener mInternalPageChangeListener -> Z
+    android.support.v4.view.ViewPager$OnAdapterChangeListener mAdapterChangeListener -> aa
+    android.support.v4.view.ViewPager$PageTransformer mPageTransformer -> ab
+    java.lang.reflect.Method mSetChildrenDrawingOrderEnabled -> ac
+    int mDrawingOrder -> ad
+    java.util.ArrayList mDrawingOrderedChildren -> ae
+    android.support.v4.view.ViewPager$ViewPositionComparator sPositionComparator -> af
+    java.lang.Runnable mEndScrollRunnable -> ag
+    int mScrollState -> ah
+    void onDetachedFromWindow() -> onDetachedFromWindow
+    void setScrollState(int) -> setScrollState
+    void setAdapter(android.support.v4.view.PagerAdapter) -> setAdapter
+    void removeNonDecorViews() -> f
+    android.support.v4.view.PagerAdapter getAdapter() -> getAdapter
+    void setOnAdapterChangeListener(android.support.v4.view.ViewPager$OnAdapterChangeListener) -> setOnAdapterChangeListener
+    int getClientWidth() -> getClientWidth
+    void setCurrentItem(int) -> setCurrentItem
+    void setCurrentItem(int,boolean) -> a
+    int getCurrentItem() -> getCurrentItem
+    void setCurrentItemInternal(int,boolean,boolean) -> a
+    void setCurrentItemInternal(int,boolean,boolean,int) -> a
+    void scrollToItem(int,boolean,int,boolean) -> a
+    void setOnPageChangeListener(android.support.v4.view.ViewPager$OnPageChangeListener) -> setOnPageChangeListener
+    void setChildrenDrawingOrderEnabledCompat(boolean) -> setChildrenDrawingOrderEnabledCompat
+    int getChildDrawingOrder(int,int) -> getChildDrawingOrder
+    int getOffscreenPageLimit() -> getOffscreenPageLimit
+    void setOffscreenPageLimit(int) -> setOffscreenPageLimit
+    void setPageMargin(int) -> setPageMargin
+    int getPageMargin() -> getPageMargin
+    void setPageMarginDrawable(android.graphics.drawable.Drawable) -> setPageMarginDrawable
+    void setPageMarginDrawable(int) -> setPageMarginDrawable
+    boolean verifyDrawable(android.graphics.drawable.Drawable) -> verifyDrawable
+    void drawableStateChanged() -> drawableStateChanged
+    float distanceInfluenceForSnapDuration(float) -> a
+    void smoothScrollTo(int,int,int) -> a
+    android.support.v4.view.ViewPager$ItemInfo addNewItem(int,int) -> a
+    void dataSetChanged() -> a
+    void populate() -> b
+    void populate(int) -> a
+    void sortChildDrawingOrder() -> g
+    void calculatePageOffsets(android.support.v4.view.ViewPager$ItemInfo,int,android.support.v4.view.ViewPager$ItemInfo) -> a
+    android.os.Parcelable onSaveInstanceState() -> onSaveInstanceState
+    void onRestoreInstanceState(android.os.Parcelable) -> onRestoreInstanceState
+    void addView(android.view.View,int,android.view.ViewGroup$LayoutParams) -> addView
+    void removeView(android.view.View) -> removeView
+    android.support.v4.view.ViewPager$ItemInfo infoForChild(android.view.View) -> a
+    android.support.v4.view.ViewPager$ItemInfo infoForAnyChild(android.view.View) -> b
+    android.support.v4.view.ViewPager$ItemInfo infoForPosition(int) -> b
+    void onAttachedToWindow() -> onAttachedToWindow
+    void onMeasure(int,int) -> onMeasure
+    void onSizeChanged(int,int,int,int) -> onSizeChanged
+    void recomputeScrollPosition(int,int,int,int) -> a
+    void onLayout(boolean,int,int,int,int) -> onLayout
+    void computeScroll() -> computeScroll
+    boolean pageScrolled(int) -> d
+    void onPageScrolled(int,float,int) -> a
+    void completeScroll(boolean) -> a
+    boolean isGutterDrag(float,float) -> a
+    void enableLayers(boolean) -> b
+    boolean onInterceptTouchEvent(android.view.MotionEvent) -> onInterceptTouchEvent
+    boolean onTouchEvent(android.view.MotionEvent) -> onTouchEvent
+    boolean performDrag(float) -> b
+    android.support.v4.view.ViewPager$ItemInfo infoForCurrentScrollPosition() -> h
+    int determineTargetPage(int,float,int,int) -> a
+    void draw(android.graphics.Canvas) -> draw
+    void onDraw(android.graphics.Canvas) -> onDraw
+    void onSecondaryPointerUp(android.view.MotionEvent) -> a
+    void endDrag() -> i
+    void setScrollingCacheEnabled(boolean) -> setScrollingCacheEnabled
+    boolean canScroll(android.view.View,boolean,int,int,int) -> a
+    boolean dispatchKeyEvent(android.view.KeyEvent) -> dispatchKeyEvent
+    boolean executeKeyEvent(android.view.KeyEvent) -> a
+    boolean arrowScroll(int) -> c
+    android.graphics.Rect getChildRectInPagerCoordinates(android.graphics.Rect,android.view.View) -> a
+    boolean pageLeft() -> c
+    boolean pageRight() -> d
+    void addFocusables(java.util.ArrayList,int,int) -> addFocusables
+    void addTouchables(java.util.ArrayList) -> addTouchables
+    boolean onRequestFocusInDescendants(int,android.graphics.Rect) -> onRequestFocusInDescendants
+    boolean dispatchPopulateAccessibilityEvent(android.view.accessibility.AccessibilityEvent) -> dispatchPopulateAccessibilityEvent
+    android.view.ViewGroup$LayoutParams generateDefaultLayoutParams() -> generateDefaultLayoutParams
+    android.view.ViewGroup$LayoutParams generateLayoutParams(android.view.ViewGroup$LayoutParams) -> generateLayoutParams
+    boolean checkLayoutParams(android.view.ViewGroup$LayoutParams) -> checkLayoutParams
+    android.view.ViewGroup$LayoutParams generateLayoutParams(android.util.AttributeSet) -> generateLayoutParams
+    int[] access$400() -> e
+android.support.v4.view.ViewPager$1 -> android.support.v4.view.ak:
+    int compare(android.support.v4.view.ViewPager$ItemInfo,android.support.v4.view.ViewPager$ItemInfo) -> a
+    int compare(java.lang.Object,java.lang.Object) -> compare
+android.support.v4.view.ViewPager$2 -> android.support.v4.view.al:
+    float getInterpolation(float) -> getInterpolation
+android.support.v4.view.ViewPager$Decor -> android.support.v4.view.am:
+android.support.v4.view.ViewPager$ItemInfo -> android.support.v4.view.an:
+    java.lang.Object object -> a
+    int position -> b
+    boolean scrolling -> c
+    float widthFactor -> d
+    float offset -> e
+android.support.v4.view.ViewPager$LayoutParams -> android.support.v4.view.ao:
+    boolean isDecor -> a
+    int gravity -> b
+    float widthFactor -> c
+    boolean needsMeasure -> d
+    int position -> e
+    int childIndex -> f
+android.support.v4.view.ViewPager$OnAdapterChangeListener -> android.support.v4.view.ap:
+    void onAdapterChanged(android.support.v4.view.PagerAdapter,android.support.v4.view.PagerAdapter) -> a
+android.support.v4.view.ViewPager$OnPageChangeListener -> android.support.v4.view.aq:
+    void onPageScrolled(int,float,int) -> a
+    void onPageSelected(int) -> a
+    void onPageScrollStateChanged(int) -> b
+android.support.v4.view.ViewPager$PageTransformer -> android.support.v4.view.ar:
+    void transformPage(android.view.View,float) -> a
+android.support.v4.view.ViewPager$PagerObserver -> android.support.v4.view.as:
+    android.support.v4.view.ViewPager this$0 -> a
+    void onChanged() -> onChanged
+    void onInvalidated() -> onInvalidated
+android.support.v4.view.ViewPager$SavedState -> android.support.v4.view.ViewPager$SavedState:
+    int position -> a
+    android.os.Parcelable adapterState -> b
+    java.lang.ClassLoader loader -> c
+    android.os.Parcelable$Creator CREATOR -> CREATOR
+    void writeToParcel(android.os.Parcel,int) -> writeToParcel
+    java.lang.String toString() -> toString
+android.support.v4.view.ViewPager$SavedState$1 -> android.support.v4.view.at:
+    android.support.v4.view.ViewPager$SavedState createFromParcel(android.os.Parcel,java.lang.ClassLoader) -> b
+    android.support.v4.view.ViewPager$SavedState[] newArray(int) -> b
+    java.lang.Object[] newArray(int) -> a
+    java.lang.Object createFromParcel(android.os.Parcel,java.lang.ClassLoader) -> a
+android.support.v4.view.ViewPager$ViewPositionComparator -> android.support.v4.view.au:
+    int compare(android.view.View,android.view.View) -> a
+    int compare(java.lang.Object,java.lang.Object) -> compare
+android.support.v4.widget.DrawerLayout -> android.support.v4.widget.DrawerLayout:
+    int[] LAYOUT_ATTRS -> a
+    int mMinDrawerMargin -> b
+    int mScrimColor -> c
+    float mScrimOpacity -> d
+    android.graphics.Paint mScrimPaint -> e
+    android.support.v4.widget.ViewDragHelper mLeftDragger -> f
+    android.support.v4.widget.ViewDragHelper mRightDragger -> g
+    android.support.v4.widget.DrawerLayout$ViewDragCallback mLeftCallback -> h
+    android.support.v4.widget.DrawerLayout$ViewDragCallback mRightCallback -> i
+    int mDrawerState -> j
+    boolean mInLayout -> k
+    boolean mFirstLayout -> l
+    int mLockModeLeft -> m
+    int mLockModeRight -> n
+    boolean mDisallowInterceptRequested -> o
+    boolean mChildrenCanceledTouch -> p
+    android.support.v4.widget.DrawerLayout$DrawerListener mListener -> q
+    float mInitialMotionX -> r
+    float mInitialMotionY -> s
+    android.graphics.drawable.Drawable mShadowLeft -> t
+    android.graphics.drawable.Drawable mShadowRight -> u
+    void setScrimColor(int) -> setScrimColor
+    void setDrawerListener(android.support.v4.widget.DrawerLayout$DrawerListener) -> setDrawerListener
+    void setDrawerLockMode(int) -> setDrawerLockMode
+    void setDrawerLockMode(int,int) -> a
+    int getDrawerLockMode(android.view.View) -> a
+    void updateDrawerState(int,int,android.view.View) -> a
+    void dispatchOnDrawerClosed(android.view.View) -> b
+    void dispatchOnDrawerOpened(android.view.View) -> c
+    void dispatchOnDrawerSlide(android.view.View,float) -> a
+    void setDrawerViewOffset(android.view.View,float) -> b
+    float getDrawerViewOffset(android.view.View) -> d
+    int getDrawerViewGravity(android.view.View) -> e
+    boolean checkDrawerViewGravity(android.view.View,int) -> a
+    android.view.View findOpenDrawer() -> a
+    android.view.View findDrawerWithGravity(int) -> a
+    java.lang.String gravityToString(int) -> b
+    void onDetachedFromWindow() -> onDetachedFromWindow
+    void onAttachedToWindow() -> onAttachedToWindow
+    void onMeasure(int,int) -> onMeasure
+    void onLayout(boolean,int,int,int,int) -> onLayout
+    void requestLayout() -> requestLayout
+    void computeScroll() -> computeScroll
+    boolean hasOpaqueBackground(android.view.View) -> k
+    boolean drawChild(android.graphics.Canvas,android.view.View,long) -> drawChild
+    boolean isContentView(android.view.View) -> f
+    boolean isDrawerView(android.view.View) -> g
+    boolean onInterceptTouchEvent(android.view.MotionEvent) -> onInterceptTouchEvent
+    boolean onTouchEvent(android.view.MotionEvent) -> onTouchEvent
+    void requestDisallowInterceptTouchEvent(boolean) -> requestDisallowInterceptTouchEvent
+    void closeDrawers() -> b
+    void closeDrawers(boolean) -> a
+    void openDrawer(android.view.View) -> h
+    void closeDrawer(android.view.View) -> i
+    boolean isDrawerVisible(android.view.View) -> j
+    boolean hasPeekingDrawer() -> d
+    android.view.ViewGroup$LayoutParams generateDefaultLayoutParams() -> generateDefaultLayoutParams
+    android.view.ViewGroup$LayoutParams generateLayoutParams(android.view.ViewGroup$LayoutParams) -> generateLayoutParams
+    boolean checkLayoutParams(android.view.ViewGroup$LayoutParams) -> checkLayoutParams
+    android.view.ViewGroup$LayoutParams generateLayoutParams(android.util.AttributeSet) -> generateLayoutParams
+    boolean hasVisibleDrawer() -> e
+    android.view.View findVisibleDrawer() -> f
+    boolean onKeyDown(int,android.view.KeyEvent) -> onKeyDown
+    boolean onKeyUp(int,android.view.KeyEvent) -> onKeyUp
+    void onRestoreInstanceState(android.os.Parcelable) -> onRestoreInstanceState
+    android.os.Parcelable onSaveInstanceState() -> onSaveInstanceState
+    int[] access$100() -> c
+android.support.v4.widget.DrawerLayout$DrawerListener -> android.support.v4.widget.a:
+    void onDrawerSlide(android.view.View,float) -> a
+    void onDrawerOpened(android.view.View) -> a
+    void onDrawerClosed(android.view.View) -> b
+    void onDrawerStateChanged(int) -> a
+android.support.v4.widget.DrawerLayout$LayoutParams -> android.support.v4.widget.b:
+    int gravity -> a
+    float onScreen -> b
+    boolean isPeeking -> c
+    boolean knownOpen -> d
+android.support.v4.widget.DrawerLayout$SavedState -> android.support.v4.widget.DrawerLayout$SavedState:
+    int openDrawerGravity -> a
+    int lockModeLeft -> b
+    int lockModeRight -> c
+    android.os.Parcelable$Creator CREATOR -> CREATOR
+    void writeToParcel(android.os.Parcel,int) -> writeToParcel
+android.support.v4.widget.DrawerLayout$SavedState$1 -> android.support.v4.widget.c:
+    android.support.v4.widget.DrawerLayout$SavedState createFromParcel(android.os.Parcel) -> a
+    android.support.v4.widget.DrawerLayout$SavedState[] newArray(int) -> a
+    java.lang.Object[] newArray(int) -> newArray
+    java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
+android.support.v4.widget.DrawerLayout$ViewDragCallback -> android.support.v4.widget.d:
+    int mGravity -> b
+    android.support.v4.widget.ViewDragHelper mDragger -> c
+    java.lang.Runnable mPeekRunnable -> d
+    android.support.v4.widget.DrawerLayout this$0 -> a
+    void removeCallbacks() -> a
+    boolean tryCaptureView(android.view.View,int) -> a
+    void onViewDragStateChanged(int) -> a
+    void onViewPositionChanged(android.view.View,int,int,int,int) -> a
+    void onViewCaptured(android.view.View,int) -> b
+    void closeOtherDrawer() -> b
+    void onViewReleased(android.view.View,float,float) -> a
+    void onEdgeTouched(int,int) -> a
+    boolean onEdgeLock(int) -> b
+    void onEdgeDragStarted(int,int) -> b
+    int getViewHorizontalDragRange(android.view.View) -> a
+    int clampViewPositionHorizontal(android.view.View,int,int) -> a
+    int clampViewPositionVertical(android.view.View,int,int) -> b
+android.support.v4.widget.EdgeEffectCompat -> android.support.v4.widget.e:
+    java.lang.Object mEdgeEffect -> a
+    android.support.v4.widget.EdgeEffectCompat$EdgeEffectImpl IMPL -> b
+    void setSize(int,int) -> a
+    boolean isFinished() -> a
+    void finish() -> b
+    boolean onPull(float) -> a
+    boolean onRelease() -> c
+    boolean draw(android.graphics.Canvas) -> a
+android.support.v4.widget.EdgeEffectCompat$BaseEdgeEffectImpl -> android.support.v4.widget.f:
+    void setSize(java.lang.Object,int,int) -> a
+    boolean isFinished(java.lang.Object) -> a
+    void finish(java.lang.Object) -> b
+    boolean onPull(java.lang.Object,float) -> a
+    boolean onRelease(java.lang.Object) -> c
+    boolean draw(java.lang.Object,android.graphics.Canvas) -> a
+android.support.v4.widget.EdgeEffectCompat$EdgeEffectIcsImpl -> android.support.v4.widget.g:
+    void setSize(java.lang.Object,int,int) -> a
+    boolean isFinished(java.lang.Object) -> a
+    void finish(java.lang.Object) -> b
+    boolean onPull(java.lang.Object,float) -> a
+    boolean onRelease(java.lang.Object) -> c
+    boolean draw(java.lang.Object,android.graphics.Canvas) -> a
+android.support.v4.widget.EdgeEffectCompat$EdgeEffectImpl -> android.support.v4.widget.h:
+    void setSize(java.lang.Object,int,int) -> a
+    boolean isFinished(java.lang.Object) -> a
+    void finish(java.lang.Object) -> b
+    boolean onPull(java.lang.Object,float) -> a
+    boolean onRelease(java.lang.Object) -> c
+    boolean draw(java.lang.Object,android.graphics.Canvas) -> a
+android.support.v4.widget.EdgeEffectCompatIcs -> android.support.v4.widget.i:
+    void setSize(java.lang.Object,int,int) -> a
+    boolean isFinished(java.lang.Object) -> a
+    void finish(java.lang.Object) -> b
+    boolean onPull(java.lang.Object,float) -> a
+    boolean onRelease(java.lang.Object) -> c
+    boolean draw(java.lang.Object,android.graphics.Canvas) -> a
+android.support.v4.widget.ScrollerCompat -> android.support.v4.widget.j:
+    java.lang.Object mScroller -> a
+    android.support.v4.widget.ScrollerCompat$ScrollerCompatImpl IMPL -> b
+    boolean isFinished() -> a
+    int getCurrX() -> b
+    int getCurrY() -> c
+    int getFinalX() -> d
+    int getFinalY() -> e
+    boolean computeScrollOffset() -> f
+    void startScroll(int,int,int,int,int) -> a
+    void abortAnimation() -> g
+android.support.v4.widget.ScrollerCompat$ScrollerCompatImpl -> android.support.v4.widget.k:
+    boolean isFinished(java.lang.Object) -> a
+    int getCurrX(java.lang.Object) -> b
+    int getCurrY(java.lang.Object) -> c
+    boolean computeScrollOffset(java.lang.Object) -> d
+    void startScroll(java.lang.Object,int,int,int,int,int) -> a
+    void abortAnimation(java.lang.Object) -> e
+    int getFinalX(java.lang.Object) -> f
+    int getFinalY(java.lang.Object) -> g
+android.support.v4.widget.ScrollerCompat$ScrollerCompatImplBase -> android.support.v4.widget.l:
+    boolean isFinished(java.lang.Object) -> a
+    int getCurrX(java.lang.Object) -> b
+    int getCurrY(java.lang.Object) -> c
+    boolean computeScrollOffset(java.lang.Object) -> d
+    void startScroll(java.lang.Object,int,int,int,int,int) -> a
+    void abortAnimation(java.lang.Object) -> e
+    int getFinalX(java.lang.Object) -> f
+    int getFinalY(java.lang.Object) -> g
+android.support.v4.widget.ScrollerCompat$ScrollerCompatImplGingerbread -> android.support.v4.widget.m:
+    boolean isFinished(java.lang.Object) -> a
+    int getCurrX(java.lang.Object) -> b
+    int getCurrY(java.lang.Object) -> c
+    boolean computeScrollOffset(java.lang.Object) -> d
+    void startScroll(java.lang.Object,int,int,int,int,int) -> a
+    void abortAnimation(java.lang.Object) -> e
+    int getFinalX(java.lang.Object) -> f
+    int getFinalY(java.lang.Object) -> g
+android.support.v4.widget.ScrollerCompat$ScrollerCompatImplIcs -> android.support.v4.widget.n:
+android.support.v4.widget.ScrollerCompatGingerbread -> android.support.v4.widget.o:
+    boolean isFinished(java.lang.Object) -> a
+    int getCurrX(java.lang.Object) -> b
+    int getCurrY(java.lang.Object) -> c
+    boolean computeScrollOffset(java.lang.Object) -> d
+    void startScroll(java.lang.Object,int,int,int,int,int) -> a
+    void abortAnimation(java.lang.Object) -> e
+    int getFinalX(java.lang.Object) -> f
+    int getFinalY(java.lang.Object) -> g
+android.support.v4.widget.SlidingPaneLayout -> android.support.v4.widget.SlidingPaneLayout:
+    int mSliderFadeColor -> b
+    int mCoveredFadeColor -> c
+    android.graphics.drawable.Drawable mShadowDrawable -> d
+    int mOverhangSize -> e
+    boolean mCanSlide -> f
+    android.view.View mSlideableView -> g
+    float mSlideOffset -> h
+    float mParallaxOffset -> i
+    int mSlideRange -> j
+    boolean mIsUnableToDrag -> k
+    int mParallaxBy -> l
+    float mInitialMotionX -> m
+    float mInitialMotionY -> n
+    android.support.v4.widget.SlidingPaneLayout$PanelSlideListener mPanelSlideListener -> o
+    android.support.v4.widget.ViewDragHelper mDragHelper -> p
+    boolean mPreservedOpenState -> q
+    boolean mFirstLayout -> r
+    android.graphics.Rect mTmpRect -> s
+    java.util.ArrayList mPostedRunnables -> t
+    android.support.v4.widget.SlidingPaneLayout$SlidingPanelLayoutImpl IMPL -> a
+    void setParallaxDistance(int) -> setParallaxDistance
+    int getParallaxDistance() -> getParallaxDistance
+    void setSliderFadeColor(int) -> setSliderFadeColor
+    int getSliderFadeColor() -> getSliderFadeColor
+    void setCoveredFadeColor(int) -> setCoveredFadeColor
+    int getCoveredFadeColor() -> getCoveredFadeColor
+    void setPanelSlideListener(android.support.v4.widget.SlidingPaneLayout$PanelSlideListener) -> setPanelSlideListener
+    void updateObscuredViewsVisibility(android.view.View) -> a
+    void setAllChildrenVisible() -> a
+    boolean hasOpaqueBackground(android.view.View) -> c
+    void onAttachedToWindow() -> onAttachedToWindow
+    void onDetachedFromWindow() -> onDetachedFromWindow
+    void onMeasure(int,int) -> onMeasure
+    void onLayout(boolean,int,int,int,int) -> onLayout
+    void onSizeChanged(int,int,int,int) -> onSizeChanged
+    void requestChildFocus(android.view.View,android.view.View) -> requestChildFocus
+    boolean onInterceptTouchEvent(android.view.MotionEvent) -> onInterceptTouchEvent
+    boolean onTouchEvent(android.view.MotionEvent) -> onTouchEvent
+    boolean closePane(android.view.View,int) -> a
+    boolean openPane(android.view.View,int) -> b
+    boolean openPane() -> b
+    boolean closePane() -> c
+    boolean isOpen() -> d
+    boolean isSlideable() -> e
+    void dimChildView(android.view.View,float,int) -> a
+    boolean drawChild(android.graphics.Canvas,android.view.View,long) -> drawChild
+    void invalidateChildRegion(android.view.View) -> d
+    boolean smoothSlideTo(float,int) -> a
+    void computeScroll() -> computeScroll
+    void setShadowDrawable(android.graphics.drawable.Drawable) -> setShadowDrawable
+    void setShadowResource(int) -> setShadowResource
+    void draw(android.graphics.Canvas) -> draw
+    void parallaxOtherViews(float) -> a
+    boolean isDimmed(android.view.View) -> b
+    android.view.ViewGroup$LayoutParams generateDefaultLayoutParams() -> generateDefaultLayoutParams
+    android.view.ViewGroup$LayoutParams generateLayoutParams(android.view.ViewGroup$LayoutParams) -> generateLayoutParams
+    boolean checkLayoutParams(android.view.ViewGroup$LayoutParams) -> checkLayoutParams
+    android.view.ViewGroup$LayoutParams generateLayoutParams(android.util.AttributeSet) -> generateLayoutParams
+    android.os.Parcelable onSaveInstanceState() -> onSaveInstanceState
+    void onRestoreInstanceState(android.os.Parcelable) -> onRestoreInstanceState
+    void access$900(android.support.v4.widget.SlidingPaneLayout,android.view.View) -> a
+    java.util.ArrayList access$1000(android.support.v4.widget.SlidingPaneLayout) -> a
+android.support.v4.widget.SlidingPaneLayout$1 -> android.support.v4.widget.p:
+android.support.v4.widget.SlidingPaneLayout$DisableLayerRunnable -> android.support.v4.widget.q:
+    android.view.View mChildView -> a
+    android.support.v4.widget.SlidingPaneLayout this$0 -> b
+    void run() -> run
+android.support.v4.widget.SlidingPaneLayout$LayoutParams -> android.support.v4.widget.r:
+    int[] ATTRS -> e
+    float weight -> a
+    boolean slideable -> b
+    boolean dimWhenOffset -> c
+    android.graphics.Paint dimPaint -> d
+android.support.v4.widget.SlidingPaneLayout$PanelSlideListener -> android.support.v4.widget.s:
+android.support.v4.widget.SlidingPaneLayout$SavedState -> android.support.v4.widget.SlidingPaneLayout$SavedState:
+    boolean isOpen -> a
+    android.os.Parcelable$Creator CREATOR -> CREATOR
+    void writeToParcel(android.os.Parcel,int) -> writeToParcel
+android.support.v4.widget.SlidingPaneLayout$SavedState$1 -> android.support.v4.widget.t:
+    android.support.v4.widget.SlidingPaneLayout$SavedState createFromParcel(android.os.Parcel) -> a
+    android.support.v4.widget.SlidingPaneLayout$SavedState[] newArray(int) -> a
+    java.lang.Object[] newArray(int) -> newArray
+    java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
+android.support.v4.widget.SlidingPaneLayout$SlidingPanelLayoutImpl -> android.support.v4.widget.u:
+    void invalidateChildRegion(android.support.v4.widget.SlidingPaneLayout,android.view.View) -> a
+android.support.v4.widget.SlidingPaneLayout$SlidingPanelLayoutImplBase -> android.support.v4.widget.v:
+    void invalidateChildRegion(android.support.v4.widget.SlidingPaneLayout,android.view.View) -> a
+android.support.v4.widget.SlidingPaneLayout$SlidingPanelLayoutImplJB -> android.support.v4.widget.w:
+    java.lang.reflect.Method mGetDisplayList -> a
+    java.lang.reflect.Field mRecreateDisplayList -> b
+    void invalidateChildRegion(android.support.v4.widget.SlidingPaneLayout,android.view.View) -> a
+android.support.v4.widget.SlidingPaneLayout$SlidingPanelLayoutImplJBMR1 -> android.support.v4.widget.x:
+    void invalidateChildRegion(android.support.v4.widget.SlidingPaneLayout,android.view.View) -> a
+android.support.v4.widget.ViewDragHelper -> android.support.v4.widget.y:
+    int mDragState -> a
+    int mTouchSlop -> b
+    int mActivePointerId -> c
+    float[] mInitialMotionX -> d
+    float[] mInitialMotionY -> e
+    float[] mLastMotionX -> f
+    float[] mLastMotionY -> g
+    int[] mInitialEdgesTouched -> h
+    int[] mEdgeDragsInProgress -> i
+    int[] mEdgeDragsLocked -> j
+    int mPointersDown -> k
+    android.view.VelocityTracker mVelocityTracker -> l
+    float mMaxVelocity -> m
+    float mMinVelocity -> n
+    int mEdgeSize -> o
+    int mTrackingEdges -> p
+    android.support.v4.widget.ScrollerCompat mScroller -> q
+    android.support.v4.widget.ViewDragHelper$Callback mCallback -> r
+    android.view.View mCapturedView -> s
+    boolean mReleaseInProgress -> t
+    android.view.ViewGroup mParentView -> u
+    android.view.animation.Interpolator sInterpolator -> v
+    java.lang.Runnable mSetIdleRunnable -> w
+    int getViewDragState() -> a
+    int getEdgeSize() -> b
+    void captureChildView(android.view.View,int) -> a
+    android.view.View getCapturedView() -> c
+    int getTouchSlop() -> d
+    void cancel() -> e
+    void abort() -> f
+    boolean smoothSlideViewTo(android.view.View,int,int) -> a
+    boolean settleCapturedViewAt(int,int) -> a
+    boolean forceSettleCapturedViewAt(int,int,int,int) -> a
+    int computeSettleDuration(android.view.View,int,int,int,int) -> a
+    int computeAxisDuration(int,int,int) -> a
+    int clampMag(int,int,int) -> b
+    float clampMag(float,float,float) -> a
+    float distanceInfluenceForSnapDuration(float) -> a
+    boolean continueSettling(boolean) -> a
+    void dispatchViewReleased(float,float) -> a
+    void clearMotionHistory() -> g
+    void clearMotionHistory(int) -> e
+    void ensureMotionHistorySizeForId(int) -> f
+    void saveInitialMotion(float,float,int) -> a
+    void saveLastMotion(android.view.MotionEvent) -> c
+    boolean isPointerDown(int) -> a
+    void setDragState(int) -> b
+    boolean tryCaptureViewForDrag(android.view.View,int) -> b
+    boolean shouldInterceptTouchEvent(android.view.MotionEvent) -> a
+    void processTouchEvent(android.view.MotionEvent) -> b
+    void reportNewEdgeDrags(float,float,int) -> b
+    boolean checkNewEdgeDrag(float,float,int,int) -> a
+    boolean checkTouchSlop(android.view.View,float,float) -> a
+    boolean checkTouchSlop(int) -> c
+    boolean checkTouchSlop(int,int) -> b
+    boolean isEdgeTouched(int) -> d
+    boolean isEdgeTouched(int,int) -> c
+    void releaseViewForPointerUp() -> h
+    void dragTo(int,int,int,int) -> b
+    boolean isCapturedViewUnder(int,int) -> d
+    boolean isViewUnder(android.view.View,int,int) -> b
+    android.view.View findTopChildUnder(int,int) -> e
+    int getEdgesTouched(int,int) -> f
+android.support.v4.widget.ViewDragHelper$1 -> android.support.v4.widget.z:
+    float getInterpolation(float) -> getInterpolation
+android.support.v4.widget.ViewDragHelper$Callback -> android.support.v4.widget.aa:
+    void onViewDragStateChanged(int) -> a
+    void onViewPositionChanged(android.view.View,int,int,int,int) -> a
+    void onViewCaptured(android.view.View,int) -> b
+    void onViewReleased(android.view.View,float,float) -> a
+    void onEdgeTouched(int,int) -> a
+    boolean onEdgeLock(int) -> b
+    void onEdgeDragStarted(int,int) -> b
+    int getOrderedChildIndex(int) -> c
+    int getViewHorizontalDragRange(android.view.View) -> a
+    int getViewVerticalDragRange(android.view.View) -> b
+    boolean tryCaptureView(android.view.View,int) -> a
+    int clampViewPositionHorizontal(android.view.View,int,int) -> a
+    int clampViewPositionVertical(android.view.View,int,int) -> b
+net.alliknow.podcatcher.AddPodcastActivity -> net.alliknow.podcatcher.AddPodcastActivity:
+    net.alliknow.podcatcher.view.fragments.AddPodcastFragment addPodcastFragment -> d
+    java.lang.String currentLoadUrl -> e
+    void onCreate(android.os.Bundle) -> onCreate
+    void onStart() -> onStart
+    void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
+    void onDestroy() -> onDestroy
+    void onAddPodcast(java.lang.String) -> a
+    void onPodcastLoadProgress(net.alliknow.podcatcher.model.types.Podcast,net.alliknow.podcatcher.model.types.Progress) -> a
+    void onPodcastLoaded(net.alliknow.podcatcher.model.types.Podcast) -> a
+    void onPodcastLoadFailed(net.alliknow.podcatcher.model.types.Podcast) -> b
+    void onShowSuggestions() -> a
+    void onImportOpml() -> b
+    void onCancel(android.content.DialogInterface) -> onCancel
+    boolean isCurrentlyLoadingPodcast(net.alliknow.podcatcher.model.types.Podcast) -> c
+net.alliknow.podcatcher.AddSuggestionActivity -> net.alliknow.podcatcher.AddSuggestionActivity:
+    net.alliknow.podcatcher.view.fragments.SuggestionFragment suggestionFragment -> d
+    net.alliknow.podcatcher.model.SuggestionManager suggestionManager -> e
+    void onCreate(android.os.Bundle) -> onCreate
+    void onStart() -> onStart
+    void onDestroy() -> onDestroy
+    void onSuggestionsLoadProgress(net.alliknow.podcatcher.model.types.Progress) -> a
+    void onSuggestionsLoaded(java.util.List) -> a
+    void onSuggestionsLoadFailed() -> a
+    void onAddPodcast(net.alliknow.podcatcher.model.types.Podcast) -> a
+    void onCancel(android.content.DialogInterface) -> onCancel
+net.alliknow.podcatcher.BaseActivity -> net.alliknow.podcatcher.a:
+    net.alliknow.podcatcher.model.PodcastManager podcastManager -> a
+    net.alliknow.podcatcher.view.ViewMode view -> b
+    net.alliknow.podcatcher.BaseActivity$ContentSelection selection -> c
+    void onCreate(android.os.Bundle) -> onCreate
+    boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
+    boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    android.app.Fragment findByTagId(int) -> a
+    void showToast(java.lang.String) -> b
+    void showToast(java.lang.String,int) -> a
+net.alliknow.podcatcher.BaseActivity$ContentMode -> net.alliknow.podcatcher.b:
+    net.alliknow.podcatcher.BaseActivity$ContentMode SINGLE_PODCAST -> a
+    net.alliknow.podcatcher.BaseActivity$ContentMode ALL_PODCASTS -> b
+    net.alliknow.podcatcher.BaseActivity$ContentMode[] ENUM$VALUES -> c
+    net.alliknow.podcatcher.BaseActivity$ContentMode[] values() -> values
+    net.alliknow.podcatcher.BaseActivity$ContentMode valueOf(java.lang.String) -> valueOf
+net.alliknow.podcatcher.BaseActivity$ContentSelection -> net.alliknow.podcatcher.c:
+    net.alliknow.podcatcher.BaseActivity$ContentSelection instance -> a
+    net.alliknow.podcatcher.BaseActivity$ContentMode mode -> b
+    net.alliknow.podcatcher.model.types.Podcast currentPodcast -> c
+    net.alliknow.podcatcher.model.types.Episode currentEpisode -> d
+    net.alliknow.podcatcher.BaseActivity$ContentSelection getInstance() -> a
+    void setMode(net.alliknow.podcatcher.BaseActivity$ContentMode) -> a
+    net.alliknow.podcatcher.model.types.Podcast getPodcast() -> b
+    void setPodcast(net.alliknow.podcatcher.model.types.Podcast) -> a
+    net.alliknow.podcatcher.model.types.Episode getEpisode() -> c
+    void setEpisode(net.alliknow.podcatcher.model.types.Episode) -> a
+    boolean isAll() -> d
+    boolean isPodcastSet() -> e
+    boolean isEpisodeSet() -> f
+    void reset() -> g
+    void resetPodcast() -> h
+    void resetEpisode() -> i
+net.alliknow.podcatcher.EpisodeActivity -> net.alliknow.podcatcher.d:
+    net.alliknow.podcatcher.view.fragments.EpisodeFragment episodeFragment -> d
+    net.alliknow.podcatcher.view.fragments.PlayerFragment playerFragment -> e
+    net.alliknow.podcatcher.services.PlayEpisodeService service -> f
+    java.util.Timer playUpdateTimer -> g
+    java.util.TimerTask playUpdateTimerTask -> h
+    boolean visible -> i
+    android.content.ServiceConnection connection -> j
+    int[] $SWITCH_TABLE$net$alliknow$podcatcher$view$ViewMode -> k
+    void onCreate(android.os.Bundle) -> onCreate
+    void findFragments() -> a
+    void onStart() -> onStart
+    void onStop() -> onStop
+    void onDestroy() -> onDestroy
+    void onEpisodeSelected(net.alliknow.podcatcher.model.types.Episode) -> a
+    void onReturnToPlayingEpisode() -> b
+    void onNoEpisodeSelected() -> c
+    void onToggleLoad() -> d
+    void onTogglePlay() -> e
+    void onPlaybackStarted() -> f
+    void onPlaybackStateChanged() -> g
+    void onProgressChanged(android.widget.SeekBar,int,boolean) -> onProgressChanged
+    void onStartTrackingTouch(android.widget.SeekBar) -> onStartTrackingTouch
+    void onStopTrackingTouch(android.widget.SeekBar) -> onStopTrackingTouch
+    void onStopForBuffering() -> h
+    void onResumeFromBuffering() -> i
+    void onBufferUpdate(int) -> b
+    void onPlaybackComplete() -> j
+    void onError() -> k
+    void updateActionBar() -> l
+    void updatePlayer() -> m
+    void startPlayProgressTimer() -> o
+    void stopPlayProgressTimer() -> p
+    void access$0(net.alliknow.podcatcher.EpisodeActivity) -> a
+    int[] $SWITCH_TABLE$net$alliknow$podcatcher$view$ViewMode() -> n
+net.alliknow.podcatcher.EpisodeActivity$1 -> net.alliknow.podcatcher.e:
+    net.alliknow.podcatcher.EpisodeActivity this$0 -> a
+    void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
+    void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
+net.alliknow.podcatcher.EpisodeActivity$PlayProgressTask -> net.alliknow.podcatcher.f:
+    java.lang.ref.WeakReference activityReference -> a
+    void run() -> run
+net.alliknow.podcatcher.EpisodeActivity$PlayProgressTask$1 -> net.alliknow.podcatcher.g:
+    net.alliknow.podcatcher.EpisodeActivity$PlayProgressTask this$1 -> a
+    net.alliknow.podcatcher.EpisodeActivity val$episodeActivity -> b
+    void run() -> run
+net.alliknow.podcatcher.EpisodeListActivity -> net.alliknow.podcatcher.h:
+    net.alliknow.podcatcher.view.fragments.EpisodeListFragment episodeListFragment -> g
+    net.alliknow.podcatcher.view.ContentSpinner contentSpinner -> h
+    java.util.List currentEpisodeList -> i
+    int[] $SWITCH_TABLE$net$alliknow$podcatcher$view$ViewMode -> j
+    void onCreate(android.os.Bundle) -> onCreate
+    void findFragments() -> a
+    void onStart() -> onStart
+    void onDestroy() -> onDestroy
+    void onPodcastLoadProgress(net.alliknow.podcatcher.model.types.Podcast,net.alliknow.podcatcher.model.types.Progress) -> a
+    void onPodcastSelected(net.alliknow.podcatcher.model.types.Podcast) -> c
+    void onAllPodcastsSelected() -> o
+    void onNoPodcastSelected() -> p
+    void onPodcastLoaded(net.alliknow.podcatcher.model.types.Podcast) -> a
+    void onPodcastLoadFailed(net.alliknow.podcatcher.model.types.Podcast) -> b
+    void onPodcastLogoLoaded(net.alliknow.podcatcher.model.types.Podcast) -> d
+    void onPodcastLogoLoadFailed(net.alliknow.podcatcher.model.types.Podcast) -> e
+    void onEpisodeSelected(net.alliknow.podcatcher.model.types.Episode) -> a
+    void onNoEpisodeSelected() -> c
+    void updateEpisodeListSelection() -> q
+    void updateDivider() -> r
+    void colorDivider(int,boolean) -> a
+    void updateActionBarSubtitleOnMultipleLoad() -> s
+    int[] $SWITCH_TABLE$net$alliknow$podcatcher$view$ViewMode() -> t
+net.alliknow.podcatcher.ExportOpmlActivity -> net.alliknow.podcatcher.ExportOpmlActivity:
+    void onCreate(android.os.Bundle) -> onCreate
+    void onActivityResult(int,int,android.content.Intent) -> onActivityResult
+    void onPodcastListStored(java.util.List,java.io.File) -> a
+    void onPodcastListStoreFailed(java.util.List,java.io.File,java.lang.Exception) -> a
+net.alliknow.podcatcher.ImportOpmlActivity -> net.alliknow.podcatcher.ImportOpmlActivity:
+    void onCreate(android.os.Bundle) -> onCreate
+    void onActivityResult(int,int,android.content.Intent) -> onActivityResult
+    void onPodcastListLoaded(java.util.List) -> a
+net.alliknow.podcatcher.ImportPodcastActivity -> net.alliknow.podcatcher.ImportPodcastActivity:
+    void onStart() -> onStart
+net.alliknow.podcatcher.PodcastActivity -> net.alliknow.podcatcher.PodcastActivity:
+    net.alliknow.podcatcher.view.fragments.PodcastListFragment podcastListFragment -> j
+    boolean showAddPodcastOnEmptyPodcastList -> k
+    void onCreate(android.os.Bundle) -> onCreate
+    void findFragments() -> a
+    void plugFragments() -> v
+    void onNewIntent(android.content.Intent) -> onNewIntent
+    void onStart() -> onStart
+    void onResume() -> onResume
+    void onPause() -> onPause
+    void onStop() -> onStop
+    void onDestroy() -> onDestroy
+    void onBackStackChanged() -> onBackStackChanged
+    void onPodcastListLoaded(java.util.List) -> a
+    void onPodcastAdded(net.alliknow.podcatcher.model.types.Podcast) -> f
+    void onPodcastRemoved(net.alliknow.podcatcher.model.types.Podcast) -> g
+    void onPodcastSelected(net.alliknow.podcatcher.model.types.Podcast) -> c
+    void onAllPodcastsSelected() -> o
+    void onNoPodcastSelected() -> p
+    void onPodcastLoadProgress(net.alliknow.podcatcher.model.types.Podcast,net.alliknow.podcatcher.model.types.Progress) -> a
+    void onPodcastLoaded(net.alliknow.podcatcher.model.types.Podcast) -> a
+    void onPodcastLoadFailed(net.alliknow.podcatcher.model.types.Podcast) -> b
+    void onPodcastLogoLoaded(net.alliknow.podcatcher.model.types.Podcast) -> d
+    void updateLogoViewMode() -> u
+    void updateActionBar() -> l
+    void updatePlayer() -> m
+net.alliknow.podcatcher.Podcatcher -> net.alliknow.podcatcher.Podcatcher:
+    void onCreate() -> onCreate
+    void flushHttpCache() -> a
+    boolean isOnline() -> b
+    boolean isOnFastConnection() -> c
+    boolean isInDebugMode() -> d
+    android.net.NetworkInfo getNetworkInfo() -> e
+net.alliknow.podcatcher.Podcatcher$FlushCacheThread -> net.alliknow.podcatcher.i:
+    void run() -> run
+net.alliknow.podcatcher.RemovePodcastActivity -> net.alliknow.podcatcher.RemovePodcastActivity:
+    void onStart() -> onStart
+net.alliknow.podcatcher.SelectFileActivity -> net.alliknow.podcatcher.SelectFileActivity:
+    net.alliknow.podcatcher.SelectFileActivity$SelectionMode selectionMode -> d
+    net.alliknow.podcatcher.view.fragments.SelectFileFragment selectFileFragment -> e
+    void onStart() -> onStart
+    void onCancel(android.content.DialogInterface) -> onCancel
+    void onFileSelected(java.io.File) -> a
+    void onDirectoryChanged(java.io.File) -> b
+    void onAccessDenied(java.io.File) -> c
+net.alliknow.podcatcher.SelectFileActivity$SelectionMode -> net.alliknow.podcatcher.j:
+    net.alliknow.podcatcher.SelectFileActivity$SelectionMode FILE -> a
+    net.alliknow.podcatcher.SelectFileActivity$SelectionMode FOLDER -> b
+    net.alliknow.podcatcher.SelectFileActivity$SelectionMode[] ENUM$VALUES -> c
+    net.alliknow.podcatcher.SelectFileActivity$SelectionMode[] values() -> values
+    net.alliknow.podcatcher.SelectFileActivity$SelectionMode valueOf(java.lang.String) -> valueOf
+net.alliknow.podcatcher.ShowEpisodeActivity -> net.alliknow.podcatcher.ShowEpisodeActivity:
+    void onCreate(android.os.Bundle) -> onCreate
+    void onEpisodeSelected(net.alliknow.podcatcher.model.types.Episode) -> a
+    boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    void onBackPressed() -> onBackPressed
+    void updateActionBar() -> l
+net.alliknow.podcatcher.ShowEpisodeListActivity -> net.alliknow.podcatcher.ShowEpisodeListActivity:
+    void onCreate(android.os.Bundle) -> onCreate
+    boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    void onBackPressed() -> onBackPressed
+    void onPodcastSelected(net.alliknow.podcatcher.model.types.Podcast) -> c
+    void onAllPodcastsSelected() -> o
+    void updateActionBar() -> l
+    void updatePlayer() -> m
+net.alliknow.podcatcher.listeners.OnAddPodcastListener -> net.alliknow.podcatcher.a.a:
+    void onAddPodcast(java.lang.String) -> a
+    void onShowSuggestions() -> a
+    void onImportOpml() -> b
+net.alliknow.podcatcher.listeners.OnAddSuggestionListener -> net.alliknow.podcatcher.a.b:
+    void onAddPodcast(net.alliknow.podcatcher.model.types.Podcast) -> a
+net.alliknow.podcatcher.listeners.OnChangePodcastListListener -> net.alliknow.podcatcher.a.c:
+    void onPodcastAdded(net.alliknow.podcatcher.model.types.Podcast) -> f
+    void onPodcastRemoved(net.alliknow.podcatcher.model.types.Podcast) -> g
+net.alliknow.podcatcher.listeners.OnLoadPodcastListListener -> net.alliknow.podcatcher.a.d:
+    void onPodcastListLoaded(java.util.List) -> a
+net.alliknow.podcatcher.listeners.OnLoadPodcastListener -> net.alliknow.podcatcher.a.e:
+    void onPodcastLoadProgress(net.alliknow.podcatcher.model.types.Podcast,net.alliknow.podcatcher.model.types.Progress) -> a
+    void onPodcastLoaded(net.alliknow.podcatcher.model.types.Podcast) -> a
+    void onPodcastLoadFailed(net.alliknow.podcatcher.model.types.Podcast) -> b
+net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener -> net.alliknow.podcatcher.a.f:
+    void onPodcastLogoLoaded(net.alliknow.podcatcher.model.types.Podcast) -> d
+    void onPodcastLogoLoadFailed(net.alliknow.podcatcher.model.types.Podcast) -> e
+net.alliknow.podcatcher.listeners.OnLoadSuggestionListener -> net.alliknow.podcatcher.a.g:
+    void onSuggestionsLoadProgress(net.alliknow.podcatcher.model.types.Progress) -> a
+    void onSuggestionsLoaded(java.util.List) -> a
+    void onSuggestionsLoadFailed() -> a
+net.alliknow.podcatcher.listeners.OnSelectEpisodeListener -> net.alliknow.podcatcher.a.h:
+    void onEpisodeSelected(net.alliknow.podcatcher.model.types.Episode) -> a
+net.alliknow.podcatcher.listeners.OnSelectFileListener -> net.alliknow.podcatcher.a.i:
+    void onFileSelected(java.io.File) -> a
+    void onDirectoryChanged(java.io.File) -> b
+    void onAccessDenied(java.io.File) -> c
+net.alliknow.podcatcher.listeners.OnSelectPodcastListener -> net.alliknow.podcatcher.a.j:
+    void onPodcastSelected(net.alliknow.podcatcher.model.types.Podcast) -> c
+    void onAllPodcastsSelected() -> o
+net.alliknow.podcatcher.listeners.OnStorePodcastListListener -> net.alliknow.podcatcher.a.k:
+    void onPodcastListStored(java.util.List,java.io.File) -> a
+    void onPodcastListStoreFailed(java.util.List,java.io.File,java.lang.Exception) -> a
+net.alliknow.podcatcher.listeners.PlayServiceListener -> net.alliknow.podcatcher.a.l:
+    void onPlaybackStarted() -> f
+    void onPlaybackStateChanged() -> g
+    void onStopForBuffering() -> h
+    void onResumeFromBuffering() -> i
+    void onBufferUpdate(int) -> b
+    void onPlaybackComplete() -> j
+    void onError() -> k
+net.alliknow.podcatcher.listeners.PlayerListener -> net.alliknow.podcatcher.a.m:
+    void onToggleLoad() -> d
+    void onTogglePlay() -> e
+    void onReturnToPlayingEpisode() -> b
+net.alliknow.podcatcher.listeners.PodcastListContextListener -> net.alliknow.podcatcher.a.n:
+    net.alliknow.podcatcher.view.fragments.PodcastListFragment fragment -> a
+    boolean onCreateActionMode(android.view.ActionMode,android.view.Menu) -> onCreateActionMode
+    boolean onPrepareActionMode(android.view.ActionMode,android.view.Menu) -> onPrepareActionMode
+    boolean onActionItemClicked(android.view.ActionMode,android.view.MenuItem) -> onActionItemClicked
+    void onDestroyActionMode(android.view.ActionMode) -> onDestroyActionMode
+    void onItemCheckedStateChanged(android.view.ActionMode,int,long,boolean) -> onItemCheckedStateChanged
+    void update(android.view.ActionMode) -> a
+net.alliknow.podcatcher.model.ParserUtils -> net.alliknow.podcatcher.b.a:
+    void skipSubTree(org.xmlpull.v1.XmlPullParser) -> a
+net.alliknow.podcatcher.model.PodcastManager -> net.alliknow.podcatcher.b.b:
+    net.alliknow.podcatcher.model.PodcastManager manager -> a
+    net.alliknow.podcatcher.Podcatcher podcatcher -> b
+    java.util.List podcastList -> c
+    boolean podcastListChanged -> d
+    java.util.Map loadPodcastTasks -> e
+    java.util.Map loadPodcastLogoTasks -> f
+    java.util.Set loadPodcastListListeners -> g
+    java.util.Set changePodcastListListeners -> h
+    java.util.Set loadPodcastListeners -> i
+    java.util.Set loadPodcastLogoListeners -> j
+    net.alliknow.podcatcher.model.PodcastManager getInstance(net.alliknow.podcatcher.Podcatcher) -> a
+    net.alliknow.podcatcher.model.PodcastManager getInstance() -> a
+    void onPodcastListLoaded(java.util.List) -> a
+    java.util.List getPodcastList() -> b
+    void load(net.alliknow.podcatcher.model.types.Podcast) -> c
+    boolean isLoading(net.alliknow.podcatcher.model.types.Podcast) -> f
+    int getLoadCount() -> c
+    void onPodcastLoadProgress(net.alliknow.podcatcher.model.types.Podcast,net.alliknow.podcatcher.model.types.Progress) -> a
+    void onPodcastLoaded(net.alliknow.podcatcher.model.types.Podcast) -> a
+    void onPodcastLoadFailed(net.alliknow.podcatcher.model.types.Podcast) -> b
+    void loadLogo(net.alliknow.podcatcher.model.types.Podcast) -> g
+    void onPodcastLogoLoaded(net.alliknow.podcatcher.model.types.Podcast) -> d
+    void onPodcastLogoLoadFailed(net.alliknow.podcatcher.model.types.Podcast) -> e
+    void addPodcast(net.alliknow.podcatcher.model.types.Podcast) -> h
+    void remove(int) -> a
+    void saveState() -> d
+    int size() -> e
+    int indexOf(net.alliknow.podcatcher.model.types.Podcast) -> i
+    boolean contains(net.alliknow.podcatcher.model.types.Podcast) -> j
+    net.alliknow.podcatcher.model.types.Podcast findPodcastForUrl(java.lang.String) -> a
+    net.alliknow.podcatcher.model.types.Episode findEpisodeForUrl(java.lang.String) -> b
+    void addLoadPodcastListListener(net.alliknow.podcatcher.listeners.OnLoadPodcastListListener) -> a
+    void removeLoadPodcastListListener(net.alliknow.podcatcher.listeners.OnLoadPodcastListListener) -> b
+    void addChangePodcastListListener(net.alliknow.podcatcher.listeners.OnChangePodcastListListener) -> a
+    void removeChangePodcastListListener(net.alliknow.podcatcher.listeners.OnChangePodcastListListener) -> b
+    void addLoadPodcastListener(net.alliknow.podcatcher.listeners.OnLoadPodcastListener) -> a
+    void removeLoadPodcastListener(net.alliknow.podcatcher.listeners.OnLoadPodcastListener) -> b
+    void addLoadPodcastLogoListener(net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener) -> a
+    void removeLoadPodcastLogoListener(net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener) -> b
+    boolean shouldReload(net.alliknow.podcatcher.model.types.Podcast) -> k
+    boolean shouldReloadLogo(net.alliknow.podcatcher.model.types.Podcast) -> l
+    void putSamplePodcasts() -> f
+    net.alliknow.podcatcher.model.types.Podcast createPodcast(java.lang.String,java.lang.String) -> a
+net.alliknow.podcatcher.model.SuggestionManager -> net.alliknow.podcatcher.b.c:
+    net.alliknow.podcatcher.model.SuggestionManager manager -> a
+    net.alliknow.podcatcher.Podcatcher podcatcher -> b
+    java.util.List podcastSuggestions -> c
+    net.alliknow.podcatcher.model.tasks.remote.LoadSuggestionsTask loadTask -> d
+    java.util.Set loadSuggestionListListeners -> e
+    net.alliknow.podcatcher.model.SuggestionManager getInstance(net.alliknow.podcatcher.Podcatcher) -> a
+    net.alliknow.podcatcher.model.SuggestionManager getInstance() -> b
+    void addLoadSuggestionListListener(net.alliknow.podcatcher.listeners.OnLoadSuggestionListener) -> a
+    void removeLoadSuggestionListListener(net.alliknow.podcatcher.listeners.OnLoadSuggestionListener) -> b
+    void load() -> c
+    void onSuggestionsLoadProgress(net.alliknow.podcatcher.model.types.Progress) -> a
+    void onSuggestionsLoaded(java.util.List) -> a
+    void onSuggestionsLoadFailed() -> a
+net.alliknow.podcatcher.model.tasks.LoadPodcastListTask -> net.alliknow.podcatcher.b.a.a:
+    android.content.Context context -> b
+    net.alliknow.podcatcher.listeners.OnLoadPodcastListListener listener -> c
+    java.io.File importFile -> a
+    void setCustomLocation(java.io.File) -> a
+    java.util.List doInBackground(java.lang.Void[]) -> a
+    void onPostExecute(java.util.List) -> a
+    net.alliknow.podcatcher.model.types.Podcast createPodcast(org.xmlpull.v1.XmlPullParser) -> a
+    void onPostExecute(java.lang.Object) -> onPostExecute
+    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+net.alliknow.podcatcher.model.tasks.StorePodcastListTask -> net.alliknow.podcatcher.b.a.b:
+    android.content.Context context -> a
+    net.alliknow.podcatcher.listeners.OnStorePodcastListListener listener -> b
+    java.util.List podcastList -> c
+    java.io.File exportLocation -> d
+    java.lang.Exception exception -> e
+    java.lang.String opmlFileTitle -> f
+    void setCustomLocation(java.io.File) -> a
+    java.lang.Void doInBackground(java.util.List[]) -> a
+    void onPostExecute(java.lang.Void) -> a
+    void onCancelled(java.lang.Void) -> b
+    void writePodcast(java.io.BufferedWriter,net.alliknow.podcatcher.model.types.Podcast) -> a
+    boolean hasNameAndUrl(net.alliknow.podcatcher.model.types.Podcast) -> a
+    void writeHeader(java.io.BufferedWriter,java.lang.String) -> a
+    void writeFooter(java.io.BufferedWriter) -> a
+    void writeLine(java.io.BufferedWriter,int,java.lang.String) -> a
+    void onPostExecute(java.lang.Object) -> onPostExecute
+    void onCancelled(java.lang.Object) -> onCancelled
+    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+net.alliknow.podcatcher.model.tasks.remote.LoadPodcastLogoTask -> net.alliknow.podcatcher.b.a.a.a:
+    net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener listener -> d
+    net.alliknow.podcatcher.model.types.Podcast podcast -> e
+    int requestedWidth -> a
+    int requestedHeight -> b
+    android.graphics.Bitmap doInBackground(net.alliknow.podcatcher.model.types.Podcast[]) -> a
+    void onPostExecute(android.graphics.Bitmap) -> a
+    void onCancelled(android.graphics.Bitmap) -> b
+    android.graphics.Bitmap decodeAndSampleBitmap(byte[]) -> a
+    int calculateInSampleSize(android.graphics.BitmapFactory$Options) -> a
+    void onPostExecute(java.lang.Object) -> onPostExecute
+    void onCancelled(java.lang.Object) -> onCancelled
+    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask -> net.alliknow.podcatcher.b.a.a.b:
+    net.alliknow.podcatcher.listeners.OnLoadPodcastListener listener -> a
+    net.alliknow.podcatcher.model.types.Podcast podcast -> b
+    java.lang.Void doInBackground(net.alliknow.podcatcher.model.types.Podcast[]) -> a
+    void onProgressUpdate(net.alliknow.podcatcher.model.types.Progress[]) -> a
+    void onPostExecute(java.lang.Void) -> a
+    void onCancelled(java.lang.Void) -> b
+    void onPostExecute(java.lang.Object) -> onPostExecute
+    void onCancelled(java.lang.Object) -> onCancelled
+    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+    void onProgressUpdate(java.lang.Object[]) -> onProgressUpdate
+net.alliknow.podcatcher.model.tasks.remote.LoadRemoteFileTask -> net.alliknow.podcatcher.b.a.a.c:
+    int loadLimit -> c
+    void setLoadLimit(int) -> a
+    byte[] loadFile(java.net.URL) -> a
+net.alliknow.podcatcher.model.tasks.remote.LoadSuggestionsTask -> net.alliknow.podcatcher.b.a.a.d:
+    net.alliknow.podcatcher.listeners.OnLoadSuggestionListener listener -> a
+    java.util.List doInBackground(java.lang.Void[]) -> a
+    void onProgressUpdate(net.alliknow.podcatcher.model.types.Progress[]) -> a
+    void onPostExecute(java.util.List) -> a
+    void onCancelled(java.util.List) -> b
+    void addSuggestionsFromJsonArray(org.json.JSONArray,java.util.List) -> a
+    net.alliknow.podcatcher.model.types.Podcast createSuggestion(org.json.JSONObject) -> a
+    void onPostExecute(java.lang.Object) -> onPostExecute
+    void onCancelled(java.lang.Object) -> onCancelled
+    java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+    void onProgressUpdate(java.lang.Object[]) -> onProgressUpdate
+net.alliknow.podcatcher.model.types.Episode -> net.alliknow.podcatcher.b.b.a:
+    net.alliknow.podcatcher.model.types.Podcast podcast -> a
+    java.lang.String name -> b
+    java.net.URL mediaUrl -> c
+    java.util.Date pubDate -> d
+    java.lang.String duration -> e
+    java.lang.String description -> f
+    java.lang.String content -> g
+    net.alliknow.podcatcher.model.types.Podcast getPodcast() -> a
+    java.lang.String getName() -> b
+    java.net.URL getMediaUrl() -> c
+    java.util.Date getPubDate() -> d
+    java.lang.String getDuration() -> e
+    java.lang.String getDescription() -> f
+    java.lang.String getLongDescription() -> g
+    java.lang.String toString() -> toString
+    boolean equals(java.lang.Object) -> equals
+    int hashCode() -> hashCode
+    int compareTo(net.alliknow.podcatcher.model.types.Episode) -> a
+    void parse(org.xmlpull.v1.XmlPullParser) -> a
+    boolean isContentEncodedTag(org.xmlpull.v1.XmlPullParser) -> b
+    java.net.URL createMediaUrl(java.lang.String) -> a
+    java.util.Date parsePubDate(java.lang.String) -> b
+    java.lang.String parseDuration(java.lang.String) -> c
+    int compareTo(java.lang.Object) -> compareTo
+net.alliknow.podcatcher.model.types.Genre -> net.alliknow.podcatcher.b.b.b:
+    net.alliknow.podcatcher.model.types.Genre COMEDY -> a
+    net.alliknow.podcatcher.model.types.Genre EDUCATION -> b
+    net.alliknow.podcatcher.model.types.Genre ENTERTAINMENT -> c
+    net.alliknow.podcatcher.model.types.Genre KIDS -> d
+    net.alliknow.podcatcher.model.types.Genre MOBILITY -> e
+    net.alliknow.podcatcher.model.types.Genre MUSIC -> f
+    net.alliknow.podcatcher.model.types.Genre NEWS -> g
+    net.alliknow.podcatcher.model.types.Genre POLITICS -> h
+    net.alliknow.podcatcher.model.types.Genre SCIENCE -> i
+    net.alliknow.podcatcher.model.types.Genre SPORTS -> j
+    net.alliknow.podcatcher.model.types.Genre TECHNOLOGY -> k
+    net.alliknow.podcatcher.model.types.Genre[] ENUM$VALUES -> l
+    net.alliknow.podcatcher.model.types.Genre[] values() -> values
+    net.alliknow.podcatcher.model.types.Genre valueOf(java.lang.String) -> valueOf
+net.alliknow.podcatcher.model.types.Language -> net.alliknow.podcatcher.b.b.c:
+    net.alliknow.podcatcher.model.types.Language ENGLISH -> a
+    net.alliknow.podcatcher.model.types.Language GERMAN -> b
+    net.alliknow.podcatcher.model.types.Language[] ENUM$VALUES -> c
+    net.alliknow.podcatcher.model.types.Language[] values() -> values
+    net.alliknow.podcatcher.model.types.Language valueOf(java.lang.String) -> valueOf
+net.alliknow.podcatcher.model.types.MediaType -> net.alliknow.podcatcher.b.b.d:
+    net.alliknow.podcatcher.model.types.MediaType AUDIO -> a
+    net.alliknow.podcatcher.model.types.MediaType VIDEO -> b
+    net.alliknow.podcatcher.model.types.MediaType[] ENUM$VALUES -> c
+    net.alliknow.podcatcher.model.types.MediaType[] values() -> values
+    net.alliknow.podcatcher.model.types.MediaType valueOf(java.lang.String) -> valueOf
+net.alliknow.podcatcher.model.types.Podcast -> net.alliknow.podcatcher.b.b.e:
+    java.lang.String name -> a
+    java.net.URL url -> b
+    java.util.List episodes -> c
+    java.lang.String description -> d
+    net.alliknow.podcatcher.model.types.Language language -> e
+    net.alliknow.podcatcher.model.types.Genre genre -> f
+    net.alliknow.podcatcher.model.types.MediaType mediaType -> g
+    java.net.URL logoUrl -> h
+    android.graphics.Bitmap logo -> i
+    java.util.Date updated -> j
+    java.util.Date lastLoadLogoAttempt -> k
+    java.lang.String getName() -> a
+    java.net.URL getUrl() -> b
+    java.lang.String getDescription() -> c
+    void setDescription(java.lang.String) -> a
+    net.alliknow.podcatcher.model.types.Language getLanguage() -> d
+    void setLanguage(net.alliknow.podcatcher.model.types.Language) -> a
+    net.alliknow.podcatcher.model.types.Genre getGenre() -> e
+    void setGenre(net.alliknow.podcatcher.model.types.Genre) -> a
+    net.alliknow.podcatcher.model.types.MediaType getMediaType() -> f
+    void setMediaType(net.alliknow.podcatcher.model.types.MediaType) -> a
+    java.util.List getEpisodes() -> g
+    int getEpisodeNumber() -> h
+    void resetEpisodes() -> i
+    java.net.URL getLogoUrl() -> j
+    android.graphics.Bitmap getLogo() -> k
+    void setLogo(android.graphics.Bitmap) -> a
+    java.util.Date getLastLoadLogoAttempt() -> l
+    void setLastLoadLogoAttempt(java.util.Date) -> a
+    void parse(org.xmlpull.v1.XmlPullParser) -> a
+    java.util.Date getLastLoaded() -> m
+    java.lang.String toString() -> toString
+    boolean equals(java.lang.Object) -> equals
+    int hashCode() -> hashCode
+    int compareTo(net.alliknow.podcatcher.model.types.Podcast) -> a
+    void loadName(org.xmlpull.v1.XmlPullParser) -> b
+    void loadImage(org.xmlpull.v1.XmlPullParser) -> c
+    void loadThumbnail(org.xmlpull.v1.XmlPullParser) -> d
+    java.net.URL createLogoUrl(java.lang.String) -> b
+    void loadEpisode(org.xmlpull.v1.XmlPullParser) -> e
+    int compareTo(java.lang.Object) -> compareTo
+net.alliknow.podcatcher.model.types.Progress -> net.alliknow.podcatcher.b.b.f:
+    net.alliknow.podcatcher.model.types.Progress WAIT -> a
+    net.alliknow.podcatcher.model.types.Progress CONNECT -> b
+    net.alliknow.podcatcher.model.types.Progress LOAD -> c
+    net.alliknow.podcatcher.model.types.Progress PARSE -> d
+    net.alliknow.podcatcher.model.types.Progress DONE -> e
+    int progress -> f
+    int total -> g
+    int getProgress() -> a
+    int getTotal() -> b
+    int getPercentDone() -> c
+    java.lang.String toString() -> toString
+    boolean equals(java.lang.Object) -> equals
+    int hashCode() -> hashCode
+net.alliknow.podcatcher.services.BecomingNoisyReceiver -> net.alliknow.podcatcher.services.BecomingNoisyReceiver:
+    void onReceive(android.content.Context,android.content.Intent) -> onReceive
+net.alliknow.podcatcher.services.MediaButtonReceiver -> net.alliknow.podcatcher.services.MediaButtonReceiver:
+    void onReceive(android.content.Context,android.content.Intent) -> onReceive
+net.alliknow.podcatcher.services.PlayEpisodeNotification -> net.alliknow.podcatcher.services.a:
+    net.alliknow.podcatcher.services.PlayEpisodeNotification instance -> a
+    android.content.Context context -> b
+    android.content.Intent appIntent -> c
+    android.app.PendingIntent tooglePendingIntent -> d
+    android.support.v4.app.NotificationCompat$Builder notificationBuilder -> e
+    java.util.Map bitmapCache -> f
+    net.alliknow.podcatcher.services.PlayEpisodeNotification getInstance(android.content.Context) -> a
+    android.app.Notification build(net.alliknow.podcatcher.model.types.Episode) -> a
+    android.app.Notification build(net.alliknow.podcatcher.model.types.Episode,boolean,int,int) -> a
+    android.app.Notification updateProgress(int,int) -> a
+    boolean isPodcastLogoAvailable(net.alliknow.podcatcher.model.types.Episode) -> b
+    boolean isLargeDevice() -> a
+    android.graphics.Bitmap getScaledBitmap(net.alliknow.podcatcher.model.types.Podcast) -> a
+net.alliknow.podcatcher.services.PlayEpisodeService -> net.alliknow.podcatcher.services.PlayEpisodeService:
+    net.alliknow.podcatcher.model.types.Episode currentEpisode -> a
+    android.media.MediaPlayer player -> b
+    boolean prepared -> c
+    boolean buffering -> d
+    boolean hasFocus -> e
+    boolean bound -> f
+    android.media.AudioManager audioManager -> g
+    android.content.ComponentName noisyReceiver -> h
+    android.content.ComponentName mediaButtonReceiver -> i
+    net.alliknow.podcatcher.services.PodcatcherRCClient remoteControlClient -> j
+    android.net.wifi.WifiManager$WifiLock wifiLock -> k
+    net.alliknow.podcatcher.services.PlayEpisodeNotification notification -> l
+    java.util.Timer playUpdateTimer -> m
+    java.util.TimerTask playUpdateTimerTask -> n
+    java.util.Set listeners -> o
+    android.os.IBinder binder -> p
+    void onCreate() -> onCreate
+    int onStartCommand(android.content.Intent,int,int) -> onStartCommand
+    android.os.IBinder onBind(android.content.Intent) -> onBind
+    boolean onUnbind(android.content.Intent) -> onUnbind
+    void onDestroy() -> onDestroy
+    void addPlayServiceListener(net.alliknow.podcatcher.listeners.PlayServiceListener) -> a
+    void removePlayServiceListener(net.alliknow.podcatcher.listeners.PlayServiceListener) -> b
+    void playEpisode(net.alliknow.podcatcher.model.types.Episode) -> a
+    void pause() -> a
+    void resume() -> b
+    void seekTo(int) -> a
+    boolean isPlaying() -> c
+    boolean isPreparing() -> d
+    boolean isPrepared() -> e
+    boolean isBuffering() -> f
+    boolean isLoadedEpisode(net.alliknow.podcatcher.model.types.Episode) -> b
+    net.alliknow.podcatcher.model.types.Episode getCurrentEpisode() -> g
+    int getCurrentPosition() -> h
+    int getDuration() -> i
+    void onPrepared(android.media.MediaPlayer) -> onPrepared
+    void onBufferingUpdate(android.media.MediaPlayer,int) -> onBufferingUpdate
+    boolean onInfo(android.media.MediaPlayer,int,int) -> onInfo
+    void onCompletion(android.media.MediaPlayer) -> onCompletion
+    boolean onError(android.media.MediaPlayer,int,int) -> onError
+    void onAudioFocusChange(int) -> onAudioFocusChange
+    void reset() -> j
+    void enableReceiver(android.content.ComponentName) -> a
+    void disableReceiver(android.content.ComponentName) -> b
+    void initPlayer() -> k
+    void startPlayProgressTimer() -> l
+    void rebuildNotification() -> m
+    void stopPlayProgressTimer() -> n
+    void stopSelfIfUnboundAndIdle() -> o
+    void updateAudioManager() -> p
+    void updateRemoteControlPlaystate(int) -> b
+    net.alliknow.podcatcher.services.PlayEpisodeNotification access$0(net.alliknow.podcatcher.services.PlayEpisodeService) -> a
+net.alliknow.podcatcher.services.PlayEpisodeService$1 -> net.alliknow.podcatcher.services.b:
+    net.alliknow.podcatcher.services.PlayEpisodeService this$0 -> a
+    void run() -> run
+net.alliknow.podcatcher.services.PlayEpisodeService$PlayServiceBinder -> net.alliknow.podcatcher.services.c:
+    net.alliknow.podcatcher.services.PlayEpisodeService this$0 -> a
+    net.alliknow.podcatcher.services.PlayEpisodeService getService() -> a
+net.alliknow.podcatcher.services.PodcatcherRCClient -> net.alliknow.podcatcher.services.d:
+    void setMetadata(net.alliknow.podcatcher.model.types.Episode) -> a
+net.alliknow.podcatcher.view.ContentSpinner -> net.alliknow.podcatcher.view.a:
+    net.alliknow.podcatcher.listeners.OnSelectPodcastListener listener -> a
+    boolean isInitialSelection -> b
+    android.widget.TextView closedTitleView -> c
+    android.widget.TextView closedSubtitleView -> d
+    net.alliknow.podcatcher.view.ContentSpinner$NavigationSpinnerAdapter spinnerAdapter -> e
+    void setTitle(java.lang.String) -> setTitle
+    void setSubtitle(java.lang.String) -> setSubtitle
+    void onItemSelected(android.widget.AdapterView,android.view.View,int,long) -> onItemSelected
+    void onNothingSelected(android.widget.AdapterView) -> onNothingSelected
+net.alliknow.podcatcher.view.ContentSpinner$NavigationSpinnerAdapter -> net.alliknow.podcatcher.view.b:
+    android.view.View closedView -> b
+    net.alliknow.podcatcher.view.ContentSpinner this$0 -> a
+    android.view.View getClosedView() -> a
+    int getCount() -> getCount
+    java.lang.Object getItem(int) -> getItem
+    long getItemId(int) -> getItemId
+    android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
+    android.view.View getDropDownView(int,android.view.View,android.view.ViewGroup) -> getDropDownView
+net.alliknow.podcatcher.view.HorizontalProgressView -> net.alliknow.podcatcher.view.HorizontalProgressView:
+    int LAYOUT -> a
+    int getLayout() -> getLayout
+    void publishProgress(net.alliknow.podcatcher.model.types.Progress) -> a
+net.alliknow.podcatcher.view.ProgressView -> net.alliknow.podcatcher.view.ProgressView:
+    android.widget.ProgressBar progressBar -> b
+    android.widget.TextView progressTextView -> c
+    int getLayout() -> getLayout
+    void publishProgress(net.alliknow.podcatcher.model.types.Progress) -> a
+    void showError(int) -> a
+    void reset() -> a
+    java.lang.String getString(int) -> b
+    int getColor(int) -> c
+net.alliknow.podcatcher.view.Utils -> net.alliknow.podcatcher.view.c:
+    java.lang.String getRelativePubDate(net.alliknow.podcatcher.model.types.Episode) -> a
+net.alliknow.podcatcher.view.ViewMode -> net.alliknow.podcatcher.view.d:
+    net.alliknow.podcatcher.view.ViewMode SMALL_PORTRAIT -> a
+    net.alliknow.podcatcher.view.ViewMode SMALL_LANDSCAPE -> b
+    net.alliknow.podcatcher.view.ViewMode LARGE_PORTRAIT -> c
+    net.alliknow.podcatcher.view.ViewMode LARGE_LANDSCAPE -> d
+    net.alliknow.podcatcher.view.ViewMode[] ENUM$VALUES -> e
+    boolean isSmall() -> a
+    boolean isSmallPortrait() -> b
+    boolean isSmallLandscape() -> c
+    boolean isLargeLandscape() -> d
+    net.alliknow.podcatcher.view.ViewMode determineViewMode(android.content.res.Resources) -> a
+    net.alliknow.podcatcher.view.ViewMode[] values() -> values
+    net.alliknow.podcatcher.view.ViewMode valueOf(java.lang.String) -> valueOf
+net.alliknow.podcatcher.view.adapters.EpisodeListAdapter -> net.alliknow.podcatcher.view.a.a:
+    java.util.List list -> a
+    boolean showPodcastNames -> b
+    void setShowPodcastNames(boolean) -> a
+    int getCount() -> getCount
+    java.lang.Object getItem(int) -> getItem
+    long getItemId(int) -> getItemId
+    android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
+    java.lang.String createTitle(net.alliknow.podcatcher.model.types.Episode) -> a
+    java.lang.String createCaption(net.alliknow.podcatcher.model.types.Episode) -> b
+net.alliknow.podcatcher.view.adapters.FileListAdapter -> net.alliknow.podcatcher.view.a.b:
+    java.io.File[] files -> a
+    java.io.FileFilter filter -> b
+    int getCount() -> getCount
+    java.lang.Object getItem(int) -> getItem
+    long getItemId(int) -> getItemId
+    android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
+net.alliknow.podcatcher.view.adapters.FileListAdapter$1 -> net.alliknow.podcatcher.view.a.c:
+    boolean accept(java.io.File) -> accept
+net.alliknow.podcatcher.view.adapters.GenreSpinnerAdapter -> net.alliknow.podcatcher.view.a.d:
+    java.lang.Object getItem(int) -> getItem
+    int getCount() -> getCount
+net.alliknow.podcatcher.view.adapters.LanguageSpinnerAdapter -> net.alliknow.podcatcher.view.a.e:
+    java.lang.Object getItem(int) -> getItem
+    int getCount() -> getCount
+net.alliknow.podcatcher.view.adapters.MediaTypeSpinnerAdapter -> net.alliknow.podcatcher.view.a.f:
+    java.lang.Object getItem(int) -> getItem
+    int getCount() -> getCount
+net.alliknow.podcatcher.view.adapters.PodcastListAdapter -> net.alliknow.podcatcher.view.a.g:
+    java.util.List list -> a
+    boolean showLogoView -> b
+    void setShowLogo(boolean) -> a
+    int getCount() -> getCount
+    java.lang.Object getItem(int) -> getItem
+    long getItemId(int) -> getItemId
+    android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
+    java.lang.String createCaption(int) -> b
+net.alliknow.podcatcher.view.adapters.PodcatcherBaseAdapter -> net.alliknow.podcatcher.view.a.h:
+    android.content.res.Resources resources -> c
+    java.lang.String packageName -> d
+    boolean hasStableIds() -> hasStableIds
+    android.view.View findReturnView(android.view.View,android.view.ViewGroup,int) -> a
+    int getStringIdentifier(java.lang.Object) -> a
+net.alliknow.podcatcher.view.adapters.PodcatcherBaseListAdapter -> net.alliknow.podcatcher.view.a.i:
+    android.util.SparseBooleanArray selectedPositions -> e
+    android.util.SparseBooleanArray checkedPositions -> f
+    boolean selectAll -> g
+    void setSelectedPosition(int) -> a
+    void setSelectAll() -> a
+    void setSelectNone() -> b
+    void setCheckedPositions(android.util.SparseBooleanArray) -> a
+    void setBackgroundColorForPosition(android.view.View,int) -> a
+    void setText(android.view.View,int,java.lang.String) -> a
+net.alliknow.podcatcher.view.adapters.PodcatcherBaseSpinnerAdapter -> net.alliknow.podcatcher.view.a.j:
+    java.util.TreeMap values -> a
+    android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
+    android.view.View getDropDownView(int,android.view.View,android.view.ViewGroup) -> getDropDownView
+    long getItemId(int) -> getItemId
+net.alliknow.podcatcher.view.adapters.SuggestionListAdapter -> net.alliknow.podcatcher.view.a.k:
+    net.alliknow.podcatcher.listeners.OnAddSuggestionListener listener -> h
+    android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
+net.alliknow.podcatcher.view.adapters.SuggestionListAdapter$1 -> net.alliknow.podcatcher.view.a.l:
+    net.alliknow.podcatcher.view.adapters.SuggestionListAdapter this$0 -> a
+    android.widget.Button val$addButton -> b
+    net.alliknow.podcatcher.model.types.Podcast val$suggestion -> c
+    void onClick(android.view.View) -> onClick
+net.alliknow.podcatcher.view.fragments.AddPodcastFragment -> net.alliknow.podcatcher.view.fragments.a:
+    net.alliknow.podcatcher.listeners.OnAddPodcastListener listener -> a
+    android.widget.EditText podcastUrlEditText -> b
+    net.alliknow.podcatcher.view.HorizontalProgressView progressView -> c
+    android.widget.Button showSuggestionsButton -> d
+    android.widget.Button addPodcastButton -> e
+    android.widget.Button importOpmlButton -> f
+    void onAttach(android.app.Activity) -> onAttach
+    android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
+    void onViewCreated(android.view.View,android.os.Bundle) -> onViewCreated
+    void onCancel(android.content.DialogInterface) -> onCancel
+    void showProgress(net.alliknow.podcatcher.model.types.Progress) -> a
+    void showPodcastLoadFailed() -> a
+    void showPodcastLoadFailed(int) -> a
+    void addPodcast() -> b
+    void checkClipboardForPodcastUrl() -> c
+    void access$0(net.alliknow.podcatcher.view.fragments.AddPodcastFragment) -> a
+    net.alliknow.podcatcher.listeners.OnAddPodcastListener access$1(net.alliknow.podcatcher.view.fragments.AddPodcastFragment) -> b
+net.alliknow.podcatcher.view.fragments.AddPodcastFragment$1 -> net.alliknow.podcatcher.view.fragments.b:
+    net.alliknow.podcatcher.view.fragments.AddPodcastFragment this$0 -> a
+    boolean onEditorAction(android.widget.TextView,int,android.view.KeyEvent) -> onEditorAction
+net.alliknow.podcatcher.view.fragments.AddPodcastFragment$2 -> net.alliknow.podcatcher.view.fragments.c:
+    net.alliknow.podcatcher.view.fragments.AddPodcastFragment this$0 -> a
+    void onClick(android.view.View) -> onClick
+net.alliknow.podcatcher.view.fragments.AddPodcastFragment$3 -> net.alliknow.podcatcher.view.fragments.d:
+    net.alliknow.podcatcher.view.fragments.AddPodcastFragment this$0 -> a
+    void onClick(android.view.View) -> onClick
+net.alliknow.podcatcher.view.fragments.AddPodcastFragment$4 -> net.alliknow.podcatcher.view.fragments.e:
+    net.alliknow.podcatcher.view.fragments.AddPodcastFragment this$0 -> a
+    void onClick(android.view.View) -> onClick
+net.alliknow.podcatcher.view.fragments.EpisodeFragment -> net.alliknow.podcatcher.view.fragments.EpisodeFragment:
+    net.alliknow.podcatcher.model.types.Episode currentEpisode -> a
+    boolean showEpisodeDate -> b
+    boolean viewCreated -> c
+    android.view.View emptyView -> d
+    android.widget.TextView titleView -> e
+    android.widget.TextView subtitleView -> f
+    android.view.View dividerView -> g
+    android.webkit.WebView descriptionView -> h
+    java.lang.String ad -> i
+    void onAttach(android.app.Activity) -> onAttach
+    android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
+    void onViewCreated(android.view.View,android.os.Bundle) -> onViewCreated
+    void onDestroyView() -> onDestroyView
+    void setEpisode(net.alliknow.podcatcher.model.types.Episode) -> a
+    void setEpisode(net.alliknow.podcatcher.model.types.Episode,boolean) -> a
+    void setShowEpisodeDate(boolean) -> a
+    void updateUiElementVisibility() -> a
+net.alliknow.podcatcher.view.fragments.EpisodeListFragment -> net.alliknow.podcatcher.view.fragments.EpisodeListFragment:
+    java.util.List currentEpisodeList -> h
+    net.alliknow.podcatcher.listeners.OnSelectEpisodeListener episodeSelectionListener -> i
+    boolean showPodcastNames -> j
+    boolean viewCreated -> k
+    void onAttach(android.app.Activity) -> onAttach
+    android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
+    void onViewCreated(android.view.View,android.os.Bundle) -> onViewCreated
+    void onListItemClick(android.widget.ListView,android.view.View,int,long) -> onListItemClick
+    void onDestroyView() -> onDestroyView
+    void setEpisodeList(java.util.List) -> a
+    void setEpisodeList(java.util.List,boolean) -> a
+    void setShowPodcastNames(boolean) -> a
+    void reset() -> a
+    void showLoadFailed() -> b
+net.alliknow.podcatcher.view.fragments.PlayerFragment -> net.alliknow.podcatcher.view.fragments.PlayerFragment:
+    net.alliknow.podcatcher.listeners.PlayerListener listener -> a
+    boolean showLoadMenuItem -> b
+    boolean loadMenuItemState -> c
+    boolean showPlayer -> d
+    boolean showPlayerTitle -> e
+    boolean showPlayerSeekbar -> f
+    boolean showError -> g
+    boolean viewCreated -> h
+    android.view.MenuItem loadMenuItem -> i
+    android.widget.TextView titleView -> j
+    android.widget.SeekBar seekBar -> k
+    android.widget.Button button -> l
+    android.widget.TextView errorView -> m
+    void onAttach(android.app.Activity) -> onAttach
+    void onCreate(android.os.Bundle) -> onCreate
+    android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
+    void onViewCreated(android.view.View,android.os.Bundle) -> onViewCreated
+    void onResume() -> onResume
+    void onCreateOptionsMenu(android.view.Menu,android.view.MenuInflater) -> onCreateOptionsMenu
+    boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    void onDestroyView() -> onDestroyView
+    void setLoadMenuItemVisibility(boolean,boolean) -> a
+    void setPlayerTitleVisibility(boolean) -> a
+    void setPlayerSeekbarVisibility(boolean) -> b
+    void updatePlayerTitle(net.alliknow.podcatcher.model.types.Episode) -> a
+    void setPlayerVisibilility(boolean) -> c
+    void updateSeekBar(boolean,int,int) -> a
+    void updateSeekBarSecondaryProgress(int) -> a
+    void updateButton(boolean,boolean,int,int) -> a
+    void setErrorViewVisibility(boolean) -> d
+    java.lang.String formatTime(int) -> b
+    java.lang.String formatNumber(int,boolean) -> a
+    net.alliknow.podcatcher.listeners.PlayerListener access$0(net.alliknow.podcatcher.view.fragments.PlayerFragment) -> a
+net.alliknow.podcatcher.view.fragments.PlayerFragment$1 -> net.alliknow.podcatcher.view.fragments.f:
+    net.alliknow.podcatcher.view.fragments.PlayerFragment this$0 -> a
+    void onClick(android.view.View) -> onClick
+net.alliknow.podcatcher.view.fragments.PlayerFragment$2 -> net.alliknow.podcatcher.view.fragments.g:
+    net.alliknow.podcatcher.view.fragments.PlayerFragment this$0 -> a
+    void onClick(android.view.View) -> onClick
+net.alliknow.podcatcher.view.fragments.PodcastListFragment -> net.alliknow.podcatcher.view.fragments.PodcastListFragment:
+    net.alliknow.podcatcher.listeners.OnSelectPodcastListener podcastSelectionListener -> h
+    java.util.List currentPodcastList -> i
+    android.widget.ImageView logoView -> j
+    net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode logoViewMode -> k
+    boolean viewCreated -> l
+    int[] $SWITCH_TABLE$net$alliknow$podcatcher$view$fragments$PodcastListFragment$LogoViewMode -> m
+    void onAttach(android.app.Activity) -> onAttach
+    void onCreate(android.os.Bundle) -> onCreate
+    android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
+    void onViewCreated(android.view.View,android.os.Bundle) -> onViewCreated
+    void onCreateOptionsMenu(android.view.Menu,android.view.MenuInflater) -> onCreateOptionsMenu
+    boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    void onListItemClick(android.widget.ListView,android.view.View,int,long) -> onListItemClick
+    void onDestroyView() -> onDestroyView
+    void setPodcastList(java.util.List) -> a
+    void showProgress(int,net.alliknow.podcatcher.model.types.Progress) -> a
+    void setLogoVisibility(net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode) -> a
+    void updateUiElementVisibility() -> c
+    int[] $SWITCH_TABLE$net$alliknow$podcatcher$view$fragments$PodcastListFragment$LogoViewMode() -> d
+net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode -> net.alliknow.podcatcher.view.fragments.h:
+    net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode NONE -> a
+    net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode SMALL -> b
+    net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode LARGE -> c
+    net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode[] ENUM$VALUES -> d
+    net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode[] values() -> values
+    net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode valueOf(java.lang.String) -> valueOf
+net.alliknow.podcatcher.view.fragments.PodcatcherListFragment -> net.alliknow.podcatcher.view.fragments.i:
+    net.alliknow.podcatcher.view.adapters.PodcatcherBaseListAdapter adapter -> a
+    android.widget.TextView emptyView -> b
+    net.alliknow.podcatcher.view.ProgressView progressView -> c
+    boolean showProgress -> d
+    boolean showLoadFailed -> e
+    boolean selectAll -> f
+    int selectedPosition -> g
+    boolean viewCreated -> h
+    void onViewCreated(android.view.View,android.os.Bundle) -> onViewCreated
+    void onResume() -> onResume
+    void onDestroyView() -> onDestroyView
+    void setListAdapter(android.widget.ListAdapter) -> setListAdapter
+    void select(int) -> a
+    void selectAll() -> e
+    void selectNone() -> f
+    void refresh() -> g
+    void resetUi() -> h
+    void resetAndSpin() -> i
+    void reset() -> a
+    void showProgress(net.alliknow.podcatcher.model.types.Progress) -> a
+    void showLoadFailed() -> b
+    void updateUiElementVisibility() -> c
+net.alliknow.podcatcher.view.fragments.SelectFileFragment -> net.alliknow.podcatcher.view.fragments.j:
+    net.alliknow.podcatcher.listeners.OnSelectFileListener listener -> a
+    java.io.File currentPath -> b
+    net.alliknow.podcatcher.SelectFileActivity$SelectionMode selectionMode -> c
+    int selectedPosition -> d
+    android.widget.TextView currentPathView -> e
+    android.widget.ImageButton upButton -> f
+    android.widget.ListView fileListView -> g
+    android.widget.Button selectButton -> h
+    void onAttach(android.app.Activity) -> onAttach
+    android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
+    void onViewCreated(android.view.View,android.os.Bundle) -> onViewCreated
+    void onResume() -> onResume
+    void onCancel(android.content.DialogInterface) -> onCancel
+    void setPath(java.io.File) -> a
+    void setSelectionMode(net.alliknow.podcatcher.SelectFileActivity$SelectionMode) -> a
+    void updateDialogTitle() -> a
+    java.io.File access$0(net.alliknow.podcatcher.view.fragments.SelectFileFragment) -> a
+    android.widget.ListView access$1(net.alliknow.podcatcher.view.fragments.SelectFileFragment) -> b
+    net.alliknow.podcatcher.SelectFileActivity$SelectionMode access$2(net.alliknow.podcatcher.view.fragments.SelectFileFragment) -> c
+    void access$3(net.alliknow.podcatcher.view.fragments.SelectFileFragment,int) -> a
+    android.widget.Button access$4(net.alliknow.podcatcher.view.fragments.SelectFileFragment) -> d
+    net.alliknow.podcatcher.listeners.OnSelectFileListener access$5(net.alliknow.podcatcher.view.fragments.SelectFileFragment) -> e
+    int access$6(net.alliknow.podcatcher.view.fragments.SelectFileFragment) -> f
+net.alliknow.podcatcher.view.fragments.SelectFileFragment$1 -> net.alliknow.podcatcher.view.fragments.k:
+    net.alliknow.podcatcher.view.fragments.SelectFileFragment this$0 -> a
+    void onClick(android.view.View) -> onClick
+net.alliknow.podcatcher.view.fragments.SelectFileFragment$2 -> net.alliknow.podcatcher.view.fragments.l:
+    net.alliknow.podcatcher.view.fragments.SelectFileFragment this$0 -> a
+    void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
+net.alliknow.podcatcher.view.fragments.SelectFileFragment$3 -> net.alliknow.podcatcher.view.fragments.m:
+    net.alliknow.podcatcher.view.fragments.SelectFileFragment this$0 -> a
+    void onClick(android.view.View) -> onClick
+net.alliknow.podcatcher.view.fragments.SuggestionFragment -> net.alliknow.podcatcher.view.fragments.n:
+    net.alliknow.podcatcher.listeners.OnAddSuggestionListener listener -> a
+    java.util.List suggestionList -> b
+    android.widget.Spinner languageFilter -> c
+    android.widget.Spinner genreFilter -> d
+    android.widget.Spinner mediaTypeFilter -> e
+    net.alliknow.podcatcher.view.ProgressView progressView -> f
+    android.widget.ListView suggestionsListView -> g
+    android.widget.TextView noSuggestionsView -> h
+    android.widget.TextView sendSuggestionView -> i
+    android.widget.AdapterView$OnItemSelectedListener selectionListener -> j
+    void onAttach(android.app.Activity) -> onAttach
+    android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
+    void onViewCreated(android.view.View,android.os.Bundle) -> onViewCreated
+    void onResume() -> onResume
+    void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
+    void onCancel(android.content.DialogInterface) -> onCancel
+    void setList(java.util.List) -> a
+    void showLoadProgress(net.alliknow.podcatcher.model.types.Progress) -> a
+    void showLoadFailed() -> a
+    void setInitialFilterSelection() -> b
+    void updateList() -> c
+    boolean matchesFilter(net.alliknow.podcatcher.model.types.Podcast) -> a
+    void access$0(net.alliknow.podcatcher.view.fragments.SuggestionFragment) -> a
+net.alliknow.podcatcher.view.fragments.SuggestionFragment$1 -> net.alliknow.podcatcher.view.fragments.o:
+    net.alliknow.podcatcher.view.fragments.SuggestionFragment this$0 -> a
+    void onItemSelected(android.widget.AdapterView,android.view.View,int,long) -> onItemSelected
+    void onNothingSelected(android.widget.AdapterView) -> onNothingSelected
