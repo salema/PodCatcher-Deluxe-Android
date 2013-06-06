@@ -343,7 +343,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         // One of many podcasts failed to load
         else if (selection.isAll())
             showToast("Podcast\n\"" + failedPodcast.getName() + "\"\n"
-                    + getString(R.string.error_podcast_load_multiple));
+                    + getString(R.string.podcast_load_multiple_error));
 
         // Update UI
         updateActionBar();
@@ -403,14 +403,14 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
         // Make sure the episode list fragment show the right empty view
         if (ContentMode.DOWNLOADS.equals(selection.getMode()))
-            episodeListFragment.setEmptyStringId(R.string.no_episodes_downloads);
+            episodeListFragment.setEmptyStringId(R.string.downloads_none);
         else if (ContentMode.PLAYLIST.equals(selection.getMode()))
-            episodeListFragment.setEmptyStringId(R.string.no_episodes_playlist);
+            episodeListFragment.setEmptyStringId(R.string.playlist_empty);
         else if (selection.isEpisodeFilterEnabled()
                 && filteredEpisodeList.isEmpty() && !currentEpisodeList.isEmpty())
-            episodeListFragment.setEmptyStringId(R.string.no_new_episodes);
+            episodeListFragment.setEmptyStringId(R.string.episodes_no_new);
         else
-            episodeListFragment.setEmptyStringId(R.string.no_episodes);
+            episodeListFragment.setEmptyStringId(R.string.episode_none);
 
         // Make sure the episode list fragment show the right filter warning
         final int filteredCount = currentEpisodeList.size() - filteredEpisodeList.size();
@@ -494,23 +494,17 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         // Load finished for all podcasts and there are episode
         if (loadingPodcastCount == 0 && currentEpisodeList != null) {
             final int episodeCount = currentEpisodeList.size();
-
-            if (episodeCount == 0)
-                contentSpinner.setSubtitle(null);
-            else if (episodeCount == 1)
-                contentSpinner.setSubtitle(getString(R.string.one_episode));
-            else
-                contentSpinner.setSubtitle(episodeCount + " " + getString(R.string.episodes));
+            contentSpinner.setSubtitle(getResources()
+                    .getQuantityString(R.plurals.episodes, episodeCount, episodeCount));
         }
         // Load finished but no episodes
         else if (loadingPodcastCount == 0)
-            contentSpinner.setSubtitle(podcastCount == 1 ? getString(R.string.one_podcast_selected)
-                    : podcastCount + " " + getString(R.string.podcasts_selected));
+            contentSpinner.setSubtitle(getResources()
+                    .getQuantityString(R.plurals.podcasts, podcastCount, podcastCount));
         // Load in progress
         else
-            contentSpinner.setSubtitle((podcastCount - loadingPodcastCount) + " "
-                    + getString(R.string.of) + " " + podcastCount + " "
-                    + getString(R.string.podcasts_selected));
+            contentSpinner.setSubtitle(getString(R.string.podcast_load_multiple_progress,
+                    (podcastCount - loadingPodcastCount), podcastCount));
     }
 
     private boolean shouldAutoDownloadLatestEpisode(Podcast podcast) {

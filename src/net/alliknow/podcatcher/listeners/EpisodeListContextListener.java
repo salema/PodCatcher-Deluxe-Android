@@ -197,16 +197,9 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
                     fragment.getListView().getCheckedItemPositions());
 
             // Update the mode title text
-            int checkedItemCount = fragment.getListView().getCheckedItemCount();
-            String newTitle = fragment.getString(R.string.no_episode_selected);
-
-            if (checkedItemCount == 1)
-                newTitle = fragment.getString(R.string.one_episode);
-            else if (checkedItemCount > 1)
-                newTitle = checkedItemCount + " "
-                        + fragment.getString(R.string.episodes);
-
-            mode.setTitle(newTitle);
+            final int checkedItemCount = fragment.getListView().getCheckedItemCount();
+            mode.setTitle(fragment.getResources()
+                    .getQuantityString(R.plurals.episodes, checkedItemCount, checkedItemCount));
         }
     }
 

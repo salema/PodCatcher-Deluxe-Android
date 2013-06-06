@@ -30,7 +30,7 @@ import net.alliknow.podcatcher.model.types.Podcast;
 import java.util.List;
 
 /**
- * Adapter for suggestion list.
+ * Adapter for the suggestion list.
  */
 public class SuggestionListAdapter extends PodcastListAdapter {
 
@@ -43,12 +43,12 @@ public class SuggestionListAdapter extends PodcastListAdapter {
      * Create new adapter.
      * 
      * @param context The current context.
-     * @param podcastList List of podcasts (suggestions) to wrap.
+     * @param suggestions List of podcasts (suggestions) to wrap.
      * @param listener Call back for the add button to attach.
      */
-    public SuggestionListAdapter(Context context, List<Podcast> podcastList,
+    public SuggestionListAdapter(Context context, List<Podcast> suggestions,
             OnAddSuggestionListener listener) {
-        super(context, podcastList);
+        super(context, suggestions);
 
         this.listener = listener;
     }
@@ -65,12 +65,7 @@ public class SuggestionListAdapter extends PodcastListAdapter {
         // Set the text to display for title
         setText(listItemView, R.id.suggestion_name, suggestion.getName());
         // Set the text to display for classification
-        setText(listItemView, R.id.suggestion_meta,
-                resources.getString(getStringIdentifier(suggestion.getLanguage()))
-                        + METADATA_SEPARATOR +
-                        resources.getString(getStringIdentifier(suggestion.getGenre()))
-                        + METADATA_SEPARATOR +
-                        resources.getString(getStringIdentifier(suggestion.getMediaType())));
+        setText(listItemView, R.id.suggestion_meta, createClassificationLabel(suggestion));
         // Set the text to display for the description
         setText(listItemView, R.id.suggestion_description, suggestion.getDescription());
 
@@ -91,5 +86,13 @@ public class SuggestionListAdapter extends PodcastListAdapter {
         });
 
         return listItemView;
+    }
+
+    private String createClassificationLabel(final Podcast suggestion) {
+        return resources.getStringArray(R.array.languages)[suggestion.getLanguage().ordinal()]
+                + METADATA_SEPARATOR
+                + resources.getStringArray(R.array.genres)[suggestion.getGenre().ordinal()]
+                + METADATA_SEPARATOR
+                + resources.getStringArray(R.array.types)[suggestion.getMediaType().ordinal()];
     }
 }

@@ -22,5 +22,5 @@ package net.alliknow.podcatcher.model.types;
  */
 @SuppressWarnings("javadoc")
 public enum Language {
-    ENGLISH, GERMAN
+    ENGLISH, FRENCH, GERMAN, SPANISH
 }

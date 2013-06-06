@@ -27,7 +27,7 @@
         android:id="@+id/podcast_url"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/enter_podcast_url_here"
+        android:hint="@string/podcast_enter_url_here"
         android:imeOptions="actionGo"
         android:inputType="textUri|textNoSuggestions" />
     <net.alliknow.podcatcher.view.HorizontalProgressView
@@ -60,7 +60,7 @@
             android:layout_gravity="center_vertical"
             android:background="@drawable/button_green"
             android:gravity="center"
-            android:text="@string/add_podcast_button"
+            android:text="@string/podcast_add_button"
             android:textColor="@drawable/button_label"
             android:singleLine="true" />
     </LinearLayout>
@@ -74,7 +74,7 @@
         android:gravity="center"
         android:paddingLeft="8dp"
         android:paddingRight="40dp"
-        android:text="@string/import_opml"
+        android:text="@string/opml_import"
         android:textColor="@drawable/button_label"
         android:singleLine="true" />
 </LinearLayout>

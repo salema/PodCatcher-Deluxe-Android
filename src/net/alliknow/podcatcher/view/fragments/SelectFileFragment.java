@@ -210,8 +210,8 @@ public class SelectFileFragment extends DialogFragment {
 
     private void updateDialogTitle() {
         if (SelectionMode.FOLDER.equals(selectionMode))
-            getDialog().setTitle(R.string.select_folder);
+            getDialog().setTitle(R.string.file_select_folder);
         else
-            getDialog().setTitle(R.string.select_file);
+            getDialog().setTitle(R.string.file_select_file);
     }
 }

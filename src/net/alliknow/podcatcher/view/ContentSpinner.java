@@ -100,7 +100,7 @@ public class ContentSpinner extends Spinner implements
         public long getItemId(int position) {
             switch (position) {
                 case 0:
-                    return R.string.select_all_podcasts;
+                    return R.string.podcast_select_all;
                 case 1:
                     return R.string.downloads;
                 case 2:
@@ -130,17 +130,15 @@ public class ContentSpinner extends Spinner implements
             switch (position) {
                 case 0:
                     imageView.setImageResource(R.drawable.ic_menu_select_all);
-                    titleView.setText(R.string.select_all_podcasts);
+                    titleView.setText(R.string.podcast_select_all);
 
                     // Set the subtitle
                     final int podcastCount = PodcastManager.getInstance().size();
                     if (podcastCount == 0)
-                        subtitleView.setText(R.string.no_podcast);
-                    else if (podcastCount == 1)
-                        subtitleView.setText(R.string.one_podcast_selected);
+                        subtitleView.setText(R.string.podcast_none);
                     else
-                        subtitleView.setText(podcastCount + " " +
-                                parent.getContext().getString(R.string.podcasts_selected));
+                        subtitleView.setText(parent.getContext().getResources()
+                                .getQuantityString(R.plurals.podcasts, podcastCount, podcastCount));
                     break;
                 case 1:
                     imageView.setImageResource(R.drawable.ic_menu_download);
@@ -173,11 +171,9 @@ public class ContentSpinner extends Spinner implements
                 final int count) {
             if (count == 0)
                 subtitleView.setText(null);
-            else if (count == 1)
-                subtitleView.setText(R.string.one_episode);
             else
-                subtitleView.setText(count + " " +
-                        parent.getContext().getString(R.string.episodes));
+                subtitleView.setText(parent.getContext().getResources()
+                        .getQuantityString(R.plurals.episodes, count, count));
         }
     }
 
@@ -225,7 +221,7 @@ public class ContentSpinner extends Spinner implements
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (!isInitialSelection)
             switch (Long.valueOf(id).intValue()) {
-                case R.string.select_all_podcasts:
+                case R.string.podcast_select_all:
                     listener.onAllPodcastsSelected();
                     break;
                 case R.string.downloads:

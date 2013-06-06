@@ -24,8 +24,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import java.util.Locale;
-
 /**
  * Abstract super class for this app's adapters. Allows access to resources.
  */
@@ -34,12 +32,6 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
     /** The resources handle */
     protected final Resources resources;
 
-    /** We need to know our package name to retrieve identifiers */
-    protected final String packageName;
-
-    /** The def type for string resources */
-    private static final String STRING_DEFTYPE = "string";
-
     /**
      * Create new adapter.
      * 
@@ -47,7 +39,6 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
      */
     public PodcatcherBaseAdapter(Context context) {
         this.resources = context.getResources();
-        this.packageName = context.getPackageName();
     }
 
     @Override
@@ -71,18 +62,5 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
         // Yes:
         else
             return convertView;
-    }
-
-    /**
-     * Get a string resource for given item. This will use the item's
-     * toString()-method, call toLowerCase() on the result and append the
-     * outcome to "R.string.".
-     * 
-     * @param item Item to find string resource for.
-     * @return The resource id or zero if not found.
-     */
-    protected int getStringIdentifier(Object item) {
-        return resources.getIdentifier(item.toString().toLowerCase(Locale.US),
-                STRING_DEFTYPE, packageName);
     }
 }

@@ -22,6 +22,6 @@
         android:id="@+id/filter_menuitem"
         android:icon="@drawable/ic_menu_filter"
         android:showAsAction="always"
-        android:title="@string/new_only"
+        android:title="@string/episodes_filter_new"
         android:orderInCategory="3" />
 </menu>

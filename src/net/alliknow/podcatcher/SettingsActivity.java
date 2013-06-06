@@ -67,7 +67,7 @@ public class SettingsActivity extends BaseActivity {
                 if (folder.canWrite())
                     settingsFragment.updateDownloadFolder(folder);
                 else
-                    showToast(getString(R.string.access_denied));
+                    showToast(getString(R.string.file_select_access_denied));
             }
     }
 }

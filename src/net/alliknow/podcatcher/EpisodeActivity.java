@@ -275,7 +275,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
         if (download) {
             episodeManager.download(selection.getEpisode());
 
-            showToast(getString(R.string.started_download) + "\n\""
+            showToast(getString(R.string.download_started) + "\n\""
                     + selection.getEpisode().getName() + "\"");
         }
         else

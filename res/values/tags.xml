@@ -18,5 +18,8 @@
  */
 -->
 <resources>
-    <dimen name="episode_view_padding">2dp</dimen>
+    <string name="podcast_list_fragment_tag" translatable="false">podcastListFragment</string>
+    <string name="episode_list_fragment_tag" translatable="false">episodeListFragment</string>
+    <string name="episode_fragment_tag" translatable="false">episodeFragment</string>
+    <string name="player_fragment_tag" translatable="false">playerFragment</string>
 </resources>

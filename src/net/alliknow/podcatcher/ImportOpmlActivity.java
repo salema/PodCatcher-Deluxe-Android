@@ -78,7 +78,7 @@ public class ImportOpmlActivity extends BaseActivity implements OnLoadPodcastLis
     public void onPodcastListLoaded(List<Podcast> podcastList) {
         // Iff the list is empty, the import went wrong
         if (podcastList.isEmpty())
-            showToast(getString(R.string.import_opml_failed));
+            showToast(getString(R.string.opml_import_failed));
         else
             // Add all podcasts to the list
             for (Podcast podcast : podcastList)

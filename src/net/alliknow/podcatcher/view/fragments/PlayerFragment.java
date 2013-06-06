@@ -336,20 +336,22 @@ public class PlayerFragment extends Fragment {
 
             // Buffering...
             if (buffering) {
-                playPauseButton.setText(R.string.buffering);
+                playPauseButton.setText(R.string.player_buffering);
                 playPauseButton.setBackgroundResource(R.drawable.button_red);
                 playPauseButton.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_menu_rotate, 0, 0, 0);
             } // Playing or paused
             else {
-                String label = "";
-                if (!showShortPlaybackPosition)
-                    label += getString(playing ? R.string.pause : R.string.resume) +
-                            " " + getString(R.string.at) + " ";
+                final String formattedPosition = formatTime(position);
+                final String formattedDuration = formatTime(duration);
 
-                label += formatTime(position) + " " + getString(R.string.of) + " "
-                        + formatTime(duration);
-                playPauseButton.setText(label);
+                if (showShortPlaybackPosition)
+                    playPauseButton.setText(getString(R.string.player_label_short,
+                            formattedPosition, formattedDuration));
+                else
+                    playPauseButton.setText(getString(playing ? R.string.pause : R.string.resume)
+                            + " " + getString(R.string.player_label, formattedPosition,
+                                    formattedDuration));
 
                 playPauseButton.setBackgroundResource(playing ?
                         R.drawable.button_red : R.drawable.button_green);

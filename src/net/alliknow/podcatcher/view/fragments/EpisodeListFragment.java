@@ -64,7 +64,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     private boolean showPodcastNames = false;
 
     /** Identifier for the string the empty view shows. */
-    private int emptyStringId = R.string.no_episodes;
+    private int emptyStringId = R.string.episode_none;
 
     /** The filter warning label */
     private TextView filterWarningLabel;
@@ -237,7 +237,8 @@ public class EpisodeListFragment extends PodcatcherListFragment {
         // otherwise onResume or the menu creation callback will call us.
         if (filterMenuItem != null) {
             filterMenuItem.setVisible(showFilterMenuItem);
-            filterMenuItem.setTitle(filterMenuItemState ? R.string.all : R.string.new_only);
+            filterMenuItem.setTitle(filterMenuItemState ?
+                    R.string.episodes_filter_all : R.string.episodes_filter_new);
             filterMenuItem.setIcon(filterMenuItemState ?
                     R.drawable.ic_menu_filter_back : R.drawable.ic_menu_filter);
         }
@@ -257,11 +258,8 @@ public class EpisodeListFragment extends PodcatcherListFragment {
         if (viewCreated) {
             filterWarningLabel.setVisibility(show ? View.VISIBLE : View.GONE);
             filterWarningDivider.setVisibility(show ? View.VISIBLE : View.GONE);
-
-            if (count == 1)
-                filterWarningLabel.setText(R.string.one_filtered_episode);
-            else
-                filterWarningLabel.setText(count + " " + getString(R.string.filtered_episodes));
+            filterWarningLabel.setText(getResources().getQuantityString(
+                    R.plurals.episodes_filtered, count, count));
         }
     }
 
@@ -290,7 +288,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     @Override
     protected void reset() {
         if (viewCreated) {
-            emptyView.setText(R.string.no_podcast_selected);
+            emptyView.setText(R.string.podcast_none_selected);
             setFilterWarning(false, 0);
         }
 
@@ -306,7 +304,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     @Override
     public void showLoadFailed() {
         if (viewCreated)
-            progressView.showError(R.string.error_podcast_load);
+            progressView.showError(R.string.podcast_load_error);
 
         super.showLoadFailed();
     }

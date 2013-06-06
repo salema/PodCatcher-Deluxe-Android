@@ -35,7 +35,7 @@
         android:layout_weight="2"
         android:layout_margin="20dp"
         android:gravity="center"
-        android:text="@string/no_podcast_long"
+        android:text="@string/podcast_none_long"
         android:textColor="@color/text_secondary"
         android:textSize="@dimen/font_size_small" />
     <net.alliknow.podcatcher.view.ProgressView

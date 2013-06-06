@@ -27,7 +27,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="@string/no_episode_selected"
+        android:text="@string/episode_none_selected"
         android:textColor="@color/text_secondary"
         android:textSize="@dimen/font_size_small" />
     <LinearLayout

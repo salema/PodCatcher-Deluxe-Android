@@ -22,12 +22,12 @@
         android:id="@+id/episode_new_contextmenuitem"
         android:icon="@drawable/ic_menu_new"
         android:showAsAction="always"
-        android:title="@string/new_only" />
+        android:title="@string/episodes_filter_new" />
     <item
         android:id="@+id/episode_old_contextmenuitem"
         android:icon="@drawable/ic_menu_old"
         android:showAsAction="always"
-        android:title="@string/old" />
+        android:title="@string/episodes_old" />
     <item
         android:id="@+id/episode_add_to_playlist_contextmenuitem"
         android:icon="@drawable/ic_menu_playlist_add"
@@ -51,5 +51,5 @@
     <item
         android:id="@+id/episode_select_all_contextmenuitem"
         android:showAsAction="never"
-        android:title="@string/select_all" />
+        android:title="@string/episodes_select_all" />
 </menu>

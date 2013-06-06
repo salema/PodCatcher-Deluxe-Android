@@ -125,19 +125,18 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
     }
 
     private String createCaption(Podcast podcast) {
-        final int numberOfEpisodes = podcast.getEpisodeNumber();
-        final int numberOfNewEpisodes = episodeManager.getNewEpisodeCount(podcast);
+        final int episodeCount = podcast.getEpisodeNumber();
+        final int newEpisodeCount = episodeManager.getNewEpisodeCount(podcast);
 
         String caption = "";
 
-        if (numberOfNewEpisodes == 0)
-            caption += resources.getString(R.string.no_new_episodes);
-        else if (numberOfNewEpisodes == 1)
-            caption += resources.getString(R.string.one_new_episode);
+        if (newEpisodeCount == 0)
+            caption += resources.getString(R.string.episodes_no_new);
         else
-            caption += numberOfNewEpisodes + " " + resources.getString(R.string.new_episodes);
+            caption += resources
+                    .getQuantityString(R.plurals.episodes_new, newEpisodeCount, newEpisodeCount);
 
         return caption +
-                " (" + numberOfEpisodes + " " + resources.getString(R.string.total_episodes) + ")";
+                " (" + episodeCount + " " + resources.getString(R.string.episodes_total) + ")";
     }
 }

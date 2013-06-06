@@ -17,7 +17,7 @@
 
 package net.alliknow.podcatcher.listeners;
 
-import static net.alliknow.podcatcher.RemovePodcastActivity.PODCAST_POSITION_LIST_KEY;
+import static net.alliknow.podcatcher.BaseActivity.PODCAST_POSITION_LIST_KEY;
 
 import android.content.Intent;
 import android.util.SparseBooleanArray;
@@ -122,15 +122,8 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
                 fragment.getListView().getCheckedItemPositions());
 
         // Update the mode title text
-        int checkedItemCount = fragment.getListView().getCheckedItemCount();
-        String newTitle = fragment.getString(R.string.no_podcast_selected);
-
-        if (checkedItemCount == 1)
-            newTitle = fragment.getString(R.string.one_podcast_selected);
-        else if (checkedItemCount > 1)
-            newTitle = checkedItemCount + " "
-                    + fragment.getString(R.string.podcasts_selected);
-
-        mode.setTitle(newTitle);
+        final int checkedItemCount = fragment.getListView().getCheckedItemCount();
+        mode.setTitle(fragment.getResources()
+                .getQuantityString(R.plurals.podcasts, checkedItemCount, checkedItemCount));
     }
 }

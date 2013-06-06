@@ -18,5 +18,5 @@
  */
 -->
 <resources>
-    <dimen name="episode_view_padding">2dp</dimen>
+    <string name="app_name" translatable="false">Podcatcher Deluxe</string>
 </resources>
