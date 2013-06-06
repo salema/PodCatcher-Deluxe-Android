@@ -52,6 +52,7 @@ import net.alliknow.podcatcher.view.adapters.SuggestionListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Fragment to show podcast suggestions.
@@ -161,7 +162,7 @@ public class SuggestionFragment extends DialogFragment {
         sendSuggestionView = (TextView) view.findViewById(R.id.suggestion_send);
         sendSuggestionView.setText(Html.fromHtml("<a href=\"mailto:" + SUGGESTION_MAIL_ADDRESS +
                 "?subject=" + SUGGESTION_MAIL_SUBJECT + "\">" +
-                getString(R.string.send_suggestion) + "</a>"));
+                getString(R.string.suggestions_send) + "</a>"));
         sendSuggestionView.setMovementMethod(LinkMovementMethod.getInstance());
 
         // Set/restore filter settings
@@ -226,20 +227,21 @@ public class SuggestionFragment extends DialogFragment {
      * Show load failed for podcast suggestions.
      */
     public void showLoadFailed() {
-        progressView.showError(R.string.error_suggestions_load);
+        progressView.showError(R.string.suggestions_load_error);
     }
 
     private void setInitialFilterSelection() {
         // Set according to locale
-        // Locale current =
-        // getActivity().getResources().getConfiguration().locale;
-        // languageFilter.setSelection(current.getLanguage().equalsIgnoreCase("de")
-        // ? 2 : 1);
+        final Locale currentLocale = getActivity().getResources().getConfiguration().locale;
+        if (currentLocale.getLanguage().equalsIgnoreCase(Locale.ENGLISH.getLanguage()))
+            languageFilter.setSelection(1);
+        else if (currentLocale.getLanguage().equalsIgnoreCase(Locale.FRENCH.getLanguage()))
+            languageFilter.setSelection(4);
+        else if (currentLocale.getLanguage().equalsIgnoreCase(Locale.GERMAN.getLanguage()))
+            languageFilter.setSelection(1);
+        else if (currentLocale.getLanguage().equalsIgnoreCase("es"))
+            languageFilter.setSelection(2);
 
-        // For now the second item is always the right on, because we are
-        // sorting and "Deutsch" is before "Englisch" and "English" is before
-        // "German"
-        languageFilter.setSelection(1);
         // Set to "all"
         genreFilter.setSelection(0);
         // Set to audio, since this is an audio version

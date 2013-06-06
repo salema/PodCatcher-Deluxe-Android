@@ -124,7 +124,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
                 // Update other UI elements
                 if (episodeList.isEmpty())
-                    emptyView.setText(R.string.no_episodes);
+                    emptyView.setText(R.string.episode_none);
 
                 // Make sure to match selection state
                 if (selectAll)
@@ -151,7 +151,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     @Override
     protected void reset() {
         if (viewCreated)
-            emptyView.setText(R.string.no_podcast_selected);
+            emptyView.setText(R.string.podcast_none_selected);
 
         currentEpisodeList = null;
         showPodcastNames = false;
@@ -165,7 +165,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     @Override
     public void showLoadFailed() {
         if (viewCreated)
-            progressView.showError(R.string.error_podcast_load);
+            progressView.showError(R.string.podcast_load_error);
 
         super.showLoadFailed();
     }

@@ -60,5 +60,5 @@
         android:layout_margin="3dp"
         android:textColor="@drawable/button_label"
         android:background="@drawable/button_green"
-        android:text="@string/select" />
+        android:text="@string/file_select" />
 </LinearLayout>

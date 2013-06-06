@@ -19,13 +19,14 @@ package net.alliknow.podcatcher.view.adapters;
 
 import android.content.Context;
 
+import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.model.types.MediaType;
 import net.alliknow.podcatcher.view.fragments.SuggestionFragment;
 
 /**
  * Adapter for the media type spinner in the suggestion dialog.
  */
-public class MediaTypeSpinnerAdapter extends PodcatcherBaseSpinnerAdapter {
+public class MediaTypeSpinnerAdapter extends SuggestionFilterSpinnerAdapter {
 
     /**
      * Create new adapter.
@@ -38,8 +39,8 @@ public class MediaTypeSpinnerAdapter extends PodcatcherBaseSpinnerAdapter {
         // Put all types into the value map where they are sorted by language
         // because we are using the corresponding resources as keys
         for (int index = 0; index < MediaType.values().length; index++) {
-            final int stringId = getStringIdentifier(MediaType.values()[index]);
-            values.put(context.getString(stringId), MediaType.values()[index]);
+            final String key = resources.getStringArray(R.array.types)[index];
+            values.put(key, MediaType.values()[index]);
         }
     }
 

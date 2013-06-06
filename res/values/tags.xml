@@ -17,15 +17,9 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/opml_export_contextmenuitem"
-        android:icon="@drawable/ic_menu_export"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/opml_export" />
-    <item
-        android:id="@+id/podcast_remove_contextmenuitem"
-        android:icon="@drawable/ic_menu_delete"
-        android:showAsAction="always|withText"
-        android:title="@string/remove" />
-</menu>
+<resources>
+    <string name="podcast_list_fragment_tag" translatable="false">podcastListFragment</string>
+    <string name="episode_list_fragment_tag" translatable="false">episodeListFragment</string>
+    <string name="episode_fragment_tag" translatable="false">episodeFragment</string>
+    <string name="player_fragment_tag" translatable="false">playerFragment</string>
+</resources>

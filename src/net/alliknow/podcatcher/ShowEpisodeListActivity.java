@@ -121,13 +121,10 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
 
         // Single podcast selected
         if (selection.isPodcastSet()) {
-            if (selection.getPodcast().getEpisodes().isEmpty())
-                contentSpinner.setSubtitle(null);
-            else {
-                int episodeCount = selection.getPodcast().getEpisodeNumber();
-                contentSpinner.setSubtitle(episodeCount == 1 ? getString(R.string.one_episode) :
-                        episodeCount + " " + getString(R.string.episodes));
-            }
+            final int episodeCount = selection.getPodcast().getEpisodeNumber();
+            contentSpinner.setSubtitle(getResources()
+                    .getQuantityString(R.plurals.episodes, episodeCount, episodeCount));
+
         } // Multiple podcast mode
         else if (selection.isAll())
             updateActionBarSubtitleOnMultipleLoad();

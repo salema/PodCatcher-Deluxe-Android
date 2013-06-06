@@ -98,7 +98,8 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
         setText(listItemView, R.id.list_item_title, podcast.getName());
         // Set the text to display as caption
         TextView captionView = (TextView) listItemView.findViewById(R.id.list_item_caption);
-        captionView.setText(createCaption(episodeNumber));
+        captionView.setText(
+                resources.getQuantityString(R.plurals.episodes, episodeNumber, episodeNumber));
         captionView.setVisibility(episodeNumber != 0 ? VISIBLE : GONE);
 
         // Check whether we should show the podcast logo
@@ -115,10 +116,5 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
                 && selectAll ? VISIBLE : GONE);
 
         return listItemView;
-    }
-
-    private String createCaption(int numberOfEpisodes) {
-        return numberOfEpisodes == 1 ? resources.getString(R.string.one_episode) :
-                numberOfEpisodes + " " + resources.getString(R.string.episodes);
     }
 }

@@ -65,7 +65,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:padding="20dp"
-        android:text="@string/no_suggestions"
+        android:text="@string/suggestions_none"
         android:visibility="gone" />
     <ImageView
         android:layout_width="match_parent"

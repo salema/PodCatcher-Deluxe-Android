@@ -291,7 +291,7 @@ public class PlayerFragment extends Fragment {
 
             // Buffering...
             if (buffering) {
-                button.setText(R.string.buffering);
+                button.setText(R.string.player_buffering);
                 button.setBackgroundResource(R.drawable.button_red);
                 button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_rotate, 0, 0, 0);
             } // Playing or paused
@@ -305,8 +305,8 @@ public class PlayerFragment extends Fragment {
                 final String formattedPosition = formatTime(position);
                 final String formattedDuration = formatTime(duration);
 
-                button.setText(button.getText() + " " + getString(R.string.at) + " " +
-                        formattedPosition + " " + getString(R.string.of) + " " + formattedDuration);
+                button.setText(button.getText() + " " +
+                        getString(R.string.player_label, formattedPosition, formattedDuration));
             }
         }
     }

@@ -142,7 +142,7 @@ public class EpisodeFragment extends Fragment {
                 if (description == null)
                     description = currentEpisode.getDescription();
                 if (description == null)
-                    description = getString(R.string.no_episode_description);
+                    description = getString(R.string.episode_no_description);
                 // Set episode description
                 descriptionView.loadDataWithBaseURL(null, description + ad,
                         "text/html", "utf-8", null);

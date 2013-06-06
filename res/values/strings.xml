@@ -18,76 +18,56 @@
  */
 -->
 <resources>
-    <string name="podcast_list_fragment_tag" translatable="false">podcastListFragment</string>
-    <string name="episode_list_fragment_tag" translatable="false">episodeListFragment</string>
-    <string name="episode_fragment_tag" translatable="false">episodeFragment</string>
-    <string name="player_fragment_tag" translatable="false">playerFragment</string>
-    <string name="divider" translatable="false">Divider</string>
-    <string name="app_name">Simple Podcatcher</string>
+    <string name="divider">Divider</string>
     <string name="about">About Simple Podcatcher</string>
     <string name="help">Help</string>
     <string name="wait">Wait</string>
     <string name="connect">Connect</string>
     <string name="load">Load</string>
     <string name="stop">Stop</string>
+    <string name="remove">Remove</string>
     <string name="parse">Read</string>
-    <string name="suggestions">Suggestions&#8230;</string>
-    <string name="suggested_podcasts">Suggested podcasts</string>
-    <string name="all">All</string>
-    <string name="english">English</string>
-    <string name="german">German</string>
-    <string name="audio">Audio</string>
-    <string name="video">Video</string>
-    <string name="comedy">Comedy</string>
-    <string name="education">Education</string>
-    <string name="entertainment">Entertainment</string>
-    <string name="mobility">Mobility</string>
-    <string name="music">Music</string>
-    <string name="news">News</string>
-    <string name="politics">Politics</string>
-    <string name="science">Science</string>
-    <string name="sports">Sports</string>
-    <string name="technology">Technology</string>
-    <string name="kids">Kids</string>
-    <string name="no_suggestions">No suggestions, please change your filters.</string>
-    <string name="error_suggestions_load">Suggestions failed to load, please check your internet connection!</string>
-    <string name="send_suggestion">Submit a podcast suggestion&#8230;</string>
     <string name="play">Play</string>
-    <string name="buffering">Buffering&#8230;</string>
     <string name="pause">Pause</string>
     <string name="resume">Resume</string>
-    <string name="next">Next</string>
-    <string name="at">at</string>
-    <string name="of">of</string>
-    <string name="error_player">Playback failed</string>
+    <string name="player_buffering">Buffering&#8230;</string>
+    <string name="player_label">at %1$s of %2$s</string>
+    <string name="player_error">Playback failed</string>
     <string name="podcast_image">Podcast logo</string>
-    <string name="no_podcast">No podcast added</string>
-    <string name="no_podcast_long">No podcasts added. Please use the plus icon in the menu to add subscriptions to this list.</string>
-    <string name="no_podcast_selected">No podcast selected</string>
-    <string name="no_episodes">No episodes in this podcast</string>
-    <string name="one_podcast_selected">One podcast</string>
-    <string name="podcasts_selected">podcasts</string>
-    <string name="no_episode_selected">No episode selected</string>
-    <string name="one_episode">One episode</string>
-    <string name="episodes">episodes</string>
-    <string name="add_podcast">New podcast</string>
-    <string name="add_podcast_button">Add</string>
-    <string name="remove">Remove</string>
-    <string name="remove_podcast">Remove podcast</string>
-    <string name="import_opml">Import OPML</string>
-    <string name="import_opml_failed">OPML import failed</string>
-    <string name="export_opml">Export OPML</string>
-    <string name="export_opml_success">OPML file stored at</string>
-    <string name="export_opml_failed">OPML export failed</string>
-    <string name="select_all_podcasts">Select all podcasts</string>
-    <string name="enter_podcast_url_here">Copy podcast address here</string>
-    <string name="error_podcast_add">New podcast failed to load.</string>
-    <string name="error_podcast_load">Cannot load podcast, please make sure you are online!</string>
-    <string name="error_podcast_load_multiple">failed to load.</string>
-    <string name="no_episode_description">No description available.</string>
-	<string name="ad">Try &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; for downloads, playlists, filters, and other premium features!</string>
-    <string name="select">Select</string>
-    <string name="select_file">Select File</string>
-    <string name="select_folder">Select Folder</string>
-    <string name="access_denied">Access denied!</string>
+    <string name="podcast_none">No podcasts added. Please use the plus icon in the menu to add subscriptions to this list.</string>
+    <string name="podcast_none_selected">No podcast selected</string>
+    <string name="podcast_select_all">Select all podcasts</string>
+    <plurals name="podcasts">
+        <item quantity="one">One podcast</item>
+        <item quantity="other">%d podcasts</item>
+    </plurals>
+    <string name="podcast_add_title">New podcast</string>
+    <string name="podcast_add_button">Add</string>
+    <string name="podcast_enter_url_here">Copy podcast address here</string>
+    <string name="podcast_add_error">New podcast failed to load.</string>
+    <string name="podcast_load_error">Cannot load podcast, please make sure you are online!</string>
+    <string name="podcast_load_multiple_progress">%1$d of %2$d podcasts</string>
+    <string name="podcast_load_multiple_error">failed to load.</string>
+    <string name="episode_none">No episodes in this podcast</string>
+    <string name="episode_no_description">No description available.</string>
+    <string name="episode_none_selected">No episode selected</string>
+    <plurals name="episodes">
+        <item quantity="one">One episode</item>
+        <item quantity="other">%d episodes</item>
+    </plurals>
+	<string name="file_select">Select</string>
+    <string name="file_select_file">Select File</string>
+    <string name="file_select_folder">Select Folder</string>
+    <string name="file_select_access_denied">Access denied!</string>
+    <string name="opml_import">Import OPML</string>
+    <string name="opml_import_failed">OPML import failed</string>
+    <string name="opml_export">Export OPML</string>
+    <string name="opml_export_success">OPML file stored at</string>
+    <string name="opml_export_failed">OPML export failed</string>
+    <string name="suggestions">Suggestions&#8230;</string>
+    <string name="suggested_podcasts">Suggested podcasts</string>
+    <string name="suggestions_none">No suggestions, please change your filters.</string>
+    <string name="suggestions_load_error">Suggestions failed to load, please check your internet connection!</string>
+    <string name="suggestions_send">Submit a podcast suggestion&#8230;</string>
+    <string name="ad">Try &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; for downloads, playlists, filters, and other premium features!</string>
 </resources>

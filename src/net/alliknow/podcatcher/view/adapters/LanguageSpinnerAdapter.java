@@ -19,13 +19,14 @@ package net.alliknow.podcatcher.view.adapters;
 
 import android.content.Context;
 
+import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.model.types.Language;
 import net.alliknow.podcatcher.view.fragments.SuggestionFragment;
 
 /**
  * Adapter for the language spinner in the suggestion dialog.
  */
-public class LanguageSpinnerAdapter extends PodcatcherBaseSpinnerAdapter {
+public class LanguageSpinnerAdapter extends SuggestionFilterSpinnerAdapter {
 
     /**
      * Create new adapter.
@@ -38,8 +39,8 @@ public class LanguageSpinnerAdapter extends PodcatcherBaseSpinnerAdapter {
         // Put all languages into the value map where they are sorted by
         // language because we are using the corresponding resources as keys
         for (int index = 0; index < Language.values().length; index++) {
-            final int stringId = getStringIdentifier(Language.values()[index]);
-            values.put(context.getString(stringId), Language.values()[index]);
+            final String key = resources.getStringArray(R.array.languages)[index];
+            values.put(key, Language.values()[index]);
         }
     }
 

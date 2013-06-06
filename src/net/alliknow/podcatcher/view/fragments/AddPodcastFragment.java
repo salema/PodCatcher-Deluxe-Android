@@ -86,7 +86,7 @@ public class AddPodcastFragment extends DialogFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        getDialog().setTitle(R.string.add_podcast);
+        getDialog().setTitle(R.string.podcast_add_title);
 
         // Prevent automatic display of the soft keyboard on first appearance
         if (savedInstanceState == null)
@@ -176,7 +176,7 @@ public class AddPodcastFragment extends DialogFragment {
      * Show load failure in the dialog UI.
      */
     public void showPodcastLoadFailed() {
-        showPodcastLoadFailed(R.string.error_podcast_add);
+        showPodcastLoadFailed(R.string.podcast_add_error);
     }
 
     /**

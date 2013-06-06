@@ -19,13 +19,14 @@ package net.alliknow.podcatcher.view.adapters;
 
 import android.content.Context;
 
+import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.model.types.Genre;
 import net.alliknow.podcatcher.view.fragments.SuggestionFragment;
 
 /**
  * Adapter for the genre spinner in the suggestion dialog.
  */
-public class GenreSpinnerAdapter extends PodcatcherBaseSpinnerAdapter {
+public class GenreSpinnerAdapter extends SuggestionFilterSpinnerAdapter {
 
     /**
      * Create new adapter.
@@ -38,8 +39,8 @@ public class GenreSpinnerAdapter extends PodcatcherBaseSpinnerAdapter {
         // Put all genres into the value map where they are sorted by language
         // because we are using the corresponding resources as keys
         for (int index = 0; index < Genre.values().length; index++) {
-            final int stringId = getStringIdentifier(Genre.values()[index]);
-            values.put(context.getString(stringId), Genre.values()[index]);
+            final String key = resources.getStringArray(R.array.genres)[index];
+            values.put(key, Genre.values()[index]);
         }
     }
 

@@ -88,13 +88,13 @@ public class ExportOpmlActivity extends BaseActivity implements OnStorePodcastLi
 
     @Override
     public void onPodcastListStored(List<Podcast> podcastList, File outputFile) {
-        showToast(getString(R.string.export_opml_success) + "\n" +
+        showToast(getString(R.string.opml_export_success) + "\n" +
                 outputFile.getAbsolutePath(), Toast.LENGTH_LONG);
     }
 
     @Override
     public void onPodcastListStoreFailed(List<Podcast> podcastList, File outputFile,
             Exception exception) {
-        showToast(getString(R.string.export_opml_failed));
+        showToast(getString(R.string.opml_export_failed));
     }
 }

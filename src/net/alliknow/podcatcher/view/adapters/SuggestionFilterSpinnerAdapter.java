@@ -22,53 +22,58 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import net.alliknow.podcatcher.R;
+
 import java.util.TreeMap;
 
 /**
- * Abstract base for spinner adapters. The default implementation will use
- * simple text views and string resources named ("keyed")
- * <code>item.toString().toLowerCase()</code>. (This will fail if these
- * resources do not exist!)
+ * Abstract base for suggestion filter spinner adapters. This default
+ * implementation will use the tree map {@link #values} to label the returned
+ * list and spinner views.
  */
-public abstract class PodcatcherBaseSpinnerAdapter extends PodcatcherBaseAdapter {
+public abstract class SuggestionFilterSpinnerAdapter extends PodcatcherBaseAdapter {
 
     /**
      * The sorted map to store our values in, this is needed to account for the
      * sorting in different languages.
      */
-    protected TreeMap<String, Object> values = new TreeMap<String, Object>();
+    protected final TreeMap<String, Object> values = new TreeMap<String, Object>();
 
     /**
      * Create the adapter.
      * 
      * @param context Context we live in.
      */
-    public PodcatcherBaseSpinnerAdapter(Context context) {
+    public SuggestionFilterSpinnerAdapter(Context context) {
         super(context);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        TextView result = (TextView) findReturnView(convertView, parent,
-                android.R.layout.simple_spinner_item);
-
-        // Get the resource string as the item's toString().toLowerCase() result
-        // plus "R.string." and set as label
-        int stringId = getStringIdentifier(getItem(position));
-        result.setText(resources.getString(stringId));
-
-        return result;
+        return getLabel(position, convertView, parent, false);
     }
 
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        TextView result = (TextView) findReturnView(convertView, parent,
-                android.R.layout.simple_spinner_dropdown_item);
+        return getLabel(position, convertView, parent, true);
+    }
 
-        // Get the resource string as the item's toString().toLowerCase() result
-        // plus "R.string." and set as label
-        int stringId = getStringIdentifier(getItem(position));
-        result.setText(resources.getString(stringId));
+    private View getLabel(int position, View convertView, ViewGroup parent, boolean dropDown) {
+        TextView result = null;
+
+        // Get the correct return view
+        if (dropDown)
+            result = (TextView) findReturnView(convertView, parent,
+                    android.R.layout.simple_spinner_dropdown_item);
+        else
+            result = (TextView) findReturnView(convertView, parent,
+                    android.R.layout.simple_spinner_item);
+
+        // Apply the appropriate text label
+        if (position == 0)
+            result.setText(resources.getString(R.string.wildcard));
+        else
+            result.setText((String) values.keySet().toArray()[position - 1]);
 
         return result;
     }

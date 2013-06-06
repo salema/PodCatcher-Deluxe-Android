@@ -92,12 +92,12 @@ public class ContentSpinner extends Spinner implements
 
         @Override
         public Object getItem(int position) {
-            return position == 0 ? R.string.select_all_podcasts : 0;
+            return position == 0 ? R.string.podcast_select_all : 0;
         }
 
         @Override
         public long getItemId(int position) {
-            return position == 0 ? R.string.select_all_podcasts : 0;
+            return position == 0 ? R.string.podcast_select_all : 0;
         }
 
         @Override
@@ -118,19 +118,14 @@ public class ContentSpinner extends Spinner implements
 
             // Set the title view
             final TextView titleView = (TextView) spinnerItemView.findViewById(R.id.title);
-            titleView.setText(R.string.select_all_podcasts);
+            titleView.setText(R.string.podcast_select_all);
 
             // Set the subtitle
             final TextView subtitleView = (TextView) spinnerItemView.findViewById(R.id.subtitle);
             final int podcastCount = PodcastManager.getInstance().size();
 
-            if (podcastCount == 0)
-                subtitleView.setText(R.string.no_podcast);
-            else if (podcastCount == 1)
-                subtitleView.setText(R.string.one_podcast_selected);
-            else
-                subtitleView.setText(podcastCount + " " +
-                        parent.getContext().getString(R.string.podcasts_selected));
+            subtitleView.setText(parent.getContext().getResources()
+                    .getQuantityString(R.plurals.podcasts, podcastCount, podcastCount));
 
             return spinnerItemView;
         }
@@ -180,7 +175,7 @@ public class ContentSpinner extends Spinner implements
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (!isInitialSelection)
             switch (Long.valueOf(id).intValue()) {
-                case R.string.select_all_podcasts:
+                case R.string.podcast_select_all:
                     listener.onAllPodcastsSelected();
             }
 
