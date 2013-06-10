@@ -32,6 +32,7 @@
     <string name="resume">Resume</string>
     <string name="player_buffering">Buffering&#8230;</string>
     <string name="player_label">at %1$s of %2$s</string>
+    <string name="player_label_short">%1$s of %2$s</string>
     <string name="player_error">Playback failed</string>
     <string name="podcast_image">Podcast logo</string>
     <string name="podcast_none">No podcasts added. Please use the plus icon in the menu to add subscriptions to this list.</string>

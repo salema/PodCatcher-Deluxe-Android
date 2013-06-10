@@ -32,6 +32,7 @@
     <string name="resume">Reprendre</string>
     <string name="player_buffering">Buffering&#8230;</string>
     <string name="player_label">à %1$s de %2$s</string>
+    <string name="player_label_short">%1$s de %2$s</string>
     <string name="player_error">Lecture a échoué</string>
     <string name="podcast_image">Logo</string>
     <string name="podcast_none">Ajouter un podcast</string>

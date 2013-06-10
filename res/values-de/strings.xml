@@ -32,6 +32,7 @@
     <string name="resume">Abspielen</string>
     <string name="player_buffering">Puffer füllen&#8230;</string>
     <string name="player_label">bei %1$s von %2$s</string>
+    <string name="player_label_short">%1$s von %2$s</string>
     <string name="player_error">Wiedergabe fehlgeschlagen</string>
     <string name="podcast_image">Podcast Logo</string>
     <string name="podcast_none">Keine Podcast vorhanden. Bitte benutzen Sie das Plus-Zeichen im Menü um Podcasts hinzuzufügen.</string>

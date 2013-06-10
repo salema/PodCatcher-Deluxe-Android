@@ -57,6 +57,8 @@ public class PlayerFragment extends Fragment {
     private boolean showPlayerTitle = false;
     /** Flag for the show player seek bar state */
     private boolean showPlayerSeekbar = true;
+    /** Flag for the position/duration information state */
+    private boolean showShortPlaybackPosition = false;
     /** Flag for the show error view state */
     private boolean showError = false;
 
@@ -222,6 +224,19 @@ public class PlayerFragment extends Fragment {
     }
 
     /**
+     * Set whether the fragment should show the long or the short
+     * playback/duration string label on its play/pause button. This has effect
+     * only after you update the button for the next time.
+     * 
+     * @param showShortPosition The flag, give <code>true</code> for a short
+     *            label.
+     * @see PlayerFragment#updateButton
+     */
+    public void setShowShortPosition(boolean showShortPosition) {
+        this.showShortPlaybackPosition = showShortPosition;
+    }
+
+    /**
      * Update the player title view to show name and link to the given episode.
      * 
      * @param playingEpisode Episode to show link to.
@@ -296,7 +311,6 @@ public class PlayerFragment extends Fragment {
                 button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_rotate, 0, 0, 0);
             } // Playing or paused
             else {
-                button.setText(playing ? R.string.pause : R.string.resume);
                 button.setBackgroundResource(playing ?
                         R.drawable.button_red : R.drawable.button_green);
                 button.setCompoundDrawablesWithIntrinsicBounds(playing ?
@@ -305,8 +319,12 @@ public class PlayerFragment extends Fragment {
                 final String formattedPosition = formatTime(position);
                 final String formattedDuration = formatTime(duration);
 
-                button.setText(button.getText() + " " +
-                        getString(R.string.player_label, formattedPosition, formattedDuration));
+                if (showShortPlaybackPosition)
+                    button.setText(getString(R.string.player_label_short,
+                            formattedPosition, formattedDuration));
+                else
+                    button.setText(getString(playing ? R.string.pause : R.string.resume) + " " +
+                            getString(R.string.player_label, formattedPosition, formattedDuration));
             }
         }
     }
