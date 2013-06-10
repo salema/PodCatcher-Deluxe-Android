@@ -458,7 +458,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
                 playerFragment.setPlayerSeekbarVisibility(!view.isSmallLandscape());
                 // Enable/disable next button
                 final boolean playlistHasEntries = !episodeManager.isPlaylistEmpty();
-                playerFragment.setShowShortPosition(playlistHasEntries && view.isSmall());
+                playerFragment.setShowShortPosition(view.isSmall() &&
+                        (playlistHasEntries || service.getDuration() >= 60 * 60));
                 playerFragment.setNextButtonVisibility(playlistHasEntries);
 
                 // Update UI to reflect service status
