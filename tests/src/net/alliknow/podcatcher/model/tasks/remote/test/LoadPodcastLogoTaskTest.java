@@ -102,7 +102,7 @@ public class LoadPodcastLogoTaskTest extends InstrumentationTestCase {
 
     private LoadPodcastLogoTask loadAndWait(final MockPodcastLogoLoader mockLoader,
             final Podcast podcast) throws Throwable {
-        final LoadPodcastLogoTask task = new LoadPodcastLogoTask(mockLoader, 100, 100);
+        final LoadPodcastLogoTask task = new LoadPodcastLogoTask(null, mockLoader);
 
         signal = new CountDownLatch(1);
 

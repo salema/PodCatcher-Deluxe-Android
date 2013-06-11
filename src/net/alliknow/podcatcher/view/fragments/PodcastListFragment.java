@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.ListView;
 
 import net.alliknow.podcatcher.AddPodcastActivity;
@@ -234,14 +235,13 @@ public class PodcastListFragment extends PodcatcherListFragment {
                         Podcast selectedPodcast = currentPodcastList.get(selectedPosition);
 
                         // Check for logo and show it if available
-                        if (selectedPodcast.getLogo() != null)
+                        if (selectedPodcast.getLogo() != null) {
                             logoView.setImageBitmap(selectedPodcast.getLogo());
-                        else
-                            // Otherwise show default image
-                            logoView.setImageResource(R.drawable.default_podcast_logo);
+                            logoView.setScaleType(ScaleType.FIT_XY);
+                        } else
+                            showGenericPodcastLogo();
                     } else
-                        // Otherwise show default image
-                        logoView.setImageResource(R.drawable.default_podcast_logo);
+                        showGenericPodcastLogo();
 
                     break;
                 case SMALL: // In small mode show logo inline
@@ -257,5 +257,10 @@ public class PodcastListFragment extends PodcatcherListFragment {
                     logoView.setVisibility(View.GONE);
             }
         }
+    }
+
+    private void showGenericPodcastLogo() {
+        logoView.setImageResource(R.drawable.default_podcast_logo);
+        logoView.setScaleType(ScaleType.CENTER_INSIDE);
     }
 }

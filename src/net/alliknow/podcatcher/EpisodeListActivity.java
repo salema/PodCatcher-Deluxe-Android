@@ -210,6 +210,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 // Go load all podcasts
                 for (Podcast podcast : podcastManager.getPodcastList())
                     podcastManager.load(podcast);
+
                 // Action bar needs update after loading has started
                 updateActionBar();
                 break;
