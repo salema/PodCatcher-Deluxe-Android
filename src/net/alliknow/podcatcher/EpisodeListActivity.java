@@ -19,6 +19,8 @@ package net.alliknow.podcatcher;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 
@@ -52,6 +54,11 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     /** Key used to store podcast URL in intent or bundle */
     public static final String PODCAST_URL_KEY = "podcast_url";
 
+    /** The theme color set */
+    protected int themeColor;
+    /** The light theme color set */
+    protected int lightThemeColor;
+
     /** The current episode list fragment */
     protected EpisodeListFragment episodeListFragment;
     /** The content mode selection spinner view */
@@ -63,6 +70,12 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Get the theme color
+        themeColor = preferences.getInt(SettingsActivity.KEY_THEME_COLOR,
+                getResources().getColor(R.color.theme_dark));
+        // This will set the light theme color member
+        lightThemeColor = calculateLightThemeColor();
 
         // Create the content mode spinner and add it to the action bar
         contentSpinner = new ContentSpinner(this, this);
@@ -79,6 +92,10 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         // The episode list fragment
         if (episodeListFragment == null)
             episodeListFragment = (EpisodeListFragment) findByTagId(R.string.episode_list_fragment_tag);
+
+        // Make sure the episode fragment know our theme colors
+        if (episodeListFragment != null)
+            episodeListFragment.setThemeColors(themeColor, lightThemeColor);
 
         // We have to do this here instead of onCreate since we can only react
         // on the call-backs properly once we have our fragment
@@ -230,8 +247,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             episodeListFragment.showLoadFailed();
         // One of many podcasts failed to load
         else if (selection.isAll())
-            showToast("Podcast\n\"" + failedPodcast.getName() + "\"\n"
-                    + getString(R.string.podcast_load_multiple_error));
+            showToast(getString(R.string.podcast_load_multiple_error, failedPodcast.getName()));
 
         // Update UI
         updateActionBar();
@@ -274,6 +290,22 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         updateDivider();
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        super.onSharedPreferenceChanged(sharedPreferences, key);
+
+        if (key.equals(SettingsActivity.KEY_THEME_COLOR)) {
+            // Set new color members
+            themeColor = preferences.getInt(SettingsActivity.KEY_THEME_COLOR, themeColor);
+            lightThemeColor = calculateLightThemeColor();
+
+            // Make the UI reflect the change
+            if (episodeListFragment != null)
+                episodeListFragment.setThemeColors(themeColor, lightThemeColor);
+            updateDivider();
+        }
+    }
+
     /**
      * Update the episode list to select the correct episode
      */
@@ -299,15 +331,18 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
      */
     protected void updateDivider() {
         colorDivider(R.id.divider_first, selection.isPodcastSet() || selection.isAll());
-        colorDivider(R.id.divider_second,
-                currentEpisodeList != null
-                        && currentEpisodeList.indexOf(selection.getEpisode()) >= 0);
+        colorDivider(R.id.divider_second, currentEpisodeList != null
+                && currentEpisodeList.indexOf(selection.getEpisode()) >= 0);
     }
 
-    private void colorDivider(int dividerViewId, boolean colorId) {
+    private void colorDivider(int dividerViewId, boolean applyColor) {
         if (getWindow() != null && getWindow().findViewById(dividerViewId) != null) {
             View divider = getWindow().findViewById(dividerViewId);
-            divider.setBackgroundResource(colorId ? R.color.divider_on : R.color.divider_off);
+
+            if (applyColor)
+                divider.setBackgroundColor(themeColor);
+            else
+                divider.setBackgroundResource(R.color.divider_off);
         }
     }
 
@@ -333,4 +368,16 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             contentSpinner.setSubtitle(getString(R.string.podcast_load_multiple_progress,
                     (podcastCount - loadingPodcastCount), podcastCount));
     }
+
+    private int calculateLightThemeColor() {
+        final float[] hsv = new float[3];
+        final int alpha = Color.alpha(themeColor);
+
+        Color.RGBToHSV(Color.red(themeColor), Color.green(themeColor), Color.blue(themeColor), hsv);
+        hsv[1] = (float) (hsv[1] - 0.25 < 0.05 ? 0.05 : hsv[1] - 0.25);
+        hsv[2] = (float) (hsv[2] + 0.25 > 0.95 ? 0.95 : hsv[2] + 0.25);
+
+        return Color.HSVToColor(alpha, hsv);
+    }
+
 }

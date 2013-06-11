@@ -19,8 +19,12 @@ package net.alliknow.podcatcher;
 
 import android.app.FragmentManager.OnBackStackChangedListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 
 import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
@@ -46,7 +50,12 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
      * Flag indicating whether the app should show the add podcast dialog if the
      * list of podcasts is empty.
      */
-    private boolean showAddPodcastOnEmptyPodcastList = false;
+    private boolean isInitialAppStart = false;
+    /**
+     * Flag indicating the intent given onCreate contains data we want to use as
+     * a podcast URL.
+     */
+    private boolean hasPodcastToAdd = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,15 +79,19 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         findFragments();
         // Add extra fragments needed in some view modes
         plugFragments();
+        // Make sure the podcast list knows about our theme colors.
+        podcastListFragment.setThemeColors(themeColor, lightThemeColor);
+        // Make sure the layout matches the preference
+        updateLayout();
 
         // 3. Init/restore the app as needed
         // If we are newly starting up and the podcast list is empty, show add
         // podcast dialog (this is used in onPodcastListLoaded(), since we only
-        // know then, whether the list is actually empty. Also do not show it if
-        // we are given an URL in the intent, because this will trigger the
-        // dialog anyway
-        showAddPodcastOnEmptyPodcastList =
-                (savedInstanceState == null && getIntent().getData() == null);
+        // know then, whether the list is actually empty). Also do not show it
+        // if we are given an URL in the intent, because this will trigger the
+        // dialog anyway.
+        isInitialAppStart = (savedInstanceState == null);
+        hasPodcastToAdd = (getIntent().getData() != null);
         // Check if podcast list is available - if so, set it
         List<Podcast> podcastList = podcastManager.getPodcastList();
         if (podcastList != null) {
@@ -232,10 +245,14 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         updateActionBar();
 
         // If podcast list is empty we show dialog on startup
-        if (podcastManager.size() == 0 && showAddPodcastOnEmptyPodcastList) {
-            showAddPodcastOnEmptyPodcastList = false;
+        if (podcastManager.size() == 0 && isInitialAppStart && !hasPodcastToAdd) {
+            isInitialAppStart = false;
             startActivity(new Intent(this, AddPodcastActivity.class));
         }
+        // If enabled, we run the "select all on start-up" action
+        else if (podcastManager.size() > 0 && isInitialAppStart
+                && preferences.getBoolean(SettingsActivity.KEY_SELECT_ALL_ON_START, false))
+            onAllPodcastsSelected();
     }
 
     @Override
@@ -356,6 +373,42 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         updateLogoViewMode();
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        super.onSharedPreferenceChanged(sharedPreferences, key);
+
+        if (key.equals(SettingsActivity.KEY_THEME_COLOR) && podcastListFragment != null) {
+            // Make the UI reflect the change
+            podcastListFragment.setThemeColors(themeColor, lightThemeColor);
+        }
+        else if (key.equals(SettingsActivity.KEY_WIDE_EPISODE_LIST)) {
+            updateLayout();
+        }
+    }
+
+    /**
+     * Update the layout to match user's preference
+     */
+    protected void updateLayout() {
+        final boolean useWide = preferences
+                .getBoolean(SettingsActivity.KEY_WIDE_EPISODE_LIST, false);
+
+        switch (view) {
+            case LARGE_PORTRAIT:
+                setMainColumnWidthWeight(episodeListFragment.getView(), useWide ? 3.5f : 3f);
+
+                break;
+            case LARGE_LANDSCAPE:
+                setMainColumnWidthWeight(episodeListFragment.getView(), useWide ? 3.5f : 3f);
+                setMainColumnWidthWeight(findViewById(R.id.right_column), useWide ? 3.5f : 4f);
+
+                break;
+            default:
+                // Nothing to do in small views
+                break;
+        }
+    }
+
     /**
      * Update the logo view mode according to current app state.
      */
@@ -389,5 +442,10 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             playerFragment.setLoadMenuItemVisibility(false, false);
             playerFragment.setPlayerTitleVisibility(true);
         }
+    }
+
+    private void setMainColumnWidthWeight(View view, float weight) {
+        view.setLayoutParams(
+                new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, weight));
     }
 }

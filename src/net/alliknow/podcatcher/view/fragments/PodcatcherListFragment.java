@@ -40,6 +40,11 @@ public abstract class PodcatcherListFragment extends ListFragment {
     /** The list adapter */
     protected PodcatcherBaseListAdapter adapter;
 
+    /** The theme color to use for highlighting list items */
+    protected int themeColor;
+    /** The theme color variant to use for pressed and checked items */
+    protected int lightThemeColor;
+
     /** The empty view */
     protected TextView emptyView;
     /** The progress bar */
@@ -85,7 +90,29 @@ public abstract class PodcatcherListFragment extends ListFragment {
     public void setListAdapter(ListAdapter adapter) {
         this.adapter = (PodcatcherBaseListAdapter) adapter;
 
+        // Set theme colors
+        if (adapter != null)
+            this.adapter.setThemeColors(themeColor, lightThemeColor);
+
         super.setListAdapter(adapter);
+    }
+
+    /**
+     * Set the colors to use in the list for selection, checked item etc.
+     * 
+     * @param color The theme color to use for highlighting list items.
+     * @param variantColor The theme color variant to use for pressed and
+     *            checked item.
+     */
+    public void setThemeColors(int color, int variantColor) {
+        this.themeColor = color;
+        this.lightThemeColor = variantColor;
+
+        // Set theme colors
+        if (adapter != null)
+            this.adapter.setThemeColors(themeColor, lightThemeColor);
+
+        refresh();
     }
 
     /**

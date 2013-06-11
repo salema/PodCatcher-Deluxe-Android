@@ -38,5 +38,4 @@
     <color name="text_error">@android:color/holo_red_dark</color>
     <color name="text_secondary">@android:color/darker_gray</color>
     <color name="divider_off">@android:color/darker_gray</color>
-    <color name="divider_on">@color/theme_dark</color>
 </resources>

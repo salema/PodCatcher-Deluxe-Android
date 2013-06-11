@@ -97,6 +97,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".SettingsActivity"
+            android:theme="@android:style/Theme.Holo.Light.Dialog" />
+        <activity
             android:name=".AddPodcastActivity"
             android:theme="@android:style/Theme.NoDisplay" />
         <activity

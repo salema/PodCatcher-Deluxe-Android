@@ -48,7 +48,7 @@
     <string name="podcast_add_error">El podcast no se pudo cargar.</string>
     <string name="podcast_load_error">El podcast no se pudo cargar. Comprueba la URL y asegúrate de que estás conectado.</string>
     <string name="podcast_load_multiple_progress">%1$d de %2$d podcasts</string>
-    <string name="podcast_load_multiple_error">no se pudo cargar.</string>
+    <string name="podcast_load_multiple_error">El podcast \n\"%s\"\nno se pudo cargar.</string>
     <string name="episode_none">No hay episodios</string>
     <string name="episode_no_description">No hay ninguna descripción disponible.</string>
     <string name="episode_none_selected">No hay episodios</string>
@@ -70,5 +70,12 @@
     <string name="suggestions_none">No hay podcasts recomendados.</string>
     <string name="suggestions_load_error">No se pudo cargar. Asegúrate de que estás conectado.</string>
     <string name="suggestions_send">Envia una propuesta para incluirla en esta lista&#8230;</string>
+    <string name="preferences">Preferencias</string>
+    <string name="pref_select_all_on_start_title">Seleccionar todo en el inicio</string>
+    <string name="pref_select_all_on_start_summary">Cargar todas las suscripciones cuando se inicia la aplicación</string>
+    <string name="pref_category_interface">Interfaz</string>
+    <string name="pref_theme_color_title">Color del tema</string>
+    <string name="pref_wide_episode_list_title">Amplia lista de episodios</string>
+    <string name="pref_wide_episode_list_summary">Haz lugar para más detalles episodio</string>
     <string name="ad">Trate &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt;: Descargas, listas, filtros y mucho más!</string>
 </resources>

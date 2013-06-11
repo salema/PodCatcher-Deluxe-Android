@@ -48,7 +48,7 @@
     <string name="podcast_add_error">Der Podcast konnte nicht geladen werden.</string>
     <string name="podcast_load_error">Podcast kann nicht geladen werden, bitte prüfen Sie Ihre Internetverbindung!</string>
     <string name="podcast_load_multiple_progress">%1$d von %2$d Podcasts</string>
-    <string name="podcast_load_multiple_error">konnte nicht geladen werden..</string>
+    <string name="podcast_load_multiple_error">Der Podcast \n\"%s\"\nkonnte nicht geladen werden..</string>
     <string name="episode_none">Dieser Podcast enthält keine Episoden</string>
     <string name="episode_no_description">Keine Beschreibung verfügbar.</string>
     <string name="episode_none_selected">Keine Episode ausgewählt</string>
@@ -70,5 +70,12 @@
     <string name="suggestions_none">Keine Empfehlungen, bitte ändern Sie Ihre Filter.</string>
     <string name="suggestions_load_error">Empfehlungen können nicht geladen werden, bitte prüfen Sie Ihre Internetverbindung!</string>
     <string name="suggestions_send">Ich möchte einen Podcast empfehlen&#8230;</string>
+    <string name="preferences">Einstellungen</string>
+    <string name="pref_select_all_on_start_title">Alle Podcasts laden</string>
+    <string name="pref_select_all_on_start_summary">Beim Start der App alle Podcasts aktualisieren</string>
+    <string name="pref_category_interface">Oberfläche</string>
+    <string name="pref_theme_color_title">Farbthema</string>
+    <string name="pref_wide_episode_list_title">Breite Episodenliste</string>
+    <string name="pref_wide_episode_list_summary">Mehr Platz für Episodendetails</string>
     <string name="ad">Testen Sie &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt;: Downloads, Playlists, Filter und viele weitere Komfortfunktionen!</string>
 </resources>
