@@ -18,6 +18,9 @@
 package net.alliknow.podcatcher.view.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.TextView;
@@ -38,6 +41,11 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
     /** Flag for whether we are in select all mode */
     protected boolean selectAll = false;
 
+    /** The theme color to use for highlighting list items */
+    protected int themeColor;
+    /** The theme color variant to use for pressed and checked items */
+    protected int lightThemeColor;
+
     /**
      * Create new adapter.
      * 
@@ -45,6 +53,19 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
      */
     public PodcatcherBaseListAdapter(Context context) {
         super(context);
+    }
+
+    /**
+     * Set the colors to use in the list for selection, checked item etc. Will
+     * only take effect after the list is redrawn.
+     * 
+     * @param color The theme color to use for highlighting list items.
+     * @param variantColor The theme color variant to use for pressed and
+     *            checked item.
+     */
+    public void setThemeColors(int color, int variantColor) {
+        this.themeColor = color;
+        this.lightThemeColor = variantColor;
     }
 
     /**
@@ -104,10 +125,23 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
      * @param position Position of the view in the list.
      */
     protected void setBackgroundColorForPosition(View view, int position) {
-        // Set list item color background
-        view.setBackgroundResource(checkedPositions.get(position) ?
-                R.color.theme_light : selectedPositions.get(position) ?
-                        R.color.theme_dark : R.color.transparent);
+        // This takes care of the item pressed state and its color
+        StateListDrawable states = new StateListDrawable();
+
+        states.addState(new int[] {
+                android.R.attr.state_pressed
+        }, new ColorDrawable(lightThemeColor));
+        // This is the view the background is drawn for
+        view.findViewById(R.id.list_item_background).setBackgroundDrawable(states);
+
+        // This handles the selected, checked and none states
+        if (checkedPositions.get(position))
+            view.setBackgroundColor(lightThemeColor);
+        else if (selectedPositions.get(position))
+            view.setBackgroundColor(themeColor);
+        else {
+            view.setBackgroundColor(Color.TRANSPARENT);
+        }
     }
 
     /**

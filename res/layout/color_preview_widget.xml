@@ -17,25 +17,9 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/list_item_background"
-    android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:orientation="horizontal"
-    android:background="@drawable/list_item_background">
-    <ImageView
-        android:id="@+id/icon"
+<View xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/color_preview"
         android:layout_width="48dp"
-        android:layout_height="match_parent"
-        android:scaleType="centerInside" />
-    <TextView
-        android:id="@+id/file:name"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:textSize="@dimen/font_size_default"
-        android:singleLine="true"
-        android:ellipsize="middle" />
-</LinearLayout>
+        android:layout_height="48dp"
+        android:background="@color/theme_dark">
+</View>

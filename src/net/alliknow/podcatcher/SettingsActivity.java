@@ -30,6 +30,12 @@ import java.io.File;
  */
 public class SettingsActivity extends BaseActivity {
 
+    /** The select all podcast on start-up preference key */
+    public static final String KEY_SELECT_ALL_ON_START = "select_all_on_startup";
+    /** The theme color preference key */
+    public static final String KEY_THEME_COLOR = "theme_color";
+    /** The episode list width preference key */
+    public static final String KEY_WIDE_EPISODE_LIST = "wide_episode_list";
     /** The preference key for the auto download flag */
     public static final String AUTO_DOWNLOAD_KEY = "auto_download";
     /** The preference key for the auto delete flag */

@@ -50,7 +50,7 @@
     <string name="podcast_add_error">Le téléchargement du podcast a échoué.</string>
     <string name="podcast_load_error">Le téléchargement du podcast a échoué. Assurez-vous que vous êtes en ligne.</string>
     <string name="podcast_load_multiple_progress">%1$d de %2$d podcasts</string>
-    <string name="podcast_load_multiple_error">ne peut pas être mis à jour.</string>
+    <string name="podcast_load_multiple_error">Le podcast \n\"%s\"\nne peut pas être mis à jour.</string>
     <string name="episode_none">Pas d\'épisodes</string>
     <string name="episode_no_description">Aucune description disponible.</string>
     <string name="episode_none_selected">Aucune description disponible</string>
@@ -96,6 +96,12 @@
     <string name="suggestions_load_error">Le téléchargement a échoué. Assurez-vous que vous êtes en ligne.</string>
     <string name="suggestions_send">Envoyer des suggestions à inclure dans cette liste&#8230;</string>
     <string name="preferences">Préférences</string>
+    <string name="pref_select_all_on_start_title">Sélectionner tous au démarrage</string>
+    <string name="pref_select_all_on_start_summary">Load all subscriptions when the app starts</string>
+    <string name="pref_category_interface">Interface</string>
+ 	<string name="pref_theme_color_title">Couleur du thème</string>
+    <string name="pref_wide_episode_list_title">Grand liste des épisodes</string>
+    <string name="pref_wide_episode_list_summary">Make room for more episode details</string>
     <string name="pref_auto_download_title">Téléchargement automatique</string>
     <string name="pref_auto_download_summary">Make new episodes available offline</string>
     <string name="pref_auto_delete_title">Suppression automatique</string>

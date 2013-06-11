@@ -108,8 +108,11 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        this.filterWarningLabel = (TextView) view.findViewById(R.id.filtered_warning);
-        this.filterWarningDivider = view.findViewById(R.id.warning_divider);
+        filterWarningLabel = (TextView) view.findViewById(R.id.filtered_warning);
+        filterWarningDivider = view.findViewById(R.id.warning_divider);
+
+        filterWarningLabel.setBackgroundColor(themeColor);
+        filterWarningDivider.setBackgroundColor(themeColor);
 
         viewCreated = true;
 
@@ -260,6 +263,16 @@ public class EpisodeListFragment extends PodcatcherListFragment {
             filterWarningDivider.setVisibility(show ? View.VISIBLE : View.GONE);
             filterWarningLabel.setText(getResources().getQuantityString(
                     R.plurals.episodes_filtered, count, count));
+        }
+    }
+
+    @Override
+    public void setThemeColors(int color, int variantColor) {
+        super.setThemeColors(color, variantColor);
+
+        if (viewCreated) {
+            filterWarningLabel.setBackgroundColor(color);
+            filterWarningDivider.setBackgroundColor(color);
         }
     }
 

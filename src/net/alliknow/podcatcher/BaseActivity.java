@@ -20,9 +20,12 @@ package net.alliknow.podcatcher;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,7 +42,7 @@ import net.alliknow.podcatcher.view.ViewMode;
  * Podcatcher base activity. Defines some common functionality useful for all
  * activities.
  */
-public abstract class BaseActivity extends Activity {
+public abstract class BaseActivity extends Activity implements OnSharedPreferenceChangeListener {
 
     /** The podcatcher website URL */
     public static final String PODCATCHER_WEBSITE = "http://www.podcatcher-deluxe.com";
@@ -53,6 +56,8 @@ public abstract class BaseActivity extends Activity {
     protected PodcastManager podcastManager;
     /** The episode manager handle */
     protected EpisodeManager episodeManager;
+    /** The shared app preferences */
+    protected SharedPreferences preferences;
 
     /** The currently active view mode */
     protected ViewMode view;
@@ -242,6 +247,9 @@ public abstract class BaseActivity extends Activity {
         // Set the data managers
         podcastManager = PodcastManager.getInstance();
         episodeManager = EpisodeManager.getInstance();
+        // Get our preferences and listen to changes
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences.registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -270,6 +278,19 @@ public abstract class BaseActivity extends Activity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // Unregister the listener
+        preferences.unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        // pass, sub-classes can hook in here
     }
 
     /**
