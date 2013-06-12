@@ -354,9 +354,13 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         if (selection.isSingle() && failedPodcast.equals(selection.getPodcast())) {
             this.currentEpisodeList = new ArrayList<Episode>();
             addSpecialEpisodes(failedPodcast);
-
-            if (currentEpisodeList != null && currentEpisodeList.size() > 0)
+            // We might at least be able to show the downloaded episodes
+            if (currentEpisodeList != null && currentEpisodeList.size() > 0) {
                 setFilteredEpisodeList();
+
+                updateFilter();
+                updateActionBar();
+            }
             else {
                 currentEpisodeList = null;
                 episodeListFragment.showLoadFailed();
