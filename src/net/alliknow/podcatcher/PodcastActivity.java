@@ -18,6 +18,7 @@
 package net.alliknow.podcatcher;
 
 import android.app.FragmentManager.OnBackStackChangedListener;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -35,6 +36,8 @@ import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment.LogoViewMode;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -43,6 +46,15 @@ import java.util.List;
  */
 public class PodcastActivity extends EpisodeListActivity implements OnBackStackChangedListener,
         OnLoadPodcastListListener, OnChangePodcastListListener, OnSelectPodcastListener {
+
+    /** The request code to identify import calls */
+    private static final int IMPORT_FROM_SIMPLE_PODCATCHER_CODE = 18;
+    /** The import from Simple Podcatcher action */
+    private static final String IMPORT_ACTION = "com.podcatcher.deluxe.action.IMPORT";
+    /** The key to find imported podcast name list under */
+    private static final String IMPORT_PODCAST_NAMES_KEY = "names";
+    /** The key to find imported podcast url list under */
+    private static final String IMPORT_PODCAST_URLS_KEY = "urls";
 
     /** The current podcast list fragment */
     protected PodcastListFragment podcastListFragment;
@@ -254,16 +266,60 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // Make action bar show number of podcasts
         updateActionBar();
 
-        // If podcast list is empty we show dialog on startup
+        // If podcast list is empty we try to import from Simple Podcatcher
         if (podcastManager.size() == 0 && isInitialAppStart && !hasPodcastToAdd) {
-            isInitialAppStart = false;
-            startActivity(new Intent(this, AddPodcastActivity.class));
+            try {
+                Intent importFromSimple = new Intent(IMPORT_ACTION);
+                startActivityForResult(importFromSimple, IMPORT_FROM_SIMPLE_PODCATCHER_CODE);
+            } catch (ActivityNotFoundException ex) {
+                // Simple Podcatcher is not installed
+                onActivityResult(IMPORT_FROM_SIMPLE_PODCATCHER_CODE, RESULT_CANCELED, null);
+            }
         }
         // If enabled, we run the "select all on start-up" action
         else if (podcastManager.size() > 0 && isInitialAppStart
                 && preferences.getBoolean(SettingsActivity.KEY_SELECT_ALL_ON_START, false)) {
             onAllPodcastsSelected();
             selection.setEpisodeFilterEnabled(true);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Only run this if we were called back from onPodcastListLoaded(). This
+        // means that we have no podcasts available and this is app start-up
+        // time.
+        if (requestCode == IMPORT_FROM_SIMPLE_PODCATCHER_CODE) {
+            boolean needsAddPodcastDialog = true;
+
+            // Find if we got some podcasts
+            if (data != null) {
+                final List<String> names = data.getStringArrayListExtra(IMPORT_PODCAST_NAMES_KEY);
+                final List<String> urls = data.getStringArrayListExtra(IMPORT_PODCAST_URLS_KEY);
+                // Yes, we got some podcasts from the Simple Podcatcher
+                if (names != null && names.size() > 0) {
+                    // Make sure dialog does not pop up
+                    needsAddPodcastDialog = false;
+                    // Import all podcasts
+                    for (String name : names) {
+                        final int index = names.indexOf(name);
+
+                        try {
+                            podcastManager.addPodcast(new Podcast(name, new URL(urls.get(index))));
+                        } catch (MalformedURLException e) {
+                            // pass
+                        }
+                    }
+                }
+            }
+
+            // If nothing is there, show add podcasts dialog
+            if (needsAddPodcastDialog) {
+                isInitialAppStart = false;
+                startActivity(new Intent(this, AddPodcastActivity.class));
+            }
         }
     }
 
