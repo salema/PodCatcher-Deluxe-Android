@@ -50,6 +50,14 @@
         <activity android:name=".ShowEpisodeListActivity" />
         <activity android:name=".ShowEpisodeActivity" />
         <activity 
+            android:name=".ScrapePodcastsActivity"
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter>
+                <action android:name="com.podcatcher.deluxe.action.IMPORT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity 
             android:name=".ImportPodcastActivity"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
