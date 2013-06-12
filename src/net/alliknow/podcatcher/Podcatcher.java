@@ -125,7 +125,7 @@ public class Podcatcher extends Application {
     public boolean isOnline() {
         final NetworkInfo activeNetwork = getNetworkInfo();
 
-        return activeNetwork != null && activeNetwork.isConnected();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
     /**

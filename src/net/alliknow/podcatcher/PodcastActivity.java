@@ -278,6 +278,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         }
         // If enabled, we run the "select all on start-up" action
         else if (podcastManager.size() > 0 && isInitialAppStart
+                && ((Podcatcher) getApplication()).isOnline()
                 && preferences.getBoolean(SettingsActivity.KEY_SELECT_ALL_ON_START, false)) {
             onAllPodcastsSelected();
             selection.setEpisodeFilterEnabled(true);
