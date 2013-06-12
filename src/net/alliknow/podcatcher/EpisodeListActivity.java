@@ -330,6 +330,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         } // Select single podcast
         else if (selection.isSingle() && podcast.equals(selection.getPodcast())) {
             currentEpisodeList = podcast.getEpisodes();
+            addSpecialEpisodes(podcast);
             setFilteredEpisodeList();
         }
 
@@ -350,8 +351,17 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     @Override
     public void onPodcastLoadFailed(Podcast failedPodcast) {
         // The podcast we are waiting for failed to load
-        if (selection.isSingle() && failedPodcast.equals(selection.getPodcast()))
-            episodeListFragment.showLoadFailed();
+        if (selection.isSingle() && failedPodcast.equals(selection.getPodcast())) {
+            this.currentEpisodeList = new ArrayList<Episode>();
+            addSpecialEpisodes(failedPodcast);
+
+            if (currentEpisodeList != null && currentEpisodeList.size() > 0)
+                setFilteredEpisodeList();
+            else {
+                currentEpisodeList = null;
+                episodeListFragment.showLoadFailed();
+            }
+        }
         // The last podcast failed to load and none of the others had any
         // episodes to show in the list
         else if (selection.isAll() && podcastManager.getLoadCount() == 0
@@ -541,6 +551,19 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         else
             contentSpinner.setSubtitle(getString(R.string.podcast_load_multiple_progress,
                     (podcastCount - loadingPodcastCount), podcastCount));
+    }
+
+    private void addSpecialEpisodes(Podcast podcast) {
+        if (currentEpisodeList != null && podcast != null) {
+            // Downloads
+            for (Episode episode : episodeManager.getDownloads())
+                if (podcast.equals(episode.getPodcast()) && !currentEpisodeList.contains(episode))
+                    currentEpisodeList.add(episode);
+            // Playlist
+            for (Episode episode : episodeManager.getPlaylist())
+                if (podcast.equals(episode.getPodcast()) && !currentEpisodeList.contains(episode))
+                    currentEpisodeList.add(episode);
+        }
     }
 
     private boolean shouldAutoDownloadLatestEpisode(Podcast podcast) {
