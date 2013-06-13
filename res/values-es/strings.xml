@@ -75,7 +75,7 @@
     <string name="download">Descargar</string>
     <string name="downloads">Descargas</string>
     <string name="downloads_none">No hay episodios</string>
-    <string name="download_started">Descarga activa: </string>
+    <string name="download_started">Descarga activa:\n\"%s\"</string>
     <string name="download_failed">Descarga falló.</string>
     <string name="playlist">Lista de reproducción</string>
     <string name="playlist_empty">No hay episodios</string>
