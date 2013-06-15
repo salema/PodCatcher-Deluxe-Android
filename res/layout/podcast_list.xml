@@ -46,8 +46,6 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="3dp"
-        android:paddingRight="3dp"
         android:scaleType="fitXY"
         android:src="@android:drawable/divider_horizontal_bright"
         android:contentDescription="@string/divider" />
@@ -57,7 +55,6 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:contentDescription="@string/podcast_image"
-        android:padding="2dp"
         android:scaleType="centerInside"
         android:src="@drawable/default_podcast_logo" />
 </LinearLayout>

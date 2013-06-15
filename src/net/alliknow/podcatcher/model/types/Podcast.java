@@ -65,8 +65,6 @@ public class Podcast implements Comparable<Podcast> {
 
     /** The point in time when the RSS file as last been set */
     private Date updated;
-    /** The point in time of the last attempt to load the podcast's logo */
-    private Date lastLoadLogoAttempt;
 
     /**
      * Create a new podcast by name and RSS file location. The name will not be
@@ -210,28 +208,6 @@ public class Podcast implements Comparable<Podcast> {
      */
     public void setLogo(Bitmap logo) {
         this.logo = logo;
-    }
-
-    /**
-     * @return The point in time the logo for this podcast has last been
-     *         attempted to load or <code>null</code> iff it had not been tried
-     *         before.
-     */
-    public Date getLastLoadLogoAttempt() {
-        if (lastLoadLogoAttempt == null)
-            return null;
-        else
-            return new Date(lastLoadLogoAttempt.getTime());
-    }
-
-    /**
-     * Set the date the logo for this podcast was last attempted to load. This
-     * is used to prevent overly frequent reloads of logos.
-     * 
-     * @param attempt Time point of the last attempt.
-     */
-    public void setLastLoadLogoAttempt(Date attempt) {
-        this.lastLoadLogoAttempt = new Date(attempt.getTime());
     }
 
     /**

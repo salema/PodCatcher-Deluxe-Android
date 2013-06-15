@@ -362,6 +362,10 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     public void onPodcastLoadFailed(Podcast failedPodcast) {
         podcastListFragment.refresh();
 
+        // Tell the podcast manager to load podcast logo even though the podcast
+        // failed to load since the podcast logo might be available offline.
+        podcastManager.loadLogo(failedPodcast);
+
         // In small portrait mode, work is done in separate activity
         if (!view.isSmallPortrait())
             super.onPodcastLoadFailed(failedPodcast);
