@@ -84,9 +84,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     /** Flag to indicate whether podcast list is dirty */
     private boolean podcastListChanged;
 
-    /** The maximum size we sample podcast logos down to */
-    private static final int LOGO_DIMENSION = 250;
-
     /** The current podcast load tasks */
     private Map<Podcast, LoadPodcastTask> loadPodcastTasks = new HashMap<Podcast, LoadPodcastTask>();
     /** The current podcast logo load tasks */
@@ -160,6 +157,10 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         else
             for (OnLoadPodcastListListener listener : loadPodcastListListeners)
                 listener.onPodcastListLoaded(getPodcastList());
+
+        // Finally, go load all podcast logo available offline
+        for (Podcast podcast : podcastList)
+            loadLogo(podcast, true);
     }
 
     /**
@@ -266,20 +267,29 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      * @see OnLoadPodcastLogoListener
      */
     public void loadLogo(Podcast podcast) {
+        loadLogo(podcast, false);
+    }
+
+    private void loadLogo(Podcast podcast, boolean localOnly) {
         // Only load podcast logo if it is not there yet
-        if (!shouldReloadLogo(podcast))
+        if (podcast.getLogo() != null)
             onPodcastLogoLoaded(podcast);
         // Only start the load task if it is not already active
         else if (!loadPodcastLogoTasks.containsKey(podcast)) {
-            // Store time stamp to avoid loading this logo too often
-            podcast.setLastLoadLogoAttempt(new Date());
             // Start logo download
-            LoadPodcastLogoTask task = new LoadPodcastLogoTask(this, LOGO_DIMENSION, LOGO_DIMENSION);
+            LoadPodcastLogoTask task = new LoadPodcastLogoTask(podcatcher, this);
+
+            // Limit logo size download unless we are on a fast network.
             if (!podcatcher.isOnFastConnection())
                 task.setLoadLimit(MAX_LOGO_SIZE_MOBILE);
+            // Only use cached file if offline (even if stale)
+            task.setLocalOnly(!podcatcher.isOnline() || localOnly);
 
+            // Go for it!
             task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
 
+            // Keep task reference, so we can cancel the load and determine
+            // whether a task for this podcast logo is already running
             loadPodcastLogoTasks.put(podcast, task);
         }
     }
@@ -550,20 +560,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     }
 
     /**
-     * Check whether we should reload the podcast logo. This depends on a
-     * combination of things including whether there is a logo and when the last
-     * effort has been made to get it.
-     * 
-     * @param Podcast to check.
-     * @return <code>true</code> iff it seems worth our time and resources to
-     *         try reload the podcast logo.
-     */
-    private boolean shouldReloadLogo(Podcast podcast) {
-        return podcast != null && podcast.getLastLoadLogoAttempt() == null
-                && podcast.getLogo() == null;
-    }
-
-    /**
      * Clear list. Add a small number of sample podcast to the list for testing.
      * Sort list.
      */
@@ -572,10 +568,12 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
 
         podcastList.add(createPodcast("This American Life",
                 "http://feeds.thisamericanlife.org/talpodcast"));
-        podcastList.add(createPodcast("Radiolab", "http://feeds.wnyc.org/radiolab"));
+        podcastList.add(createPodcast("Radiolab",
+                "http://feeds.wnyc.org/radiolab"));
         podcastList.add(createPodcast("Linux' Outlaws",
                 "http://feeds.feedburner.com/linuxoutlaws"));
-        podcastList.add(createPodcast("GEO", "http://www.geo.de/GEOaudio/index.xml"));
+        podcastList.add(createPodcast("GEO",
+                "http://www.geo.de/GEOaudio/index.xml"));
         podcastList.add(createPodcast("All Politics",
                 "http://www.npr.org/rss/podcast.php?id=510068"));
         podcastList.add(createPodcast("Planet Money",
