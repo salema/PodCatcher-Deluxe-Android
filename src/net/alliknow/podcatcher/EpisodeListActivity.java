@@ -29,6 +29,7 @@ import net.alliknow.podcatcher.listeners.OnLoadDownloadsListener;
 import net.alliknow.podcatcher.listeners.OnLoadPlaylistListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
+import net.alliknow.podcatcher.listeners.OnReverseSortingListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.listeners.OnToggleFilterListener;
 import net.alliknow.podcatcher.model.tasks.LoadDownloadsTask;
@@ -52,7 +53,8 @@ import java.util.List;
  */
 public abstract class EpisodeListActivity extends EpisodeActivity implements
         OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectPodcastListener,
-        OnLoadDownloadsListener, OnLoadPlaylistListener, OnToggleFilterListener {
+        OnLoadDownloadsListener, OnLoadPlaylistListener, OnToggleFilterListener,
+        OnReverseSortingListener {
 
     /** Key used to save the current content mode in bundle */
     public static final String MODE_KEY = "MODE_KEY";
@@ -140,13 +142,19 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
+    public void onReverseOrder() {
+        selection.setEpisodeOrderReversed(!selection.isEpisodeOrderReversed());
+
+        if (currentEpisodeList != null)
+            setSortedAndFilteredEpisodeList();
+    }
+
+    @Override
     public void onToggleFilter() {
         selection.setEpisodeFilterEnabled(!selection.isEpisodeFilterEnabled());
 
         if (currentEpisodeList != null)
-            setFilteredEpisodeList();
-
-        updateFilter();
+            setSortedAndFilteredEpisodeList();
     }
 
     @Override
@@ -168,6 +176,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 // List fragment is visible, make it show progress UI
                 episodeListFragment.resetAndSpin();
                 // Update other UI
+                updateSorting();
                 updateFilter();
                 updateDivider();
 
@@ -204,6 +213,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                     episodeListFragment.resetUi();
                 episodeListFragment.setShowPodcastNames(true);
                 // Update other UI
+                updateSorting();
                 updateFilter();
                 updateDivider();
 
@@ -250,10 +260,9 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     @Override
     public void onDownloadsLoaded(List<Episode> downloads) {
         this.currentEpisodeList = downloads;
-        setFilteredEpisodeList();
+        setSortedAndFilteredEpisodeList();
 
         updateActionBar();
-        updateFilter();
         updateDivider();
     }
 
@@ -287,10 +296,9 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     @Override
     public void onPlaylistLoaded(List<Episode> playlist) {
         this.currentEpisodeList = playlist;
-        setFilteredEpisodeList();
+        setSortedAndFilteredEpisodeList();
 
         updateActionBar();
-        updateFilter();
         updateDivider();
     }
 
@@ -324,15 +332,13 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         if (selection.isAll()) {
             if (podcast.getEpisodeNumber() > 0) {
                 currentEpisodeList.addAll(podcast.getEpisodes());
-                Collections.sort(currentEpisodeList);
-                // Make sure this is a copy
-                setFilteredEpisodeList();
+                setSortedAndFilteredEpisodeList();
             }
         } // Select single podcast
         else if (selection.isSingle() && podcast.equals(selection.getPodcast())) {
             currentEpisodeList = podcast.getEpisodes();
             addSpecialEpisodes(podcast);
-            setFilteredEpisodeList();
+            setSortedAndFilteredEpisodeList();
         }
 
         // Additionally, if on large device, process clever selection update
@@ -345,7 +351,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         if (shouldAutoDownloadLatestEpisode(podcast))
             episodeManager.download(podcast.getEpisodes().get(0));
 
-        updateFilter();
         updateActionBar();
     }
 
@@ -357,9 +362,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             addSpecialEpisodes(failedPodcast);
             // We might at least be able to show the downloaded episodes
             if (currentEpisodeList != null && currentEpisodeList.size() > 0) {
-                setFilteredEpisodeList();
+                setSortedAndFilteredEpisodeList();
 
-                updateFilter();
                 updateActionBar();
             }
             else {
@@ -434,12 +438,13 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     /**
-     * Filter and set the current episode list to show in the episode list
-     * fragment.
+     * Filter, sort and, set the current episode list to show in the episode
+     * list fragment.
      */
-    protected void setFilteredEpisodeList() {
+    protected void setSortedAndFilteredEpisodeList() {
         filteredEpisodeList = new ArrayList<Episode>(currentEpisodeList);
 
+        // Apply the filter
         if (selection.isEpisodeFilterEnabled()) {
             Iterator<Episode> iterator = filteredEpisodeList.iterator();
 
@@ -447,6 +452,11 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 if (episodeManager.getState(iterator.next()))
                     iterator.remove();
         }
+
+        // Go sort the list
+        Collections.sort(filteredEpisodeList);
+        if (selection.isEpisodeOrderReversed())
+            Collections.reverse(filteredEpisodeList);
 
         // Make sure the episode list fragment show the right empty view
         if (ContentMode.DOWNLOADS.equals(selection.getMode()))
@@ -466,6 +476,10 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
         episodeListFragment.setEpisodeList(filteredEpisodeList);
         updateEpisodeListSelection();
+
+        // Update other UI
+        updateSorting();
+        updateFilter();
     }
 
     /**
@@ -480,6 +494,15 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 episodeListFragment.selectNone();
         } else
             episodeListFragment.selectNone();
+    }
+
+    /**
+     * Update the sorting menu icon visibility.
+     */
+    protected void updateSorting() {
+        episodeListFragment.setSortMenuItemVisibility(
+                currentEpisodeList != null && !currentEpisodeList.isEmpty(),
+                selection.isEpisodeOrderReversed());
     }
 
     /**
