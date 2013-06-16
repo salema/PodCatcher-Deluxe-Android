@@ -78,7 +78,7 @@ public class ColorPickerDialog
 
         setContentView(layout);
 
-        setTitle("Test");
+        setTitle(R.string.pref_theme_color_dialog_title);
 
         mColorPicker = (ColorPickerView) layout.findViewById(R.id.color_picker_view);
         mOldColor = (ColorPickerPanelView) layout.findViewById(R.id.old_color_panel);
@@ -162,11 +162,11 @@ public class ColorPickerDialog
     private void updateHexLengthFilter() {
         if (getAlphaSliderVisible())
             mHexVal.setFilters(new InputFilter[] {
-                new InputFilter.LengthFilter(9)
+                    new InputFilter.LengthFilter(9)
             });
         else
             mHexVal.setFilters(new InputFilter[] {
-                new InputFilter.LengthFilter(7)
+                    new InputFilter.LengthFilter(7)
             });
     }
 
