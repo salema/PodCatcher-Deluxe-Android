@@ -74,7 +74,9 @@
     <string name="pref_select_all_on_start_title">Sélectionner tous au démarrage</string>
     <string name="pref_select_all_on_start_summary">Load all subscriptions when the app starts</string>
     <string name="pref_category_interface">Interface</string>
-    <string name="pref_theme_color_title">Couleur du thème</string>
+ 	<string name="pref_theme_color_title">Couleur du thème</string>
+    <string name="pref_theme_color_dialog_title">Sélectionner couleur</string>
+    <string name="pref_theme_color_dialog_use">Appuyez nouvelle couleur pour l\'appliquer</string>
     <string name="pref_wide_episode_list_title">Grand liste des épisodes</string>
     <string name="pref_wide_episode_list_summary">Make room for more episode details</string>
     <string name="ad">Essayez &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt;: Téléchargements, Listes de lecture, Filtres et bien plus encore!</string>
