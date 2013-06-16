@@ -72,6 +72,7 @@
     <string name="episodes_old">Viejo</string>
     <string name="episodes_filter_all">Todos</string>
     <string name="episodes_filter_new">Nuevos</string>
+    <string name="episodes_sort_toggle">Invertir orden</string>
     <string name="download">Descargar</string>
     <string name="downloads">Descargas</string>
     <string name="downloads_none">No hay episodios</string>

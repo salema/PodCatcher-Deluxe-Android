@@ -95,6 +95,8 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
         /** The selected episode */
         private Episode currentEpisode;
 
+        /** The sorting reversed flag */
+        private boolean sortingReversed = false;
         /** The filter active flag */
         private boolean filterEnabled = false;
 
@@ -160,6 +162,23 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
          */
         public void setEpisode(Episode episode) {
             this.currentEpisode = episode;
+        }
+
+        /**
+         * @return Whether the episode list is sorted old -> new instead of the
+         *         natural new -> old.
+         */
+        public boolean isEpisodeOrderReversed() {
+            return sortingReversed;
+        }
+
+        /**
+         * Update the episode list sorting setting.
+         * 
+         * @param reversed Give <code>true</code> reverse natural sorting order.
+         */
+        public void setEpisodeOrderReversed(boolean reversed) {
+            this.sortingReversed = reversed;
         }
 
         /**

@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.EpisodeListContextListener;
+import net.alliknow.podcatcher.listeners.OnReverseSortingListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnToggleFilterListener;
 import net.alliknow.podcatcher.model.types.Episode;
@@ -51,7 +52,13 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     private OnSelectEpisodeListener episodeSelectionListener;
     /** The activity we are in (listens to filter toggles) */
     private OnToggleFilterListener filterListener;
+    /** The activity we are in (listens to sorting toggles) */
+    private OnReverseSortingListener sortingListener;
 
+    /** Flag for show sort menu item state */
+    private boolean showSortMenuItem = false;
+    /** Flag for the state of the sort menu item */
+    private boolean sortMenuItemState = false;
     /** Flag for show filter menu item state */
     private boolean showFilterMenuItem = false;
     /** Flag for the state of the filter menu item */
@@ -66,12 +73,14 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     /** Identifier for the string the empty view shows. */
     private int emptyStringId = R.string.episode_none;
 
+    /** The sort episodes menu bar item */
+    private MenuItem sortMenuItem;
+    /** The filter episodes menu bar item */
+    private MenuItem filterMenuItem;
     /** The filter warning label */
     private TextView filterWarningLabel;
     /** The filter warning label divider */
     private View filterWarningDivider;
-    /** The filter episodes menu bar item */
-    private MenuItem filterMenuItem;
 
     /** Status flag indicating that our view is created */
     private boolean viewCreated = false;
@@ -84,9 +93,11 @@ public class EpisodeListFragment extends PodcatcherListFragment {
         try {
             this.episodeSelectionListener = (OnSelectEpisodeListener) activity;
             this.filterListener = (OnToggleFilterListener) activity;
+            this.sortingListener = (OnReverseSortingListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnSelectEpisodeListener and OnFilterToggleListener");
+                    + " must implement OnSelectEpisodeListener, " +
+                    "OnFilterToggleListener, and OnReverseSortingListener");
         }
     }
 
@@ -133,6 +144,9 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
         inflater.inflate(R.menu.episode_list, menu);
 
+        sortMenuItem = menu.findItem(R.id.sort_menuitem);
+        setSortMenuItemVisibility(showSortMenuItem, sortMenuItemState);
+
         filterMenuItem = menu.findItem(R.id.filter_menuitem);
         setFilterMenuItemVisibility(showFilterMenuItem, filterMenuItemState);
     }
@@ -140,6 +154,11 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.sort_menuitem:
+                // Tell activity to re-order the list
+                sortingListener.onReverseOrder();
+
+                return true;
             case R.id.filter_menuitem:
                 // Tell activity to toggle the filter
                 filterListener.onToggleFilter();
@@ -220,6 +239,28 @@ public class EpisodeListFragment extends PodcatcherListFragment {
                 else
                     selectNone();
             }
+        }
+    }
+
+    /**
+     * Set whether the fragment should show the sort icon. You can call this any
+     * time and can expect it to happen on fragment resume at the latest. You
+     * also have to set the sort icon state, <code>true</code> for "reverse" and
+     * <code>false</code> for "normal" (i.e. latest first).
+     * 
+     * @param show Whether to show the sort menu item.
+     * @param filter State of the sort menu item (reverse / normal)
+     */
+    public void setSortMenuItemVisibility(boolean show, boolean reverse) {
+        this.showSortMenuItem = show;
+        this.sortMenuItemState = reverse;
+
+        // Only do it right away if resumed and menu item is available,
+        // otherwise onResume or the menu creation callback will call us.
+        if (sortMenuItem != null) {
+            sortMenuItem.setVisible(showSortMenuItem);
+            sortMenuItem.setIcon(sortMenuItemState ?
+                    R.drawable.ic_menu_sort_reverse : R.drawable.ic_menu_sort);
         }
     }
 

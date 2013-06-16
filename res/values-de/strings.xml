@@ -72,6 +72,7 @@
     <string name="episodes_old">Alt</string>
     <string name="episodes_filter_all">Alle</string>
     <string name="episodes_filter_new">Neue</string>
+    <string name="episodes_sort_toggle">Reihenfolge umdrehen</string>
     <string name="download">Download</string>
     <string name="downloads">Downloads</string>
     <string name="downloads_none">Keine Downloads vorhanden. Benutzen Sie das Download-Zeichen im Menü um Episoden auf dem Gerät zu speichern.</string>

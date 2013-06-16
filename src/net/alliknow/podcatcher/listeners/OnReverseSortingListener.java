@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
 /** Copyright 2012, 2013 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
@@ -16,18 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
--->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/sort_menuitem"
-        android:icon="@drawable/ic_menu_sort"
-        android:showAsAction="always"
-        android:title="@string/episodes_sort_toggle"
-        android:orderInCategory="2" />
-    <item
-        android:id="@+id/filter_menuitem"
-        android:icon="@drawable/ic_menu_filter"
-        android:showAsAction="always"
-        android:title="@string/episodes_filter_new"
-        android:orderInCategory="3" />
-</menu>
+
+package net.alliknow.podcatcher.listeners;
+
+/**
+ * Interface for the controller to implement when the user requests an episode
+ * list re-ordering.
+ */
+public interface OnReverseSortingListener {
+
+    /**
+     * Called on the listener if the sorting state toggles.
+     */
+    public void onReverseOrder();
+}
