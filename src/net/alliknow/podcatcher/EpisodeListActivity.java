@@ -26,6 +26,7 @@ import android.view.View;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
+import net.alliknow.podcatcher.listeners.OnReverseSortingListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
@@ -44,7 +45,8 @@ import java.util.List;
  * simply show this layout.
  */
 public abstract class EpisodeListActivity extends EpisodeActivity implements
-        OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectPodcastListener {
+        OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectPodcastListener,
+        OnReverseSortingListener {
 
     /**
      * Key used to save the current setting for
@@ -126,6 +128,19 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
+    public void onReverseOrder() {
+        selection.setEpisodeOrderReversed(!selection.isEpisodeOrderReversed());
+
+        if (currentEpisodeList != null) {
+            Collections.sort(currentEpisodeList);
+            if (selection.isEpisodeOrderReversed())
+                Collections.reverse(currentEpisodeList);
+            // Make sure this is a copy
+            episodeListFragment.setEpisodeList(new ArrayList<Episode>(currentEpisodeList));
+        }
+    }
+
+    @Override
     public void onPodcastSelected(Podcast podcast) {
         selection.setPodcast(podcast);
         selection.setMode(ContentMode.SINGLE_PODCAST);
@@ -144,6 +159,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 // List fragment is visible, make it show progress UI
                 episodeListFragment.resetAndSpin();
                 // Update other UI
+                updateSorting();
                 updateDivider();
 
                 // Load podcast
@@ -179,6 +195,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                     episodeListFragment.resetUi();
                 episodeListFragment.setShowPodcastNames(true);
                 // Update other UI
+                updateSorting();
                 updateDivider();
 
                 for (Podcast podcast : podcastManager.getPodcastList())
@@ -220,12 +237,17 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             if (podcast.getEpisodeNumber() > 0) {
                 currentEpisodeList.addAll(podcast.getEpisodes());
                 Collections.sort(currentEpisodeList);
+                if (selection.isEpisodeOrderReversed())
+                    Collections.reverse(currentEpisodeList);
                 // Make sure this is a copy
                 episodeListFragment.setEpisodeList(new ArrayList<Episode>(currentEpisodeList));
             }
         } // Select single podcast
         else if (podcast.equals(selection.getPodcast())) {
             currentEpisodeList = podcast.getEpisodes();
+            if (selection.isEpisodeOrderReversed())
+                Collections.reverse(currentEpisodeList);
+
             episodeListFragment.setEpisodeList(currentEpisodeList);
         }
 
@@ -325,6 +347,15 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             default:
                 episodeListFragment.selectNone();
         }
+    }
+
+    /**
+     * Update the sorting menu icon visibility.
+     */
+    protected void updateSorting() {
+        episodeListFragment.setSortMenuItemVisibility(
+                currentEpisodeList != null && !currentEpisodeList.isEmpty(),
+                selection.isEpisodeOrderReversed());
     }
 
     /**

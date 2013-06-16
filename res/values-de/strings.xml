@@ -56,6 +56,7 @@
         <item quantity="one">Eine Episode</item>
         <item quantity="other">%d Episoden</item>
     </plurals>
+    <string name="episodes_sort_toggle">Reihenfolge umdrehen</string>
 	<string name="file_select">Auswählen</string>
     <string name="file_select_file">Datei wählen</string>
     <string name="file_select_folder">Ordner wählen</string>

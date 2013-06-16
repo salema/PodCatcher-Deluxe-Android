@@ -86,6 +86,9 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
         /** The selected episode */
         private Episode currentEpisode;
 
+        /** The sorting reversed flag */
+        private boolean sortingReversed = false;
+
         private ContentSelection() {
             // Nothing to do here
         }
@@ -148,6 +151,30 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
          */
         public void setEpisode(Episode episode) {
             this.currentEpisode = episode;
+        }
+
+        /**
+         * @return Whether the episode list is sorted old -> new instead of the
+         *         natural new -> old.
+         */
+        public boolean isEpisodeOrderReversed() {
+            return sortingReversed;
+        }
+
+        /**
+         * Update the episode list sorting setting.
+         * 
+         * @param reversed Give <code>true</code> reverse natural sorting order.
+         */
+        public void setEpisodeOrderReversed(boolean reversed) {
+            this.sortingReversed = reversed;
+        }
+
+        /**
+         * @return Whether the app is currently in single podcast mode.
+         */
+        public boolean isSingle() {
+            return ContentMode.SINGLE_PODCAST.equals(mode);
         }
 
         /**

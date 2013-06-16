@@ -20,11 +20,15 @@ package net.alliknow.podcatcher.view.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.listeners.OnReverseSortingListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.view.adapters.EpisodeListAdapter;
@@ -41,9 +45,19 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
     /** The activity we are in (listens to user selection) */
     private OnSelectEpisodeListener episodeSelectionListener;
+    /** The activity we are in (listens to sorting toggles) */
+    private OnReverseSortingListener sortingListener;
 
+    /** Flag for show sort menu item state */
+    private boolean showSortMenuItem = false;
+    /** Flag for the state of the sort menu item */
+    private boolean sortMenuItemState = false;
     /** Flag to indicate whether podcast names should be shown for episodes */
     private boolean showPodcastNames = false;
+
+    /** The sort episodes menu bar item */
+    private MenuItem sortMenuItem;
+    /** The filter episodes menu bar item */
 
     /** Status flag indicating that our view is created */
     private boolean viewCreated = false;
@@ -55,9 +69,10 @@ public class EpisodeListFragment extends PodcatcherListFragment {
         // Make sure our listener is present
         try {
             this.episodeSelectionListener = (OnSelectEpisodeListener) activity;
+            this.sortingListener = (OnReverseSortingListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnSelectEpisodeListener");
+                    + " must implement OnSelectEpisodeListener and OnReverseSortingListener");
         }
     }
 
@@ -78,6 +93,30 @@ public class EpisodeListFragment extends PodcatcherListFragment {
         // controls are established (the list might have been set earlier)
         if (currentEpisodeList != null)
             setEpisodeList(currentEpisodeList, true);
+
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        inflater.inflate(R.menu.episode_list, menu);
+
+        sortMenuItem = menu.findItem(R.id.sort_menuitem);
+        setSortMenuItemVisibility(showSortMenuItem, sortMenuItemState);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.sort_menuitem:
+                // Tell activity to re-order the list
+                sortingListener.onReverseOrder();
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -134,6 +173,28 @@ public class EpisodeListFragment extends PodcatcherListFragment {
                 else
                     selectNone();
             }
+        }
+    }
+
+    /**
+     * Set whether the fragment should show the sort icon. You can call this any
+     * time and can expect it to happen on fragment resume at the latest. You
+     * also have to set the sort icon state, <code>true</code> for "reverse" and
+     * <code>false</code> for "normal" (i.e. latest first).
+     * 
+     * @param show Whether to show the sort menu item.
+     * @param filter State of the sort menu item (reverse / normal)
+     */
+    public void setSortMenuItemVisibility(boolean show, boolean reverse) {
+        this.showSortMenuItem = show;
+        this.sortMenuItemState = reverse;
+
+        // Only do it right away if resumed and menu item is available,
+        // otherwise onResume or the menu creation callback will call us.
+        if (sortMenuItem != null) {
+            sortMenuItem.setVisible(showSortMenuItem);
+            sortMenuItem.setIcon(sortMenuItemState ?
+                    R.drawable.ic_menu_sort_reverse : R.drawable.ic_menu_sort);
         }
     }
 
