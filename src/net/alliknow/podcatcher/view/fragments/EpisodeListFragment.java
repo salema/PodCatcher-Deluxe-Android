@@ -75,6 +75,13 @@ public class EpisodeListFragment extends PodcatcherListFragment {
                     + " must implement OnSelectEpisodeListener and OnReverseSortingListener");
         }
     }
+    
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

@@ -21,6 +21,6 @@
     <item
         android:id="@+id/podcast_add_menuitem"
         android:icon="@drawable/ic_menu_add"
-        android:showAsAction="always|withText"
+        android:showAsAction="always"
         android:title="@string/podcast_add_title" />
 </menu>

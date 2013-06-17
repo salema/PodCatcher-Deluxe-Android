@@ -131,13 +131,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     public void onReverseOrder() {
         selection.setEpisodeOrderReversed(!selection.isEpisodeOrderReversed());
 
-        if (currentEpisodeList != null) {
-            Collections.sort(currentEpisodeList);
-            if (selection.isEpisodeOrderReversed())
-                Collections.reverse(currentEpisodeList);
-            // Make sure this is a copy
-            episodeListFragment.setEpisodeList(new ArrayList<Episode>(currentEpisodeList));
-        }
+        if (currentEpisodeList != null)
+            setSortedEpisodeList();
     }
 
     @Override
@@ -223,6 +218,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             episodeListFragment.resetUi();
 
             // Update other UI
+            updateSorting();
             updateDivider();
         }
     }
@@ -232,27 +228,16 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         // Update list fragment to show episode list
         // Select all podcasts
         if (selection.isAll()) {
-            // TODO decide on this: episodeList.addAll(list.subList(0,
-            // list.size() > 100 ? 100 : list.size() - 1));
             if (podcast.getEpisodeNumber() > 0) {
                 currentEpisodeList.addAll(podcast.getEpisodes());
-                Collections.sort(currentEpisodeList);
-                if (selection.isEpisodeOrderReversed())
-                    Collections.reverse(currentEpisodeList);
-                // Make sure this is a copy
-                episodeListFragment.setEpisodeList(new ArrayList<Episode>(currentEpisodeList));
+                setSortedEpisodeList();
             }
         } // Select single podcast
         else if (podcast.equals(selection.getPodcast())) {
             currentEpisodeList = podcast.getEpisodes();
-            if (selection.isEpisodeOrderReversed())
-                Collections.reverse(currentEpisodeList);
-
-            episodeListFragment.setEpisodeList(currentEpisodeList);
+            setSortedEpisodeList();
         }
 
-        // Additionally, if on large device, process clever selection update
-        updateEpisodeListSelection();
         // Update other UI
         updateDivider();
         updateActionBar();
@@ -327,6 +312,26 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 episodeListFragment.setThemeColors(themeColor, lightThemeColor);
             updateDivider();
         }
+    }
+
+    /**
+     * Sort and set the current episode list to show in the episode list
+     * fragment.
+     */
+    protected void setSortedEpisodeList() {
+        // Make sure this is a copy
+        currentEpisodeList = new ArrayList<Episode>(currentEpisodeList);
+
+        // Go sort the list
+        Collections.sort(currentEpisodeList);
+        if (selection.isEpisodeOrderReversed())
+            Collections.reverse(currentEpisodeList);
+
+        episodeListFragment.setEpisodeList(currentEpisodeList);
+        updateEpisodeListSelection();
+
+        // Update other UI
+        updateSorting();
     }
 
     /**
