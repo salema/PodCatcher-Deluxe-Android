@@ -173,8 +173,12 @@ public class Episode implements Comparable<Episode> {
 
     @Override
     public int compareTo(Episode another) {
-        if (pubDate == null || another == null || another.getPubDate() == null)
+        if (this.pubDate == null && another.getPubDate() == null)
             return 0;
+        else if (this.pubDate == null && another.getPubDate() != null)
+            return -1;
+        else if (this.pubDate != null && another.getPubDate() == null)
+            return 1;
         else
             return -1 * pubDate.compareTo(another.getPubDate());
     }
