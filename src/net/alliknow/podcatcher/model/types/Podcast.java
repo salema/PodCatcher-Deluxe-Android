@@ -296,8 +296,12 @@ public class Podcast implements Comparable<Podcast> {
 
     @Override
     public int compareTo(Podcast another) {
-        if (name == null || another == null || another.getName() == null)
+        if (this.name == null && another.getName() == null)
             return 0;
+        else if (this.name == null && another.getName() != null)
+            return -1;
+        else if (this.name != null && another.getName() == null)
+            return 1;
         else
             return getName().compareToIgnoreCase(another.getName());
     }
