@@ -268,20 +268,22 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onToggleDownload() {
-        // Check for action to perform
-        boolean download = !episodeManager.isDownloadingOrDownloaded(selection.getEpisode());
+        if (selection.isEpisodeSet()) {
+            // Check for action to perform
+            boolean download = !episodeManager.isDownloadingOrDownloaded(selection.getEpisode());
 
-        // Kick off the appropriate action
-        if (download) {
-            episodeManager.download(selection.getEpisode());
+            // Kick off the appropriate action
+            if (download) {
+                episodeManager.download(selection.getEpisode());
 
-            showToast(getString(R.string.download_started, selection.getEpisode().getName()));
+                showToast(getString(R.string.download_started, selection.getEpisode().getName()));
+            }
+            else
+                episodeManager.deleteDownload(selection.getEpisode());
+
+            // Update the UI
+            updateDownloadUi();
         }
-        else
-            episodeManager.deleteDownload(selection.getEpisode());
-
-        // Update the UI
-        updateDownloadUi();
     }
 
     @Override
