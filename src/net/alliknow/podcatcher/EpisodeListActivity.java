@@ -315,6 +315,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             episodeListFragment.resetUi();
 
             // Update other UI
+            updateSorting();
+            updateFilter();
             updateDivider();
         }
     }
@@ -418,6 +420,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
         if (episodeListFragment != null)
             episodeListFragment.selectNone();
+
         updateDivider();
     }
 
@@ -501,7 +504,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
      */
     protected void updateSorting() {
         episodeListFragment.setSortMenuItemVisibility(
-                currentEpisodeList != null && !currentEpisodeList.isEmpty(),
+                currentEpisodeList != null && !currentEpisodeList.isEmpty()
+                        && !ContentMode.PLAYLIST.equals(selection.getMode()),
                 selection.isEpisodeOrderReversed());
     }
 
