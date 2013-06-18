@@ -27,7 +27,6 @@ import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -104,10 +103,13 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
         // Let's go. There are a lot of options here, since we really want to
         // optimize this for re-using the cached versions as much as possible.
         try {
+            publishProgress(Progress.CONNECT);
             // 1. So this the simple case where we have the local version and
             // it is fresh enough. Return it.
-            if (isCachedLocally(podcast) && getCachedLogoAge(podcast) <= maxAge)
+            if (isCachedLocally(podcast) && getCachedLogoAge(podcast) <= maxAge) {
+                publishProgress(Progress.PARSE);
                 result = restoreBitmapFromFileCache(podcast);
+            }
             // 2. If that is not the case, we need to go over the air, unless
             // the localOnly flag is set or we do not know the remote location.
             else if (!localOnly && podcast.getLogoUrl() != null) {
@@ -115,8 +117,10 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
                 final byte[] logo = loadFile(podcast.getLogoUrl());
 
                 // 2b. Decode and sample the result
-                if (!isCancelled())
+                if (!isCancelled()) {
+                    publishProgress(Progress.PARSE);
                     result = decodeAndSampleBitmap(logo);
+                }
 
                 // 2c. Save to file
                 if (!isCancelled())
@@ -130,8 +134,10 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
         } catch (Exception e) {
             // Return the cached version even though it is stale (having an old
             // logo for the podcast is better then having none).
-            if (isCachedLocally(podcast))
+            if (isCachedLocally(podcast)) {
+                publishProgress(Progress.PARSE);
                 result = restoreBitmapFromFileCache(podcast);
+            }
             // We are out of options here
             else {
                 Log.w(getClass().getSimpleName(), "Logo failed to load for podcast \""
@@ -217,7 +223,7 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 
     private File getLogoCacheFile(Podcast podcast) {
         // Create the complete path leading to where we expect the cached file
-        return new File(context.getFilesDir(), CACHE_DIR + File.separator
+        return new File(context.getCacheDir(), CACHE_DIR + File.separator
                 + podcast.getUrl().hashCode() + ".jpeg");
     }
 
@@ -238,7 +244,7 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
     }
 
     private void storeBitmapToFileCache(Podcast podcast, Bitmap bitmap) {
-        final File logoCacheDir = new File(context.getFilesDir(), CACHE_DIR);
+        final File logoCacheDir = new File(context.getCacheDir(), CACHE_DIR);
         logoCacheDir.mkdirs();
 
         FileOutputStream out = null;
@@ -248,10 +254,8 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 
             bitmap.compress(Bitmap.CompressFormat.JPEG, 85, out);
             out.flush();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            // pass
         } finally {
             try {
                 out.close();

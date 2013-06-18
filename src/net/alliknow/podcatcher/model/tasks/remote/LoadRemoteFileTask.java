@@ -31,7 +31,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -51,6 +50,23 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
     /** The read timeout */
     protected static final int READ_TIMEOUT = 60000;
 
+    /** The use caches flag set to the http connection before it is opened. */
+    protected boolean useCaches;
+
+    /** The max stale cache control to set */
+    protected int maxStale = -1;
+
+    /**
+     * Set a "max-stale" cache control directive when downloading the file. The
+     * default is a negative number, turning off the directive. If not negative,
+     * the cache control directive will be set when requesting the file.
+     * 
+     * @param seconds The max stale time to set in seconds.
+     */
+    public void setMaxStale(int seconds) {
+        this.maxStale = seconds;
+    }
+
     /** A file size limit in bytes for the download */
     protected int loadLimit = -1;
 
@@ -60,10 +76,10 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
      * reached, {@link #loadFile(URL)} below will return <code>null</code>
      * immediately.
      * 
-     * @param limit The limit to set in bytes.
+     * @param bytes The limit to set in bytes.
      */
-    public void setLoadLimit(int limit) {
-        this.loadLimit = limit;
+    public void setLoadLimit(int bytes) {
+        this.loadLimit = bytes;
     }
 
     /**
@@ -78,10 +94,15 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
         HttpURLConnection connection = (HttpURLConnection) remote.openConnection();
         connection.setConnectTimeout(CONNECT_TIMEOUT);
         connection.setReadTimeout(READ_TIMEOUT);
+        // Set whether we use the http cache
+        connection.setUseCaches(useCaches);
         // We set a custom user agent here because some servers (e.g. ZDF.de)
         // redirect connections from mobile devices to servers where the content
         // we are looking for might not be available.
         connection.setRequestProperty(USER_AGENT_KEY, USER_AGENT_VALUE);
+        // Set cache control directive
+        if (maxStale >= 0)
+            connection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
 
         // TODO allow for password protected feeds
         // String userpass = username + ":" + password;
@@ -108,7 +129,7 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
                     && connection.getContentEncoding().equals("gzip");
             final boolean sendLoadProgress = contentLength > 0 && !isZippedResponse;
 
-            //showResponseHeaderDetails(connection);
+            // showResponseHeaderDetails(connection);
 
             // 2. Create the byte buffer to write to
             result = new ByteArrayOutputStream();
