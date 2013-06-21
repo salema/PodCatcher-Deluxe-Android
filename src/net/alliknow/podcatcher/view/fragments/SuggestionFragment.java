@@ -241,6 +241,9 @@ public class SuggestionFragment extends DialogFragment {
             languageFilter.setSelection(1);
         else if (currentLocale.getLanguage().equalsIgnoreCase("es"))
             languageFilter.setSelection(2);
+        // No filter for this language, set to "all"
+        else
+            languageFilter.setSelection(0);
 
         // Set to "all"
         genreFilter.setSelection(0);
