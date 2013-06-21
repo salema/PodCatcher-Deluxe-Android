@@ -54,7 +54,7 @@
     <string name="episode_none_selected">No hay episodios</string>
     <plurals name="episodes">
         <item quantity="one">Un episodio</item>
-        <item quantity="other">%d episodes</item>
+        <item quantity="other">%d episodios</item>
     </plurals>
     <string name="episodes_sort_toggle">Invertir orden</string>
 	<string name="file_select">Seleccionar</string>
