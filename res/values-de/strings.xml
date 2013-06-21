@@ -50,7 +50,7 @@
     <string name="podcast_add_error">Der Podcast konnte nicht geladen werden.</string>
     <string name="podcast_load_error">Podcast kann nicht geladen werden, bitte prüfen Sie Ihre Internetverbindung!</string>
     <string name="podcast_load_multiple_progress">%1$d von %2$d Podcasts</string>
-    <string name="podcast_load_multiple_error">Der Podcast \n\"%s\"\nkonnte nicht geladen werden..</string>
+    <string name="podcast_load_multiple_error">Der Podcast\n\"%s\"\nkonnte nicht geladen werden.</string>
     <string name="episode_none">Dieser Podcast enthält keine Episoden</string>
     <string name="episode_no_description">Keine Beschreibung verfügbar.</string>
     <string name="episode_none_selected">Keine Episode ausgewählt</string>
