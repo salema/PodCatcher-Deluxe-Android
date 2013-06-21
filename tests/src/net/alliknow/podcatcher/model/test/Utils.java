@@ -55,7 +55,7 @@ public class Utils {
         final CountDownLatch signal = new CountDownLatch(1);
         final List<Podcast> examples = new ArrayList<Podcast>();
 
-        LoadSuggestionsTask task = new LoadSuggestionsTask(new OnLoadSuggestionListener() {
+        LoadSuggestionsTask task = new LoadSuggestionsTask(null, new OnLoadSuggestionListener() {
 
             @Override
             public void onSuggestionsLoaded(List<Podcast> suggestions) {
