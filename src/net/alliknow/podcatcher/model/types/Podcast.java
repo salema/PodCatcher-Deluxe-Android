@@ -174,13 +174,6 @@ public class Podcast implements Comparable<Podcast> {
     }
 
     /**
-     * Replace current episode list with an empty one.
-     */
-    public void resetEpisodes() {
-        episodes.clear();
-    }
-
-    /**
      * Find and return the podcast's image location (logo). Only works after RSS
      * file is set.
      * 
@@ -222,7 +215,7 @@ public class Podcast implements Comparable<Podcast> {
      */
     public void parse(XmlPullParser parser) throws XmlPullParserException, IOException {
         // Reset state
-        resetEpisodes();
+        episodes.clear();
         updated = new Date();
 
         // Start parsing

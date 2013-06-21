@@ -113,7 +113,7 @@ public class SuggestionManager implements OnLoadSuggestionListener {
         // Suggestion have not been loaded before (and are not currently
         // loading)
         if (podcastSuggestions == null && loadTask == null) {
-            loadTask = new LoadSuggestionsTask(this);
+            loadTask = new LoadSuggestionsTask(podcatcher, this);
             loadTask.execute((Void) null);
         } // Suggestions already present
         else if (podcastSuggestions != null)

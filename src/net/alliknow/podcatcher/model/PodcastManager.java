@@ -18,10 +18,12 @@
 package net.alliknow.podcatcher.model;
 
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.text.Html;
 import android.util.Log;
 
 import net.alliknow.podcatcher.Podcatcher;
+import net.alliknow.podcatcher.SettingsActivity;
 import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
@@ -46,6 +48,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Our model class. Holds all the podcast and episode model data and offers
@@ -75,6 +79,13 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     /** Maximum byte size for the logo to load when on mobile connection */
     public static final int MAX_LOGO_SIZE_MOBILE = 500000;
 
+    /** Max stale time we accept from http cache on fast connections */
+    private static final int MAX_STALE = 60 * 60; // one hour
+    /** Max stale time we accept from http cache on mobile connections */
+    private static final int MAX_STALE_MOBILE = 60 * 60 * 4; // 4 hours
+    /** Max stale time we accept from http cache when offline */
+    private static final int MAX_STALE_OFFLINE = 60 * 60 * 24 * 7; // 1 week
+
     /** The name of the file we store our saved podcasts in (as OPML) */
     public static final String OPML_FILENAME = "podcasts.opml";
     /** The OPML file encoding */
@@ -98,6 +109,42 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     private Set<OnLoadPodcastListener> loadPodcastListeners = new HashSet<OnLoadPodcastListener>();
     /** The call-back set for the podcast logo load listeners */
     private Set<OnLoadPodcastLogoListener> loadPodcastLogoListeners = new HashSet<OnLoadPodcastLogoListener>();
+
+    /** This is the background update task */
+    private class PodcastUpdateTask extends TimerTask {
+
+        @Override
+        public void run() {
+            Log.i("TAG", "Running podcast background update");
+
+            final boolean online = podcatcher.isOnline();
+            // This is the current time minus the time to life for the podcast
+            // minus some extra time to make sure we refresh before it if
+            // actually due
+            final Date triggerIfLoadedBefore = new Date(new Date().getTime() -
+                    (podcatcher.isOnFastConnection() ? TIME_TO_LIFE : TIME_TO_LIFE_MOBILE) -
+                    1000 * 60 * 6); // trigger if six minutes before reload
+            Log.i("TAG", "trigger before: " + triggerIfLoadedBefore.toLocaleString());
+
+            for (Podcast podcast : podcastList) {
+                // There are some condition here: We need to be online, the
+                // podcast is not currently loading, and has not been loaded
+                // recently
+                if (online && !loadPodcastTasks.containsKey(podcast) &&
+                        (podcast.getLastLoaded() == null || podcast.getLastLoaded().before(
+                                triggerIfLoadedBefore))) {
+                    // Download podcast RSS feed (async)
+                    LoadPodcastTask task = new LoadPodcastTask(PodcastManager.this);
+                    task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
+
+                    // Keep task reference, so we can cancel the load and
+                    // determine
+                    // whether a task for this podcast is already running
+                    loadPodcastTasks.put(podcast, task);
+                }
+            }
+        }
+    }
 
     /**
      * Init the podcast data.
@@ -165,9 +212,17 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             for (OnLoadPodcastListListener listener : loadPodcastListListeners)
                 listener.onPodcastListLoaded(getPodcastList());
 
-        // Finally, go load all podcast logo available offline
+        // Go load all podcast logo available offline
         for (Podcast podcast : podcastList)
             loadLogo(podcast, true);
+
+        // Run podcast update task every five minutes
+        final int fiveMinutes = 1000 * 60 * 60 * 5;
+        final boolean isSelectAllOnStart = PreferenceManager.getDefaultSharedPreferences(
+                podcatcher.getApplicationContext()).getBoolean(
+                SettingsActivity.KEY_SELECT_ALL_ON_START, false);
+        new Timer().schedule(new PodcastUpdateTask(), isSelectAllOnStart ?
+                fiveMinutes : 0, fiveMinutes);
     }
 
     /**
@@ -205,6 +260,12 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         else if (!loadPodcastTasks.containsKey(podcast)) {
             // Download podcast RSS feed (async)
             LoadPodcastTask task = new LoadPodcastTask(this);
+            // We will accept stale versions from the cache in certain
+            // situations
+            task.setMaxStale(podcatcher.isOnline() ?
+                    podcatcher.isOnFastConnection() ? MAX_STALE : MAX_STALE_MOBILE
+                    : MAX_STALE_OFFLINE);
+
             task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
 
             // Keep task reference, so we can cancel the load and determine
