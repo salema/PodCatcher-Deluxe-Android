@@ -197,7 +197,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         selection.resetPodcast();
         selection.setMode(ContentMode.ALL_PODCASTS);
 
-		// We need to use a set here to avoid duplicates
+        // We need to use a set here to avoid duplicates
         this.currentEpisodeSet = new TreeSet<Episode>();
 
         switch (view) {
@@ -336,7 +336,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         // Select all podcasts
         if (selection.isAll()) {
             if (currentEpisodeSet.addAll(podcast.getEpisodes()))
-            setSortedAndFilteredEpisodeList();
+                setSortedAndFilteredEpisodeList();
         } // Select single podcast
         else if (selection.isSingle() && podcast.equals(selection.getPodcast())) {
             currentEpisodeSet = new TreeSet<Episode>(podcast.getEpisodes());
@@ -560,7 +560,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             if (applyColor)
                 divider.setBackgroundColor(themeColor);
             else
-                divider.setBackgroundResource(R.color.divider_off);
+                divider.setBackgroundColor(getResources().getColor(R.color.divider_off));
         }
     }
 

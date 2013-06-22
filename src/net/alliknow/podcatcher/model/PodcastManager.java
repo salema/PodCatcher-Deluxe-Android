@@ -214,8 +214,9 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         final boolean isSelectAllOnStart = PreferenceManager.getDefaultSharedPreferences(
                 podcatcher.getApplicationContext()).getBoolean(
                 SettingsActivity.KEY_SELECT_ALL_ON_START, false);
-        new Timer().schedule(new PodcastUpdateTask(), isSelectAllOnStart ?
-                fiveMinutes : 0, fiveMinutes);
+        new Timer().schedule(new PodcastUpdateTask(),
+                isSelectAllOnStart || podcatcher.isInDebugMode() ?
+                        fiveMinutes : 0, fiveMinutes);
     }
 
     /**
