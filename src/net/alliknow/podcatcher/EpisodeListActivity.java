@@ -383,7 +383,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             if (applyColor)
                 divider.setBackgroundColor(themeColor);
             else
-                divider.setBackgroundResource(R.color.divider_off);
+                divider.setBackgroundColor(getResources().getColor(R.color.divider_off));
         }
     }
 
