@@ -82,14 +82,14 @@
     <string name="playlist_empty">No hay episodios</string>
     <string name="playlist_add">Añadir a la lista de reproducción</string>
     <string name="playlist_remove">Eliminar de la lista de reproducción</string>
-	<string name="file_select">Seleccionar</string>
+    <string name="file_select">Seleccionar</string>
     <string name="file_select_file">Seleccionar archivo</string>
     <string name="file_select_folder">Seleccionar folleto</string>
     <string name="file_select_access_denied">Acceso denegado!</string>
     <string name="opml_import">Import OPML</string>
     <string name="opml_import_failed">Importación falló</string>
     <string name="opml_export">Exportación OPML</string>
-    <string name="opml_export_success">Archivo OPML almacenado en</string>
+    <string name="opml_export_success">Archivo OPML almacenado en\n%s</string>
     <string name="opml_export_failed">Exportación falló</string>
     <string name="suggestions">Sugerencias&#8230;</string>
     <string name="suggested_podcasts">Podcasts recomendados</string>

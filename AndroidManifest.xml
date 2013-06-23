@@ -139,7 +139,7 @@
             </intent-filter>
         </receiver>
         <receiver 
-        	android:name=".services.BecomingNoisyReceiver"
+            android:name=".services.BecomingNoisyReceiver"
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.media.AUDIO_BECOMING_NOISY" />

@@ -82,14 +82,14 @@
     <string name="playlist_empty">Your playlist is empty. Use the episode list\'s context menu (press and hold any episode to enter) to add episodes to the playlist.</string>
     <string name="playlist_add">Add to Playlist</string>
     <string name="playlist_remove">Remove from Playlist</string>
-	<string name="file_select">Select</string>
+    <string name="file_select">Select</string>
     <string name="file_select_file">Select File</string>
     <string name="file_select_folder">Select Folder</string>
     <string name="file_select_access_denied">Access denied!</string>
     <string name="opml_import">Import OPML</string>
     <string name="opml_import_failed">OPML import failed</string>
     <string name="opml_export">Export OPML</string>
-    <string name="opml_export_success">OPML file stored at</string>
+    <string name="opml_export_success">OPML file stored at\n%s</string>
     <string name="opml_export_failed">OPML export failed</string>
     <string name="suggestions">Suggestions&#8230;</string>
     <string name="suggested_podcasts">Suggested podcasts</string>
@@ -104,7 +104,7 @@
     <string name="pref_theme_color_dialog_title">Select theme color</string>
     <string name="pref_theme_color_dialog_use">Press new color to apply</string>
     <string name="pref_wide_episode_list_title">Wide episode list</string>
-	<string name="pref_wide_episode_list_summary">Make room for more episode details</string>
+    <string name="pref_wide_episode_list_summary">Make room for more episode details</string>
     <string name="pref_auto_download_title">Auto download</string>
     <string name="pref_auto_download_summary">Make new episodes available offline</string>
     <string name="pref_auto_delete_title">Auto delete</string>

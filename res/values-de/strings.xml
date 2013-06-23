@@ -82,14 +82,14 @@
     <string name="playlist_empty">Ihre Wiedergabeliste ist leer. Bitte benutzen Sie das Kontextmenü der Episodenliste (zum Öffnen eine beliebige Episode drücken und halten) um Einträge hinzuzufügen.</string>
     <string name="playlist_add">Zur Wiedergabeliste hinzufügen</string>
     <string name="playlist_remove">Aus Wiedergabeliste löschen</string>
-	<string name="file_select">Auswählen</string>
+    <string name="file_select">Auswählen</string>
     <string name="file_select_file">Datei wählen</string>
     <string name="file_select_folder">Ordner wählen</string>
     <string name="file_select_access_denied">Zugriff verweigert!</string>
     <string name="opml_import">OPML-Import</string>
     <string name="opml_import_failed">OPML-Import fehlgeschlagen</string>
     <string name="opml_export">OPML-Export</string>
-    <string name="opml_export_success">OPML-Datei gespeichert unter</string>
+    <string name="opml_export_success">OPML-Datei gespeichert unter\n%s</string>
     <string name="opml_export_failed">OPML-Export fehlgeschlagen</string>
     <string name="suggestions">Vorschläge&#8230;</string>
     <string name="suggested_podcasts">Empfohlene Podcasts</string>
@@ -104,7 +104,7 @@
     <string name="pref_theme_color_dialog_title">Farbe auswählen</string>
     <string name="pref_theme_color_dialog_use">Zum Anwenden neue Farbe drücken</string>
     <string name="pref_wide_episode_list_title">Breite Episodenliste</string>
-	<string name="pref_wide_episode_list_summary">Mehr Platz für Episodendetails</string>
+    <string name="pref_wide_episode_list_summary">Mehr Platz für Episodendetails</string>
     <string name="pref_auto_download_title">Automatischer Download</string>
     <string name="pref_auto_download_summary">Neue Episoden offline verfügbar machen</string>
     <string name="pref_auto_delete_title">Automatisches Löschen</string>

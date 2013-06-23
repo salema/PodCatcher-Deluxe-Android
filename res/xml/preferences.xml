@@ -29,18 +29,18 @@
         android:defaultValue="@color/theme_dark" />
     <PreferenceCategory
         android:title="@string/downloads">
-	    <CheckBoxPreference
-	        android:key="auto_download"
-	        android:title="@string/pref_auto_download_title"
-	        android:summary="@string/pref_auto_download_summary"
-	        android:defaultValue="false" />
-	    <CheckBoxPreference
-	        android:key="auto_delete"
-	        android:title="@string/pref_auto_delete_title"
-	        android:summary="@string/pref_auto_delete_summary"
-	        android:defaultValue="false" />
-	    <net.alliknow.podcatcher.preferences.DownloadFolderPreference 
-	        android:key="download_folder"
-	        android:title="@string/pref_download_folder_title" />
+        <CheckBoxPreference
+            android:key="auto_download"
+            android:title="@string/pref_auto_download_title"
+            android:summary="@string/pref_auto_download_summary"
+            android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="auto_delete"
+            android:title="@string/pref_auto_delete_title"
+            android:summary="@string/pref_auto_delete_summary"
+            android:defaultValue="false" />
+        <net.alliknow.podcatcher.preferences.DownloadFolderPreference 
+            android:key="download_folder"
+            android:title="@string/pref_download_folder_title" />
     </PreferenceCategory>
 </PreferenceScreen>
