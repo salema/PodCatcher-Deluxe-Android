@@ -26,9 +26,9 @@ import net.alliknow.podcatcher.view.fragments.SettingsFragment;
  */
 public class SettingsActivity extends BaseActivity {
 
-	/** The select all podcast on start-up preference key */
+    /** The select all podcast on start-up preference key */
     public static final String KEY_SELECT_ALL_ON_START = "select_all_on_startup";
-	/** The theme color preference key */
+    /** The theme color preference key */
     public static final String KEY_THEME_COLOR = "theme_color";
     /** The episode list width preference key */
     public static final String KEY_WIDE_EPISODE_LIST = "wide_episode_list";

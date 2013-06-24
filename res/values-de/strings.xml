@@ -57,14 +57,14 @@
         <item quantity="other">%d Episoden</item>
     </plurals>
     <string name="episodes_sort_toggle">Reihenfolge umdrehen</string>
-	<string name="file_select">Auswählen</string>
+    <string name="file_select">Auswählen</string>
     <string name="file_select_file">Datei wählen</string>
     <string name="file_select_folder">Ordner wählen</string>
     <string name="file_select_access_denied">Zugriff verweigert!</string>
     <string name="opml_import">OPML-Import</string>
     <string name="opml_import_failed">OPML-Import fehlgeschlagen</string>
     <string name="opml_export">OPML-Export</string>
-    <string name="opml_export_success">OPML-Datei gespeichert unter</string>
+    <string name="opml_export_success">OPML-Datei gespeichert unter\n%s</string>
     <string name="opml_export_failed">OPML-Export fehlgeschlagen</string>
     <string name="suggestions">Vorschläge&#8230;</string>
     <string name="suggested_podcasts">Empfohlene Podcasts</string>

@@ -37,7 +37,7 @@
     <string name="podcast_image">Imagen de el podcast</string>
     <string name="podcast_none">No hay podcast</string>
     <string name="podcast_none_selected">No hay episodios</string>
-    <string name="podcast_select_all">Seleccionar todos podcasts</string>
+    <string name="podcast_select_all">Seleccionar todos</string>
     <plurals name="podcasts">
         <item quantity="one">Un podcast</item>
         <item quantity="other">%d podcasts</item>
@@ -57,14 +57,14 @@
         <item quantity="other">%d episodios</item>
     </plurals>
     <string name="episodes_sort_toggle">Invertir orden</string>
-	<string name="file_select">Seleccionar</string>
+    <string name="file_select">Seleccionar</string>
     <string name="file_select_file">Seleccionar archivo</string>
     <string name="file_select_folder">Seleccionar folleto</string>
     <string name="file_select_access_denied">Acceso denegado!</string>
     <string name="opml_import">Import OPML</string>
     <string name="opml_import_failed">Importación falló</string>
     <string name="opml_export">Exportación OPML</string>
-    <string name="opml_export_success">Archivo OPML almacenado en</string>
+    <string name="opml_export_success">Archivo OPML almacenado en\n%s</string>
     <string name="opml_export_failed">Exportación falló</string>
     <string name="suggestions">Sugerencias&#8230;</string>
     <string name="suggested_podcasts">Podcasts recomendados</string>
