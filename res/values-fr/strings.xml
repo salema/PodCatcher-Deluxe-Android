@@ -39,7 +39,7 @@
     <string name="podcast_none">Aucun podcast disponible</string>
     <string name="podcast_none_long">Aucun podcast disponible. Pour en ajouter un, cliquez sur le symbole \"plus\" dans le menu.</string>
     <string name="podcast_none_selected">Aucun podcast sélectionné</string>
-    <string name="podcast_select_all">Sélectionner tous les podcasts</string>
+    <string name="podcast_select_all">Sélectionner tous</string>
     <plurals name="podcasts">
         <item quantity="one">Un podcast</item>
         <item quantity="other">%d podcasts</item>
@@ -76,7 +76,7 @@
     <string name="download">Télécharger</string>
     <string name="downloads">Téléchargements</string>
     <string name="downloads_none">Aucun épisode disponible. Pour sauvegarder un épisode, cliquez sur le symbole de téléchargement.</string>
-    <string name="download_started">Téléchargement de\n\"%s\" démarré</string>
+    <string name="download_started">Téléchargement de\n\"%s\"\ndémarré</string>
     <string name="download_failed">Le téléchargement a échoué.</string>
     <string name="playlist">Liste de lecture</string>
     <string name="playlist_empty">Votre liste de lecture est vide. Pour y ajouter de nouveaux fichiers, utilisez le menu contextuel de la liste d\'épisodes (pour y entrer, cliquez sur un épisode tout en maintenant la pression).</string>
@@ -102,7 +102,7 @@
     <string name="pref_category_interface">Interface</string>
     <string name="pref_theme_color_title">Thème de couleur</string>
     <string name="pref_theme_color_dialog_title">Sélectionner couleur</string>
-    <string name="pref_theme_color_dialog_use">Appuyez sur la nouvelle couleur pour l\’appliquer</string>
+    <string name="pref_theme_color_dialog_use">Appuyez sur la nouvelle couleur pour l\'appliquer</string>
     <string name="pref_wide_episode_list_title">Grande liste d\'épisodes</string>
     <string name="pref_wide_episode_list_summary">Plus d\'espace pour les détails d\'épisode</string>
     <string name="pref_auto_download_title">Téléchargement automatique</string>

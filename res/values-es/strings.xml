@@ -39,7 +39,7 @@
     <string name="podcast_none">No hay podcast</string>
     <string name="podcast_none_long">No hay podcast</string>
     <string name="podcast_none_selected">No hay episodios</string>
-    <string name="podcast_select_all">Seleccionar todos podcasts</string>
+    <string name="podcast_select_all">Seleccionar todos</string>
     <plurals name="podcasts">
         <item quantity="one">Un podcast</item>
         <item quantity="other">%d podcasts</item>
