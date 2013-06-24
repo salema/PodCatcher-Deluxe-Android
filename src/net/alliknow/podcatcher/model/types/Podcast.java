@@ -18,6 +18,7 @@
 package net.alliknow.podcatcher.model.types;
 
 import android.graphics.Bitmap;
+import android.text.Html;
 import android.util.Log;
 
 import net.alliknow.podcatcher.model.ParserUtils;
@@ -302,7 +303,7 @@ public class Podcast implements Comparable<Podcast> {
     private void loadName(XmlPullParser parser) throws XmlPullParserException, IOException {
         // Only update the name if not set
         if (name == null)
-            name = parser.nextText();
+            name = Html.fromHtml(parser.nextText().trim()).toString();
     }
 
     private void loadImage(XmlPullParser parser) throws XmlPullParserException, IOException {
