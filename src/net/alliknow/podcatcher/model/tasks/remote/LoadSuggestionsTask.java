@@ -255,7 +255,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
         } finally {
             try {
                 input.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 // Nothing more we could do here
             }
         }
@@ -277,7 +277,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
         } finally {
             try {
                 out.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 // Nothing more we could do here
             }
         }
