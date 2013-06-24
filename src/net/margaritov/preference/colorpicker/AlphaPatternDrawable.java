@@ -25,9 +25,10 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
 /**
- * This drawable that draws a simple white and gray chessboard pattern.
- * It's pattern you will often see as a background behind a
- * partly transparent image in many applications.
+ * This drawable that draws a simple white and gray chessboard pattern. It's
+ * pattern you will often see as a background behind a partly transparent image
+ * in many applications.
+ * 
  * @author Daniel Nilsson
  */
 public class AlphaPatternDrawable extends Drawable {
@@ -44,7 +45,7 @@ public class AlphaPatternDrawable extends Drawable {
     /**
      * Bitmap in which the pattern will be cahched.
      */
-    private Bitmap        mBitmap;
+    private Bitmap mBitmap;
 
     public AlphaPatternDrawable(int rectangleSize) {
         mRectangleSize = rectangleSize;
@@ -79,26 +80,25 @@ public class AlphaPatternDrawable extends Drawable {
         int height = bounds.height();
         int width = bounds.width();
 
-        numRectanglesHorizontal = (int) Math.ceil((width / mRectangleSize));
-        numRectanglesVertical = (int) Math.ceil(height / mRectangleSize);
+        numRectanglesHorizontal = (int) Math.ceil((width / (float) mRectangleSize));
+        numRectanglesVertical = (int) Math.ceil(height / (float) mRectangleSize);
 
         generatePatternBitmap();
 
     }
 
     /**
-     * This will generate a bitmap with the pattern
-     * as big as the rectangle we were allow to draw on.
-     * We do this to chache the bitmap so we don't need to
-     * recreate it each time draw() is called since it
-     * takes a few milliseconds.
+     * This will generate a bitmap with the pattern as big as the rectangle we
+     * were allow to draw on. We do this to chache the bitmap so we don't need
+     * to recreate it each time draw() is called since it takes a few
+     * milliseconds.
      */
-    private void generatePatternBitmap(){
+    private void generatePatternBitmap() {
 
-        if(getBounds().width() <= 0 || getBounds().height() <= 0){
+        if (getBounds().width() <= 0 || getBounds().height() <= 0) {
             return;
         }
-        
+
         mBitmap = Bitmap.createBitmap(getBounds().width(), getBounds().height(), Config.ARGB_8888);
         Canvas canvas = new Canvas(mBitmap);
 

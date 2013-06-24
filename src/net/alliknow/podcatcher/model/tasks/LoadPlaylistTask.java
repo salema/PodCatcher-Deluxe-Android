@@ -65,8 +65,10 @@ public class LoadPlaylistTask extends AsyncTask<Void, Void, List<Episode>> {
     @Override
     protected void onPostExecute(List<Episode> playlist) {
         // Playlist available
-        if (listener.get() != null)
-            listener.get().onPlaylistLoaded(playlist);
+        final OnLoadPlaylistListener listener = this.listener.get();
+
+        if (listener != null)
+            listener.onPlaylistLoaded(playlist);
         else
             Log.w(getClass().getSimpleName(), "Playlist loaded, but no listener attached");
     }

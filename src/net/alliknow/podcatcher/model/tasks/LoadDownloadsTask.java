@@ -65,8 +65,10 @@ public class LoadDownloadsTask extends AsyncTask<Void, Void, List<Episode>> {
     @Override
     protected void onPostExecute(List<Episode> downloads) {
         // List of downloads available
-        if (listener.get() != null)
-            listener.get().onDownloadsLoaded(downloads);
+        final OnLoadDownloadsListener listener = this.listener.get();
+
+        if (listener != null)
+            listener.onDownloadsLoaded(downloads);
         else
             Log.w(getClass().getSimpleName(),
                     "List of downloads available loaded, but no listener attached");
