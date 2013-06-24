@@ -20,8 +20,8 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.alliknow.podcatcher"
-    android:versionCode="41"
-    android:versionName="2.7.1">
+    android:versionCode="42"
+    android:versionName="2.8">
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="17" />
@@ -53,7 +53,7 @@
             android:name=".ScrapePodcastsActivity"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
-                <action android:name="com.podcatcher.deluxe.action.IMPORT" />
+                <action android:name="net.alliknow.podcatcher.action.IMPORT" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -129,14 +129,14 @@
             android:name=".services.PlayEpisodeService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.podcatcher.deluxe.action.TOGGLE" />
-                <action android:name="com.podcatcher.deluxe.action.PLAY" />
-                <action android:name="com.podcatcher.deluxe.action.PAUSE" />
-                <action android:name="com.podcatcher.deluxe.action.PREVIOUS" />
-                <action android:name="com.podcatcher.deluxe.action.SKIP" />
-                <action android:name="com.podcatcher.deluxe.action.REWIND" />
-                <action android:name="com.podcatcher.deluxe.action.FORWARD" />
-                <action android:name="com.podcatcher.deluxe.action.STOP" />
+                <action android:name="net.alliknow.podcatcher.action.TOGGLE" />
+                <action android:name="net.alliknow.podcatcher.action.PLAY" />
+                <action android:name="net.alliknow.podcatcher.action.PAUSE" />
+                <action android:name="net.alliknow.podcatcher.action.PREVIOUS" />
+                <action android:name="net.alliknow.podcatcher.action.SKIP" />
+                <action android:name="net.alliknow.podcatcher.action.REWIND" />
+                <action android:name="net.alliknow.podcatcher.action.FORWARD" />
+                <action android:name="net.alliknow.podcatcher.action.STOP" />
             </intent-filter>
         </service>
         <receiver 

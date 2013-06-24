@@ -85,6 +85,9 @@ net.alliknow.podcatcher.R$anim: int slide_in_left
 net.alliknow.podcatcher.R$anim: int slide_in_right
 net.alliknow.podcatcher.R$anim: int slide_out_left
 net.alliknow.podcatcher.R$anim: int slide_out_right
+net.alliknow.podcatcher.R$array: int genres
+net.alliknow.podcatcher.R$array: int languages
+net.alliknow.podcatcher.R$array: int types
 net.alliknow.podcatcher.R$color: int button_blue_dark
 net.alliknow.podcatcher.R$color: int button_blue_light
 net.alliknow.podcatcher.R$color: int button_green_dark
@@ -100,7 +103,6 @@ net.alliknow.podcatcher.R$color: int button_red_dark_disabled
 net.alliknow.podcatcher.R$color: int button_red_light
 net.alliknow.podcatcher.R$color: int button_red_light_disabled
 net.alliknow.podcatcher.R$color: int divider_off
-net.alliknow.podcatcher.R$color: int divider_on
 net.alliknow.podcatcher.R$color: int text_error
 net.alliknow.podcatcher.R$color: int text_secondary
 net.alliknow.podcatcher.R$color: int theme_dark
@@ -112,7 +114,6 @@ net.alliknow.podcatcher.R$dimen: int font_size_default
 net.alliknow.podcatcher.R$dimen: int font_size_large
 net.alliknow.podcatcher.R$dimen: int font_size_small
 net.alliknow.podcatcher.R$dimen: int list_item_padding
-net.alliknow.podcatcher.R$dimen: int player_right_padding
 net.alliknow.podcatcher.R$drawable: int button_blue
 net.alliknow.podcatcher.R$drawable: int button_green
 net.alliknow.podcatcher.R$drawable: int button_label
@@ -123,8 +124,6 @@ net.alliknow.podcatcher.R$drawable: int ic_checkmark_light
 net.alliknow.podcatcher.R$drawable: int ic_file
 net.alliknow.podcatcher.R$drawable: int ic_file_folder
 net.alliknow.podcatcher.R$drawable: int ic_file_up
-net.alliknow.podcatcher.R$drawable: int ic_media_fullscreen
-net.alliknow.podcatcher.R$drawable: int ic_media_next
 net.alliknow.podcatcher.R$drawable: int ic_media_pause
 net.alliknow.podcatcher.R$drawable: int ic_media_play
 net.alliknow.podcatcher.R$drawable: int ic_media_stop
@@ -134,12 +133,16 @@ net.alliknow.podcatcher.R$drawable: int ic_menu_export
 net.alliknow.podcatcher.R$drawable: int ic_menu_import
 net.alliknow.podcatcher.R$drawable: int ic_menu_rotate
 net.alliknow.podcatcher.R$drawable: int ic_menu_select_all
+net.alliknow.podcatcher.R$drawable: int ic_menu_sort
+net.alliknow.podcatcher.R$drawable: int ic_menu_sort_reverse
 net.alliknow.podcatcher.R$drawable: int ic_stat
 net.alliknow.podcatcher.R$drawable: int launcher
 net.alliknow.podcatcher.R$drawable: int list_item_background
 net.alliknow.podcatcher.R$drawable: int logo
 net.alliknow.podcatcher.R$id: int about_menuitem
 net.alliknow.podcatcher.R$id: int add_podcast_progress
+net.alliknow.podcatcher.R$id: int color_picker_view
+net.alliknow.podcatcher.R$id: int color_preview
 net.alliknow.podcatcher.R$id: int content
 net.alliknow.podcatcher.R$id: int current_path
 net.alliknow.podcatcher.R$id: int divider_first
@@ -153,11 +156,15 @@ net.alliknow.podcatcher.R$id: int episode_title
 net.alliknow.podcatcher.R$id: int file_name
 net.alliknow.podcatcher.R$id: int files
 net.alliknow.podcatcher.R$id: int help_menuitem
+net.alliknow.podcatcher.R$id: int hex_val
 net.alliknow.podcatcher.R$id: int icon
 net.alliknow.podcatcher.R$id: int import_opml_button
+net.alliknow.podcatcher.R$id: int list_item_background
 net.alliknow.podcatcher.R$id: int list_item_caption
 net.alliknow.podcatcher.R$id: int list_item_progress
 net.alliknow.podcatcher.R$id: int list_item_title
+net.alliknow.podcatcher.R$id: int new_color_panel
+net.alliknow.podcatcher.R$id: int old_color_panel
 net.alliknow.podcatcher.R$id: int opml_export_contextmenuitem
 net.alliknow.podcatcher.R$id: int path_up
 net.alliknow.podcatcher.R$id: int player
@@ -178,7 +185,10 @@ net.alliknow.podcatcher.R$id: int progress
 net.alliknow.podcatcher.R$id: int progress_bar
 net.alliknow.podcatcher.R$id: int progress_text
 net.alliknow.podcatcher.R$id: int right
+net.alliknow.podcatcher.R$id: int right_column
 net.alliknow.podcatcher.R$id: int select_file
+net.alliknow.podcatcher.R$id: int settings_menuitem
+net.alliknow.podcatcher.R$id: int sort_menuitem
 net.alliknow.podcatcher.R$id: int subtitle
 net.alliknow.podcatcher.R$id: int suggestion_add_button
 net.alliknow.podcatcher.R$id: int suggestion_description
@@ -191,10 +201,13 @@ net.alliknow.podcatcher.R$id: int suggestion_none
 net.alliknow.podcatcher.R$id: int suggestion_podcasts
 net.alliknow.podcatcher.R$id: int suggestion_send
 net.alliknow.podcatcher.R$id: int suggestion_type_select
+net.alliknow.podcatcher.R$id: int text_hex_wrapper
 net.alliknow.podcatcher.R$id: int title
 net.alliknow.podcatcher.R$integer: int progress_bar_horizontal_weight
 net.alliknow.podcatcher.R$layout: int add_podcast
+net.alliknow.podcatcher.R$layout: int color_preview_widget
 net.alliknow.podcatcher.R$layout: int content_spinner_item
+net.alliknow.podcatcher.R$layout: int dialog_color_picker
 net.alliknow.podcatcher.R$layout: int episode
 net.alliknow.podcatcher.R$layout: int episode_list
 net.alliknow.podcatcher.R$layout: int file_dialog
@@ -207,88 +220,85 @@ net.alliknow.podcatcher.R$layout: int progress
 net.alliknow.podcatcher.R$layout: int progress_horizontal
 net.alliknow.podcatcher.R$layout: int suggestion_list_item
 net.alliknow.podcatcher.R$layout: int suggestions
+net.alliknow.podcatcher.R$menu: int episode_list
 net.alliknow.podcatcher.R$menu: int player
 net.alliknow.podcatcher.R$menu: int podcast_list
 net.alliknow.podcatcher.R$menu: int podcast_list_context
 net.alliknow.podcatcher.R$menu: int podcatcher
+net.alliknow.podcatcher.R$plurals: int episodes
+net.alliknow.podcatcher.R$plurals: int podcasts
 net.alliknow.podcatcher.R$string: int about
-net.alliknow.podcatcher.R$string: int access_denied
 net.alliknow.podcatcher.R$string: int ad
-net.alliknow.podcatcher.R$string: int add_podcast
-net.alliknow.podcatcher.R$string: int add_podcast_button
-net.alliknow.podcatcher.R$string: int all
 net.alliknow.podcatcher.R$string: int app_name
-net.alliknow.podcatcher.R$string: int at
-net.alliknow.podcatcher.R$string: int audio
-net.alliknow.podcatcher.R$string: int buffering
-net.alliknow.podcatcher.R$string: int comedy
 net.alliknow.podcatcher.R$string: int connect
 net.alliknow.podcatcher.R$string: int divider
-net.alliknow.podcatcher.R$string: int education
-net.alliknow.podcatcher.R$string: int english
-net.alliknow.podcatcher.R$string: int enter_podcast_url_here
-net.alliknow.podcatcher.R$string: int entertainment
 net.alliknow.podcatcher.R$string: int episode_fragment_tag
 net.alliknow.podcatcher.R$string: int episode_list_fragment_tag
-net.alliknow.podcatcher.R$string: int episodes
-net.alliknow.podcatcher.R$string: int error_player
-net.alliknow.podcatcher.R$string: int error_podcast_add
-net.alliknow.podcatcher.R$string: int error_podcast_load
-net.alliknow.podcatcher.R$string: int error_podcast_load_multiple
-net.alliknow.podcatcher.R$string: int error_suggestions_load
-net.alliknow.podcatcher.R$string: int export_opml
-net.alliknow.podcatcher.R$string: int export_opml_failed
-net.alliknow.podcatcher.R$string: int export_opml_success
-net.alliknow.podcatcher.R$string: int german
+net.alliknow.podcatcher.R$string: int episode_no_description
+net.alliknow.podcatcher.R$string: int episode_none
+net.alliknow.podcatcher.R$string: int episode_none_selected
+net.alliknow.podcatcher.R$string: int episodes_sort_toggle
+net.alliknow.podcatcher.R$string: int file_select
+net.alliknow.podcatcher.R$string: int file_select_access_denied
+net.alliknow.podcatcher.R$string: int file_select_file
+net.alliknow.podcatcher.R$string: int file_select_folder
 net.alliknow.podcatcher.R$string: int help
-net.alliknow.podcatcher.R$string: int import_opml
-net.alliknow.podcatcher.R$string: int import_opml_failed
-net.alliknow.podcatcher.R$string: int kids
 net.alliknow.podcatcher.R$string: int load
-net.alliknow.podcatcher.R$string: int mobility
-net.alliknow.podcatcher.R$string: int music
-net.alliknow.podcatcher.R$string: int news
-net.alliknow.podcatcher.R$string: int next
-net.alliknow.podcatcher.R$string: int no_episode_description
-net.alliknow.podcatcher.R$string: int no_episode_selected
-net.alliknow.podcatcher.R$string: int no_episodes
-net.alliknow.podcatcher.R$string: int no_podcast
-net.alliknow.podcatcher.R$string: int no_podcast_long
-net.alliknow.podcatcher.R$string: int no_podcast_selected
-net.alliknow.podcatcher.R$string: int no_suggestions
-net.alliknow.podcatcher.R$string: int of
-net.alliknow.podcatcher.R$string: int one_episode
-net.alliknow.podcatcher.R$string: int one_podcast_selected
+net.alliknow.podcatcher.R$string: int opml_export
+net.alliknow.podcatcher.R$string: int opml_export_failed
+net.alliknow.podcatcher.R$string: int opml_export_success
+net.alliknow.podcatcher.R$string: int opml_import
+net.alliknow.podcatcher.R$string: int opml_import_failed
 net.alliknow.podcatcher.R$string: int parse
 net.alliknow.podcatcher.R$string: int pause
 net.alliknow.podcatcher.R$string: int play
+net.alliknow.podcatcher.R$string: int player_buffering
+net.alliknow.podcatcher.R$string: int player_error
 net.alliknow.podcatcher.R$string: int player_fragment_tag
+net.alliknow.podcatcher.R$string: int player_label
+net.alliknow.podcatcher.R$string: int player_label_short
+net.alliknow.podcatcher.R$string: int podcast_add_button
+net.alliknow.podcatcher.R$string: int podcast_add_error
+net.alliknow.podcatcher.R$string: int podcast_add_title
+net.alliknow.podcatcher.R$string: int podcast_enter_url_here
 net.alliknow.podcatcher.R$string: int podcast_image
 net.alliknow.podcatcher.R$string: int podcast_list_fragment_tag
-net.alliknow.podcatcher.R$string: int podcasts_selected
-net.alliknow.podcatcher.R$string: int politics
+net.alliknow.podcatcher.R$string: int podcast_load_error
+net.alliknow.podcatcher.R$string: int podcast_load_multiple_error
+net.alliknow.podcatcher.R$string: int podcast_load_multiple_progress
+net.alliknow.podcatcher.R$string: int podcast_none
+net.alliknow.podcatcher.R$string: int podcast_none_selected
+net.alliknow.podcatcher.R$string: int podcast_select_all
+net.alliknow.podcatcher.R$string: int pref_category_interface
+net.alliknow.podcatcher.R$string: int pref_select_all_on_start_summary
+net.alliknow.podcatcher.R$string: int pref_select_all_on_start_title
+net.alliknow.podcatcher.R$string: int pref_theme_color_dialog_title
+net.alliknow.podcatcher.R$string: int pref_theme_color_dialog_use
+net.alliknow.podcatcher.R$string: int pref_theme_color_title
+net.alliknow.podcatcher.R$string: int pref_wide_episode_list_summary
+net.alliknow.podcatcher.R$string: int pref_wide_episode_list_title
+net.alliknow.podcatcher.R$string: int preferences
 net.alliknow.podcatcher.R$string: int remove
-net.alliknow.podcatcher.R$string: int remove_podcast
 net.alliknow.podcatcher.R$string: int resume
-net.alliknow.podcatcher.R$string: int science
-net.alliknow.podcatcher.R$string: int select
-net.alliknow.podcatcher.R$string: int select_all_podcasts
-net.alliknow.podcatcher.R$string: int select_file
-net.alliknow.podcatcher.R$string: int select_folder
-net.alliknow.podcatcher.R$string: int send_suggestion
-net.alliknow.podcatcher.R$string: int sports
 net.alliknow.podcatcher.R$string: int stop
 net.alliknow.podcatcher.R$string: int suggested_podcasts
 net.alliknow.podcatcher.R$string: int suggestions
-net.alliknow.podcatcher.R$string: int technology
-net.alliknow.podcatcher.R$string: int video
+net.alliknow.podcatcher.R$string: int suggestions_load_error
+net.alliknow.podcatcher.R$string: int suggestions_none
+net.alliknow.podcatcher.R$string: int suggestions_send
 net.alliknow.podcatcher.R$string: int wait
+net.alliknow.podcatcher.R$string: int wildcard
+net.alliknow.podcatcher.R$xml: int preferences
 net.alliknow.podcatcher.RemovePodcastActivity
 net.alliknow.podcatcher.RemovePodcastActivity: RemovePodcastActivity()
+net.alliknow.podcatcher.ScrapePodcastsActivity
+net.alliknow.podcatcher.ScrapePodcastsActivity: ScrapePodcastsActivity()
 net.alliknow.podcatcher.SelectFileActivity
 net.alliknow.podcatcher.SelectFileActivity: SelectFileActivity()
 net.alliknow.podcatcher.SelectFileActivity$SelectionMode: net.alliknow.podcatcher.SelectFileActivity$SelectionMode[] values()
 net.alliknow.podcatcher.SelectFileActivity$SelectionMode: net.alliknow.podcatcher.SelectFileActivity$SelectionMode valueOf(java.lang.String)
+net.alliknow.podcatcher.SettingsActivity
+net.alliknow.podcatcher.SettingsActivity: SettingsActivity()
 net.alliknow.podcatcher.ShowEpisodeActivity
 net.alliknow.podcatcher.ShowEpisodeActivity: ShowEpisodeActivity()
 net.alliknow.podcatcher.ShowEpisodeListActivity
@@ -326,3 +336,36 @@ net.alliknow.podcatcher.view.fragments.PodcastListFragment: PodcastListFragment(
 net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode: net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode[] values()
 net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode: net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode valueOf(java.lang.String)
 net.alliknow.podcatcher.view.fragments.PodcatcherListFragment: PodcatcherListFragment()
+net.margaritov.preference.colorpicker.ColorPickerPanelView
+net.margaritov.preference.colorpicker.ColorPickerPanelView: ColorPickerPanelView(android.content.Context)
+net.margaritov.preference.colorpicker.ColorPickerPanelView: ColorPickerPanelView(android.content.Context,android.util.AttributeSet)
+net.margaritov.preference.colorpicker.ColorPickerPanelView: ColorPickerPanelView(android.content.Context,android.util.AttributeSet,int)
+net.margaritov.preference.colorpicker.ColorPickerPanelView: void setColor(int)
+net.margaritov.preference.colorpicker.ColorPickerPanelView: int getColor()
+net.margaritov.preference.colorpicker.ColorPickerPanelView: void setBorderColor(int)
+net.margaritov.preference.colorpicker.ColorPickerPanelView: int getBorderColor()
+net.margaritov.preference.colorpicker.ColorPickerPreference
+net.margaritov.preference.colorpicker.ColorPickerPreference: ColorPickerPreference(android.content.Context)
+net.margaritov.preference.colorpicker.ColorPickerPreference: ColorPickerPreference(android.content.Context,android.util.AttributeSet)
+net.margaritov.preference.colorpicker.ColorPickerPreference: ColorPickerPreference(android.content.Context,android.util.AttributeSet,int)
+net.margaritov.preference.colorpicker.ColorPickerPreference$SavedState
+net.margaritov.preference.colorpicker.ColorPickerPreference$SavedState: android.os.Parcelable$Creator CREATOR
+net.margaritov.preference.colorpicker.ColorPickerView
+net.margaritov.preference.colorpicker.ColorPickerView: ColorPickerView(android.content.Context)
+net.margaritov.preference.colorpicker.ColorPickerView: ColorPickerView(android.content.Context,android.util.AttributeSet)
+net.margaritov.preference.colorpicker.ColorPickerView: ColorPickerView(android.content.Context,android.util.AttributeSet,int)
+net.margaritov.preference.colorpicker.ColorPickerView: int getPrefferedWidth()
+net.margaritov.preference.colorpicker.ColorPickerView: int getPrefferedHeight()
+net.margaritov.preference.colorpicker.ColorPickerView: void setOnColorChangedListener(net.margaritov.preference.colorpicker.ColorPickerView$OnColorChangedListener)
+net.margaritov.preference.colorpicker.ColorPickerView: void setBorderColor(int)
+net.margaritov.preference.colorpicker.ColorPickerView: int getBorderColor()
+net.margaritov.preference.colorpicker.ColorPickerView: int getColor()
+net.margaritov.preference.colorpicker.ColorPickerView: void setColor(int)
+net.margaritov.preference.colorpicker.ColorPickerView: float getDrawingOffset()
+net.margaritov.preference.colorpicker.ColorPickerView: void setAlphaSliderVisible(boolean)
+net.margaritov.preference.colorpicker.ColorPickerView: boolean getAlphaSliderVisible()
+net.margaritov.preference.colorpicker.ColorPickerView: void setSliderTrackerColor(int)
+net.margaritov.preference.colorpicker.ColorPickerView: int getSliderTrackerColor()
+net.margaritov.preference.colorpicker.ColorPickerView: void setAlphaSliderText(int)
+net.margaritov.preference.colorpicker.ColorPickerView: void setAlphaSliderText(java.lang.String)
+net.margaritov.preference.colorpicker.ColorPickerView: java.lang.String getAlphaSliderText()
