@@ -17,6 +17,7 @@
 
 package net.alliknow.podcatcher.model.types;
 
+import android.text.Html;
 import android.util.Log;
 
 import net.alliknow.podcatcher.model.ParserUtils;
@@ -202,7 +203,7 @@ public class Episode implements Comparable<Episode> {
 
             // Episode title
             if (tagName.equalsIgnoreCase(RSS.TITLE))
-                name = parser.nextText().trim();
+                name = Html.fromHtml(parser.nextText().trim()).toString();
             // Episode media URL
             else if (tagName.equalsIgnoreCase(RSS.ENCLOSURE)) {
                 mediaUrl = createMediaUrl(parser.getAttributeValue("", RSS.URL));
