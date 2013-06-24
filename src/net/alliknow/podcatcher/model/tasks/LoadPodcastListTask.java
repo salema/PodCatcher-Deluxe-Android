@@ -81,8 +81,8 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
      * 
      * @param location The location to read from.
      */
-    public void setCustomLocation(File opmlFile) {
-        this.importFile = opmlFile;
+    public void setCustomLocation(File location) {
+        this.importFile = location;
     }
 
     @Override

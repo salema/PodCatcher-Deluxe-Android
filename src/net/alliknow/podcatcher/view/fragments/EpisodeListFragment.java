@@ -249,7 +249,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
      * <code>false</code> for "normal" (i.e. latest first).
      * 
      * @param show Whether to show the sort menu item.
-     * @param filter State of the sort menu item (reverse / normal)
+     * @param reverse State of the sort menu item (reverse / normal)
      */
     public void setSortMenuItemVisibility(boolean show, boolean reverse) {
         this.showSortMenuItem = show;
