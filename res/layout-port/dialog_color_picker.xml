@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="left"
-            android:text="Use color"
+            android:text="@string/pref_theme_color_dialog_use"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <EditText
