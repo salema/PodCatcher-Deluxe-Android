@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
@@ -82,6 +83,8 @@ public class EpisodeFragment extends Fragment {
     private ImageView downloadIconView;
     /** The divider view between title and description */
     private View dividerView;
+    /** The episode video view */
+    private VideoView videoView;
     /** The episode description web view */
     private WebView descriptionView;
 
@@ -122,8 +125,10 @@ public class EpisodeFragment extends Fragment {
         subtitleView = (TextView) getView().findViewById(R.id.podcast_title);
         stateIconView = (ImageView) getView().findViewById(R.id.state_icon);
         downloadIconView = (ImageView) getView().findViewById(R.id.download_icon);
-        descriptionView = (WebView) getView().findViewById(R.id.episode_description);
         dividerView = getView().findViewById(R.id.episode_divider);
+
+        videoView = (VideoView) getView().findViewById(R.id.episode_video);
+        descriptionView = (WebView) getView().findViewById(R.id.episode_description);
 
         viewCreated = true;
 
@@ -162,6 +167,10 @@ public class EpisodeFragment extends Fragment {
         viewCreated = false;
 
         super.onDestroyView();
+    }
+
+    public VideoView getVideoView() {
+        return videoView;
     }
 
     /**
@@ -289,5 +298,10 @@ public class EpisodeFragment extends Fragment {
             dividerView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
             descriptionView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
         }
+    }
+
+    public void setShowVideoView(boolean showVideo) {
+        if (videoView != null)
+            videoView.setVisibility(showVideo ? VISIBLE : GONE);
     }
 }

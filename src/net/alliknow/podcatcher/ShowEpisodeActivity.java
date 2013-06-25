@@ -103,4 +103,9 @@ public class ShowEpisodeActivity extends EpisodeActivity {
         // Enable navigation
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
+    protected void updateVideoSurface() {
+        if (service != null)
+            service.setVideoSurfaceProvider(this);
+    }
 }

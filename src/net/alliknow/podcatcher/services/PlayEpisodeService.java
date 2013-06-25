@@ -44,10 +44,13 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
+import android.widget.VideoView;
 
 import net.alliknow.podcatcher.SettingsActivity;
 import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
+import net.alliknow.podcatcher.listeners.VideoSurfaceProvider;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
 
@@ -128,6 +131,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
     /** The call-back set for the play service listeners */
     private Set<PlayServiceListener> listeners = new HashSet<PlayServiceListener>();
+    /** The registered video surface provider */
+    private VideoSurfaceProvider videoSurfaceProvider;
     /** Binder given to clients */
     private final IBinder binder = new PlayServiceBinder();
 
@@ -265,6 +270,17 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         listeners.remove(listener);
     }
 
+    public void setVideoSurfaceProvider(VideoSurfaceProvider provider) {
+        this.videoSurfaceProvider = provider;
+
+        if (isVideo() && provider != null) {
+            final VideoView view = provider.getVideoView();
+
+            if (view != null && view.getVisibility() == View.VISIBLE)
+                player.setDisplay(provider.getVideoView().getHolder());
+        }
+    }
+
     /**
      * Load and start playback for given episode. Will end any current playback.
      * 
@@ -395,6 +411,10 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         return buffering || isPreparing();
     }
 
+    public boolean isVideo() {
+        return player != null && player.getVideoHeight() > 0;
+    }
+
     /**
      * Checks whether the currently loaded episode is equal to the one given.
      * The check we be true regardless of whether the episode has been actually
@@ -465,9 +485,19 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             // Alert the listeners
             if (listeners.size() > 0)
                 for (PlayServiceListener listener : listeners)
-                    listener.onPlaybackStarted();
+                    listener.onPlaybackStarted(isVideo());
             else
                 Log.d(getClass().getSimpleName(), "Episode prepared, but no listener attached");
+
+            // Set the video view if needed
+            if (isVideo() && videoSurfaceProvider != null) {
+                final VideoView view = videoSurfaceProvider.getVideoView();
+
+                if (view != null && view.getVisibility() == View.VISIBLE) {
+                    player.setDisplay(videoSurfaceProvider.getVideoView().getHolder());
+                    player.setScreenOnWhilePlaying(true);
+                }
+            }
         } else
             onError(mediaPlayer, 0, 0);
     }

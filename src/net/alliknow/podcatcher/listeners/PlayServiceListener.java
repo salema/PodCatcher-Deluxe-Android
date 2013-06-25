@@ -28,8 +28,10 @@ public interface PlayServiceListener {
     /**
      * Called by the service on the listener if an episode is loaded and ready
      * to play (the service might in fact already have started playback...)
+     * 
+     * @param video Whether the episode started has video content.
      */
-    public void onPlaybackStarted();
+    public void onPlaybackStarted(boolean video);
 
     /**
      * Called by the service on the listener if the state of the service

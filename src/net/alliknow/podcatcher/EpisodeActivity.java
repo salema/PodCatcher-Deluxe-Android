@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.widget.SeekBar;
+import android.widget.VideoView;
 
 import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
 import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
@@ -31,6 +32,7 @@ import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.listeners.PlayerListener;
+import net.alliknow.podcatcher.listeners.VideoSurfaceProvider;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
@@ -47,7 +49,7 @@ import java.util.TimerTask;
  * or simply show this layout.
  */
 public abstract class EpisodeActivity extends BaseActivity implements
-        PlayerListener, PlayServiceListener, OnSelectEpisodeListener,
+        PlayerListener, PlayServiceListener, VideoSurfaceProvider, OnSelectEpisodeListener,
         OnDownloadEpisodeListener, OnChangePlaylistListener, OnChangeEpisodeStateListener {
 
     /** Key used to store episode URL in intent or bundle */
@@ -181,6 +183,11 @@ public abstract class EpisodeActivity extends BaseActivity implements
             service.removePlayServiceListener(this);
             unbindService(connection);
         }
+    }
+
+    @Override
+    public VideoView getVideoView() {
+        return episodeFragment.getVideoView();
     }
 
     @Override
@@ -325,8 +332,11 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     @Override
-    public void onPlaybackStarted() {
+    public void onPlaybackStarted(boolean video) {
         startPlayProgressTimer();
+
+        if (video && episodeFragment != null)
+            episodeFragment.setShowVideoView(true);
     }
 
     @Override
@@ -433,6 +443,11 @@ public abstract class EpisodeActivity extends BaseActivity implements
             episodeFragment.setNewIconVisibility(!episodeManager.getState(selection.getEpisode()));
     }
 
+    protected void updateVideoSurface() {
+        if (!view.isSmallPortrait() && service != null)
+            service.setVideoSurfaceProvider(this);
+    }
+
     /**
      * Update the player fragment UI to reflect current state of play.
      */
@@ -512,6 +527,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
             // Update player UI
             updatePlayerUi();
+            updateVideoSurface();
 
             // Restart play progress timer task if service is playing
             if (service.isPlaying())
