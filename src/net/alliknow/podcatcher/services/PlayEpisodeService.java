@@ -44,8 +44,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.View;
-import android.widget.VideoView;
+import android.view.SurfaceHolder;
 
 import net.alliknow.podcatcher.SettingsActivity;
 import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
@@ -135,6 +134,35 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     private VideoSurfaceProvider videoSurfaceProvider;
     /** Binder given to clients */
     private final IBinder binder = new PlayServiceBinder();
+
+    private final class VideoCallback implements SurfaceHolder.Callback {
+
+        private final boolean startPlaybackOnCreate;
+
+        public VideoCallback(boolean startPlayback) {
+            this.startPlaybackOnCreate = startPlayback;
+        }
+
+        @Override
+        public void surfaceDestroyed(SurfaceHolder holder) {
+            // pass
+        }
+
+        @Override
+        public void surfaceCreated(SurfaceHolder holder) {
+            setVideoSurface(holder);
+
+            if (startPlaybackOnCreate)
+                player.start();
+
+            holder.removeCallback(this);
+        }
+
+        @Override
+        public void surfaceChanged(SurfaceHolder holder, int f, int w, int h) {
+            // pass
+        }
+    }
 
     /**
      * The binder to return to client.
@@ -270,15 +298,36 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         listeners.remove(listener);
     }
 
+    /**
+     * Set the video sink for the service. The service will only feed only
+     * surface at a time. Calling this method will replace any sink currently
+     * set. If playing, playback will continue on the new surface. Set to
+     * <code>null</code> for audio only.
+     * 
+     * @param provider The current video surface provider.
+     */
     public void setVideoSurfaceProvider(VideoSurfaceProvider provider) {
         this.videoSurfaceProvider = provider;
 
-        if (isVideo() && provider != null) {
-            final VideoView view = provider.getVideoView();
+        // Switch to new display if needed
+        if (isPrepared() && isVideo() && provider != null) {
+            final SurfaceHolder holder = provider.getVideoSurface();
 
-            if (view != null && view.getVisibility() == View.VISIBLE)
-                player.setDisplay(provider.getVideoView().getHolder());
+            if (provider.isVideoSurfaceAvailable())
+                setVideoSurface(holder);
+            else
+                holder.addCallback(new VideoCallback(false));
         }
+    }
+
+    /**
+     * @param holder
+     */
+    private void setVideoSurface(final SurfaceHolder holder) {
+        player.setDisplay(holder);
+        player.setScreenOnWhilePlaying(true);
+        videoSurfaceProvider.adjustToVideoSize(player.getVideoWidth(),
+                player.getVideoHeight());
     }
 
     /**
@@ -411,6 +460,9 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         return buffering || isPreparing();
     }
 
+    /**
+     * @return Whether the currently loaded episode has video content.
+     */
     public boolean isVideo() {
         return player != null && player.getVideoHeight() > 0;
     }
@@ -475,7 +527,25 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
             // Go start and show the notification
             player.seekTo(episodeManager.getResumeAt(currentEpisode));
-            player.start();
+            // 1) If we play audio or do not have a video surface, simply start
+            // playback
+            if (!isVideo() || videoSurfaceProvider == null)
+                player.start();
+            // 2) If we have a video and a surface, use it
+            else {
+                final SurfaceHolder holder = videoSurfaceProvider.getVideoSurface();
+
+                // 2.1) The surface is available, we can start right away
+                if (videoSurfaceProvider.isVideoSurfaceAvailable()) {
+                    setVideoSurface(holder);
+                    player.start();
+                }
+                // 2.2) We need to wait for the callback because the surface is
+                // not yet available
+                else
+                    holder.addCallback(new VideoCallback(true));
+            }
+            // 3. Show notification
             startForeground(NOTIFICATION_ID, notification.build(currentEpisode));
             startPlayProgressTimer();
 
@@ -488,16 +558,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                     listener.onPlaybackStarted(isVideo());
             else
                 Log.d(getClass().getSimpleName(), "Episode prepared, but no listener attached");
-
-            // Set the video view if needed
-            if (isVideo() && videoSurfaceProvider != null) {
-                final VideoView view = videoSurfaceProvider.getVideoView();
-
-                if (view != null && view.getVisibility() == View.VISIBLE) {
-                    player.setDisplay(videoSurfaceProvider.getVideoView().getHolder());
-                    player.setScreenOnWhilePlaying(true);
-                }
-            }
         } else
             onError(mediaPlayer, 0, 0);
     }

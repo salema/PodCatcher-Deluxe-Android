@@ -23,12 +23,17 @@ import static android.view.View.VISIBLE;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.SurfaceHolder;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -36,6 +41,7 @@ import android.widget.VideoView;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
+import net.alliknow.podcatcher.listeners.OnRequestFullscreenListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.view.Utils;
 
@@ -45,7 +51,9 @@ import net.alliknow.podcatcher.view.Utils;
 public class EpisodeFragment extends Fragment {
 
     /** The listener for the menu item */
-    private OnDownloadEpisodeListener listener;
+    private OnDownloadEpisodeListener downloadListener;
+    /** The listener for the video view */
+    private OnRequestFullscreenListener fullscreenListener;
     /** The currently shown episode */
     private Episode currentEpisode;
 
@@ -88,16 +96,40 @@ public class EpisodeFragment extends Fragment {
     /** The episode description web view */
     private WebView descriptionView;
 
+    /** Flag to indicate whether video surface is available */
+    private boolean videoSurfaceAvailable = false;
+    /** Our video surface holder callback to update availability */
+    private VideoCallback videoCallback = new VideoCallback();
+
+    /** The callback implementation */
+    private final class VideoCallback implements SurfaceHolder.Callback {
+        @Override
+        public void surfaceCreated(SurfaceHolder holder) {
+            videoSurfaceAvailable = true;
+        }
+
+        @Override
+        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            // pass
+        }
+
+        @Override
+        public void surfaceDestroyed(SurfaceHolder holder) {
+            videoSurfaceAvailable = false;
+        }
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
         // Make sure our listener is present
         try {
-            this.listener = (OnDownloadEpisodeListener) activity;
+            this.downloadListener = (OnDownloadEpisodeListener) activity;
+            this.fullscreenListener = (OnRequestFullscreenListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnDownloadEpisodeListener");
+                    + " must implement OnDownloadEpisodeListener and OnRequestFullscreenListener");
         }
     }
 
@@ -128,6 +160,18 @@ public class EpisodeFragment extends Fragment {
         dividerView = getView().findViewById(R.id.episode_divider);
 
         videoView = (VideoView) getView().findViewById(R.id.episode_video);
+        videoView.getHolder().addCallback(videoCallback);
+        videoView.setOnTouchListener(new OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.i(getTag(), "Fullscreen requested");
+                fullscreenListener.onRequestFullscreen();
+
+                return true;
+            }
+        });
+
         descriptionView = (WebView) getView().findViewById(R.id.episode_description);
 
         viewCreated = true;
@@ -154,7 +198,7 @@ public class EpisodeFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.episode_download_menuitem:
                 // Tell activity to load/unload the current episode
-                listener.onToggleDownload();
+                downloadListener.onToggleDownload();
 
                 return true;
             default:
@@ -165,12 +209,40 @@ public class EpisodeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         viewCreated = false;
+        videoView.getHolder().removeCallback(videoCallback);
 
         super.onDestroyView();
     }
 
-    public VideoView getVideoView() {
-        return videoView;
+    /**
+     * @return The surface holder for the video view.
+     */
+    public SurfaceHolder getSurfaceHolder() {
+        return videoView.getHolder();
+    }
+
+    /**
+     * @return Whether the surface is available for playback.
+     */
+    public boolean isVideoSurfaceAvailable() {
+        return videoSurfaceAvailable;
+    }
+
+    /**
+     * Set the size of the video currently played back and make the fragment's
+     * video view adjust to the size, respecting the video aspect ratio.
+     * 
+     * @param width The current video's width.
+     * @param height The current video's height
+     */
+    public void setVideoSize(int width, int height) {
+        LayoutParams layoutParams = videoView.getLayoutParams();
+
+        layoutParams.height = (int) (((float) height / (float) width) *
+                (float) videoView.getWidth());
+        Log.i(getClass().getSimpleName(), "Video view height set to " + height);
+
+        videoView.setLayoutParams(layoutParams);
     }
 
     /**
@@ -301,7 +373,7 @@ public class EpisodeFragment extends Fragment {
     }
 
     public void setShowVideoView(boolean showVideo) {
-        if (videoView != null)
+        if (viewCreated)
             videoView.setVisibility(showVideo ? VISIBLE : GONE);
     }
 }

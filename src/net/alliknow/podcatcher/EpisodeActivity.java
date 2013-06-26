@@ -23,12 +23,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.util.Log;
+import android.view.SurfaceHolder;
 import android.widget.SeekBar;
-import android.widget.VideoView;
 
 import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
 import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
+import net.alliknow.podcatcher.listeners.OnRequestFullscreenListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.listeners.PlayerListener;
@@ -37,6 +39,7 @@ import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
 import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
+import net.alliknow.podcatcher.view.fragments.FullscreenFragment;
 import net.alliknow.podcatcher.view.fragments.PlayerFragment;
 
 import java.lang.ref.WeakReference;
@@ -50,7 +53,8 @@ import java.util.TimerTask;
  */
 public abstract class EpisodeActivity extends BaseActivity implements
         PlayerListener, PlayServiceListener, VideoSurfaceProvider, OnSelectEpisodeListener,
-        OnDownloadEpisodeListener, OnChangePlaylistListener, OnChangeEpisodeStateListener {
+        OnDownloadEpisodeListener, OnRequestFullscreenListener, OnChangePlaylistListener,
+        OnChangeEpisodeStateListener {
 
     /** Key used to store episode URL in intent or bundle */
     public static final String EPISODE_URL_KEY = "episode_url";
@@ -69,6 +73,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
     private TimerTask playUpdateTimerTask;
     /** Flag for visibility, coordinating timer */
     private boolean visible = false;
+
+    private boolean fullscreen;
 
     /** The actual task to regularly update the UI on playback */
     private static class PlayProgressTask extends TimerTask {
@@ -186,8 +192,49 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     @Override
-    public VideoView getVideoView() {
-        return episodeFragment.getVideoView();
+    public SurfaceHolder getVideoSurface() {
+        final FullscreenFragment ff = ((FullscreenFragment) getFragmentManager()
+                .findFragmentByTag("fullscreen_dialog"));
+
+        if (fullscreen && ff != null)
+            return ff.getSurfaceHolder();
+        else
+            return episodeFragment == null ? null : episodeFragment.getSurfaceHolder();
+    }
+
+    @Override
+    public boolean isVideoSurfaceAvailable() {
+        final FullscreenFragment ff = ((FullscreenFragment) getFragmentManager()
+                .findFragmentByTag("fullscreen_dialog"));
+
+        if (fullscreen)
+            return ff.isVideoSurfaceAvailable();
+        else
+            return episodeFragment == null ? false : episodeFragment.isVideoSurfaceAvailable();
+    }
+
+    @Override
+    public void adjustToVideoSize(int width, int height) {
+        Log.i(getClass().getSimpleName(), "New video dimension: width: " + width);
+        Log.i(getClass().getSimpleName(), "New video dimension: height: " + height);
+
+        if (episodeFragment != null && !fullscreen)
+            episodeFragment.setVideoSize(width, height);
+    }
+
+    @Override
+    public void onRequestFullscreen() {
+        this.fullscreen = true;
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.addToBackStack(null);
+
+        // Create and show the dialog.
+        FullscreenFragment videoFragment = new FullscreenFragment();
+        videoFragment.show(transaction, "fullscreen_dialog");
+        getFragmentManager().executePendingTransactions();
+
+        updateVideoSurface();
     }
 
     @Override
@@ -388,6 +435,9 @@ public abstract class EpisodeActivity extends BaseActivity implements
         if (episodeManager.isPlaylistEmpty()) {
             stopPlayProgressTimer();
             updatePlayerUi();
+
+            if (episodeFragment != null)
+                episodeFragment.setShowVideoView(false);
         }
     }
 
@@ -395,6 +445,9 @@ public abstract class EpisodeActivity extends BaseActivity implements
     public void onError() {
         stopPlayProgressTimer();
         service.reset();
+
+        if (episodeFragment != null)
+            episodeFragment.setShowVideoView(false);
 
         updatePlayerUi();
         playerFragment.setPlayerVisibilility(true);
@@ -460,6 +513,11 @@ public abstract class EpisodeActivity extends BaseActivity implements
             // Show/hide menu item
             playerFragment.setLoadMenuItemVisibility(selection.isEpisodeSet(),
                     !currentEpisodeIsShowing);
+
+            // Show/hide video output
+            if (episodeFragment != null)
+                episodeFragment.setShowVideoView(service.isPrepared() && service.isVideo()
+                        && currentEpisodeIsShowing);
 
             // Make sure player is shown if and as needed (update the details
             // only if they are actually visible)

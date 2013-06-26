@@ -17,12 +17,35 @@
 
 package net.alliknow.podcatcher.listeners;
 
-import android.widget.VideoView;
+import android.view.SurfaceHolder;
+
+import net.alliknow.podcatcher.services.PlayEpisodeService;
 
 /**
  * Listener interface to implement by activities interested in showing video.
+ * 
+ * @see PlayEpisodeService#setVideoSurfaceProvider(VideoSurfaceProvider)
  */
 public interface VideoSurfaceProvider {
 
-    public VideoView getVideoView();
+    /**
+     * @return The surface holder for the video view. This will be used by the
+     *         episode playback service to show the video content when playing.
+     */
+    public SurfaceHolder getVideoSurface();
+
+    /**
+     * @return Whether the surface is available for playback. Needs to return
+     *         <code>true</code> if the surface is already available, and
+     *         <code>false</code> otherwise.
+     */
+    public boolean isVideoSurfaceAvailable();
+
+    /**
+     * Alert UI about the size of the video currently played back.
+     * 
+     * @param width The current video's width.
+     * @param height The current video's height
+     */
+    public void adjustToVideoSize(int width, int height);
 }

@@ -18,6 +18,7 @@
 package net.alliknow.podcatcher;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import net.alliknow.podcatcher.model.types.Episode;
@@ -105,6 +106,8 @@ public class ShowEpisodeActivity extends EpisodeActivity {
     }
 
     protected void updateVideoSurface() {
+        Log.i("VIDEO", "Video surface broadcasted to service");
+
         if (service != null)
             service.setVideoSurfaceProvider(this);
     }

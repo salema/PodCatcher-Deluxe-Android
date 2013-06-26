@@ -642,8 +642,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
                 "http://www.npr.org/rss/podcast.php?id=510289"));
         podcastList.add(createPodcast("Freakonomics",
                 "http://feeds.feedburner.com/freakonomicsradio"));
-        podcastList.add(createPodcast("Sendung mit der Maus",
-                "http://podcast.wdr.de/maus.xml"));
+        podcastList.add(createPodcast("Anstalt",
+                "http://www.zdf.de/ZDFmediathek/podcast/222630?view=podcast"));
         podcastList.add(createPodcast("Little Letter for Gaelic Learners",
                 "http://downloads.bbc.co.uk/podcasts/scotland/litirbheag/rss.xml"));
 
