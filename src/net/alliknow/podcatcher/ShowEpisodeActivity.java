@@ -18,7 +18,6 @@
 package net.alliknow.podcatcher;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 
 import net.alliknow.podcatcher.model.types.Episode;
@@ -105,10 +104,13 @@ public class ShowEpisodeActivity extends EpisodeActivity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    @Override
     protected void updateVideoSurface() {
-        Log.i("VIDEO", "Video surface broadcasted to service");
-
-        if (service != null)
-            service.setVideoSurfaceProvider(this);
+        if (service != null) {
+            if (selection.isFullscreenEnabled())
+                service.setVideoSurfaceProvider(fullscreenFragment);
+            else
+                service.setVideoSurfaceProvider(episodeFragment);
+        }
     }
 }

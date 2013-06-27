@@ -33,11 +33,12 @@ import android.widget.MediaController.MediaPlayerControl;
 import android.widget.VideoView;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.listeners.VideoSurfaceProvider;
 
 /**
  * Fragment for fullscreen video playback.
  */
-public class FullscreenFragment extends DialogFragment {
+public class FullscreenFragment extends DialogFragment implements VideoSurfaceProvider {
 
     /** The activity we live in */
     private OnCancelListener listener;
@@ -132,28 +133,18 @@ public class FullscreenFragment extends DialogFragment {
         listener.onCancel(dialog);
     }
 
-    /**
-     * @return The surface holder for the video view.
-     */
-    public SurfaceHolder getSurfaceHolder() {
+    @Override
+    public SurfaceHolder getVideoSurface() {
         return videoView.getHolder();
     }
 
-    /**
-     * @return Whether the surface is available for playback.
-     */
+    @Override
     public boolean isVideoSurfaceAvailable() {
         return videoSurfaceAvailable;
     }
 
-    /**
-     * Set the size of the video currently played back and make the fragment's
-     * video view adjust to the size, respecting the video aspect ratio.
-     * 
-     * @param width The current video's width.
-     * @param height The current video's height
-     */
-    public void setVideoSize(int width, int height) {
+    @Override
+    public void adjustToVideoSize(int width, int height) {
         LayoutParams layoutParams = videoView.getLayoutParams();
 
         layoutParams.height = (int) (((float) height / (float) width) *

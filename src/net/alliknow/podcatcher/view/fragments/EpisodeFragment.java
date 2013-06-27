@@ -42,13 +42,14 @@ import android.widget.VideoView;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnRequestFullscreenListener;
+import net.alliknow.podcatcher.listeners.VideoSurfaceProvider;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.view.Utils;
 
 /**
  * Fragment showing episode details.
  */
-public class EpisodeFragment extends Fragment {
+public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
 
     /** The listener for the menu item */
     private OnDownloadEpisodeListener downloadListener;
@@ -215,37 +216,6 @@ public class EpisodeFragment extends Fragment {
     }
 
     /**
-     * @return The surface holder for the video view.
-     */
-    public SurfaceHolder getSurfaceHolder() {
-        return videoView.getHolder();
-    }
-
-    /**
-     * @return Whether the surface is available for playback.
-     */
-    public boolean isVideoSurfaceAvailable() {
-        return videoSurfaceAvailable;
-    }
-
-    /**
-     * Set the size of the video currently played back and make the fragment's
-     * video view adjust to the size, respecting the video aspect ratio.
-     * 
-     * @param width The current video's width.
-     * @param height The current video's height
-     */
-    public void setVideoSize(int width, int height) {
-        LayoutParams layoutParams = videoView.getLayoutParams();
-
-        layoutParams.height = (int) (((float) height / (float) width) *
-                (float) videoView.getWidth());
-        Log.i(getClass().getSimpleName(), "Video view height set to " + height);
-
-        videoView.setLayoutParams(layoutParams);
-    }
-
-    /**
      * Set the displayed episode, all UI will be updated. Only has any effect if
      * the episode given is not <code>null</code> and different from the episode
      * currently displayed.
@@ -361,6 +331,38 @@ public class EpisodeFragment extends Fragment {
         this.showEpisodeDate = show;
     }
 
+    /**
+     * Set whether the fragment should make the video surface visible. If the
+     * view is created, the effect will be immediate.
+     * 
+     * @param showVideo Set to <code>true</code> to make the video surface
+     *            appear.
+     */
+    public void setShowVideoView(boolean showVideo) {
+        if (viewCreated)
+            videoView.setVisibility(showVideo ? VISIBLE : GONE);
+    }
+
+    @Override
+    public SurfaceHolder getVideoSurface() {
+        return videoView.getHolder();
+    }
+
+    @Override
+    public boolean isVideoSurfaceAvailable() {
+        return videoSurfaceAvailable;
+    }
+
+    @Override
+    public void adjustToVideoSize(int width, int height) {
+        LayoutParams layoutParams = videoView.getLayoutParams();
+
+        layoutParams.height = (int) (((float) height / (float) width) *
+                (float) videoView.getWidth());
+
+        videoView.setLayoutParams(layoutParams);
+    }
+
     private void updateUiElementVisibility() {
         if (viewCreated) {
             emptyView.setVisibility(currentEpisode == null ? VISIBLE : GONE);
@@ -370,10 +372,5 @@ public class EpisodeFragment extends Fragment {
             dividerView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
             descriptionView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
         }
-    }
-
-    public void setShowVideoView(boolean showVideo) {
-        if (viewCreated)
-            videoView.setVisibility(showVideo ? VISIBLE : GONE);
     }
 }

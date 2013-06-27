@@ -25,8 +25,6 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.util.Log;
-import android.view.SurfaceHolder;
 import android.widget.SeekBar;
 
 import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
@@ -36,7 +34,6 @@ import net.alliknow.podcatcher.listeners.OnRequestFullscreenListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.listeners.PlayerListener;
-import net.alliknow.podcatcher.listeners.VideoSurfaceProvider;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
@@ -54,7 +51,7 @@ import java.util.TimerTask;
  * or simply show this layout.
  */
 public abstract class EpisodeActivity extends BaseActivity implements
-        PlayerListener, PlayServiceListener, VideoSurfaceProvider, OnSelectEpisodeListener,
+        PlayerListener, PlayServiceListener, OnSelectEpisodeListener,
         OnDownloadEpisodeListener, OnRequestFullscreenListener, OnChangePlaylistListener,
         OnChangeEpisodeStateListener, OnCancelListener {
 
@@ -65,6 +62,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
     protected EpisodeFragment episodeFragment;
     /** The current player fragment */
     protected PlayerFragment playerFragment;
+    /** The fullscreen video fragment */
+    protected FullscreenFragment fullscreenFragment;
 
     /** Play service */
     protected PlayEpisodeService service;
@@ -192,36 +191,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     @Override
-    public SurfaceHolder getVideoSurface() {
-        if (selection.isFullscreenEnabled())
-            return ((FullscreenFragment) findByTagId(R.string.fullscreen_fragment_tag))
-                    .getSurfaceHolder();
-        else
-            return episodeFragment == null ? null : episodeFragment.getSurfaceHolder();
-    }
-
-    @Override
-    public boolean isVideoSurfaceAvailable() {
-        if (selection.isFullscreenEnabled())
-            return ((FullscreenFragment) findByTagId(R.string.fullscreen_fragment_tag))
-                    .isVideoSurfaceAvailable();
-        else
-            return episodeFragment == null ? false : episodeFragment.isVideoSurfaceAvailable();
-    }
-
-    @Override
-    public void adjustToVideoSize(int width, int height) {
-        Log.i(getClass().getSimpleName(), "New video dimension: width: " + width);
-        Log.i(getClass().getSimpleName(), "New video dimension: height: " + height);
-
-        if (selection.isFullscreenEnabled())
-            ((FullscreenFragment) findByTagId(R.string.fullscreen_fragment_tag))
-                    .setVideoSize(width, height);
-        else if (episodeFragment != null)
-            episodeFragment.setVideoSize(width, height);
-    }
-
-    @Override
     public void onRequestFullscreen() {
         selection.setFullscreenEnabled(true);
 
@@ -229,9 +198,9 @@ public abstract class EpisodeActivity extends BaseActivity implements
         transaction.addToBackStack(null);
 
         // Create and show the dialog.
-        FullscreenFragment videoFragment = new FullscreenFragment();
-        videoFragment.setMediaPlayerControl(service);
-        videoFragment.show(transaction, getString(R.string.fullscreen_fragment_tag));
+        fullscreenFragment = new FullscreenFragment();
+        fullscreenFragment.setMediaPlayerControl(service);
+        fullscreenFragment.show(transaction, getString(R.string.fullscreen_fragment_tag));
         getFragmentManager().executePendingTransactions();
 
         updateVideoSurface();
@@ -504,9 +473,16 @@ public abstract class EpisodeActivity extends BaseActivity implements
             episodeFragment.setNewIconVisibility(!episodeManager.getState(selection.getEpisode()));
     }
 
+    /**
+     * Broadcast the video surface to the episode playback service.
+     */
     protected void updateVideoSurface() {
-        if (!view.isSmallPortrait() && service != null)
-            service.setVideoSurfaceProvider(this);
+        if (service != null) {
+            if (selection.isFullscreenEnabled())
+                service.setVideoSurfaceProvider(fullscreenFragment);
+            else if (!view.isSmallPortrait())
+                service.setVideoSurfaceProvider(episodeFragment);
+        }
     }
 
     /**
