@@ -45,6 +45,7 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.SurfaceHolder;
+import android.widget.MediaController.MediaPlayerControl;
 
 import net.alliknow.podcatcher.SettingsActivity;
 import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
@@ -67,8 +68,8 @@ import java.util.TimerTask;
  * and/or send intent actions to use it. For even more interaction, implement
  * {@link PlayServiceListener}.
  */
-public class PlayEpisodeService extends Service implements OnPreparedListener,
-        OnCompletionListener, OnErrorListener, OnBufferingUpdateListener,
+public class PlayEpisodeService extends Service implements MediaPlayerControl,
+        OnPreparedListener, OnCompletionListener, OnErrorListener, OnBufferingUpdateListener,
         OnInfoListener, OnAudioFocusChangeListener, OnChangePlaylistListener {
 
     /** Action to send to service to toggle play/pause */
@@ -134,6 +135,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     private VideoSurfaceProvider videoSurfaceProvider;
     /** Binder given to clients */
     private final IBinder binder = new PlayServiceBinder();
+    private int bufferPercent;
 
     private final class VideoCallback implements SurfaceHolder.Callback {
 
@@ -215,10 +217,10 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 if (isPlaying())
                     pause();
                 else
-                    resume();
+                    start();
             }
             else if (action.equals(ACTION_PLAY))
-                resume();
+                start();
             else if (action.equals(ACTION_PAUSE))
                 pause();
             else if (action.equals(ACTION_PREVIOUS))
@@ -403,7 +405,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     /**
      * Resume to play current episode.
      */
-    public void resume() {
+    public void start() {
         if (currentEpisode == null)
             Log.d(getClass().getSimpleName(), "Called resume without setting episode");
         else if (!hasFocus)
@@ -465,6 +467,21 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
      */
     public boolean isVideo() {
         return player != null && player.getVideoHeight() > 0;
+    }
+
+    @Override
+    public boolean canPause() {
+        return isPlaying();
+    }
+
+    @Override
+    public boolean canSeekBackward() {
+        return isPrepared();
+    }
+
+    @Override
+    public boolean canSeekForward() {
+        return isPrepared();
     }
 
     /**
@@ -564,9 +581,16 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
+        this.bufferPercent = percent;
+
         // Send buffer information to listeners
         for (PlayServiceListener listener : listeners)
             listener.onBufferUpdate(getDuration() * percent / 100);
+    }
+
+    @Override
+    public int getBufferPercentage() {
+        return bufferPercent;
     }
 
     @Override
