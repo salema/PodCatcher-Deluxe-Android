@@ -99,6 +99,8 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
         private boolean sortingReversed = false;
         /** The filter active flag */
         private boolean filterEnabled = false;
+        /** The fullscreen mode flag */
+        private boolean fullscreen = false;
 
         private ContentSelection() {
             // Nothing to do here
@@ -195,6 +197,22 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
          */
         public void setEpisodeFilterEnabled(boolean active) {
             this.filterEnabled = active;
+        }
+
+        /**
+         * @return Whether the fullscreen mode is enabled.
+         */
+        public boolean isFullscreenEnabled() {
+            return fullscreen;
+        }
+
+        /**
+         * Update the fullscreen mode setting.
+         * 
+         * @param active Give <code>true</code> to mark fullscreen mode enabled.
+         */
+        public void setFullscreenEnabled(boolean active) {
+            this.fullscreen = active;
         }
 
         /**

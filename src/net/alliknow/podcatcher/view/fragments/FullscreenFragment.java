@@ -17,12 +17,19 @@
 
 package net.alliknow.podcatcher.view.fragments;
 
+import android.app.Activity;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.MediaController;
+import android.widget.MediaController.MediaPlayerControl;
 import android.widget.VideoView;
 
 import net.alliknow.podcatcher.R;
@@ -32,6 +39,10 @@ import net.alliknow.podcatcher.R;
  */
 public class FullscreenFragment extends DialogFragment {
 
+    /** The activity we live in */
+    private OnCancelListener listener;
+    /** The media controller to use in overlay */
+    private MediaPlayerControl control;
     /** The episode video view */
     private VideoView videoView;
 
@@ -57,6 +68,23 @@ public class FullscreenFragment extends DialogFragment {
             videoSurfaceAvailable = false;
         }
     }
+
+    public void setMediaPlayerControl(MediaPlayerControl control) {
+        this.control = control;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // Make sure our listener is present
+        try {
+            this.listener = (OnCancelListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnCancelListener");
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,6 +116,20 @@ public class FullscreenFragment extends DialogFragment {
 
         videoView = (VideoView) getView().findViewById(R.id.episode_video);
         videoView.getHolder().addCallback(videoCallback);
+
+        if (control != null) {
+            final MediaController controller = new MediaController(getActivity());
+            controller.setMediaPlayer(control);
+            controller.setAnchorView(videoView);
+
+            videoView.setMediaController(controller);
+        }
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        // Make sure the parent activity knows when we are closing
+        listener.onCancel(dialog);
     }
 
     /**
@@ -102,5 +144,22 @@ public class FullscreenFragment extends DialogFragment {
      */
     public boolean isVideoSurfaceAvailable() {
         return videoSurfaceAvailable;
+    }
+
+    /**
+     * Set the size of the video currently played back and make the fragment's
+     * video view adjust to the size, respecting the video aspect ratio.
+     * 
+     * @param width The current video's width.
+     * @param height The current video's height
+     */
+    public void setVideoSize(int width, int height) {
+        LayoutParams layoutParams = videoView.getLayoutParams();
+
+        layoutParams.height = (int) (((float) height / (float) width) *
+                (float) videoView.getWidth());
+        Log.i(getClass().getSimpleName(), "Video view height set to " + height);
+
+        videoView.setLayoutParams(layoutParams);
     }
 }

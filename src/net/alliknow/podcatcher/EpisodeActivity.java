@@ -20,6 +20,8 @@ package net.alliknow.podcatcher;
 import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
@@ -54,7 +56,7 @@ import java.util.TimerTask;
 public abstract class EpisodeActivity extends BaseActivity implements
         PlayerListener, PlayServiceListener, VideoSurfaceProvider, OnSelectEpisodeListener,
         OnDownloadEpisodeListener, OnRequestFullscreenListener, OnChangePlaylistListener,
-        OnChangeEpisodeStateListener {
+        OnChangeEpisodeStateListener, OnCancelListener {
 
     /** Key used to store episode URL in intent or bundle */
     public static final String EPISODE_URL_KEY = "episode_url";
@@ -73,8 +75,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
     private TimerTask playUpdateTimerTask;
     /** Flag for visibility, coordinating timer */
     private boolean visible = false;
-
-    private boolean fullscreen;
 
     /** The actual task to regularly update the UI on playback */
     private static class PlayProgressTask extends TimerTask {
@@ -193,22 +193,18 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public SurfaceHolder getVideoSurface() {
-        final FullscreenFragment ff = ((FullscreenFragment) getFragmentManager()
-                .findFragmentByTag("fullscreen_dialog"));
-
-        if (fullscreen && ff != null)
-            return ff.getSurfaceHolder();
+        if (selection.isFullscreenEnabled())
+            return ((FullscreenFragment) findByTagId(R.string.fullscreen_fragment_tag))
+                    .getSurfaceHolder();
         else
             return episodeFragment == null ? null : episodeFragment.getSurfaceHolder();
     }
 
     @Override
     public boolean isVideoSurfaceAvailable() {
-        final FullscreenFragment ff = ((FullscreenFragment) getFragmentManager()
-                .findFragmentByTag("fullscreen_dialog"));
-
-        if (fullscreen)
-            return ff.isVideoSurfaceAvailable();
+        if (selection.isFullscreenEnabled())
+            return ((FullscreenFragment) findByTagId(R.string.fullscreen_fragment_tag))
+                    .isVideoSurfaceAvailable();
         else
             return episodeFragment == null ? false : episodeFragment.isVideoSurfaceAvailable();
     }
@@ -218,21 +214,33 @@ public abstract class EpisodeActivity extends BaseActivity implements
         Log.i(getClass().getSimpleName(), "New video dimension: width: " + width);
         Log.i(getClass().getSimpleName(), "New video dimension: height: " + height);
 
-        if (episodeFragment != null && !fullscreen)
+        if (selection.isFullscreenEnabled())
+            ((FullscreenFragment) findByTagId(R.string.fullscreen_fragment_tag))
+                    .setVideoSize(width, height);
+        else if (episodeFragment != null)
             episodeFragment.setVideoSize(width, height);
     }
 
     @Override
     public void onRequestFullscreen() {
-        this.fullscreen = true;
+        selection.setFullscreenEnabled(true);
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.addToBackStack(null);
 
         // Create and show the dialog.
         FullscreenFragment videoFragment = new FullscreenFragment();
-        videoFragment.show(transaction, "fullscreen_dialog");
+        videoFragment.setMediaPlayerControl(service);
+        videoFragment.show(transaction, getString(R.string.fullscreen_fragment_tag));
         getFragmentManager().executePendingTransactions();
+
+        updateVideoSurface();
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        // Fullscreen video closed
+        selection.setFullscreenEnabled(false);
 
         updateVideoSurface();
     }
