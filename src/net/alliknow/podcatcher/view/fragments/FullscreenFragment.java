@@ -33,7 +33,6 @@ import android.widget.MediaController.MediaPlayerControl;
 import android.widget.VideoView;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.listeners.VideoSurfaceProvider;
 
 /**
  * Fragment for fullscreen video playback.
@@ -70,6 +69,12 @@ public class FullscreenFragment extends DialogFragment implements VideoSurfacePr
         }
     }
 
+    /**
+     * Make dialog aware of the media controller to use. Needs to be set in
+     * order to enable overlay controls for the video.
+     * 
+     * @param control The control to use.
+     */
     public void setMediaPlayerControl(MediaPlayerControl control) {
         this.control = control;
     }
@@ -97,18 +102,8 @@ public class FullscreenFragment extends DialogFragment implements VideoSurfacePr
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        // Inflate the layout
-        final View layout = inflater.inflate(R.layout.fullscreen_video, container, false);
 
-        // // Get the display dimensions
-        // Rect displayRectangle = new Rect();
-        // getActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
-        //
-        // // Adjust the layout minimum height so the dialog always has the same
-        // // height and does not bounce around depending on the list content
-        // layout.setMinimumHeight((int) (displayRectangle.height() * 0.9f));
-
-        return layout;
+        return inflater.inflate(R.layout.fullscreen_video, container, false);
     }
 
     @Override

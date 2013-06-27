@@ -50,9 +50,9 @@ import android.widget.MediaController.MediaPlayerControl;
 import net.alliknow.podcatcher.SettingsActivity;
 import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
-import net.alliknow.podcatcher.listeners.VideoSurfaceProvider;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
+import net.alliknow.podcatcher.view.fragments.VideoSurfaceProvider;
 
 import java.util.HashSet;
 import java.util.List;
@@ -99,6 +99,8 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
     private boolean prepared = false;
     /** Is the player currently buffering ? */
     private boolean buffering = false;
+    /** The current buffer state */
+    private int bufferPercent = 0;
     /** Do we have audio focus ? */
     private boolean hasFocus = false;
     /** Are we bound to any activity ? */
@@ -133,15 +135,25 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
     private Set<PlayServiceListener> listeners = new HashSet<PlayServiceListener>();
     /** The registered video surface provider */
     private VideoSurfaceProvider videoSurfaceProvider;
-    /** Binder given to clients */
-    private final IBinder binder = new PlayServiceBinder();
-    private int bufferPercent;
 
+    /** The video holder callback that alerts us when the surface is ready */
     private final class VideoCallback implements SurfaceHolder.Callback {
 
+        /**
+         * Flag indicating whether we need to start playback once the surface is
+         * ready
+         */
         private final boolean startPlaybackOnCreate;
 
-        public VideoCallback(boolean startPlayback) {
+        /**
+         * Create the callback, needs to be added to a {@link SurfaceHolder}.
+         * Will remove itself once the surface is created.
+         * 
+         * @param startPlayback If set to <code>true</code>, the service's
+         *            {@link PlayEpisodeService#start()} method will be called
+         *            once the surface is available
+         */
+        VideoCallback(boolean startPlayback) {
             this.startPlaybackOnCreate = startPlayback;
         }
 
@@ -157,6 +169,7 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
             if (startPlaybackOnCreate)
                 player.start();
 
+            // Remove the callback
             holder.removeCallback(this);
         }
 
@@ -165,6 +178,9 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
             // pass
         }
     }
+
+    /** Binder given to clients */
+    private final IBinder binder = new PlayServiceBinder();
 
     /**
      * The binder to return to client.
@@ -322,9 +338,6 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
         }
     }
 
-    /**
-     * @param holder
-     */
     private void setVideoSurface(final SurfaceHolder holder) {
         player.setDisplay(holder);
         player.setScreenOnWhilePlaying(true);
@@ -466,7 +479,7 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
      * @return Whether the currently loaded episode has video content.
      */
     public boolean isVideo() {
-        return player != null && player.getVideoHeight() > 0;
+        return isPrepared() && player.getVideoHeight() > 0;
     }
 
     @Override
@@ -711,6 +724,7 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
         this.currentEpisode = null;
         this.prepared = false;
         this.buffering = false;
+        this.bufferPercent = 0;
 
         // Release resources
         audioManager.abandonAudioFocus(this);

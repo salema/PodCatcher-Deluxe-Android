@@ -42,7 +42,6 @@ import android.widget.VideoView;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnRequestFullscreenListener;
-import net.alliknow.podcatcher.listeners.VideoSurfaceProvider;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.view.Utils;
 

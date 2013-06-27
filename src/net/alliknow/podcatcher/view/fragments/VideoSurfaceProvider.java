@@ -15,14 +15,14 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.alliknow.podcatcher.listeners;
+package net.alliknow.podcatcher.view.fragments;
 
 import android.view.SurfaceHolder;
 
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 
 /**
- * Listener interface to implement by activities interested in showing video.
+ * Listener interface to implement by fragments interested in showing video.
  * 
  * @see PlayEpisodeService#setVideoSurfaceProvider(VideoSurfaceProvider)
  */

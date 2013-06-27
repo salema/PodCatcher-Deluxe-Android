@@ -106,6 +106,7 @@ public class ShowEpisodeActivity extends EpisodeActivity {
 
     @Override
     protected void updateVideoSurface() {
+        // This will only run in small portrait view
         if (service != null) {
             if (selection.isFullscreenEnabled())
                 service.setVideoSurfaceProvider(fullscreenFragment);

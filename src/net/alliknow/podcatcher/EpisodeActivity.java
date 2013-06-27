@@ -201,6 +201,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
         fullscreenFragment = new FullscreenFragment();
         fullscreenFragment.setMediaPlayerControl(service);
         fullscreenFragment.show(transaction, getString(R.string.fullscreen_fragment_tag));
+		// We need this to be executed, otherwise updateing the surface would not work
         getFragmentManager().executePendingTransactions();
 
         updateVideoSurface();
