@@ -192,25 +192,31 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onRequestFullscreen() {
-        selection.setFullscreenEnabled(true);
+        if (!selection.isFullscreenEnabled()) {
+            selection.setFullscreenEnabled(true);
 
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.addToBackStack(null);
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.addToBackStack(null);
 
-        // Create and show the dialog.
-        fullscreenFragment = new FullscreenFragment();
-        fullscreenFragment.setMediaPlayerControl(service);
-        fullscreenFragment.show(transaction, getString(R.string.fullscreen_fragment_tag));
-		// We need this to be executed, otherwise updateing the surface would not work
-        getFragmentManager().executePendingTransactions();
+            // Create and show the dialog.
+            fullscreenFragment = new FullscreenFragment();
+            fullscreenFragment.setMediaPlayerControl(service);
+            fullscreenFragment.show(transaction, getString(R.string.fullscreen_fragment_tag));
+            // We need this to be executed, otherwise updateing the surface
+            // would not work
+            getFragmentManager().executePendingTransactions();
 
-        updateVideoSurface();
+            updateVideoSurface();
+        }
     }
 
     @Override
     public void onCancel(DialogInterface dialog) {
         // Fullscreen video closed
         selection.setFullscreenEnabled(false);
+
+        fullscreenFragment.dismiss();
+        getFragmentManager().executePendingTransactions();
 
         updateVideoSurface();
     }

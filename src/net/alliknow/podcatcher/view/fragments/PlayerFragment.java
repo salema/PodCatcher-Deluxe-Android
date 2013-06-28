@@ -342,8 +342,8 @@ public class PlayerFragment extends Fragment {
                         R.drawable.ic_menu_rotate, 0, 0, 0);
             } // Playing or paused
             else {
-                final String formattedPosition = formatTime(position);
-                final String formattedDuration = formatTime(duration);
+                final String formattedPosition = formatTime(position / 1000);
+                final String formattedDuration = formatTime(duration / 1000);
 
                 if (showShortPlaybackPosition)
                     playPauseButton.setText(getString(R.string.player_label_short,

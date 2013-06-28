@@ -114,6 +114,7 @@ public class FullscreenFragment extends DialogFragment implements VideoSurfacePr
         videoView.getHolder().addCallback(videoCallback);
 
         if (control != null) {
+            Log.i("VIDEO", "Controller added");
             final MediaController controller = new MediaController(getActivity());
             controller.setMediaPlayer(control);
             controller.setAnchorView(videoView);

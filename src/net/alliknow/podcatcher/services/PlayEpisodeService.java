@@ -127,7 +127,7 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
     /** Our notification id (does not really matter) */
     private static final int NOTIFICATION_ID = 123;
     /** The amount of seconds used for any forward or rewind event */
-    private static final int SKIP_AMOUNT = 3;
+    private static final int SKIP_AMOUNT = 3 * 1000;
     /** The volume we duck playback to */
     private static final float DUCK_VOLUME = 0.1f;
 
@@ -137,7 +137,7 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
     private VideoSurfaceProvider videoSurfaceProvider;
 
     /** The video holder callback that alerts us when the surface is ready */
-    private final class VideoCallback implements SurfaceHolder.Callback {
+    private final class VideoSurfaceCallback implements SurfaceHolder.Callback {
 
         /**
          * Flag indicating whether we need to start playback once the surface is
@@ -147,30 +147,31 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
 
         /**
          * Create the callback, needs to be added to a {@link SurfaceHolder}.
-         * Will remove itself once the surface is created.
          * 
          * @param startPlayback If set to <code>true</code>, the service's
          *            {@link PlayEpisodeService#start()} method will be called
          *            once the surface is available
          */
-        VideoCallback(boolean startPlayback) {
+        VideoSurfaceCallback(boolean startPlayback) {
             this.startPlaybackOnCreate = startPlayback;
         }
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
-            // pass
+            if (player != null)
+                player.setDisplay(null);
         }
 
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             setVideoSurface(holder);
 
-            if (startPlaybackOnCreate)
-                player.start();
+            if (startPlaybackOnCreate) {
+                start();
 
-            // Remove the callback
-            holder.removeCallback(this);
+                for (PlayServiceListener listener : listeners)
+                    listener.onPlaybackStateChanged();
+            }
         }
 
         @Override
@@ -333,8 +334,10 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
 
             if (provider.isVideoSurfaceAvailable())
                 setVideoSurface(holder);
-            else
-                holder.addCallback(new VideoCallback(false));
+
+            // Need to set the call-back in any case, since we need to listen to
+            // surfaceDestroyed()
+            holder.addCallback(new VideoSurfaceCallback(false));
         }
     }
 
@@ -435,11 +438,11 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
     /**
      * Seek player to given location in media file.
      * 
-     * @param seconds Seconds from the start to seek to.
+     * @param msec Milli seconds from the start to seek to.
      */
-    public void seekTo(int seconds) {
-        if (prepared && seconds >= 0 && seconds <= getDuration()) {
-            player.seekTo(seconds * 1000); // multiply to get millis
+    public void seekTo(int msec) {
+        if (prepared && msec >= 0 && msec <= getDuration()) {
+            player.seekTo(msec);
 
             startForeground(NOTIFICATION_ID,
                     notification.updateProgress(getCurrentPosition(), getDuration()));
@@ -517,25 +520,19 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
     }
 
     /**
-     * @return Current position of playback in seconds from media start. Does
-     *         not throw any exception but returns at least zero.
+     * @return Current position of playback in milli-seconds from media start.
+     *         Does not throw any exception but returns at least zero.
      */
     public int getCurrentPosition() {
-        if (player == null || !prepared)
-            return 0;
-        else
-            return player.getCurrentPosition() / 1000;
+        return isPrepared() ? player.getCurrentPosition() : 0;
     }
 
     /**
-     * @return Duration of media element in seconds. Does not throw any
+     * @return Duration of media element in milli-seconds. Does not throw any
      *         exception but returns at least zero.
      */
     public int getDuration() {
-        if (player == null || !prepared)
-            return 0;
-        else
-            return player.getDuration() / 1000;
+        return isPrepared() ? player.getDuration() : 0;
     }
 
     @Override
@@ -571,9 +568,9 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
                     player.start();
                 }
                 // 2.2) We need to wait for the callback because the surface is
-                // not yet available
-                else
-                    holder.addCallback(new VideoCallback(true));
+                // not yet available. We need to set the call-back in any case,
+                // since it also listens to surfaceDestroyed()
+                holder.addCallback(new VideoSurfaceCallback(true));
             }
             // 3. Show notification
             startForeground(NOTIFICATION_ID, notification.build(currentEpisode));
