@@ -247,8 +247,8 @@ public class SuggestionFragment extends DialogFragment {
 
         // Set to "all"
         genreFilter.setSelection(0);
-        // Set to audio, since this is an audio version
-        mediaTypeFilter.setSelection(1);
+        // Set to video, since this is the video version
+        mediaTypeFilter.setSelection(2);
     }
 
     private void updateList() {
