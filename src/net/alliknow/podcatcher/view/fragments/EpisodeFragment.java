@@ -30,6 +30,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
@@ -37,7 +38,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
@@ -92,7 +92,7 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
     /** The divider view between title and description */
     private View dividerView;
     /** The episode video view */
-    private VideoView videoView;
+    private SurfaceView videoView;
     /** The episode description web view */
     private WebView descriptionView;
 
@@ -105,6 +105,7 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
     private final class VideoCallback implements SurfaceHolder.Callback {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
+            Log.i(getClass().getSimpleName(), "Surface created EpisodeFragment");
             videoSurfaceAvailable = true;
         }
 
@@ -115,6 +116,7 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
+            Log.i(getClass().getSimpleName(), "Surface destroyed EpisodeFragment");
             videoSurfaceAvailable = false;
         }
     }
@@ -159,16 +161,19 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
         downloadIconView = (ImageView) getView().findViewById(R.id.download_icon);
         dividerView = getView().findViewById(R.id.episode_divider);
 
-        videoView = (VideoView) getView().findViewById(R.id.episode_video);
+        videoView = (SurfaceView) getView().findViewById(R.id.episode_video);
         videoView.getHolder().addCallback(videoCallback);
         videoView.setOnTouchListener(new OnTouchListener() {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Log.i(getTag(), "Fullscreen requested");
-                fullscreenListener.onRequestFullscreen();
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    Log.i(getClass().getSimpleName(), "Fullscreen requested");
+                    fullscreenListener.onRequestFullscreen();
 
-                return true;
+                    return true;
+                } else
+                    return false;
             }
         });
 
@@ -208,8 +213,8 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
 
     @Override
     public void onDestroyView() {
-        viewCreated = false;
         videoView.getHolder().removeCallback(videoCallback);
+        viewCreated = false;
 
         super.onDestroyView();
     }

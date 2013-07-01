@@ -37,6 +37,7 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnInfoListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.media.MediaPlayer.OnVideoSizeChangedListener;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Binder;
@@ -69,8 +70,9 @@ import java.util.TimerTask;
  * {@link PlayServiceListener}.
  */
 public class PlayEpisodeService extends Service implements MediaPlayerControl,
-        OnPreparedListener, OnCompletionListener, OnErrorListener, OnBufferingUpdateListener,
-        OnInfoListener, OnAudioFocusChangeListener, OnChangePlaylistListener {
+        SurfaceHolder.Callback, OnVideoSizeChangedListener, OnPreparedListener,
+        OnCompletionListener, OnErrorListener, OnBufferingUpdateListener, OnInfoListener,
+        OnAudioFocusChangeListener, OnChangePlaylistListener {
 
     /** Action to send to service to toggle play/pause */
     public static final String ACTION_TOGGLE = "com.podcatcher.deluxe.video.action.TOGGLE";
@@ -135,50 +137,11 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
     private Set<PlayServiceListener> listeners = new HashSet<PlayServiceListener>();
     /** The registered video surface provider */
     private VideoSurfaceProvider videoSurfaceProvider;
-
-    /** The video holder callback that alerts us when the surface is ready */
-    private final class VideoSurfaceCallback implements SurfaceHolder.Callback {
-
-        /**
-         * Flag indicating whether we need to start playback once the surface is
-         * ready
-         */
-        private final boolean startPlaybackOnCreate;
-
-        /**
-         * Create the callback, needs to be added to a {@link SurfaceHolder}.
-         * 
-         * @param startPlayback If set to <code>true</code>, the service's
-         *            {@link PlayEpisodeService#start()} method will be called
-         *            once the surface is available
-         */
-        VideoSurfaceCallback(boolean startPlayback) {
-            this.startPlaybackOnCreate = startPlayback;
-        }
-
-        @Override
-        public void surfaceDestroyed(SurfaceHolder holder) {
-            if (player != null)
-                player.setDisplay(null);
-        }
-
-        @Override
-        public void surfaceCreated(SurfaceHolder holder) {
-            setVideoSurface(holder);
-
-            if (startPlaybackOnCreate) {
-                start();
-
-                for (PlayServiceListener listener : listeners)
-                    listener.onPlaybackStateChanged();
-            }
-        }
-
-        @Override
-        public void surfaceChanged(SurfaceHolder holder, int f, int w, int h) {
-            // pass
-        }
-    }
+    /**
+     * Flag indicating whether we need to start playback once the surface is
+     * ready
+     */
+    private boolean startPlaybackOnCreate;
 
     /** Binder given to clients */
     private final IBinder binder = new PlayServiceBinder();
@@ -326,26 +289,63 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
      * @param provider The current video surface provider.
      */
     public void setVideoSurfaceProvider(VideoSurfaceProvider provider) {
+        // Remove callback from old provider
+        if (videoSurfaceProvider != null)
+            videoSurfaceProvider.getVideoSurface().removeCallback(this);
+        // Set new provider
         this.videoSurfaceProvider = provider;
 
         // Switch to new display if needed
         if (isPrepared() && isVideo() && provider != null) {
             final SurfaceHolder holder = provider.getVideoSurface();
 
-            if (provider.isVideoSurfaceAvailable())
-                setVideoSurface(holder);
-
             // Need to set the call-back in any case, since we need to listen to
             // surfaceDestroyed()
-            holder.addCallback(new VideoSurfaceCallback(false));
+            holder.addCallback(this);
+            // If the surface is already available, we can switch to it,
+            // otherwise the callback will take care of that.
+            if (provider.isVideoSurfaceAvailable())
+                setVideoSurface(holder);
         }
     }
 
-    private void setVideoSurface(final SurfaceHolder holder) {
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        Log.i(getClass().getSimpleName(), "Surface destroyed Service");
+
+        if (player != null)
+            player.setDisplay(null);
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        Log.i(getClass().getSimpleName(), "Surface created Service");
+        setVideoSurface(holder);
+
+        if (startPlaybackOnCreate) {
+            start();
+            startPlaybackOnCreate = false;
+
+            for (PlayServiceListener listener : listeners)
+                listener.onPlaybackStateChanged();
+        }
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int f, int w, int h) {
+        // pass
+    }
+
+    @Override
+    public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+        if (videoSurfaceProvider != null)
+            videoSurfaceProvider.adjustToVideoSize(width, height);
+    }
+
+    private void setVideoSurface(SurfaceHolder holder) {
         player.setDisplay(holder);
-        player.setScreenOnWhilePlaying(true);
-        videoSurfaceProvider.adjustToVideoSize(player.getVideoWidth(),
-                player.getVideoHeight());
+        player.setScreenOnWhilePlaying(holder != null);
+        onVideoSizeChanged(player, player.getVideoWidth(), player.getVideoHeight());
     }
 
     /**
@@ -562,15 +562,16 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
             else {
                 final SurfaceHolder holder = videoSurfaceProvider.getVideoSurface();
 
-                // 2.1) The surface is available, we can start right away
+                // 2.1) We need to set the call-back in any case,
+                // since it also listens to surfaceDestroyed()
+                holder.addCallback(this);
+
+                // 2.2) The surface is available, we can start right away
                 if (videoSurfaceProvider.isVideoSurfaceAvailable()) {
                     setVideoSurface(holder);
                     player.start();
-                }
-                // 2.2) We need to wait for the callback because the surface is
-                // not yet available. We need to set the call-back in any case,
-                // since it also listens to surfaceDestroyed()
-                holder.addCallback(new VideoSurfaceCallback(true));
+                } else
+                    startPlaybackOnCreate = true;
             }
             // 3. Show notification
             startForeground(NOTIFICATION_ID, notification.build(currentEpisode));
@@ -582,7 +583,7 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
             // Alert the listeners
             if (listeners.size() > 0)
                 for (PlayServiceListener listener : listeners)
-                    listener.onPlaybackStarted(isVideo());
+                    listener.onPlaybackStarted();
             else
                 Log.d(getClass().getSimpleName(), "Episode prepared, but no listener attached");
         } else
@@ -774,6 +775,7 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
         player.setOnErrorListener(this);
         player.setOnInfoListener(this);
         player.setOnBufferingUpdateListener(this);
+        player.setOnVideoSizeChangedListener(this);
     }
 
     private void startPlayProgressTimer() {

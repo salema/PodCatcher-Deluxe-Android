@@ -215,9 +215,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
         // Fullscreen video closed
         selection.setFullscreenEnabled(false);
 
-        fullscreenFragment.dismiss();
-        getFragmentManager().executePendingTransactions();
-
         updateVideoSurface();
     }
 
@@ -363,10 +360,10 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     @Override
-    public void onPlaybackStarted(boolean video) {
+    public void onPlaybackStarted() {
         startPlayProgressTimer();
 
-        if (video && episodeFragment != null)
+        if (service.isVideo() && episodeFragment != null)
             episodeFragment.setShowVideoView(true);
     }
 

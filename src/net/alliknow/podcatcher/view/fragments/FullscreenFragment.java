@@ -22,15 +22,17 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.MediaController;
 import android.widget.MediaController.MediaPlayerControl;
-import android.widget.VideoView;
 
 import net.alliknow.podcatcher.R;
 
@@ -44,7 +46,9 @@ public class FullscreenFragment extends DialogFragment implements VideoSurfacePr
     /** The media controller to use in overlay */
     private MediaPlayerControl control;
     /** The episode video view */
-    private VideoView videoView;
+    private SurfaceView videoView;
+    /** The media controller for the video view */
+    private MediaController controller;
 
     /** Flag to indicate whether video surface is available */
     private boolean videoSurfaceAvailable = false;
@@ -55,6 +59,7 @@ public class FullscreenFragment extends DialogFragment implements VideoSurfacePr
     private final class VideoCallback implements SurfaceHolder.Callback {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
+            Log.i(getClass().getSimpleName(), "Surface created FullscreenFragment");
             videoSurfaceAvailable = true;
         }
 
@@ -65,6 +70,7 @@ public class FullscreenFragment extends DialogFragment implements VideoSurfacePr
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
+            Log.i(getClass().getSimpleName(), "Surface destroyed FullscreenFragment");
             videoSurfaceAvailable = false;
         }
     }
@@ -110,17 +116,41 @@ public class FullscreenFragment extends DialogFragment implements VideoSurfacePr
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        videoView = (VideoView) getView().findViewById(R.id.episode_video);
+        videoView = (SurfaceView) getView().findViewById(R.id.episode_video);
         videoView.getHolder().addCallback(videoCallback);
 
         if (control != null) {
-            Log.i("VIDEO", "Controller added");
-            final MediaController controller = new MediaController(getActivity());
+            controller = new MediaController(getActivity());
             controller.setMediaPlayer(control);
-            controller.setAnchorView(videoView);
+            controller.setAnchorView(getView());
 
-            videoView.setMediaController(controller);
+            Log.i(getClass().getSimpleName(), "Controller set!");
+
+            new Handler().post(new Runnable() {
+
+                public void run() {
+                    controller.setEnabled(true);
+                    controller.show();
+                    Log.i(getClass().getSimpleName(), "Controller show() called!");
+                }
+            });
         }
+
+        videoView.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                /*
+                 * the MediaController will hide after 3 seconds - tap the
+                 * screen to make it appear again
+                 */
+                controller.setEnabled(true);
+                controller.show();
+                Log.i(getClass().getSimpleName(), "Controller show() called!");
+
+                return true;
+            }
+        });
     }
 
     @Override
@@ -145,7 +175,6 @@ public class FullscreenFragment extends DialogFragment implements VideoSurfacePr
 
         layoutParams.height = (int) (((float) height / (float) width) *
                 (float) videoView.getWidth());
-        Log.i(getClass().getSimpleName(), "Video view height set to " + height);
 
         videoView.setLayoutParams(layoutParams);
     }

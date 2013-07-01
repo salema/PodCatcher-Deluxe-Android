@@ -644,8 +644,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
                 "http://feeds.feedburner.com/freakonomicsradio"));
         podcastList.add(createPodcast("Anstalt",
                 "http://www.zdf.de/ZDFmediathek/podcast/222630?view=podcast"));
-        podcastList.add(createPodcast("Little Letter for Gaelic Learners",
-                "http://downloads.bbc.co.uk/podcasts/scotland/litirbheag/rss.xml"));
+        podcastList.add(createPodcast("Radio Ambulante",
+                "http://feeds.feedburner.com/RadioAmbulante-English"));
 
         // Remove null elements if accidentally create and added above
         while (podcastList.remove(null))

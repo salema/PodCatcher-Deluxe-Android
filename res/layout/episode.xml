@@ -88,10 +88,10 @@
         android:scaleType="fitXY"
         android:src="@android:drawable/divider_horizontal_bright"
         android:visibility="gone" />
-    <VideoView 
+    <SurfaceView 
         android:id="@+id/episode_video" 
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="1dp"
         android:visibility="gone" />
     <WebView
         android:id="@+id/episode_description"
