@@ -25,6 +25,7 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.SeekBar;
 
 import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
@@ -123,6 +124,9 @@ public abstract class EpisodeActivity extends BaseActivity implements
         // The episode fragment to use
         if (episodeFragment == null)
             episodeFragment = (EpisodeFragment) findByTagId(R.string.episode_fragment_tag);
+
+        Log.i(getClass().getSimpleName(), fullscreenFragment + "");
+        Log.i(getClass().getSimpleName(), findByTagId(R.string.fullscreen_fragment_tag) + "");
     }
 
     /**
@@ -212,6 +216,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onCancel(DialogInterface dialog) {
+        Log.i(getClass().getSimpleName(), "Fullscreen cancelled");
         // Fullscreen video closed
         selection.setFullscreenEnabled(false);
 
@@ -242,11 +247,15 @@ public abstract class EpisodeActivity extends BaseActivity implements
                             getString(R.string.episode_fragment_tag));
                     transaction.addToBackStack(null);
                     transaction.commit();
+
+                    getFragmentManager().executePendingTransactions();
                 }
 
                 // Set the episode
                 episodeFragment.setEpisode(selectedEpisode);
                 episodeFragment.setShowEpisodeDate(true);
+
+                updateVideoSurface();
 
                 break;
             case SMALL_PORTRAIT:
@@ -481,7 +490,11 @@ public abstract class EpisodeActivity extends BaseActivity implements
      * Broadcast the video surface to the episode playback service.
      */
     protected void updateVideoSurface() {
+
         if (service != null) {
+            Log.i(getClass().getSimpleName(),
+                    "Update surface called with fullscreen: " + selection.isFullscreenEnabled());
+
             if (selection.isFullscreenEnabled())
                 service.setVideoSurfaceProvider(fullscreenFragment);
             else if (!view.isSmallPortrait())

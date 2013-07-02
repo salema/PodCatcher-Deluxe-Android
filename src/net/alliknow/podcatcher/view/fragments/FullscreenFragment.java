@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -122,9 +121,6 @@ public class FullscreenFragment extends DialogFragment implements VideoSurfacePr
         if (control != null) {
             controller = new MediaController(getActivity());
             controller.setMediaPlayer(control);
-            controller.setAnchorView(getView());
-
-            Log.i(getClass().getSimpleName(), "Controller set!");
 
             new Handler().post(new Runnable() {
 
@@ -135,22 +131,6 @@ public class FullscreenFragment extends DialogFragment implements VideoSurfacePr
                 }
             });
         }
-
-        videoView.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                /*
-                 * the MediaController will hide after 3 seconds - tap the
-                 * screen to make it appear again
-                 */
-                controller.setEnabled(true);
-                controller.show();
-                Log.i(getClass().getSimpleName(), "Controller show() called!");
-
-                return true;
-            }
-        });
     }
 
     @Override

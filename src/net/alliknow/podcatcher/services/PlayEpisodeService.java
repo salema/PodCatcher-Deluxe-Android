@@ -141,7 +141,7 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
      * Flag indicating whether we need to start playback once the surface is
      * ready
      */
-    private boolean startPlaybackOnCreate;
+    private boolean startPlaybackOnSurfaceCreate = false;
 
     /** Binder given to clients */
     private final IBinder binder = new PlayServiceBinder();
@@ -281,8 +281,8 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
     }
 
     /**
-     * Set the video sink for the service. The service will only feed only
-     * surface at a time. Calling this method will replace any sink currently
+     * Set the video sink for the service. The service will only feed one
+     * surface at the time. Calling this method will replace any sink currently
      * set. If playing, playback will continue on the new surface. Set to
      * <code>null</code> for audio only.
      * 
@@ -292,21 +292,21 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
         // Remove callback from old provider
         if (videoSurfaceProvider != null)
             videoSurfaceProvider.getVideoSurface().removeCallback(this);
+
         // Set new provider
         this.videoSurfaceProvider = provider;
+        if (provider != null) {
+            // Add callback to new provider
+            provider.getVideoSurface().addCallback(this);
 
-        // Switch to new display if needed
-        if (isPrepared() && isVideo() && provider != null) {
-            final SurfaceHolder holder = provider.getVideoSurface();
-
-            // Need to set the call-back in any case, since we need to listen to
-            // surfaceDestroyed()
-            holder.addCallback(this);
             // If the surface is already available, we can switch to it,
             // otherwise the callback will take care of that.
-            if (provider.isVideoSurfaceAvailable())
-                setVideoSurface(holder);
+            if (isPrepared() && isVideo() && provider.isVideoSurfaceAvailable())
+                setVideoSurface(provider.getVideoSurface());
         }
+        // If the provider is set to <code>null</code>, reset the display
+        else
+            setVideoSurface(null);
     }
 
     @Override
@@ -314,7 +314,7 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
         Log.i(getClass().getSimpleName(), "Surface destroyed Service");
 
         if (player != null)
-            player.setDisplay(null);
+            setVideoSurface(null);
     }
 
     @Override
@@ -322,9 +322,9 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
         Log.i(getClass().getSimpleName(), "Surface created Service");
         setVideoSurface(holder);
 
-        if (startPlaybackOnCreate) {
+        if (startPlaybackOnSurfaceCreate) {
+            startPlaybackOnSurfaceCreate = false;
             start();
-            startPlaybackOnCreate = false;
 
             for (PlayServiceListener listener : listeners)
                 listener.onPlaybackStateChanged();
@@ -338,14 +338,18 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
 
     @Override
     public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+        Log.i(getClass().getSimpleName(), "Video size changed: " + width + "/" + height);
+
         if (videoSurfaceProvider != null)
             videoSurfaceProvider.adjustToVideoSize(width, height);
     }
 
     private void setVideoSurface(SurfaceHolder holder) {
-        player.setDisplay(holder);
-        player.setScreenOnWhilePlaying(holder != null);
-        onVideoSizeChanged(player, player.getVideoWidth(), player.getVideoHeight());
+        if (player != null) {
+            player.setDisplay(holder);
+            player.setScreenOnWhilePlaying(holder != null);
+            onVideoSizeChanged(player, player.getVideoWidth(), player.getVideoHeight());
+        }
     }
 
     /**
@@ -552,28 +556,27 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
             updateAudioManager();
             updateRemoteControlPlaystate(PLAYSTATE_PLAYING);
 
-            // Go start and show the notification
+            // Start the playback the right point in time
             player.seekTo(episodeManager.getResumeAt(currentEpisode));
-            // 1) If we play audio or do not have a video surface, simply start
-            // playback
+            // A) If we play audio or do not have a video surface, simply start
+            // playback without caring about any video content
             if (!isVideo() || videoSurfaceProvider == null)
                 player.start();
-            // 2) If we have a video and a surface, use it
+            // B) If we have a video and a surface, use it
             else {
                 final SurfaceHolder holder = videoSurfaceProvider.getVideoSurface();
 
-                // 2.1) We need to set the call-back in any case,
-                // since it also listens to surfaceDestroyed()
-                holder.addCallback(this);
-
-                // 2.2) The surface is available, we can start right away
+                // The surface is available, we can start right away
                 if (videoSurfaceProvider.isVideoSurfaceAvailable()) {
                     setVideoSurface(holder);
                     player.start();
-                } else
-                    startPlaybackOnCreate = true;
+                }
+                // No surface yet, the surface callback will need to start
+                // the playback
+                else
+                    startPlaybackOnSurfaceCreate = true;
             }
-            // 3. Show notification
+            // Show notification
             startForeground(NOTIFICATION_ID, notification.build(currentEpisode));
             startPlayProgressTimer();
 
@@ -723,6 +726,7 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
         this.prepared = false;
         this.buffering = false;
         this.bufferPercent = 0;
+        this.startPlaybackOnSurfaceCreate = false;
 
         // Release resources
         audioManager.abandonAudioFocus(this);
