@@ -224,8 +224,8 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      */
     @SuppressWarnings("unchecked")
     public void saveState() {
-        // Store cleaned matadata if dirty
-        if (metadataChanged) {
+        // Store cleaned metadata if dirty
+        if (metadataChanged && metadata != null) {
             // Store a copy of the actual map, since there might come in changes
             // to the metadata while the task is running and that would lead to
             // a concurrent modification exception.
@@ -245,7 +245,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      * @param episode Episode to get.
      */
     public void download(Episode episode) {
-        if (episode != null && !isDownloadingOrDownloaded(episode)) {
+        if (episode != null && !isDownloadingOrDownloaded(episode) && metadata != null) {
             // Find the podcast directory and the path to store episode under
             File podcastDir = new File(PreferenceManager.getDefaultSharedPreferences(podcatcher)
                     .getString(SettingsActivity.DOWNLOAD_FOLDER_KEY,
@@ -305,7 +305,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      * @param episode Episode to delete download for.
      */
     public void deleteDownload(Episode episode) {
-        if (episode != null && isDownloadingOrDownloaded(episode)) {
+        if (episode != null && isDownloadingOrDownloaded(episode) && metadata != null) {
             // Find the metadata information holder
             EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
 
@@ -338,13 +338,10 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      * @return <code>true</code> if the episode is downloaded and available.
      */
     public boolean isDownloaded(Episode episode) {
-        if (episode == null)
+        if (episode != null && metadata != null)
+            return isDownloaded(metadata.get(episode.getMediaUrl()));
+        else
             return false;
-        else {
-            EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
-
-            return isDownloaded(meta);
-        }
     }
 
     /**
@@ -355,15 +352,15 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      *         being downloaded.
      */
     public boolean isDownloading(Episode episode) {
-        if (episode == null)
-            return false;
-        else {
-            EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+        if (episode != null && metadata != null) {
+            final EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
 
             return meta != null
                     && meta.downloadId != null
                     && meta.filePath == null;
         }
+        else
+            return false;
     }
 
     /**
@@ -425,13 +422,13 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      * @see #isDownloaded(Episode)
      */
     public String getLocalPath(Episode episode) {
-        if (episode == null)
-            return null;
-        else {
-            EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+        if (episode != null && metadata != null) {
+            final EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
 
             return meta == null ? null : meta.filePath;
         }
+        else
+            return null;
     }
 
     /**
@@ -522,7 +519,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     public int getPlaylistPosition(Episode episode) {
         int result = -1;
 
-        if (episode != null) {
+        if (episode != null && metadata != null) {
             // Find metadata information holder
             EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
             if (meta != null && meta.playlistPosition != null)
@@ -539,7 +536,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      * @param episode The episode to add.
      */
     public void appendToPlaylist(Episode episode) {
-        if (episode != null) {
+        if (episode != null && metadata != null) {
             // Only append the episode if it is not already part of the playlist
             final List<Episode> playlist = getPlaylist();
             if (!playlist.contains(episode)) {
@@ -576,7 +573,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      * @param episode Episode to pop.
      */
     public void removeFromPlaylist(Episode episode) {
-        if (episode != null) {
+        if (episode != null && metadata != null) {
             // Find the metadata information holder
             EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
             if (meta != null && meta.playlistPosition != null) {
@@ -637,7 +634,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      *            the default.
      */
     public void setState(Episode episode, Boolean isOld) {
-        if (episode != null && episode.getMediaUrl() != null) {
+        if (episode != null && episode.getMediaUrl() != null && metadata != null) {
             EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
 
             // Metadata not yet created
@@ -668,7 +665,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      *         <code>false</code> otherwise.
      */
     public boolean getState(Episode episode) {
-        if (episode != null && episode.getMediaUrl() != null) {
+        if (episode != null && episode.getMediaUrl() != null && metadata != null) {
             EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
 
             if (meta != null && meta.isOld != null)
@@ -723,7 +720,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      *            resume playback from. Give <code>null</code> to reset.
      */
     public void setResumeAt(Episode episode, Integer at) {
-        if (episode != null && episode.getMediaUrl() != null) {
+        if (episode != null && episode.getMediaUrl() != null && metadata != null) {
             EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
 
             // Metadata not yet created
@@ -748,7 +745,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
      * @return The resume time as millis from the start or zero if not set.
      */
     public int getResumeAt(Episode episode) {
-        if (episode != null && episode.getMediaUrl() != null) {
+        if (episode != null && episode.getMediaUrl() != null && metadata != null) {
             EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
 
             if (meta != null && meta.resumeAt != null)
@@ -790,70 +787,79 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     }
 
     private void processDownloadComplete(long downloadId) {
-        // Check if this was a download we care for
-        for (EpisodeMetadata meta : metadata.values())
-            if (meta.downloadId != null && meta.downloadId == downloadId) {
-                // Find download result information
-                Cursor result = downloadManager.query(new Query().setFilterById(downloadId));
-                // There should be information on the download
-                if (result.moveToFirst())
-                    // Download was a success
-                    if (STATUS_SUCCESSFUL == result.getInt(result.getColumnIndex(COLUMN_STATUS))) {
-                        // Get the path to the new local file and put in
-                        // as metadata information
-                        meta.filePath = result.getString(result
-                                .getColumnIndex(COLUMN_LOCAL_FILENAME));
+        // Nothing we can do if the meta data is not available
+        if (metadata != null) {
+            // Check if this was a download we care for
+            for (EpisodeMetadata meta : metadata.values())
+                if (meta.downloadId != null && meta.downloadId == downloadId) {
+                    // Find download result information
+                    Cursor result = downloadManager.query(new Query().setFilterById(downloadId));
+                    // There should be information on the download
+                    if (result.moveToFirst())
+                        // Download was a success
+                        if (STATUS_SUCCESSFUL == result
+                                .getInt(result.getColumnIndex(COLUMN_STATUS))) {
+                            // Get the path to the new local file and put in
+                            // as metadata information
+                            meta.filePath = result.getString(result
+                                    .getColumnIndex(COLUMN_LOCAL_FILENAME));
 
-                        for (OnDownloadEpisodeListener listener : downloadListeners)
-                            listener.onDownloadSuccess();
-                    }
-                    // Download failed
-                    else {
-                        downloadManager.remove(downloadId);
+                            for (OnDownloadEpisodeListener listener : downloadListeners)
+                                listener.onDownloadSuccess();
+                        }
+                        // Download failed
+                        else {
+                            downloadManager.remove(downloadId);
 
-                        meta.downloadId = null;
-                        meta.filePath = null;
+                            meta.downloadId = null;
+                            meta.filePath = null;
 
-                        for (OnDownloadEpisodeListener listener : downloadListeners)
-                            listener.onDownloadFailed();
+                            for (OnDownloadEpisodeListener listener : downloadListeners)
+                                listener.onDownloadFailed();
 
-                        final int status = result.getInt(result.getColumnIndex(COLUMN_STATUS));
-                        final int reason = result.getInt(result.getColumnIndex(COLUMN_REASON));
-                        Log.e(getClass().getSimpleName(), "Download failed (status/reason): "
-                                + status + "/" + reason);
-                    }
+                            final int status = result.getInt(result.getColumnIndex(COLUMN_STATUS));
+                            final int reason = result.getInt(result.getColumnIndex(COLUMN_REASON));
+                            Log.e(getClass().getSimpleName(), "Download failed (status/reason): "
+                                    + status + "/" + reason);
+                        }
 
-                // Close cursor
-                result.close();
-                // Mark metadata record as dirty
-                metadataChanged = true;
-            }
+                    // Close cursor
+                    result.close();
+                    // Mark metadata record as dirty
+                    metadataChanged = true;
+                }
+        }
     }
 
     private void processDownloadClicked(long downloadId) {
-        // Find download from metadata
-        Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
-        while (iterator.hasNext()) {
-            final Entry<URL, EpisodeMetadata> entry = iterator.next();
-            final EpisodeMetadata data = entry.getValue();
+        // Nothing we can do if the meta data is not available
+        if (metadata != null) {
+            // Find download from metadata
+            Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+            while (iterator.hasNext()) {
+                final Entry<URL, EpisodeMetadata> entry = iterator.next();
+                final EpisodeMetadata data = entry.getValue();
 
-            // Only act if we care for this download
-            if (data.downloadId != null && data.downloadId == downloadId) {
-                // Create the downloading episode
-                Episode download = entry.getValue().marshalEpisode(entry.getKey());
-                if (download != null) {
-                    Intent intent = new Intent(podcatcher.getApplicationContext(),
-                            PodcastActivity.class)
-                            .putExtra(EpisodeListActivity.MODE_KEY, ContentMode.SINGLE_PODCAST)
-                            .putExtra(EpisodeListActivity.PODCAST_URL_KEY,
-                                    download.getPodcast().getUrl().toString())
-                            .putExtra(EpisodeActivity.EPISODE_URL_KEY,
-                                    download.getMediaUrl().toString())
-                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                                    Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                // Only act if we care for this download
+                if (data.downloadId != null && data.downloadId == downloadId) {
+                    // Create the downloading episode
+                    Episode download = entry.getValue().marshalEpisode(entry.getKey());
+                    if (download != null) {
+                        Intent intent = new Intent(podcatcher.getApplicationContext(),
+                                PodcastActivity.class)
+                                .putExtra(EpisodeListActivity.MODE_KEY, ContentMode.SINGLE_PODCAST)
+                                .putExtra(EpisodeListActivity.PODCAST_URL_KEY,
+                                        download.getPodcast().getUrl().toString())
+                                .putExtra(EpisodeActivity.EPISODE_URL_KEY,
+                                        download.getMediaUrl().toString())
+                                .addFlags(
+                                        Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                                                Intent.FLAG_ACTIVITY_NEW_TASK
+                                                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-                    // Make the app switch to it.
-                    podcatcher.startActivity(intent);
+                        // Make the app switch to it.
+                        podcatcher.startActivity(intent);
+                    }
                 }
             }
         }
