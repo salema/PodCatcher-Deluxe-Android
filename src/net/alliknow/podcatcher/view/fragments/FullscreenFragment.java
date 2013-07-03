@@ -22,7 +22,6 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -101,7 +100,6 @@ public class FullscreenFragment extends DialogFragment implements VideoSurfacePr
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // setRetainInstance(true);
         setStyle(STYLE_NO_FRAME, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
     }
 
@@ -120,17 +118,8 @@ public class FullscreenFragment extends DialogFragment implements VideoSurfacePr
         videoView.getHolder().addCallback(videoCallback);
 
         if (control != null) {
-            controller = new MediaController(getActivity());
+            controller = (MediaController) getView().findViewById(R.id.media_controller);
             controller.setMediaPlayer(control);
-
-            new Handler().post(new Runnable() {
-
-                public void run() {
-                    controller.setEnabled(true);
-                    controller.show();
-                    Log.i(getClass().getSimpleName(), "Controller show() called!");
-                }
-            });
         }
     }
 

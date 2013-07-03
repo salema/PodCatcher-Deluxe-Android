@@ -352,10 +352,8 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
         this.showVideo = showVideo;
         this.videoFillsSpace = fillSpace;
 
-        if (viewCreated) {
-            videoView.setVisibility(showVideo ? VISIBLE : GONE);
-            descriptionView.setVisibility(showVideo && fillSpace ? GONE : VISIBLE);
-        }
+        if (viewCreated)
+            updateUiElementVisibility();
     }
 
     @Override
@@ -370,6 +368,11 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
 
     @Override
     public void adjustToVideoSize(int width, int height) {
+        if (width > 0 && height > 0 && !showVideo) {
+            Log.i(getClass().getSimpleName(), " Show video view");
+            setShowVideoView(true, false);
+        }
+
         LinearLayout.LayoutParams layoutParams =
                 (LinearLayout.LayoutParams) videoView.getLayoutParams();
 
@@ -393,8 +396,9 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
             titleView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
             subtitleView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
             dividerView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
-            descriptionView.setVisibility(currentEpisode == null || videoFillsSpace ?
-                    GONE : VISIBLE);
+            videoView.setVisibility(showVideo ? VISIBLE : GONE);
+            descriptionView.setVisibility(currentEpisode == null ||
+                    (showVideo && videoFillsSpace) ? GONE : VISIBLE);
         }
     }
 }

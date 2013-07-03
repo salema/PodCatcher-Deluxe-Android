@@ -495,13 +495,13 @@ public abstract class EpisodeActivity extends BaseActivity implements
         if (service != null) {
             if (selection.isFullscreenEnabled() && fullscreenFragment != null)
                 service.setVideoSurfaceProvider(fullscreenFragment);
-            else if (!view.isSmallPortrait() && episodeFragment != null)
+            else if (!selection.isFullscreenEnabled() && episodeFragment != null)
                 service.setVideoSurfaceProvider(episodeFragment);
             else {
                 Log.i(getClass().getSimpleName(), "Update surface failed!");
                 Log.i(getClass().getSimpleName(), "Fullscreen: " + selection.isFullscreenEnabled());
                 Log.i(getClass().getSimpleName(), "EpisodeFragment: " + episodeFragment);
-                Log.i(getClass().getSimpleName(), "FullscreenFragement: " + fullscreenFragment);
+                Log.i(getClass().getSimpleName(), "FullscreenFragment: " + fullscreenFragment);
             }
         }
     }
