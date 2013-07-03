@@ -34,7 +34,7 @@
     <string name="player_label">en %1$s de %2$s</string>
     <string name="player_label_short">%1$s de %2$s</string>
     <string name="player_error">Error de reproducción</string>
-    <string name="podcast_image">Imagen de el podcast</string>
+    <string name="podcast_image">Imagen del podcast</string>
     <string name="podcast_none">No hay podcast</string>
     <string name="podcast_none_selected">No hay episodios</string>
     <string name="podcast_select_all">Seleccionar todos</string>
