@@ -101,6 +101,7 @@ public class FullscreenFragment extends DialogFragment implements VideoSurfacePr
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // setRetainInstance(true);
         setStyle(STYLE_NO_FRAME, android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
     }
 

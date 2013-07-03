@@ -103,15 +103,4 @@ public class ShowEpisodeActivity extends EpisodeActivity {
         // Enable navigation
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
-
-    @Override
-    protected void updateVideoSurface() {
-        // This will only run in small portrait view
-        if (service != null) {
-            if (selection.isFullscreenEnabled())
-                service.setVideoSurfaceProvider(fullscreenFragment);
-            else
-                service.setVideoSurfaceProvider(episodeFragment);
-        }
-    }
 }

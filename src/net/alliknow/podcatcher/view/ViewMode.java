@@ -72,6 +72,13 @@ public enum ViewMode {
     }
 
     /**
+     * @return Whether we are showing on a large device held in portrait
+     */
+    public boolean isLargePortrait() {
+        return LARGE_PORTRAIT.equals(this);
+    }
+
+    /**
      * @return Whether we are showing on a large device held in landscape
      */
     public boolean isLargeLandscape() {

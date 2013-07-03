@@ -125,8 +125,9 @@ public abstract class EpisodeActivity extends BaseActivity implements
         if (episodeFragment == null)
             episodeFragment = (EpisodeFragment) findByTagId(R.string.episode_fragment_tag);
 
-        Log.i(getClass().getSimpleName(), fullscreenFragment + "");
-        Log.i(getClass().getSimpleName(), findByTagId(R.string.fullscreen_fragment_tag) + "");
+        // The fullscreen fragment to use
+        if (fullscreenFragment == null)
+            fullscreenFragment = (FullscreenFragment) findByTagId(R.string.fullscreen_fragment_tag);
     }
 
     /**
@@ -373,7 +374,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
         startPlayProgressTimer();
 
         if (service.isVideo() && episodeFragment != null)
-            episodeFragment.setShowVideoView(true);
+            episodeFragment.setShowVideoView(true,
+                    view.isSmallLandscape() || view.isLargePortrait());
     }
 
     @Override
@@ -427,7 +429,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
             updatePlayerUi();
 
             if (episodeFragment != null)
-                episodeFragment.setShowVideoView(false);
+                episodeFragment.setShowVideoView(false, false);
         }
     }
 
@@ -437,7 +439,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
         service.reset();
 
         if (episodeFragment != null)
-            episodeFragment.setShowVideoView(false);
+            episodeFragment.setShowVideoView(false, false);
 
         updatePlayerUi();
         playerFragment.setPlayerVisibilility(true);
@@ -490,15 +492,17 @@ public abstract class EpisodeActivity extends BaseActivity implements
      * Broadcast the video surface to the episode playback service.
      */
     protected void updateVideoSurface() {
-
         if (service != null) {
-            Log.i(getClass().getSimpleName(),
-                    "Update surface called with fullscreen: " + selection.isFullscreenEnabled());
-
-            if (selection.isFullscreenEnabled())
+            if (selection.isFullscreenEnabled() && fullscreenFragment != null)
                 service.setVideoSurfaceProvider(fullscreenFragment);
-            else if (!view.isSmallPortrait())
+            else if (!view.isSmallPortrait() && episodeFragment != null)
                 service.setVideoSurfaceProvider(episodeFragment);
+            else {
+                Log.i(getClass().getSimpleName(), "Update surface failed!");
+                Log.i(getClass().getSimpleName(), "Fullscreen: " + selection.isFullscreenEnabled());
+                Log.i(getClass().getSimpleName(), "EpisodeFragment: " + episodeFragment);
+                Log.i(getClass().getSimpleName(), "FullscreenFragement: " + fullscreenFragment);
+            }
         }
     }
 
@@ -516,9 +520,11 @@ public abstract class EpisodeActivity extends BaseActivity implements
                     !currentEpisodeIsShowing);
 
             // Show/hide video output
+            final boolean showVideo = service.isPrepared() && service.isVideo()
+                    && currentEpisodeIsShowing;
             if (episodeFragment != null)
-                episodeFragment.setShowVideoView(service.isPrepared() && service.isVideo()
-                        && currentEpisodeIsShowing);
+                episodeFragment.setShowVideoView(showVideo, showVideo
+                        && (view.isSmallLandscape() || view.isLargePortrait()));
 
             // Make sure player is shown if and as needed (update the details
             // only if they are actually visible)

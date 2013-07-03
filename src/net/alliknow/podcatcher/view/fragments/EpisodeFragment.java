@@ -34,9 +34,9 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
@@ -69,6 +69,10 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
     private boolean showDownloadIcon = false;
     /** Flag for the state of the download icon */
     private boolean downloadIconState = true;
+    /** Flag for the video view visibility */
+    private boolean showVideo = false;
+    /** Flag for the video fill space option */
+    private boolean videoFillsSpace = false;
 
     /** Separator for date and podcast name */
     private static final String SEPARATOR = " • ";
@@ -187,6 +191,7 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
             setEpisode(currentEpisode, true);
             setNewIconVisibility(showNewStateIcon);
             setDownloadIconVisibility(showDownloadIcon, downloadIconState);
+            setShowVideoView(showVideo, videoFillsSpace);
         }
     }
 
@@ -341,10 +346,16 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
      * 
      * @param showVideo Set to <code>true</code> to make the video surface
      *            appear.
+     * @param fillSpace
      */
-    public void setShowVideoView(boolean showVideo) {
-        if (viewCreated)
+    public void setShowVideoView(boolean showVideo, boolean fillSpace) {
+        this.showVideo = showVideo;
+        this.videoFillsSpace = fillSpace;
+
+        if (viewCreated) {
             videoView.setVisibility(showVideo ? VISIBLE : GONE);
+            descriptionView.setVisibility(showVideo && fillSpace ? GONE : VISIBLE);
+        }
     }
 
     @Override
@@ -359,10 +370,18 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
 
     @Override
     public void adjustToVideoSize(int width, int height) {
-        LayoutParams layoutParams = videoView.getLayoutParams();
+        LinearLayout.LayoutParams layoutParams =
+                (LinearLayout.LayoutParams) videoView.getLayoutParams();
 
-        layoutParams.height = (int) (((float) height / (float) width) *
-                (float) videoView.getWidth());
+        if (videoFillsSpace) {
+            layoutParams.height = 0;
+            layoutParams.weight = 1;
+        }
+        else {
+            layoutParams.height = (int) (((float) height / (float) width) *
+                    (float) videoView.getWidth());
+            layoutParams.weight = 0;
+        }
 
         videoView.setLayoutParams(layoutParams);
     }
@@ -374,7 +393,8 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
             titleView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
             subtitleView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
             dividerView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
-            descriptionView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
+            descriptionView.setVisibility(currentEpisode == null || videoFillsSpace ?
+                    GONE : VISIBLE);
         }
     }
 }
