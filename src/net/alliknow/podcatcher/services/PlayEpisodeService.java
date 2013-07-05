@@ -313,8 +313,7 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
     public void surfaceDestroyed(SurfaceHolder holder) {
         Log.i(getClass().getSimpleName(), "Surface destroyed Service");
 
-        if (player != null)
-            setVideoSurface(null);
+        setVideoSurface(null);
     }
 
     @Override
@@ -324,10 +323,9 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
 
         if (startPlaybackOnSurfaceCreate) {
             startPlaybackOnSurfaceCreate = false;
-            start();
 
-            for (PlayServiceListener listener : listeners)
-                listener.onPlaybackStateChanged();
+            start();
+            alertListenersOnInitialStart();
         }
     }
 
@@ -340,15 +338,22 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
     public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
         Log.i(getClass().getSimpleName(), "Video size changed: " + width + "/" + height);
 
-        if (videoSurfaceProvider != null)
-            videoSurfaceProvider.adjustToVideoSize(width, height);
+        if (width > 0 && height > 0) {
+            if (videoSurfaceProvider != null)
+                videoSurfaceProvider.adjustToVideoSize(width, height);
+
+            for (PlayServiceListener listener : listeners)
+                listener.onVideoAvailable();
+        }
     }
 
     private void setVideoSurface(SurfaceHolder holder) {
         if (player != null) {
             player.setDisplay(holder);
             player.setScreenOnWhilePlaying(holder != null);
-            onVideoSizeChanged(player, player.getVideoWidth(), player.getVideoHeight());
+
+            if (holder != null)
+                onVideoSizeChanged(player, player.getVideoWidth(), player.getVideoHeight());
         }
     }
 
@@ -560,8 +565,10 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
             player.seekTo(episodeManager.getResumeAt(currentEpisode));
             // A) If we play audio or do not have a video surface, simply start
             // playback without caring about any video content
-            if (!isVideo() || videoSurfaceProvider == null)
+            if (!isVideo() || videoSurfaceProvider == null) {
                 player.start();
+                alertListenersOnInitialStart();
+            }
             // B) If we have a video and a surface, use it
             else {
                 final SurfaceHolder holder = videoSurfaceProvider.getVideoSurface();
@@ -570,6 +577,7 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
                 if (videoSurfaceProvider.isVideoSurfaceAvailable()) {
                     setVideoSurface(holder);
                     player.start();
+                    alertListenersOnInitialStart();
                 }
                 // No surface yet, the surface callback will need to start
                 // the playback
@@ -582,15 +590,17 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
 
             // Pop the episode off the playlist
             episodeManager.removeFromPlaylist(currentEpisode);
-
-            // Alert the listeners
-            if (listeners.size() > 0)
-                for (PlayServiceListener listener : listeners)
-                    listener.onPlaybackStarted();
-            else
-                Log.d(getClass().getSimpleName(), "Episode prepared, but no listener attached");
         } else
             onError(mediaPlayer, 0, 0);
+    }
+
+    private void alertListenersOnInitialStart() {
+        // Alert the listeners
+        if (listeners.size() > 0)
+            for (PlayServiceListener listener : listeners)
+                listener.onPlaybackStarted();
+        else
+            Log.d(getClass().getSimpleName(), "Episode prepared, but no listener attached");
     }
 
     @Override

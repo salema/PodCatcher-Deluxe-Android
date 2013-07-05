@@ -186,6 +186,8 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         }
         // This is an internal call to update the selection
         else if (intent.hasExtra(MODE_KEY)) {
+            selection.setFullscreenEnabled(false);
+
             selection.setMode((ContentMode) intent.getSerializableExtra(MODE_KEY));
             selection.setPodcast(podcastManager.findPodcastForUrl(
                     intent.getStringExtra(PODCAST_URL_KEY)));

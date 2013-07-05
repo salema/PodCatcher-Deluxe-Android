@@ -31,6 +31,8 @@ public interface PlayServiceListener {
      */
     public void onPlaybackStarted();
 
+    public void onVideoAvailable();
+
     /**
      * Called by the service on the listener if the state of the service
      * (playing/paused) is changed externally, e.g. via the headsets media

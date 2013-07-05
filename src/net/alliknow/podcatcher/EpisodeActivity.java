@@ -20,8 +20,6 @@ package net.alliknow.podcatcher;
 import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
@@ -39,7 +37,6 @@ import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
 import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
-import net.alliknow.podcatcher.view.fragments.FullscreenFragment;
 import net.alliknow.podcatcher.view.fragments.PlayerFragment;
 
 import java.lang.ref.WeakReference;
@@ -54,7 +51,7 @@ import java.util.TimerTask;
 public abstract class EpisodeActivity extends BaseActivity implements
         PlayerListener, PlayServiceListener, OnSelectEpisodeListener,
         OnDownloadEpisodeListener, OnRequestFullscreenListener, OnChangePlaylistListener,
-        OnChangeEpisodeStateListener, OnCancelListener {
+        OnChangeEpisodeStateListener {
 
     /** Key used to store episode URL in intent or bundle */
     public static final String EPISODE_URL_KEY = "episode_url";
@@ -63,8 +60,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
     protected EpisodeFragment episodeFragment;
     /** The current player fragment */
     protected PlayerFragment playerFragment;
-    /** The fullscreen video fragment */
-    protected FullscreenFragment fullscreenFragment;
 
     /** Play service */
     protected PlayEpisodeService service;
@@ -124,10 +119,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
         // The episode fragment to use
         if (episodeFragment == null)
             episodeFragment = (EpisodeFragment) findByTagId(R.string.episode_fragment_tag);
-
-        // The fullscreen fragment to use
-        if (fullscreenFragment == null)
-            fullscreenFragment = (FullscreenFragment) findByTagId(R.string.fullscreen_fragment_tag);
     }
 
     /**
@@ -166,6 +157,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
         updateActionBar();
         updatePlayerUi();
+        updateVideoSurface();
     }
 
     @Override
@@ -200,28 +192,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
         if (!selection.isFullscreenEnabled()) {
             selection.setFullscreenEnabled(true);
 
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.addToBackStack(null);
-
-            // Create and show the dialog.
-            fullscreenFragment = new FullscreenFragment();
-            fullscreenFragment.setMediaPlayerControl(service);
-            fullscreenFragment.show(transaction, getString(R.string.fullscreen_fragment_tag));
-            // We need this to be executed, otherwise updateing the surface
-            // would not work
-            getFragmentManager().executePendingTransactions();
-
-            updateVideoSurface();
+            startActivity(new Intent(this, FullscreenVideoActivity.class));
         }
-    }
-
-    @Override
-    public void onCancel(DialogInterface dialog) {
-        Log.i(getClass().getSimpleName(), "Fullscreen cancelled");
-        // Fullscreen video closed
-        selection.setFullscreenEnabled(false);
-
-        updateVideoSurface();
     }
 
     @Override
@@ -372,8 +344,12 @@ public abstract class EpisodeActivity extends BaseActivity implements
     @Override
     public void onPlaybackStarted() {
         startPlayProgressTimer();
+    }
 
-        if (service.isVideo() && episodeFragment != null)
+    @Override
+    public void onVideoAvailable() {
+        Log.i(getClass().getSimpleName(), "Video now available");
+        if (episodeFragment != null)
             episodeFragment.setShowVideoView(true,
                     view.isSmallLandscape() || view.isLargePortrait());
     }
@@ -492,18 +468,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
      * Broadcast the video surface to the episode playback service.
      */
     protected void updateVideoSurface() {
-        if (service != null) {
-            if (selection.isFullscreenEnabled() && fullscreenFragment != null)
-                service.setVideoSurfaceProvider(fullscreenFragment);
-            else if (!selection.isFullscreenEnabled() && episodeFragment != null)
-                service.setVideoSurfaceProvider(episodeFragment);
-            else {
-                Log.i(getClass().getSimpleName(), "Update surface failed!");
-                Log.i(getClass().getSimpleName(), "Fullscreen: " + selection.isFullscreenEnabled());
-                Log.i(getClass().getSimpleName(), "EpisodeFragment: " + episodeFragment);
-                Log.i(getClass().getSimpleName(), "FullscreenFragment: " + fullscreenFragment);
-            }
-        }
+        if (service != null && episodeFragment != null && !selection.isFullscreenEnabled())
+            service.setVideoSurfaceProvider(episodeFragment);
     }
 
     /**

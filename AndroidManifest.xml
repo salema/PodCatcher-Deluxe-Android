@@ -47,6 +47,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".FullscreenVideoActivity" 
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" />
         <activity android:name=".ShowEpisodeListActivity" />
         <activity android:name=".ShowEpisodeActivity" />
         <activity 

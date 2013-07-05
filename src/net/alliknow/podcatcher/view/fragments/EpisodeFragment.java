@@ -23,7 +23,6 @@ import static android.view.View.VISIBLE;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -109,7 +108,6 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
     private final class VideoCallback implements SurfaceHolder.Callback {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
-            Log.i(getClass().getSimpleName(), "Surface created EpisodeFragment");
             videoSurfaceAvailable = true;
         }
 
@@ -120,7 +118,6 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
-            Log.i(getClass().getSimpleName(), "Surface destroyed EpisodeFragment");
             videoSurfaceAvailable = false;
         }
     }
@@ -171,13 +168,10 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    Log.i(getClass().getSimpleName(), "Fullscreen requested");
+                if (event.getAction() == MotionEvent.ACTION_DOWN)
                     fullscreenListener.onRequestFullscreen();
 
-                    return true;
-                } else
-                    return false;
+                return event.getAction() == MotionEvent.ACTION_DOWN;
             }
         });
 
@@ -346,7 +340,8 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
      * 
      * @param showVideo Set to <code>true</code> to make the video surface
      *            appear.
-     * @param fillSpace
+     * @param fillSpace If set to <code>true</code>, the video view will consume
+     *            all the space available and the episode description is hidden.
      */
     public void setShowVideoView(boolean showVideo, boolean fillSpace) {
         this.showVideo = showVideo;
@@ -368,25 +363,22 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
 
     @Override
     public void adjustToVideoSize(int width, int height) {
-        if (width > 0 && height > 0 && !showVideo) {
-            Log.i(getClass().getSimpleName(), " Show video view");
-            setShowVideoView(true, false);
-        }
+        if (viewCreated) {
+            LinearLayout.LayoutParams layoutParams =
+                    (LinearLayout.LayoutParams) videoView.getLayoutParams();
 
-        LinearLayout.LayoutParams layoutParams =
-                (LinearLayout.LayoutParams) videoView.getLayoutParams();
+            if (videoFillsSpace) {
+                layoutParams.height = 0;
+                layoutParams.weight = 1;
+            }
+            else {
+                layoutParams.height = (int) (((float) height / (float) width) *
+                        (float) getView().getWidth());
+                layoutParams.weight = 0;
+            }
 
-        if (videoFillsSpace) {
-            layoutParams.height = 0;
-            layoutParams.weight = 1;
+            videoView.setLayoutParams(layoutParams);
         }
-        else {
-            layoutParams.height = (int) (((float) height / (float) width) *
-                    (float) videoView.getWidth());
-            layoutParams.weight = 0;
-        }
-
-        videoView.setLayoutParams(layoutParams);
     }
 
     private void updateUiElementVisibility() {
