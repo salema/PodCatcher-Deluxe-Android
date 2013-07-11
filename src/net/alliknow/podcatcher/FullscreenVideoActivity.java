@@ -27,6 +27,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.MediaController;
 
@@ -137,6 +138,8 @@ public class FullscreenVideoActivity extends BaseActivity implements VideoSurfac
 
             controller = new MediaController(FullscreenVideoActivity.this);
             controller.setMediaPlayer(service);
+            controller.setPrevNextListeners(episodeManager.isPlaylistEmpty() ?
+                    null : new NextListener(), new PrevListener());
             controller.setAnchorView(videoView);
         }
 
@@ -166,6 +169,24 @@ public class FullscreenVideoActivity extends BaseActivity implements VideoSurfac
         public void surfaceDestroyed(SurfaceHolder holder) {
             Log.i(getClass().getSimpleName(), "Surface destroyed FullscreenActivity");
             videoSurfaceAvailable = false;
+        }
+    }
+
+    private final class NextListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            if (service != null)
+                service.playNext();
+        }
+    }
+
+    private final class PrevListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            if (service != null)
+                service.seekTo(0);
         }
     }
 }

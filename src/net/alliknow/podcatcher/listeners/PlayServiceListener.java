@@ -26,12 +26,16 @@ import net.alliknow.podcatcher.services.PlayEpisodeService;
 public interface PlayServiceListener {
 
     /**
+     * Called on the listener when video content becomes available (video size
+     * known and > 0) as part of the media player's preparation process.
+     */
+    public void onVideoAvailable();
+
+    /**
      * Called by the service on the listener if an episode is loaded and ready
      * to play (the service might in fact already have started playback...)
      */
     public void onPlaybackStarted();
-
-    public void onVideoAvailable();
 
     /**
      * Called by the service on the listener if the state of the service
