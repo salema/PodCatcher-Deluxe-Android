@@ -311,14 +311,11 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.i(getClass().getSimpleName(), "Surface destroyed Service");
-
         setVideoSurface(null);
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Log.i(getClass().getSimpleName(), "Surface created Service");
         setVideoSurface(holder);
 
         if (startPlaybackOnSurfaceCreate) {
@@ -336,8 +333,6 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
 
     @Override
     public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-        Log.i(getClass().getSimpleName(), "Video size changed: " + width + "/" + height);
-
         if (width > 0 && height > 0) {
             if (videoSurfaceProvider != null)
                 videoSurfaceProvider.adjustToVideoSize(width, height);
@@ -651,6 +646,11 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
         if (shouldAutoDeleteCompletedEpisode(currentEpisode))
             episodeManager.deleteDownload(currentEpisode);
 
+        // Alert listeners
+        if (listeners.size() > 0)
+            for (PlayServiceListener listener : listeners)
+                listener.onPlaybackComplete();
+
         // If there is another episode on the playlist, play it.
         if (!episodeManager.isPlaylistEmpty())
             playNext();
@@ -658,11 +658,6 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
             reset();
             stopSelfIfUnboundAndIdle();
         }
-
-        // Alert listeners
-        if (listeners.size() > 0)
-            for (PlayServiceListener listener : listeners)
-                listener.onPlaybackComplete();
     }
 
     @Override

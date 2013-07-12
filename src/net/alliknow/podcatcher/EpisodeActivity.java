@@ -23,7 +23,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.util.Log;
 import android.widget.SeekBar;
 
 import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
@@ -348,7 +347,6 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onVideoAvailable() {
-        Log.i(getClass().getSimpleName(), "Video now available");
         if (episodeFragment != null)
             episodeFragment.setShowVideoView(true,
                     view.isSmallLandscape() || view.isLargePortrait());

@@ -150,7 +150,8 @@ public class FullscreenVideoActivity extends BaseActivity implements VideoSurfac
 
     @Override
     public void onPlaybackComplete() {
-        // pass
+        if (episodeManager.isPlaylistEmpty())
+            finish();
     }
 
     @Override
