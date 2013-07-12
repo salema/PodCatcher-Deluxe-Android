@@ -69,8 +69,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // Register as listener to the podcast data manager
         podcastManager.addLoadPodcastListListener(this);
         podcastManager.addChangePodcastListListener(this);
-        // Make sure we are alerted on back stack changes
-        getFragmentManager().addOnBackStackChangedListener(this);
 
         // 2. Create the UI via XML layouts and fragments
         // Inflate the main content view (depends on view mode)
@@ -198,11 +196,18 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             onEpisodeSelected(selection.getEpisode());
         else
             onNoEpisodeSelected();
+
+        // Make sure we are alerted on back stack changes. This needs to be
+        // added after re-selection of the current content.
+        getFragmentManager().addOnBackStackChangedListener(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+
+        // Disable listener (would interfere with resume)
+        getFragmentManager().removeOnBackStackChangedListener(this);
 
         // Make sure we persist the podcast manager state
         podcastManager.saveState();
@@ -223,7 +228,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // Unregister the listeners
         podcastManager.removeLoadPodcastListListener(this);
         podcastManager.removeChangePodcastListListener(this);
-        getFragmentManager().removeOnBackStackChangedListener(this);
     }
 
     @Override
