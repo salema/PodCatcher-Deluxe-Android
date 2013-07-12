@@ -145,7 +145,7 @@ public class ContentSpinner extends Spinner implements
                     titleView.setText(R.string.downloads);
 
                     // Set the subtitle
-                    final int downloadsCount = EpisodeManager.getInstance().getDownloads().size();
+                    final int downloadsCount = EpisodeManager.getInstance().getDownloadsSize();
                     setEpisodeNumberText(parent, subtitleView, downloadsCount);
 
                     break;
@@ -154,7 +154,7 @@ public class ContentSpinner extends Spinner implements
                     titleView.setText(R.string.playlist);
 
                     // Set the subtitle
-                    final int playlistCount = EpisodeManager.getInstance().getPlaylist().size();
+                    final int playlistCount = EpisodeManager.getInstance().getPlaylistSize();
                     setEpisodeNumberText(parent, subtitleView, playlistCount);
 
                     break;

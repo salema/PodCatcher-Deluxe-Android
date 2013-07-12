@@ -91,6 +91,8 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     /** Latch we use to block all threads until we have our data */
     private CountDownLatch latch = new CountDownLatch(1);
 
+    /** Helper to make downloads methods more efficient */
+    private int downloadsSize = -1;
     /** Helper to make playlist methods more efficient */
     private int playlistSize = -1;
 
@@ -288,6 +290,10 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
                 for (OnDownloadEpisodeListener listener : downloadListeners)
                     listener.onDownloadSuccess();
+
+                // Update counter
+                if (downloadsSize != -1)
+                    downloadsSize++;
             }
 
             // Put metadata information
@@ -326,6 +332,9 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
                 // Mark metadata record as dirty
                 metadataChanged = true;
+                // Decrement counter
+                if (downloadsSize != -1)
+                    downloadsSize--;
             }
         }
     }
@@ -406,11 +415,25 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                         result.add(download);
                 }
             }
+
+            // Since we have the downloads list here, we could just as well set
+            // this and make the other methods return faster
+            this.downloadsSize = result.size();
         }
 
         // Sort and return the list
         Collections.sort(result);
         return result;
+    }
+
+    /**
+     * @return The number of downloaded episodes.
+     */
+    public int getDownloadsSize() {
+        if (downloadsSize == -1 && metadata != null)
+            initDownloadsCounter();
+
+        return downloadsSize == -1 ? 0 : downloadsSize;
     }
 
     /**
@@ -486,16 +509,21 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
     }
 
     /**
+     * @return The number of episodes in the playlist.
+     */
+    public int getPlaylistSize() {
+        if (playlistSize == -1 && metadata != null)
+            initPlaylistCounter();
+
+        return playlistSize == -1 ? 0 : playlistSize;
+    }
+
+    /**
      * @return Whether the current playlist has any entries.
      */
     public boolean isPlaylistEmpty() {
-        if (playlistSize == -1 && metadata != null) {
-            playlistSize = 0;
-
-            for (EpisodeMetadata meta : metadata.values())
-                if (meta.playlistPosition != null)
-                    playlistSize++;
-        }
+        if (playlistSize == -1 && metadata != null)
+            initPlaylistCounter();
 
         return playlistSize <= 0;
     }
@@ -755,6 +783,22 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
         return 0;
     }
 
+    private void initDownloadsCounter() {
+        this.downloadsSize = 0;
+
+        for (EpisodeMetadata meta : metadata.values())
+            if (isDownloaded(meta))
+                downloadsSize++;
+    }
+
+    private void initPlaylistCounter() {
+        this.playlistSize = 0;
+
+        for (EpisodeMetadata meta : metadata.values())
+            if (meta.playlistPosition != null)
+                playlistSize++;
+    }
+
     /**
      * Find the path relative to the base directory the local episode file
      * should be located in.
@@ -791,7 +835,7 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
         if (metadata != null) {
             // Check if this was a download we care for
             for (EpisodeMetadata meta : metadata.values())
-                if (meta.downloadId != null && meta.downloadId == downloadId) {
+                if (meta.downloadId != null && meta.downloadId == downloadId && !isDownloaded(meta)) {
                     // Find download result information
                     Cursor result = downloadManager.query(new Query().setFilterById(downloadId));
                     // There should be information on the download
@@ -806,6 +850,10 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
 
                             for (OnDownloadEpisodeListener listener : downloadListeners)
                                 listener.onDownloadSuccess();
+
+                            // Update counter
+                            if (downloadsSize != -1)
+                                downloadsSize++;
                         }
                         // Download failed
                         else {
