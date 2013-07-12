@@ -36,6 +36,7 @@
     <string name="player_error">Error de reproducción</string>
     <string name="podcast_image">Imagen del podcast</string>
     <string name="podcast_none">Ningún podcast disponible</string>
+    <string name="podcast_none_long">Ningún podcast disponible</string>
     <string name="podcast_none_selected">No hay ningún podcast seleccionado</string>
     <string name="podcast_select_all">Seleccionar todos</string>
     <plurals name="podcasts">

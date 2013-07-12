@@ -123,9 +123,11 @@ public class ContentSpinner extends Spinner implements
             // Set the subtitle
             final TextView subtitleView = (TextView) spinnerItemView.findViewById(R.id.subtitle);
             final int podcastCount = PodcastManager.getInstance().size();
-
-            subtitleView.setText(parent.getContext().getResources()
-                    .getQuantityString(R.plurals.podcasts, podcastCount, podcastCount));
+            if (podcastCount == 0)
+                subtitleView.setText(R.string.podcast_none);
+            else
+                subtitleView.setText(parent.getContext().getResources()
+                        .getQuantityString(R.plurals.podcasts, podcastCount, podcastCount));
 
             return spinnerItemView;
         }

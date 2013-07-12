@@ -35,7 +35,8 @@
     <string name="player_label_short">%1$s of %2$s</string>
     <string name="player_error">Playback failed</string>
     <string name="podcast_image">Podcast logo</string>
-    <string name="podcast_none">No podcasts added. Please use the plus icon in the menu to add subscriptions to this list.</string>
+    <string name="podcast_none">No podcasts added.</string>
+    <string name="podcast_none_long">No podcasts added. Please use the plus icon in the menu to add subscriptions to this list.</string>
     <string name="podcast_none_selected">No podcast selected</string>
     <string name="podcast_select_all">Select all podcasts</string>
     <plurals name="podcasts">
