@@ -36,6 +36,7 @@
     <string name="player_error">La lecture a échoué</string>
     <string name="podcast_image">Logo du podcast</string>
     <string name="podcast_none">Aucun podcast disponible</string>
+    <string name="podcast_none_long">Aucun podcast disponible</string>
     <string name="podcast_none_selected">Aucun podcast sélectionné</string>
     <string name="podcast_select_all">Sélectionner tous</string>
     <plurals name="podcasts">
