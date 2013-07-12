@@ -283,7 +283,19 @@ public class EpisodeManager implements OnLoadEpisodeMetadataListener {
                         .addRequestHeader("Cache-Control", "no-store");
 
                 // Start the download
-                id = downloadManager.enqueue(download);
+                try {
+                    id = downloadManager.enqueue(download);
+                } catch (SecurityException se) {
+                    // This happens if the download manager has not the rights
+                    // to write to the selected downloads directory
+                    for (OnDownloadEpisodeListener listener : downloadListeners)
+                        listener.onDownloadFailed();
+
+                    // TODO Find a better solution here, e.g. download the file
+                    // to some temp folder and move it the the wanted
+                    // destination when the download completed
+                    return;
+                }
             } // The episode is already there, alert listeners
             else {
                 meta.filePath = new File(podcastDir, subPath).getAbsolutePath();
