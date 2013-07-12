@@ -50,6 +50,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Our model class. Holds all the podcast and episode model data and offers
@@ -115,7 +116,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
 
         @Override
         public void run() {
-            Log.i("TAG", "Running podcast background update");
+            Log.i(getClass().getSimpleName(), "Running podcast background update");
 
             final boolean online = podcatcher.isOnline();
             // This is the current time minus the time to life for the podcast
@@ -124,25 +125,31 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             final Date triggerIfLoadedBefore = new Date(new Date().getTime() -
                     (podcatcher.isOnFastConnection() ? TIME_TO_LIFE : TIME_TO_LIFE_MOBILE) -
                     1000 * 60 * 6); // trigger if six minutes before reload
-            Log.i("TAG", "trigger before: " + triggerIfLoadedBefore.toLocaleString());
 
-            for (Podcast podcast : podcastList) {
-                // There are some condition here: We need to be online, the
-                // podcast is not currently loading, and has not been loaded
-                // recently
-                if (online && !loadPodcastTasks.containsKey(podcast) &&
-                        (podcast.getLastLoaded() == null || podcast.getLastLoaded().before(
-                                triggerIfLoadedBefore))) {
-                    // Download podcast RSS feed (async)
-                    LoadPodcastTask task = new LoadPodcastTask(PodcastManager.this);
-                    task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
+            // There are some conditions here: We need to be online and there
+            // should not be too many threads open
+            if (online && (loadPodcastTasks.size() + loadPodcastLogoTasks.size() < 50))
+                for (Podcast podcast : podcastList) {
+                    // There are more conditions here: The podcast is not
+                    // currently loading, and has not been loaded recently
+                    if (!loadPodcastTasks.containsKey(podcast) &&
+                            (podcast.getLastLoaded() == null || podcast.getLastLoaded().before(
+                                    triggerIfLoadedBefore))) {
+                        // Download podcast RSS feed (async)
+                        final LoadPodcastTask task = new LoadPodcastTask(PodcastManager.this);
+                        try {
+                            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
 
-                    // Keep task reference, so we can cancel the load and
-                    // determine
-                    // whether a task for this podcast is already running
-                    loadPodcastTasks.put(podcast, task);
+                            // Keep task reference, so we can cancel the load
+                            // and determine whether a task for this podcast is
+                            // already running
+                            loadPodcastTasks.put(podcast, task);
+                        } catch (RejectedExecutionException ree) {
+                            // Skip update
+                            Log.d(getClass().getSimpleName(), "Cannot update podcast", ree);
+                        }
+                    }
                 }
-            }
         }
     }
 
@@ -260,18 +267,23 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         // Only start the load task if it is not already active
         else if (!loadPodcastTasks.containsKey(podcast)) {
             // Download podcast RSS feed (async)
-            LoadPodcastTask task = new LoadPodcastTask(this);
+            final LoadPodcastTask task = new LoadPodcastTask(this);
             // We will accept stale versions from the cache in certain
             // situations
             task.setMaxStale(podcatcher.isOnline() ?
                     podcatcher.isOnFastConnection() ? MAX_STALE : MAX_STALE_MOBILE
                     : MAX_STALE_OFFLINE);
 
-            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
+            try {
+                task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
 
-            // Keep task reference, so we can cancel the load and determine
-            // whether a task for this podcast is already running
-            loadPodcastTasks.put(podcast, task);
+                // Keep task reference, so we can cancel the load and determine
+                // whether a task for this podcast is already running
+                loadPodcastTasks.put(podcast, task);
+            } catch (RejectedExecutionException ree) {
+                // Skip update TODO We might need a better solution here?
+                Log.d(getClass().getSimpleName(), "Cannot update podcast", ree);
+            }
         }
     }
 
@@ -352,12 +364,17 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             // Only use cached file if offline (even if stale)
             task.setLocalOnly(!podcatcher.isOnline() || localOnly);
 
-            // Go for it!
-            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
+            try {
+                // Go for it!
+                task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
 
-            // Keep task reference, so we can cancel the load and determine
-            // whether a task for this podcast logo is already running
-            loadPodcastLogoTasks.put(podcast, task);
+                // Keep task reference, so we can cancel the load and determine
+                // whether a task for this podcast logo is already running
+                loadPodcastLogoTasks.put(podcast, task);
+            } catch (RejectedExecutionException ree) {
+                // Skip logo loading
+                Log.d(getClass().getSimpleName(), "Cannot load podcast logo", ree);
+            }
         }
     }
 
