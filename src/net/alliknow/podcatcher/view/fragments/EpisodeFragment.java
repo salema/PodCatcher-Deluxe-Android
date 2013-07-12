@@ -106,6 +106,7 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
 
     /** The callback implementation */
     private final class VideoCallback implements SurfaceHolder.Callback {
+
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             videoSurfaceAvailable = true;

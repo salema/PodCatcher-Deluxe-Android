@@ -22,8 +22,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -31,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.MediaController;
 
+import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
 import net.alliknow.podcatcher.view.fragments.VideoSurfaceProvider;
@@ -38,10 +37,12 @@ import net.alliknow.podcatcher.view.fragments.VideoSurfaceProvider;
 /**
  * Show fullscreen video activity.
  */
-public class FullscreenVideoActivity extends BaseActivity implements VideoSurfaceProvider {
+public class FullscreenVideoActivity extends BaseActivity implements VideoSurfaceProvider,
+        PlayServiceListener {
 
     /** Play service */
     protected PlayEpisodeService service;
+    /** The media controller overlay */
     private MediaController controller;
 
     /** Flag to indicate whether video surface is available */
@@ -56,8 +57,10 @@ public class FullscreenVideoActivity extends BaseActivity implements VideoSurfac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // We only get to work if fullscreen playback is actually enabled.
         if (selection.isFullscreenEnabled()) {
             setContentView(R.layout.fullscreen_video);
+
             videoView = (SurfaceView) findViewById(R.id.episode_video);
             videoView.getHolder().addCallback(videoCallback);
 
@@ -65,6 +68,7 @@ public class FullscreenVideoActivity extends BaseActivity implements VideoSurfac
             Intent intent = new Intent(this, PlayEpisodeService.class);
             bindService(intent, connection, 0);
         }
+        // Stop ourselves
         else
             finish();
     }
@@ -86,15 +90,10 @@ public class FullscreenVideoActivity extends BaseActivity implements VideoSurfac
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Log.i(getClass().getSimpleName(), "Fullscreen close requested");
-            selection.setFullscreenEnabled(false);
+    public void finish() {
+        selection.setFullscreenEnabled(false);
 
-            finish();
-        }
-
-        return false;
+        super.finish();
     }
 
     @Override
@@ -102,10 +101,62 @@ public class FullscreenVideoActivity extends BaseActivity implements VideoSurfac
         videoView.getHolder().removeCallback(videoCallback);
 
         // Detach from play service (prevents leaking)
-        if (service != null)
+        if (service != null) {
+            service.removePlayServiceListener(this);
             unbindService(connection);
+        }
 
         super.onDestroy();
+    }
+
+    @Override
+    public void onVideoAvailable() {
+        // pass
+    }
+
+    @Override
+    public void onPlaybackStarted() {
+        // If we go to the next episode and that one has no video content, close
+        // the activity.
+        if (service != null && !service.isVideo())
+            finish();
+        // Update the controller
+        else if (controller != null) {
+            controller.show();
+            attachPrevNextListeners();
+        }
+    }
+
+    @Override
+    public void onPlaybackStateChanged() {
+        if (controller != null)
+            controller.show();
+    }
+
+    @Override
+    public void onStopForBuffering() {
+        // pass
+    }
+
+    @Override
+    public void onResumeFromBuffering() {
+        // pass
+    }
+
+    @Override
+    public void onBufferUpdate(int seconds) {
+        // pass
+    }
+
+    @Override
+    public void onPlaybackComplete() {
+        // pass
+    }
+
+    @Override
+    public void onError() {
+        // Close activity on error
+        finish();
     }
 
     @Override
@@ -134,13 +185,15 @@ public class FullscreenVideoActivity extends BaseActivity implements VideoSurfac
         @Override
         public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
             service = ((PlayServiceBinder) serviceBinder).getService();
+            // Attach the listeners and provide our surface
             service.setVideoSurfaceProvider(FullscreenVideoActivity.this);
+            service.addPlayServiceListener(FullscreenVideoActivity.this);
 
+            // Create the media controller to show when the surface is touched
             controller = new MediaController(FullscreenVideoActivity.this);
             controller.setMediaPlayer(service);
-            controller.setPrevNextListeners(episodeManager.isPlaylistEmpty() ?
-                    null : new NextListener(), new PrevListener());
             controller.setAnchorView(videoView);
+            attachPrevNextListeners();
         }
 
         @Override
@@ -151,9 +204,9 @@ public class FullscreenVideoActivity extends BaseActivity implements VideoSurfac
 
     /** The callback implementation */
     private final class VideoCallback implements SurfaceHolder.Callback {
+
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
-            Log.i(getClass().getSimpleName(), "Surface created FullscreenActivity");
             videoSurfaceAvailable = true;
 
             if (controller != null)
@@ -167,7 +220,6 @@ public class FullscreenVideoActivity extends BaseActivity implements VideoSurfac
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
-            Log.i(getClass().getSimpleName(), "Surface destroyed FullscreenActivity");
             videoSurfaceAvailable = false;
         }
     }
@@ -188,5 +240,11 @@ public class FullscreenVideoActivity extends BaseActivity implements VideoSurfac
             if (service != null)
                 service.seekTo(0);
         }
+    }
+
+    private void attachPrevNextListeners() {
+        if (controller != null)
+            controller.setPrevNextListeners(episodeManager.isPlaylistEmpty() ?
+                    null : new NextListener(), new PrevListener());
     }
 }

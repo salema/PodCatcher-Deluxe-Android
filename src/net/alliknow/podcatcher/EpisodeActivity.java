@@ -208,9 +208,9 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
                 break;
             case SMALL_LANDSCAPE:
-                // Find, and if not already done create, episode fragment
-                if (episodeFragment == null)
-                    episodeFragment = new EpisodeFragment();
+                // We need to create new episode fragment here each time to
+                // renew the video surface
+                episodeFragment = new EpisodeFragment();
 
                 // Add the fragment to the UI, replacing the list fragment if it
                 // is not already there
