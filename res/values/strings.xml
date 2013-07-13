@@ -81,5 +81,5 @@
     <string name="pref_theme_color_dialog_use">Press new color to apply</string>
     <string name="pref_wide_episode_list_title">Wide episode list</string>
     <string name="pref_wide_episode_list_summary">Make room for more episode details</string>
-    <string name="ad">Try &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; for downloads, playlists, filters, and other premium features!</string>
+    <string name="ad">Try &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; and &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt; for downloads, playlists, filters, and many more premium features!</string>
 </resources>

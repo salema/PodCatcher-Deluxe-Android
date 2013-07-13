@@ -81,5 +81,5 @@
     <string name="pref_theme_color_dialog_use">Zum Anwenden neue Farbe drücken</string>
     <string name="pref_wide_episode_list_title">Breite Episodenliste</string>
     <string name="pref_wide_episode_list_summary">Mehr Platz für Episodendetails</string>
-    <string name="ad">Testen Sie &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt;: Downloads, Wiedergabelisten, Filter und viele weitere Komfortfunktionen!</string>
+    <string name="ad">Testen Sie &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; und &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt;: Downloads, Wiedergabelisten, Filter und viele weitere Komfortfunktionen!</string>
 </resources>

@@ -81,5 +81,5 @@
     <string name="pref_theme_color_dialog_use">Appuyez nouvelle couleur pour l\'appliquer</string>
     <string name="pref_wide_episode_list_title">Grand liste des épisodes</string>
     <string name="pref_wide_episode_list_summary">Make room for more episode details</string>
-    <string name="ad">Testez &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt;, l\'application qui vous offre plus d\'options: téléchargement d’épisodes, création de listes de lecture, filtres et beaucoup d’autres fonctions!</string>
+    <string name="ad">Testez &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; et &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt;, les applications que vous offrent plus d\'options: téléchargement d’épisodes, création de listes de lecture, filtres et beaucoup d’autres fonctions!</string>
 </resources>
