@@ -145,7 +145,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
                             loadPodcastTasks.put(podcast, task);
                         } catch (RejectedExecutionException ree) {
                             // Skip update
-                            Log.d(getClass().getSimpleName(), "Cannot update podcast", ree);
+                            Log.d(getClass().getSimpleName(), "Cannot update podcast \"" + podcast
+                                    + "\"", ree);
                         }
                     }
                 }
@@ -277,7 +278,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
                 loadPodcastTasks.put(podcast, task);
             } catch (RejectedExecutionException ree) {
                 // Skip update TODO We might need a better solution here?
-                Log.d(getClass().getSimpleName(), "Cannot update podcast", ree);
+                Log.d(getClass().getSimpleName(), "Cannot update podcast \"" + podcast
+                        + "\"", ree);
             }
         }
     }
@@ -368,7 +370,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
                 loadPodcastLogoTasks.put(podcast, task);
             } catch (RejectedExecutionException ree) {
                 // Skip logo loading
-                Log.d(getClass().getSimpleName(), "Cannot load podcast logo", ree);
+                Log.d(getClass().getSimpleName(), "Cannot load logo for podcast \"" + podcast
+                        + "\"", ree);
             }
         }
     }
