@@ -131,9 +131,17 @@ public abstract class EpisodeActivity extends BaseActivity implements
         super.onStart();
         this.visible = true;
 
+        // This is safe since it actually only starts the timer if it is
+        // actually needed
+        startPlayProgressTimer();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         updateActionBar();
         updatePlayer();
-        startPlayProgressTimer();
     }
 
     @Override

@@ -20,8 +20,8 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.alliknow.podcatcher"
-    android:versionCode="42"
-    android:versionName="2.8">
+    android:versionCode="45"
+    android:versionName="2.8.1">
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="17" />
@@ -53,7 +53,7 @@
             android:name=".ScrapePodcastsActivity"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
-                <action android:name="net.alliknow.podcatcher.action.IMPORT" />
+                <action android:name="com.podcatcher.deluxe.action.IMPORT" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
