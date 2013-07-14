@@ -88,10 +88,9 @@ public class AddPodcastFragment extends DialogFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         getDialog().setTitle(R.string.podcast_add_title);
 
-        // Prevent automatic display of the soft keyboard on first appearance
-        if (savedInstanceState == null)
-            getDialog().getWindow().setSoftInputMode(
-                    WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        // Prevent automatic display of the soft keyboard
+        getDialog().getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         podcastUrlEditText = (EditText) view.findViewById(R.id.podcast_url);
         podcastUrlEditText.setOnEditorActionListener(new OnEditorActionListener() {
