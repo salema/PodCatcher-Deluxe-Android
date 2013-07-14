@@ -126,7 +126,6 @@ com.podcatcher.deluxe.R$drawable: int ic_file_folder
 com.podcatcher.deluxe.R$drawable: int ic_file_up
 com.podcatcher.deluxe.R$drawable: int ic_media_downloaded
 com.podcatcher.deluxe.R$drawable: int ic_media_downloading
-com.podcatcher.deluxe.R$drawable: int ic_media_fullscreen
 com.podcatcher.deluxe.R$drawable: int ic_media_new
 com.podcatcher.deluxe.R$drawable: int ic_media_next
 com.podcatcher.deluxe.R$drawable: int ic_media_pause
@@ -335,6 +334,8 @@ com.podcatcher.deluxe.R$string: int remove
 com.podcatcher.deluxe.R$string: int resume
 com.podcatcher.deluxe.R$string: int stop
 com.podcatcher.deluxe.R$string: int suggested_podcasts
+com.podcatcher.deluxe.R$string: int suggestion_listen
+com.podcatcher.deluxe.R$string: int suggestion_watch
 com.podcatcher.deluxe.R$string: int suggestions
 com.podcatcher.deluxe.R$string: int suggestions_load_error
 com.podcatcher.deluxe.R$string: int suggestions_none
