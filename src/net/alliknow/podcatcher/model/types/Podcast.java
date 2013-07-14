@@ -311,8 +311,10 @@ public class Podcast implements Comparable<Podcast> {
             // HREF attribute used?
             if (parser.getAttributeValue("", RSS.HREF) != null)
                 logoUrl = createLogoUrl(parser.getAttributeValue("", RSS.HREF));
-            // URL tag used!
-            else {
+            // URL tag used! We do not override any previous setting, because
+            // the HREF is from the <itunes:image> tag which tends to have
+            // better pics.
+            else if (logoUrl == null) {
                 // Make sure we start at image tag
                 parser.require(XmlPullParser.START_TAG, "", RSS.IMAGE);
 
