@@ -26,13 +26,13 @@
         android:id="@id/android:list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="1"
         android:choiceMode="multipleChoiceModal" />
     <TextView
         android:id="@id/android:empty"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="1"
         android:layout_margin="20dp"
         android:gravity="center"
         android:text="@string/podcast_none_long"
@@ -52,8 +52,7 @@
     <ImageView
         android:id="@+id/podcast_image"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="48dp"
         android:contentDescription="@string/podcast_image"
         android:scaleType="centerInside"
         android:src="@drawable/default_podcast_logo" />
