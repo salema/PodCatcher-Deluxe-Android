@@ -44,7 +44,7 @@
         <item quantity="other">%d Podcasts</item>
     </plurals>
     <string name="podcast_add_title">Neuer Podcast</string>
-    <string name="podcast_add_button">Anhören</string>
+    <string name="podcast_add_button">Hinzufügen</string>
     <string name="podcast_enter_url_here">Podcast-Adresse hier einfügen</string>
     <string name="podcast_add_error">Der Podcast konnte nicht geladen werden.</string>
     <string name="podcast_load_error">Podcast kann nicht geladen werden, bitte prüfen Sie Ihre Internetverbindung!</string>
@@ -69,6 +69,8 @@
     <string name="opml_export_failed">OPML-Export fehlgeschlagen</string>
     <string name="suggestions">Vorschläge&#8230;</string>
     <string name="suggested_podcasts">Empfohlene Podcasts</string>
+    <string name="suggestion_listen">Anhören</string>
+    <string name="suggestion_watch">Anschauen</string>
     <string name="suggestions_none">Keine Empfehlungen, bitte ändern Sie Ihre Filter.</string>
     <string name="suggestions_load_error">Empfehlungen können nicht geladen werden, bitte prüfen Sie Ihre Internetverbindung!</string>
     <string name="suggestions_send">Ich möchte einen Podcast empfehlen&#8230;</string>

@@ -69,6 +69,8 @@
     <string name="opml_export_failed">La exportación ha fallado</string>
     <string name="suggestions">Sugerencias&#8230;</string>
     <string name="suggested_podcasts">Podcasts recomendados</string>
+    <string name="suggestion_listen">Escuchar</string>
+    <string name="suggestion_watch">Ver</string>
     <string name="suggestions_none">No hay ninguna sugerencia.</string>
     <string name="suggestions_load_error">Las sugerencias no se han podido cargar. Comprobar la conexión al internet.</string>
     <string name="suggestions_send">Envia una propuesta para incluirla en esta lista&#8230;</string>
