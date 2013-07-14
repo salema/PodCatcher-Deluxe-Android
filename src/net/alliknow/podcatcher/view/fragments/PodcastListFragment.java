@@ -26,6 +26,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.ListView;
@@ -114,6 +116,21 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
         // Find logo view member handle
         logoView = (ImageView) view.findViewById(R.id.podcast_image);
+        // ... and make sure the logo view is square
+        logoView.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+
+                    @Override
+                    public void onGlobalLayout() {
+                        // We only need this once
+                        logoView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                        // Update new layout params
+                        final LayoutParams layoutParams = logoView.getLayoutParams();
+                        layoutParams.height = getView().getWidth();
+                        logoView.setLayoutParams(layoutParams);
+                    }
+                });
+
         // Set list choice listener (context action mode)
         getListView().setMultiChoiceModeListener(new PodcastListContextListener(this));
 
