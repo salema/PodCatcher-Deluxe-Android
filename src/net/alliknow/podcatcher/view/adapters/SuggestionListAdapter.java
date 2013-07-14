@@ -25,6 +25,7 @@ import android.widget.Button;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnAddSuggestionListener;
+import net.alliknow.podcatcher.model.types.MediaType;
 import net.alliknow.podcatcher.model.types.Podcast;
 
 import java.util.List;
@@ -71,6 +72,8 @@ public class SuggestionListAdapter extends PodcastListAdapter {
 
         // Find and prepare the add button
         final Button addButton = (Button) listItemView.findViewById(R.id.suggestion_add_button);
+        addButton.setText(suggestion.getMediaType().equals(MediaType.AUDIO) ?
+                R.string.suggestion_listen : R.string.suggestion_watch);
         addButton.setOnClickListener(new View.OnClickListener() {
 
             @Override

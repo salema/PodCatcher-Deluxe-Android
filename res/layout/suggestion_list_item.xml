@@ -55,9 +55,9 @@
             android:layout_weight="1"
             android:background="@drawable/button_green"
             android:gravity="center"
-            android:text="@string/podcast_add_button"
             android:textColor="@drawable/button_label"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:ellipsize="marquee" />
     </LinearLayout>
     <TextView
         android:id="@+id/suggestion_description"

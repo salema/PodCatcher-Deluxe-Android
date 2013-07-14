@@ -93,6 +93,8 @@
     <string name="opml_export_failed">L\'export a échoué</string>
     <string name="suggestions">Suggestions&#8230;</string>
     <string name="suggested_podcasts">Podcasts suggérés</string>
+    <string name="suggestion_listen">Écouter</string>
+    <string name="suggestion_watch">Regarder</string>
     <string name="suggestions_none">Aucune suggestion. Veuillez modifier les critères de filtre.</string>
     <string name="suggestions_load_error">Impossible de charger les suggestions. Vérifiez votre connexion Internet!</string>
     <string name="suggestions_send">Suggérer un podcast&#8230;</string>
