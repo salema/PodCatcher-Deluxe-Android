@@ -267,6 +267,7 @@ net.alliknow.podcatcher.R$string: int podcast_load_error
 net.alliknow.podcatcher.R$string: int podcast_load_multiple_error
 net.alliknow.podcatcher.R$string: int podcast_load_multiple_progress
 net.alliknow.podcatcher.R$string: int podcast_none
+net.alliknow.podcatcher.R$string: int podcast_none_long
 net.alliknow.podcatcher.R$string: int podcast_none_selected
 net.alliknow.podcatcher.R$string: int podcast_select_all
 net.alliknow.podcatcher.R$string: int pref_category_interface
@@ -282,6 +283,8 @@ net.alliknow.podcatcher.R$string: int remove
 net.alliknow.podcatcher.R$string: int resume
 net.alliknow.podcatcher.R$string: int stop
 net.alliknow.podcatcher.R$string: int suggested_podcasts
+net.alliknow.podcatcher.R$string: int suggestion_listen
+net.alliknow.podcatcher.R$string: int suggestion_watch
 net.alliknow.podcatcher.R$string: int suggestions
 net.alliknow.podcatcher.R$string: int suggestions_load_error
 net.alliknow.podcatcher.R$string: int suggestions_none
