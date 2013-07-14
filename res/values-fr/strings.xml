@@ -41,7 +41,7 @@
     <string name="podcast_select_all">Sélectionner tous</string>
     <plurals name="podcasts">
         <item quantity="one">Un podcast</item>
-        <item quantity="other">%d épisodes</item>
+        <item quantity="other">%d podcasts</item>
     </plurals>
     <string name="podcast_add_title">Nouveau podcast</string>
     <string name="podcast_add_button">Ajouter</string>
