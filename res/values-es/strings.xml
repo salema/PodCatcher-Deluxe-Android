@@ -29,7 +29,7 @@
     <string name="parse">Analizar</string>
     <string name="play">Reproducir</string>
     <string name="pause">Pausar</string>
-    <string name="resume">Resumir</string>
+    <string name="resume">Reanudar</string>
     <string name="player_buffering">Buffering&#8230;</string>
     <string name="player_label">en %1$s de %2$s</string>
     <string name="player_label_short">%1$s de %2$s</string>
