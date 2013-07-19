@@ -1,1 +1,2 @@
 Make sure class renaming are done properly, in particular for custom preferences and views
+Maybe run OptiPNG: find . -name "*.png" -exec optipng {} \;
