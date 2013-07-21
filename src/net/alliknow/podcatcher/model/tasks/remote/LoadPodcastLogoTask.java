@@ -131,7 +131,7 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
             // stale cached version.
             else
                 throw new IOException();
-        } catch (Exception e) {
+        } catch (Throwable throwable) {
             // Return the cached version even though it is stale (having an old
             // logo for the podcast is better then having none).
             if (isCachedLocally(podcast)) {
@@ -141,7 +141,8 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
             // We are out of options here
             else {
                 Log.w(getClass().getSimpleName(), "Logo failed to load for podcast \""
-                        + podcasts[0] + "\" with " + "logo URL " + podcasts[0].getLogoUrl(), e);
+                        + podcasts[0] + "\" with " + "logo URL " + podcasts[0].getLogoUrl(),
+                        throwable);
 
                 cancel(true);
             }

@@ -93,17 +93,18 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
 
                 storeSuggestionsToFileCache(suggestions);
             }
-        } catch (Exception e) {
+        } catch (Throwable throwable) {
             // Use cached version even if it is stale
             if (isCachedLocally())
                 try {
                     suggestions = restoreSuggestionsFromFileCache();
-                } catch (IOException e1) {
+                } catch (IOException ioe) {
                     cancel(true);
                     return null; // Nothing more we could do here
                 }
             else {
-                Log.w(getClass().getSimpleName(), "Load failed for podcast suggestions file", e);
+                Log.w(getClass().getSimpleName(), "Load failed for podcast suggestions file",
+                        throwable);
 
                 cancel(true);
                 return null;
