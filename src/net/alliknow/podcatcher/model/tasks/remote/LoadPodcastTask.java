@@ -83,8 +83,9 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
             // 4. We need to wait here and make sure the episode metadata is
             // available before we return
             EpisodeManager.getInstance().blockUntilEpisodeMetadataIsLoaded();
-        } catch (Exception e) {
-            Log.w(getClass().getSimpleName(), "Load failed for podcast \"" + podcasts[0] + "\"", e);
+        } catch (Throwable throwable) {
+            Log.w(getClass().getSimpleName(), "Load failed for podcast \"" + podcasts[0] + "\"",
+                    throwable);
 
             cancel(true);
         } finally {
