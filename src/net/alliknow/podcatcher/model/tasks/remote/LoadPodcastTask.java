@@ -78,8 +78,9 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
             // 3. Parse as podcast content
             if (!isCancelled())
                 podcast.parse(parser);
-        } catch (Exception e) {
-            Log.w(getClass().getSimpleName(), "Load failed for podcast \"" + podcasts[0] + "\"", e);
+        } catch (Throwable throwable) {
+            Log.w(getClass().getSimpleName(), "Load failed for podcast \"" + podcasts[0] + "\"",
+                    throwable);
 
             cancel(true);
         } finally {
