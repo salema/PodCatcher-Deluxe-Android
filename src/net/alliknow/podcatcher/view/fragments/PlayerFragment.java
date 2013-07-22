@@ -37,6 +37,7 @@ import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.PlayerListener;
+import net.alliknow.podcatcher.model.ParserUtils;
 import net.alliknow.podcatcher.model.types.Episode;
 
 /**
@@ -316,8 +317,8 @@ public class PlayerFragment extends Fragment {
                 button.setCompoundDrawablesWithIntrinsicBounds(playing ?
                         R.drawable.ic_media_pause : R.drawable.ic_media_play, 0, 0, 0);
 
-                final String formattedPosition = formatTime(position);
-                final String formattedDuration = formatTime(duration);
+                final String formattedPosition = ParserUtils.formatTime(position);
+                final String formattedDuration = ParserUtils.formatTime(duration);
 
                 if (showShortPlaybackPosition)
                     button.setText(getString(R.string.player_label_short,
@@ -345,33 +346,5 @@ public class PlayerFragment extends Fragment {
             seekBar.setVisibility(show ? GONE : VISIBLE);
             errorView.setVisibility(show ? VISIBLE : GONE);
         }
-    }
-
-    /**
-     * Format an amount of time.
-     * 
-     * @param time Amount in seconds to format.
-     * @return The time span as hh:mm:ss with appropriate omissions.
-     */
-    private String formatTime(int time) {
-        int hours = time / 3600;
-
-        int minutes = (time / 60) - 60 * hours;
-        int seconds = time % 60;
-
-        String minutesString = formatNumber(minutes, hours > 0);
-        String secondsString = formatNumber(seconds, true);
-
-        if (hours > 0)
-            return hours + ":" + minutesString + ":" + secondsString;
-        else
-            return minutesString + ":" + secondsString;
-    }
-
-    private static String formatNumber(int number, boolean makeTwoDigits) {
-        if (number < 10 && makeTwoDigits)
-            return "0" + number;
-        else
-            return number + "";
     }
 }

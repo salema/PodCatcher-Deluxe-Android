@@ -54,4 +54,31 @@ public class ParserUtils {
         // sub-tree that might have been there. Return.
     }
 
+    /**
+     * Format an amount of time.
+     * 
+     * @param time Amount in seconds to format.
+     * @return The time span as hh:mm:ss with appropriate omissions.
+     */
+    public static String formatTime(int time) {
+        int hours = time / 3600;
+
+        int minutes = (time / 60) - 60 * hours;
+        int seconds = time % 60;
+
+        String minutesString = formatNumber(minutes, hours > 0);
+        String secondsString = formatNumber(seconds, true);
+
+        if (hours > 0)
+            return hours + ":" + minutesString + ":" + secondsString;
+        else
+            return minutesString + ":" + secondsString;
+    }
+
+    private static String formatNumber(int number, boolean makeTwoDigits) {
+        if (number < 10 && makeTwoDigits)
+            return "0" + number;
+        else
+            return number + "";
+    }
 }

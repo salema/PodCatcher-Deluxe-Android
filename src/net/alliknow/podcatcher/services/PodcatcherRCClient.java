@@ -19,6 +19,7 @@ package net.alliknow.podcatcher.services;
 
 import static android.media.MediaMetadataRetriever.METADATA_KEY_ARTIST;
 import static android.media.MediaMetadataRetriever.METADATA_KEY_DATE;
+import static android.media.MediaMetadataRetriever.METADATA_KEY_DURATION;
 import static android.media.MediaMetadataRetriever.METADATA_KEY_TITLE;
 import static android.media.RemoteControlClient.MetadataEditor.BITMAP_KEY_ARTWORK;
 
@@ -58,7 +59,7 @@ public class PodcatcherRCClient extends RemoteControlClient {
 
             editor.putString(METADATA_KEY_TITLE, episode.getName());
             editor.putString(METADATA_KEY_DATE, Utils.getRelativePubDate(episode));
-            // editor.putLong(METADATA_KEY_DURATION, player.getDuration());
+            editor.putLong(METADATA_KEY_DURATION, episode.getDuration() * 1000);
 
             if (episode.getPodcast() != null) {
                 editor.putString(METADATA_KEY_ARTIST, episode.getPodcast().getName());
