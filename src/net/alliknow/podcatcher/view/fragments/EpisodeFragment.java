@@ -134,9 +134,9 @@ public class EpisodeFragment extends Fragment {
                     subtitleView.setText(subtitleView.getText() + SEPARATOR
                             + Utils.getRelativePubDate(currentEpisode));
                 // Episode duration
-                if (currentEpisode.getDuration() != null)
+                if (currentEpisode.getDurationString() != null)
                     subtitleView.setText(subtitleView.getText() + SEPARATOR
-                            + currentEpisode.getDuration());
+                            + currentEpisode.getDurationString());
                 // Find valid episode description
                 String description = currentEpisode.getLongDescription();
                 if (description == null)
