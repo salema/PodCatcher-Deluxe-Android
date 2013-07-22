@@ -45,6 +45,11 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
     /** The call-back set for the episode state changed listeners */
     private Set<OnChangeEpisodeStateListener> stateListeners = new HashSet<OnChangeEpisodeStateListener>();
 
+    /** Helper to prevent clean-up from running too often */
+    private int podcastLoadCounter = 0;
+    /** Helper to prevent clean-up to run twice for the same podcast */
+    private Set<String> podcastsCleanUpRanFor = new HashSet<String>();
+
     /**
      * Init the episode state manager.
      * 
@@ -213,61 +218,25 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
 
     @Override
     public void onPodcastRemoved(final Podcast podcast) {
-        // Go off the main thread, we rely on getting an iterator from the
-        // metadata being thread safe here!
-        new Thread() {
+        if (podcast != null) {
+            // Go off the main thread, we rely on getting an iterator from the
+            // metadata being thread safe here!
+            new Thread() {
 
-            @Override
-            public void run() {
-                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+                @Override
+                public void run() {
+                    android.os.Process
+                            .setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
 
-                // Clean all state meta data information for episodes of the
-                // deleted feed
-                Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
-                while (iterator.hasNext()) {
-                    final Entry<URL, EpisodeMetadata> entry = iterator.next();
+                    // Clean all state meta data information for episodes of the
+                    // deleted feed
+                    Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+                    while (iterator.hasNext()) {
+                        final Entry<URL, EpisodeMetadata> entry = iterator.next();
 
-                    // Find metadata records with matching podcast
-                    if (podcast.getUrl().toString().equals(entry.getValue().podcastUrl)
-                            && entry.getValue().hasOnlyStateData()) {
-                        // This is actually enough since the task storing the
-                        // metadata will clean empty records
-                        entry.getValue().isOld = null;
-                        entry.getValue().resumeAt = null;
-                    }
-                }
-            }
-        }.start();
-    }
-
-    @Override
-    public void onPodcastLoaded(final Podcast podcast) {
-        // Go off the main thread, we rely on getting an iterator from the
-        // metadata being thread safe here!
-        new Thread() {
-
-            @Override
-            public void run() {
-                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
-
-                // Clean all state meta data information for episodes no longer
-                // present in the podcast feed
-                Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
-                while (iterator.hasNext()) {
-                    final Entry<URL, EpisodeMetadata> entry = iterator.next();
-
-                    // Podcast matches
-                    if (podcast.getUrl().toString().equals(entry.getValue().podcastUrl)) {
-                        boolean stillInPodcast = false;
-
-                        // Check whether the episode is still there
-                        for (Episode episode : podcast.getEpisodes())
-                            if (episode.getMediaUrl().equals(entry.getKey()))
-                                stillInPodcast = true;
-
-                        // If it is not there and the episode metadata does not
-                        // have any other information, delete the metadata
-                        if (!stillInPodcast && entry.getValue().hasOnlyStateData()) {
+                        // Find metadata records with matching podcast
+                        if (podcast.getUrl().toString().equals(entry.getValue().podcastUrl)
+                                && entry.getValue().hasOnlyStateData()) {
                             // This is actually enough since the task storing
                             // the metadata will clean empty records
                             entry.getValue().isOld = null;
@@ -275,8 +244,64 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
                         }
                     }
                 }
-            }
-        }.start();
+            }.start();
+        }
+    }
+
+    @Override
+    public void onPodcastLoaded(final Podcast podcast) {
+        // We do not want to run this too frequently and for all podcasts at
+        // once. In addition it should run only once per podcast during the
+        // lifetime of this EpisodeManager
+        if (podcast != null && !podcastsCleanUpRanFor.contains(podcast.getUrl().toString())
+                && podcastLoadCounter % 10 == 0) {
+            // Update helpers
+            podcastLoadCounter++;
+            podcastsCleanUpRanFor.add(podcast.getUrl().toString());
+
+            // Go off the main thread, we rely on getting an iterator from the
+            // metadata being thread safe here!
+            new Thread() {
+
+                @Override
+                public void run() {
+                    android.os.Process
+                            .setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+
+                    // Clean all state meta data information for episodes no
+                    // longer present in the podcast feed
+                    Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+                    while (iterator.hasNext()) {
+                        final Entry<URL, EpisodeMetadata> entry = iterator.next();
+
+                        // Podcast matches
+                        if (podcast.getUrl().toString().equals(entry.getValue().podcastUrl)) {
+                            boolean stillInPodcast = false;
+
+                            // Check whether the episode is still there
+                            for (Episode episode : podcast.getEpisodes())
+                                if (episode.getMediaUrl().equals(entry.getKey()))
+                                    stillInPodcast = true;
+
+                            // If it is not there and the episode metadata does
+                            // not have any other information, delete the
+                            // metadata
+                            if (!stillInPodcast && entry.getValue().hasOnlyStateData()) {
+                                // This is actually enough since the task
+                                // storing the metadata will clean empty records
+                                entry.getValue().isOld = null;
+                                entry.getValue().resumeAt = null;
+                            }
+                        }
+                    }
+                }
+            }.start();
+        }
+        // The other interesting case is when the load counter allowed the
+        // clean-up to run but the podcast is already clean: Do nothing.
+        // In all other cases: increment counter.
+        else if (podcast != null && podcastLoadCounter % 10 != 0)
+            podcastLoadCounter++;
     }
 
     @Override
