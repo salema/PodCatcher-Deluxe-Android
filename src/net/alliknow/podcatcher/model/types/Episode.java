@@ -52,7 +52,7 @@ public class Episode implements Comparable<Episode> {
     /** The episode's release date */
     private Date pubDate;
     /** The episode duration */
-    private String duration;
+    private int duration = -1;
     /** The episode's description */
     private String description;
     /** The episode's long content description */
@@ -124,10 +124,19 @@ public class Episode implements Comparable<Episode> {
     }
 
     /**
-     * @return The episode's duration as given by the podcast feed. This might
-     *         not be available and therefore <code>null</code>.
+     * @return The episode's duration as given by the podcast feed converted
+     *         into a string 00:00:00. This might not be available and therefore
+     *         <code>null</code>.
      */
-    public String getDuration() {
+    public String getDurationString() {
+        return duration > 0 ? ParserUtils.formatTime(duration) : null;
+    }
+
+    /**
+     * @return The episode's duration as given by the podcast feed or -1 if not
+     *         available.
+     */
+    public int getDuration() {
         return duration;
     }
 
@@ -260,20 +269,25 @@ public class Episode implements Comparable<Episode> {
         return null;
     }
 
-    private String parseDuration(String durationString) {
+    private int parseDuration(String durationString) {
         try {
-            // Do not allow something like 0:00
-            if (Integer.parseInt(durationString.replace(':', '0')) == 0)
-                return null;
-
-            final int duration = Integer.parseInt(durationString);
-            return duration / 60 + ":" + duration % 60;
+            // Duration simply given as number of seconds
+            return Integer.parseInt(durationString);
         } catch (NumberFormatException e) {
-            // Do not allow zero hours
-            if (durationString.startsWith("00:") && durationString.length() > 5)
-                durationString = durationString.substring(3);
+            // The duration is given as something like "1:12:34" instead
+            try {
+                String[] split = durationString.split(":");
 
-            return durationString;
+                if (split.length == 2)
+                    return Integer.parseInt(split[1]) + Integer.parseInt(split[0]) * 60;
+                else if (split.length == 3)
+                    return Integer.parseInt(split[2]) + Integer.parseInt(split[1]) * 60
+                            + Integer.parseInt(split[0]) * 3600;
+                else
+                    return -1;
+            } catch (NumberFormatException ex) {
+                return -1;
+            }
         }
     }
 }

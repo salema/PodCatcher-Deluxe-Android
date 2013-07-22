@@ -71,6 +71,17 @@ public class EpisodeMetadata {
     }
 
     /**
+     * @return Whether the metadata has no information other then for the
+     *         episode's state, i.e. <code>isOld</code> and/or
+     *         <code>resumeAt</code>.
+     */
+    public boolean hasOnlyStateData() {
+        return downloadId == null &&
+                filePath == null &&
+                playlistPosition == null;
+    }
+
+    /**
      * Create an actual episode object from the metadata.
      * 
      * @param episodeUrl URL for the new episode to be identified by.
