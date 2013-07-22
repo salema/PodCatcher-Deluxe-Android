@@ -95,7 +95,7 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
             // information is still needed later (Once the podcast feed is
             // deleted or the episode is not in the feed anymore, we can delete
             // the metadata for the episode).
-            if (meta.isOld != null && episode.getPodcast() != null)
+            if (meta != null && meta.isOld != null && episode.getPodcast() != null)
                 meta.podcastUrl = episode.getPodcast().getUrl().toString();
 
             // Mark metadata record as dirty
@@ -187,7 +187,7 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
             // information is still needed later (Once the podcast feed is
             // deleted or the episode is not in the feed anymore, we can delete
             // the metadata for the episode).
-            if (meta.resumeAt != null && episode.getPodcast() != null)
+            if (meta != null && meta.resumeAt != null && episode.getPodcast() != null)
                 meta.podcastUrl = episode.getPodcast().getUrl().toString();
 
             // Mark metadata record as dirty
