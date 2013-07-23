@@ -317,8 +317,8 @@ public class PlayerFragment extends Fragment {
                 button.setCompoundDrawablesWithIntrinsicBounds(playing ?
                         R.drawable.ic_media_pause : R.drawable.ic_media_play, 0, 0, 0);
 
-                final String formattedPosition = ParserUtils.formatTime(position);
-                final String formattedDuration = ParserUtils.formatTime(duration);
+                final String formattedPosition = ParserUtils.formatTime(position / 1000);
+                final String formattedDuration = ParserUtils.formatTime(duration / 1000);
 
                 if (showShortPlaybackPosition)
                     button.setText(getString(R.string.player_label_short,
