@@ -55,6 +55,7 @@ public class PlayEpisodeNotification {
     /** The actual intent that brings back the app */
     private final Intent appIntent;
     /** The pending intents for the actions */
+    private final PendingIntent stopPendingIntent;
     private final PendingIntent tooglePendingIntent;
     private final PendingIntent nextPendingIntent;
 
@@ -72,6 +73,11 @@ public class PlayEpisodeNotification {
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                         Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
+        final Intent stopIntent = new Intent(context, PlayEpisodeService.class);
+        stopIntent.setAction(PlayEpisodeService.ACTION_STOP);
+        stopPendingIntent = PendingIntent.getService(context, 0, stopIntent,
+                FLAG_UPDATE_CURRENT);
+
         final Intent toogleIntent = new Intent(context, PlayEpisodeService.class);
         toogleIntent.setAction(PlayEpisodeService.ACTION_TOGGLE);
         tooglePendingIntent = PendingIntent.getService(context, 0, toogleIntent,
@@ -79,7 +85,8 @@ public class PlayEpisodeNotification {
 
         final Intent nextIntent = new Intent(context, PlayEpisodeService.class);
         nextIntent.setAction(PlayEpisodeService.ACTION_SKIP);
-        nextPendingIntent = PendingIntent.getService(context, 0, nextIntent, FLAG_UPDATE_CURRENT);
+        nextPendingIntent = PendingIntent.getService(context, 0, nextIntent,
+                FLAG_UPDATE_CURRENT);
     }
 
     /**
@@ -134,7 +141,11 @@ public class PlayEpisodeNotification {
                 .setProgress(duration, position, false)
                 .setOngoing(true);
 
-        // Add actions according to playback state
+        // Add stop action
+        notificationBuilder.addAction(R.drawable.ic_media_stop,
+                context.getString(R.string.stop), stopPendingIntent);
+
+        // Add other actions according to playback state
         if (paused)
             notificationBuilder.addAction(R.drawable.ic_media_play,
                     context.getString(R.string.resume), tooglePendingIntent);
