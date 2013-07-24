@@ -53,7 +53,8 @@ public class PlayEpisodeNotification {
 
     /** The actual intent that brings back the app */
     private final Intent appIntent;
-    /** The pending intent for the toogle play action */
+    /** The pending intents for the actions */
+    private final PendingIntent stopPendingIntent;
     private final PendingIntent tooglePendingIntent;
 
     /** Our builder */
@@ -69,6 +70,11 @@ public class PlayEpisodeNotification {
                 .putExtra(EpisodeListActivity.MODE_KEY, ContentMode.SINGLE_PODCAST)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                         Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        final Intent stopIntent = new Intent(context, PlayEpisodeService.class);
+        stopIntent.setAction(PlayEpisodeService.ACTION_STOP);
+        stopPendingIntent = PendingIntent.getService(context, 0, stopIntent,
+                FLAG_UPDATE_CURRENT);
 
         final Intent toogleIntent = new Intent(context, PlayEpisodeService.class);
         toogleIntent.setAction(PlayEpisodeService.ACTION_TOGGLE);
@@ -128,7 +134,11 @@ public class PlayEpisodeNotification {
                 .setProgress(duration, position, false)
                 .setOngoing(true);
 
-        // Add actions according to playback state
+        // Add stop action
+        notificationBuilder.addAction(R.drawable.ic_media_stop,
+                context.getString(R.string.stop), stopPendingIntent);
+
+        // Add other actions according to playback state
         if (paused)
             notificationBuilder.addAction(R.drawable.ic_media_play,
                     context.getString(R.string.resume), tooglePendingIntent);
