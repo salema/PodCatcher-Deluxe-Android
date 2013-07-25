@@ -19,6 +19,7 @@ package net.alliknow.podcatcher;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -259,11 +260,21 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
 
                 return true;
             case R.id.about_menuitem:
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_WEBSITE)));
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_WEBSITE)));
+                } catch (ActivityNotFoundException e) {
+                    // We are in a restricted profile without a browser
+                    showToast(getString(R.string.no_browser));
+                }
 
                 return true;
             case R.id.help_menuitem:
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_HELPSITE)));
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_HELPSITE)));
+                } catch (ActivityNotFoundException e) {
+                    // We are in a restricted profile without a browser
+                    showToast(getString(R.string.no_browser));
+                }
 
                 return true;
             default:
