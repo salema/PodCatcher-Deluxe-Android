@@ -21,6 +21,7 @@
     <string name="divider">Divider</string>
     <string name="about">About Podcatcher Deluxe</string>
     <string name="help">Help</string>
+    <string name="no_browser">No browser available!</string>
     <string name="wait">Wait</string>
     <string name="connect">Connect</string>
     <string name="load">Load</string>

@@ -21,6 +21,7 @@
     <string name="divider">Séparateur</string>
     <string name="about">À propos</string>
     <string name="help">Aide</string>
+    <string name="no_browser">Aucun navigateur disponible!</string>
     <string name="wait">Attendre</string>
     <string name="connect">Connecter</string>
     <string name="load">Charger</string>
