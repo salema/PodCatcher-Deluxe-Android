@@ -249,10 +249,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     @Override
-    public final void onDownloadFailed() {
+    public void onDownloadFailed() {
         updateDownloadUi();
-
-        showToast(getString(R.string.download_failed));
     }
 
     @Override
