@@ -62,6 +62,9 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
     /** The currently active selection */
     protected ContentSelection selection;
 
+    /** Our toast object */
+    private Toast toast;
+
     /** The options available for the content mode */
     public static enum ContentMode {
         /** Show single podcast */
@@ -242,6 +245,13 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
         // Get our preferences and listen to changes
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferences.registerOnSharedPreferenceChangeListener(this);
+
+        // Create and configure toast member (not shown here, ignore lint
+        // warning). We use only one toast object to avoid stacked notifications
+        toast = Toast.makeText(this, null, Toast.LENGTH_SHORT);
+        final TextView textView = (TextView) toast.getView().findViewById(android.R.id.message);
+        if (textView != null)
+            textView.setGravity(Gravity.CENTER);
     }
 
     @Override
@@ -323,10 +333,8 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
      * @param length The duration for the toast to show.
      */
     protected void showToast(String text, int length) {
-        Toast toast = Toast.makeText(this, text, length);
-
-        TextView textView = (TextView) toast.getView().findViewById(android.R.id.message);
-        textView.setGravity(Gravity.CENTER);
+        toast.setText(text);
+        toast.setDuration(length);
 
         toast.show();
     }
