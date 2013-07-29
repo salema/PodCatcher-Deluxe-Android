@@ -484,6 +484,13 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         }
     }
 
+    @Override
+    public void onDownloadFailed() {
+        super.onDownloadFailed();
+
+        showToast(getString(R.string.download_failed));
+    }
+
     /**
      * Update the layout to match user's preference
      */
