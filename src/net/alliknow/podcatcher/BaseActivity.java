@@ -19,6 +19,7 @@ package net.alliknow.podcatcher;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -63,6 +64,9 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
     protected ViewMode view;
     /** The currently active selection */
     protected ContentSelection selection;
+
+    /** Our toast object */
+    private Toast toast;
 
     /** The options available for the content mode */
     public static enum ContentMode {
@@ -287,6 +291,13 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
         // Get our preferences and listen to changes
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferences.registerOnSharedPreferenceChangeListener(this);
+
+        // Create and configure toast member (not shown here, ignore lint
+        // warning). We use only one toast object to avoid stacked notifications
+        toast = Toast.makeText(this, null, Toast.LENGTH_SHORT);
+        final TextView textView = (TextView) toast.getView().findViewById(android.R.id.message);
+        if (textView != null)
+            textView.setGravity(Gravity.CENTER);
     }
 
     @Override
@@ -305,11 +316,21 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
 
                 return true;
             case R.id.about_menuitem:
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_WEBSITE)));
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_WEBSITE)));
+                } catch (ActivityNotFoundException e) {
+                    // We are in a restricted profile without a browser
+                    showToast(getString(R.string.no_browser));
+                }
 
                 return true;
             case R.id.help_menuitem:
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_HELPSITE)));
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_HELPSITE)));
+                } catch (ActivityNotFoundException e) {
+                    // We are in a restricted profile without a browser
+                    showToast(getString(R.string.no_browser));
+                }
 
                 return true;
             default:
@@ -358,10 +379,8 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
      * @param length The duration for the toast to show.
      */
     protected void showToast(String text, int length) {
-        Toast toast = Toast.makeText(this, text, length);
-
-        TextView textView = (TextView) toast.getView().findViewById(android.R.id.message);
-        textView.setGravity(Gravity.CENTER);
+        toast.setText(text);
+        toast.setDuration(length);
 
         toast.show();
     }

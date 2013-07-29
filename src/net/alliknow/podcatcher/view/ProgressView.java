@@ -73,17 +73,17 @@ public class ProgressView extends LinearLayout {
         progressTextView.setTextColor(getColor(R.color.text_secondary));
 
         if (progress.equals(Progress.WAIT))
-            progressTextView.setText(getString(R.string.wait));
+            progressTextView.setText(R.string.wait);
         else if (progress.equals(Progress.CONNECT))
-            progressTextView.setText(getString(R.string.connect));
+            progressTextView.setText(R.string.connect);
         else if (progress.equals(Progress.LOAD))
-            progressTextView.setText(getString(R.string.load));
+            progressTextView.setText(R.string.load);
         else if (progress.equals(Progress.PARSE))
-            progressTextView.setText(getString(R.string.parse));
+            progressTextView.setText(R.string.parse);
         else if (progress.getPercentDone() >= 0 && progress.getPercentDone() <= 100)
             progressTextView.setText(progress.getPercentDone() + "%");
         else
-            progressTextView.setText(getString(R.string.load));
+            progressTextView.setText(R.string.load);
     }
 
     /**
@@ -108,16 +108,6 @@ public class ProgressView extends LinearLayout {
         progressTextView.setVisibility(VISIBLE);
         progressTextView.setText(R.string.wait);
         progressTextView.setTextColor(getColor(R.color.text_secondary));
-    }
-
-    /**
-     * Short cut to string resource.
-     * 
-     * @param id String resources id key.
-     * @return The string resource.
-     */
-    protected String getString(int id) {
-        return getResources().getString(id);
     }
 
     /**
