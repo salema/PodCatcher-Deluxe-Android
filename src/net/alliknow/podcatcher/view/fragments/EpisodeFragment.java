@@ -23,6 +23,7 @@ import static android.view.View.VISIBLE;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -48,6 +49,9 @@ import net.alliknow.podcatcher.view.Utils;
  * Fragment showing episode details.
  */
 public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
+
+    /** Delay after the fullscreen hint is take off the video */
+    private static final int HIDE_FULLSCREEN_HINT_DELAY = 3000;
 
     /** The listener for the menu item */
     private OnDownloadEpisodeListener downloadListener;
@@ -95,7 +99,11 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
     /** The divider view between title and description */
     private View dividerView;
     /** The episode video view */
-    private SurfaceView videoView;
+    private View videoView;
+    /** The actual video surface */
+    private SurfaceView surfaceView;
+    /** The go to fullscreen icon */
+    private ImageView fullscreenButton;
     /** The episode description web view */
     private WebView descriptionView;
 
@@ -110,6 +118,15 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             videoSurfaceAvailable = true;
+
+            // We need to hide the fullscreen hint after a while
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    fullscreenButton.setVisibility(GONE);
+                }
+            }, HIDE_FULLSCREEN_HINT_DELAY);
         }
 
         @Override
@@ -163,8 +180,7 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
         downloadIconView = (ImageView) getView().findViewById(R.id.download_icon);
         dividerView = getView().findViewById(R.id.episode_divider);
 
-        videoView = (SurfaceView) getView().findViewById(R.id.episode_video);
-        videoView.getHolder().addCallback(videoCallback);
+        videoView = getView().findViewById(R.id.episode_video);
         videoView.setOnTouchListener(new OnTouchListener() {
 
             @Override
@@ -175,6 +191,10 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
                 return event.getAction() == MotionEvent.ACTION_DOWN;
             }
         });
+
+        surfaceView = (SurfaceView) getView().findViewById(R.id.surface);
+        surfaceView.getHolder().addCallback(videoCallback);
+        fullscreenButton = (ImageView) getView().findViewById(R.id.fullscreen);
 
         descriptionView = (WebView) getView().findViewById(R.id.episode_description);
 
@@ -213,7 +233,7 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
 
     @Override
     public void onDestroyView() {
-        videoView.getHolder().removeCallback(videoCallback);
+        surfaceView.getHolder().removeCallback(videoCallback);
         viewCreated = false;
 
         super.onDestroyView();
@@ -354,7 +374,7 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
 
     @Override
     public SurfaceHolder getVideoSurface() {
-        return videoView.getHolder();
+        return surfaceView.getHolder();
     }
 
     @Override

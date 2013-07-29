@@ -88,11 +88,22 @@
         android:scaleType="fitXY"
         android:src="@android:drawable/divider_horizontal_bright"
         android:visibility="gone" />
-    <SurfaceView 
+    <RelativeLayout 
         android:id="@+id/episode_video" 
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:visibility="gone" />
+        android:visibility="gone">
+	    <SurfaceView 
+	        android:id="@+id/surface"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent" />
+	    <ImageView
+	        android:id="@+id/fullscreen"
+	        android:layout_width="48dp"
+	        android:layout_height="48dp"
+	        android:layout_centerInParent="true"
+	        android:src="@drawable/ic_media_fullscreen" />
+    </RelativeLayout>
     <WebView
         android:id="@+id/episode_description"
         android:layout_width="match_parent"
