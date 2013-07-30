@@ -646,17 +646,17 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
         if (shouldAutoDeleteCompletedEpisode(currentEpisode))
             episodeManager.deleteDownload(currentEpisode);
 
-        // Alert listeners
-        if (listeners.size() > 0)
-            for (PlayServiceListener listener : listeners)
-                listener.onPlaybackComplete();
-
         // If there is another episode on the playlist, play it.
         if (!episodeManager.isPlaylistEmpty())
             playNext();
         else {
             reset();
             stopSelfIfUnboundAndIdle();
+
+            // Alert listeners
+            if (listeners.size() > 0)
+                for (PlayServiceListener listener : listeners)
+                    listener.onPlaybackComplete();
         }
     }
 
