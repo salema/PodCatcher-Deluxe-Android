@@ -34,12 +34,12 @@ import android.widget.ListView;
 
 import net.alliknow.podcatcher.AddPodcastActivity;
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.adapters.PodcastListAdapter;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.listeners.PodcastListContextListener;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.HorizontalProgressView;
-import net.alliknow.podcatcher.view.adapters.PodcastListAdapter;
 
 import java.util.List;
 

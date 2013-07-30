@@ -15,21 +15,15 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.alliknow.podcatcher.view.adapters;
-
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
+package net.alliknow.podcatcher.adapters;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.types.Podcast;
-import net.alliknow.podcatcher.view.HorizontalProgressView;
+import net.alliknow.podcatcher.view.PodcastListItemView;
 
 import java.util.List;
 
@@ -84,37 +78,14 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // Get the return view (possibly recycle a used one)
-        View listItemView = findReturnView(convertView, parent, R.layout.list_item);
+        final PodcastListItemView returnView = (PodcastListItemView)
+                findReturnView(convertView, parent, R.layout.podcast_list_item);
 
-        // Set list item color background
-        setBackgroundColorForPosition(listItemView, position);
+        // Make sure the coloring is right
+        setBackgroundColorForPosition(returnView, position);
+        // Make the view represent podcast at given position
+        returnView.show((Podcast) getItem(position), showLogoView, selectAll);
 
-        // Find podcast to represent
-        final Podcast podcast = list.get(position);
-        final int episodeNumber = podcast.getEpisodeNumber();
-
-        // Set the text to display for title
-        setText(listItemView, R.id.list_item_title, podcast.getName());
-        // Set the text to display as caption
-        TextView captionView = (TextView) listItemView.findViewById(R.id.list_item_caption);
-        captionView.setText(
-                resources.getQuantityString(R.plurals.episodes, episodeNumber, episodeNumber));
-        captionView.setVisibility(episodeNumber != 0 ? VISIBLE : GONE);
-
-        // Check whether we should show the podcast logo
-        boolean show = showLogoView && podcast.getLogo() != null;
-        // Set the podcast logo if available and wanted
-        ImageView logoView = (ImageView) listItemView.findViewById(R.id.podcast_logo);
-        logoView.setVisibility(show ? VISIBLE : GONE);
-        logoView.setImageBitmap(show ? podcast.getLogo() : null);
-
-        // Show progress on select all podcasts?
-        HorizontalProgressView progressView = (HorizontalProgressView)
-                listItemView.findViewById(R.id.list_item_progress);
-        progressView.setVisibility(PodcastManager.getInstance().isLoading(podcast)
-                && selectAll ? VISIBLE : GONE);
-
-        return listItemView;
+        return returnView;
     }
 }

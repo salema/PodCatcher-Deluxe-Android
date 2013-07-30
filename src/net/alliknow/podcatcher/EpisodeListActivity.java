@@ -20,7 +20,6 @@ package net.alliknow.podcatcher;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 
@@ -58,11 +57,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     /** Key used to store podcast URL in intent or bundle */
     public static final String PODCAST_URL_KEY = "podcast_url";
 
-    /** The theme color set */
-    protected int themeColor;
-    /** The light theme color set */
-    protected int lightThemeColor;
-
     /** The current episode list fragment */
     protected EpisodeListFragment episodeListFragment;
     /** The content mode selection spinner view */
@@ -76,12 +70,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Get the theme color
-        themeColor = preferences.getInt(SettingsActivity.KEY_THEME_COLOR,
-                getResources().getColor(R.color.theme_dark));
-        // This will set the light theme color member
-        lightThemeColor = calculateLightThemeColor();
 
         // Create the content mode spinner and add it to the action bar
         contentSpinner = new ContentSpinner(this, this);
@@ -306,10 +294,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         super.onSharedPreferenceChanged(sharedPreferences, key);
 
         if (key.equals(SettingsActivity.KEY_THEME_COLOR)) {
-            // Set new color members
-            themeColor = preferences.getInt(SettingsActivity.KEY_THEME_COLOR, themeColor);
-            lightThemeColor = calculateLightThemeColor();
-
             // Make the UI reflect the change
             if (episodeListFragment != null)
                 episodeListFragment.setThemeColors(themeColor, lightThemeColor);
@@ -409,16 +393,4 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             contentSpinner.setSubtitle(getString(R.string.podcast_load_multiple_progress,
                     (podcastCount - loadingPodcastCount), podcastCount));
     }
-
-    private int calculateLightThemeColor() {
-        final float[] hsv = new float[3];
-        final int alpha = Color.alpha(themeColor);
-
-        Color.RGBToHSV(Color.red(themeColor), Color.green(themeColor), Color.blue(themeColor), hsv);
-        hsv[1] = (float) (hsv[1] - 0.25 < 0.05 ? 0.05 : hsv[1] - 0.25);
-        hsv[2] = (float) (hsv[2] + 0.25 > 0.95 ? 0.95 : hsv[2] + 0.25);
-
-        return Color.HSVToColor(alpha, hsv);
-    }
-
 }

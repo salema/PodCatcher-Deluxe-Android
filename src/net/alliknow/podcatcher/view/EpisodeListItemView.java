@@ -15,89 +15,61 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.alliknow.podcatcher.view.adapters;
+package net.alliknow.podcatcher.view;
 
 import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
+import android.util.AttributeSet;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.model.types.Episode;
-import net.alliknow.podcatcher.view.Utils;
-
-import java.util.List;
 
 /**
- * Adapter class used for the list of episodes.
+ * A list item view to represent an episode.
  */
-public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
-
-    /** The list our data resides in */
-    protected List<Episode> list;
-    /** Whether the podcast name should be shown */
-    protected boolean showPodcastNames = false;
+public class EpisodeListItemView extends LinearLayout {
 
     /** String to use if no episode publication date available */
     private static final String NO_DATE = "---";
     /** Separator for date and podcast name */
     private static final String SEPARATOR = " • ";
 
-    /**
-     * Create new adapter.
-     * 
-     * @param context The activity.
-     * @param episodeList The list of episodes to show in list.
-     */
-    public EpisodeListAdapter(Context context, List<Episode> episodeList) {
-        super(context);
-
-        this.list = episodeList;
-    }
+    /** The title text view */
+    private TextView titleTextView;
+    /** The caption text view */
+    private TextView captionTextView;
 
     /**
-     * Set whether the podcast name for the episode should be shown. This will
-     * redraw the list and take effect immediately.
+     * Create an episode item list view.
      * 
-     * @param show Whether to show each episode's podcast name.
+     * @param context Context for the view to live in.
+     * @param attrs View attributes.
      */
-    public void setShowPodcastNames(boolean show) {
-        this.showPodcastNames = show;
-
-        notifyDataSetChanged();
+    public EpisodeListItemView(Context context, AttributeSet attrs) {
+        super(context, attrs);
     }
 
     @Override
-    public int getCount() {
-        return list.size();
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+
+        titleTextView = (TextView) findViewById(R.id.list_item_title);
+        captionTextView = (TextView) findViewById(R.id.list_item_caption);
     }
 
-    @Override
-    public Object getItem(int position) {
-        return list.get(position);
-    }
+    /**
+     * Make the view update all its child to represent input given.
+     * 
+     * @param episode Episode to represent.
+     * @param showPodcastName Whether the podcast name should show.
+     */
+    public void show(final Episode episode, boolean showPodcastName) {
+        // 1. Set episode title
+        titleTextView.setText(createTitle(episode));
 
-    @Override
-    public long getItemId(int position) {
-        return list.get(position).hashCode();
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        // Get the return view (possibly recycle a used one)
-        View listItemView = findReturnView(convertView, parent, R.layout.list_item);
-
-        // Set list item color background
-        setBackgroundColorForPosition(listItemView, position);
-
-        // Find episode to represent
-        final Episode episode = list.get(position);
-
-        // Set the text to display for title
-        setText(listItemView, R.id.list_item_title, createTitle(episode));
-        // Set the text to display as caption
-        setText(listItemView, R.id.list_item_caption, createCaption(episode));
-
-        return listItemView;
+        // 2. Set caption
+        captionTextView.setText(createCaption(episode, showPodcastName));
     }
 
     private String createTitle(Episode episode) {
@@ -114,12 +86,12 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
             return episodeName;
     }
 
-    private String createCaption(Episode episode) {
+    private String createCaption(Episode episode, boolean showPodcastName) {
         // This should not happen (but we cover it)
-        if (episode.getPubDate() == null && !showPodcastNames)
+        if (episode.getPubDate() == null && !showPodcastName)
             return NO_DATE;
         // Episode has no date, should not happen
-        else if (episode.getPubDate() == null && showPodcastNames)
+        else if (episode.getPubDate() == null && showPodcastName)
             return episode.getPodcast().getName();
         // This is the interesting case
         else {
@@ -127,7 +99,7 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
             String dateString = Utils.getRelativePubDate(episode);
 
             // Append podcast name
-            if (showPodcastNames)
+            if (showPodcastName)
                 return dateString + SEPARATOR + episode.getPodcast().getName();
             // Omit podcast name
             else

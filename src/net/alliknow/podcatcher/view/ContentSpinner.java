@@ -59,12 +59,14 @@ public class ContentSpinner extends Spinner implements
     /** The data adapter used to populate the spinner */
     private static class NavigationSpinnerAdapter extends BaseAdapter {
 
+        /** The inflater we use */
+        private final LayoutInflater inflater;
         /** The view we return for a closed spinner */
-        private View closedView;
+        private final View closedView;
 
         public NavigationSpinnerAdapter(ViewGroup parent) {
-            this.closedView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.content_spinner_item, parent, false);
+            this.inflater = LayoutInflater.from(parent.getContext());
+            this.closedView = inflater.inflate(R.layout.content_spinner_item, parent, false);
 
             // FOr the closed view, no padding is needed
             closedView.setPadding(0, 0, 0, 0);
@@ -109,8 +111,8 @@ public class ContentSpinner extends Spinner implements
         @Override
         public View getDropDownView(int position, View convertView, ViewGroup parent) {
             // Create the return view (this should not be recycled)
-            final View spinnerItemView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.content_spinner_item, parent, false);
+            final View spinnerItemView = inflater.inflate(
+                    R.layout.content_spinner_item, parent, false);
 
             // Set the icon
             final ImageView imageView = (ImageView) spinnerItemView.findViewById(R.id.icon);

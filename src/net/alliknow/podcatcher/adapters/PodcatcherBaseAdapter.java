@@ -15,7 +15,7 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.alliknow.podcatcher.view.adapters;
+package net.alliknow.podcatcher.adapters;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -31,6 +31,8 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 
     /** The resources handle */
     protected final Resources resources;
+    /** The inflater we use */
+    private final LayoutInflater inflater;
 
     /**
      * Create new adapter.
@@ -39,6 +41,7 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
      */
     public PodcatcherBaseAdapter(Context context) {
         this.resources = context.getResources();
+        this.inflater = LayoutInflater.from(context);
     }
 
     @Override
@@ -54,11 +57,11 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
      * @param inflateId Id of view to inflate if recycling is not possible.
      * @return A view to use (not <code>null</code>).
      */
-    protected static View findReturnView(View convertView, ViewGroup parent, int inflateId) {
+    protected View findReturnView(View convertView, ViewGroup parent, int inflateId) {
         // Can we recycle the convert view?
         // No:
         if (convertView == null)
-            return LayoutInflater.from(parent.getContext()).inflate(inflateId, parent, false);
+            return inflater.inflate(inflateId, parent, false);
         // Yes:
         else
             return convertView;

@@ -28,10 +28,10 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.listeners.OnReverseSortingListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.model.types.Episode;
-import net.alliknow.podcatcher.view.adapters.EpisodeListAdapter;
 
 import java.util.List;
 

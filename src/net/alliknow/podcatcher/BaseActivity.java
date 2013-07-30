@@ -17,12 +17,14 @@
 
 package net.alliknow.podcatcher;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -56,6 +58,11 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
     protected PodcastManager podcastManager;
     /** The shared app preferences */
     protected SharedPreferences preferences;
+
+    /** The theme color set */
+    protected int themeColor;
+    /** The light theme color set */
+    protected int lightThemeColor;
 
     /** The currently active view mode */
     protected ViewMode view;
@@ -227,6 +234,7 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
         }
     }
 
+    @SuppressLint("ShowToast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -245,6 +253,12 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
         // Get our preferences and listen to changes
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferences.registerOnSharedPreferenceChangeListener(this);
+
+        // Get the theme color
+        themeColor = preferences.getInt(SettingsActivity.KEY_THEME_COLOR,
+                getResources().getColor(R.color.theme_dark));
+        // This will set the light theme color member
+        lightThemeColor = calculateLightThemeColor();
 
         // Create and configure toast member (not shown here, ignore lint
         // warning). We use only one toast object to avoid stacked notifications
@@ -302,7 +316,12 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        // pass, sub-classes can hook in here
+        if (key.equals(SettingsActivity.KEY_THEME_COLOR)) {
+            // Set new color members
+            themeColor = preferences.getInt(SettingsActivity.KEY_THEME_COLOR, themeColor);
+            lightThemeColor = calculateLightThemeColor();
+
+        }
     }
 
     /**
@@ -337,5 +356,23 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
         toast.setDuration(length);
 
         toast.show();
+    }
+
+    private int calculateLightThemeColor() {
+        // If the theme color is unchanged, use original light variant
+        if (themeColor == getResources().getColor(R.color.theme_dark))
+            return getResources().getColor(R.color.theme_light);
+        // We have a custom theme color, calculate variant
+        else {
+            final float[] hsv = new float[3];
+            final int alpha = Color.alpha(themeColor);
+
+            Color.RGBToHSV(Color.red(themeColor), Color.green(themeColor), Color.blue(themeColor),
+                    hsv);
+            hsv[1] = (float) (hsv[1] - 0.25 < 0.05 ? 0.05 : hsv[1] - 0.25);
+            hsv[2] = (float) (hsv[2] + 0.25 > 0.95 ? 0.95 : hsv[2] + 0.25);
+
+            return Color.HSVToColor(alpha, hsv);
+        }
     }
 }

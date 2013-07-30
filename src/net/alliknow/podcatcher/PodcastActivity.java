@@ -132,6 +132,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // On small screens in landscape mode, add the episode list fragment
         if (view.isSmallLandscape() && episodeListFragment == null) {
             episodeListFragment = new EpisodeListFragment();
+            episodeListFragment.setThemeColors(themeColor, lightThemeColor);
             getFragmentManager()
                     .beginTransaction()
                     .add(R.id.right, episodeListFragment,

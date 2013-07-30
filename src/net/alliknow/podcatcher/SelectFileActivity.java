@@ -100,6 +100,9 @@ public class SelectFileActivity extends BaseActivity implements OnSelectFileList
             selectFileFragment.setPath(podcastDir);
         }
 
+        // Set theme colors
+        selectFileFragment.setThemeColors(themeColor, lightThemeColor);
+
         // Show the fragment
         selectFileFragment.show(getFragmentManager(), SELECT_FILE_FRAGMENT_TAG);
     }

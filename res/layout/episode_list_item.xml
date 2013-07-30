@@ -17,23 +17,29 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<net.alliknow.podcatcher.view.FileListItemView
+<net.alliknow.podcatcher.view.EpisodeListItemView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:orientation="horizontal">
-    <ImageView
-        android:id="@+id/file_icon"
-        android:layout_width="48dp"
-        android:layout_height="match_parent"
-        android:scaleType="centerInside" />
+    android:orientation="vertical">
     <TextView
-        android:id="@+id/file_name"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:id="@+id/list_item_title"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center_vertical"
-        android:textSize="@dimen/font_size_default"
+        android:paddingLeft="@dimen/list_item_padding"
         android:singleLine="true"
-        android:ellipsize="middle" />
-</net.alliknow.podcatcher.view.FileListItemView>
+        android:ellipsize="marquee"
+        android:textSize="@dimen/font_size_large" />
+    <TextView
+        android:id="@+id/list_item_caption"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/list_item_padding"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:textSize="@dimen/font_size_small" />
+</net.alliknow.podcatcher.view.EpisodeListItemView>

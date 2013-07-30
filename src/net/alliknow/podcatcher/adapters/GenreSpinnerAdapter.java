@@ -15,32 +15,32 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.alliknow.podcatcher.view.adapters;
+package net.alliknow.podcatcher.adapters;
 
 import android.content.Context;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.model.types.Language;
+import net.alliknow.podcatcher.model.types.Genre;
 import net.alliknow.podcatcher.view.fragments.SuggestionFragment;
 
 /**
- * Adapter for the language spinner in the suggestion dialog.
+ * Adapter for the genre spinner in the suggestion dialog.
  */
-public class LanguageSpinnerAdapter extends SuggestionFilterSpinnerAdapter {
+public class GenreSpinnerAdapter extends SuggestionFilterSpinnerAdapter {
 
     /**
      * Create new adapter.
      * 
      * @param context The current context.
      */
-    public LanguageSpinnerAdapter(Context context) {
+    public GenreSpinnerAdapter(Context context) {
         super(context);
 
-        // Put all languages into the value map where they are sorted by
-        // language because we are using the corresponding resources as keys
-        for (int index = 0; index < Language.values().length; index++) {
-            final String key = resources.getStringArray(R.array.languages)[index];
-            values.put(key, Language.values()[index]);
+        // Put all genres into the value map where they are sorted by language
+        // because we are using the corresponding resources as keys
+        for (int index = 0; index < Genre.values().length; index++) {
+            final String key = resources.getStringArray(R.array.genres)[index];
+            values.put(key, Genre.values()[index]);
         }
     }
 
@@ -54,6 +54,6 @@ public class LanguageSpinnerAdapter extends SuggestionFilterSpinnerAdapter {
 
     @Override
     public int getCount() {
-        return Language.values().length + 1;
+        return Genre.values().length + 1;
     }
 }
