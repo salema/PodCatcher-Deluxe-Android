@@ -124,8 +124,12 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         // Single podcast selected
         if (selection.isPodcastSet()) {
             final int episodeCount = selection.getPodcast().getEpisodeNumber();
-            contentSpinner.setSubtitle(getResources()
-                    .getQuantityString(R.plurals.episodes, episodeCount, episodeCount));
+
+            if (episodeCount == 0)
+                contentSpinner.setSubtitle(null);
+            else
+                contentSpinner.setSubtitle(getResources()
+                        .getQuantityString(R.plurals.episodes, episodeCount, episodeCount));
 
         } // Multiple podcast mode
         else if (selection.isAll())

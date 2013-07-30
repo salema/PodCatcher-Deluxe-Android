@@ -32,6 +32,9 @@ import net.alliknow.podcatcher.model.types.Podcast;
  */
 public class PodcastListItemView extends RelativeLayout {
 
+    /** Our podcast manager handle */
+    private final PodcastManager podcastManager;
+
     /** The title text view */
     private TextView titleTextView;
     /** The caption text view */
@@ -49,6 +52,8 @@ public class PodcastListItemView extends RelativeLayout {
      */
     public PodcastListItemView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        this.podcastManager = PodcastManager.getInstance();
     }
 
     @Override
@@ -84,7 +89,7 @@ public class PodcastListItemView extends RelativeLayout {
         logoView.setImageBitmap(showLogoView ? podcast.getLogo() : null);
 
         // 4. Show/hide progress view
-        progressView.setVisibility(PodcastManager.getInstance().isLoading(podcast)
+        progressView.setVisibility(podcastManager.isLoading(podcast)
                 && showProgress ? VISIBLE : GONE);
     }
 }
