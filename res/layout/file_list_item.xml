@@ -20,12 +20,12 @@
 <net.alliknow.podcatcher.view.FileListItemView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
+    android:layout_height="wrap_content"
     android:orientation="horizontal">
     <ImageView
         android:id="@+id/file_icon"
         android:layout_width="48dp"
-        android:layout_height="match_parent"
+        android:layout_height="48dp"
         android:scaleType="centerInside" />
     <TextView
         android:id="@+id/file_name"

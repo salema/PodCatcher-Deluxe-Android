@@ -69,8 +69,8 @@ public class EpisodeFragment extends Fragment {
         super.onAttach(activity);
 
         ad = "<hr style=\"color: gray; width: 100%\">" +
-                "<span style=\"color: gray; font-size: smaller;\">" +
-                getString(R.string.ad) + "</span>";
+                "<div style=\"color: gray; font-size: smaller; text-align: center; width: 100%\">" +
+                getString(R.string.ad) + "</div>";
     }
 
     @Override

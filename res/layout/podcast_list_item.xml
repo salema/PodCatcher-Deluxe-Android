@@ -33,7 +33,8 @@
     <LinearLayout
         android:id="@+id/list_item_main_content"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:layout_toLeftOf="@id/podcast_logo"
         android:orientation="vertical">
         <TextView
