@@ -22,6 +22,8 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,8 +38,8 @@ import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.SelectFileActivity.SelectionMode;
+import net.alliknow.podcatcher.adapters.FileListAdapter;
 import net.alliknow.podcatcher.listeners.OnSelectFileListener;
-import net.alliknow.podcatcher.view.adapters.FileListAdapter;
 
 import java.io.File;
 
@@ -55,6 +57,11 @@ public class SelectFileFragment extends DialogFragment {
     /** The currently selected position in list (used only for file selection) */
     private int selectedPosition = -1;
 
+    /** The theme color to use for highlighting list items */
+    protected int themeColor;
+    /** The theme color variant to use for pressed and checked items */
+    protected int lightThemeColor;
+
     /** The current path view */
     private TextView currentPathView;
     /** The up button */
@@ -63,6 +70,9 @@ public class SelectFileFragment extends DialogFragment {
     private ListView fileListView;
     /** The select button */
     private Button selectButton;
+
+    /** Status flag indicating that our view is created */
+    private boolean viewCreated = false;
 
     @Override
     public void onAttach(Activity activity) {
@@ -131,6 +141,7 @@ public class SelectFileFragment extends DialogFragment {
                 }
             }
         });
+        updateListSelector();
 
         selectButton = (Button) view.findViewById(R.id.select_file);
         selectButton.setOnClickListener(new OnClickListener() {
@@ -144,6 +155,8 @@ public class SelectFileFragment extends DialogFragment {
                             (File) fileListView.getAdapter().getItem(selectedPosition));
             }
         });
+
+        viewCreated = true;
     }
 
     @Override
@@ -158,9 +171,31 @@ public class SelectFileFragment extends DialogFragment {
 
     @Override
     public void onCancel(DialogInterface dialog) {
+        viewCreated = false;
+
         // Make sure the parent activity knows when we are closing
         if (listener instanceof OnCancelListener)
             ((OnCancelListener) listener).onCancel(dialog);
+    }
+
+    /**
+     * Set the colors to use in the list for selection, checked item etc.
+     * 
+     * @param color The theme color to use for highlighting list items.
+     * @param variantColor The theme color variant to use for pressed and
+     *            checked items.
+     */
+    public void setThemeColors(int color, int variantColor) {
+        this.themeColor = color;
+        this.lightThemeColor = variantColor;
+
+        // Set theme colors in adapter
+        if (fileListView != null && fileListView.getAdapter() != null)
+            ((FileListAdapter) fileListView.getAdapter())
+                    .setThemeColors(themeColor, lightThemeColor);
+        // ...and for the list view
+        if (viewCreated)
+            updateListSelector();
     }
 
     /**
@@ -180,7 +215,10 @@ public class SelectFileFragment extends DialogFragment {
                 currentPathView.setText(path.getAbsolutePath());
                 upButton.setEnabled(path.getParent() != null);
 
-                fileListView.setAdapter(new FileListAdapter(getActivity(), path));
+                final FileListAdapter adapter =
+                        new FileListAdapter(getDialog().getContext(), path);
+                adapter.setThemeColors(themeColor, lightThemeColor);
+                fileListView.setAdapter(adapter);
 
                 if (SelectionMode.FOLDER.equals(selectionMode))
                     selectButton.setEnabled(true);
@@ -213,5 +251,16 @@ public class SelectFileFragment extends DialogFragment {
             getDialog().setTitle(R.string.file_select_folder);
         else
             getDialog().setTitle(R.string.file_select_file);
+    }
+
+    private void updateListSelector() {
+        // This takes care of the item pressed state and its color
+        StateListDrawable states = new StateListDrawable();
+
+        states.addState(new int[] {
+                android.R.attr.state_pressed
+        }, new ColorDrawable(lightThemeColor));
+        // Set the states drawable
+        fileListView.setSelector(states);
     }
 }

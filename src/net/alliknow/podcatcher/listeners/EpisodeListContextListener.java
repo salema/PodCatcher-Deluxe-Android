@@ -25,9 +25,9 @@ import android.view.MenuItem;
 import android.widget.AbsListView.MultiChoiceModeListener;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
-import net.alliknow.podcatcher.view.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 
 /**

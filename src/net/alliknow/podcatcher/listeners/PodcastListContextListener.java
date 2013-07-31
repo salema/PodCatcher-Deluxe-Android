@@ -30,7 +30,7 @@ import android.widget.AbsListView.MultiChoiceModeListener;
 import net.alliknow.podcatcher.ExportOpmlActivity;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.RemovePodcastActivity;
-import net.alliknow.podcatcher.view.adapters.PodcastListAdapter;
+import net.alliknow.podcatcher.adapters.PodcastListAdapter;
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
 
 import java.util.ArrayList;

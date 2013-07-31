@@ -17,54 +17,49 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<LinearLayout
+<net.alliknow.podcatcher.view.SuggestionListItemView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/suggestion_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/list_item_padding"
-                android:singleLine="true"
-                android:textSize="@dimen/font_size_large" />
-            <TextView
-                android:id="@+id/suggestion_meta"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/list_item_padding"
-                android:singleLine="true"
-                android:textColor="@color/text_secondary"
-                android:textSize="@dimen/font_size_default" />
-        </LinearLayout>
-        <Button
-            android:id="@+id/suggestion_add_button"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_margin="3dp"
-            android:layout_weight="1"
-            android:background="@drawable/button_green"
-            android:gravity="center"
-            android:textColor="@drawable/button_label"
-            android:singleLine="true"
-            android:ellipsize="marquee" />
-    </LinearLayout>
+    android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/suggestion_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@id/suggestion_add_button"
+        android:paddingLeft="@dimen/list_item_padding"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:textSize="@dimen/font_size_large" />
+    <TextView
+        android:id="@+id/suggestion_meta"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/suggestion_name"
+        android:layout_toLeftOf="@id/suggestion_add_button"
+        android:paddingLeft="@dimen/list_item_padding"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/font_size_default" />
+    <Button
+        android:id="@+id/suggestion_add_button"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_margin="3dp"
+        android:layout_alignParentRight="true"
+        android:paddingLeft="@dimen/suggestion_add_padding"
+        android:paddingRight="@dimen/suggestion_add_padding"
+        android:background="@drawable/button_green"
+        android:textColor="@drawable/button_label"
+        android:singleLine="true" />
     <TextView
         android:id="@+id/suggestion_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/suggestion_meta"
         android:paddingBottom="2dp"
-        android:gravity="center_vertical"
         android:paddingLeft="@dimen/list_item_padding"
+        android:paddingRight="@dimen/list_item_padding"
         android:textSize="@dimen/font_size_small" />
-</LinearLayout>
+</net.alliknow.podcatcher.view.SuggestionListItemView>
