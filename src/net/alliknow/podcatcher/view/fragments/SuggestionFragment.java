@@ -38,6 +38,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.adapters.GenreSpinnerAdapter;
+import net.alliknow.podcatcher.adapters.LanguageSpinnerAdapter;
+import net.alliknow.podcatcher.adapters.MediaTypeSpinnerAdapter;
+import net.alliknow.podcatcher.adapters.SuggestionListAdapter;
 import net.alliknow.podcatcher.listeners.OnAddSuggestionListener;
 import net.alliknow.podcatcher.model.types.Genre;
 import net.alliknow.podcatcher.model.types.Language;
@@ -45,10 +49,6 @@ import net.alliknow.podcatcher.model.types.MediaType;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.ProgressView;
-import net.alliknow.podcatcher.view.adapters.GenreSpinnerAdapter;
-import net.alliknow.podcatcher.view.adapters.LanguageSpinnerAdapter;
-import net.alliknow.podcatcher.view.adapters.MediaTypeSpinnerAdapter;
-import net.alliknow.podcatcher.view.adapters.SuggestionListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -143,15 +143,15 @@ public class SuggestionFragment extends DialogFragment {
         getDialog().setTitle(R.string.suggested_podcasts);
 
         languageFilter = (Spinner) view.findViewById(R.id.suggestion_language_select);
-        languageFilter.setAdapter(new LanguageSpinnerAdapter(getActivity()));
+        languageFilter.setAdapter(new LanguageSpinnerAdapter(getDialog().getContext()));
         languageFilter.setOnItemSelectedListener(selectionListener);
 
         genreFilter = (Spinner) view.findViewById(R.id.suggestion_genre_select);
-        genreFilter.setAdapter(new GenreSpinnerAdapter(getActivity()));
+        genreFilter.setAdapter(new GenreSpinnerAdapter(getDialog().getContext()));
         genreFilter.setOnItemSelectedListener(selectionListener);
 
         mediaTypeFilter = (Spinner) view.findViewById(R.id.suggestion_type_select);
-        mediaTypeFilter.setAdapter(new MediaTypeSpinnerAdapter(getActivity()));
+        mediaTypeFilter.setAdapter(new MediaTypeSpinnerAdapter(getDialog().getContext()));
         mediaTypeFilter.setOnItemSelectedListener(selectionListener);
 
         progressView = (ProgressView) view.findViewById(R.id.suggestion_list_progress);
@@ -262,7 +262,7 @@ public class SuggestionFragment extends DialogFragment {
                     filteredSuggestionList.add(suggestion);
 
             // Set filtered list
-            suggestionsListView.setAdapter(new SuggestionListAdapter(getActivity(),
+            suggestionsListView.setAdapter(new SuggestionListAdapter(getDialog().getContext(),
                     filteredSuggestionList, listener));
             // Update UI
             if (filteredSuggestionList.isEmpty()) {

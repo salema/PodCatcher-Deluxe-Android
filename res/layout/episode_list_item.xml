@@ -17,59 +17,65 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<LinearLayout
+<net.alliknow.podcatcher.view.EpisodeListItemView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
+   <ImageView
+        android:id="@+id/state_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_media_new"
+        android:visibility="gone" />
+    <ImageView
+        android:id="@+id/download_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_below="@id/state_icon"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:scaleType="centerInside"
+        android:visibility="gone" />
+    <TextView
+        android:id="@+id/playlist_position"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_below="@id/state_icon"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/download_icon"
+        android:includeFontPadding="false"
+        android:gravity="center"
+        android:textSize="@dimen/font_size_large"
+        android:textColor="@color/text_secondary"
+        android:visibility="gone" />
     <LinearLayout
-        android:id="@+id/list_item_background"
+        android:id="@+id/list_item_main_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/list_item_background">
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:minHeight="48dp"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/list_item_title"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:paddingLeft="@dimen/list_item_padding"
-                android:singleLine="true"
-                android:textSize="@dimen/font_size_large" />
-            <TextView
-                android:id="@+id/list_item_caption"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:paddingLeft="@dimen/list_item_padding"
-                android:singleLine="true"
-                android:textSize="@dimen/font_size_small" />
+        android:minHeight="48dp"
+        android:layout_toLeftOf="@id/playlist_position"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/list_item_title"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/list_item_padding"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:textSize="@dimen/font_size_large" />
+        <TextView
+            android:id="@+id/list_item_caption"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:paddingLeft="@dimen/list_item_padding"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:textSize="@dimen/font_size_small" />
         </LinearLayout>
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
-            <ImageView
-                android:id="@+id/state_icon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentTop="true"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_media_new"
-                android:visibility="gone" />
-            <ImageView
-                android:id="@+id/download_icon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentBottom="true"
-                android:scaleType="centerInside"
-                android:visibility="gone" />
-        </RelativeLayout>
-    </LinearLayout>
-</LinearLayout>
+</net.alliknow.podcatcher.view.EpisodeListItemView>

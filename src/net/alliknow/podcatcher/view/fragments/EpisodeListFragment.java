@@ -30,12 +30,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.listeners.EpisodeListContextListener;
 import net.alliknow.podcatcher.listeners.OnReverseSortingListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnToggleFilterListener;
 import net.alliknow.podcatcher.model.types.Episode;
-import net.alliknow.podcatcher.view.adapters.EpisodeListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -15,15 +15,14 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.alliknow.podcatcher.view.adapters;
+package net.alliknow.podcatcher.adapters;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.view.FileListItemView;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -77,19 +76,14 @@ public class FileListAdapter extends PodcatcherBaseListAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // Get the return view (possibly recycle a used one)
-        final View fileView = findReturnView(convertView, parent, R.layout.file_list_item);
-        // Get the file object to represent
-        final File file = (File) getItem(position);
+        final FileListItemView returnView = (FileListItemView)
+                findReturnView(convertView, parent, R.layout.file_list_item);
 
-        // Set list item color background
-        setBackgroundColorForPosition(fileView, position);
-        // Set the icon
-        ((ImageView) fileView.findViewById(R.id.icon)).setImageResource(
-                file.isDirectory() ? R.drawable.ic_file_folder : R.drawable.ic_file);
-        // Set the file name as text
-        ((TextView) fileView.findViewById(R.id.file_name)).setText(file.getName());
+        // Make sure the coloring is right
+        setBackgroundColorForPosition(returnView, position);
+        // Make the view represent file at given position
+        returnView.show((File) getItem(position));
 
-        return fileView;
+        return returnView;
     }
 }

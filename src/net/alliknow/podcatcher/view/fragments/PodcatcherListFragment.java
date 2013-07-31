@@ -21,15 +21,17 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.app.ListFragment;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.adapters.PodcatcherBaseListAdapter;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.ProgressView;
-import net.alliknow.podcatcher.view.adapters.PodcatcherBaseListAdapter;
 
 /**
  * Generic list fragment sub-class for podcatcher list fragments. Defines some
@@ -70,6 +72,7 @@ public abstract class PodcatcherListFragment extends ListFragment {
         progressView = (ProgressView) getView().findViewById(R.id.progress);
 
         viewCreated = true;
+        updateListSelector();
     }
 
     @Override
@@ -108,9 +111,12 @@ public abstract class PodcatcherListFragment extends ListFragment {
         this.themeColor = color;
         this.lightThemeColor = variantColor;
 
-        // Set theme colors
+        // Set theme colors in adapter
         if (adapter != null)
             this.adapter.setThemeColors(themeColor, lightThemeColor);
+        // ...and for the list view
+        if (viewCreated)
+            updateListSelector();
 
         refresh();
     }
@@ -247,5 +253,16 @@ public abstract class PodcatcherListFragment extends ListFragment {
                 progressView.setVisibility(GONE);
             }
         }
+    }
+
+    private void updateListSelector() {
+        // This takes care of the item pressed state and its color
+        StateListDrawable states = new StateListDrawable();
+
+        states.addState(new int[] {
+                android.R.attr.state_pressed
+        }, new ColorDrawable(lightThemeColor));
+        // Set the states drawable
+        getListView().setSelector(states);
     }
 }

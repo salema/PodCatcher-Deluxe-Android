@@ -15,17 +15,12 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.alliknow.podcatcher.view.adapters;
+package net.alliknow.podcatcher.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.StateListDrawable;
 import android.util.SparseBooleanArray;
 import android.view.View;
-import android.widget.TextView;
-
-import net.alliknow.podcatcher.R;
 
 /**
  * Abstract super class for this app's list adapters. Handles the
@@ -61,7 +56,7 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
      * 
      * @param color The theme color to use for highlighting list items.
      * @param variantColor The theme color variant to use for pressed and
-     *            checked item.
+     *            checked items.
      */
     public void setThemeColors(int color, int variantColor) {
         this.themeColor = color;
@@ -125,15 +120,6 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
      * @param position Position of the view in the list.
      */
     protected void setBackgroundColorForPosition(View view, int position) {
-        // This takes care of the item pressed state and its color
-        StateListDrawable states = new StateListDrawable();
-
-        states.addState(new int[] {
-                android.R.attr.state_pressed
-        }, new ColorDrawable(lightThemeColor));
-        // This is the view the background is drawn for
-        view.findViewById(R.id.list_item_background).setBackgroundDrawable(states);
-
         // This handles the selected, checked and none states
         if (checkedPositions.get(position))
             view.setBackgroundColor(lightThemeColor);
@@ -142,17 +128,5 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
         else {
             view.setBackgroundColor(Color.TRANSPARENT);
         }
-    }
-
-    /**
-     * Set text for a list item view element.
-     * 
-     * @param listItem The view representing the whole list item.
-     * @param viewId View id of the child view, has to be (a subclass of)
-     *            <code>TextView</code>.
-     * @param text Text to display.
-     */
-    protected static void setText(View listItem, int viewId, String text) {
-        ((TextView) listItem.findViewById(viewId)).setText(text);
     }
 }

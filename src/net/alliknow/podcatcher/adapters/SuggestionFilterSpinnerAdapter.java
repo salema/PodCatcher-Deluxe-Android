@@ -15,7 +15,7 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.alliknow.podcatcher.view.adapters;
+package net.alliknow.podcatcher.adapters;
 
 import android.content.Context;
 import android.view.View;

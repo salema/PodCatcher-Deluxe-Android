@@ -17,54 +17,51 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<LinearLayout
+<net.alliknow.podcatcher.view.PodcastListItemView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/podcast_logo"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentRight="true"
+        android:contentDescription="@string/podcast_image"
+        android:scaleType="fitXY"
+        android:padding="1dp"
+        android:visibility="gone" />
     <LinearLayout
-        android:id="@+id/list_item_background"
+        android:id="@+id/list_item_main_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/list_item_background">
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:minHeight="48dp"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/list_item_title"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:paddingLeft="@dimen/list_item_padding"
-                android:singleLine="true"
-                android:textSize="@dimen/font_size_large" />
-            <TextView
-                android:id="@+id/list_item_caption"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:paddingLeft="@dimen/list_item_padding"
-                android:singleLine="true"
-                android:textSize="@dimen/font_size_small" />
-        </LinearLayout>
-        <ImageView
-            android:id="@+id/podcast_logo"
-            android:layout_width="48dp"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/podcast_image"
-            android:scaleType="fitXY"
-            android:padding="1dp"
-            android:visibility="gone" />
+        android:minHeight="48dp"
+        android:layout_toLeftOf="@id/podcast_logo"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/list_item_title"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/list_item_padding"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:textSize="@dimen/font_size_large" />
+        <TextView
+            android:id="@+id/list_item_caption"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:paddingLeft="@dimen/list_item_padding"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:textSize="@dimen/font_size_small" />
     </LinearLayout>
     <net.alliknow.podcatcher.view.HorizontalProgressView
         android:id="@+id/list_item_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/list_item_main_content"
         android:indeterminate="true"
         android:visibility="gone" />
-</LinearLayout>
+</net.alliknow.podcatcher.view.PodcastListItemView>
