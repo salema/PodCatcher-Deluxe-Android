@@ -22,5 +22,4 @@
     <string name="episode_list_fragment_tag" translatable="false">episodeListFragment</string>
     <string name="episode_fragment_tag" translatable="false">episodeFragment</string>
     <string name="player_fragment_tag" translatable="false">playerFragment</string>
-    <string name="fullscreen_fragment_tag" translatable="false">fullscreenFragment</string>
 </resources>
