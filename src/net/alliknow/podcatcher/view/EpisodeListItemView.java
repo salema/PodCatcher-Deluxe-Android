@@ -148,12 +148,18 @@ public class EpisodeListItemView extends RelativeLayout {
         // Fix the layout params of our views depending on the metadata showing:
         // 1. If no download icon shows, the playlist position view jumps right
         if (position >= 0) {
-            LayoutParams params = (RelativeLayout.LayoutParams) playlistPositionView
-                    .getLayoutParams();
+            final boolean downloadIconShows = downloaded || downloading;
+
+            LayoutParams params = (RelativeLayout.LayoutParams)
+                    playlistPositionView.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
-                    !downloaded && !downloading ? RelativeLayout.TRUE : 0);
+                    downloadIconShows ? 0 : RelativeLayout.TRUE);
             params.addRule(RelativeLayout.LEFT_OF,
-                    !downloaded && !downloading ? -1 : R.id.download_icon);
+                    downloadIconShows ? R.id.download_icon : -1);
+            playlistPositionView.setMinWidth(downloadIconShows ? 0 :
+                    (int) (24 * (getResources().getDisplayMetrics().densityDpi / 160f)));
+            playlistPositionView.setPadding(downloadIconShows ? 4 : 0, 0,
+                    !downloadIconShows && position >= 9 ? 2 : 0, 0);
 
             playlistPositionView.setLayoutParams(params);
         }
