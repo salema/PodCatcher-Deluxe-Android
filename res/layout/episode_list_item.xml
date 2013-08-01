@@ -41,7 +41,7 @@
         android:visibility="gone" />
     <TextView
         android:id="@+id/playlist_position"
-        android:layout_width="24dp"
+        android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_below="@id/state_icon"
         android:layout_alignParentBottom="true"
