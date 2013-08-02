@@ -126,7 +126,7 @@ public abstract class PodcatcherListFragment extends ListFragment {
      * 
      * @param position Index of item to select.
      */
-    public void select(int position) {
+    public void select(final int position) {
         selectAll = false;
         selectedPosition = position;
 

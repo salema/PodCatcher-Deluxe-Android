@@ -199,7 +199,11 @@ public class PodcastListFragment extends PodcatcherListFragment {
         // Maps the podcast list items to the list UI
         // Only update the UI if it has been inflated
         if (viewCreated) {
-            setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
+            if (adapter == null)
+                // This also set the member
+                setListAdapter(new PodcastListAdapter(getActivity(), podcastList));
+            else
+                ((PodcastListAdapter) adapter).updateList(podcastList);
 
             updateUiElementVisibility();
         }
