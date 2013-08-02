@@ -49,6 +49,12 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
         this.list = episodeList;
     }
 
+    public void updateList(List<Episode> episodeList) {
+        this.list = episodeList;
+
+        notifyDataSetChanged();
+    }
+
     /**
      * Set whether the podcast name for the episode should be shown. This will
      * redraw the list and take effect immediately.

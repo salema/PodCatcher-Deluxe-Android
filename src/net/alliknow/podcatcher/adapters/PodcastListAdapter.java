@@ -49,6 +49,12 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
         this.list = podcastList;
     }
 
+    public void updateList(List<Podcast> newList) {
+        this.list = newList;
+
+        notifyDataSetChanged();
+    }
+
     /**
      * Set whether the podcast logo should be shown. This will redraw the list
      * and take effect immediately.
