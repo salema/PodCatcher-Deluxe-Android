@@ -133,7 +133,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
         // This will make sure we show the right information once the view
         // controls are established (the list might have been set earlier)
         if (currentEpisodeList != null) {
-            setEpisodeList(currentEpisodeList, true);
+            setEpisodeList(currentEpisodeList);
             setFilterWarning(showFilterWarning, filteredEpisodesCount);
         }
     }
@@ -185,60 +185,54 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
     /**
      * Set the list of episodes to show in this fragment. You can call this any
-     * time and the view will catch up as soon as it is created. Only has any
-     * effect if the list given is not <code>null</code> and different from the
-     * episode list currently displayed.
+     * time and the view will catch up as soon as it is created.
      * 
      * @param episodeList List of episodes to show.
      */
     public void setEpisodeList(List<Episode> episodeList) {
-        setEpisodeList(episodeList, false);
-    }
+        this.currentEpisodeList = episodeList;
 
-    private void setEpisodeList(List<Episode> episodeList, boolean forceReload) {
-        if (forceReload || (episodeList != null && !episodeList.equals(currentEpisodeList))) {
+        showProgress = false;
+        showLoadFailed = false;
 
-            this.currentEpisodeList = episodeList;
+        // Update UI
+        if (viewCreated) {
+            // We need to store any currently check items here because
+            // setting the adapter will override their status and the
+            // relevant positions in the list might change
+            List<Episode> checkedEpisodes = getCheckedEpisodes();
+            // Clear all checked states here
+            getListView().clearChoices();
 
-            showProgress = false;
-            showLoadFailed = false;
+            if (adapter == null)
+                // This also set the member
+                setListAdapter(new EpisodeListAdapter(getActivity(), episodeList));
+            else
+                ((EpisodeListAdapter) adapter).updateList(episodeList);
 
-            // Update UI
-            if (viewCreated) {
-                // We need to store any currently check items here because
-                // setting the adapter will override their status and the
-                // relevant positions in the list might change
-                List<Episode> checkedEpisodes = getCheckedEpisodes();
-                // Clear all checked states here
-                getListView().clearChoices();
+            // Update adapter setting
+            ((EpisodeListAdapter) adapter).setShowPodcastNames(showPodcastNames);
 
-                // Update the list
-                EpisodeListAdapter adapter = new EpisodeListAdapter(getActivity(), episodeList);
-                adapter.setShowPodcastNames(showPodcastNames);
+            // Restore checked items
+            if (checkedEpisodes != null)
+                for (Episode episode : checkedEpisodes) {
+                    final int newPosition = currentEpisodeList.indexOf(episode);
 
-                setListAdapter(adapter);
+                    if (newPosition >= 0)
+                        getListView().setItemChecked(newPosition, true);
+                }
 
-                // Restore checked items
-                if (checkedEpisodes != null)
-                    for (Episode episode : checkedEpisodes) {
-                        final int newPosition = currentEpisodeList.indexOf(episode);
+            // Update other UI elements
+            if (episodeList.isEmpty())
+                emptyView.setText(emptyStringId);
 
-                        if (newPosition >= 0)
-                            getListView().setItemChecked(newPosition, true);
-                    }
-
-                // Update other UI elements
-                if (episodeList.isEmpty())
-                    emptyView.setText(emptyStringId);
-
-                // Make sure to match selection state
-                if (selectAll)
-                    selectAll();
-                else if (selectedPosition >= 0 && selectedPosition < episodeList.size())
-                    select(selectedPosition);
-                else
-                    selectNone();
-            }
+            // Make sure to match selection state
+            if (selectAll)
+                selectAll();
+            else if (selectedPosition >= 0 && selectedPosition < episodeList.size())
+                select(selectedPosition);
+            else
+                selectNone();
         }
     }
 

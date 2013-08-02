@@ -387,30 +387,42 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onEpisodeSelected(Episode selectedEpisode) {
-        super.onEpisodeSelected(selectedEpisode);
+        onEpisodeSelected(selectedEpisode, false);
+    }
 
-        if (!view.isSmall())
-            // Make sure selection matches in list fragment
-            updateEpisodeListSelection();
-        else if (view.isSmallPortrait()) {
-            // Send intent to open episode as a new activity
-            Intent intent = new Intent(this, ShowEpisodeActivity.class);
+    protected void onEpisodeSelected(Episode selectedEpisode, boolean forceReload) {
+        if (forceReload || !selectedEpisode.equals(selection.getEpisode())) {
+            super.onEpisodeSelected(selectedEpisode);
 
-            startActivity(intent);
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+            if (!view.isSmall())
+                // Make sure selection matches in list fragment
+                updateEpisodeListSelection();
+            else if (view.isSmallPortrait()) {
+                // Send intent to open episode as a new activity
+                Intent intent = new Intent(this, ShowEpisodeActivity.class);
+
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+            }
+
+            updateDivider();
         }
-
-        updateDivider();
     }
 
     @Override
     public void onNoEpisodeSelected() {
-        super.onNoEpisodeSelected();
+        onNoEpisodeSelected(false);
+    }
 
-        if (episodeListFragment != null)
-            episodeListFragment.selectNone();
+    protected void onNoEpisodeSelected(boolean forceReload) {
+        if (forceReload || selection.getEpisode() != null) {
+            super.onNoEpisodeSelected();
 
-        updateDivider();
+            if (episodeListFragment != null)
+                episodeListFragment.selectNone();
+
+            updateDivider();
+        }
     }
 
     @Override
