@@ -115,7 +115,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     /** Our notification id (does not really matter) */
     private static final int NOTIFICATION_ID = 123;
     /** The amount of seconds used for any forward or rewind event */
-    private static final int SKIP_AMOUNT = 3;
+    private static final int SKIP_AMOUNT = 3 * 1000;
     /** The volume we duck playback to */
     private static final float DUCK_VOLUME = 0.1f;
 
@@ -314,11 +314,11 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     /**
      * Seek player to given location in media file.
      * 
-     * @param seconds Seconds from the start to seek to.
+     * @param msecs Milli seconds from the start to seek to.
      */
-    public void seekTo(int seconds) {
-        if (prepared && seconds >= 0 && seconds <= getDuration()) {
-            player.seekTo(seconds * 1000); // multiply to get millis
+    public void seekTo(int msecs) {
+        if (prepared && msecs >= 0 && msecs <= getDuration()) {
+            player.seekTo(msecs);
 
             startForeground(NOTIFICATION_ID,
                     notification.updateProgress(getCurrentPosition(), getDuration()));
@@ -374,25 +374,25 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     }
 
     /**
-     * @return Current position of playback in seconds from media start. Does
-     *         not throw any exception but returns at least zero.
+     * @return Current position of playback in milli-seconds from media start.
+     *         Does not throw any exception but returns at least zero.
      */
     public int getCurrentPosition() {
         if (player == null || !prepared)
             return 0;
         else
-            return player.getCurrentPosition() / 1000;
+            return player.getCurrentPosition();
     }
 
     /**
-     * @return Duration of media element in seconds. Does not throw any
+     * @return Duration of media element in milli-seconds. Does not throw any
      *         exception but returns at least zero.
      */
     public int getDuration() {
         if (player == null || !prepared)
             return 0;
         else
-            return player.getDuration() / 1000;
+            return player.getDuration();
     }
 
     @Override
