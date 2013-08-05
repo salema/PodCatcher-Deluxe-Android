@@ -34,8 +34,10 @@ public class ShowEpisodeActivity extends EpisodeActivity {
         super.onCreate(savedInstanceState);
 
         // In large or landscape layouts we do not need this activity at
-        // all, so finish it off
-        if (!view.isSmallPortrait())
+        // all, so finish it. Also there is the case where the Android system
+        // recreates this activity after the app has been killed and the
+        // activity would show up empty because there is no episode selected.
+        if (!view.isSmallPortrait() || !selection.isEpisodeSet())
             finish();
         else {
             // Set the content view
@@ -54,8 +56,7 @@ public class ShowEpisodeActivity extends EpisodeActivity {
             }
 
             // Set it
-            if (selection.isEpisodeSet())
-                onEpisodeSelected(selection.getEpisode());
+            onEpisodeSelected(selection.getEpisode());
         }
     }
 

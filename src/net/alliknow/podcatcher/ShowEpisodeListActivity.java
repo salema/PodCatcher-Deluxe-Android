@@ -33,8 +33,12 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Check if we need this activity at all
-        if (!view.isSmallPortrait())
+        // In large or landscape layouts we do not need this activity at
+        // all, so finish it. Also we need to avoid the case where the Android
+        // system recreates this activity after the app has been killed and the
+        // activity would show up with an endless progress indication because
+        // there is no content selected.
+        if (!view.isSmallPortrait() || (!selection.isAll() && !selection.isPodcastSet()))
             finish();
         else {
             // Set the content view
@@ -59,8 +63,6 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
                 onAllPodcastsSelected();
             else if (selection.isPodcastSet())
                 onPodcastSelected(selection.getPodcast());
-            else
-                episodeListFragment.showLoadFailed();
         }
     }
 
