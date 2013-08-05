@@ -216,9 +216,9 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             else if (selection.isSingle() && selection.isPodcastSet())
                 onPodcastSelected(selection.getPodcast(), true);
             else if (ContentMode.DOWNLOADS.equals(selection.getMode()))
-                onDownloadsSelected(true);
+                onDownloadsSelected();
             else if (ContentMode.PLAYLIST.equals(selection.getMode()))
-                onPlaylistSelected(true);
+                onPlaylistSelected();
             else
                 onNoPodcastSelected(true);
 
@@ -424,42 +424,30 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
     @Override
     public void onDownloadsSelected() {
-        onDownloadsSelected(false);
-    }
+        super.onDownloadsSelected();
 
-    private void onDownloadsSelected(boolean forceReload) {
-        if (forceReload || !ContentMode.DOWNLOADS.equals(selection.getMode())) {
-            super.onDownloadsSelected();
+        // Prepare podcast list fragment
+        podcastListFragment.selectNone();
 
-            // Prepare podcast list fragment
-            podcastListFragment.selectNone();
+        if (view.isSmallPortrait())
+            showEpisodeListActivity();
 
-            if (view.isSmallPortrait())
-                showEpisodeListActivity();
-
-            // Update UI
-            updateLogoViewMode();
-        }
+        // Update UI
+        updateLogoViewMode();
     }
 
     @Override
     public void onPlaylistSelected() {
-        onPlaylistSelected(false);
-    }
+        super.onPlaylistSelected();
 
-    public void onPlaylistSelected(boolean forceReload) {
-        if (forceReload || !ContentMode.PLAYLIST.equals(selection.getMode())) {
-            super.onPlaylistSelected();
+        // Prepare podcast list fragment
+        podcastListFragment.selectNone();
 
-            // Prepare podcast list fragment
-            podcastListFragment.selectNone();
+        if (view.isSmallPortrait())
+            showEpisodeListActivity();
 
-            if (view.isSmallPortrait())
-                showEpisodeListActivity();
-
-            // Update UI
-            updateLogoViewMode();
-        }
+        // Update UI
+        updateLogoViewMode();
     }
 
     @Override
