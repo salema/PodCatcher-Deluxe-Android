@@ -276,7 +276,7 @@ public class Episode implements Comparable<Episode> {
         } catch (NumberFormatException e) {
             // The duration is given as something like "1:12:34" instead
             try {
-                String[] split = durationString.split(":");
+                final String[] split = durationString.split(":");
 
                 if (split.length == 2)
                     return Integer.parseInt(split[1]) + Integer.parseInt(split[0]) * 60;
