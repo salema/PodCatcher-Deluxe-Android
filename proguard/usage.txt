@@ -891,77 +891,77 @@ android.support.v4.widget.ViewDragHelper:
 android.support.v4.widget.ViewDragHelper$2
 android.support.v4.widget.ViewDragHelper$Callback:
     148:148:public ViewDragHelper$Callback()
-com.podcatcher.deluxe.AddPodcastActivity:
+com.podcatcher.deluxe.video.AddPodcastActivity:
     private static final java.lang.String ADD_PODCAST_FRAGMENT_TAG
     private static final java.lang.String LOADING_URL_KEY
-com.podcatcher.deluxe.AddSuggestionActivity:
+com.podcatcher.deluxe.video.AddSuggestionActivity:
     public static final java.lang.String SHOW_SUGGESTIONS_FRAGMENT_TAG
-com.podcatcher.deluxe.BaseActivity:
+com.podcatcher.deluxe.video.BaseActivity:
     public static final java.lang.String PODCATCHER_WEBSITE
     public static final java.lang.String PODCATCHER_HELPSITE
     public static final java.lang.String PODCAST_POSITION_LIST_KEY
-com.podcatcher.deluxe.BuildConfig
-com.podcatcher.deluxe.EpisodeActivity:
+com.podcatcher.deluxe.video.BuildConfig
+com.podcatcher.deluxe.video.EpisodeActivity:
     public static final java.lang.String EPISODE_URL_KEY
-com.podcatcher.deluxe.EpisodeListActivity:
+com.podcatcher.deluxe.video.EpisodeListActivity:
     public static final java.lang.String MODE_KEY
     public static final java.lang.String PODCAST_URL_KEY
-com.podcatcher.deluxe.ImportPodcastActivity:
+com.podcatcher.deluxe.video.ImportPodcastActivity:
     private static final int LAUNCHER_FLAGS
     private static final java.lang.String HTTP
     private static final java.lang.String ITPC
     private static final java.lang.String PCAST
     private static final java.lang.String FEED
     private static final java.lang.String RSS
-com.podcatcher.deluxe.PodcastActivity:
+com.podcatcher.deluxe.video.PodcastActivity:
     private static final int IMPORT_FROM_SIMPLE_PODCATCHER_CODE
     private static final java.lang.String IMPORT_ACTION
     private static final java.lang.String IMPORT_PODCAST_NAMES_KEY
     private static final java.lang.String IMPORT_PODCAST_URLS_KEY
-com.podcatcher.deluxe.Podcatcher:
+com.podcatcher.deluxe.video.Podcatcher:
     public static final int MIN_PIXEL_LARGE
     private static final java.lang.String RESERVED_CHARS
     public static final java.lang.String USER_AGENT_KEY
     public static final java.lang.String USER_AGENT_VALUE
     public static final long HTTP_CACHE_SIZE
-com.podcatcher.deluxe.R
-com.podcatcher.deluxe.R$anim
-com.podcatcher.deluxe.R$array
-com.podcatcher.deluxe.R$attr
-com.podcatcher.deluxe.R$color
-com.podcatcher.deluxe.R$dimen
-com.podcatcher.deluxe.R$drawable
-com.podcatcher.deluxe.R$id
-com.podcatcher.deluxe.R$integer
-com.podcatcher.deluxe.R$layout
-com.podcatcher.deluxe.R$menu
-com.podcatcher.deluxe.R$plurals
-com.podcatcher.deluxe.R$string
-com.podcatcher.deluxe.R$xml
-com.podcatcher.deluxe.SelectFileActivity:
+com.podcatcher.deluxe.video.R
+com.podcatcher.deluxe.video.R$anim
+com.podcatcher.deluxe.video.R$array
+com.podcatcher.deluxe.video.R$attr
+com.podcatcher.deluxe.video.R$color
+com.podcatcher.deluxe.video.R$dimen
+com.podcatcher.deluxe.video.R$drawable
+com.podcatcher.deluxe.video.R$id
+com.podcatcher.deluxe.video.R$integer
+com.podcatcher.deluxe.video.R$layout
+com.podcatcher.deluxe.video.R$menu
+com.podcatcher.deluxe.video.R$plurals
+com.podcatcher.deluxe.video.R$string
+com.podcatcher.deluxe.video.R$xml
+com.podcatcher.deluxe.video.SelectFileActivity:
     private static final java.lang.String SELECT_FILE_FRAGMENT_TAG
     public static final java.lang.String INITIAL_PATH_KEY
     public static final java.lang.String RESULT_PATH_KEY
     public static final java.lang.String SELECTION_MODE_KEY
-com.podcatcher.deluxe.SettingsActivity:
+com.podcatcher.deluxe.video.SettingsActivity:
     public static final java.lang.String KEY_SELECT_ALL_ON_START
     public static final java.lang.String KEY_THEME_COLOR
     public static final java.lang.String KEY_WIDE_EPISODE_LIST
     public static final java.lang.String AUTO_DOWNLOAD_KEY
     public static final java.lang.String AUTO_DELETE_KEY
     public static final java.lang.String DOWNLOAD_FOLDER_KEY
-com.podcatcher.deluxe.listeners.EpisodeListContextListener:
+com.podcatcher.deluxe.video.listeners.EpisodeListContextListener:
     private static final int MAX_DOWNLOADS
     private static final int MAX_TO_PLAYLIST
-com.podcatcher.deluxe.listeners.OnSelectEpisodeListener:
+com.podcatcher.deluxe.video.listeners.OnSelectEpisodeListener:
     public abstract void onNoEpisodeSelected()
-com.podcatcher.deluxe.listeners.OnSelectPodcastListener:
+com.podcatcher.deluxe.video.listeners.OnSelectPodcastListener:
     public abstract void onNoPodcastSelected()
-com.podcatcher.deluxe.model.EpisodeManager:
+com.podcatcher.deluxe.video.model.EpisodeBaseManager:
     public static final java.lang.String METADATA_FILENAME
-com.podcatcher.deluxe.model.ParserUtils:
+com.podcatcher.deluxe.video.model.ParserUtils:
     28:28:public ParserUtils()
-com.podcatcher.deluxe.model.PodcastManager:
+com.podcatcher.deluxe.video.model.PodcastManager:
     public static final int TIME_TO_LIFE
     public static final int TIME_TO_LIFE_MOBILE
     public static final int MAX_LOGO_SIZE_MOBILE
@@ -970,36 +970,37 @@ com.podcatcher.deluxe.model.PodcastManager:
     private static final int MAX_STALE_OFFLINE
     public static final java.lang.String OPML_FILENAME
     public static final java.lang.String OPML_FILE_ENCODING
-com.podcatcher.deluxe.model.tags.JSON
-com.podcatcher.deluxe.model.tags.METADATA
-com.podcatcher.deluxe.model.tags.OPML
-com.podcatcher.deluxe.model.tags.RSS
-com.podcatcher.deluxe.model.tasks.StoreFileTask:
+com.podcatcher.deluxe.video.model.tags.JSON
+com.podcatcher.deluxe.video.model.tags.METADATA
+com.podcatcher.deluxe.video.model.tags.OPML
+com.podcatcher.deluxe.video.model.tags.RSS
+com.podcatcher.deluxe.video.model.tasks.StoreFileTask:
     public static final java.lang.String FILE_ENCODING
     protected static final char INDENT
-com.podcatcher.deluxe.model.tasks.remote.LoadPodcastLogoTask:
+com.podcatcher.deluxe.video.model.tasks.remote.LoadPodcastLogoTask:
     private static final int LOGO_DIMENSION
     private static final java.lang.String CACHE_DIR
     96:97:public void setMaxAge(int)
-com.podcatcher.deluxe.model.tasks.remote.LoadPodcastTask:
+com.podcatcher.deluxe.video.model.tasks.remote.LoadPodcastTask:
     public static final int MAX_RSS_FILE_SIZE
-com.podcatcher.deluxe.model.tasks.remote.LoadRemoteFileTask:
+com.podcatcher.deluxe.video.model.tasks.remote.LoadRemoteFileTask:
     protected static final int CONNECT_TIMEOUT
     protected static final int READ_TIMEOUT
     187:197:private void showResponseHeaderDetails(java.net.HttpURLConnection)
     200:211:private void reportCacheStats()
-com.podcatcher.deluxe.model.tasks.remote.LoadSuggestionsTask:
+com.podcatcher.deluxe.video.model.tasks.remote.LoadSuggestionsTask:
     private static final java.lang.String SUGGESTIONS_ENCODING
     private static final java.lang.String SOURCE
-com.podcatcher.deluxe.model.types.Progress:
+com.podcatcher.deluxe.video.model.types.Progress:
     private static final int PROGRESS_WAIT
     private static final int PROGRESS_CONNECT
     private static final int PROGRESS_LOAD
     private static final int PROGRESS_PARSE
     private static final int PROGRESS_DONE
-com.podcatcher.deluxe.preferences.DownloadFolderPreference:
+com.podcatcher.deluxe.video.preferences.DownloadFolderPreference:
     public static final int REQUEST_CODE
-com.podcatcher.deluxe.services.PlayEpisodeService:
+    52:57:public DownloadFolderPreference(android.content.Context,android.util.AttributeSet)
+com.podcatcher.deluxe.video.services.PlayEpisodeService:
     public static final java.lang.String ACTION_TOGGLE
     public static final java.lang.String ACTION_PLAY
     public static final java.lang.String ACTION_PAUSE
@@ -1011,18 +1012,19 @@ com.podcatcher.deluxe.services.PlayEpisodeService:
     private static final int NOTIFICATION_ID
     private static final int SKIP_AMOUNT
     private static final float DUCK_VOLUME
-com.podcatcher.deluxe.services.PodcatcherRCClient:
+com.podcatcher.deluxe.video.services.PodcatcherRCClient:
     private static final int SUPPORTED_TRANSPORTS
-com.podcatcher.deluxe.view.Utils:
-    28:28:public Utils()
-com.podcatcher.deluxe.view.adapters.EpisodeListAdapter:
+com.podcatcher.deluxe.video.view.EpisodeListItemView:
     private static final java.lang.String NO_DATE
     private static final java.lang.String SEPARATOR
-com.podcatcher.deluxe.view.adapters.SuggestionListAdapter:
+com.podcatcher.deluxe.video.view.SuggestionListItemView:
     private static final java.lang.String METADATA_SEPARATOR
-com.podcatcher.deluxe.view.fragments.EpisodeFragment:
+com.podcatcher.deluxe.video.view.Utils:
+    28:28:public Utils()
+com.podcatcher.deluxe.video.view.fragments.EpisodeFragment:
+    private static final int HIDE_FULLSCREEN_HINT_DELAY
     private static final java.lang.String SEPARATOR
-com.podcatcher.deluxe.view.fragments.SuggestionFragment:
+com.podcatcher.deluxe.video.view.fragments.SuggestionFragment:
     public static final java.lang.String FILTER_WILDCARD
     private static final java.lang.String SUGGESTION_MAIL_ADDRESS
     private static final java.lang.String SUGGESTION_MAIL_SUBJECT

@@ -62,333 +62,350 @@ android.support.v4.widget.SlidingPaneLayout: void setShadowDrawable(android.grap
 android.support.v4.widget.SlidingPaneLayout: void setShadowResource(int)
 android.support.v4.widget.SlidingPaneLayout$SavedState
 android.support.v4.widget.SlidingPaneLayout$SavedState: android.os.Parcelable$Creator CREATOR
-com.podcatcher.deluxe.AddPodcastActivity
-com.podcatcher.deluxe.AddPodcastActivity: AddPodcastActivity()
-com.podcatcher.deluxe.AddSuggestionActivity
-com.podcatcher.deluxe.AddSuggestionActivity: AddSuggestionActivity()
-com.podcatcher.deluxe.BaseActivity: BaseActivity()
-com.podcatcher.deluxe.BaseActivity$ContentMode: com.podcatcher.deluxe.BaseActivity$ContentMode[] values()
-com.podcatcher.deluxe.BaseActivity$ContentMode: com.podcatcher.deluxe.BaseActivity$ContentMode valueOf(java.lang.String)
-com.podcatcher.deluxe.EpisodeActivity: EpisodeActivity()
-com.podcatcher.deluxe.EpisodeListActivity: EpisodeListActivity()
-com.podcatcher.deluxe.ExportOpmlActivity
-com.podcatcher.deluxe.ExportOpmlActivity: ExportOpmlActivity()
-com.podcatcher.deluxe.ImportOpmlActivity
-com.podcatcher.deluxe.ImportOpmlActivity: ImportOpmlActivity()
-com.podcatcher.deluxe.ImportPodcastActivity
-com.podcatcher.deluxe.ImportPodcastActivity: ImportPodcastActivity()
-com.podcatcher.deluxe.PodcastActivity
-com.podcatcher.deluxe.PodcastActivity: PodcastActivity()
-com.podcatcher.deluxe.Podcatcher
-com.podcatcher.deluxe.Podcatcher: Podcatcher()
-com.podcatcher.deluxe.R$anim: int slide_in_left
-com.podcatcher.deluxe.R$anim: int slide_in_right
-com.podcatcher.deluxe.R$anim: int slide_out_left
-com.podcatcher.deluxe.R$anim: int slide_out_right
-com.podcatcher.deluxe.R$array: int genres
-com.podcatcher.deluxe.R$array: int languages
-com.podcatcher.deluxe.R$array: int types
-com.podcatcher.deluxe.R$color: int button_blue_dark
-com.podcatcher.deluxe.R$color: int button_blue_light
-com.podcatcher.deluxe.R$color: int button_green_dark
-com.podcatcher.deluxe.R$color: int button_green_dark_disabled
-com.podcatcher.deluxe.R$color: int button_green_light
-com.podcatcher.deluxe.R$color: int button_green_light_disabled
-com.podcatcher.deluxe.R$color: int button_label_disabled
-com.podcatcher.deluxe.R$color: int button_label_enabled
-com.podcatcher.deluxe.R$color: int button_orange_dark
-com.podcatcher.deluxe.R$color: int button_orange_light
-com.podcatcher.deluxe.R$color: int button_red_dark
-com.podcatcher.deluxe.R$color: int button_red_dark_disabled
-com.podcatcher.deluxe.R$color: int button_red_light
-com.podcatcher.deluxe.R$color: int button_red_light_disabled
-com.podcatcher.deluxe.R$color: int divider_off
-com.podcatcher.deluxe.R$color: int text_error
-com.podcatcher.deluxe.R$color: int text_secondary
-com.podcatcher.deluxe.R$color: int theme_dark
-com.podcatcher.deluxe.R$color: int theme_light
-com.podcatcher.deluxe.R$color: int transparent
-com.podcatcher.deluxe.R$dimen: int divider_width
-com.podcatcher.deluxe.R$dimen: int episode_view_padding
-com.podcatcher.deluxe.R$dimen: int font_size_default
-com.podcatcher.deluxe.R$dimen: int font_size_large
-com.podcatcher.deluxe.R$dimen: int font_size_small
-com.podcatcher.deluxe.R$dimen: int list_item_padding
-com.podcatcher.deluxe.R$drawable: int button_blue
-com.podcatcher.deluxe.R$drawable: int button_green
-com.podcatcher.deluxe.R$drawable: int button_label
-com.podcatcher.deluxe.R$drawable: int button_orange
-com.podcatcher.deluxe.R$drawable: int button_red
-com.podcatcher.deluxe.R$drawable: int default_podcast_logo
-com.podcatcher.deluxe.R$drawable: int ic_checkmark_light
-com.podcatcher.deluxe.R$drawable: int ic_file
-com.podcatcher.deluxe.R$drawable: int ic_file_folder
-com.podcatcher.deluxe.R$drawable: int ic_file_up
-com.podcatcher.deluxe.R$drawable: int ic_media_downloaded
-com.podcatcher.deluxe.R$drawable: int ic_media_downloading
-com.podcatcher.deluxe.R$drawable: int ic_media_fullscreen
-com.podcatcher.deluxe.R$drawable: int ic_media_new
-com.podcatcher.deluxe.R$drawable: int ic_media_next
-com.podcatcher.deluxe.R$drawable: int ic_media_pause
-com.podcatcher.deluxe.R$drawable: int ic_media_play
-com.podcatcher.deluxe.R$drawable: int ic_media_stop
-com.podcatcher.deluxe.R$drawable: int ic_menu_add
-com.podcatcher.deluxe.R$drawable: int ic_menu_delete
-com.podcatcher.deluxe.R$drawable: int ic_menu_download
-com.podcatcher.deluxe.R$drawable: int ic_menu_export
-com.podcatcher.deluxe.R$drawable: int ic_menu_filter
-com.podcatcher.deluxe.R$drawable: int ic_menu_filter_back
-com.podcatcher.deluxe.R$drawable: int ic_menu_import
-com.podcatcher.deluxe.R$drawable: int ic_menu_new
-com.podcatcher.deluxe.R$drawable: int ic_menu_old
-com.podcatcher.deluxe.R$drawable: int ic_menu_playlist
-com.podcatcher.deluxe.R$drawable: int ic_menu_playlist_add
-com.podcatcher.deluxe.R$drawable: int ic_menu_playlist_remove
-com.podcatcher.deluxe.R$drawable: int ic_menu_rotate
-com.podcatcher.deluxe.R$drawable: int ic_menu_select_all
-com.podcatcher.deluxe.R$drawable: int ic_menu_sort
-com.podcatcher.deluxe.R$drawable: int ic_menu_sort_reverse
-com.podcatcher.deluxe.R$drawable: int ic_stat
-com.podcatcher.deluxe.R$drawable: int launcher
-com.podcatcher.deluxe.R$drawable: int list_item_background
-com.podcatcher.deluxe.R$drawable: int logo
-com.podcatcher.deluxe.R$id: int about_menuitem
-com.podcatcher.deluxe.R$id: int add_podcast_progress
-com.podcatcher.deluxe.R$id: int color_picker_view
-com.podcatcher.deluxe.R$id: int color_preview
-com.podcatcher.deluxe.R$id: int content
-com.podcatcher.deluxe.R$id: int current_path
-com.podcatcher.deluxe.R$id: int divider_first
-com.podcatcher.deluxe.R$id: int divider_second
-com.podcatcher.deluxe.R$id: int download_icon
-com.podcatcher.deluxe.R$id: int episode
-com.podcatcher.deluxe.R$id: int episode_add_to_playlist_contextmenuitem
-com.podcatcher.deluxe.R$id: int episode_description
-com.podcatcher.deluxe.R$id: int episode_divider
-com.podcatcher.deluxe.R$id: int episode_download_contextmenuitem
-com.podcatcher.deluxe.R$id: int episode_download_menuitem
-com.podcatcher.deluxe.R$id: int episode_list
-com.podcatcher.deluxe.R$id: int episode_load_menuitem
-com.podcatcher.deluxe.R$id: int episode_new_contextmenuitem
-com.podcatcher.deluxe.R$id: int episode_old_contextmenuitem
-com.podcatcher.deluxe.R$id: int episode_remove_contextmenuitem
-com.podcatcher.deluxe.R$id: int episode_remove_from_playlist_contextmenuitem
-com.podcatcher.deluxe.R$id: int episode_select_all_contextmenuitem
-com.podcatcher.deluxe.R$id: int episode_title
-com.podcatcher.deluxe.R$id: int file_name
-com.podcatcher.deluxe.R$id: int files
-com.podcatcher.deluxe.R$id: int filter_menuitem
-com.podcatcher.deluxe.R$id: int filtered_warning
-com.podcatcher.deluxe.R$id: int help_menuitem
-com.podcatcher.deluxe.R$id: int hex_val
-com.podcatcher.deluxe.R$id: int icon
-com.podcatcher.deluxe.R$id: int import_opml_button
-com.podcatcher.deluxe.R$id: int list_item_background
-com.podcatcher.deluxe.R$id: int list_item_caption
-com.podcatcher.deluxe.R$id: int list_item_progress
-com.podcatcher.deluxe.R$id: int list_item_title
-com.podcatcher.deluxe.R$id: int new_color_panel
-com.podcatcher.deluxe.R$id: int old_color_panel
-com.podcatcher.deluxe.R$id: int opml_export_contextmenuitem
-com.podcatcher.deluxe.R$id: int path_up
-com.podcatcher.deluxe.R$id: int player
-com.podcatcher.deluxe.R$id: int player_button
-com.podcatcher.deluxe.R$id: int player_divider
-com.podcatcher.deluxe.R$id: int player_error
-com.podcatcher.deluxe.R$id: int player_next
-com.podcatcher.deluxe.R$id: int player_seekbar
-com.podcatcher.deluxe.R$id: int player_title
-com.podcatcher.deluxe.R$id: int podcast_add_button
-com.podcatcher.deluxe.R$id: int podcast_add_menuitem
-com.podcatcher.deluxe.R$id: int podcast_image
-com.podcatcher.deluxe.R$id: int podcast_list
-com.podcatcher.deluxe.R$id: int podcast_logo
-com.podcatcher.deluxe.R$id: int podcast_remove_contextmenuitem
-com.podcatcher.deluxe.R$id: int podcast_title
-com.podcatcher.deluxe.R$id: int podcast_url
-com.podcatcher.deluxe.R$id: int progress
-com.podcatcher.deluxe.R$id: int progress_bar
-com.podcatcher.deluxe.R$id: int progress_text
-com.podcatcher.deluxe.R$id: int right
-com.podcatcher.deluxe.R$id: int right_column
-com.podcatcher.deluxe.R$id: int select_file
-com.podcatcher.deluxe.R$id: int settings_menuitem
-com.podcatcher.deluxe.R$id: int sort_menuitem
-com.podcatcher.deluxe.R$id: int state_icon
-com.podcatcher.deluxe.R$id: int subtitle
-com.podcatcher.deluxe.R$id: int suggestion_add_button
-com.podcatcher.deluxe.R$id: int suggestion_description
-com.podcatcher.deluxe.R$id: int suggestion_genre_select
-com.podcatcher.deluxe.R$id: int suggestion_language_select
-com.podcatcher.deluxe.R$id: int suggestion_list_progress
-com.podcatcher.deluxe.R$id: int suggestion_meta
-com.podcatcher.deluxe.R$id: int suggestion_name
-com.podcatcher.deluxe.R$id: int suggestion_none
-com.podcatcher.deluxe.R$id: int suggestion_podcasts
-com.podcatcher.deluxe.R$id: int suggestion_send
-com.podcatcher.deluxe.R$id: int suggestion_type_select
-com.podcatcher.deluxe.R$id: int text_hex_wrapper
-com.podcatcher.deluxe.R$id: int title
-com.podcatcher.deluxe.R$id: int warning_divider
-com.podcatcher.deluxe.R$integer: int progress_bar_horizontal_weight
-com.podcatcher.deluxe.R$layout: int add_podcast
-com.podcatcher.deluxe.R$layout: int color_preview_widget
-com.podcatcher.deluxe.R$layout: int content_spinner_item
-com.podcatcher.deluxe.R$layout: int dialog_color_picker
-com.podcatcher.deluxe.R$layout: int episode
-com.podcatcher.deluxe.R$layout: int episode_list
-com.podcatcher.deluxe.R$layout: int episode_list_item
-com.podcatcher.deluxe.R$layout: int file_dialog
-com.podcatcher.deluxe.R$layout: int file_list_item
-com.podcatcher.deluxe.R$layout: int main
-com.podcatcher.deluxe.R$layout: int player
-com.podcatcher.deluxe.R$layout: int podcast_list
-com.podcatcher.deluxe.R$layout: int podcast_list_item
-com.podcatcher.deluxe.R$layout: int progress
-com.podcatcher.deluxe.R$layout: int progress_horizontal
-com.podcatcher.deluxe.R$layout: int suggestion_list_item
-com.podcatcher.deluxe.R$layout: int suggestions
-com.podcatcher.deluxe.R$menu: int episode
-com.podcatcher.deluxe.R$menu: int episode_list
-com.podcatcher.deluxe.R$menu: int episode_list_context
-com.podcatcher.deluxe.R$menu: int player
-com.podcatcher.deluxe.R$menu: int podcast_list
-com.podcatcher.deluxe.R$menu: int podcast_list_context
-com.podcatcher.deluxe.R$menu: int podcatcher
-com.podcatcher.deluxe.R$plurals: int episodes
-com.podcatcher.deluxe.R$plurals: int episodes_filtered
-com.podcatcher.deluxe.R$plurals: int episodes_new
-com.podcatcher.deluxe.R$plurals: int podcasts
-com.podcatcher.deluxe.R$string: int about
-com.podcatcher.deluxe.R$string: int app_name
-com.podcatcher.deluxe.R$string: int connect
-com.podcatcher.deluxe.R$string: int divider
-com.podcatcher.deluxe.R$string: int download
-com.podcatcher.deluxe.R$string: int download_failed
-com.podcatcher.deluxe.R$string: int download_started
-com.podcatcher.deluxe.R$string: int downloads
-com.podcatcher.deluxe.R$string: int downloads_none
-com.podcatcher.deluxe.R$string: int episode_fragment_tag
-com.podcatcher.deluxe.R$string: int episode_list_fragment_tag
-com.podcatcher.deluxe.R$string: int episode_no_description
-com.podcatcher.deluxe.R$string: int episode_none
-com.podcatcher.deluxe.R$string: int episode_none_selected
-com.podcatcher.deluxe.R$string: int episodes_filter_all
-com.podcatcher.deluxe.R$string: int episodes_filter_new
-com.podcatcher.deluxe.R$string: int episodes_no_new
-com.podcatcher.deluxe.R$string: int episodes_old
-com.podcatcher.deluxe.R$string: int episodes_select_all
-com.podcatcher.deluxe.R$string: int episodes_sort_toggle
-com.podcatcher.deluxe.R$string: int episodes_total
-com.podcatcher.deluxe.R$string: int file_select
-com.podcatcher.deluxe.R$string: int file_select_access_denied
-com.podcatcher.deluxe.R$string: int file_select_file
-com.podcatcher.deluxe.R$string: int file_select_folder
-com.podcatcher.deluxe.R$string: int help
-com.podcatcher.deluxe.R$string: int load
-com.podcatcher.deluxe.R$string: int next
-com.podcatcher.deluxe.R$string: int opml_export
-com.podcatcher.deluxe.R$string: int opml_export_failed
-com.podcatcher.deluxe.R$string: int opml_export_success
-com.podcatcher.deluxe.R$string: int opml_import
-com.podcatcher.deluxe.R$string: int opml_import_failed
-com.podcatcher.deluxe.R$string: int parse
-com.podcatcher.deluxe.R$string: int pause
-com.podcatcher.deluxe.R$string: int play
-com.podcatcher.deluxe.R$string: int player_buffering
-com.podcatcher.deluxe.R$string: int player_error
-com.podcatcher.deluxe.R$string: int player_fragment_tag
-com.podcatcher.deluxe.R$string: int player_label
-com.podcatcher.deluxe.R$string: int player_label_short
-com.podcatcher.deluxe.R$string: int playlist
-com.podcatcher.deluxe.R$string: int playlist_add
-com.podcatcher.deluxe.R$string: int playlist_empty
-com.podcatcher.deluxe.R$string: int playlist_remove
-com.podcatcher.deluxe.R$string: int podcast_add_button
-com.podcatcher.deluxe.R$string: int podcast_add_error
-com.podcatcher.deluxe.R$string: int podcast_add_title
-com.podcatcher.deluxe.R$string: int podcast_enter_url_here
-com.podcatcher.deluxe.R$string: int podcast_image
-com.podcatcher.deluxe.R$string: int podcast_list_fragment_tag
-com.podcatcher.deluxe.R$string: int podcast_load_error
-com.podcatcher.deluxe.R$string: int podcast_load_multiple_error
-com.podcatcher.deluxe.R$string: int podcast_load_multiple_progress
-com.podcatcher.deluxe.R$string: int podcast_none
-com.podcatcher.deluxe.R$string: int podcast_none_long
-com.podcatcher.deluxe.R$string: int podcast_none_selected
-com.podcatcher.deluxe.R$string: int podcast_select_all
-com.podcatcher.deluxe.R$string: int pref_auto_delete_summary
-com.podcatcher.deluxe.R$string: int pref_auto_delete_title
-com.podcatcher.deluxe.R$string: int pref_auto_download_summary
-com.podcatcher.deluxe.R$string: int pref_auto_download_title
-com.podcatcher.deluxe.R$string: int pref_category_interface
-com.podcatcher.deluxe.R$string: int pref_download_folder_title
-com.podcatcher.deluxe.R$string: int pref_select_all_on_start_summary
-com.podcatcher.deluxe.R$string: int pref_select_all_on_start_title
-com.podcatcher.deluxe.R$string: int pref_theme_color_dialog_title
-com.podcatcher.deluxe.R$string: int pref_theme_color_dialog_use
-com.podcatcher.deluxe.R$string: int pref_theme_color_title
-com.podcatcher.deluxe.R$string: int pref_wide_episode_list_summary
-com.podcatcher.deluxe.R$string: int pref_wide_episode_list_title
-com.podcatcher.deluxe.R$string: int preferences
-com.podcatcher.deluxe.R$string: int remove
-com.podcatcher.deluxe.R$string: int resume
-com.podcatcher.deluxe.R$string: int stop
-com.podcatcher.deluxe.R$string: int suggested_podcasts
-com.podcatcher.deluxe.R$string: int suggestions
-com.podcatcher.deluxe.R$string: int suggestions_load_error
-com.podcatcher.deluxe.R$string: int suggestions_none
-com.podcatcher.deluxe.R$string: int suggestions_send
-com.podcatcher.deluxe.R$string: int wait
-com.podcatcher.deluxe.R$string: int wildcard
-com.podcatcher.deluxe.R$xml: int preferences
-com.podcatcher.deluxe.RemovePodcastActivity
-com.podcatcher.deluxe.RemovePodcastActivity: RemovePodcastActivity()
-com.podcatcher.deluxe.SelectFileActivity
-com.podcatcher.deluxe.SelectFileActivity: SelectFileActivity()
-com.podcatcher.deluxe.SelectFileActivity$SelectionMode: com.podcatcher.deluxe.SelectFileActivity$SelectionMode[] values()
-com.podcatcher.deluxe.SelectFileActivity$SelectionMode: com.podcatcher.deluxe.SelectFileActivity$SelectionMode valueOf(java.lang.String)
-com.podcatcher.deluxe.SettingsActivity
-com.podcatcher.deluxe.SettingsActivity: SettingsActivity()
-com.podcatcher.deluxe.ShowEpisodeActivity
-com.podcatcher.deluxe.ShowEpisodeActivity: ShowEpisodeActivity()
-com.podcatcher.deluxe.ShowEpisodeListActivity
-com.podcatcher.deluxe.ShowEpisodeListActivity: ShowEpisodeListActivity()
-com.podcatcher.deluxe.model.types.Genre: com.podcatcher.deluxe.model.types.Genre[] values()
-com.podcatcher.deluxe.model.types.Genre: com.podcatcher.deluxe.model.types.Genre valueOf(java.lang.String)
-com.podcatcher.deluxe.model.types.Language: com.podcatcher.deluxe.model.types.Language[] values()
-com.podcatcher.deluxe.model.types.Language: com.podcatcher.deluxe.model.types.Language valueOf(java.lang.String)
-com.podcatcher.deluxe.model.types.MediaType: com.podcatcher.deluxe.model.types.MediaType[] values()
-com.podcatcher.deluxe.model.types.MediaType: com.podcatcher.deluxe.model.types.MediaType valueOf(java.lang.String)
-com.podcatcher.deluxe.preferences.DownloadFolderPreference
-com.podcatcher.deluxe.preferences.DownloadFolderPreference: DownloadFolderPreference(android.content.Context,android.util.AttributeSet)
-com.podcatcher.deluxe.services.BecomingNoisyReceiver
-com.podcatcher.deluxe.services.BecomingNoisyReceiver: BecomingNoisyReceiver()
-com.podcatcher.deluxe.services.MediaButtonReceiver
-com.podcatcher.deluxe.services.MediaButtonReceiver: MediaButtonReceiver()
-com.podcatcher.deluxe.services.PlayEpisodeService
-com.podcatcher.deluxe.services.PlayEpisodeService: PlayEpisodeService()
-com.podcatcher.deluxe.view.ContentSpinner: void setTitle(java.lang.String)
-com.podcatcher.deluxe.view.ContentSpinner: void setSubtitle(java.lang.String)
-com.podcatcher.deluxe.view.HorizontalProgressView
-com.podcatcher.deluxe.view.HorizontalProgressView: HorizontalProgressView(android.content.Context,android.util.AttributeSet)
-com.podcatcher.deluxe.view.HorizontalProgressView: int getLayout()
-com.podcatcher.deluxe.view.ProgressView
-com.podcatcher.deluxe.view.ProgressView: ProgressView(android.content.Context,android.util.AttributeSet)
-com.podcatcher.deluxe.view.ProgressView: int getLayout()
-com.podcatcher.deluxe.view.ViewMode: com.podcatcher.deluxe.view.ViewMode[] values()
-com.podcatcher.deluxe.view.ViewMode: com.podcatcher.deluxe.view.ViewMode valueOf(java.lang.String)
-com.podcatcher.deluxe.view.fragments.EpisodeFragment
-com.podcatcher.deluxe.view.fragments.EpisodeFragment: EpisodeFragment()
-com.podcatcher.deluxe.view.fragments.EpisodeListFragment
-com.podcatcher.deluxe.view.fragments.EpisodeListFragment: EpisodeListFragment()
-com.podcatcher.deluxe.view.fragments.PlayerFragment
-com.podcatcher.deluxe.view.fragments.PlayerFragment: PlayerFragment()
-com.podcatcher.deluxe.view.fragments.PodcastListFragment
-com.podcatcher.deluxe.view.fragments.PodcastListFragment: PodcastListFragment()
-com.podcatcher.deluxe.view.fragments.PodcastListFragment$LogoViewMode: com.podcatcher.deluxe.view.fragments.PodcastListFragment$LogoViewMode[] values()
-com.podcatcher.deluxe.view.fragments.PodcastListFragment$LogoViewMode: com.podcatcher.deluxe.view.fragments.PodcastListFragment$LogoViewMode valueOf(java.lang.String)
-com.podcatcher.deluxe.view.fragments.PodcatcherListFragment: PodcatcherListFragment()
+com.podcatcher.deluxe.video.AddPodcastActivity
+com.podcatcher.deluxe.video.AddPodcastActivity: AddPodcastActivity()
+com.podcatcher.deluxe.video.AddSuggestionActivity
+com.podcatcher.deluxe.video.AddSuggestionActivity: AddSuggestionActivity()
+com.podcatcher.deluxe.video.BaseActivity: BaseActivity()
+com.podcatcher.deluxe.video.BaseActivity$ContentMode: com.podcatcher.deluxe.video.BaseActivity$ContentMode[] values()
+com.podcatcher.deluxe.video.BaseActivity$ContentMode: com.podcatcher.deluxe.video.BaseActivity$ContentMode valueOf(java.lang.String)
+com.podcatcher.deluxe.video.EpisodeActivity: EpisodeActivity()
+com.podcatcher.deluxe.video.EpisodeListActivity: EpisodeListActivity()
+com.podcatcher.deluxe.video.ExportOpmlActivity
+com.podcatcher.deluxe.video.ExportOpmlActivity: ExportOpmlActivity()
+com.podcatcher.deluxe.video.FullscreenVideoActivity
+com.podcatcher.deluxe.video.FullscreenVideoActivity: FullscreenVideoActivity()
+com.podcatcher.deluxe.video.ImportOpmlActivity
+com.podcatcher.deluxe.video.ImportOpmlActivity: ImportOpmlActivity()
+com.podcatcher.deluxe.video.ImportPodcastActivity
+com.podcatcher.deluxe.video.ImportPodcastActivity: ImportPodcastActivity()
+com.podcatcher.deluxe.video.PodcastActivity
+com.podcatcher.deluxe.video.PodcastActivity: PodcastActivity()
+com.podcatcher.deluxe.video.Podcatcher
+com.podcatcher.deluxe.video.Podcatcher: Podcatcher()
+com.podcatcher.deluxe.video.R$anim: int slide_in_left
+com.podcatcher.deluxe.video.R$anim: int slide_in_right
+com.podcatcher.deluxe.video.R$anim: int slide_out_left
+com.podcatcher.deluxe.video.R$anim: int slide_out_right
+com.podcatcher.deluxe.video.R$array: int genres
+com.podcatcher.deluxe.video.R$array: int languages
+com.podcatcher.deluxe.video.R$array: int types
+com.podcatcher.deluxe.video.R$color: int button_blue_dark
+com.podcatcher.deluxe.video.R$color: int button_blue_light
+com.podcatcher.deluxe.video.R$color: int button_green_dark
+com.podcatcher.deluxe.video.R$color: int button_green_dark_disabled
+com.podcatcher.deluxe.video.R$color: int button_green_light
+com.podcatcher.deluxe.video.R$color: int button_green_light_disabled
+com.podcatcher.deluxe.video.R$color: int button_label_disabled
+com.podcatcher.deluxe.video.R$color: int button_label_enabled
+com.podcatcher.deluxe.video.R$color: int button_orange_dark
+com.podcatcher.deluxe.video.R$color: int button_orange_light
+com.podcatcher.deluxe.video.R$color: int button_red_dark
+com.podcatcher.deluxe.video.R$color: int button_red_dark_disabled
+com.podcatcher.deluxe.video.R$color: int button_red_light
+com.podcatcher.deluxe.video.R$color: int button_red_light_disabled
+com.podcatcher.deluxe.video.R$color: int divider_off
+com.podcatcher.deluxe.video.R$color: int text_error
+com.podcatcher.deluxe.video.R$color: int text_secondary
+com.podcatcher.deluxe.video.R$color: int theme_dark
+com.podcatcher.deluxe.video.R$color: int theme_light
+com.podcatcher.deluxe.video.R$color: int transparent
+com.podcatcher.deluxe.video.R$dimen: int divider_width
+com.podcatcher.deluxe.video.R$dimen: int episode_view_padding
+com.podcatcher.deluxe.video.R$dimen: int font_size_default
+com.podcatcher.deluxe.video.R$dimen: int font_size_large
+com.podcatcher.deluxe.video.R$dimen: int font_size_small
+com.podcatcher.deluxe.video.R$dimen: int list_item_padding
+com.podcatcher.deluxe.video.R$dimen: int suggestion_add_padding
+com.podcatcher.deluxe.video.R$drawable: int button_blue
+com.podcatcher.deluxe.video.R$drawable: int button_green
+com.podcatcher.deluxe.video.R$drawable: int button_label
+com.podcatcher.deluxe.video.R$drawable: int button_orange
+com.podcatcher.deluxe.video.R$drawable: int button_red
+com.podcatcher.deluxe.video.R$drawable: int default_podcast_logo
+com.podcatcher.deluxe.video.R$drawable: int ic_checkmark_light
+com.podcatcher.deluxe.video.R$drawable: int ic_file
+com.podcatcher.deluxe.video.R$drawable: int ic_file_folder
+com.podcatcher.deluxe.video.R$drawable: int ic_file_up
+com.podcatcher.deluxe.video.R$drawable: int ic_media_downloaded
+com.podcatcher.deluxe.video.R$drawable: int ic_media_downloading
+com.podcatcher.deluxe.video.R$drawable: int ic_media_fullscreen
+com.podcatcher.deluxe.video.R$drawable: int ic_media_new
+com.podcatcher.deluxe.video.R$drawable: int ic_media_next
+com.podcatcher.deluxe.video.R$drawable: int ic_media_pause
+com.podcatcher.deluxe.video.R$drawable: int ic_media_play
+com.podcatcher.deluxe.video.R$drawable: int ic_media_stop
+com.podcatcher.deluxe.video.R$drawable: int ic_menu_add
+com.podcatcher.deluxe.video.R$drawable: int ic_menu_delete
+com.podcatcher.deluxe.video.R$drawable: int ic_menu_download
+com.podcatcher.deluxe.video.R$drawable: int ic_menu_export
+com.podcatcher.deluxe.video.R$drawable: int ic_menu_filter
+com.podcatcher.deluxe.video.R$drawable: int ic_menu_filter_back
+com.podcatcher.deluxe.video.R$drawable: int ic_menu_import
+com.podcatcher.deluxe.video.R$drawable: int ic_menu_new
+com.podcatcher.deluxe.video.R$drawable: int ic_menu_old
+com.podcatcher.deluxe.video.R$drawable: int ic_menu_playlist
+com.podcatcher.deluxe.video.R$drawable: int ic_menu_playlist_add
+com.podcatcher.deluxe.video.R$drawable: int ic_menu_playlist_remove
+com.podcatcher.deluxe.video.R$drawable: int ic_menu_rotate
+com.podcatcher.deluxe.video.R$drawable: int ic_menu_select_all
+com.podcatcher.deluxe.video.R$drawable: int ic_menu_sort
+com.podcatcher.deluxe.video.R$drawable: int ic_menu_sort_reverse
+com.podcatcher.deluxe.video.R$drawable: int ic_stat
+com.podcatcher.deluxe.video.R$drawable: int launcher
+com.podcatcher.deluxe.video.R$drawable: int logo
+com.podcatcher.deluxe.video.R$id: int about_menuitem
+com.podcatcher.deluxe.video.R$id: int add_podcast_progress
+com.podcatcher.deluxe.video.R$id: int color_picker_view
+com.podcatcher.deluxe.video.R$id: int color_preview
+com.podcatcher.deluxe.video.R$id: int content
+com.podcatcher.deluxe.video.R$id: int current_path
+com.podcatcher.deluxe.video.R$id: int divider_first
+com.podcatcher.deluxe.video.R$id: int divider_second
+com.podcatcher.deluxe.video.R$id: int download_icon
+com.podcatcher.deluxe.video.R$id: int episode
+com.podcatcher.deluxe.video.R$id: int episode_add_to_playlist_contextmenuitem
+com.podcatcher.deluxe.video.R$id: int episode_description
+com.podcatcher.deluxe.video.R$id: int episode_divider
+com.podcatcher.deluxe.video.R$id: int episode_download_contextmenuitem
+com.podcatcher.deluxe.video.R$id: int episode_download_menuitem
+com.podcatcher.deluxe.video.R$id: int episode_list
+com.podcatcher.deluxe.video.R$id: int episode_load_menuitem
+com.podcatcher.deluxe.video.R$id: int episode_new_contextmenuitem
+com.podcatcher.deluxe.video.R$id: int episode_old_contextmenuitem
+com.podcatcher.deluxe.video.R$id: int episode_remove_contextmenuitem
+com.podcatcher.deluxe.video.R$id: int episode_remove_from_playlist_contextmenuitem
+com.podcatcher.deluxe.video.R$id: int episode_select_all_contextmenuitem
+com.podcatcher.deluxe.video.R$id: int episode_title
+com.podcatcher.deluxe.video.R$id: int episode_video
+com.podcatcher.deluxe.video.R$id: int file_icon
+com.podcatcher.deluxe.video.R$id: int file_name
+com.podcatcher.deluxe.video.R$id: int files
+com.podcatcher.deluxe.video.R$id: int filter_menuitem
+com.podcatcher.deluxe.video.R$id: int filtered_warning
+com.podcatcher.deluxe.video.R$id: int fullscreen
+com.podcatcher.deluxe.video.R$id: int help_menuitem
+com.podcatcher.deluxe.video.R$id: int hex_val
+com.podcatcher.deluxe.video.R$id: int icon
+com.podcatcher.deluxe.video.R$id: int import_opml_button
+com.podcatcher.deluxe.video.R$id: int list_item_caption
+com.podcatcher.deluxe.video.R$id: int list_item_main_content
+com.podcatcher.deluxe.video.R$id: int list_item_progress
+com.podcatcher.deluxe.video.R$id: int list_item_title
+com.podcatcher.deluxe.video.R$id: int new_color_panel
+com.podcatcher.deluxe.video.R$id: int old_color_panel
+com.podcatcher.deluxe.video.R$id: int opml_export_contextmenuitem
+com.podcatcher.deluxe.video.R$id: int path_up
+com.podcatcher.deluxe.video.R$id: int player
+com.podcatcher.deluxe.video.R$id: int player_button
+com.podcatcher.deluxe.video.R$id: int player_divider
+com.podcatcher.deluxe.video.R$id: int player_error
+com.podcatcher.deluxe.video.R$id: int player_next
+com.podcatcher.deluxe.video.R$id: int player_seekbar
+com.podcatcher.deluxe.video.R$id: int player_title
+com.podcatcher.deluxe.video.R$id: int playlist_position
+com.podcatcher.deluxe.video.R$id: int podcast_add_button
+com.podcatcher.deluxe.video.R$id: int podcast_add_menuitem
+com.podcatcher.deluxe.video.R$id: int podcast_image
+com.podcatcher.deluxe.video.R$id: int podcast_list
+com.podcatcher.deluxe.video.R$id: int podcast_logo
+com.podcatcher.deluxe.video.R$id: int podcast_remove_contextmenuitem
+com.podcatcher.deluxe.video.R$id: int podcast_title
+com.podcatcher.deluxe.video.R$id: int podcast_url
+com.podcatcher.deluxe.video.R$id: int progress
+com.podcatcher.deluxe.video.R$id: int progress_bar
+com.podcatcher.deluxe.video.R$id: int progress_text
+com.podcatcher.deluxe.video.R$id: int right
+com.podcatcher.deluxe.video.R$id: int right_column
+com.podcatcher.deluxe.video.R$id: int select_file
+com.podcatcher.deluxe.video.R$id: int settings_menuitem
+com.podcatcher.deluxe.video.R$id: int sort_menuitem
+com.podcatcher.deluxe.video.R$id: int state_icon
+com.podcatcher.deluxe.video.R$id: int subtitle
+com.podcatcher.deluxe.video.R$id: int suggestion_add_button
+com.podcatcher.deluxe.video.R$id: int suggestion_description
+com.podcatcher.deluxe.video.R$id: int suggestion_genre_select
+com.podcatcher.deluxe.video.R$id: int suggestion_language_select
+com.podcatcher.deluxe.video.R$id: int suggestion_list_progress
+com.podcatcher.deluxe.video.R$id: int suggestion_meta
+com.podcatcher.deluxe.video.R$id: int suggestion_name
+com.podcatcher.deluxe.video.R$id: int suggestion_none
+com.podcatcher.deluxe.video.R$id: int suggestion_podcasts
+com.podcatcher.deluxe.video.R$id: int suggestion_send
+com.podcatcher.deluxe.video.R$id: int suggestion_type_select
+com.podcatcher.deluxe.video.R$id: int surface
+com.podcatcher.deluxe.video.R$id: int text_hex_wrapper
+com.podcatcher.deluxe.video.R$id: int title
+com.podcatcher.deluxe.video.R$id: int warning_divider
+com.podcatcher.deluxe.video.R$integer: int progress_bar_horizontal_weight
+com.podcatcher.deluxe.video.R$layout: int add_podcast
+com.podcatcher.deluxe.video.R$layout: int color_preview_widget
+com.podcatcher.deluxe.video.R$layout: int content_spinner_item
+com.podcatcher.deluxe.video.R$layout: int dialog_color_picker
+com.podcatcher.deluxe.video.R$layout: int episode
+com.podcatcher.deluxe.video.R$layout: int episode_list
+com.podcatcher.deluxe.video.R$layout: int episode_list_item
+com.podcatcher.deluxe.video.R$layout: int file_dialog
+com.podcatcher.deluxe.video.R$layout: int file_list_item
+com.podcatcher.deluxe.video.R$layout: int fullscreen_video
+com.podcatcher.deluxe.video.R$layout: int main
+com.podcatcher.deluxe.video.R$layout: int player
+com.podcatcher.deluxe.video.R$layout: int podcast_list
+com.podcatcher.deluxe.video.R$layout: int podcast_list_item
+com.podcatcher.deluxe.video.R$layout: int progress
+com.podcatcher.deluxe.video.R$layout: int progress_horizontal
+com.podcatcher.deluxe.video.R$layout: int suggestion_list_item
+com.podcatcher.deluxe.video.R$layout: int suggestions
+com.podcatcher.deluxe.video.R$menu: int episode
+com.podcatcher.deluxe.video.R$menu: int episode_list
+com.podcatcher.deluxe.video.R$menu: int episode_list_context
+com.podcatcher.deluxe.video.R$menu: int player
+com.podcatcher.deluxe.video.R$menu: int podcast_list
+com.podcatcher.deluxe.video.R$menu: int podcast_list_context
+com.podcatcher.deluxe.video.R$menu: int podcatcher
+com.podcatcher.deluxe.video.R$plurals: int episodes
+com.podcatcher.deluxe.video.R$plurals: int episodes_filtered
+com.podcatcher.deluxe.video.R$plurals: int episodes_new
+com.podcatcher.deluxe.video.R$plurals: int podcasts
+com.podcatcher.deluxe.video.R$string: int about
+com.podcatcher.deluxe.video.R$string: int app_name
+com.podcatcher.deluxe.video.R$string: int connect
+com.podcatcher.deluxe.video.R$string: int divider
+com.podcatcher.deluxe.video.R$string: int download
+com.podcatcher.deluxe.video.R$string: int download_failed
+com.podcatcher.deluxe.video.R$string: int download_started
+com.podcatcher.deluxe.video.R$string: int downloads
+com.podcatcher.deluxe.video.R$string: int downloads_none
+com.podcatcher.deluxe.video.R$string: int episode_fragment_tag
+com.podcatcher.deluxe.video.R$string: int episode_list_fragment_tag
+com.podcatcher.deluxe.video.R$string: int episode_no_description
+com.podcatcher.deluxe.video.R$string: int episode_none
+com.podcatcher.deluxe.video.R$string: int episode_none_selected
+com.podcatcher.deluxe.video.R$string: int episodes_filter_all
+com.podcatcher.deluxe.video.R$string: int episodes_filter_new
+com.podcatcher.deluxe.video.R$string: int episodes_no_new
+com.podcatcher.deluxe.video.R$string: int episodes_old
+com.podcatcher.deluxe.video.R$string: int episodes_select_all
+com.podcatcher.deluxe.video.R$string: int episodes_sort_toggle
+com.podcatcher.deluxe.video.R$string: int episodes_total
+com.podcatcher.deluxe.video.R$string: int file_select
+com.podcatcher.deluxe.video.R$string: int file_select_access_denied
+com.podcatcher.deluxe.video.R$string: int file_select_file
+com.podcatcher.deluxe.video.R$string: int file_select_folder
+com.podcatcher.deluxe.video.R$string: int help
+com.podcatcher.deluxe.video.R$string: int load
+com.podcatcher.deluxe.video.R$string: int next
+com.podcatcher.deluxe.video.R$string: int no_browser
+com.podcatcher.deluxe.video.R$string: int opml_export
+com.podcatcher.deluxe.video.R$string: int opml_export_failed
+com.podcatcher.deluxe.video.R$string: int opml_export_success
+com.podcatcher.deluxe.video.R$string: int opml_import
+com.podcatcher.deluxe.video.R$string: int opml_import_failed
+com.podcatcher.deluxe.video.R$string: int parse
+com.podcatcher.deluxe.video.R$string: int pause
+com.podcatcher.deluxe.video.R$string: int play
+com.podcatcher.deluxe.video.R$string: int player_buffering
+com.podcatcher.deluxe.video.R$string: int player_error
+com.podcatcher.deluxe.video.R$string: int player_fragment_tag
+com.podcatcher.deluxe.video.R$string: int player_label
+com.podcatcher.deluxe.video.R$string: int player_label_short
+com.podcatcher.deluxe.video.R$string: int playlist
+com.podcatcher.deluxe.video.R$string: int playlist_add
+com.podcatcher.deluxe.video.R$string: int playlist_empty
+com.podcatcher.deluxe.video.R$string: int playlist_remove
+com.podcatcher.deluxe.video.R$string: int podcast_add_button
+com.podcatcher.deluxe.video.R$string: int podcast_add_error
+com.podcatcher.deluxe.video.R$string: int podcast_add_title
+com.podcatcher.deluxe.video.R$string: int podcast_enter_url_here
+com.podcatcher.deluxe.video.R$string: int podcast_image
+com.podcatcher.deluxe.video.R$string: int podcast_list_fragment_tag
+com.podcatcher.deluxe.video.R$string: int podcast_load_error
+com.podcatcher.deluxe.video.R$string: int podcast_load_multiple_error
+com.podcatcher.deluxe.video.R$string: int podcast_load_multiple_progress
+com.podcatcher.deluxe.video.R$string: int podcast_none
+com.podcatcher.deluxe.video.R$string: int podcast_none_long
+com.podcatcher.deluxe.video.R$string: int podcast_none_selected
+com.podcatcher.deluxe.video.R$string: int podcast_select_all
+com.podcatcher.deluxe.video.R$string: int pref_auto_delete_summary
+com.podcatcher.deluxe.video.R$string: int pref_auto_delete_title
+com.podcatcher.deluxe.video.R$string: int pref_auto_download_summary
+com.podcatcher.deluxe.video.R$string: int pref_auto_download_title
+com.podcatcher.deluxe.video.R$string: int pref_category_interface
+com.podcatcher.deluxe.video.R$string: int pref_download_folder_title
+com.podcatcher.deluxe.video.R$string: int pref_select_all_on_start_summary
+com.podcatcher.deluxe.video.R$string: int pref_select_all_on_start_title
+com.podcatcher.deluxe.video.R$string: int pref_theme_color_dialog_title
+com.podcatcher.deluxe.video.R$string: int pref_theme_color_dialog_use
+com.podcatcher.deluxe.video.R$string: int pref_theme_color_title
+com.podcatcher.deluxe.video.R$string: int pref_wide_episode_list_summary
+com.podcatcher.deluxe.video.R$string: int pref_wide_episode_list_title
+com.podcatcher.deluxe.video.R$string: int preferences
+com.podcatcher.deluxe.video.R$string: int remove
+com.podcatcher.deluxe.video.R$string: int resume
+com.podcatcher.deluxe.video.R$string: int stop
+com.podcatcher.deluxe.video.R$string: int suggested_podcasts
+com.podcatcher.deluxe.video.R$string: int suggestion_listen
+com.podcatcher.deluxe.video.R$string: int suggestion_watch
+com.podcatcher.deluxe.video.R$string: int suggestions
+com.podcatcher.deluxe.video.R$string: int suggestions_load_error
+com.podcatcher.deluxe.video.R$string: int suggestions_none
+com.podcatcher.deluxe.video.R$string: int suggestions_send
+com.podcatcher.deluxe.video.R$string: int wait
+com.podcatcher.deluxe.video.R$string: int wildcard
+com.podcatcher.deluxe.video.R$xml: int preferences
+com.podcatcher.deluxe.video.RemovePodcastActivity
+com.podcatcher.deluxe.video.RemovePodcastActivity: RemovePodcastActivity()
+com.podcatcher.deluxe.video.SelectFileActivity
+com.podcatcher.deluxe.video.SelectFileActivity: SelectFileActivity()
+com.podcatcher.deluxe.video.SelectFileActivity$SelectionMode: com.podcatcher.deluxe.video.SelectFileActivity$SelectionMode[] values()
+com.podcatcher.deluxe.video.SelectFileActivity$SelectionMode: com.podcatcher.deluxe.video.SelectFileActivity$SelectionMode valueOf(java.lang.String)
+com.podcatcher.deluxe.video.SettingsActivity
+com.podcatcher.deluxe.video.SettingsActivity: SettingsActivity()
+com.podcatcher.deluxe.video.ShowEpisodeActivity
+com.podcatcher.deluxe.video.ShowEpisodeActivity: ShowEpisodeActivity()
+com.podcatcher.deluxe.video.ShowEpisodeListActivity
+com.podcatcher.deluxe.video.ShowEpisodeListActivity: ShowEpisodeListActivity()
+com.podcatcher.deluxe.video.model.types.Genre: com.podcatcher.deluxe.video.model.types.Genre[] values()
+com.podcatcher.deluxe.video.model.types.Genre: com.podcatcher.deluxe.video.model.types.Genre valueOf(java.lang.String)
+com.podcatcher.deluxe.video.model.types.Language: com.podcatcher.deluxe.video.model.types.Language[] values()
+com.podcatcher.deluxe.video.model.types.Language: com.podcatcher.deluxe.video.model.types.Language valueOf(java.lang.String)
+com.podcatcher.deluxe.video.model.types.MediaType: com.podcatcher.deluxe.video.model.types.MediaType[] values()
+com.podcatcher.deluxe.video.model.types.MediaType: com.podcatcher.deluxe.video.model.types.MediaType valueOf(java.lang.String)
+com.podcatcher.deluxe.video.services.BecomingNoisyReceiver
+com.podcatcher.deluxe.video.services.BecomingNoisyReceiver: BecomingNoisyReceiver()
+com.podcatcher.deluxe.video.services.MediaButtonReceiver
+com.podcatcher.deluxe.video.services.MediaButtonReceiver: MediaButtonReceiver()
+com.podcatcher.deluxe.video.services.PlayEpisodeService
+com.podcatcher.deluxe.video.services.PlayEpisodeService: PlayEpisodeService()
+com.podcatcher.deluxe.video.view.ContentSpinner: void setTitle(java.lang.String)
+com.podcatcher.deluxe.video.view.ContentSpinner: void setSubtitle(java.lang.String)
+com.podcatcher.deluxe.video.view.EpisodeListItemView
+com.podcatcher.deluxe.video.view.EpisodeListItemView: EpisodeListItemView(android.content.Context,android.util.AttributeSet)
+com.podcatcher.deluxe.video.view.FileListItemView
+com.podcatcher.deluxe.video.view.FileListItemView: FileListItemView(android.content.Context,android.util.AttributeSet)
+com.podcatcher.deluxe.video.view.HorizontalProgressView
+com.podcatcher.deluxe.video.view.HorizontalProgressView: HorizontalProgressView(android.content.Context,android.util.AttributeSet)
+com.podcatcher.deluxe.video.view.HorizontalProgressView: int getLayout()
+com.podcatcher.deluxe.video.view.PodcastListItemView
+com.podcatcher.deluxe.video.view.PodcastListItemView: PodcastListItemView(android.content.Context,android.util.AttributeSet)
+com.podcatcher.deluxe.video.view.ProgressView
+com.podcatcher.deluxe.video.view.ProgressView: ProgressView(android.content.Context,android.util.AttributeSet)
+com.podcatcher.deluxe.video.view.ProgressView: int getLayout()
+com.podcatcher.deluxe.video.view.SuggestionListItemView
+com.podcatcher.deluxe.video.view.SuggestionListItemView: SuggestionListItemView(android.content.Context,android.util.AttributeSet)
+com.podcatcher.deluxe.video.view.ViewMode: com.podcatcher.deluxe.video.view.ViewMode[] values()
+com.podcatcher.deluxe.video.view.ViewMode: com.podcatcher.deluxe.video.view.ViewMode valueOf(java.lang.String)
+com.podcatcher.deluxe.video.view.fragments.EpisodeFragment
+com.podcatcher.deluxe.video.view.fragments.EpisodeFragment: EpisodeFragment()
+com.podcatcher.deluxe.video.view.fragments.EpisodeListFragment
+com.podcatcher.deluxe.video.view.fragments.EpisodeListFragment: EpisodeListFragment()
+com.podcatcher.deluxe.video.view.fragments.PlayerFragment
+com.podcatcher.deluxe.video.view.fragments.PlayerFragment: PlayerFragment()
+com.podcatcher.deluxe.video.view.fragments.PodcastListFragment
+com.podcatcher.deluxe.video.view.fragments.PodcastListFragment: PodcastListFragment()
+com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$LogoViewMode: com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$LogoViewMode[] values()
+com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$LogoViewMode: com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$LogoViewMode valueOf(java.lang.String)
+com.podcatcher.deluxe.video.view.fragments.PodcatcherListFragment: PodcatcherListFragment()
 net.margaritov.preference.colorpicker.ColorPickerPanelView
 net.margaritov.preference.colorpicker.ColorPickerPanelView: ColorPickerPanelView(android.content.Context)
 net.margaritov.preference.colorpicker.ColorPickerPanelView: ColorPickerPanelView(android.content.Context,android.util.AttributeSet)
