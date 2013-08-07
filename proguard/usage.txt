@@ -957,7 +957,7 @@ com.podcatcher.deluxe.listeners.OnSelectEpisodeListener:
     public abstract void onNoEpisodeSelected()
 com.podcatcher.deluxe.listeners.OnSelectPodcastListener:
     public abstract void onNoPodcastSelected()
-com.podcatcher.deluxe.model.EpisodeManager:
+com.podcatcher.deluxe.model.EpisodeBaseManager:
     public static final java.lang.String METADATA_FILENAME
 com.podcatcher.deluxe.model.ParserUtils:
     28:28:public ParserUtils()
@@ -1013,13 +1013,13 @@ com.podcatcher.deluxe.services.PlayEpisodeService:
     private static final float DUCK_VOLUME
 com.podcatcher.deluxe.services.PodcatcherRCClient:
     private static final int SUPPORTED_TRANSPORTS
-com.podcatcher.deluxe.view.Utils:
-    28:28:public Utils()
-com.podcatcher.deluxe.view.adapters.EpisodeListAdapter:
+com.podcatcher.deluxe.view.EpisodeListItemView:
     private static final java.lang.String NO_DATE
     private static final java.lang.String SEPARATOR
-com.podcatcher.deluxe.view.adapters.SuggestionListAdapter:
+com.podcatcher.deluxe.view.SuggestionListItemView:
     private static final java.lang.String METADATA_SEPARATOR
+com.podcatcher.deluxe.view.Utils:
+    28:28:public Utils()
 com.podcatcher.deluxe.view.fragments.EpisodeFragment:
     private static final java.lang.String SEPARATOR
 com.podcatcher.deluxe.view.fragments.SuggestionFragment:

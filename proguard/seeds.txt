@@ -114,6 +114,7 @@ com.podcatcher.deluxe.R$dimen: int font_size_default
 com.podcatcher.deluxe.R$dimen: int font_size_large
 com.podcatcher.deluxe.R$dimen: int font_size_small
 com.podcatcher.deluxe.R$dimen: int list_item_padding
+com.podcatcher.deluxe.R$dimen: int suggestion_add_padding
 com.podcatcher.deluxe.R$drawable: int button_blue
 com.podcatcher.deluxe.R$drawable: int button_green
 com.podcatcher.deluxe.R$drawable: int button_label
@@ -149,7 +150,6 @@ com.podcatcher.deluxe.R$drawable: int ic_menu_sort
 com.podcatcher.deluxe.R$drawable: int ic_menu_sort_reverse
 com.podcatcher.deluxe.R$drawable: int ic_stat
 com.podcatcher.deluxe.R$drawable: int launcher
-com.podcatcher.deluxe.R$drawable: int list_item_background
 com.podcatcher.deluxe.R$drawable: int logo
 com.podcatcher.deluxe.R$id: int about_menuitem
 com.podcatcher.deluxe.R$id: int add_podcast_progress
@@ -174,6 +174,7 @@ com.podcatcher.deluxe.R$id: int episode_remove_contextmenuitem
 com.podcatcher.deluxe.R$id: int episode_remove_from_playlist_contextmenuitem
 com.podcatcher.deluxe.R$id: int episode_select_all_contextmenuitem
 com.podcatcher.deluxe.R$id: int episode_title
+com.podcatcher.deluxe.R$id: int file_icon
 com.podcatcher.deluxe.R$id: int file_name
 com.podcatcher.deluxe.R$id: int files
 com.podcatcher.deluxe.R$id: int filter_menuitem
@@ -182,8 +183,8 @@ com.podcatcher.deluxe.R$id: int help_menuitem
 com.podcatcher.deluxe.R$id: int hex_val
 com.podcatcher.deluxe.R$id: int icon
 com.podcatcher.deluxe.R$id: int import_opml_button
-com.podcatcher.deluxe.R$id: int list_item_background
 com.podcatcher.deluxe.R$id: int list_item_caption
+com.podcatcher.deluxe.R$id: int list_item_main_content
 com.podcatcher.deluxe.R$id: int list_item_progress
 com.podcatcher.deluxe.R$id: int list_item_title
 com.podcatcher.deluxe.R$id: int new_color_panel
@@ -197,6 +198,7 @@ com.podcatcher.deluxe.R$id: int player_error
 com.podcatcher.deluxe.R$id: int player_next
 com.podcatcher.deluxe.R$id: int player_seekbar
 com.podcatcher.deluxe.R$id: int player_title
+com.podcatcher.deluxe.R$id: int playlist_position
 com.podcatcher.deluxe.R$id: int podcast_add_button
 com.podcatcher.deluxe.R$id: int podcast_add_menuitem
 com.podcatcher.deluxe.R$id: int podcast_image
@@ -286,6 +288,7 @@ com.podcatcher.deluxe.R$string: int file_select_folder
 com.podcatcher.deluxe.R$string: int help
 com.podcatcher.deluxe.R$string: int load
 com.podcatcher.deluxe.R$string: int next
+com.podcatcher.deluxe.R$string: int no_browser
 com.podcatcher.deluxe.R$string: int opml_export
 com.podcatcher.deluxe.R$string: int opml_export_failed
 com.podcatcher.deluxe.R$string: int opml_export_success
@@ -371,12 +374,20 @@ com.podcatcher.deluxe.services.PlayEpisodeService
 com.podcatcher.deluxe.services.PlayEpisodeService: PlayEpisodeService()
 com.podcatcher.deluxe.view.ContentSpinner: void setTitle(java.lang.String)
 com.podcatcher.deluxe.view.ContentSpinner: void setSubtitle(java.lang.String)
+com.podcatcher.deluxe.view.EpisodeListItemView
+com.podcatcher.deluxe.view.EpisodeListItemView: EpisodeListItemView(android.content.Context,android.util.AttributeSet)
+com.podcatcher.deluxe.view.FileListItemView
+com.podcatcher.deluxe.view.FileListItemView: FileListItemView(android.content.Context,android.util.AttributeSet)
 com.podcatcher.deluxe.view.HorizontalProgressView
 com.podcatcher.deluxe.view.HorizontalProgressView: HorizontalProgressView(android.content.Context,android.util.AttributeSet)
 com.podcatcher.deluxe.view.HorizontalProgressView: int getLayout()
+com.podcatcher.deluxe.view.PodcastListItemView
+com.podcatcher.deluxe.view.PodcastListItemView: PodcastListItemView(android.content.Context,android.util.AttributeSet)
 com.podcatcher.deluxe.view.ProgressView
 com.podcatcher.deluxe.view.ProgressView: ProgressView(android.content.Context,android.util.AttributeSet)
 com.podcatcher.deluxe.view.ProgressView: int getLayout()
+com.podcatcher.deluxe.view.SuggestionListItemView
+com.podcatcher.deluxe.view.SuggestionListItemView: SuggestionListItemView(android.content.Context,android.util.AttributeSet)
 com.podcatcher.deluxe.view.ViewMode: com.podcatcher.deluxe.view.ViewMode[] values()
 com.podcatcher.deluxe.view.ViewMode: com.podcatcher.deluxe.view.ViewMode valueOf(java.lang.String)
 com.podcatcher.deluxe.view.fragments.EpisodeFragment
