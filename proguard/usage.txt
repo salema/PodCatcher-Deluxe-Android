@@ -901,8 +901,8 @@ net.alliknow.podcatcher.BaseActivity:
     public static final java.lang.String PODCATCHER_HELPSITE
     public static final java.lang.String PODCAST_POSITION_LIST_KEY
 net.alliknow.podcatcher.BaseActivity$ContentSelection:
-    115:115:public net.alliknow.podcatcher.BaseActivity$ContentMode getMode()
-    177:177:public boolean isSingle()
+    126:126:public net.alliknow.podcatcher.BaseActivity$ContentMode getMode()
+    188:188:public boolean isSingle()
 net.alliknow.podcatcher.BuildConfig
 net.alliknow.podcatcher.EpisodeActivity:
     public static final java.lang.String EPISODE_URL_KEY
@@ -1001,13 +1001,13 @@ net.alliknow.podcatcher.services.PlayEpisodeService:
     private static final float DUCK_VOLUME
 net.alliknow.podcatcher.services.PodcatcherRCClient:
     private static final int SUPPORTED_TRANSPORTS
-net.alliknow.podcatcher.view.Utils:
-    27:27:public Utils()
-net.alliknow.podcatcher.view.adapters.EpisodeListAdapter:
+net.alliknow.podcatcher.view.EpisodeListItemView:
     private static final java.lang.String NO_DATE
     private static final java.lang.String SEPARATOR
-net.alliknow.podcatcher.view.adapters.SuggestionListAdapter:
+net.alliknow.podcatcher.view.SuggestionListItemView:
     private static final java.lang.String METADATA_SEPARATOR
+net.alliknow.podcatcher.view.Utils:
+    27:27:public Utils()
 net.alliknow.podcatcher.view.fragments.EpisodeFragment:
     private static final java.lang.String SEPARATOR
 net.alliknow.podcatcher.view.fragments.SuggestionFragment:
