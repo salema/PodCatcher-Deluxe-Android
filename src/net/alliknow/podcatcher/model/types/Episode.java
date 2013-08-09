@@ -176,7 +176,7 @@ public class Episode implements Comparable<Episode> {
             if (result == 0)
                 return this.equals(another) ? 0 : -1;
             else
-                return result;
+                return -1 * result;
         }
     }
 
