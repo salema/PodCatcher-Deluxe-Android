@@ -560,14 +560,28 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         }
     }
 
-    private void enableReceiver(ComponentName receiver) {
-        getPackageManager().setComponentEnabledSetting(receiver,
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+    private void enableReceiver(final ComponentName receiver) {
+        // This writes to disk, so go off the main thread
+        new Thread() {
+            @Override
+            public void run() {
+                getPackageManager().setComponentEnabledSetting(receiver,
+                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                        PackageManager.DONT_KILL_APP);
+            }
+        }.start();
     }
 
-    private void disableReceiver(ComponentName receiver) {
-        getPackageManager().setComponentEnabledSetting(receiver,
-                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+    private void disableReceiver(final ComponentName receiver) {
+        // This writes to disk, so go off the main thread
+        new Thread() {
+            @Override
+            public void run() {
+                getPackageManager().setComponentEnabledSetting(receiver,
+                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                        PackageManager.DONT_KILL_APP);
+            }
+        }.start();
     }
 
     private void initPlayer() {
