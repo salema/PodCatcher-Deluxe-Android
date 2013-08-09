@@ -189,8 +189,16 @@ public class Episode implements Comparable<Episode> {
             return -1;
         else if (this.pubDate != null && another.getPubDate() == null)
             return 1;
-        else
-            return -1 * pubDate.compareTo(another.getPubDate());
+        else {
+            final int result = pubDate.compareTo(another.getPubDate());
+
+            // This should never be zero unless the episodes are equal, since a
+            // podcast might publish two episodes at the same pubDate
+            if (result == 0)
+                return this.equals(another) ? 0 : -1;
+            else
+                return result;
+        }
     }
 
     /**
