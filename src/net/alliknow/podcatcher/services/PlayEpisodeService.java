@@ -536,6 +536,10 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         if (isPlaying())
             player.stop();
 
+        // Remove notification
+        stopForeground(true);
+        stopPlayProgressTimer();
+
         // Reset variables
         this.currentEpisode = null;
         this.prepared = false;
@@ -549,25 +553,37 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         if (wifiLock.isHeld())
             wifiLock.release();
 
-        // Remove notification
-        stopForeground(true);
-        stopPlayProgressTimer();
-
-        // Release player
-        if (player != null) {
-            player.release();
-            player = null;
-        }
+        // Release player, async
+        new Thread() {
+            public void run() {
+                if (player != null)
+                    player.release();
+            }
+        }.start();
     }
 
-    private void enableReceiver(ComponentName receiver) {
-        getPackageManager().setComponentEnabledSetting(receiver,
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+    private void enableReceiver(final ComponentName receiver) {
+        // This writes to disk, so go off the main thread
+        new Thread() {
+            @Override
+            public void run() {
+                getPackageManager().setComponentEnabledSetting(receiver,
+                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                        PackageManager.DONT_KILL_APP);
+            }
+        }.start();
     }
 
-    private void disableReceiver(ComponentName receiver) {
-        getPackageManager().setComponentEnabledSetting(receiver,
-                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+    private void disableReceiver(final ComponentName receiver) {
+        // This writes to disk, so go off the main thread
+        new Thread() {
+            @Override
+            public void run() {
+                getPackageManager().setComponentEnabledSetting(receiver,
+                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                        PackageManager.DONT_KILL_APP);
+            }
+        }.start();
     }
 
     private void initPlayer() {
