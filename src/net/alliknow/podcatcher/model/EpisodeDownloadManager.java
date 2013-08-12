@@ -17,42 +17,28 @@
 
 package net.alliknow.podcatcher.model;
 
-import static android.app.DownloadManager.ACTION_DOWNLOAD_COMPLETE;
 import static android.app.DownloadManager.ACTION_NOTIFICATION_CLICKED;
-import static android.app.DownloadManager.COLUMN_LOCAL_FILENAME;
-import static android.app.DownloadManager.COLUMN_REASON;
-import static android.app.DownloadManager.COLUMN_STATUS;
-import static android.app.DownloadManager.EXTRA_DOWNLOAD_ID;
 import static android.app.DownloadManager.EXTRA_NOTIFICATION_CLICK_DOWNLOAD_IDS;
-import static android.app.DownloadManager.STATUS_SUCCESSFUL;
-import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_KEY;
-import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_VALUE;
-import static net.alliknow.podcatcher.Podcatcher.sanitizeAsFilename;
 
 import android.app.DownloadManager;
-import android.app.DownloadManager.Query;
-import android.app.DownloadManager.Request;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
-import android.net.Uri;
-import android.preference.PreferenceManager;
-import android.util.Log;
+import android.os.AsyncTask;
 
 import net.alliknow.podcatcher.BaseActivity.ContentMode;
 import net.alliknow.podcatcher.EpisodeActivity;
 import net.alliknow.podcatcher.EpisodeListActivity;
 import net.alliknow.podcatcher.PodcastActivity;
 import net.alliknow.podcatcher.Podcatcher;
-import net.alliknow.podcatcher.SettingsActivity;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnLoadDownloadsListener;
 import net.alliknow.podcatcher.model.tasks.LoadDownloadsTask;
+import net.alliknow.podcatcher.model.tasks.remote.DownloadEpisodeTask;
+import net.alliknow.podcatcher.model.tasks.remote.DownloadEpisodeTask.DownloadTaskListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
-import net.alliknow.podcatcher.preferences.DownloadFolderPreference;
 
 import java.io.File;
 import java.net.URL;
@@ -71,13 +57,11 @@ import java.util.Set;
  * 
  * @see EpisodeManager
  */
-public abstract class EpisodeDownloadManager extends EpisodeBaseManager {
+public abstract class EpisodeDownloadManager extends EpisodeBaseManager implements
+        DownloadTaskListener {
 
-    /** The current number of downloaded episode we know of */
+    /** The current number of downloaded episodes we know of */
     protected int downloadsSize = -1;
-
-    /** The system download manager */
-    private DownloadManager downloadManager;
 
     /** The call-back set for the complete download listeners */
     private Set<OnDownloadEpisodeListener> downloadListeners = new HashSet<OnDownloadEpisodeListener>();
@@ -90,15 +74,6 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager {
     protected EpisodeDownloadManager(Podcatcher app) {
         super(app);
 
-        // Get handle to the system download manager which does all the
-        // downloading for us
-        downloadManager = (DownloadManager)
-                podcatcher.getSystemService(Context.DOWNLOAD_SERVICE);
-
-        // Register as a receiver for download events so we are alerted when a
-        // download completes (both successfully or failed)
-        podcatcher.registerReceiver(onDownloadComplete,
-                new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         // Register as a receiver for downloads selections so we are alerted
         // when a download is clicked in the DownloadManager UI
         podcatcher.registerReceiver(onDownloadClicked,
@@ -113,15 +88,6 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager {
      */
     public void download(Episode episode) {
         if (episode != null && metadata != null && !isDownloadingOrDownloaded(episode)) {
-            // Find the podcast directory and the path to store episode under
-            File podcastDir = new File(PreferenceManager.getDefaultSharedPreferences(podcatcher)
-                    .getString(SettingsActivity.DOWNLOAD_FOLDER_KEY,
-                            DownloadFolderPreference.getDefaultDownloadFolder().getAbsolutePath()));
-            String subPath = getSubPath(episode);
-            // We need to put a download id. If the episode is already
-            // downloaded (i.e. the file exists) and we somehow missed to catch
-            // it, zero will work just fine.
-            long id = 0;
             // Find or create the metadata information holder
             EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
             if (meta == null) {
@@ -129,54 +95,68 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager {
                 metadata.put(episode.getMediaUrl(), meta);
             }
 
-            // Start download if the episode is not there
-            if (!new File(podcastDir, subPath).exists()) {
-                // Make sure podcast directory exists
-                new File(podcastDir, sanitizeAsFilename(episode.getPodcast().getName())).mkdirs();
-
-                // Create the request
-                Request download = new Request(Uri.parse(episode.getMediaUrl().toString()))
-                        .setDestinationUri(Uri.fromFile(new File(podcastDir, subPath)))
-                        .setTitle(episode.getName())
-                        .setDescription(episode.getPodcast().getName())
-                        // We overwrite the AndroidDownloadManager user agent
-                        // string here because there are servers out there (e.g.
-                        // ORF.at) that apparently block downloads based on this
-                        // information
-                        .addRequestHeader(USER_AGENT_KEY, USER_AGENT_VALUE)
-                        // Make sure our download dont end up in the http cache
-                        .addRequestHeader("Cache-Control", "no-store");
-
-                // Start the download
-                try {
-                    id = downloadManager.enqueue(download);
-                } catch (SecurityException se) {
-                    // This happens if the download manager has not the rights
-                    // to write to the selected downloads directory
-                    for (OnDownloadEpisodeListener listener : downloadListeners)
-                        listener.onDownloadFailed();
-
-                    // TODO Find a better solution here, e.g. download the file
-                    // to some temp folder and move it the the wanted
-                    // destination when the download completed
-                    return;
-                }
-            }
-            // The episode is already there, alert listeners
-            else {
-                meta.filePath = new File(podcastDir, subPath).getAbsolutePath();
-
-                for (OnDownloadEpisodeListener listener : downloadListeners)
-                    listener.onDownloadSuccess();
-
-                // Update counter
-                if (downloadsSize != -1)
-                    downloadsSize++;
-            }
-
-            // Put metadata information
-            meta.downloadId = id;
+            // We need to put a download id. If the episode is already
+            // downloaded (i.e. the file exists) and we somehow missed to catch
+            // it, zero will work just fine.
+            meta.downloadId = 0l;
             putAdditionalEpisodeInformation(episode, meta);
+
+            // Mark metadata record as dirty
+            metadataChanged = true;
+
+            // Start the actual download
+            new DownloadEpisodeTask(podcatcher, this)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, episode);
+        }
+    }
+
+    @Override
+    public void onEpisodeEnqueued(Episode episode, long id) {
+        // Find the metadata record for the episode
+        final EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+        if (meta != null) {
+            meta.downloadId = id;
+
+            // Mark metadata record as dirty
+            metadataChanged = true;
+        }
+    }
+
+    @Override
+    public void onEpisodeDownloadProgressed(Episode episode, int percent) {
+        // pass, we are not using this so far
+        // Log.i("DOWNLOAD_PROGRESS", percent + " of " + episode);
+    }
+
+    @Override
+    public void onEpisodeDownloaded(Episode episode, File episodeFile) {
+        // Find the metadata record for the episode
+        final EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+        if (meta != null) {
+            meta.filePath = episodeFile.getAbsolutePath();
+
+            for (OnDownloadEpisodeListener listener : downloadListeners)
+                listener.onDownloadSuccess();
+
+            // Update counter
+            if (downloadsSize != -1)
+                downloadsSize++;
+
+            // Mark metadata record as dirty
+            metadataChanged = true;
+        }
+    }
+
+    @Override
+    public void onEpisodeDownloadFailed(Episode episode) {
+        // Find the metadata record for the episode
+        final EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+        if (meta != null) {
+            meta.downloadId = null;
+            meta.filePath = null;
+
+            for (OnDownloadEpisodeListener listener : downloadListeners)
+                listener.onDownloadFailed();
 
             // Mark metadata record as dirty
             metadataChanged = true;
@@ -191,13 +171,22 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager {
     public void deleteDownload(Episode episode) {
         if (episode != null && metadata != null && isDownloadingOrDownloaded(episode)) {
             // Find the metadata information holder
-            EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
-
+            final EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
             if (meta != null) {
-                // This should delete the download and remove any information
-                downloadManager.remove(meta.downloadId);
+                final long downloadId = meta.downloadId;
+                // Go async when accessing download manager
+                new Thread() {
+                    @Override
+                    public void run() {
+                        // This should delete the download and remove all
+                        // information
+                        ((DownloadManager) podcatcher.getSystemService(Context.DOWNLOAD_SERVICE))
+                                .remove(downloadId);
+                    };
+                }.start();
+
                 // Make sure the file is deleted since this might not have taken
-                // care of by remove() above
+                // care of by DownloadManager.remove() above
                 if (meta.filePath != null)
                     new File(meta.filePath).delete();
 
@@ -360,92 +349,11 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager {
                 downloadsSize++;
     }
 
-    /**
-     * Find the path relative to the base directory the local episode file
-     * should be located in.
-     * 
-     * @param episode Episode to create sub-path for.
-     * @return The relative path
-     */
-    private String getSubPath(Episode episode) {
-        // Extract file ending
-        String remoteFile = episode.getMediaUrl().getPath();
-        String fileEnding = remoteFile.substring(remoteFile.lastIndexOf('.'));
-
-        return sanitizeAsFilename(episode.getPodcast().getName()) + File.separatorChar +
-                sanitizeAsFilename(episode.getName()) + fileEnding;
-    }
-
     private boolean isDownloaded(EpisodeMetadata meta) {
         return meta != null
                 && meta.downloadId != null
                 && meta.filePath != null
                 && new File(meta.filePath).exists();
-    }
-
-    /** The receiver we register for episode downloads */
-    private BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // Only react if this actually is a download complete event
-            if (ACTION_DOWNLOAD_COMPLETE.equals(intent.getAction())) {
-                // Get the download id that finished
-                final long downloadId = intent.getLongExtra(EXTRA_DOWNLOAD_ID, -1);
-                // Go do the actual work in the episode manager
-                if (downloadId >= 0)
-                    processDownloadComplete(downloadId);
-            }
-        }
-    };
-
-    private void processDownloadComplete(long downloadId) {
-        // Nothing we can do if the meta data is not available
-        if (metadata != null) {
-            // Check if this was a download we care for
-            for (EpisodeMetadata meta : metadata.values())
-                if (meta.downloadId != null && meta.downloadId == downloadId && !isDownloaded(meta)) {
-                    // Find download result information
-                    Cursor result = downloadManager.query(new Query().setFilterById(downloadId));
-                    // There should be information on the download
-                    if (result.moveToFirst())
-                        // Download was a success
-                        if (STATUS_SUCCESSFUL == result
-                                .getInt(result.getColumnIndex(COLUMN_STATUS))) {
-                            // Get the path to the new local file and put in
-                            // as metadata information
-                            meta.filePath = result.getString(result
-                                    .getColumnIndex(COLUMN_LOCAL_FILENAME));
-
-                            for (OnDownloadEpisodeListener listener : downloadListeners)
-                                listener.onDownloadSuccess();
-
-                            // Update counter
-                            if (downloadsSize != -1)
-                                downloadsSize++;
-                        }
-                        // Download failed
-                        else {
-                            downloadManager.remove(downloadId);
-
-                            meta.downloadId = null;
-                            meta.filePath = null;
-
-                            for (OnDownloadEpisodeListener listener : downloadListeners)
-                                listener.onDownloadFailed();
-
-                            final int status = result.getInt(result.getColumnIndex(COLUMN_STATUS));
-                            final int reason = result.getInt(result.getColumnIndex(COLUMN_REASON));
-                            Log.e(getClass().getSimpleName(), "Download failed (status/reason): "
-                                    + status + "/" + reason);
-                        }
-
-                    // Close cursor
-                    result.close();
-                    // Mark metadata record as dirty
-                    metadataChanged = true;
-                }
-        }
     }
 
     /** The receiver we register for download selections */
