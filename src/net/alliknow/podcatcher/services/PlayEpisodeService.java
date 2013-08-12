@@ -555,6 +555,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
         // Release player, async
         new Thread() {
+            @Override
             public void run() {
                 if (player != null)
                     player.release();
