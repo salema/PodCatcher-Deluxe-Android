@@ -36,6 +36,7 @@ import net.alliknow.podcatcher.listeners.OnReverseSortingListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnToggleFilterListener;
 import net.alliknow.podcatcher.model.types.Episode;
+import net.alliknow.podcatcher.view.EpisodeListItemView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -298,6 +299,26 @@ public class EpisodeListFragment extends PodcatcherListFragment {
             filterWarningDivider.setVisibility(show ? View.VISIBLE : View.GONE);
             filterWarningLabel.setText(getResources().getQuantityString(
                     R.plurals.episodes_filtered, count, count));
+        }
+    }
+
+    /**
+     * Update the progress information for the episode at the given position to
+     * reflect the percentage of given. Does nothing if the episode is off
+     * screen.
+     * 
+     * @param position The position of the episode in the current list.
+     * @param percent The percentage value to show.
+     */
+    public void showProgress(int position, int percent) {
+        // To prevent this if we are not ready to handle progress update
+        // e.g. on app termination
+        if (viewCreated) {
+            EpisodeListItemView listItemView =
+                    (EpisodeListItemView) getListView().getChildAt(position);
+            // Is the position visible?
+            if (listItemView != null)
+                listItemView.updateProgress(percent);
         }
     }
 

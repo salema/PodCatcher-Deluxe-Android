@@ -31,7 +31,6 @@
         android:padding="1dp"
         android:visibility="gone" />
     <LinearLayout
-        android:id="@+id/list_item_main_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="48dp"
@@ -56,12 +55,12 @@
             android:singleLine="true"
             android:ellipsize="marquee"
             android:textSize="@dimen/font_size_small" />
+        <net.alliknow.podcatcher.view.HorizontalProgressView
+        	android:id="@+id/list_item_progress"
+        	android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+        	android:indeterminate="true"
+        	android:visibility="gone" />
     </LinearLayout>
-    <net.alliknow.podcatcher.view.HorizontalProgressView
-        android:id="@+id/list_item_progress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/list_item_main_content"
-        android:indeterminate="true"
-        android:visibility="gone" />
 </net.alliknow.podcatcher.view.PodcastListItemView>

@@ -27,6 +27,7 @@ import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.Progress;
 
 /**
  * A list item view to represent a podcast.
@@ -78,26 +79,40 @@ public class PodcastListItemView extends RelativeLayout {
      * @param showProgress Whether the progress view should be visible.
      */
     public void show(final Podcast podcast, boolean showLogo, boolean showProgress) {
+        // 0. Check podcast state
+        final boolean loading = podcastManager.isLoading(podcast);
+        final int episodeNumber = podcast.getEpisodeNumber();
+        final boolean showLogoView = showLogo && podcast.getLogo() != null;
+
         // 1. Set podcast title
         titleTextView.setText(podcast.getName());
 
         // 2. Set caption
-        final int episodeNumber = podcast.getEpisodeNumber();
-        captionTextView.setText(createCaption(podcast));
-        captionTextView.setVisibility(episodeNumber != 0 ? VISIBLE : GONE);
+        captionTextView.setText(createCaption(podcast, episodeNumber));
+        captionTextView.setVisibility(episodeNumber > 0 && !loading ? VISIBLE : GONE);
 
         // 3. Set podcast logo if available
-        final boolean showLogoView = showLogo && podcast.getLogo() != null;
         logoView.setVisibility(showLogoView ? VISIBLE : GONE);
         logoView.setImageBitmap(showLogoView ? podcast.getLogo() : null);
 
         // 4. Show/hide progress view
-        progressView.setVisibility(podcastManager.isLoading(podcast)
-                && showProgress ? VISIBLE : GONE);
+        progressView.setVisibility(loading && showProgress ? VISIBLE : GONE);
+        // We need to reset the progress here, because the view might be
+        // recycled and it should not show another podcast's progress
+        progressView.publishProgress(Progress.WAIT);
     }
 
-    private String createCaption(Podcast podcast) {
-        final int episodeCount = podcast.getEpisodeNumber();
+    /**
+     * Update the podcast progress indicator to the progress given. Does not
+     * change the visibility of the progress view.
+     * 
+     * @param progress Progress to show.
+     */
+    public void updateProgress(Progress progress) {
+        progressView.publishProgress(progress);
+    }
+
+    private String createCaption(Podcast podcast, int episodeCount) {
         final int newEpisodeCount = episodeManager.getNewEpisodeCount(podcast);
 
         String caption = "";

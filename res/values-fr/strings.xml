@@ -78,7 +78,7 @@
     <string name="downloads">Téléchargements</string>
     <string name="downloads_none">Aucun épisode disponible. Pour sauvegarder un épisode, cliquez sur le symbole de téléchargement.</string>
     <string name="download_started">Téléchargement de\n\"%s\"\ndémarré</string>
-    <string name="download_failed">Le téléchargement a échoué.</string>
+    <string name="download_failed">Le téléchargement a échoué:\n\"%s\"</string>
     <string name="playlist">Liste de lecture</string>
     <string name="playlist_empty">Votre liste de lecture est vide. Pour y ajouter de nouveaux fichiers, utilisez le menu contextuel de la liste d\'épisodes (pour y entrer, cliquez sur un épisode tout en maintenant la pression).</string>
     <string name="playlist_add">Ajouter à la liste de lecture</string>

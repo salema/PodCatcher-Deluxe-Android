@@ -124,8 +124,14 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
 
     @Override
     public void onEpisodeDownloadProgressed(Episode episode, int percent) {
-        // pass, we are not using this so far
-        // Log.i("DOWNLOAD_PROGRESS", percent + " of " + episode);
+        // Find the metadata record for the episode
+        final EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+        if (meta != null) {
+            meta.downloadProgress = percent;
+        }
+
+        for (OnDownloadEpisodeListener listener : downloadListeners)
+            listener.onDownloadProgress(episode, percent);
     }
 
     @Override
@@ -136,7 +142,7 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
             meta.filePath = episodeFile.getAbsolutePath();
 
             for (OnDownloadEpisodeListener listener : downloadListeners)
-                listener.onDownloadSuccess();
+                listener.onDownloadSuccess(episode);
 
             // Update counter
             if (downloadsSize != -1)
@@ -156,7 +162,7 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
             meta.filePath = null;
 
             for (OnDownloadEpisodeListener listener : downloadListeners)
-                listener.onDownloadFailed();
+                listener.onDownloadFailed(episode);
 
             // Mark metadata record as dirty
             metadataChanged = true;
@@ -195,7 +201,7 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
 
                 // Alert listeners
                 for (OnDownloadEpisodeListener listener : downloadListeners)
-                    listener.onDownloadDeleted();
+                    listener.onDownloadDeleted(episode);
 
                 // Mark metadata record as dirty
                 metadataChanged = true;
@@ -249,6 +255,27 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
      */
     public boolean isDownloadingOrDownloaded(Episode episode) {
         return isDownloading(episode) || isDownloaded(episode);
+    }
+
+    /**
+     * Get the download progress for this episode. Only returns a meaningful
+     * value if the episode is currently pull from the net and the download task
+     * told this manager about its progress.
+     * 
+     * @param episode The Episode to look for.
+     * @return The amount of data (in percent [0-100]) downloaded iff this
+     *         information is available or -1 in all other cases.
+     */
+    public int getDownloadProgress(Episode episode) {
+        if (isDownloading(episode)) {
+            final EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
+
+            if (meta != null) {
+                return meta.downloadProgress;
+            } else
+                return -1;
+        } else
+            return -1;
     }
 
     /**

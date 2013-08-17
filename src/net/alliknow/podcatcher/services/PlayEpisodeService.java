@@ -726,6 +726,10 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
         if (isPlaying())
             player.stop();
 
+        // Remove notification
+        stopForeground(true);
+        stopPlayProgressTimer();
+
         // Reset variables
         this.currentEpisode = null;
         this.prepared = false;
@@ -741,15 +745,16 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
         if (wifiLock.isHeld())
             wifiLock.release();
 
-        // Remove notification
-        stopForeground(true);
-        stopPlayProgressTimer();
-
-        // Release player
-        if (player != null) {
-            player.release();
-            player = null;
-        }
+        // Release player, async
+        new Thread() {
+            @Override
+            public void run() {
+                if (player != null) {
+                    player.release();
+                    player = null;
+                }
+            }
+        }.start();
     }
 
     private void storeResumeAt() {

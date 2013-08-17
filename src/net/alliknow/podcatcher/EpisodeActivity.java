@@ -255,28 +255,33 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     @Override
-    public final void onDownloadSuccess() {
+    public void onDownloadProgress(Episode episode, int percent) {
+        // pass
+    }
+
+    @Override
+    public void onDownloadSuccess(Episode episode) {
         updateDownloadUi();
     }
 
     @Override
-    public final void onDownloadDeleted() {
+    public void onDownloadDeleted(Episode episode) {
         updateDownloadUi();
     }
 
     @Override
-    public void onDownloadFailed() {
+    public void onDownloadFailed(Episode episode) {
         updateDownloadUi();
     }
 
     @Override
-    public final void onPlaylistChanged() {
+    public void onPlaylistChanged() {
         updatePlaylistUi();
         updatePlayerUi();
     }
 
     @Override
-    public final void onStateChanged(Episode episode) {
+    public void onStateChanged(Episode episode) {
         updateStateUi();
     }
 

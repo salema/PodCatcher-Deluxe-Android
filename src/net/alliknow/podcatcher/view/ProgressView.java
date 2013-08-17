@@ -46,10 +46,7 @@ public class ProgressView extends LinearLayout {
     public ProgressView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        View view = View.inflate(context, getLayout(), this);
-
-        progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
-        progressTextView = (TextView) view.findViewById(R.id.progress_text);
+        View.inflate(context, getLayout(), this);
     }
 
     /**
@@ -58,6 +55,14 @@ public class ProgressView extends LinearLayout {
      */
     protected int getLayout() {
         return R.layout.progress;
+    }
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        progressTextView = (TextView) findViewById(R.id.progress_text);
     }
 
     /**

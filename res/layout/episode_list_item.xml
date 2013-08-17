@@ -77,5 +77,16 @@
             android:singleLine="true"
             android:ellipsize="marquee"
             android:textSize="@dimen/font_size_small" />
+        <ProgressBar
+            android:id="@+id/list_item_progress"
+            style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:layout_gravity="center"
+            android:paddingLeft="@dimen/list_item_padding"
+            android:paddingRight="@dimen/list_item_padding"
+            android:indeterminate="true"
+            android:visibility="gone" />
         </LinearLayout>
 </net.alliknow.podcatcher.view.EpisodeListItemView>

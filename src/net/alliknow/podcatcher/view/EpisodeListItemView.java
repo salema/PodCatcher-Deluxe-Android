@@ -21,6 +21,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -45,6 +46,8 @@ public class EpisodeListItemView extends RelativeLayout {
     private TextView titleTextView;
     /** The caption text view */
     private TextView captionTextView;
+    /** The progress bar view */
+    private ProgressBar progressBarView;
     /** The playlist position view */
     private TextView playlistPositionView;
     /** The download icon view */
@@ -70,6 +73,7 @@ public class EpisodeListItemView extends RelativeLayout {
 
         titleTextView = (TextView) findViewById(R.id.list_item_title);
         captionTextView = (TextView) findViewById(R.id.list_item_caption);
+        progressBarView = (ProgressBar) findViewById(R.id.list_item_progress);
         playlistPositionView = (TextView) findViewById(R.id.playlist_position);
         downloadIconView = (ImageView) findViewById(R.id.download_icon);
         stateIconView = (ImageView) findViewById(R.id.state_icon);
@@ -82,14 +86,40 @@ public class EpisodeListItemView extends RelativeLayout {
      * @param showPodcastName Whether the podcast name should show.
      */
     public void show(final Episode episode, boolean showPodcastName) {
+        // 0. Get episode state
+        final boolean downloading = episodeManager.isDownloading(episode);
+
         // 1. Set episode title
         titleTextView.setText(createTitle(episode));
 
         // 2. Set caption
         captionTextView.setText(createCaption(episode, showPodcastName));
+        captionTextView.setVisibility(downloading ? GONE : VISIBLE);
 
-        // 3. Update the metadata to show for this episode
+        // 3. Hide/show progress bar
+        progressBarView.setVisibility(downloading ? VISIBLE : GONE);
+        // We need to reset the progress here, because the view might be
+        // recycled and it should not show another episode's progress
+        if (downloading)
+            updateProgress(episodeManager.getDownloadProgress(episode));
+
+        // 4. Update the metadata to show for this episode
         updateMetadata(episode);
+    }
+
+    /**
+     * Update the episode progress indicator to the progress given. Does not
+     * change the visibility of the progress view.
+     * 
+     * @param progress Progress to show.
+     */
+    public void updateProgress(int percent) {
+        // Show progress in progress bar
+        if (percent >= 0 && percent <= 100) {
+            progressBarView.setIndeterminate(false);
+            progressBarView.setProgress(percent);
+        } else
+            progressBarView.setIndeterminate(true);
     }
 
     private String createTitle(Episode episode) {

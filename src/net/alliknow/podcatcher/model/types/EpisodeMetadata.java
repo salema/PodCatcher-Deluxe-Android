@@ -44,6 +44,12 @@ public class EpisodeMetadata {
     public Integer playlistPosition;
 
     /**
+     * Extra information that is only valid when the app runs and is not saved.
+     */
+    /** The progress made downloading the episode */
+    public int downloadProgress = -1;
+
+    /**
      * Extra information to make it possible to actually display an episode not
      * available from any podcast. It is not essential for the metadata record
      * and is only needed if the episode is downloaded.

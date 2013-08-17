@@ -78,7 +78,7 @@
     <string name="downloads">Downloads</string>
     <string name="downloads_none">Keine Downloads vorhanden. Benutzen Sie das Download-Zeichen im Menü um Episoden auf dem Gerät zu speichern.</string>
     <string name="download_started">Download gestartet für \n\"%s\"</string>
-    <string name="download_failed">Download fehlgeschlagen.</string>
+    <string name="download_failed">Download fehlgeschlagen für \n\"%s\"</string>
     <string name="playlist">Wiedergabeliste</string>
     <string name="playlist_empty">Ihre Wiedergabeliste ist leer. Bitte benutzen Sie das Kontextmenü der Episodenliste (zum Öffnen eine beliebige Episode drücken und halten) um Einträge hinzuzufügen.</string>
     <string name="playlist_add">Zur Wiedergabeliste hinzufügen</string>

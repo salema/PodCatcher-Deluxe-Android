@@ -426,6 +426,16 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
+    public void onDownloadProgress(Episode episode, int percent) {
+        if (!view.isSmallPortrait())
+            super.onDownloadProgress(episode, percent);
+
+        // Check whether the episode is potentially currently displayed
+        if (filteredEpisodeList.contains(episode))
+            episodeListFragment.showProgress(filteredEpisodeList.indexOf(episode), percent);
+    }
+
+    @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         super.onSharedPreferenceChanged(sharedPreferences, key);
 
