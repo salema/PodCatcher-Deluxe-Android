@@ -78,7 +78,7 @@
     <string name="downloads">Descargas</string>
     <string name="downloads_none">No hay ningún episodio disponible. Para almacenar uno, hacer clic en el símbolo de descarga del menú.</string>
     <string name="download_started">Descarga activa:\n\"%s\"</string>
-    <string name="download_failed">La descarga ha fallado.</string>
+    <string name="download_failed">La descarga ha fallado:\n\"%s\"</string>
     <string name="playlist">Lista de reproducción</string>
     <string name="playlist_empty">La lista de reproducción está vacía. Para agregar archivos nuevos, utilizar el menú contextual de la lista de episodios (para esto, hacer clic en un episodio manteniéndolo presionado).</string>
     <string name="playlist_add">Añadir a la lista de reproducción</string>
