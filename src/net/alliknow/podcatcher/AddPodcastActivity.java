@@ -103,9 +103,16 @@ public class AddPodcastActivity extends BaseActivity
     public void onAddPodcast(String podcastUrl) {
         // Try to load the given online resource
         try {
-            // TODO Handle the case were given podcast is already added
-            podcastManager.load(new Podcast(null, new URL(podcastUrl)));
+            final Podcast newPodcast = new Podcast(null, new URL(podcastUrl));
+            // We need to keep note which podcast we are loading
             currentLoadUrl = podcastUrl;
+
+            // No need to do anything if the podcast is present
+            if (podcastManager.contains(newPodcast))
+                onPodcastLoaded(newPodcast);
+            // Otherwise try to load it
+            else
+                podcastManager.load(newPodcast);
         } catch (MalformedURLException e) {
             // Show failed UI
             addPodcastFragment.showPodcastLoadFailed();
@@ -124,15 +131,9 @@ public class AddPodcastActivity extends BaseActivity
             // Reset current load url
             currentLoadUrl = null;
 
-            // We do not allow empty podcast to be added (TODO Does this make
-            // sense?)
-            if (podcast.getEpisodes().isEmpty())
-                onPodcastLoadFailed(podcast);
-            // This is an actual podcast, add it
-            else {
-                podcastManager.addPodcast(podcast);
-                finish();
-            }
+            // Add podcast and finish the activity
+            podcastManager.addPodcast(podcast);
+            finish();
         }
     }
 
