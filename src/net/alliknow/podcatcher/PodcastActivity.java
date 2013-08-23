@@ -523,6 +523,14 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     }
 
     @Override
+    public void onDownloadProgress(Episode episode, int percent) {
+        // In small portrait mode, there is a separate episode list activity
+        // that will handle this
+        if (!view.isSmallPortrait())
+            super.onDownloadProgress(episode, percent);
+    }
+
+    @Override
     public void onDownloadFailed(Episode episode) {
         super.onDownloadFailed(episode);
 

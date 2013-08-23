@@ -99,6 +99,8 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
             // downloaded (i.e. the file exists) and we somehow missed to catch
             // it, zero will work just fine.
             meta.downloadId = 0l;
+            // Prepare metadata record
+            meta.downloadProgress = -1;
             putAdditionalEpisodeInformation(episode, meta);
 
             // Mark metadata record as dirty

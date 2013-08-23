@@ -46,6 +46,8 @@ public class EpisodeListItemView extends RelativeLayout {
     private TextView titleTextView;
     /** The caption text view */
     private TextView captionTextView;
+    /** The progress bar holder layout */
+    private View progressBarHolder;
     /** The progress bar view */
     private ProgressBar progressBarView;
     /** The playlist position view */
@@ -73,6 +75,7 @@ public class EpisodeListItemView extends RelativeLayout {
 
         titleTextView = (TextView) findViewById(R.id.list_item_title);
         captionTextView = (TextView) findViewById(R.id.list_item_caption);
+        progressBarHolder = findViewById(R.id.list_item_progress_holder);
         progressBarView = (ProgressBar) findViewById(R.id.list_item_progress);
         playlistPositionView = (TextView) findViewById(R.id.playlist_position);
         downloadIconView = (ImageView) findViewById(R.id.download_icon);
@@ -97,7 +100,7 @@ public class EpisodeListItemView extends RelativeLayout {
         captionTextView.setVisibility(downloading ? GONE : VISIBLE);
 
         // 3. Hide/show progress bar
-        progressBarView.setVisibility(downloading ? VISIBLE : GONE);
+        progressBarHolder.setVisibility(downloading ? VISIBLE : GONE);
         // We need to reset the progress here, because the view might be
         // recycled and it should not show another episode's progress
         if (downloading)

@@ -17,14 +17,25 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<resources>
-    <dimen name="divider_width">1dp</dimen>
-    <dimen name="font_size_default">18sp</dimen>
-    <dimen name="font_size_small">14sp</dimen>
-    <dimen name="font_size_large">20sp</dimen>
-    <dimen name="list_item_padding">4dp</dimen>
-    <dimen name="episode_view_padding">4dp</dimen>
-    <dimen name="suggestion_add_padding">8dp</dimen>
-    <dimen name="progress_bar_horizontal_height">6dp</dimen>
-    <integer name="progress_bar_horizontal_weight">3</integer>
-</resources>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <shape>
+            <corners android:radius="5dip" />
+            <gradient
+                    android:startColor="#ff9d9e9d"
+                    android:centerColor="#ff5a5d5a"
+                    android:centerY="0.75"
+                    android:endColor="#ff747674"
+                    android:angle="270" />
+        </shape>
+    </item>
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape>
+                <corners android:radius="5dip" />
+                <solid android:color="@android:color/holo_blue_bright" />
+            </shape>
+        </clip>
+    </item>
+</layer-list>
+
