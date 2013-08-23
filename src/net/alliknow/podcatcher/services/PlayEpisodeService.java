@@ -745,16 +745,11 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
         if (wifiLock.isHeld())
             wifiLock.release();
 
-        // Release player, async
-        new Thread() {
-            @Override
-            public void run() {
-                if (player != null) {
-                    player.release();
-                    player = null;
-                }
-            }
-        }.start();
+        // Release player
+        if (player != null) {
+            player.release();
+            player = null;
+        }
     }
 
     private void storeResumeAt() {

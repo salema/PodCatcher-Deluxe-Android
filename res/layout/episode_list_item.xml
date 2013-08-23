@@ -77,16 +77,20 @@
             android:singleLine="true"
             android:ellipsize="marquee"
             android:textSize="@dimen/font_size_small" />
-        <ProgressBar
-            android:id="@+id/list_item_progress"
-            style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
+        <RelativeLayout 
+            android:id="@+id/list_item_progress_holder"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3"
-            android:layout_gravity="center"
-            android:paddingLeft="@dimen/list_item_padding"
-            android:paddingRight="@dimen/list_item_padding"
-            android:indeterminate="true"
-            android:visibility="gone" />
-        </LinearLayout>
+            android:layout_height="20dp"
+            android:visibility="gone">
+            <ProgressBar
+	            android:id="@+id/list_item_progress"
+	            style="@style/ProgressBar.Horizontal"
+	            android:layout_width="match_parent"
+	            android:layout_height="@dimen/progress_bar_horizontal_height"
+	            android:layout_centerInParent="true"            
+	            android:layout_marginLeft="@dimen/list_item_padding"
+	            android:layout_marginRight="@dimen/list_item_padding"
+	            android:indeterminate="true" />
+        </RelativeLayout>
+    </LinearLayout>
 </net.alliknow.podcatcher.view.EpisodeListItemView>

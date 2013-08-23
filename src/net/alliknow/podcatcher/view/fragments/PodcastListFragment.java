@@ -220,8 +220,10 @@ public class PodcastListFragment extends PodcatcherListFragment {
         // To prevent this if we are not ready to handle progress update
         // e.g. on app termination
         if (viewCreated) {
-            PodcastListItemView listItemView =
-                    (PodcastListItemView) getListView().getChildAt(position);
+            // Adjust the position relative to list scroll state
+            final int firstVisiblePosition = getListView().getFirstVisiblePosition();
+            final PodcastListItemView listItemView =
+                    (PodcastListItemView) getListView().getChildAt(position - firstVisiblePosition);
             // Is the position visible?
             if (listItemView != null)
                 listItemView.updateProgress(progress);
