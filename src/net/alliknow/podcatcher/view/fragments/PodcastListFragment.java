@@ -39,7 +39,7 @@ import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.listeners.PodcastListContextListener;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
-import net.alliknow.podcatcher.view.HorizontalProgressView;
+import net.alliknow.podcatcher.view.PodcastListItemView;
 
 import java.util.List;
 
@@ -220,10 +220,13 @@ public class PodcastListFragment extends PodcatcherListFragment {
         // To prevent this if we are not ready to handle progress update
         // e.g. on app termination
         if (viewCreated) {
-            View listItemView = getListView().getChildAt(position);
+            // Adjust the position relative to list scroll state
+            final int firstVisiblePosition = getListView().getFirstVisiblePosition();
+            final PodcastListItemView listItemView =
+                    (PodcastListItemView) getListView().getChildAt(position - firstVisiblePosition);
+            // Is the position visible?
             if (listItemView != null)
-                ((HorizontalProgressView) listItemView.findViewById(R.id.list_item_progress))
-                        .publishProgress(progress);
+                listItemView.updateProgress(progress);
         }
     }
 

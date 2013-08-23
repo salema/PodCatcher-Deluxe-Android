@@ -24,12 +24,12 @@
     android:orientation="horizontal">
     <ProgressBar
         android:id="@+id/progress_bar"
-        style="@android:style/Widget.ProgressBar.Horizontal"
+        style="@style/ProgressBar.Horizontal"
         android:layout_width="0dp"
-        android:layout_height="6dp"
+        android:layout_height="@dimen/progress_bar_horizontal_height"
         android:layout_weight="@integer/progress_bar_horizontal_weight"
-        android:layout_margin="3dp"
         android:layout_gravity="center_vertical"
+        android:layout_margin="3dp"
         android:indeterminate="true" />
     <TextView
         android:id="@+id/progress_text"
