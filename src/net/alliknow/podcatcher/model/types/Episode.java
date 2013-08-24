@@ -183,8 +183,15 @@ public class Episode implements Comparable<Episode> {
 
     @Override
     public int compareTo(Episode another) {
-        if (this.pubDate == null && another.getPubDate() == null)
-            return 0;
+        // We need to be "consistent with equals": only return 0 (zero) for
+        // equal episodes. Failing to do so will cause episode with equal
+        // pubDates to mysteriously disappear when put in a SortedSet.
+        if (this.pubDate == null && another.getPubDate() == null) {
+
+            // This should never be zero unless the episodes are equal, since a
+            // podcast might publish two episodes at the same pubDate
+            return this.equals(another) ? 0 : 1;
+        }
         else if (this.pubDate == null && another.getPubDate() != null)
             return -1;
         else if (this.pubDate != null && another.getPubDate() == null)
@@ -195,7 +202,7 @@ public class Episode implements Comparable<Episode> {
             // This should never be zero unless the episodes are equal, since a
             // podcast might publish two episodes at the same pubDate
             if (result == 0)
-                return this.equals(another) ? 0 : -1;
+                return this.equals(another) ? 0 : 1;
             else
                 return -1 * result;
         }

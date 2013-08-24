@@ -146,7 +146,7 @@ public class EpisodeListItemView extends RelativeLayout {
         if (episode.getPubDate() == null && showPodcastName)
             result = episode.getPodcast().getName();
         // This is the interesting case
-        else {
+        else if (episode.getPubDate() != null) {
             // Get a nice time span string for the age of the episode
             String dateString = Utils.getRelativePubDate(episode);
 
