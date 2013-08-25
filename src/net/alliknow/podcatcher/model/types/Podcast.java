@@ -221,6 +221,7 @@ public class Podcast implements Comparable<Podcast> {
 
         // Start parsing
         int eventType = parser.next();
+        int episodeIndex = 0;
 
         // Read complete document
         while (eventType != XmlPullParser.END_DOCUMENT) {
@@ -239,7 +240,7 @@ public class Podcast implements Comparable<Podcast> {
                     loadThumbnail(parser);
                 // Episode found
                 else if (tagName.equalsIgnoreCase(RSS.ITEM))
-                    loadEpisode(parser);
+                    loadEpisode(parser, episodeIndex++);
             }
 
             // Done, get next parsing event
@@ -352,9 +353,10 @@ public class Podcast implements Comparable<Podcast> {
         return null;
     }
 
-    private void loadEpisode(XmlPullParser parser) throws XmlPullParserException, IOException {
+    private void loadEpisode(XmlPullParser parser, int index)
+            throws XmlPullParserException, IOException {
         // Create episode and parse the data
-        Episode newEpisode = new Episode(this);
+        Episode newEpisode = new Episode(this, index);
         newEpisode.parse(parser);
 
         // Only add if there is some actual content to play
