@@ -44,6 +44,11 @@ public class Episode implements Comparable<Episode> {
 
     /** The podcast this episode is part of */
     private Podcast podcast;
+    /**
+     * The index (starting with zero at the top of the feed) this episode is in
+     * its podcast. -1 means that we do not have this information.
+     */
+    private final int index;
 
     /** This episode title */
     private String name;
@@ -64,11 +69,12 @@ public class Episode implements Comparable<Episode> {
      * @param podcast Podcast this episode belongs to. Cannot be
      *            <code>null</code>.
      */
-    public Episode(Podcast podcast) {
+    public Episode(Podcast podcast, int index) {
         if (podcast == null)
             throw new NullPointerException("Episode can not have null as the podcast instance!");
 
         this.podcast = podcast;
+        this.index = index;
     }
 
     /**
@@ -82,7 +88,7 @@ public class Episode implements Comparable<Episode> {
      * @param description The episode's description.
      */
     public Episode(Podcast podcast, String name, URL mediaUrl, Date pubDate, String description) {
-        this(podcast);
+        this(podcast, -1);
 
         this.name = name;
         this.mediaUrl = mediaUrl;
@@ -97,6 +103,14 @@ public class Episode implements Comparable<Episode> {
      */
     public Podcast getPodcast() {
         return podcast;
+    }
+
+    /**
+     * @return The index for this episode object in the podcast's feed. -1 means
+     *         that this information is not available.
+     */
+    public int getPositionInPodcast() {
+        return index;
     }
 
     /**
@@ -184,13 +198,15 @@ public class Episode implements Comparable<Episode> {
     @Override
     public int compareTo(Episode another) {
         // We need to be "consistent with equals": only return 0 (zero) for
-        // equal episodes. Failing to do so will cause episode with equal
+        // equal episodes. Failing to do so will cause episodes with equal
         // pubDates to mysteriously disappear when put in a SortedSet.
         if (this.pubDate == null && another.getPubDate() == null) {
 
             // This should never be zero unless the episodes are equal, since a
-            // podcast might publish two episodes at the same pubDate
-            return this.equals(another) ? 0 : 1;
+            // podcast might publish two episodes at the same pubDate. If it is
+            // (and the episode are not equal) we use the original order from
+            // the feed instead.
+            return this.equals(another) ? 0 : index - another.getPositionInPodcast();
         }
         else if (this.pubDate == null && another.getPubDate() != null)
             return -1;
@@ -200,9 +216,11 @@ public class Episode implements Comparable<Episode> {
             final int result = pubDate.compareTo(another.getPubDate());
 
             // This should never be zero unless the episodes are equal, since a
-            // podcast might publish two episodes at the same pubDate
+            // podcast might publish two episodes at the same pubDate. If it is
+            // (and the episode are not equal) we use the original order from
+            // the feed instead.
             if (result == 0)
-                return this.equals(another) ? 0 : 1;
+                return this.equals(another) ? 0 : index - another.getPositionInPodcast();
             else
                 return -1 * result;
         }
