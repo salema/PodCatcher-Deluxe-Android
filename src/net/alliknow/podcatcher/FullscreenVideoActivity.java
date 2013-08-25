@@ -238,8 +238,12 @@ public class FullscreenVideoActivity extends BaseActivity implements VideoSurfac
 
         @Override
         public void onClick(View v) {
-            if (service != null)
+            if (service != null) {
                 service.seekTo(0);
+
+                // This will make sure the progress bar is updated
+                controller.show();
+            }
         }
     }
 
