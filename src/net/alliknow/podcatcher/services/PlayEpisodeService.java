@@ -491,7 +491,7 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
 
     @Override
     public boolean canPause() {
-        return isPlaying();
+        return isPrepared();
     }
 
     @Override
