@@ -60,6 +60,9 @@ import java.util.Set;
 public abstract class EpisodeDownloadManager extends EpisodeBaseManager implements
         DownloadTaskListener {
 
+    /** Characters not allowed in filenames */
+    private static final String RESERVED_CHARS = "|\\?*<\":>+[]/'#!,&";
+
     /** The current number of downloaded episodes we know of */
     protected int downloadsSize = -1;
 
@@ -439,5 +442,45 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
                 }
             }
         }
+    }
+
+    /**
+     * Clean up given string to be suitable as a file/directory name. This works
+     * by removing all reserved chars.
+     * 
+     * @param name The String to clean up (not <code>null</code>).
+     * @return A cleaned string, might have zero length.
+     */
+    public static String sanitizeAsFilename(String name) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < name.length(); i++)
+            if (RESERVED_CHARS.indexOf(name.charAt(i)) == -1)
+                builder.append(name.charAt(i));
+
+        return builder.toString();
+    }
+
+    /**
+     * Get the relative file path for the episode entry given. This reflects
+     * where it would have been or should be stored locally when downloaded.
+     * Note that this is still relative to the download directory set. Uses
+     * {@link #sanitizeAsFilename(String)}.
+     * 
+     * @param episodeUrl The episode's URL (used to determine the file ending)
+     * @param episodeName The episode's name
+     * @param podcastName The episode's owning podcast's name
+     * @return The path string as podcast/episode.ending without reserved
+     *         characters
+     */
+    public static String sanitizeAsFilePath(String episodeUrl, String episodeName,
+            String podcastName) {
+        // Extract file ending
+        final int endingIndex = episodeUrl.lastIndexOf('.');
+        final String fileEnding = endingIndex > 0 ? episodeUrl.substring(endingIndex) : "";
+
+        // Create sanitized path <podcast>/<episode>.<ending>
+        return sanitizeAsFilename(podcastName) + File.separatorChar
+                + sanitizeAsFilename(episodeName) + fileEnding;
     }
 }
