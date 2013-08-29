@@ -17,16 +17,14 @@
 
 package net.alliknow.podcatcher.model.tasks;
 
-import static net.alliknow.podcatcher.Podcatcher.sanitizeAsFilename;
-
 import android.content.Context;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
 import net.alliknow.podcatcher.SettingsActivity;
 import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
+import net.alliknow.podcatcher.model.EpisodeDownloadManager;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.tags.METADATA;
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
@@ -211,7 +209,9 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
             if (entry.getValue().downloadId == null)
                 continue;
 
-            File downloadPath = getDownloadLocationFor(podcastDir, entry);
+            final File downloadPath = new File(podcastDir,
+                    EpisodeDownloadManager.sanitizeAsFilePath(entry.getKey().getPath(),
+                            entry.getValue().episodeName, entry.getValue().podcastName));
 
             if (entry.getValue().filePath == null && downloadPath.exists())
                 entry.getValue().filePath = downloadPath.getAbsolutePath();
@@ -234,16 +234,5 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
                 entry.getValue().filePath = null;
             }
         }
-    }
-
-    private File getDownloadLocationFor(File podcastDir, Entry<URL, EpisodeMetadata> entry) {
-        // Extract file ending
-        String remoteFile = Uri.parse(entry.getKey().toString()).getPath();
-        String fileEnding = remoteFile.substring(remoteFile.lastIndexOf('.'));
-
-        String subpath = sanitizeAsFilename(entry.getValue().podcastName) + File.separatorChar +
-                sanitizeAsFilename(entry.getValue().episodeName) + fileEnding;
-
-        return new File(podcastDir, subpath);
     }
 }

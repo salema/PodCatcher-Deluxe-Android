@@ -50,9 +50,6 @@ public class Podcatcher extends Application {
      */
     public static final int MIN_PIXEL_LARGE = 600;
 
-    /** Characters not allowed in filenames */
-    private static final String RESERVED_CHARS = "|\\?*<\":>+[]/'#!,&";
-
     /** The http request header field key for the user agent */
     public static final String USER_AGENT_KEY = "User-Agent";
     /** The user agent string we use to identify us */
@@ -170,23 +167,6 @@ public class Podcatcher extends Application {
         }
 
         return debug;
-    }
-
-    /**
-     * Clean up given string to be suitable as a file/directory name. This works
-     * by removing all reserved chars.
-     * 
-     * @param name The String to clean up (not <code>null</code>).
-     * @return A cleaned string, might have zero length.
-     */
-    public static String sanitizeAsFilename(String name) {
-        StringBuilder builder = new StringBuilder();
-
-        for (int i = 0; i < name.length(); i++)
-            if (RESERVED_CHARS.indexOf(name.charAt(i)) == -1)
-                builder.append(name.charAt(i));
-
-        return builder.toString();
     }
 
     private NetworkInfo getNetworkInfo() {

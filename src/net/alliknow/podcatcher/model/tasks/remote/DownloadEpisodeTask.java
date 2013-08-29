@@ -25,7 +25,6 @@ import static android.app.DownloadManager.STATUS_FAILED;
 import static android.app.DownloadManager.STATUS_SUCCESSFUL;
 import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_KEY;
 import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_VALUE;
-import static net.alliknow.podcatcher.Podcatcher.sanitizeAsFilename;
 
 import android.app.DownloadManager;
 import android.app.DownloadManager.Query;
@@ -38,6 +37,7 @@ import android.preference.PreferenceManager;
 
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.SettingsActivity;
+import net.alliknow.podcatcher.model.EpisodeDownloadManager;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.preferences.DownloadFolderPreference;
 
@@ -133,7 +133,8 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
         final File podcastDir = new File(PreferenceManager.getDefaultSharedPreferences(podcatcher)
                 .getString(SettingsActivity.DOWNLOAD_FOLDER_KEY,
                         DownloadFolderPreference.getDefaultDownloadFolder().getAbsolutePath()));
-        final String subPath = getSubPath(episode);
+        final String subPath = EpisodeDownloadManager.sanitizeAsFilePath(
+                episode.getMediaUrl().getPath(), episode.getName(), episode.getPodcast().getName());
         // The actual episode file
         final File localFile = new File(podcastDir, subPath);
 
@@ -143,7 +144,8 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
         // Start download because the episode is not there
         else {
             // Make sure podcast directory exists
-            new File(podcastDir, sanitizeAsFilename(episode.getPodcast().getName())).mkdirs();
+            new File(podcastDir, EpisodeDownloadManager.sanitizeAsFilename(episode.getPodcast()
+                    .getName())).mkdirs();
 
             // Create the request
             Request download = new Request(Uri.parse(episode.getMediaUrl().toString()))
@@ -245,21 +247,5 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
     @Override
     protected void onCancelled(Void result) {
         listener.onEpisodeDownloadFailed(episode);
-    }
-
-    /**
-     * Find the path relative to the base directory the local episode file
-     * should be located in.
-     * 
-     * @param episode Episode to create sub-path for.
-     * @return The relative path
-     */
-    private String getSubPath(Episode episode) {
-        // Extract file ending
-        final String remoteFile = episode.getMediaUrl().getPath();
-        final String fileEnding = remoteFile.substring(remoteFile.lastIndexOf('.'));
-
-        return sanitizeAsFilename(episode.getPodcast().getName()) + File.separatorChar +
-                sanitizeAsFilename(episode.getName()) + fileEnding;
     }
 }
