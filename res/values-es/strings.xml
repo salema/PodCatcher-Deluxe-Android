@@ -49,7 +49,7 @@
     <string name="podcast_add_button">Agregar</string>
     <string name="podcast_enter_url_here">Insertar la URL del podcast</string>
     <string name="podcast_add_error">No se ha podido agregar el podcast.</string>
-    <string name="podcast_load_error">No se ha podido cargar el podcast. Comprobar la URL y la conexión al internet.</string>
+    <string name="podcast_load_error">No se ha podido cargar el podcast. Comprobar la URL y la conexión a Internet.</string>
     <string name="podcast_load_multiple_progress">%1$d de %2$d podcasts</string>
     <string name="podcast_load_multiple_error">El podcast\n\"%s\"\nno se ha podido cargar.</string>
     <string name="episode_none">No hay ningún episodio disponible</string>
@@ -66,8 +66,8 @@
     <string name="episodes_no_new">No hay episodios nuevos</string>
     <string name="episodes_total">total</string>
     <plurals name="episodes_filtered">
-        <item quantity="one">Un episodio fitrado</item>
-        <item quantity="other">%d episodios fitrados</item>
+        <item quantity="one">Un episodio filtrado</item>
+        <item quantity="other">%d episodios filtrados</item>
     </plurals>
     <string name="episodes_select_all">Seleccionar todos</string>
     <string name="episodes_old">Antiguo</string>
@@ -97,7 +97,7 @@
     <string name="suggestion_listen">Escuchar</string>
     <string name="suggestion_watch">Ver</string>
     <string name="suggestions_none">No hay ninguna sugerencia.</string>
-    <string name="suggestions_load_error">Las sugerencias no se han podido cargar. Comprobar la conexión al internet.</string>
+    <string name="suggestions_load_error">Las sugerencias no se han podido cargar. Comprobar la conexión a Internet.</string>
     <string name="suggestions_send">Envia una propuesta para incluirla en esta lista&#8230;</string>
     <string name="preferences">Ajustes</string>
     <string name="pref_select_all_on_start_title">Seleccionar todos al inicio</string>
@@ -107,10 +107,10 @@
     <string name="pref_theme_color_dialog_title">Seleccionar color</string>
     <string name="pref_theme_color_dialog_use">Presione nuevo color para aplicarlo</string>
     <string name="pref_wide_episode_list_title">Amplia lista de episodios</string>
-    <string name="pref_wide_episode_list_summary">Hacer espacio para mas detalles sobre los episodios</string>
+    <string name="pref_wide_episode_list_summary">Hacer espacio para más detalles sobre los episodios</string>
     <string name="pref_auto_download_title">Descargas automáticas</string>
     <string name="pref_auto_download_summary">Nuevos episodios disponibles sin conexión al internet</string>
     <string name="pref_auto_delete_title">Eliminación automática</string>
-    <string name="pref_auto_delete_summary">Elimina los episodios descargados después de escucharlos</string>
+    <string name="pref_auto_delete_summary">Elimina los episodios descargados después de reproducirlos</string>
     <string name="pref_download_folder_title">Carpeta de descargas</string>
 </resources>
