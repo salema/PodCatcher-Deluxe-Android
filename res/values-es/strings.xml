@@ -48,7 +48,7 @@
     <string name="podcast_add_button">Agregar</string>
     <string name="podcast_enter_url_here">Insertar la URL del podcast</string>
     <string name="podcast_add_error">No se ha podido agregar el podcast.</string>
-    <string name="podcast_load_error">No se ha podido cargar el podcast. Comprobar la URL y la conexión al internet.</string>
+    <string name="podcast_load_error">No se ha podido cargar el podcast. Comprobar la URL y la conexión a Internet.</string>
     <string name="podcast_load_multiple_progress">%1$d de %2$d podcasts</string>
     <string name="podcast_load_multiple_error">El podcast\n\"%s\"\nno se ha podido cargar.</string>
     <string name="episode_none">No hay ningún episodio disponible</string>
@@ -73,7 +73,7 @@
     <string name="suggestion_listen">Escuchar</string>
     <string name="suggestion_watch">Ver</string>
     <string name="suggestions_none">No hay ninguna sugerencia.</string>
-    <string name="suggestions_load_error">Las sugerencias no se han podido cargar. Comprobar la conexión al internet.</string>
+    <string name="suggestions_load_error">Las sugerencias no se han podido cargar. Comprobar la conexión a Internet.</string>
     <string name="suggestions_send">Envia una propuesta para incluirla en esta lista&#8230;</string>
     <string name="preferences">Ajustes</string>
     <string name="pref_select_all_on_start_title">Seleccionar todos al inicio</string>
@@ -83,6 +83,6 @@
     <string name="pref_theme_color_dialog_title">Seleccionar color</string>
     <string name="pref_theme_color_dialog_use">Presione nuevo color para aplicarlo</string>
     <string name="pref_wide_episode_list_title">Amplia lista de episodios</string>
-    <string name="pref_wide_episode_list_summary">Hacer espacio para mas detalles sobre los episodios</string>
+    <string name="pref_wide_episode_list_summary">Hacer espacio para más detalles sobre los episodios</string>
     <string name="ad">Prueba &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; y &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt;: Descargas, listas, filtros y mucho más!</string>
 </resources>
