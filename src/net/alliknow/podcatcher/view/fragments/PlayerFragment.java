@@ -53,6 +53,8 @@ public class PlayerFragment extends Fragment {
     private boolean showLoadMenuItem = false;
     /** Flag for the state of the load menu item */
     private boolean loadMenuItemState = true;
+    /** Flag for the resume/play state of the load menu item */
+    private boolean loadMenuItemResume = false;
     /** Flag for the show player state */
     private boolean showPlayer = false;
     /** Flag for the show player title state */
@@ -150,7 +152,7 @@ public class PlayerFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        setLoadMenuItemVisibility(showLoadMenuItem, loadMenuItemState);
+        setLoadMenuItemVisibility(showLoadMenuItem, loadMenuItemState, loadMenuItemResume);
         setPlayerVisibilility(showPlayer);
         setPlayerTitleVisibility(showPlayerTitle);
         setPlayerSeekbarVisibility(showPlayerSeekbar);
@@ -163,7 +165,7 @@ public class PlayerFragment extends Fragment {
         inflater.inflate(R.menu.player, menu);
 
         loadMenuItem = menu.findItem(R.id.episode_load_menuitem);
-        setLoadMenuItemVisibility(showLoadMenuItem, loadMenuItemState);
+        setLoadMenuItemVisibility(showLoadMenuItem, loadMenuItemState, loadMenuItemResume);
     }
 
     @Override
@@ -194,10 +196,13 @@ public class PlayerFragment extends Fragment {
      * 
      * @param show Whether to show the load menu item.
      * @param load State of the load menu item (load / unload)
+     * @param resume Whether to use the resume or the play icon as load
+     *            indicator
      */
-    public void setLoadMenuItemVisibility(boolean show, boolean load) {
+    public void setLoadMenuItemVisibility(boolean show, boolean load, boolean resume) {
         this.showLoadMenuItem = show;
         this.loadMenuItemState = load;
+        this.loadMenuItemResume = resume;
 
         // Only do it right away if resumed and menu item is available,
         // otherwise onResume or the menu creation callback will call us.
@@ -205,7 +210,8 @@ public class PlayerFragment extends Fragment {
             loadMenuItem.setVisible(show);
 
             loadMenuItem.setTitle(load ? R.string.play : R.string.stop);
-            loadMenuItem.setIcon(load ? R.drawable.ic_media_play : R.drawable.ic_media_stop);
+            loadMenuItem.setIcon(load ? resume ? R.drawable.ic_media_resume
+                    : R.drawable.ic_media_play : R.drawable.ic_media_stop);
         }
     }
 
@@ -357,7 +363,7 @@ public class PlayerFragment extends Fragment {
                 playPauseButton.setBackgroundResource(playing ?
                         R.drawable.button_red : R.drawable.button_green);
                 playPauseButton.setCompoundDrawablesWithIntrinsicBounds(playing ?
-                        R.drawable.ic_media_pause : R.drawable.ic_media_play, 0, 0, 0);
+                        R.drawable.ic_media_pause : R.drawable.ic_media_resume, 0, 0, 0);
             }
         }
     }

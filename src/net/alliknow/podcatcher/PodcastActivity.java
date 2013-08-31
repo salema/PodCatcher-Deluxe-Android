@@ -610,7 +610,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         super.updatePlayerUi();
 
         if (view.isSmallPortrait()) {
-            playerFragment.setLoadMenuItemVisibility(false, false);
+            playerFragment.setLoadMenuItemVisibility(false, false, false);
             playerFragment.setPlayerTitleVisibility(true);
         }
     }
