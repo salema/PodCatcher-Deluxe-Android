@@ -195,7 +195,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         super.updatePlayerUi();
 
         // Make sure to show episode title in player
-        playerFragment.setLoadMenuItemVisibility(false, false);
+        playerFragment.setLoadMenuItemVisibility(false, false, false);
         playerFragment.setPlayerTitleVisibility(true);
     }
 }
