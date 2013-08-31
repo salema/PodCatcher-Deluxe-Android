@@ -140,7 +140,7 @@ public class PlayEpisodeNotification {
 
         // Add other actions according to playback state
         if (paused)
-            notificationBuilder.addAction(R.drawable.ic_media_play,
+            notificationBuilder.addAction(R.drawable.ic_media_resume,
                     context.getString(R.string.resume), tooglePendingIntent);
         else
             notificationBuilder.addAction(R.drawable.ic_media_pause,

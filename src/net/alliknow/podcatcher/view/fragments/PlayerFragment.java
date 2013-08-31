@@ -315,7 +315,7 @@ public class PlayerFragment extends Fragment {
                 button.setBackgroundResource(playing ?
                         R.drawable.button_red : R.drawable.button_green);
                 button.setCompoundDrawablesWithIntrinsicBounds(playing ?
-                        R.drawable.ic_media_pause : R.drawable.ic_media_play, 0, 0, 0);
+                        R.drawable.ic_media_pause : R.drawable.ic_media_resume, 0, 0, 0);
 
                 final String formattedPosition = ParserUtils.formatTime(position / 1000);
                 final String formattedDuration = ParserUtils.formatTime(duration / 1000);
