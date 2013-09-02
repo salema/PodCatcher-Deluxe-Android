@@ -38,7 +38,13 @@
         android:layout_height="wrap_content"
         android:scaleType="fitXY"
         android:src="@android:drawable/divider_horizontal_bright"
-        android:contentDescription="@string/divider"
+        android:contentDescription="@string/divider" />
+    <ProgressBar
+        android:id="@+id/progress_bar_top"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:indeterminate="true"
         android:visibility="gone" />
     <ListView
         android:id="@id/android:list"

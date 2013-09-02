@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
@@ -64,6 +65,8 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     private boolean showFilterMenuItem = false;
     /** Flag for the state of the filter menu item */
     private boolean filterMenuItemState = false;
+    /** Flag for the top progress bar state */
+    private boolean showTopProgressBar = false;
     /** Flag for show filter warning state */
     private boolean showFilterWarning = false;
     /** The number of episodes filtered */
@@ -76,6 +79,8 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
     /** The sort episodes menu bar item */
     private MenuItem sortMenuItem;
+    /** The top progress bar */
+    private ProgressBar topProgressBar;
     /** The filter episodes menu bar item */
     private MenuItem filterMenuItem;
     /** The filter warning label */
@@ -120,6 +125,8 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        topProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar_top);
+
         filterWarningLabel = (TextView) view.findViewById(R.id.filtered_warning);
         filterWarningDivider = view.findViewById(R.id.warning_divider);
 
@@ -136,6 +143,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
         if (currentEpisodeList != null) {
             setEpisodeList(currentEpisodeList);
             setFilterWarning(showFilterWarning, filteredEpisodesCount);
+            setShowTopProgress(showTopProgressBar);
         }
     }
 
@@ -260,10 +268,10 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     }
 
     /**
-     * Set whether the fragment should show the filter icon. You can call this
-     * any time and can expect it to happen on fragment resume at the latest.
-     * You also have to set the filter icon state, <code>true</code> for
-     * "new only" and <code>false</code> for "show all".
+     * <<<<<<< deluxe Set whether the fragment should show the filter icon. You
+     * can call this any time and can expect it to happen on fragment resume at
+     * the latest. You also have to set the filter icon state, <code>true</code>
+     * for "new only" and <code>false</code> for "show all".
      * 
      * @param show Whether to show the filter menu item.
      * @param filter State of the filter menu item (new / all)
@@ -332,6 +340,20 @@ public class EpisodeListFragment extends PodcatcherListFragment {
             filterWarningLabel.setBackgroundColor(color);
             filterWarningDivider.setBackgroundColor(color);
         }
+    }
+
+    /**
+     * Set whether the fragment should show the top progress bar. You can call
+     * this any time and can expect it to happen on fragment resume at the
+     * latest.
+     * 
+     * @param show Whether to show the top progress bar.
+     */
+    public void setShowTopProgress(boolean show) {
+        this.showTopProgressBar = show;
+
+        if (viewCreated)
+            topProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     /**
