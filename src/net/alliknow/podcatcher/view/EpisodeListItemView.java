@@ -54,6 +54,8 @@ public class EpisodeListItemView extends RelativeLayout {
     private TextView playlistPositionView;
     /** The download icon view */
     private ImageView downloadIconView;
+    /** The download icon view */
+    private ImageView resumeIconView;
     /** The state icon view */
     private ImageView stateIconView;
 
@@ -79,6 +81,7 @@ public class EpisodeListItemView extends RelativeLayout {
         progressBarView = (ProgressBar) findViewById(R.id.list_item_progress);
         playlistPositionView = (TextView) findViewById(R.id.playlist_position);
         downloadIconView = (ImageView) findViewById(R.id.download_icon);
+        resumeIconView = (ImageView) findViewById(R.id.resume_icon);
         stateIconView = (ImageView) findViewById(R.id.state_icon);
     }
 
@@ -162,11 +165,16 @@ public class EpisodeListItemView extends RelativeLayout {
     }
 
     private void updateMetadata(Episode episode) {
+        // Okay, so this gets a bit messy, we have a lot of cases to cover.
+        // 1. Find all the information we need to make the view look right
         final boolean downloading = episodeManager.isDownloading(episode);
         final boolean downloaded = episodeManager.isDownloaded(episode);
+        final boolean downloadIconShows = downloaded || downloading;
         final boolean isNew = !episodeManager.getState(episode);
+        final boolean willResume = episodeManager.getResumeAt(episode) > 0;
         final int position = episodeManager.getPlaylistPosition(episode);
 
+        // 2. Set the view content and visibility accordingly
         if (downloading)
             downloadIconView.setImageResource(R.drawable.ic_media_downloading);
         else if (downloaded)
@@ -175,35 +183,32 @@ public class EpisodeListItemView extends RelativeLayout {
         playlistPositionView.setText(String.valueOf(position + 1));
 
         downloadIconView.setVisibility(downloading || downloaded ? View.VISIBLE : View.GONE);
+        resumeIconView.setVisibility(willResume ? View.VISIBLE : View.GONE);
         playlistPositionView.setVisibility(position >= 0 ? View.VISIBLE : View.GONE);
         stateIconView.setVisibility(isNew ? View.VISIBLE : View.GONE);
 
-        // Fix the layout params of our views depending on the metadata showing:
-        // 1. If no download icon shows, the playlist position view jumps right
-        if (position >= 0) {
-            final boolean downloadIconShows = downloaded || downloading;
+        // 3. Fix the layout params of our views in the lower right corner
+        // depending on the metadata showing:
+        adjustLayout(playlistPositionView, true, -1);
+        adjustLayout(resumeIconView, position < 0, R.id.playlist_position);
+        adjustLayout(downloadIconView, position < 0 && !willResume,
+                willResume ? R.id.resume_icon : R.id.playlist_position);
 
-            LayoutParams params = (RelativeLayout.LayoutParams)
-                    playlistPositionView.getLayoutParams();
-            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
-                    downloadIconShows ? 0 : RelativeLayout.TRUE);
-            params.addRule(RelativeLayout.LEFT_OF,
-                    downloadIconShows ? R.id.download_icon : -1);
-            playlistPositionView.setMinWidth(downloadIconShows ? 0 :
-                    (int) (24 * (getResources().getDisplayMetrics().densityDpi / 160f)));
-            playlistPositionView.setPadding(downloadIconShows ? 4 : 0, 0,
-                    !downloadIconShows && position >= 9 ? 2 : 0, 0);
-
-            playlistPositionView.setLayoutParams(params);
-        }
-
-        // 2. Switch anchor for the main content to whatever metadata showing
+        // 4. Switch right hand anchor for the main content to whatever metadata
+        // is showing:
         LayoutParams params = (RelativeLayout.LayoutParams) findViewById(
                 R.id.list_item_main_content).getLayoutParams();
-
-        params.addRule(RelativeLayout.LEFT_OF, position >= 0 ? R.id.playlist_position :
-                isNew ? R.id.state_icon : R.id.download_icon);
-
+        params.addRule(RelativeLayout.LEFT_OF, downloadIconShows ? R.id.download_icon :
+                willResume ? R.id.resume_icon : isNew ? R.id.state_icon : R.id.playlist_position);
         findViewById(R.id.list_item_main_content).setLayoutParams(params);
+    }
+
+    private void adjustLayout(View view, boolean atParentRight, int isLeftOf) {
+        LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
+
+        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, atParentRight ? RelativeLayout.TRUE : 0);
+        params.addRule(RelativeLayout.LEFT_OF, atParentRight ? -1 : isLeftOf);
+
+        view.setLayoutParams(params);
     }
 }

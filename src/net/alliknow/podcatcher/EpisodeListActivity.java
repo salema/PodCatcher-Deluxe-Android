@@ -148,6 +148,14 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
+    public void onToggleLoad() {
+        super.onToggleLoad();
+
+        // This might have changed the state of some episodes
+        episodeListFragment.refresh();
+    }
+
+    @Override
     public void onPodcastSelected(Podcast podcast) {
         selection.setPodcast(podcast);
         selection.setMode(ContentMode.SINGLE_PODCAST);
