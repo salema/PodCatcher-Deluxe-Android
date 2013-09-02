@@ -553,14 +553,10 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         if (wifiLock.isHeld())
             wifiLock.release();
 
-        // Release player, async
-        new Thread() {
-            @Override
-            public void run() {
-                if (player != null)
-                    player.release();
-            }
-        }.start();
+        if (player != null) {
+            player.release();
+            player = null;
+        }
     }
 
     private void enableReceiver(final ComponentName receiver) {
