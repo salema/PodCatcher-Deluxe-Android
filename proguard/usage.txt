@@ -906,6 +906,8 @@ com.podcatcher.deluxe.video.EpisodeActivity:
 com.podcatcher.deluxe.video.EpisodeListActivity:
     public static final java.lang.String MODE_KEY
     public static final java.lang.String PODCAST_URL_KEY
+com.podcatcher.deluxe.video.FirstRunActivity:
+    private static final java.lang.String FIRST_RUN_FRAGMENT_TAG
 com.podcatcher.deluxe.video.ImportPodcastActivity:
     private static final int LAUNCHER_FLAGS
     private static final java.lang.String HTTP
@@ -920,7 +922,6 @@ com.podcatcher.deluxe.video.PodcastActivity:
     private static final java.lang.String IMPORT_PODCAST_URLS_KEY
 com.podcatcher.deluxe.video.Podcatcher:
     public static final int MIN_PIXEL_LARGE
-    private static final java.lang.String RESERVED_CHARS
     public static final java.lang.String USER_AGENT_KEY
     public static final java.lang.String USER_AGENT_VALUE
     public static final long HTTP_CACHE_SIZE
@@ -937,6 +938,7 @@ com.podcatcher.deluxe.video.R$layout
 com.podcatcher.deluxe.video.R$menu
 com.podcatcher.deluxe.video.R$plurals
 com.podcatcher.deluxe.video.R$string
+com.podcatcher.deluxe.video.R$style
 com.podcatcher.deluxe.video.R$xml
 com.podcatcher.deluxe.video.SelectFileActivity:
     private static final java.lang.String SELECT_FILE_FRAGMENT_TAG
@@ -944,6 +946,7 @@ com.podcatcher.deluxe.video.SelectFileActivity:
     public static final java.lang.String RESULT_PATH_KEY
     public static final java.lang.String SELECTION_MODE_KEY
 com.podcatcher.deluxe.video.SettingsActivity:
+    public static final java.lang.String KEY_FIRST_RUN
     public static final java.lang.String KEY_SELECT_ALL_ON_START
     public static final java.lang.String KEY_THEME_COLOR
     public static final java.lang.String KEY_WIDE_EPISODE_LIST
@@ -959,6 +962,8 @@ com.podcatcher.deluxe.video.listeners.OnSelectPodcastListener:
     public abstract void onNoPodcastSelected()
 com.podcatcher.deluxe.video.model.EpisodeBaseManager:
     public static final java.lang.String METADATA_FILENAME
+com.podcatcher.deluxe.video.model.EpisodeDownloadManager:
+    private static final java.lang.String RESERVED_CHARS
 com.podcatcher.deluxe.video.model.ParserUtils:
     28:28:public ParserUtils()
 com.podcatcher.deluxe.video.model.PodcastManager:
@@ -970,6 +975,8 @@ com.podcatcher.deluxe.video.model.PodcastManager:
     private static final int MAX_STALE_OFFLINE
     public static final java.lang.String OPML_FILENAME
     public static final java.lang.String OPML_FILE_ENCODING
+    650:676:private void putSamplePodcasts()
+    680:683:private static com.podcatcher.deluxe.video.model.types.Podcast createPodcast(java.lang.String,java.lang.String)
 com.podcatcher.deluxe.video.model.tags.JSON
 com.podcatcher.deluxe.video.model.tags.METADATA
 com.podcatcher.deluxe.video.model.tags.OPML
@@ -977,6 +984,8 @@ com.podcatcher.deluxe.video.model.tags.RSS
 com.podcatcher.deluxe.video.model.tasks.StoreFileTask:
     public static final java.lang.String FILE_ENCODING
     protected static final char INDENT
+com.podcatcher.deluxe.video.model.tasks.remote.DownloadEpisodeTask:
+    private static final long DOWNLOAD_STATUS_POLL_INTERVALL
 com.podcatcher.deluxe.video.model.tasks.remote.LoadPodcastLogoTask:
     private static final int LOGO_DIMENSION
     private static final java.lang.String CACHE_DIR
@@ -999,7 +1008,6 @@ com.podcatcher.deluxe.video.model.types.Progress:
     private static final int PROGRESS_DONE
 com.podcatcher.deluxe.video.preferences.DownloadFolderPreference:
     public static final int REQUEST_CODE
-    52:57:public DownloadFolderPreference(android.content.Context,android.util.AttributeSet)
 com.podcatcher.deluxe.video.services.PlayEpisodeService:
     public static final java.lang.String ACTION_TOGGLE
     public static final java.lang.String ACTION_PLAY
@@ -1024,6 +1032,8 @@ com.podcatcher.deluxe.video.view.Utils:
 com.podcatcher.deluxe.video.view.fragments.EpisodeFragment:
     private static final int HIDE_FULLSCREEN_HINT_DELAY
     private static final java.lang.String SEPARATOR
+com.podcatcher.deluxe.video.view.fragments.FirstRunFragment:
+    private static final java.lang.String PODCATCHER_HELPSITE
 com.podcatcher.deluxe.video.view.fragments.SuggestionFragment:
     public static final java.lang.String FILTER_WILDCARD
     private static final java.lang.String SUGGESTION_MAIL_ADDRESS
