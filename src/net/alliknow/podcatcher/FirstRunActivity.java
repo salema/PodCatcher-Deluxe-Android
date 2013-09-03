@@ -19,16 +19,17 @@ package net.alliknow.podcatcher;
 
 import android.app.DialogFragment;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.os.Bundle;
 
 import net.alliknow.podcatcher.view.fragments.FirstRunFragment;
+import net.alliknow.podcatcher.view.fragments.FirstRunFragment.FirstRunListener;
 
 /**
  * Activity to run on the very first app start. Welcomes the user and gives some
  * hints.
  */
-public class FirstRunActivity extends BaseActivity implements OnCancelListener {
+public class FirstRunActivity extends BaseActivity implements FirstRunListener {
 
     /** The tag we identify our fragment with */
     private static final String FIRST_RUN_FRAGMENT_TAG = "first_run";
@@ -61,6 +62,14 @@ public class FirstRunActivity extends BaseActivity implements OnCancelListener {
             // Show the fragment
             firstRunFragment.show(getFragmentManager(), FIRST_RUN_FRAGMENT_TAG);
         }
+    }
+
+    @Override
+    public void onAddPodcasts() {
+        firstRunFragment.dismiss();
+        finish();
+
+        startActivity(new Intent(this, AddPodcastActivity.class));
     }
 
     @Override

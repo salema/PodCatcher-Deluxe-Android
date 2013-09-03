@@ -30,7 +30,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import net.alliknow.podcatcher.AddPodcastActivity;
 import net.alliknow.podcatcher.R;
 
 /**
@@ -42,7 +41,14 @@ public class FirstRunFragment extends DialogFragment {
     private static final String PODCATCHER_HELPSITE = "http://www.podcatcher-deluxe.com/help#add";
 
     /** The listener we report back to */
-    private OnCancelListener listener;
+    private FirstRunListener listener;
+
+    /** The listener interface to implement by our activity */
+    public interface FirstRunListener extends OnCancelListener {
+
+        /** Called when the add podcast button is pressed */
+        public void onAddPodcasts();
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -50,9 +56,9 @@ public class FirstRunFragment extends DialogFragment {
 
         // Make sure our listener is present
         try {
-            this.listener = (OnCancelListener) activity;
+            this.listener = (FirstRunListener) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnCancelListener");
+            throw new ClassCastException(activity.toString() + " must implement FirstRunListener");
         }
     }
 
@@ -86,8 +92,7 @@ public class FirstRunFragment extends DialogFragment {
 
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), AddPodcastActivity.class));
-                dismiss();
+                listener.onAddPodcasts();
             }
         });
     }
@@ -96,6 +101,8 @@ public class FirstRunFragment extends DialogFragment {
     public void onCancel(DialogInterface dialog) {
         // Make sure the parent activity knows when we are closing
         if (listener instanceof OnCancelListener)
-            ((OnCancelListener) listener).onCancel(dialog);
+            ((OnCancelListener) listener).onCancel(getDialog());
+
+        super.onCancel(dialog);
     }
 }

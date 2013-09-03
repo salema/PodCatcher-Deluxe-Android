@@ -287,8 +287,8 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                 Intent importFromSimple = new Intent(IMPORT_ACTION);
                 startActivityForResult(importFromSimple, IMPORT_FROM_SIMPLE_PODCATCHER_CODE);
             } catch (ActivityNotFoundException ex) {
-                // Simple Podcatcher is not installed
-                onActivityResult(IMPORT_FROM_SIMPLE_PODCATCHER_CODE, RESULT_CANCELED, null);
+                // Simple Podcatcher is not installed, we do not need to call
+                // onActivityResult() since the system will do this
             }
         }
         // If enabled, we run the "select all on start-up" action
