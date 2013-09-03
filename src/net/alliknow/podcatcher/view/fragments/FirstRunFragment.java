@@ -86,16 +86,27 @@ public class FirstRunFragment extends DialogFragment {
 
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), AddPodcastActivity.class));
                 dismiss();
+                startActivity(new Intent(getActivity(), AddPodcastActivity.class));
             }
         });
+    }
+
+    @Override
+    public void dismiss() {
+        // Make sure the parent activity knows when we are closing
+        if (listener instanceof OnCancelListener)
+            ((OnCancelListener) listener).onCancel(getDialog());
+
+        super.dismiss();
     }
 
     @Override
     public void onCancel(DialogInterface dialog) {
         // Make sure the parent activity knows when we are closing
         if (listener instanceof OnCancelListener)
-            ((OnCancelListener) listener).onCancel(dialog);
+            ((OnCancelListener) listener).onCancel(getDialog());
+
+        super.onCancel(dialog);
     }
 }
