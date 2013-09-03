@@ -909,6 +909,8 @@ net.alliknow.podcatcher.EpisodeActivity:
 net.alliknow.podcatcher.EpisodeListActivity:
     public static final java.lang.String MODE_KEY
     public static final java.lang.String PODCAST_URL_KEY
+net.alliknow.podcatcher.FirstRunActivity:
+    private static final java.lang.String FIRST_RUN_FRAGMENT_TAG
 net.alliknow.podcatcher.ImportPodcastActivity:
     private static final int LAUNCHER_FLAGS
     private static final java.lang.String HTTP
@@ -934,6 +936,7 @@ net.alliknow.podcatcher.R$layout
 net.alliknow.podcatcher.R$menu
 net.alliknow.podcatcher.R$plurals
 net.alliknow.podcatcher.R$string
+net.alliknow.podcatcher.R$style
 net.alliknow.podcatcher.R$xml
 net.alliknow.podcatcher.ScrapePodcastsActivity:
     private static final java.lang.String EXPORT_PODCAST_NAMES_KEY
@@ -944,6 +947,7 @@ net.alliknow.podcatcher.SelectFileActivity:
     public static final java.lang.String RESULT_PATH_KEY
     public static final java.lang.String SELECTION_MODE_KEY
 net.alliknow.podcatcher.SettingsActivity:
+    public static final java.lang.String KEY_FIRST_RUN
     public static final java.lang.String KEY_SELECT_ALL_ON_START
     public static final java.lang.String KEY_THEME_COLOR
     public static final java.lang.String KEY_WIDE_EPISODE_LIST
@@ -962,6 +966,8 @@ net.alliknow.podcatcher.model.PodcastManager:
     private static final int MAX_STALE_OFFLINE
     public static final java.lang.String OPML_FILENAME
     public static final java.lang.String OPML_FILE_ENCODING
+    654:678:private void putSamplePodcasts()
+    682:685:private static net.alliknow.podcatcher.model.types.Podcast createPodcast(java.lang.String,java.lang.String)
 net.alliknow.podcatcher.model.tags.JSON
 net.alliknow.podcatcher.model.tags.OPML
 net.alliknow.podcatcher.model.tags.RSS
@@ -1010,6 +1016,8 @@ net.alliknow.podcatcher.view.Utils:
     27:27:public Utils()
 net.alliknow.podcatcher.view.fragments.EpisodeFragment:
     private static final java.lang.String SEPARATOR
+net.alliknow.podcatcher.view.fragments.FirstRunFragment:
+    private static final java.lang.String PODCATCHER_HELPSITE
 net.alliknow.podcatcher.view.fragments.SuggestionFragment:
     public static final java.lang.String FILTER_WILDCARD
     private static final java.lang.String SUGGESTION_MAIL_ADDRESS

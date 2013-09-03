@@ -73,6 +73,8 @@ net.alliknow.podcatcher.EpisodeActivity: EpisodeActivity()
 net.alliknow.podcatcher.EpisodeListActivity: EpisodeListActivity()
 net.alliknow.podcatcher.ExportOpmlActivity
 net.alliknow.podcatcher.ExportOpmlActivity: ExportOpmlActivity()
+net.alliknow.podcatcher.FirstRunActivity
+net.alliknow.podcatcher.FirstRunActivity: FirstRunActivity()
 net.alliknow.podcatcher.ImportOpmlActivity
 net.alliknow.podcatcher.ImportOpmlActivity: ImportOpmlActivity()
 net.alliknow.podcatcher.ImportPodcastActivity
@@ -114,6 +116,7 @@ net.alliknow.podcatcher.R$dimen: int font_size_default
 net.alliknow.podcatcher.R$dimen: int font_size_large
 net.alliknow.podcatcher.R$dimen: int font_size_small
 net.alliknow.podcatcher.R$dimen: int list_item_padding
+net.alliknow.podcatcher.R$dimen: int progress_bar_horizontal_height
 net.alliknow.podcatcher.R$dimen: int suggestion_add_padding
 net.alliknow.podcatcher.R$drawable: int button_blue
 net.alliknow.podcatcher.R$drawable: int button_green
@@ -127,6 +130,7 @@ net.alliknow.podcatcher.R$drawable: int ic_file_folder
 net.alliknow.podcatcher.R$drawable: int ic_file_up
 net.alliknow.podcatcher.R$drawable: int ic_media_pause
 net.alliknow.podcatcher.R$drawable: int ic_media_play
+net.alliknow.podcatcher.R$drawable: int ic_media_resume
 net.alliknow.podcatcher.R$drawable: int ic_media_stop
 net.alliknow.podcatcher.R$drawable: int ic_menu_add
 net.alliknow.podcatcher.R$drawable: int ic_menu_delete
@@ -139,6 +143,7 @@ net.alliknow.podcatcher.R$drawable: int ic_menu_sort_reverse
 net.alliknow.podcatcher.R$drawable: int ic_stat
 net.alliknow.podcatcher.R$drawable: int launcher
 net.alliknow.podcatcher.R$drawable: int logo
+net.alliknow.podcatcher.R$drawable: int progress_horizontal
 net.alliknow.podcatcher.R$id: int about_menuitem
 net.alliknow.podcatcher.R$id: int add_podcast_progress
 net.alliknow.podcatcher.R$id: int color_picker_view
@@ -156,12 +161,13 @@ net.alliknow.podcatcher.R$id: int episode_title
 net.alliknow.podcatcher.R$id: int file_icon
 net.alliknow.podcatcher.R$id: int file_name
 net.alliknow.podcatcher.R$id: int files
+net.alliknow.podcatcher.R$id: int first_run_add_button
+net.alliknow.podcatcher.R$id: int first_run_help_button
 net.alliknow.podcatcher.R$id: int help_menuitem
 net.alliknow.podcatcher.R$id: int hex_val
 net.alliknow.podcatcher.R$id: int icon
 net.alliknow.podcatcher.R$id: int import_opml_button
 net.alliknow.podcatcher.R$id: int list_item_caption
-net.alliknow.podcatcher.R$id: int list_item_main_content
 net.alliknow.podcatcher.R$id: int list_item_progress
 net.alliknow.podcatcher.R$id: int list_item_title
 net.alliknow.podcatcher.R$id: int new_color_panel
@@ -184,6 +190,7 @@ net.alliknow.podcatcher.R$id: int podcast_title
 net.alliknow.podcatcher.R$id: int podcast_url
 net.alliknow.podcatcher.R$id: int progress
 net.alliknow.podcatcher.R$id: int progress_bar
+net.alliknow.podcatcher.R$id: int progress_bar_top
 net.alliknow.podcatcher.R$id: int progress_text
 net.alliknow.podcatcher.R$id: int right
 net.alliknow.podcatcher.R$id: int right_column
@@ -214,6 +221,7 @@ net.alliknow.podcatcher.R$layout: int episode_list
 net.alliknow.podcatcher.R$layout: int episode_list_item
 net.alliknow.podcatcher.R$layout: int file_dialog
 net.alliknow.podcatcher.R$layout: int file_list_item
+net.alliknow.podcatcher.R$layout: int first_run
 net.alliknow.podcatcher.R$layout: int main
 net.alliknow.podcatcher.R$layout: int player
 net.alliknow.podcatcher.R$layout: int podcast_list
@@ -244,6 +252,9 @@ net.alliknow.podcatcher.R$string: int file_select
 net.alliknow.podcatcher.R$string: int file_select_access_denied
 net.alliknow.podcatcher.R$string: int file_select_file
 net.alliknow.podcatcher.R$string: int file_select_folder
+net.alliknow.podcatcher.R$string: int first_run_add
+net.alliknow.podcatcher.R$string: int first_run_text
+net.alliknow.podcatcher.R$string: int first_run_title
 net.alliknow.podcatcher.R$string: int help
 net.alliknow.podcatcher.R$string: int load
 net.alliknow.podcatcher.R$string: int no_browser
@@ -294,6 +305,7 @@ net.alliknow.podcatcher.R$string: int suggestions_none
 net.alliknow.podcatcher.R$string: int suggestions_send
 net.alliknow.podcatcher.R$string: int wait
 net.alliknow.podcatcher.R$string: int wildcard
+net.alliknow.podcatcher.R$style: int ProgressBar_Horizontal
 net.alliknow.podcatcher.R$xml: int preferences
 net.alliknow.podcatcher.RemovePodcastActivity
 net.alliknow.podcatcher.RemovePodcastActivity: RemovePodcastActivity()

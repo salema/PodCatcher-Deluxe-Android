@@ -42,7 +42,14 @@ public class FirstRunFragment extends DialogFragment {
     private static final String PODCATCHER_HELPSITE = "http://www.podcatcher-deluxe.com/help#add";
 
     /** The listener we report back to */
-    private OnCancelListener listener;
+    private FirstRunListener listener;
+
+    /** The listener interface to implement by our activity */
+    public interface FirstRunListener extends OnCancelListener {
+
+        /** Called when the add podcast button is pressed */
+        public void onAddPodcasts();
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -50,9 +57,9 @@ public class FirstRunFragment extends DialogFragment {
 
         // Make sure our listener is present
         try {
-            this.listener = (OnCancelListener) activity;
+            this.listener = (FirstRunListener) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnCancelListener");
+            throw new ClassCastException(activity.toString() + " must implement FirstRunListener");
         }
     }
 
@@ -84,21 +91,11 @@ public class FirstRunFragment extends DialogFragment {
         final Button addButton = (Button) view.findViewById(R.id.first_run_add_button);
         addButton.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                dismiss();
-                startActivity(new Intent(getActivity(), AddPodcastActivity.class));
-            }
+        	 @Override
+             public void onClick(View v) {
+                 listener.onAddPodcasts();
+             }
         });
-    }
-
-    @Override
-    public void dismiss() {
-        // Make sure the parent activity knows when we are closing
-        if (listener instanceof OnCancelListener)
-            ((OnCancelListener) listener).onCancel(getDialog());
-
-        super.dismiss();
     }
 
     @Override
