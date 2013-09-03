@@ -337,7 +337,13 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             // If nothing is there, show add podcasts dialog
             if (needsAddPodcastDialog) {
                 isInitialAppStart = false;
-                startActivity(new Intent(this, AddPodcastActivity.class));
+
+                // On the very first start of the app, show the first run dialog
+                if (preferences.getBoolean(SettingsActivity.KEY_FIRST_RUN, true))
+                    startActivity(new Intent(this, FirstRunActivity.class));
+                // Otherwise, just show the add podcast dialog
+                else
+                    startActivity(new Intent(this, AddPodcastActivity.class));
             }
         }
     }

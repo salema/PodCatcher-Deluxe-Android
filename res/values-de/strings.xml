@@ -32,6 +32,9 @@
     <string name="pause">Pause</string>
     <string name="resume">Abspielen</string>
     <string name="next">Nächste</string>
+    <string name="first_run_title">Willkommen</string>
+    <string name="first_run_text">Bitte fügen Sie als ersten Schritt ein oder mehrere Podcasts in Ihre Podcastliste ein. Verwenden Sie dazu die grüne Schaltfläche unten. Von dem neuen Dialogfenster aus können Sie auch Podcastvorschläge einsehen und OPML-Listen importieren.</string>
+    <string name="first_run_add">Podcasts hinzufügen</string>
     <string name="player_buffering">Puffer füllen&#8230;</string>
     <string name="player_label">bei %1$s von %2$s</string>
     <string name="player_label_short">%1$s von %2$s</string>
