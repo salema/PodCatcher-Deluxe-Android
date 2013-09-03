@@ -260,10 +260,16 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // Make action bar show number of podcasts
         updateActionBar();
 
-        // If podcast list is empty we show dialog on startup
+        // If podcast list is empty we show a dialog on startup
         if (podcastManager.size() == 0 && isInitialAppStart && !hasPodcastToAdd) {
             isInitialAppStart = false;
-            startActivity(new Intent(this, AddPodcastActivity.class));
+
+            // On the very first start of the app, show the first run dialog
+            if (preferences.getBoolean(SettingsActivity.KEY_FIRST_RUN, true))
+                startActivity(new Intent(this, FirstRunActivity.class));
+            // Otherwise, just show the add podcast dialog
+            else
+                startActivity(new Intent(this, AddPodcastActivity.class));
         }
         // If enabled, we run the "select all on start-up" action
         else if (podcastManager.size() > 0 && isInitialAppStart

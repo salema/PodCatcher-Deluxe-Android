@@ -31,6 +31,9 @@
     <string name="play">Play</string>
     <string name="pause">Pause</string>
     <string name="resume">Resume</string>
+    <string name="first_run_title">Welcome</string>
+    <string name="first_run_text">Your first step is to add one or more podcast subscriptions. Please use the green button below to open the Add Podcast dialog. The dialog also offers podcast suggestions and OPML subscription list imports.</string>
+    <string name="first_run_add">Add podcasts</string>
     <string name="player_buffering">Buffering&#8230;</string>
     <string name="player_label">at %1$s of %2$s</string>
     <string name="player_label_short">%1$s of %2$s</string>

@@ -31,6 +31,9 @@
     <string name="play">Lecture</string>
     <string name="pause">Pause</string>
     <string name="resume">Reprendre</string>
+    <string name="first_run_title">Bienvenue</string>
+    <string name="first_run_text">Ajoutez tout d’abord un ou plusieurs podcasts à votre liste de podcasts. Pour ce faire, cliquez sur le bouton vert. Dans la fenêtre qui apparaîtra vous pourrez voir aussi des podcasts recommandés et importer des listes OPML.</string>
+    <string name="first_run_add">Ajouter podcasts</string>
     <string name="player_buffering">Buffering&#8230;</string>
     <string name="player_label">à %1$s de %2$s</string>
     <string name="player_label_short">%1$s de %2$s</string>

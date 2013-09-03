@@ -108,6 +108,9 @@
             android:name=".SettingsActivity"
             android:theme="@android:style/Theme.Holo.Light.Dialog" />
         <activity
+            android:name=".FirstRunActivity"
+            android:theme="@android:style/Theme.NoDisplay" />
+        <activity
             android:name=".AddPodcastActivity"
             android:theme="@android:style/Theme.NoDisplay" />
         <activity

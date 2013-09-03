@@ -26,6 +26,9 @@ import net.alliknow.podcatcher.view.fragments.SettingsFragment;
  */
 public class SettingsActivity extends BaseActivity {
 
+    /** The flag for the first run dialog */
+    public static final String KEY_FIRST_RUN = "first_run";
+
     /** The select all podcast on start-up preference key */
     public static final String KEY_SELECT_ALL_ON_START = "select_all_on_startup";
     /** The theme color preference key */
