@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
@@ -52,12 +53,15 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     private boolean showSortMenuItem = false;
     /** Flag for the state of the sort menu item */
     private boolean sortMenuItemState = false;
+    /** Flag for the top progress bar state */
+    private boolean showTopProgressBar = false;
     /** Flag to indicate whether podcast names should be shown for episodes */
     private boolean showPodcastNames = false;
 
     /** The sort episodes menu bar item */
     private MenuItem sortMenuItem;
-    /** The filter episodes menu bar item */
+    /** The top progress bar */
+    private ProgressBar topProgressBar;
 
     /** Status flag indicating that our view is created */
     private boolean viewCreated = false;
@@ -94,12 +98,16 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        topProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar_top);
+
         viewCreated = true;
 
         // This will make sure we show the right information once the view
         // controls are established (the list might have been set earlier)
-        if (currentEpisodeList != null)
+        if (currentEpisodeList != null) {
             setEpisodeList(currentEpisodeList);
+            setShowTopProgress(showTopProgressBar);
+        }
     }
 
     @Override
@@ -196,6 +204,20 @@ public class EpisodeListFragment extends PodcatcherListFragment {
             sortMenuItem.setIcon(sortMenuItemState ?
                     R.drawable.ic_menu_sort_reverse : R.drawable.ic_menu_sort);
         }
+    }
+
+    /**
+     * Set whether the fragment should show the top progress bar. You can call
+     * this any time and can expect it to happen on fragment resume at the
+     * latest.
+     * 
+     * @param show Whether to show the top progress bar.
+     */
+    public void setShowTopProgress(boolean show) {
+        this.showTopProgressBar = show;
+
+        if (viewCreated)
+            topProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     /**
