@@ -154,6 +154,8 @@ public class AddPodcastFragment extends DialogFragment {
         // Make sure the parent activity knows when we are closing
         if (listener instanceof OnCancelListener)
             ((OnCancelListener) listener).onCancel(dialog);
+
+        super.onCancel(dialog);
     }
 
     /**

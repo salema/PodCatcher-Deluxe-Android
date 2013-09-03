@@ -30,7 +30,8 @@
         android:layout_marginBottom="3dp"
         android:layout_marginRight="6dp"
         android:layout_marginLeft="6dp"
-        android:text="@string/first_run_text" />
+        android:text="@string/first_run_text"
+        android:textSize="@dimen/font_size_large" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
