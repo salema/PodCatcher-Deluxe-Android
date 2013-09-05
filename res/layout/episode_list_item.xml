@@ -21,7 +21,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-   <ImageView
+    <ImageView
         android:id="@+id/state_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
@@ -80,29 +80,29 @@
             android:singleLine="true"
             android:ellipsize="marquee"
             android:textSize="@dimen/font_size_large" />
-        <TextView
-            android:id="@+id/list_item_caption"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="3"
-            android:paddingLeft="@dimen/list_item_padding"
-            android:singleLine="true"
-            android:ellipsize="marquee"
-            android:textSize="@dimen/font_size_small" />
-        <RelativeLayout 
-            android:id="@+id/list_item_progress_holder"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:visibility="gone">
+            android:minHeight="20dp">
+            <TextView
+                android:id="@+id/list_item_caption"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/list_item_padding"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:textSize="@dimen/font_size_small" />
             <ProgressBar
-	            android:id="@+id/list_item_progress"
-	            style="@style/ProgressBar.Horizontal"
-	            android:layout_width="match_parent"
-	            android:layout_height="@dimen/progress_bar_horizontal_height"
-	            android:layout_centerInParent="true"            
-	            android:layout_marginLeft="@dimen/list_item_padding"
-	            android:layout_marginRight="@dimen/list_item_padding"
-	            android:indeterminate="true" />
-        </RelativeLayout>
+                android:id="@+id/list_item_progress"
+                style="@style/ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/progress_bar_horizontal_height"
+                android:layout_gravity="center_vertical"            
+                android:layout_marginLeft="@dimen/list_item_padding"
+                android:layout_marginRight="@dimen/list_item_padding"
+                android:indeterminate="true"
+                android:visibility="gone" />
+        </FrameLayout>     
     </LinearLayout>
 </net.alliknow.podcatcher.view.EpisodeListItemView>

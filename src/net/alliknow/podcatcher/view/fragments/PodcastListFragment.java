@@ -17,6 +17,10 @@
 
 package net.alliknow.podcatcher.view.fragments;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
+import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -41,6 +45,7 @@ import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.PodcastListItemView;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -56,6 +61,8 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
     /** The logo view */
     private ImageView logoView;
+    /** The logo view height used to make it square */
+    private int logoViewHeight;
     /** The current logo view mode */
     private LogoViewMode logoViewMode = LogoViewMode.SMALL;
 
@@ -77,6 +84,13 @@ public class PodcastListFragment extends PodcatcherListFragment {
         LARGE
     };
 
+    /** Flag for animation currently running */
+    private boolean animating = false;
+    /** The podcast add and remove animation duration */
+    private int addRemoveDuration;
+    /** The logo view slide animation duration */
+    private int slideDuration;
+
     /** Status flag indicating that our view is created */
     private boolean viewCreated = false;
 
@@ -91,6 +105,9 @@ public class PodcastListFragment extends PodcatcherListFragment {
             throw new ClassCastException(activity.toString()
                     + " must implement OnSelectPodcastListener");
         }
+
+        this.addRemoveDuration = getResources().getInteger(android.R.integer.config_mediumAnimTime);
+        this.slideDuration = addRemoveDuration;
     }
 
     @Override
@@ -124,9 +141,11 @@ public class PodcastListFragment extends PodcatcherListFragment {
                     public void onGlobalLayout() {
                         // We only need this once
                         logoView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                        // Store value for future use in animations
+                        logoViewHeight = getView().getWidth();
                         // Update new layout params
                         final LayoutParams layoutParams = logoView.getLayoutParams();
-                        layoutParams.height = getView().getWidth();
+                        layoutParams.height = logoViewHeight;
                         logoView.setLayoutParams(layoutParams);
                     }
                 });
@@ -143,7 +162,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
             setPodcastList(currentPodcastList);
 
         // Make sure logo view mode is set
-        setLogoVisibility(logoViewMode);
+        updateLogo(logoViewMode);
     }
 
     @Override
@@ -210,6 +229,59 @@ public class PodcastListFragment extends PodcatcherListFragment {
     }
 
     /**
+     * Add a podcast to the list shown. Use this instead of
+     * {@link #setPodcastList(List)} if you want a nice, animated addition.
+     * 
+     * @param podcast Podcast to add.
+     */
+    public void addPodcast(Podcast podcast) {
+        currentPodcastList.add(podcast);
+        Collections.sort(currentPodcastList);
+        ((PodcastListAdapter) adapter).updateList(currentPodcastList);
+
+        final int index = currentPodcastList.indexOf(podcast);
+
+        if (viewCreated) {
+            final PodcastListItemView listItemView = (PodcastListItemView) findListItemViewForIndex(index);
+
+            // Is the position visible?
+            if (listItemView != null) {
+                listItemView.setAlpha(0f);
+                listItemView.animate().alpha(1f).setDuration(addRemoveDuration).setListener(null);
+            }
+        }
+    }
+
+    /**
+     * Remove a podcast from the list shown. Use this instead of
+     * {@link #setPodcastList(List)} if you want a nice, animated removal.
+     * 
+     * @param podcast Podcast to remove.
+     */
+    public void removePodcast(Podcast podcast) {
+        final int index = currentPodcastList.indexOf(podcast);
+
+        if (viewCreated) {
+            final PodcastListItemView listItemView = (PodcastListItemView) findListItemViewForIndex(index);
+
+            // Is the position visible?
+            if (listItemView != null)
+                listItemView.animate().alpha(0f).setDuration(addRemoveDuration)
+                        .setListener(new AnimatorListenerAdapter() {
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                currentPodcastList.remove(index);
+                                ((PodcastListAdapter) adapter).updateList(currentPodcastList);
+                                // Set it back to opaque because the view might
+                                // be recycled and we need it to show
+                                listItemView.setAlpha(1f);
+                            }
+                        });
+        }
+    }
+
+    /**
      * Show progress for a certain position in the podcast list. Progress will
      * ignored if the item is not visible.
      * 
@@ -220,10 +292,8 @@ public class PodcastListFragment extends PodcatcherListFragment {
         // To prevent this if we are not ready to handle progress update
         // e.g. on app termination
         if (viewCreated) {
-            // Adjust the position relative to list scroll state
-            final int firstVisiblePosition = getListView().getFirstVisiblePosition();
-            final PodcastListItemView listItemView =
-                    (PodcastListItemView) getListView().getChildAt(position - firstVisiblePosition);
+            final PodcastListItemView listItemView = (PodcastListItemView) findListItemViewForIndex(position);
+
             // Is the position visible?
             if (listItemView != null)
                 listItemView.updateProgress(progress);
@@ -231,56 +301,114 @@ public class PodcastListFragment extends PodcatcherListFragment {
     }
 
     /**
-     * Set the logo view mode. This will also update the logo if possible.
+     * Set the logo view mode. This will also update the logo(s) showing if
+     * possible or needed.
      * 
      * @param mode The logo view mode to use.
      */
-    public void setLogoVisibility(LogoViewMode mode) {
+    public void updateLogo(LogoViewMode mode) {
+        final boolean needsSlide =
+                // Mode changes from something to LARGE
+                LogoViewMode.LARGE.equals(mode) && !LogoViewMode.LARGE.equals(logoViewMode) ||
+                        // Mode changes from LARGE to something else
+                        !LogoViewMode.LARGE.equals(mode) && LogoViewMode.LARGE.equals(logoViewMode);
+
         this.logoViewMode = mode;
-
-        updateUiElementVisibility();
-    }
-
-    @Override
-    protected void updateUiElementVisibility() {
-        super.updateUiElementVisibility();
 
         // Only act if the view is actually created
         if (viewCreated) {
-            // Update according to logo view mode
-            switch (logoViewMode) {
-                case LARGE: // In large mode show single logo at the bottom
-                    if (adapter != null)
-                        ((PodcastListAdapter) adapter).setShowLogo(false);
-                    logoView.setVisibility(View.VISIBLE);
+            // SMALL means that the adapter needs to make the individual podcast
+            // list item view show the podcast icon, see there
+            if (adapter != null)
+                ((PodcastListAdapter) adapter).setShowLogo(LogoViewMode.SMALL.equals(logoViewMode));
 
-                    // Go find the currently selected podcast (if any)
-                    if (currentPodcastList != null && selectedPosition >= 0) {
-                        Podcast selectedPodcast = currentPodcastList.get(selectedPosition);
+            // LARGE shows the big image view below the list
+            if (LogoViewMode.LARGE.equals(logoViewMode)) {
+                updatePodcastLogoView();
+                logoView.setVisibility(View.VISIBLE);
 
-                        // Check for logo and show it if available
-                        if (selectedPodcast.getLogo() != null) {
-                            logoView.setImageBitmap(selectedPodcast.getLogo());
-                            logoView.setScaleType(ScaleType.FIT_XY);
-                        } else
-                            showGenericPodcastLogo();
-                    } else
-                        showGenericPodcastLogo();
-
-                    break;
-                case SMALL: // In small mode show logo inline
-                    if (adapter != null)
-                        ((PodcastListAdapter) adapter).setShowLogo(true);
-                    logoView.setVisibility(View.GONE);
-
-                    break;
-
-                default: // Show no logo at all
-                    if (adapter != null)
-                        ((PodcastListAdapter) adapter).setShowLogo(false);
+                if (needsSlide && logoViewHeight > 0)
+                    slideInLogoView();
+            }
+            // NONE hides the logo view
+            else {
+                if (needsSlide)
+                    slideOutLogoView();
+                else if (!animating)
                     logoView.setVisibility(View.GONE);
             }
         }
+    }
+
+    private void slideInLogoView() {
+        final LayoutParams layoutParams = logoView.getLayoutParams();
+
+        ValueAnimator animator = ValueAnimator.ofInt(0, logoViewHeight);
+        animator.setDuration(slideDuration);
+        animator.addUpdateListener(new AnimatorUpdateListener() {
+
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                // Animate to new layout params
+                layoutParams.height = (Integer) animation.getAnimatedValue();
+                logoView.setLayoutParams(layoutParams);
+            }
+        });
+        animator.addListener(new AnimatorListenerAdapter() {
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                animating = false;
+            }
+        });
+
+        animating = true;
+        animator.start();
+    }
+
+    private void slideOutLogoView() {
+        final LayoutParams layoutParams = logoView.getLayoutParams();
+
+        ValueAnimator animator = ValueAnimator.ofInt(logoViewHeight, 0);
+        animator.setDuration(slideDuration);
+        animator.addUpdateListener(new AnimatorUpdateListener() {
+
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                // Animate to new layout params
+                layoutParams.height = (Integer) animation.getAnimatedValue();
+                logoView.setLayoutParams(layoutParams);
+            }
+        });
+        animator.addListener(new AnimatorListenerAdapter() {
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                logoView.setVisibility(View.GONE);
+                // Reset to old layout params
+                layoutParams.height = logoViewHeight;
+                logoView.setLayoutParams(layoutParams);
+
+                animating = false;
+            }
+        });
+
+        animating = true;
+        animator.start();
+    }
+
+    private void updatePodcastLogoView() {
+        if (currentPodcastList != null && selectedPosition >= 0) {
+            final Podcast selectedPodcast = currentPodcastList.get(selectedPosition);
+
+            // Check for logo and show it if available
+            if (selectedPodcast.getLogo() != null) {
+                logoView.setImageBitmap(selectedPodcast.getLogo());
+                logoView.setScaleType(ScaleType.FIT_XY);
+            } else
+                showGenericPodcastLogo();
+        } else
+            showGenericPodcastLogo();
     }
 
     private void showGenericPodcastLogo() {

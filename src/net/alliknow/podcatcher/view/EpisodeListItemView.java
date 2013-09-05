@@ -26,16 +26,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
 
 /**
  * A list item view to represent an episode.
  */
-public class EpisodeListItemView extends RelativeLayout {
-
-    /** Our episode manager handle */
-    private final EpisodeManager episodeManager;
+public class EpisodeListItemView extends PodcatcherListItemView {
 
     /** String to use if no episode publication date available */
     private static final String NO_DATE = "---";
@@ -46,8 +42,6 @@ public class EpisodeListItemView extends RelativeLayout {
     private TextView titleTextView;
     /** The caption text view */
     private TextView captionTextView;
-    /** The progress bar holder layout */
-    private View progressBarHolder;
     /** The progress bar view */
     private ProgressBar progressBarView;
     /** The playlist position view */
@@ -67,8 +61,6 @@ public class EpisodeListItemView extends RelativeLayout {
      */
     public EpisodeListItemView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-        this.episodeManager = EpisodeManager.getInstance();
     }
 
     @Override
@@ -77,7 +69,6 @@ public class EpisodeListItemView extends RelativeLayout {
 
         titleTextView = (TextView) findViewById(R.id.list_item_title);
         captionTextView = (TextView) findViewById(R.id.list_item_caption);
-        progressBarHolder = findViewById(R.id.list_item_progress_holder);
         progressBarView = (ProgressBar) findViewById(R.id.list_item_progress);
         playlistPositionView = (TextView) findViewById(R.id.playlist_position);
         downloadIconView = (ImageView) findViewById(R.id.download_icon);
@@ -94,16 +85,25 @@ public class EpisodeListItemView extends RelativeLayout {
     public void show(final Episode episode, boolean showPodcastName) {
         // 0. Get episode state
         final boolean downloading = episodeManager.isDownloading(episode);
+        final boolean progressShouldFade = episode.hashCode() == lastItemId;
 
         // 1. Set episode title
         titleTextView.setText(createTitle(episode));
 
-        // 2. Set caption
+        // 2. Set caption and make sure it shows
         captionTextView.setText(createCaption(episode, showPodcastName));
-        captionTextView.setVisibility(downloading ? GONE : VISIBLE);
+        // If this is the same episode, crossfade (otherwise just set it)
+        if (!downloading && isShowingProgress && progressShouldFade)
+            crossfade(captionTextView, progressBarView);
+        else
+            captionTextView.setVisibility(downloading ? GONE : VISIBLE);
 
         // 3. Hide/show progress bar
-        progressBarHolder.setVisibility(downloading ? VISIBLE : GONE);
+        // If this is the same episode, crossfade (otherwise just set it)
+        if (downloading && !isShowingProgress && progressShouldFade)
+            crossfade(progressBarView, captionTextView);
+        else
+            progressBarView.setVisibility(downloading ? VISIBLE : GONE);
         // We need to reset the progress here, because the view might be
         // recycled and it should not show another episode's progress
         if (downloading)
@@ -111,6 +111,11 @@ public class EpisodeListItemView extends RelativeLayout {
 
         // 4. Update the metadata to show for this episode
         updateMetadata(episode);
+
+        // 5. Store state to make sure it is available next time show() is
+        // called and we can decide whether to crossfade or not
+        this.isShowingProgress = downloading;
+        this.lastItemId = episode.hashCode();
     }
 
     /**

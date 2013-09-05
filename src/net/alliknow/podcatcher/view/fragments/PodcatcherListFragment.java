@@ -234,6 +234,21 @@ public abstract class PodcatcherListFragment extends ListFragment {
     }
 
     /**
+     * Find the view representing the list item at the given index (NOT position
+     * in the list widget, but the index in the list backing it).
+     * 
+     * @param index The index of the item in the original data obejct list.
+     * @return The view representing the data object at the given index or
+     *         <code>null</code> if that object is not represented at the moment
+     *         (i.e. it is off-screen).
+     */
+    protected View findListItemViewForIndex(int index) {
+        // Adjust the position relative to list scroll state
+        final int firstVisiblePosition = getListView().getFirstVisiblePosition();
+        return getListView().getChildAt(index - firstVisiblePosition);
+    }
+
+    /**
      * Use the internal state variables to determine wanted UI state.
      * Sub-classes might want to extend this.
      */

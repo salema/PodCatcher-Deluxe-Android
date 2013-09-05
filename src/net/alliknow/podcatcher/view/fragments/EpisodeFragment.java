@@ -20,6 +20,7 @@ package net.alliknow.podcatcher.view.fragments;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
@@ -66,6 +68,8 @@ public class EpisodeFragment extends Fragment {
 
     /** Status flag indicating that our view is created */
     private boolean viewCreated = false;
+    /** Flag for transition animation fix */
+    private boolean needsLayoutTransitionFix = true;
 
     /** The download episode menu bar item */
     private MenuItem downloadMenuItem;
@@ -200,6 +204,23 @@ public class EpisodeFragment extends Fragment {
 
         // Update the UI widget's visibility to reflect state
         updateUiElementVisibility();
+
+        // This is a workaround for the fact that declaring animateLayoutChanges
+        // in combination with a webview breaks the fragment on some devices
+        // (such as the HP Touchpad). Activating the layout transition after the
+        // view has been shown once, works.
+        if (needsLayoutTransitionFix && viewCreated) {
+            ViewGroup parent = (ViewGroup) getView().getParent();
+
+            // In small view we need to go two steps up
+            if (!(parent instanceof LinearLayout))
+                parent = (ViewGroup) parent.getParent();
+
+            if (parent.getLayoutTransition() == null) {
+                parent.setLayoutTransition(new LayoutTransition());
+                needsLayoutTransitionFix = false;
+            }
+        }
     }
 
     /**
