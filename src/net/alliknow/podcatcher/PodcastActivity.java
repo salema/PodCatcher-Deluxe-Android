@@ -476,7 +476,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         else if (view.isSmallPortrait())
             logoViewMode = LogoViewMode.SMALL;
 
-        podcastListFragment.setLogoVisibility(logoViewMode);
+        podcastListFragment.updateLogo(logoViewMode);
     }
 
     @Override
