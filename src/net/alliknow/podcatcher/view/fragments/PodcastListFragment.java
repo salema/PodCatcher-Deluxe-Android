@@ -107,7 +107,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
         }
 
         this.addRemoveDuration = getResources().getInteger(android.R.integer.config_mediumAnimTime);
-        this.slideDuration = 5000; // addRemoveDuration;
+        this.slideDuration = addRemoveDuration;
     }
 
     @Override
@@ -324,12 +324,11 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
             // LARGE shows the big image view below the list
             if (LogoViewMode.LARGE.equals(logoViewMode)) {
+                updatePodcastLogoView();
+                logoView.setVisibility(View.VISIBLE);
+
                 if (needsSlide && logoViewHeight > 0)
                     slideInLogoView();
-                else if (!animating && logoViewHeight > 0) {
-                    logoView.setVisibility(View.VISIBLE);
-                    updatePodcastLogoView();
-                }
             }
             // NONE hides the logo view
             else {
@@ -342,8 +341,6 @@ public class PodcastListFragment extends PodcatcherListFragment {
     }
 
     private void slideInLogoView() {
-        logoView.setVisibility(View.VISIBLE);
-
         ValueAnimator animator = ValueAnimator.ofInt(0, logoViewHeight);
         animator.setDuration(slideDuration);
         animator.addUpdateListener(new AnimatorUpdateListener() {
