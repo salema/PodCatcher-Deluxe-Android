@@ -439,7 +439,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             super.onDownloadProgress(episode, percent);
 
         // Check whether the episode is potentially currently displayed
-        if (filteredEpisodeList.contains(episode))
+        if (filteredEpisodeList != null && filteredEpisodeList.contains(episode))
             episodeListFragment.showProgress(filteredEpisodeList.indexOf(episode), percent);
     }
 
