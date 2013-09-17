@@ -30,7 +30,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import net.alliknow.podcatcher.AddPodcastActivity;
 import net.alliknow.podcatcher.R;
 
 /**
@@ -91,10 +90,10 @@ public class FirstRunFragment extends DialogFragment {
         final Button addButton = (Button) view.findViewById(R.id.first_run_add_button);
         addButton.setOnClickListener(new View.OnClickListener() {
 
-        	 @Override
-             public void onClick(View v) {
-                 listener.onAddPodcasts();
-             }
+            @Override
+            public void onClick(View v) {
+                listener.onAddPodcasts();
+            }
         });
     }
 

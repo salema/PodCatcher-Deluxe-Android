@@ -68,6 +68,8 @@ public class Episode implements Comparable<Episode> {
      * 
      * @param podcast Podcast this episode belongs to. Cannot be
      *            <code>null</code>.
+     * @param index The index of the episode created in the podcast's feed (used
+     *            for sorting if the publication date is not available).
      */
     public Episode(Podcast podcast, int index) {
         if (podcast == null)
