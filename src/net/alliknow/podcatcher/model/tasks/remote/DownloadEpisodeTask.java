@@ -112,8 +112,8 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
     /**
      * Create a new task.
      * 
-     * @param podcatcher
-     * @param listener
+     * @param podcatcher The podcatcher app handle.
+     * @param listener The call-back used by the task.
      */
     public DownloadEpisodeTask(Podcatcher podcatcher, DownloadTaskListener listener) {
         this.podcatcher = podcatcher;
