@@ -117,7 +117,7 @@ public class EpisodeListItemView extends RelativeLayout {
      * Update the episode progress indicator to the progress given. Does not
      * change the visibility of the progress view.
      * 
-     * @param progress Progress to show.
+     * @param percent Progress to show.
      */
     public void updateProgress(int percent) {
         // Show progress in progress bar

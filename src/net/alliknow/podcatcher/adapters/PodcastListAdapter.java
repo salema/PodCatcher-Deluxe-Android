@@ -49,6 +49,11 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
         this.list = podcastList;
     }
 
+    /**
+     * Replace the current podcast list with a new one.
+     * 
+     * @param newList The new list (not <code>null</code>).
+     */
     public void updateList(List<Podcast> newList) {
         this.list = newList;
 
