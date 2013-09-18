@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/** Copyright 2012, 2013 Kevin Hausmann
+ *
+ * This file is part of PodCatcher Deluxe.
+ *
+ * PodCatcher Deluxe is free software: you can redistribute it 
+ * and/or modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * PodCatcher Deluxe is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
+ */
+-->
+<resources>
+    <string name="divider">Rozdělovač</string>
+    <string name="about">O programu Video Podcatcher Deluxe</string>
+    <string name="help">Nápověda</string>
+    <string name="no_browser">Není dostupný žádný prohlížeč!</string>
+    <string name="wait">Čekat</string>
+    <string name="connect">Spojit</string>
+    <string name="load">Nahrát</string>
+    <string name="stop">Zastavit</string>
+    <string name="remove">Odstranit</string>
+    <string name="parse">Číst</string>
+    <string name="play">Přehrát</string>
+    <string name="pause">Pozastavit</string>
+    <string name="resume">Pokračovat</string>
+    <string name="next">Další</string>
+    <string name="first_run_title">Vítejte</string>
+    <string name="first_run_text">Vaším prvním krokem je přidání odběru jednoho nebo více záznamů (podcast), zvukových a obrazových. Použijte, prosím, zelené tlačítko níže k otevření dialogu Přidat záznam. Dialog nabízí i návrhy záznamů a seznam odběrů OPML.</string>
+    <string name="first_run_add">Přidat záznamy</string>
+    <string name="player_buffering">Ukládání do vyrovnávací paměti&#8230;</string>
+    <string name="player_label">u %1$s z %2$s</string>
+    <string name="player_label_short">%1$s z %2$s</string>
+    <string name="player_error">Přehrávání se nezdařilo</string>
+    <string name="podcast_image">Logo záznamu</string>
+    <string name="podcast_none">Nepřidán žádný záznam.</string>
+    <string name="podcast_none_long">Nepřidán žádný záznam (podcast). Použijte, prosím, ikonu plus v nabídce pro přidání odběrů do tohoto seznamu.</string>
+    <string name="podcast_none_selected">Nevybrán žádný záznam</string>
+    <string name="podcast_select_all">Vybrat všechny záznamy</string>
+    <plurals name="podcasts">
+        <item quantity="one">Jeden záznam</item>
+        <item quantity="few">%d záznamy</item>
+        <item quantity="other">%d záznamů</item>
+    </plurals>
+    <string name="podcast_add_title">Nový záznam</string>
+    <string name="podcast_add_button">Přidat</string>
+    <string name="podcast_enter_url_here">Kopírovat adresu záznamu zde</string>
+    <string name="podcast_add_error">Nový záznam se nepodařilo nahrát.</string>
+    <string name="podcast_load_error">Nelze nahrát záznam. Ujistěte se, prosím, že jste připojen k internetu!</string>
+    <string name="podcast_load_multiple_progress">%1$d z %2$d záznamů</string>
+    <string name="podcast_load_multiple_error">Záznam\n\"%s\"\nse nepodařilo nahrát.</string>
+    <string name="episode_none">Žádné díly v tomto záznamu</string>
+    <string name="episode_no_description">Není dostupný žádný popis.</string>
+    <string name="episode_none_selected">Nevybrán žádný díl</string>
+    <plurals name="episodes">
+        <item quantity="one">Jeden díl</item>
+        <item quantity="few">%d díly</item>
+        <item quantity="other">%d dílů</item>
+    </plurals>
+    <plurals name="episodes_new">
+        <item quantity="one">Jeden nový díl</item>
+        <item quantity="few">%d nové díly</item>
+        <item quantity="other">%d nových dílů</item>
+    </plurals>
+    <string name="episodes_no_new">Žádné nové díly</string>
+    <string name="episodes_total">celkem</string>
+    <plurals name="episodes_filtered">
+        <item quantity="one">Přefiltrován jeden starý díl</item>
+        <item quantity="few">Přefiltrovány %d staré díly</item>
+        <item quantity="other">Přefiltrováno %d starých dílů</item>
+    </plurals>
+    <string name="episodes_select_all">Vybrat vše</string>
+    <string name="episodes_old">Starý</string>
+    <string name="episodes_filter_all">Vše</string>
+    <string name="episodes_filter_new">Nový</string>
+    <string name="episodes_sort_toggle">Obrátit pořadí</string>
+    <string name="download">Stahování</string>
+    <string name="downloads">Stahování</string>
+    <string name="downloads_none">Žádné stahování. Použijte ikonu pro stahování v nabídce pro zpřístupnění dílů, když nejste připojen k internetu.</string>
+    <string name="download_started">Stahování spuštěno pro \n\"%s\"</string>
+    <string name="download_failed">Stahování se nepodařilo u \n\"%s\"</string>
+    <string name="playlist">Seznam skladeb</string>
+    <string name="playlist_empty">Váš seznam skladeb je prázdný. Použijte nabídku pro seznam dílů (stiskněte a podržte všechny díly k vložení) k přidání dílů do seznamu skladeb.</string>
+    <string name="playlist_add">Přidat do seznamu skladeb</string>
+    <string name="playlist_remove">Odstranit ze seznamu skladeb</string>
+    <string name="file_select">Vybrat</string>
+    <string name="file_select_file">Vybrat soubor</string>
+    <string name="file_select_folder">Vybrat složku</string>
+    <string name="file_select_access_denied">Přístup odepřen!</string>
+    <string name="opml_import">Zavést OPML</string>
+    <string name="opml_import_failed">Zavedení OPML se nezdařilo</string>
+    <string name="opml_export">Vyvést OPML</string>
+    <string name="opml_export_success">Soubor OPML uložen v\n%s</string>
+    <string name="opml_export_failed">Vyvedení OPML se nezdařilo</string>
+    <string name="suggestions">Návrhy&#8230;</string>
+    <string name="suggested_podcasts">Navržené záznamy</string>
+    <string name="suggestion_listen">Poslouchat</string>
+    <string name="suggestion_watch">Dívat se</string>
+    <string name="suggestions_none">Žádné návrhy. Změňte, prosím, své filtry.</string>
+    <string name="suggestions_load_error">Návrhy se nepodařilo nahrát. Prověřte, prosím, své internetové spojení!</string>
+    <string name="suggestions_send">Odeslat návrh záznamu&#8230;</string>
+    <string name="preferences">Nastavení</string>
+    <string name="pref_select_all_on_start_title">Vybrat vše při spuštění</string>
+    <string name="pref_select_all_on_start_summary">Nahrát všechny odběry, když se program spouští</string>
+    <string name="pref_category_interface">Rozhraní</string>
+    <string name="pref_theme_color_title">Barva motivu</string>
+    <string name="pref_theme_color_dialog_title">Vybrat barvu motivu</string>
+    <string name="pref_theme_color_dialog_use">Stiskněte, aby se nová barva použila</string>
+    <string name="pref_wide_episode_list_title">Rozsáhlý seznam dílů</string>
+    <string name="pref_wide_episode_list_summary">Udělat prostor pro více podrobností k dílu</string>
+    <string name="pref_auto_download_title">Automatické stahování</string>
+    <string name="pref_auto_download_summary">Zpřístupnit nové díly mimo internet</string>
+    <string name="pref_auto_delete_title">Automatické smazání</string>
+    <string name="pref_auto_delete_summary">Odstranit stažené díly, když je přehrávání dokončeno</string>
+    <string name="pref_download_folder_title">Složka pro stahování</string>
+</resources>
