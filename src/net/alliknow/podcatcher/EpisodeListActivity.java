@@ -322,8 +322,13 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
-        if (selection.isSingle() && podcast.equals(selection.getPodcast()))
-            episodeListFragment.showProgress(progress);
+        try {
+            if (selection.isSingle() && podcast.equals(selection.getPodcast()))
+                episodeListFragment.showProgress(progress);
+        } catch (NullPointerException nep) {
+            // When the load progress comes to quickly, the fragment might not
+            // be present yet, pass...
+        }
     }
 
     @Override
