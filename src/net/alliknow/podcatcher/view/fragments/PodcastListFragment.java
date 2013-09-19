@@ -341,6 +341,8 @@ public class PodcastListFragment extends PodcatcherListFragment {
     }
 
     private void slideInLogoView() {
+        final LayoutParams layoutParams = logoView.getLayoutParams();
+
         ValueAnimator animator = ValueAnimator.ofInt(0, logoViewHeight);
         animator.setDuration(slideDuration);
         animator.addUpdateListener(new AnimatorUpdateListener() {
@@ -348,7 +350,6 @@ public class PodcastListFragment extends PodcatcherListFragment {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 // Animate to new layout params
-                final LayoutParams layoutParams = logoView.getLayoutParams();
                 layoutParams.height = (Integer) animation.getAnimatedValue();
                 logoView.setLayoutParams(layoutParams);
             }
@@ -366,6 +367,8 @@ public class PodcastListFragment extends PodcatcherListFragment {
     }
 
     private void slideOutLogoView() {
+        final LayoutParams layoutParams = logoView.getLayoutParams();
+
         ValueAnimator animator = ValueAnimator.ofInt(logoViewHeight, 0);
         animator.setDuration(slideDuration);
         animator.addUpdateListener(new AnimatorUpdateListener() {
@@ -373,7 +376,6 @@ public class PodcastListFragment extends PodcatcherListFragment {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 // Animate to new layout params
-                final LayoutParams layoutParams = logoView.getLayoutParams();
                 layoutParams.height = (Integer) animation.getAnimatedValue();
                 logoView.setLayoutParams(layoutParams);
             }
@@ -384,7 +386,6 @@ public class PodcastListFragment extends PodcatcherListFragment {
             public void onAnimationEnd(Animator animation) {
                 logoView.setVisibility(View.GONE);
                 // Reset to old layout params
-                final LayoutParams layoutParams = logoView.getLayoutParams();
                 layoutParams.height = logoViewHeight;
                 logoView.setLayoutParams(layoutParams);
 
