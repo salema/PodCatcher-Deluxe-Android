@@ -233,6 +233,12 @@ public abstract class PodcatcherListFragment extends ListFragment {
         updateUiElementVisibility();
     }
 
+    protected View findListItemViewForIndex(int index) {
+        // Adjust the position relative to list scroll state
+        final int firstVisiblePosition = getListView().getFirstVisiblePosition();
+        return getListView().getChildAt(index - firstVisiblePosition);
+    }
+
     /**
      * Use the internal state variables to determine wanted UI state.
      * Sub-classes might want to extend this.

@@ -281,7 +281,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     @Override
     public void onPodcastAdded(Podcast podcast) {
         // Update podcast list
-        podcastListFragment.setPodcastList(podcastManager.getPodcastList());
+        podcastListFragment.addPodcast(podcast);
         // Update UI
         updateActionBar();
 
@@ -308,7 +308,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     @Override
     public void onPodcastRemoved(Podcast podcast) {
         // Update podcast list
-        podcastListFragment.setPodcastList(podcastManager.getPodcastList());
+        podcastListFragment.removePodcast(podcast);
         // Update UI
         updateActionBar();
 

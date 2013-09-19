@@ -17,6 +17,8 @@
 
 package net.alliknow.podcatcher.view.fragments;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -41,6 +43,7 @@ import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.PodcastListItemView;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -77,6 +80,8 @@ public class PodcastListFragment extends PodcatcherListFragment {
         LARGE
     };
 
+    private int addRemoveDuration;
+
     /** Status flag indicating that our view is created */
     private boolean viewCreated = false;
 
@@ -91,6 +96,8 @@ public class PodcastListFragment extends PodcatcherListFragment {
             throw new ClassCastException(activity.toString()
                     + " must implement OnSelectPodcastListener");
         }
+
+        this.addRemoveDuration = getResources().getInteger(android.R.integer.config_mediumAnimTime);
     }
 
     @Override
@@ -209,6 +216,47 @@ public class PodcastListFragment extends PodcatcherListFragment {
         }
     }
 
+    public void addPodcast(Podcast podcast) {
+        currentPodcastList.add(podcast);
+        Collections.sort(currentPodcastList);
+        ((PodcastListAdapter) adapter).updateList(currentPodcastList);
+
+        final int index = currentPodcastList.indexOf(podcast);
+
+        if (viewCreated) {
+            final PodcastListItemView listItemView = (PodcastListItemView) findListItemViewForIndex(index);
+
+            // Is the position visible?
+            if (listItemView != null) {
+                listItemView.setAlpha(0f);
+                listItemView.animate().alpha(1f).setDuration(addRemoveDuration).setListener(null);
+            }
+        }
+    }
+
+    public void removePodcast(Podcast podcast) {
+        final int index = currentPodcastList.indexOf(podcast);
+
+        if (viewCreated) {
+            final PodcastListItemView listItemView = (PodcastListItemView) findListItemViewForIndex(index);
+
+            // Is the position visible?
+            if (listItemView != null)
+                listItemView.animate().alpha(0f).setDuration(addRemoveDuration)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                currentPodcastList.remove(index);
+                                ((PodcastListAdapter) adapter).updateList(currentPodcastList);
+                                // Set it back to opaque because the view might
+                                // be
+                                // recycled and we need it to show
+                                listItemView.setAlpha(1f);
+                            }
+                        });
+        }
+    }
+
     /**
      * Show progress for a certain position in the podcast list. Progress will
      * ignored if the item is not visible.
@@ -220,10 +268,8 @@ public class PodcastListFragment extends PodcatcherListFragment {
         // To prevent this if we are not ready to handle progress update
         // e.g. on app termination
         if (viewCreated) {
-            // Adjust the position relative to list scroll state
-            final int firstVisiblePosition = getListView().getFirstVisiblePosition();
-            final PodcastListItemView listItemView =
-                    (PodcastListItemView) getListView().getChildAt(position - firstVisiblePosition);
+            final PodcastListItemView listItemView = (PodcastListItemView) findListItemViewForIndex(position);
+
             // Is the position visible?
             if (listItemView != null)
                 listItemView.updateProgress(progress);

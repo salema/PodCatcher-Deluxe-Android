@@ -35,6 +35,11 @@ abstract class PodcatcherListItemView extends RelativeLayout {
     /** Our podcast manager handle */
     protected final PodcastManager podcastManager;
 
+    /** Flag for progress bar visibility, needed for correct crossfade */
+    protected boolean isShowingProgress;
+    /** Last object's id show by this view, needed for correct crossfade */
+    protected int lastItemId;
+
     /** The animation duration to use for crossfade */
     private final int crossfadeDuration;
 
@@ -75,6 +80,9 @@ abstract class PodcatcherListItemView extends RelativeLayout {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         outgoing.setVisibility(View.GONE);
+                        // Set it back to opaque because the view might be
+                        // recycled and we need it to show
+                        outgoing.setAlpha(1f);
                     }
                 });
     }

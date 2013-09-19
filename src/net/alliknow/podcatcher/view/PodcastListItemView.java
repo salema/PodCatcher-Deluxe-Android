@@ -19,6 +19,7 @@ package net.alliknow.podcatcher.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -72,24 +73,41 @@ public class PodcastListItemView extends PodcatcherListItemView {
         final boolean loading = podcastManager.isLoading(podcast);
         final int episodeNumber = podcast.getEpisodeNumber();
         final boolean showLogoView = showLogo && podcast.getLogo() != null;
+        final boolean progressShouldFade = podcast.hashCode() == lastItemId;
 
         // 1. Set podcast title
         titleTextView.setText(podcast.getName());
 
-        // 2. Set caption
+        // 2. Set caption text and visibility
         captionTextView.setText(getResources().getQuantityString(
                 R.plurals.episodes, episodeNumber, episodeNumber));
-        captionTextView.setVisibility(episodeNumber > 0 && !loading ? VISIBLE : GONE);
+        // The caption should only show if there are episodes or there is
+        // progress to display
+        ((View) captionTextView.getParent())
+                .setVisibility(episodeNumber > 0 || (loading && showProgress) ? VISIBLE : GONE);
+        // Whether the caption show episode numbers, either faded-in or directly
+        if (episodeNumber > 0 && !loading && isShowingProgress && progressShouldFade)
+            crossfade(captionTextView, progressView);
+        else
+            captionTextView.setVisibility(episodeNumber > 0 && !loading ? VISIBLE : GONE);
 
-        // 3. Set podcast logo if available
-        logoView.setVisibility(showLogoView ? VISIBLE : GONE);
-        logoView.setImageBitmap(showLogoView ? podcast.getLogo() : null);
-
-        // 4. Show/hide progress view
-        progressView.setVisibility(loading && showProgress ? VISIBLE : GONE);
+        // 3. Show/hide progress view, either fade-in or directly
+        if (loading && showProgress && !isShowingProgress && progressShouldFade)
+            crossfade(progressView, captionTextView);
+        else
+            progressView.setVisibility(loading && showProgress ? VISIBLE : GONE);
         // We need to reset the progress here, because the view might be
         // recycled and it should not show another podcast's progress
         progressView.publishProgress(Progress.WAIT);
+
+        // 4. Set podcast logo if available
+        logoView.setVisibility(showLogoView ? VISIBLE : GONE);
+        logoView.setImageBitmap(showLogoView ? podcast.getLogo() : null);
+
+        // 5. Store state to make sure it is available next time show() is
+        // called and we can decide whether to crossfade or not
+        this.isShowingProgress = loading;
+        this.lastItemId = podcast.hashCode();
     }
 
     /**
