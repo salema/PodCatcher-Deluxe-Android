@@ -188,7 +188,6 @@ com.podcatcher.deluxe.video.R$id: int file_icon
 com.podcatcher.deluxe.video.R$id: int file_name
 com.podcatcher.deluxe.video.R$id: int files
 com.podcatcher.deluxe.video.R$id: int filter_menuitem
-com.podcatcher.deluxe.video.R$id: int filtered_warning
 com.podcatcher.deluxe.video.R$id: int first_run_add_button
 com.podcatcher.deluxe.video.R$id: int first_run_help_button
 com.podcatcher.deluxe.video.R$id: int fullscreen
@@ -196,10 +195,11 @@ com.podcatcher.deluxe.video.R$id: int help_menuitem
 com.podcatcher.deluxe.video.R$id: int hex_val
 com.podcatcher.deluxe.video.R$id: int icon
 com.podcatcher.deluxe.video.R$id: int import_opml_button
+com.podcatcher.deluxe.video.R$id: int info_box
+com.podcatcher.deluxe.video.R$id: int info_box_divider
 com.podcatcher.deluxe.video.R$id: int list_item_caption
 com.podcatcher.deluxe.video.R$id: int list_item_main_content
 com.podcatcher.deluxe.video.R$id: int list_item_progress
-com.podcatcher.deluxe.video.R$id: int list_item_progress_holder
 com.podcatcher.deluxe.video.R$id: int list_item_title
 com.podcatcher.deluxe.video.R$id: int new_color_panel
 com.podcatcher.deluxe.video.R$id: int old_color_panel
@@ -247,7 +247,6 @@ com.podcatcher.deluxe.video.R$id: int suggestion_type_select
 com.podcatcher.deluxe.video.R$id: int surface
 com.podcatcher.deluxe.video.R$id: int text_hex_wrapper
 com.podcatcher.deluxe.video.R$id: int title
-com.podcatcher.deluxe.video.R$id: int warning_divider
 com.podcatcher.deluxe.video.R$integer: int progress_bar_horizontal_weight
 com.podcatcher.deluxe.video.R$layout: int add_podcast
 com.podcatcher.deluxe.video.R$layout: int color_preview_widget
@@ -328,6 +327,7 @@ com.podcatcher.deluxe.video.R$string: int playlist
 com.podcatcher.deluxe.video.R$string: int playlist_add
 com.podcatcher.deluxe.video.R$string: int playlist_empty
 com.podcatcher.deluxe.video.R$string: int playlist_remove
+com.podcatcher.deluxe.video.R$string: int playlist_swipe_reorder
 com.podcatcher.deluxe.video.R$string: int podcast_add_button
 com.podcatcher.deluxe.video.R$string: int podcast_add_error
 com.podcatcher.deluxe.video.R$string: int podcast_add_title
@@ -406,6 +406,7 @@ com.podcatcher.deluxe.video.view.HorizontalProgressView: HorizontalProgressView(
 com.podcatcher.deluxe.video.view.HorizontalProgressView: int getLayout()
 com.podcatcher.deluxe.video.view.PodcastListItemView
 com.podcatcher.deluxe.video.view.PodcastListItemView: PodcastListItemView(android.content.Context,android.util.AttributeSet)
+com.podcatcher.deluxe.video.view.PodcatcherListItemView: PodcatcherListItemView(android.content.Context,android.util.AttributeSet)
 com.podcatcher.deluxe.video.view.ProgressView
 com.podcatcher.deluxe.video.view.ProgressView: ProgressView(android.content.Context,android.util.AttributeSet)
 com.podcatcher.deluxe.video.view.ProgressView: int getLayout()

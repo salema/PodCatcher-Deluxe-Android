@@ -975,8 +975,6 @@ com.podcatcher.deluxe.video.model.PodcastManager:
     private static final int MAX_STALE_OFFLINE
     public static final java.lang.String OPML_FILENAME
     public static final java.lang.String OPML_FILE_ENCODING
-    650:676:private void putSamplePodcasts()
-    680:683:private static com.podcatcher.deluxe.video.model.types.Podcast createPodcast(java.lang.String,java.lang.String)
 com.podcatcher.deluxe.video.model.tags.JSON
 com.podcatcher.deluxe.video.model.tags.METADATA
 com.podcatcher.deluxe.video.model.tags.OPML
