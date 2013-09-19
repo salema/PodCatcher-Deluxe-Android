@@ -86,6 +86,7 @@
     <string name="playlist_empty">La lista de reproducción está vacía. Para agregar archivos nuevos, utilice el menú contextual de la lista de episodios (para entrar, haga clic en un episodio y manténgalo presionado).</string>
     <string name="playlist_add">Añadir a la lista de reproducción</string>
     <string name="playlist_remove">Eliminar de la lista de reproducción</string>
+    <string name="playlist_swipe_reorder">Para reordenar los episodios, coloque el dedo en un episodio y deslícelo hacia la izquierda o la derecha</string>
     <string name="file_select">Seleccionar</string>
     <string name="file_select_file">Seleccionar archivo</string>
     <string name="file_select_folder">Seleccionar carpeta</string>

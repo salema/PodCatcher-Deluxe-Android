@@ -90,6 +90,7 @@
     <string name="playlist_empty">Váš seznam skladeb je prázdný. Použijte nabídku pro seznam dílů (stiskněte a podržte všechny díly k vložení) k přidání dílů do seznamu skladeb.</string>
     <string name="playlist_add">Přidat do seznamu skladeb</string>
     <string name="playlist_remove">Odstranit ze seznamu skladeb</string>
+    <string name="playlist_swipe_reorder">Přejeďte prstem nad díly pro přeskupení</string>
     <string name="file_select">Vybrat</string>
     <string name="file_select_file">Vybrat soubor</string>
     <string name="file_select_folder">Vybrat složku</string>

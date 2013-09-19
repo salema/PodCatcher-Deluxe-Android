@@ -153,6 +153,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
 
         episodeListFragment.resetAndSpin();
         episodeListFragment.setShowPodcastNames(true);
+        episodeListFragment.setEnableSwipeReorder(true);
 
         new LoadPlaylistTask(this).execute((Void) null);
     }

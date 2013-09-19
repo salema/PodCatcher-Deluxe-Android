@@ -86,6 +86,7 @@
     <string name="playlist_empty">Votre liste de lecture est vide. Pour y ajouter de nouveaux fichiers, utilisez le menu contextuel de la liste d\'épisodes (pour y entrer, cliquez sur un épisode tout en maintenant la pression).</string>
     <string name="playlist_add">Ajouter à la liste de lecture</string>
     <string name="playlist_remove">Supprimer de la liste de lecture</string>
+    <string name="playlist_swipe_reorder">Pour réorganiser la liste d\'épisodes, posez le doigt sur un épisode et effectuez un balayage vers la gauche ou vers la droite</string>
     <string name="file_select">Sélectionner</string>
     <string name="file_select_file">Sélectionner fichier</string>
     <string name="file_select_folder">Sélectionner dossier</string>

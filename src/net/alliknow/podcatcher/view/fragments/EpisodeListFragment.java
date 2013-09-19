@@ -33,11 +33,13 @@ import android.widget.TextView;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.listeners.EpisodeListContextListener;
+import net.alliknow.podcatcher.listeners.OnReorderEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnReverseSortingListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnToggleFilterListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.view.EpisodeListItemView;
+import net.alliknow.podcatcher.view.fragments.SwipeReorderListViewTouchListener.ReorderCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,17 +47,22 @@ import java.util.List;
 /**
  * List fragment to display the list of episodes.
  */
-public class EpisodeListFragment extends PodcatcherListFragment {
+public class EpisodeListFragment extends PodcatcherListFragment implements ReorderCallback {
 
     /** The list of episodes we are currently showing. */
     private List<Episode> currentEpisodeList;
 
     /** The activity we are in (listens to user selection) */
     private OnSelectEpisodeListener episodeSelectionListener;
+    /** The activity we are in (listens to reorder requests) */
+    private OnReorderEpisodeListener episodeReorderListener;
     /** The activity we are in (listens to filter toggles) */
     private OnToggleFilterListener filterListener;
     /** The activity we are in (listens to sorting toggles) */
     private OnReverseSortingListener sortingListener;
+
+    /** Out swipe to reorder listener */
+    private SwipeReorderListViewTouchListener swipeReorderListener;
 
     /** Flag for show sort menu item state */
     private boolean showSortMenuItem = false;
@@ -67,12 +74,14 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     private boolean filterMenuItemState = false;
     /** Flag for the top progress bar state */
     private boolean showTopProgressBar = false;
-    /** Flag for show filter warning state */
-    private boolean showFilterWarning = false;
-    /** The number of episodes filtered */
-    private int filteredEpisodesCount = 0;
+    /** Flag for show info box state state */
+    private boolean showInfoBox = false;
+    /** The text string displayed in the info box */
+    private String infoBoxText;
     /** Flag to indicate whether podcast names should be shown for episodes */
     private boolean showPodcastNames = false;
+    /** Flag indicating whether list items can be swiped to reorder */
+    private boolean enableSwipeReorder = false;
 
     /** Identifier for the string the empty view shows. */
     private int emptyStringId = R.string.episode_none;
@@ -83,10 +92,10 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     private ProgressBar topProgressBar;
     /** The filter episodes menu bar item */
     private MenuItem filterMenuItem;
-    /** The filter warning label */
-    private TextView filterWarningLabel;
-    /** The filter warning label divider */
-    private View filterWarningDivider;
+    /** The info box label */
+    private TextView infoBoxTextView;
+    /** The info box label divider */
+    private View infoBoxDivider;
 
     /** Status flag indicating that our view is created */
     private boolean viewCreated = false;
@@ -98,11 +107,12 @@ public class EpisodeListFragment extends PodcatcherListFragment {
         // Make sure our listener is present
         try {
             this.episodeSelectionListener = (OnSelectEpisodeListener) activity;
+            this.episodeReorderListener = (OnReorderEpisodeListener) activity;
             this.filterListener = (OnToggleFilterListener) activity;
             this.sortingListener = (OnReverseSortingListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnSelectEpisodeListener, " +
+                    + " must implement OnSelectEpisodeListener, OnReorderEpisodeListener, " +
                     "OnFilterToggleListener, and OnReverseSortingListener");
         }
     }
@@ -127,22 +137,27 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
         topProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar_top);
 
-        filterWarningLabel = (TextView) view.findViewById(R.id.filtered_warning);
-        filterWarningDivider = view.findViewById(R.id.warning_divider);
+        infoBoxTextView = (TextView) view.findViewById(R.id.info_box);
+        infoBoxDivider = view.findViewById(R.id.info_box_divider);
 
-        filterWarningLabel.setBackgroundColor(themeColor);
-        filterWarningDivider.setBackgroundColor(themeColor);
+        infoBoxTextView.setBackgroundColor(themeColor);
+        infoBoxDivider.setBackgroundColor(themeColor);
 
         viewCreated = true;
 
         // Set list choice listener (context action mode)
         getListView().setMultiChoiceModeListener(new EpisodeListContextListener(this));
 
+        // Create and set the swipe-to-reorder listener on the listview.
+        swipeReorderListener = new SwipeReorderListViewTouchListener(getListView(), this);
+        getListView().setOnTouchListener(swipeReorderListener);
+        getListView().setOnScrollListener(swipeReorderListener.makeScrollListener());
+
         // This will make sure we show the right information once the view
         // controls are established (the list might have been set earlier)
         if (currentEpisodeList != null) {
             setEpisodeList(currentEpisodeList);
-            setFilterWarning(showFilterWarning, filteredEpisodesCount);
+            setShowTopInfoBox(showInfoBox, infoBoxText);
             setShowTopProgress(showTopProgressBar);
         }
     }
@@ -183,6 +198,35 @@ public class EpisodeListFragment extends PodcatcherListFragment {
         // Find selected episode and alert listener
         Episode selectedEpisode = (Episode) adapter.getItem(position);
         episodeSelectionListener.onEpisodeSelected(selectedEpisode);
+    }
+
+    @Override
+    public boolean canReorder(int position) {
+        return enableSwipeReorder && currentEpisodeList != null && currentEpisodeList.size() > 1;
+    }
+
+    @Override
+    public void onMoveUp(int[] positions) {
+        if (currentEpisodeList != null && positions.length > 0) {
+            try {
+                final Episode episode = currentEpisodeList.get(positions[0]);
+                episodeReorderListener.onMoveEpisodeUp(episode);
+            } catch (IndexOutOfBoundsException e) {
+                // pass
+            }
+        }
+    }
+
+    @Override
+    public void onMoveDown(int[] positions) {
+        if (currentEpisodeList != null && positions.length > 0) {
+            try {
+                final Episode episode = currentEpisodeList.get(positions[0]);
+                episodeReorderListener.onMoveEpisodeDown(episode);
+            } catch (IndexOutOfBoundsException e) {
+                // pass
+            }
+        }
     }
 
     @Override
@@ -292,21 +336,20 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     }
 
     /**
-     * Configure whether the fragment should show the filter warning. This will
-     * only work once the view is created.
+     * Configure whether the fragment should show the info box at the top of the
+     * list.
      * 
-     * @param show Whether to show the warning at all.
-     * @param count The amount of episodes filtered.
+     * @param show Whether to show the info box at all.
+     * @param info The info text to show.
      */
-    public void setFilterWarning(boolean show, int count) {
-        this.showFilterWarning = show;
-        this.filteredEpisodesCount = count;
+    public void setShowTopInfoBox(boolean show, String info) {
+        this.showInfoBox = show;
+        this.infoBoxText = info;
 
         if (viewCreated) {
-            filterWarningLabel.setVisibility(show ? View.VISIBLE : View.GONE);
-            filterWarningDivider.setVisibility(show ? View.VISIBLE : View.GONE);
-            filterWarningLabel.setText(getResources().getQuantityString(
-                    R.plurals.episodes_filtered, count, count));
+            infoBoxTextView.setVisibility(show ? View.VISIBLE : View.GONE);
+            infoBoxDivider.setVisibility(show ? View.VISIBLE : View.GONE);
+            infoBoxTextView.setText(info);
         }
     }
 
@@ -334,9 +377,19 @@ public class EpisodeListFragment extends PodcatcherListFragment {
         super.setThemeColors(color, variantColor);
 
         if (viewCreated) {
-            filterWarningLabel.setBackgroundColor(color);
-            filterWarningDivider.setBackgroundColor(color);
+            infoBoxTextView.setBackgroundColor(color);
+            infoBoxDivider.setBackgroundColor(color);
         }
+    }
+
+    /**
+     * Set to <code>true</code> to make list items (episodes) "flingable". Uses
+     * the {@link SwipeReorderListViewTouchListener} and its callback methods.
+     * 
+     * @param enable Whether list item can be swiped.
+     */
+    public void setEnableSwipeReorder(boolean enable) {
+        this.enableSwipeReorder = enable;
     }
 
     /**
@@ -379,11 +432,12 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     protected void reset() {
         if (viewCreated) {
             emptyView.setText(R.string.podcast_none_selected);
-            setFilterWarning(false, 0);
+            setShowTopInfoBox(false, null);
         }
 
         currentEpisodeList = null;
         showPodcastNames = false;
+        enableSwipeReorder = false;
 
         super.reset();
     }
