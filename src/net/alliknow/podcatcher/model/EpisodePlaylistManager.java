@@ -140,17 +140,27 @@ public abstract class EpisodePlaylistManager extends EpisodeDownloadManager {
 
     /**
      * Add an episode to the playlist. The episode will be appended to the end
-     * of the list.
+     * of the list. Does nothing if the episode is already in the playlist.
      * 
      * @param episode The episode to add.
      */
     public void appendToPlaylist(Episode episode) {
-        if (episode != null && metadata != null) {
-            // Only append the episode if it is not already part of the playlist
+        insertAtPlaylistPosition(episode, getPlaylistSize());
+    }
+
+    /**
+     * Insert an episode at the given playlist position. The episode will be
+     * appended if the given position is greater than the number of items in the
+     * playlist. Does nothing if the episode is already in the playlist.
+     * 
+     * @param episode Episode to insert.
+     * @param position Index to insert at (starting at 0).
+     */
+    public void insertAtPlaylistPosition(Episode episode, int position) {
+        if (episode != null && position >= 0) {
+            // Only insert the episode if it is not already part of the playlist
             final List<Episode> playlist = getPlaylist();
             if (!playlist.contains(episode)) {
-                final int position = playlist.size();
-
                 // Find or create the metadata information holder
                 EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
                 if (meta == null) {
@@ -158,8 +168,15 @@ public abstract class EpisodePlaylistManager extends EpisodeDownloadManager {
                     metadata.put(episode.getMediaUrl(), meta);
                 }
 
+                // Increment all other positions if needed
+                if (position < getPlaylistSize())
+                    for (EpisodeMetadata otherMeta : metadata.values())
+                        if (otherMeta.playlistPosition != null
+                                && otherMeta.playlistPosition >= position)
+                            otherMeta.playlistPosition++;
+
                 // Put metadata information
-                meta.playlistPosition = position;
+                meta.playlistPosition = position < getPlaylistSize() ? position : getPlaylistSize();
                 putAdditionalEpisodeInformation(episode, meta);
 
                 // Increment counter

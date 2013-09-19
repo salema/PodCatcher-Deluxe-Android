@@ -86,6 +86,7 @@
     <string name="playlist_empty">Your playlist is empty. Use the episode list\'s context menu (press and hold any episode to enter) to add episodes to the playlist.</string>
     <string name="playlist_add">Add to Playlist</string>
     <string name="playlist_remove">Remove from Playlist</string>
+    <string name="playlist_swipe_reorder">Swipe episodes to re-order</string>
     <string name="file_select">Select</string>
     <string name="file_select_file">Select File</string>
     <string name="file_select_folder">Select Folder</string>

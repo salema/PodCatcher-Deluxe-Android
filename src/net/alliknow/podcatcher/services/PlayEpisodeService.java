@@ -387,16 +387,27 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
     }
 
     /**
-     * Play the next episode in the playlist. Does nothing if there is none.
+     * Play the next episode in the playlist. Does nothing if there is none. If
+     * this is called while the current episode is still set, this episode will
+     * be removed from the playlist. The current episode (if set) also
+     * influences the selection of the next episode: if in the playlist (e.g. as
+     * item number #4) the next episode is selected relative to the current one
+     * (#5). That said, playback will jump to item #1 if the current episode is
+     * either not in the playlist or is at the end of the playlist.
      */
     public void playNext() {
         final List<Episode> playlist = episodeManager.getPlaylist();
+        final int currentEpisodePosition = playlist.indexOf(currentEpisode);
+
+        // Pop the episode off the playlist
+        episodeManager.removeFromPlaylist(currentEpisode);
+        playlist.remove(currentEpisode);
 
         if (!playlist.isEmpty()) {
             Episode next = playlist.get(0);
-            // This will be done again on onPrepared but we what the UI to
-            // update immediately on user action and it does no harm.
-            episodeManager.removeFromPlaylist(next);
+
+            if (currentEpisodePosition > 0 && currentEpisodePosition < playlist.size())
+                next = playlist.get(currentEpisodePosition);
 
             playEpisode(next);
         }
@@ -582,9 +593,6 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
             // Show notification
             startForeground(NOTIFICATION_ID, notification.build(currentEpisode));
             startPlayProgressTimer();
-
-            // Pop the episode off the playlist
-            episodeManager.removeFromPlaylist(currentEpisode);
         } else
             onError(mediaPlayer, 0, 0);
     }
@@ -647,9 +655,15 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
             episodeManager.deleteDownload(currentEpisode);
 
         // If there is another episode on the playlist, play it.
-        if (!episodeManager.isPlaylistEmpty())
+        final List<Episode> playlist = episodeManager.getPlaylist();
+        playlist.remove(currentEpisode);
+        if (!playlist.isEmpty())
             playNext();
+        // If not, stop
         else {
+            // Pop the episode off the playlist
+            episodeManager.removeFromPlaylist(currentEpisode);
+
             reset();
             stopSelfIfUnboundAndIdle();
 

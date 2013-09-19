@@ -23,7 +23,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <TextView
-        android:id="@+id/filtered_warning"
+        android:id="@+id/info_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -33,7 +33,7 @@
         android:textSize="@dimen/font_size_small"
         android:visibility="gone" />
     <ImageView
-        android:id="@+id/warning_divider"
+        android:id="@+id/info_box_divider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scaleType="fitXY"
