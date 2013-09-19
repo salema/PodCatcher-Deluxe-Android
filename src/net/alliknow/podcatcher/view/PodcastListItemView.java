@@ -20,21 +20,16 @@ package net.alliknow.podcatcher.view;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 
 /**
  * A list item view to represent a podcast.
  */
-public class PodcastListItemView extends RelativeLayout {
-
-    /** Our podcast manager handle */
-    private final PodcastManager podcastManager;
+public class PodcastListItemView extends PodcatcherListItemView {
 
     /** The title text view */
     private TextView titleTextView;
@@ -53,8 +48,6 @@ public class PodcastListItemView extends RelativeLayout {
      */
     public PodcastListItemView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-        this.podcastManager = PodcastManager.getInstance();
     }
 
     @Override

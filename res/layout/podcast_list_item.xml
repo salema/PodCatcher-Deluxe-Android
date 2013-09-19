@@ -46,21 +46,24 @@
             android:singleLine="true"
             android:ellipsize="marquee"
             android:textSize="@dimen/font_size_large" />
-        <TextView
-            android:id="@+id/list_item_caption"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="3"
-            android:paddingLeft="@dimen/list_item_padding"
-            android:singleLine="true"
-            android:ellipsize="marquee"
-            android:textSize="@dimen/font_size_small" />
-        <net.alliknow.podcatcher.view.HorizontalProgressView
-        	android:id="@+id/list_item_progress"
-        	android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3"
-        	android:indeterminate="true"
-        	android:visibility="gone" />
+            android:layout_weight="3">
+            <TextView
+                android:id="@+id/list_item_caption"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/list_item_padding"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:textSize="@dimen/font_size_small" />
+            <net.alliknow.podcatcher.view.HorizontalProgressView
+            	android:id="@+id/list_item_progress"
+            	android:layout_width="match_parent"
+                android:layout_height="match_parent"
+            	android:indeterminate="true"
+            	android:visibility="gone" />
+        </FrameLayout>
     </LinearLayout>
 </net.alliknow.podcatcher.view.PodcastListItemView>
