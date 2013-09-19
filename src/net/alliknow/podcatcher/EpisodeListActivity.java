@@ -114,12 +114,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
-    public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
-        if (!selection.isAll() && podcast.equals(selection.getPodcast()))
-            episodeListFragment.showProgress(progress);
-    }
-
-    @Override
     public void onReverseOrder() {
         selection.setEpisodeOrderReversed(!selection.isEpisodeOrderReversed());
 
@@ -213,6 +207,17 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             // Update other UI
             updateSorting();
             updateDivider();
+        }
+    }
+
+    @Override
+    public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
+        try {
+            if (!selection.isAll() && podcast.equals(selection.getPodcast()))
+                episodeListFragment.showProgress(progress);
+        } catch (NullPointerException nep) {
+            // When the load progress comes to quickly, the fragment might not
+            // be present yet, pass...
         }
     }
 
