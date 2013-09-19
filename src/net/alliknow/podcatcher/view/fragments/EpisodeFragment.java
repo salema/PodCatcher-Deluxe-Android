@@ -51,6 +51,8 @@ public class EpisodeFragment extends Fragment {
 
     /** Status flag indicating that our view is created */
     private boolean viewCreated = false;
+    /** Flag for transition animation fix */
+    private boolean needsLayoutTransitionFix = true;
 
     /** The empty view */
     private View emptyView;
@@ -150,15 +152,17 @@ public class EpisodeFragment extends Fragment {
         // in combination with a webview breaks the fragment on some devices
         // (such as the HP Touchpad). Activating the layout transition after the
         // view has been shown once, works.
-        if (viewCreated) {
+        if (needsLayoutTransitionFix && viewCreated) {
             ViewGroup parent = (ViewGroup) getView().getParent();
 
             // In small view we need to go two steps up
             if (!(parent instanceof LinearLayout))
                 parent = (ViewGroup) parent.getParent();
 
-            if (parent.getLayoutTransition() == null)
+            if (parent.getLayoutTransition() == null) {
                 parent.setLayoutTransition(new LayoutTransition());
+                needsLayoutTransitionFix = false;
+            }
         }
     }
 
