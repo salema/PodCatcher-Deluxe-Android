@@ -1447,11 +1447,11 @@ net.alliknow.podcatcher.EpisodeListActivity -> net.alliknow.podcatcher.h:
     void findFragments() -> a
     void onStart() -> onStart
     void onDestroy() -> onDestroy
-    void onPodcastLoadProgress(net.alliknow.podcatcher.model.types.Podcast,net.alliknow.podcatcher.model.types.Progress) -> a
     void onReverseOrder() -> o
     void onPodcastSelected(net.alliknow.podcatcher.model.types.Podcast) -> c
     void onAllPodcastsSelected() -> p
     void onNoPodcastSelected() -> q
+    void onPodcastLoadProgress(net.alliknow.podcatcher.model.types.Podcast,net.alliknow.podcatcher.model.types.Progress) -> a
     void onPodcastLoaded(net.alliknow.podcatcher.model.types.Podcast) -> a
     void onPodcastLoadFailed(net.alliknow.podcatcher.model.types.Podcast) -> b
     void onPodcastLogoLoaded(net.alliknow.podcatcher.model.types.Podcast) -> d
@@ -1732,6 +1732,8 @@ net.alliknow.podcatcher.model.PodcastManager -> net.alliknow.podcatcher.c.b:
     void addLoadPodcastLogoListener(net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener) -> a
     void removeLoadPodcastLogoListener(net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener) -> b
     boolean shouldReload(net.alliknow.podcatcher.model.types.Podcast) -> k
+    void putSamplePodcasts() -> f
+    net.alliknow.podcatcher.model.types.Podcast createPodcast(java.lang.String,java.lang.String) -> a
     net.alliknow.podcatcher.Podcatcher access$0(net.alliknow.podcatcher.model.PodcastManager) -> a
     java.util.Map access$1(net.alliknow.podcatcher.model.PodcastManager) -> b
     java.util.Map access$2(net.alliknow.podcatcher.model.PodcastManager) -> c
@@ -2072,14 +2074,23 @@ net.alliknow.podcatcher.view.HorizontalProgressView -> net.alliknow.podcatcher.v
     int getLayout() -> getLayout
     void publishProgress(net.alliknow.podcatcher.model.types.Progress) -> a
 net.alliknow.podcatcher.view.PodcastListItemView -> net.alliknow.podcatcher.view.PodcastListItemView:
-    net.alliknow.podcatcher.model.PodcastManager podcastManager -> a
-    android.widget.TextView titleTextView -> b
-    android.widget.TextView captionTextView -> c
-    android.widget.ImageView logoView -> d
-    net.alliknow.podcatcher.view.HorizontalProgressView progressView -> e
+    android.widget.TextView titleTextView -> d
+    android.widget.TextView captionTextView -> e
+    android.widget.ImageView logoView -> f
+    net.alliknow.podcatcher.view.HorizontalProgressView progressView -> g
     void onFinishInflate() -> onFinishInflate
     void show(net.alliknow.podcatcher.model.types.Podcast,boolean,boolean) -> a
     void updateProgress(net.alliknow.podcatcher.model.types.Progress) -> a
+net.alliknow.podcatcher.view.PodcatcherListItemView -> net.alliknow.podcatcher.view.c:
+    net.alliknow.podcatcher.model.PodcastManager podcastManager -> a
+    boolean isShowingProgress -> b
+    int lastItemId -> c
+    int crossfadeDuration -> d
+    void crossfade(android.view.View,android.view.View) -> a
+net.alliknow.podcatcher.view.PodcatcherListItemView$1 -> net.alliknow.podcatcher.view.d:
+    net.alliknow.podcatcher.view.PodcatcherListItemView this$0 -> a
+    android.view.View val$outgoing -> b
+    void onAnimationEnd(android.animation.Animator) -> onAnimationEnd
 net.alliknow.podcatcher.view.ProgressView -> net.alliknow.podcatcher.view.ProgressView:
     android.widget.ProgressBar progressBar -> b
     android.widget.TextView progressTextView -> c
@@ -2099,14 +2110,14 @@ net.alliknow.podcatcher.view.SuggestionListItemView -> net.alliknow.podcatcher.v
     java.lang.String createClassificationLabel(net.alliknow.podcatcher.model.types.Podcast) -> a
     void showCheckmarkInsteadOfButton() -> a
     void access$0(net.alliknow.podcatcher.view.SuggestionListItemView) -> a
-net.alliknow.podcatcher.view.SuggestionListItemView$1 -> net.alliknow.podcatcher.view.c:
+net.alliknow.podcatcher.view.SuggestionListItemView$1 -> net.alliknow.podcatcher.view.e:
     net.alliknow.podcatcher.view.SuggestionListItemView this$0 -> a
     net.alliknow.podcatcher.listeners.OnAddSuggestionListener val$listener -> b
     net.alliknow.podcatcher.model.types.Podcast val$suggestion -> c
     void onClick(android.view.View) -> onClick
-net.alliknow.podcatcher.view.Utils -> net.alliknow.podcatcher.view.d:
+net.alliknow.podcatcher.view.Utils -> net.alliknow.podcatcher.view.f:
     java.lang.String getRelativePubDate(net.alliknow.podcatcher.model.types.Episode) -> a
-net.alliknow.podcatcher.view.ViewMode -> net.alliknow.podcatcher.view.e:
+net.alliknow.podcatcher.view.ViewMode -> net.alliknow.podcatcher.view.g:
     net.alliknow.podcatcher.view.ViewMode SMALL_PORTRAIT -> a
     net.alliknow.podcatcher.view.ViewMode SMALL_LANDSCAPE -> b
     net.alliknow.podcatcher.view.ViewMode LARGE_PORTRAIT -> c
@@ -2153,12 +2164,13 @@ net.alliknow.podcatcher.view.fragments.EpisodeFragment -> net.alliknow.podcatche
     net.alliknow.podcatcher.model.types.Episode currentEpisode -> a
     boolean showEpisodeDate -> b
     boolean viewCreated -> c
-    android.view.View emptyView -> d
-    android.widget.TextView titleView -> e
-    android.widget.TextView subtitleView -> f
-    android.view.View dividerView -> g
-    android.webkit.WebView descriptionView -> h
-    java.lang.String ad -> i
+    boolean needsLayoutTransitionFix -> d
+    android.view.View emptyView -> e
+    android.widget.TextView titleView -> f
+    android.widget.TextView subtitleView -> g
+    android.view.View dividerView -> h
+    android.webkit.WebView descriptionView -> i
+    java.lang.String ad -> j
     void onAttach(android.app.Activity) -> onAttach
     android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
     void onViewCreated(android.view.View,android.os.Bundle) -> onViewCreated
@@ -2250,9 +2262,12 @@ net.alliknow.podcatcher.view.fragments.PodcastListFragment -> net.alliknow.podca
     net.alliknow.podcatcher.listeners.OnSelectPodcastListener podcastSelectionListener -> j
     java.util.List currentPodcastList -> k
     android.widget.ImageView logoView -> l
-    net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode logoViewMode -> m
-    boolean viewCreated -> n
-    int[] $SWITCH_TABLE$net$alliknow$podcatcher$view$fragments$PodcastListFragment$LogoViewMode -> o
+    int logoViewHeight -> m
+    net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode logoViewMode -> n
+    boolean animating -> o
+    int addRemoveDuration -> p
+    int slideDuration -> q
+    boolean viewCreated -> r
     void onAttach(android.app.Activity) -> onAttach
     void onCreate(android.os.Bundle) -> onCreate
     android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
@@ -2262,23 +2277,50 @@ net.alliknow.podcatcher.view.fragments.PodcastListFragment -> net.alliknow.podca
     void onListItemClick(android.widget.ListView,android.view.View,int,long) -> onListItemClick
     void onDestroyView() -> onDestroyView
     void setPodcastList(java.util.List) -> a
+    void addPodcast(net.alliknow.podcatcher.model.types.Podcast) -> a
+    void removePodcast(net.alliknow.podcatcher.model.types.Podcast) -> b
     void showProgress(int,net.alliknow.podcatcher.model.types.Progress) -> a
-    void setLogoVisibility(net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode) -> a
-    void updateUiElementVisibility() -> c
-    void showGenericPodcastLogo() -> j
+    void updateLogo(net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode) -> a
+    void slideInLogoView() -> i
+    void slideOutLogoView() -> j
+    void updatePodcastLogoView() -> k
+    void showGenericPodcastLogo() -> l
     android.widget.ImageView access$0(net.alliknow.podcatcher.view.fragments.PodcastListFragment) -> a
-    int[] $SWITCH_TABLE$net$alliknow$podcatcher$view$fragments$PodcastListFragment$LogoViewMode() -> d
+    void access$1(net.alliknow.podcatcher.view.fragments.PodcastListFragment,int) -> a
+    int access$2(net.alliknow.podcatcher.view.fragments.PodcastListFragment) -> b
+    java.util.List access$3(net.alliknow.podcatcher.view.fragments.PodcastListFragment) -> c
+    void access$4(net.alliknow.podcatcher.view.fragments.PodcastListFragment,boolean) -> a
 net.alliknow.podcatcher.view.fragments.PodcastListFragment$1 -> net.alliknow.podcatcher.view.fragments.l:
     net.alliknow.podcatcher.view.fragments.PodcastListFragment this$0 -> a
     void onGlobalLayout() -> onGlobalLayout
-net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode -> net.alliknow.podcatcher.view.fragments.m:
+net.alliknow.podcatcher.view.fragments.PodcastListFragment$2 -> net.alliknow.podcatcher.view.fragments.m:
+    net.alliknow.podcatcher.view.fragments.PodcastListFragment this$0 -> a
+    int val$index -> b
+    net.alliknow.podcatcher.view.PodcastListItemView val$listItemView -> c
+    void onAnimationEnd(android.animation.Animator) -> onAnimationEnd
+net.alliknow.podcatcher.view.fragments.PodcastListFragment$3 -> net.alliknow.podcatcher.view.fragments.n:
+    net.alliknow.podcatcher.view.fragments.PodcastListFragment this$0 -> a
+    android.view.ViewGroup$LayoutParams val$layoutParams -> b
+    void onAnimationUpdate(android.animation.ValueAnimator) -> onAnimationUpdate
+net.alliknow.podcatcher.view.fragments.PodcastListFragment$4 -> net.alliknow.podcatcher.view.fragments.o:
+    net.alliknow.podcatcher.view.fragments.PodcastListFragment this$0 -> a
+    void onAnimationEnd(android.animation.Animator) -> onAnimationEnd
+net.alliknow.podcatcher.view.fragments.PodcastListFragment$5 -> net.alliknow.podcatcher.view.fragments.p:
+    net.alliknow.podcatcher.view.fragments.PodcastListFragment this$0 -> a
+    android.view.ViewGroup$LayoutParams val$layoutParams -> b
+    void onAnimationUpdate(android.animation.ValueAnimator) -> onAnimationUpdate
+net.alliknow.podcatcher.view.fragments.PodcastListFragment$6 -> net.alliknow.podcatcher.view.fragments.q:
+    net.alliknow.podcatcher.view.fragments.PodcastListFragment this$0 -> a
+    android.view.ViewGroup$LayoutParams val$layoutParams -> b
+    void onAnimationEnd(android.animation.Animator) -> onAnimationEnd
+net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode -> net.alliknow.podcatcher.view.fragments.r:
     net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode NONE -> a
     net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode SMALL -> b
     net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode LARGE -> c
     net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode[] ENUM$VALUES -> d
     net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode[] values() -> values
     net.alliknow.podcatcher.view.fragments.PodcastListFragment$LogoViewMode valueOf(java.lang.String) -> valueOf
-net.alliknow.podcatcher.view.fragments.PodcatcherListFragment -> net.alliknow.podcatcher.view.fragments.n:
+net.alliknow.podcatcher.view.fragments.PodcatcherListFragment -> net.alliknow.podcatcher.view.fragments.s:
     net.alliknow.podcatcher.adapters.PodcatcherBaseListAdapter adapter -> a
     int themeColor -> b
     int lightThemeColor -> c
@@ -2295,17 +2337,18 @@ net.alliknow.podcatcher.view.fragments.PodcatcherListFragment -> net.alliknow.po
     void setListAdapter(android.widget.ListAdapter) -> setListAdapter
     void setThemeColors(int,int) -> a
     void select(int) -> a
-    void selectAll() -> e
-    void selectNone() -> f
-    void refresh() -> g
-    void resetUi() -> h
-    void resetAndSpin() -> i
+    void selectAll() -> c
+    void selectNone() -> d
+    void refresh() -> e
+    void resetUi() -> f
+    void resetAndSpin() -> g
     void reset() -> a
     void showProgress(net.alliknow.podcatcher.model.types.Progress) -> a
     void showLoadFailed() -> b
-    void updateUiElementVisibility() -> c
-    void updateListSelector() -> d
-net.alliknow.podcatcher.view.fragments.SelectFileFragment -> net.alliknow.podcatcher.view.fragments.o:
+    android.view.View findListItemViewForIndex(int) -> b
+    void updateUiElementVisibility() -> h
+    void updateListSelector() -> i
+net.alliknow.podcatcher.view.fragments.SelectFileFragment -> net.alliknow.podcatcher.view.fragments.t:
     net.alliknow.podcatcher.listeners.OnSelectFileListener listener -> c
     java.io.File currentPath -> d
     net.alliknow.podcatcher.SelectFileActivity$SelectionMode selectionMode -> e
@@ -2334,20 +2377,20 @@ net.alliknow.podcatcher.view.fragments.SelectFileFragment -> net.alliknow.podcat
     android.widget.Button access$4(net.alliknow.podcatcher.view.fragments.SelectFileFragment) -> d
     net.alliknow.podcatcher.listeners.OnSelectFileListener access$5(net.alliknow.podcatcher.view.fragments.SelectFileFragment) -> e
     int access$6(net.alliknow.podcatcher.view.fragments.SelectFileFragment) -> f
-net.alliknow.podcatcher.view.fragments.SelectFileFragment$1 -> net.alliknow.podcatcher.view.fragments.p:
+net.alliknow.podcatcher.view.fragments.SelectFileFragment$1 -> net.alliknow.podcatcher.view.fragments.u:
     net.alliknow.podcatcher.view.fragments.SelectFileFragment this$0 -> a
     void onClick(android.view.View) -> onClick
-net.alliknow.podcatcher.view.fragments.SelectFileFragment$2 -> net.alliknow.podcatcher.view.fragments.q:
+net.alliknow.podcatcher.view.fragments.SelectFileFragment$2 -> net.alliknow.podcatcher.view.fragments.v:
     net.alliknow.podcatcher.view.fragments.SelectFileFragment this$0 -> a
     void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-net.alliknow.podcatcher.view.fragments.SelectFileFragment$3 -> net.alliknow.podcatcher.view.fragments.r:
+net.alliknow.podcatcher.view.fragments.SelectFileFragment$3 -> net.alliknow.podcatcher.view.fragments.w:
     net.alliknow.podcatcher.view.fragments.SelectFileFragment this$0 -> a
     void onClick(android.view.View) -> onClick
-net.alliknow.podcatcher.view.fragments.SettingsFragment -> net.alliknow.podcatcher.view.fragments.s:
+net.alliknow.podcatcher.view.fragments.SettingsFragment -> net.alliknow.podcatcher.view.fragments.x:
     void onCreate(android.os.Bundle) -> onCreate
     void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
     void onDestroy() -> onDestroy
-net.alliknow.podcatcher.view.fragments.SuggestionFragment -> net.alliknow.podcatcher.view.fragments.t:
+net.alliknow.podcatcher.view.fragments.SuggestionFragment -> net.alliknow.podcatcher.view.fragments.y:
     net.alliknow.podcatcher.listeners.OnAddSuggestionListener listener -> a
     java.util.List suggestionList -> b
     android.widget.Spinner languageFilter -> c
@@ -2371,7 +2414,7 @@ net.alliknow.podcatcher.view.fragments.SuggestionFragment -> net.alliknow.podcat
     void updateList() -> c
     boolean matchesFilter(net.alliknow.podcatcher.model.types.Podcast) -> a
     void access$0(net.alliknow.podcatcher.view.fragments.SuggestionFragment) -> a
-net.alliknow.podcatcher.view.fragments.SuggestionFragment$1 -> net.alliknow.podcatcher.view.fragments.u:
+net.alliknow.podcatcher.view.fragments.SuggestionFragment$1 -> net.alliknow.podcatcher.view.fragments.z:
     net.alliknow.podcatcher.view.fragments.SuggestionFragment this$0 -> a
     void onItemSelected(android.widget.AdapterView,android.view.View,int,long) -> onItemSelected
     void onNothingSelected(android.widget.AdapterView) -> onNothingSelected

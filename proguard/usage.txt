@@ -966,8 +966,6 @@ net.alliknow.podcatcher.model.PodcastManager:
     private static final int MAX_STALE_OFFLINE
     public static final java.lang.String OPML_FILENAME
     public static final java.lang.String OPML_FILE_ENCODING
-    654:678:private void putSamplePodcasts()
-    682:685:private static net.alliknow.podcatcher.model.types.Podcast createPodcast(java.lang.String,java.lang.String)
 net.alliknow.podcatcher.model.tags.JSON
 net.alliknow.podcatcher.model.tags.OPML
 net.alliknow.podcatcher.model.tags.RSS

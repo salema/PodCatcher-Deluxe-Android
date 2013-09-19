@@ -344,6 +344,7 @@ net.alliknow.podcatcher.view.HorizontalProgressView: HorizontalProgressView(andr
 net.alliknow.podcatcher.view.HorizontalProgressView: int getLayout()
 net.alliknow.podcatcher.view.PodcastListItemView
 net.alliknow.podcatcher.view.PodcastListItemView: PodcastListItemView(android.content.Context,android.util.AttributeSet)
+net.alliknow.podcatcher.view.PodcatcherListItemView: PodcatcherListItemView(android.content.Context,android.util.AttributeSet)
 net.alliknow.podcatcher.view.ProgressView
 net.alliknow.podcatcher.view.ProgressView: ProgressView(android.content.Context,android.util.AttributeSet)
 net.alliknow.podcatcher.view.ProgressView: int getLayout()
