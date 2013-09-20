@@ -446,10 +446,13 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         // Only accept movements if in playlist mode
         if (ContentMode.PLAYLIST.equals(selection.getMode())) {
             final int currentPosition = episodeManager.getPlaylistPosition(episode);
+            final int playlistLength = episodeManager.getPlaylistSize();
             // Only move episode if it is actually in the playlist
             if (currentPosition >= 0) {
                 episodeManager.removeFromPlaylist(episode);
-                episodeManager.insertAtPlaylistPosition(episode, currentPosition + 1);
+                // If the episode is at the end of the playlist, send it back up
+                episodeManager.insertAtPlaylistPosition(episode,
+                        currentPosition == playlistLength - 1 ? 0 : currentPosition + 1);
             }
 
             onPlaylistLoaded(episodeManager.getPlaylist());
@@ -465,6 +468,10 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             if (currentPosition > 0) {
                 episodeManager.removeFromPlaylist(episode);
                 episodeManager.insertAtPlaylistPosition(episode, currentPosition - 1);
+            } // When at top, move to the bottom end
+            else if (currentPosition == 0) {
+                episodeManager.removeFromPlaylist(episode);
+                episodeManager.appendToPlaylist(episode);
             }
 
             onPlaylistLoaded(episodeManager.getPlaylist());

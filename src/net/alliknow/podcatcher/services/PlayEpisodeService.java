@@ -58,6 +58,7 @@ import net.alliknow.podcatcher.view.fragments.VideoSurfaceProvider;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -661,9 +662,7 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
             episodeManager.deleteDownload(currentEpisode);
 
         // If there is another episode on the playlist, play it.
-        final List<Episode> playlist = episodeManager.getPlaylist();
-        playlist.remove(currentEpisode);
-        if (!playlist.isEmpty())
+        if (!episodeManager.isPlaylistEmptyBesides(currentEpisode))
             playNext();
         // If not, stop
         else {
@@ -684,9 +683,31 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
     public boolean onError(MediaPlayer mp, int what, int extra) {
         updateRemoteControlPlaystate(PLAYSTATE_ERROR);
 
+        // If there is another downloaded episode in the playlist, play it.
+        final SortedMap<Integer, Episode> playlist = episodeManager.getDownloadedPlaylist();
+        if (!(playlist.isEmpty() || (playlist.size() == 1 && playlist.values().contains(
+                currentEpisode)))) {
+            // Find the current episode's position in the complete playlist and
+            // remove it from the playlist of downloaded episodes item since we
+            // will not play that one in any case and we know there is at least
+            // one other episode more.
+            final int currentEpisodePosition = episodeManager.getPlaylistPosition(currentEpisode);
+            playlist.remove(currentEpisodePosition);
+
+            // Play the episode with the lowest key or the one preceding the
+            // current episode's position
+            Episode next = playlist.get(playlist.firstKey());
+
+            if (currentEpisodePosition > 0 && currentEpisodePosition < playlist.lastKey()) {
+                SortedMap<Integer, Episode> tail = playlist.tailMap(currentEpisodePosition);
+                next = tail.get(tail.firstKey());
+            }
+
+            playEpisode(next);
+        }
         // If there is anybody listening, alert and let them decide what to do
         // next, if not we reset and possibly stop ourselves
-        if (listeners.size() > 0)
+        else if (listeners.size() > 0)
             for (PlayServiceListener listener : listeners)
                 listener.onError();
         else {

@@ -528,9 +528,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
                         !view.isSmallLandscape() && !currentEpisodeIsShowing);
                 playerFragment.setPlayerSeekbarVisibility(!view.isSmallLandscape());
                 // Enable/disable next button
-                final boolean showNext = !episodeManager.isPlaylistEmpty()
-                        && !(episodeManager.getPlaylistSize() == 1 && episodeManager
-                                .isInPlaylist(service.getCurrentEpisode()));
+                final boolean showNext =
+                        !episodeManager.isPlaylistEmptyBesides(service.getCurrentEpisode());
                 playerFragment.setShowShortPosition(view.isSmall() &&
                         (showNext || service.getDuration() >= 60 * 60));
                 playerFragment.setNextButtonVisibility(showNext);
