@@ -153,7 +153,7 @@ public class PlayEpisodeNotification {
             notificationBuilder.addAction(R.drawable.ic_media_pause,
                     context.getString(R.string.pause), tooglePendingIntent);
 
-        if (!EpisodeManager.getInstance().isPlaylistEmpty())
+        if (!EpisodeManager.getInstance().isPlaylistEmptyBesides(episode))
             notificationBuilder.addAction(R.drawable.ic_media_next,
                     context.getString(R.string.next), nextPendingIntent);
 

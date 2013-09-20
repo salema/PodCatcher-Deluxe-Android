@@ -50,7 +50,7 @@ public class PodcatcherRCClient extends RemoteControlClient {
     public PodcatcherRCClient(PendingIntent mediaButtonIntent, Episode episode) {
         super(mediaButtonIntent);
 
-        final boolean canSkip = !EpisodeManager.getInstance().isPlaylistEmpty();
+        final boolean canSkip = !EpisodeManager.getInstance().isPlaylistEmptyBesides(episode);
         setTransportControlFlags(SUPPORTED_TRANSPORTS | (canSkip ? FLAG_KEY_MEDIA_NEXT : 0));
         setMetadata(episode);
     }

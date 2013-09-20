@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
@@ -90,6 +91,27 @@ public abstract class EpisodePlaylistManager extends EpisodeDownloadManager {
     }
 
     /**
+     * @return The current playlist filtered to only contain episodes available
+     *         locally, keyed using their original playlist position. Might be
+     *         empty but not <code>null</code>. Only call this if you are sure
+     *         the metadata is already available.
+     * @see EpisodePlaylistManager#getPlaylist()
+     */
+    public SortedMap<Integer, Episode> getDownloadedPlaylist() {
+        final List<Episode> playlist = getPlaylist();
+        final SortedMap<Integer, Episode> filteredPlaylist = new TreeMap<Integer, Episode>();
+
+        for (int index = 0; index < playlist.size(); index++) {
+            final Episode episode = playlist.get(index);
+
+            if (isDownloaded(episode))
+                filteredPlaylist.put(index, episode);
+        }
+
+        return filteredPlaylist;
+    }
+
+    /**
      * @return The number of episodes in the playlist.
      */
     public int getPlaylistSize() {
@@ -103,10 +125,19 @@ public abstract class EpisodePlaylistManager extends EpisodeDownloadManager {
      * @return Whether the current playlist has any entries.
      */
     public boolean isPlaylistEmpty() {
-        if (playlistSize == -1 && metadata != null)
-            initPlaylistCounter();
+        return getPlaylistSize() <= 0;
+    }
 
-        return playlistSize <= 0;
+    /**
+     * Find out whether some episode is alone in the playlist.
+     * 
+     * @param Episode to exclude from empty check.
+     * @return Whether the current playlist has any entries besides the episode
+     *         given. Will also return <code>true</code> if the playlist has no
+     *         entries at all.
+     */
+    public boolean isPlaylistEmptyBesides(Episode episode) {
+        return isPlaylistEmpty() || (getPlaylistSize() == 1 && isInPlaylist(episode));
     }
 
     /**
