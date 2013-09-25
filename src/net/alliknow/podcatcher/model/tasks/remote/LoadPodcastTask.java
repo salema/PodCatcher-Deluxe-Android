@@ -52,7 +52,10 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
      */
     public LoadPodcastTask(OnLoadPodcastListener listener) {
         this.listener = listener;
-        this.loadLimit = MAX_RSS_FILE_SIZE;
+        // We disable the load limit for the podcast feeds because there are
+        // huge feeds out there and user's really do not understand why they are
+        // unable to access them.
+        // this.loadLimit = MAX_RSS_FILE_SIZE;
     }
 
     @Override
