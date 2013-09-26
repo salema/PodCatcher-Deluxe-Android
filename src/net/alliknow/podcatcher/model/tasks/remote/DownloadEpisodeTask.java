@@ -139,8 +139,18 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
         final File localFile = new File(podcastDir, subPath);
 
         // The episode is already there, alert listener
-        if (localFile.exists())
+        if (localFile.exists()) {
+            // Wait one round in order to give the "download started" animation
+            // time to complete. Otherwise the UI will show artifacts because we
+            // return too early (i.e. before the animation completed).
+            try {
+                Thread.sleep(podcatcher.getResources().getInteger(
+                        android.R.integer.config_longAnimTime));
+            } catch (InterruptedException e) {
+            }
+
             this.episodeFile = localFile;
+        }
         // Start download because the episode is not there
         else {
             // Make sure podcast directory exists
