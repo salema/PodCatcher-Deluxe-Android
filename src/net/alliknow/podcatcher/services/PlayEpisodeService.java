@@ -613,6 +613,12 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
         // Send buffer information to listeners
         for (PlayServiceListener listener : listeners)
             listener.onBufferUpdate(getDuration() * percent / 100);
+
+        // This will fix the case where the media player does not send a
+        // "BUFFERING_END" event via onInfo(), we will simply create our own:
+        if (buffering && getDuration() > 0 &&
+                percent > getCurrentPosition() / (float) getDuration() * 100)
+            onInfo(player, MediaPlayer.MEDIA_INFO_BUFFERING_END, 0);
     }
 
     @Override
