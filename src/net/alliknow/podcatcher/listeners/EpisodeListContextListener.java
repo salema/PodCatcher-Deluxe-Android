@@ -17,6 +17,10 @@
 
 package net.alliknow.podcatcher.listeners;
 
+import static net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationDialogFragment.EPISODE_COUNT_KEY;
+import static net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationDialogFragment.TAG;
+
+import android.os.Bundle;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -28,6 +32,8 @@ import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
+import net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationDialogFragment;
+import net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationDialogFragment.DeleteDownloadsConfirmationListener;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 
 /**
@@ -103,12 +109,11 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
     }
 
     @Override
-    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+    public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
         boolean markNew = false;
-        boolean download = false;
         boolean append = false;
 
-        SparseBooleanArray checkedItems = fragment.getListView().getCheckedItemPositions();
+        final SparseBooleanArray checkedItems = fragment.getListView().getCheckedItemPositions();
 
         switch (item.getItemId()) {
             case R.id.episode_new_contextmenuitem:
@@ -126,21 +131,47 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
                 mode.finish();
                 return true;
             case R.id.episode_download_contextmenuitem:
-                download = true;
-                // No break here, code blow should run
-            case R.id.episode_remove_contextmenuitem:
                 for (int position = 0; position < fragment.getListAdapter().getCount(); position++)
-                    if (checkedItems.get(position)) {
-                        Episode episode = (Episode) fragment.getListAdapter().getItem(position);
-
-                        if (download)
-                            episodeManager.download(episode);
-                        else
-                            episodeManager.deleteDownload(episode);
-                    }
+                    if (checkedItems.get(position))
+                        episodeManager.download(
+                                (Episode) fragment.getListAdapter().getItem(position));
 
                 // Action picked, so close the CAB
                 mode.finish();
+                return true;
+            case R.id.episode_remove_contextmenuitem:
+                final DeleteDownloadsConfirmationDialogFragment confirmationDialog =
+                        new DeleteDownloadsConfirmationDialogFragment();
+                // Create bundle to make dialog aware of selection count
+                final Bundle args = new Bundle();
+                args.putInt(EPISODE_COUNT_KEY, checkedItems.size());
+                confirmationDialog.setArguments(args);
+                // Set the callback
+                confirmationDialog.setListener(new DeleteDownloadsConfirmationListener() {
+
+                    @Override
+                    public void onConfirm() {
+                        // Dismiss the dialog
+                        confirmationDialog.dismiss();
+
+                        // ... and go delete the downloads
+                        for (int position = 0; position < fragment.getListAdapter().getCount(); position++)
+                            if (checkedItems.get(position))
+                                episodeManager.deleteDownload(
+                                        (Episode) fragment.getListAdapter().getItem(position));
+
+                        // Action picked, so close the CAB
+                        mode.finish();
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        confirmationDialog.dismiss();
+                    }
+                });
+                // Finally show the dialog
+                confirmationDialog.show(fragment.getFragmentManager(), TAG);
+
                 return true;
             case R.id.episode_add_to_playlist_contextmenuitem:
                 append = true;
