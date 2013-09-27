@@ -26,6 +26,7 @@
     <string name="connect">Connecter</string>
     <string name="load">Charger</string>
     <string name="stop">Arrêter</string>
+    <string name="cancel">Annular</string>
     <string name="remove">Supprimer</string>
     <string name="parse">Analyser</string>
     <string name="play">Lecture</string>
@@ -79,6 +80,14 @@
     <string name="episodes_sort_toggle">Inverser l\'ordre</string>
     <string name="download">Télécharger</string>
     <string name="downloads">Téléchargements</string>
+    <plurals name="downloads_remove_title">
+        <item quantity="one">Supprimer téléchargement</item>
+        <item quantity="other">Supprimer %d téléchargements</item>
+    </plurals>
+    <plurals name="downloads_remove_text">
+        <item quantity="one">Cet épisode ne sera plus disponible hors connexion.</item>
+        <item quantity="other">Ces épisodes ne seront plus disponibles hors connexion.</item>
+    </plurals>
     <string name="downloads_none">Aucun épisode disponible. Pour sauvegarder un épisode, cliquez sur le symbole de téléchargement.</string>
     <string name="download_started">Téléchargement de\n\"%s\"\ndémarré</string>
     <string name="download_failed">Le téléchargement a échoué:\n\"%s\"</string>

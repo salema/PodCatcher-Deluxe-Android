@@ -26,6 +26,7 @@
     <string name="connect">Spojit</string>
     <string name="load">Nahrát</string>
     <string name="stop">Zastavit</string>
+    <string name="cancel">Zrušit</string>
     <string name="remove">Odstranit</string>
     <string name="parse">Číst</string>
     <string name="play">Přehrát</string>
@@ -83,6 +84,16 @@
     <string name="episodes_sort_toggle">Obrátit pořadí</string>
     <string name="download">Stahování</string>
     <string name="downloads">Stahování</string>
+    <plurals name="downloads_remove_title">
+        <item quantity="one">Smazat stažený</item>
+        <item quantity="few">Smazat %d stažené</item>
+        <item quantity="other">Smazat %d stažených</item>
+    </plurals>
+    <plurals name="downloads_remove_text">
+        <item quantity="one">Díl nebude nadále dostupný mimo internet.</item>
+        <item quantity="few">Díly nebudou nadále dostupné mimo internet.</item>
+        <item quantity="other">Díly nebudou nadále dostupné mimo internet.</item>
+    </plurals>
     <string name="downloads_none">Žádné stahování. Použijte ikonu pro stahování v nabídce pro zpřístupnění dílů, když nejste připojen k internetu.</string>
     <string name="download_started">Stahování spuštěno pro \n\"%s\"</string>
     <string name="download_failed">Stahování se nepodařilo u \n\"%s\"</string>

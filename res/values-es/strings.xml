@@ -26,6 +26,7 @@
     <string name="connect">Conectar</string>
     <string name="load">Cargar</string>
     <string name="stop">Parar</string>
+    <string name="cancel">Cancelar</string>
     <string name="remove">Eliminar</string>
     <string name="parse">Analizar</string>
     <string name="play">Reproducir</string>
@@ -79,6 +80,14 @@
     <string name="episodes_sort_toggle">Invertir orden</string>
     <string name="download">Descargar</string>
     <string name="downloads">Descargas</string>
+    <plurals name="downloads_remove_title">
+        <item quantity="one">Eliminar descarga</item>
+        <item quantity="other">Eliminar %d descargas</item>
+    </plurals>
+    <plurals name="downloads_remove_text">
+        <item quantity="one">Este episodio ya no estará disponible sin conexión.</item>
+        <item quantity="other">Estos episodios YA no estarán disponibles sin conexión.</item>
+    </plurals>
     <string name="downloads_none">No hay ningún episodio disponible. Para almacenar uno, hacer clic en el símbolo de descarga del menú.</string>
     <string name="download_started">Descarga activa:\n\"%s\"</string>
     <string name="download_failed">La descarga ha fallado:\n\"%s\"</string>

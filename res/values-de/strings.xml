@@ -26,6 +26,7 @@
     <string name="connect">Verbinden</string>
     <string name="load">Laden</string>
     <string name="stop">Stop</string>
+    <string name="cancel">Abbrechen</string>
     <string name="remove">Entfernen</string>
     <string name="parse">Lesen</string>
     <string name="play">Abspielen</string>
@@ -79,6 +80,14 @@
     <string name="episodes_sort_toggle">Reihenfolge umdrehen</string>
     <string name="download">Download</string>
     <string name="downloads">Downloads</string>
+    <plurals name="downloads_remove_title">
+        <item quantity="one">Download löschen</item>
+        <item quantity="other">%d Downloads löschen</item>
+    </plurals>
+    <plurals name="downloads_remove_text">
+        <item quantity="one">Diese Episode ist nach dem Löschen nicht mehr ohne Internetverbindung verfügbar.</item>
+        <item quantity="other">Diese Episoden sind nach dem Löschen nicht mehr ohne Internetverbindung verfügbar.</item>
+    </plurals>
     <string name="downloads_none">Keine Downloads vorhanden. Benutzen Sie das Download-Zeichen im Menü um Episoden auf dem Gerät zu speichern.</string>
     <string name="download_started">Download gestartet für \n\"%s\"</string>
     <string name="download_failed">Download fehlgeschlagen für \n\"%s\"</string>

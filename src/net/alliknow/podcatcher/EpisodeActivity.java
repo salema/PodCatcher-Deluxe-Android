@@ -17,6 +17,8 @@
 
 package net.alliknow.podcatcher;
 
+import static net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationDialogFragment.TAG;
+
 import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Context;
@@ -35,6 +37,8 @@ import net.alliknow.podcatcher.listeners.PlayerListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
+import net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationDialogFragment;
+import net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationDialogFragment.DeleteDownloadsConfirmationListener;
 import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.view.fragments.PlayerFragment;
 
@@ -297,8 +301,26 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
                 showToast(getString(R.string.download_started, selection.getEpisode().getName()));
             }
-            else
-                episodeManager.deleteDownload(selection.getEpisode());
+            else {
+                // For deletion, we show a confirmation dialog first
+                final DeleteDownloadsConfirmationDialogFragment confirmationDialog =
+                        new DeleteDownloadsConfirmationDialogFragment();
+                confirmationDialog.setListener(new DeleteDownloadsConfirmationListener() {
+
+                    @Override
+                    public void onConfirm() {
+                        confirmationDialog.dismiss();
+                        episodeManager.deleteDownload(selection.getEpisode());
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        confirmationDialog.dismiss();
+                    }
+                });
+
+                confirmationDialog.show(getFragmentManager(), TAG);
+            }
 
             // Update the UI
             updateDownloadUi();
