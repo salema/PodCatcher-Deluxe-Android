@@ -26,6 +26,7 @@
     <string name="connect">Connect</string>
     <string name="load">Load</string>
     <string name="stop">Stop</string>
+    <string name="cancel">Cancel</string>
     <string name="remove">Remove</string>
     <string name="parse">Read</string>
     <string name="play">Play</string>
@@ -79,6 +80,14 @@
     <string name="episodes_sort_toggle">Reverse order</string>
     <string name="download">Download</string>
     <string name="downloads">Downloads</string>
+    <plurals name="downloads_remove_title">
+        <item quantity="one">Delete download</item>
+        <item quantity="other">Delete %d downloads</item>
+    </plurals>
+    <plurals name="downloads_remove_text">
+        <item quantity="one">This episode will no longer be available offline.</item>
+        <item quantity="other">These episodes will no longer be available offline.</item>
+    </plurals>
     <string name="downloads_none">No downloads. Use the download icon in the menu to make episodes available offline.</string>
     <string name="download_started">Download started for \n\"%s\"</string>
     <string name="download_failed">Download failed for \n\"%s\"</string>
