@@ -184,22 +184,24 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
             // Find the metadata information holder
             final EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
             if (meta != null) {
+                // Keep info for the thread to run on
                 final long downloadId = meta.downloadId;
+                final String filePath = meta.filePath;
                 // Go async when accessing download manager
                 new Thread() {
                     @Override
                     public void run() {
                         // This should delete the download and remove all
-                        // information
+                        // information from the download manager
                         ((DownloadManager) podcatcher.getSystemService(Context.DOWNLOAD_SERVICE))
                                 .remove(downloadId);
+
+                        // Make sure the file is deleted since this might not
+                        // have taken care of by DownloadManager.remove() above
+                        if (filePath != null)
+                            new File(filePath).delete();
                     };
                 }.start();
-
-                // Make sure the file is deleted since this might not have taken
-                // care of by DownloadManager.remove() above
-                if (meta.filePath != null)
-                    new File(meta.filePath).delete();
 
                 meta.downloadId = null;
                 meta.filePath = null;

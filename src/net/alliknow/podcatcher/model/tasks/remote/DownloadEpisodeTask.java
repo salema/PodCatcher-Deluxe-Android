@@ -41,13 +41,20 @@ import net.alliknow.podcatcher.model.EpisodeDownloadManager;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.preferences.DownloadFolderPreference;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Async task that triggers the download of an episode. The task will be alive
  * and busy in its doInBackground() method as long as the download takes. It
  * will publish updates of the download's progress to the call-back attached.
- * Use a new task for each episode you want to download.
+ * Use a new task for each episode you want to download. Make sure not to give
+ * <code>null</code> as an episode to the {@link #doInBackground(Episode...)}
+ * method or things will break.
  */
 public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
 
@@ -70,6 +77,8 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
     private File episodeFile;
     /** The current percentage state of the download [0...100] */
     private int percentProgress;
+    /** Flag on whether the download needs moving after the fact */
+    private boolean needsPostDownloadMove = false;
 
     /** The interface to implement by the call-back for this task */
     public interface DownloadTaskListener {
@@ -154,12 +163,11 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
         // Start download because the episode is not there
         else {
             // Make sure podcast directory exists
-            new File(podcastDir, EpisodeDownloadManager.sanitizeAsFilename(episode.getPodcast()
-                    .getName())).mkdirs();
+            localFile.getParentFile().mkdirs();
 
             // Create the request
             Request download = new Request(Uri.parse(episode.getMediaUrl().toString()))
-                    .setDestinationUri(Uri.fromFile(new File(podcastDir, subPath)))
+                    .setDestinationUri(Uri.fromFile(localFile))
                     .setTitle(episode.getName())
                     .setDescription(episode.getPodcast().getName())
                     // We overwrite the AndroidDownloadManager user agent
@@ -171,60 +179,84 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
                     .addRequestHeader("Cache-Control", "no-store");
 
             // Start the download
+            long downloadId;
             try {
-                final long id = downloadManager.enqueue(download);
-                // We need to tell our listener about the download id, to
-                // separate it from percentage done, put minus sign
-                publishProgress(id > 0 ? id * -1 : id);
-
-                // Start checking the download manager for status updates
-                boolean finished = false;
-                while (!isCancelled() && !finished) {
-                    // Wait between polls
-                    try {
-                        Thread.sleep(DOWNLOAD_STATUS_POLL_INTERVALL);
-                    } catch (InterruptedException e) {
-                    }
-
-                    // Find download information
-                    final Cursor info = downloadManager.query(new Query().setFilterById(id));
-                    // There should be information on the download
-                    if (info.moveToFirst()) {
-                        final int state = info.getInt(info.getColumnIndex(COLUMN_STATUS));
-                        switch (state) {
-                            case STATUS_SUCCESSFUL:
-                                this.episodeFile = new File(info.getString(
-                                        info.getColumnIndex(COLUMN_LOCAL_FILENAME)));
-
-                                finished = true;
-                                break;
-                            case STATUS_FAILED:
-                                downloadManager.remove(id);
-
-                                cancel(false);
-                                break;
-                            default:
-                                // Update progress
-                                final long total = info.getLong(info
-                                        .getColumnIndex(COLUMN_TOTAL_SIZE_BYTES));
-                                final long progress = info.getLong(info
-                                        .getColumnIndex(COLUMN_BYTES_DOWNLOADED_SO_FAR));
-
-                                if (total > 0 && progress > 0 && total >= progress)
-                                    publishProgress((long) (((float) progress / (float) total) * 100));
-                        }
-                    }
-                    // Close cursor
-                    info.close();
-                }
+                downloadId = downloadManager.enqueue(download);
             } catch (SecurityException se) {
                 // This happens if the download manager has not the rights
                 // to write to the selected downloads directory
-                cancel(true);
+                needsPostDownloadMove = true;
 
-                // TODO Find a better solution here, e.g. download the file
-                // to some temp folder and move it the the wanted
-                // destination when the download completed
+                // Download the file to a temp folder and move it the the wanted
+                // destination once the download completed
+                download.setDestinationUri(Uri.fromFile(
+                        new File(podcatcher.getExternalCacheDir(), localFile.getName())));
+                downloadId = downloadManager.enqueue(download);
+            }
+
+            // We need to tell our listener about the download id, to
+            // separate it from percentage done, put minus sign. See
+            // onProgressUpdate() below.
+            publishProgress(downloadId > 0 ? downloadId * -1 : downloadId);
+
+            // Start checking the download manager for status updates
+            boolean finished = false;
+            while (!isCancelled() && !finished) {
+                // Wait between polls
+                try {
+                    Thread.sleep(DOWNLOAD_STATUS_POLL_INTERVALL);
+                } catch (InterruptedException e) {
+                    // pass
+                }
+
+                // Find download information
+                final Cursor info = downloadManager.query(new Query().setFilterById(downloadId));
+                // There should be information on the download
+                if (info.moveToFirst()) {
+                    final int state = info.getInt(info.getColumnIndex(COLUMN_STATUS));
+                    switch (state) {
+                        case STATUS_SUCCESSFUL:
+                            // This is the file the download manager got for us
+                            final File downloadedFile = new File(info.getString(info
+                                    .getColumnIndex(COLUMN_LOCAL_FILENAME)));
+
+                            // It might need to be moved to its final position
+                            if (needsPostDownloadMove) {
+                                // This worked
+                                if (moveFile(downloadedFile, localFile))
+                                    this.episodeFile = localFile;
+                                // Move operation failed -> download failed
+                                else
+                                    cancel(false);
+
+                                // We remove the file from the system's download
+                                // manager here, since we moved the downloaded
+                                // file (or it failed anyway)
+                                downloadManager.remove(downloadId);
+                            }
+                            else
+                                this.episodeFile = downloadedFile;
+
+                            finished = true;
+                            break;
+                        case STATUS_FAILED:
+                            downloadManager.remove(downloadId);
+
+                            cancel(false);
+                            break;
+                        default:
+                            // Update progress
+                            final long total = info.getLong(info
+                                    .getColumnIndex(COLUMN_TOTAL_SIZE_BYTES));
+                            final long progress = info.getLong(info
+                                    .getColumnIndex(COLUMN_BYTES_DOWNLOADED_SO_FAR));
+
+                            if (total > 0 && progress > 0 && total >= progress)
+                                publishProgress((long) (((float) progress / (float) total) * 100));
+                    }
+                }
+                // Close cursor
+                info.close();
             }
         }
 
@@ -257,5 +289,42 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
     @Override
     protected void onCancelled(Void result) {
         listener.onEpisodeDownloadFailed(episode);
+    }
+
+    private boolean moveFile(File from, File to) {
+        boolean success = true;
+
+        BufferedInputStream reader = null;
+        BufferedOutputStream writer = null;
+        // Move file over, put try catch to set return value to false is the
+        // move fails
+        try {
+            reader = new BufferedInputStream(new FileInputStream(from));
+            writer = new BufferedOutputStream(new FileOutputStream(to));
+
+            byte[] buffer = new byte[1024];
+            while (reader.read(buffer) > 0)
+                writer.write(buffer);
+
+        } catch (IOException ioe) {
+            success = false;
+        } finally {
+            if (reader != null)
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    // pass
+                }
+            if (writer != null)
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    // pass
+                }
+
+            from.delete();
+        }
+
+        return success;
     }
 }
