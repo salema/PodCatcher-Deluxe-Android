@@ -267,12 +267,15 @@ com.podcatcher.deluxe.R$menu: int player
 com.podcatcher.deluxe.R$menu: int podcast_list
 com.podcatcher.deluxe.R$menu: int podcast_list_context
 com.podcatcher.deluxe.R$menu: int podcatcher
+com.podcatcher.deluxe.R$plurals: int downloads_remove_text
+com.podcatcher.deluxe.R$plurals: int downloads_remove_title
 com.podcatcher.deluxe.R$plurals: int episodes
 com.podcatcher.deluxe.R$plurals: int episodes_filtered
 com.podcatcher.deluxe.R$plurals: int episodes_new
 com.podcatcher.deluxe.R$plurals: int podcasts
 com.podcatcher.deluxe.R$string: int about
 com.podcatcher.deluxe.R$string: int app_name
+com.podcatcher.deluxe.R$string: int cancel
 com.podcatcher.deluxe.R$string: int connect
 com.podcatcher.deluxe.R$string: int divider
 com.podcatcher.deluxe.R$string: int download
