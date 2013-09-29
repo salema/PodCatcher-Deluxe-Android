@@ -1455,14 +1455,19 @@ com.podcatcher.deluxe.video.EpisodeActivity$1 -> com.podcatcher.deluxe.video.e:
     com.podcatcher.deluxe.video.EpisodeActivity this$0 -> a
     void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
     void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
-com.podcatcher.deluxe.video.EpisodeActivity$PlayProgressTask -> com.podcatcher.deluxe.video.f:
+com.podcatcher.deluxe.video.EpisodeActivity$2 -> com.podcatcher.deluxe.video.f:
+    com.podcatcher.deluxe.video.EpisodeActivity this$0 -> a
+    com.podcatcher.deluxe.video.view.fragments.DeleteDownloadsConfirmationDialogFragment val$confirmationDialog -> b
+    void onConfirm() -> a
+    void onCancel() -> b
+com.podcatcher.deluxe.video.EpisodeActivity$PlayProgressTask -> com.podcatcher.deluxe.video.g:
     java.lang.ref.WeakReference activityReference -> a
     void run() -> run
-com.podcatcher.deluxe.video.EpisodeActivity$PlayProgressTask$1 -> com.podcatcher.deluxe.video.g:
+com.podcatcher.deluxe.video.EpisodeActivity$PlayProgressTask$1 -> com.podcatcher.deluxe.video.h:
     com.podcatcher.deluxe.video.EpisodeActivity$PlayProgressTask this$1 -> a
     com.podcatcher.deluxe.video.EpisodeActivity val$episodeActivity -> b
     void run() -> run
-com.podcatcher.deluxe.video.EpisodeListActivity -> com.podcatcher.deluxe.video.h:
+com.podcatcher.deluxe.video.EpisodeListActivity -> com.podcatcher.deluxe.video.i:
     com.podcatcher.deluxe.video.view.fragments.EpisodeListFragment episodeListFragment -> k
     com.podcatcher.deluxe.video.view.ContentSpinner contentSpinner -> l
     java.util.SortedSet currentEpisodeSet -> m
@@ -1550,17 +1555,17 @@ com.podcatcher.deluxe.video.FullscreenVideoActivity -> com.podcatcher.deluxe.vid
     android.view.SurfaceView access$2(com.podcatcher.deluxe.video.FullscreenVideoActivity) -> b
     void access$3(com.podcatcher.deluxe.video.FullscreenVideoActivity) -> c
     void access$4(com.podcatcher.deluxe.video.FullscreenVideoActivity,boolean) -> a
-com.podcatcher.deluxe.video.FullscreenVideoActivity$1 -> com.podcatcher.deluxe.video.i:
+com.podcatcher.deluxe.video.FullscreenVideoActivity$1 -> com.podcatcher.deluxe.video.j:
     com.podcatcher.deluxe.video.FullscreenVideoActivity this$0 -> a
     void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
     void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
-com.podcatcher.deluxe.video.FullscreenVideoActivity$NextListener -> com.podcatcher.deluxe.video.j:
+com.podcatcher.deluxe.video.FullscreenVideoActivity$NextListener -> com.podcatcher.deluxe.video.k:
     com.podcatcher.deluxe.video.FullscreenVideoActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.podcatcher.deluxe.video.FullscreenVideoActivity$PrevListener -> com.podcatcher.deluxe.video.k:
+com.podcatcher.deluxe.video.FullscreenVideoActivity$PrevListener -> com.podcatcher.deluxe.video.l:
     com.podcatcher.deluxe.video.FullscreenVideoActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-com.podcatcher.deluxe.video.FullscreenVideoActivity$VideoCallback -> com.podcatcher.deluxe.video.l:
+com.podcatcher.deluxe.video.FullscreenVideoActivity$VideoCallback -> com.podcatcher.deluxe.video.m:
     com.podcatcher.deluxe.video.FullscreenVideoActivity this$0 -> a
     void surfaceCreated(android.view.SurfaceHolder) -> surfaceCreated
     void surfaceChanged(android.view.SurfaceHolder,int,int,int) -> surfaceChanged
@@ -1623,7 +1628,7 @@ com.podcatcher.deluxe.video.Podcatcher -> com.podcatcher.deluxe.video.Podcatcher
     boolean isOnFastConnection() -> c
     boolean isInDebugMode() -> d
     android.net.NetworkInfo getNetworkInfo() -> e
-com.podcatcher.deluxe.video.Podcatcher$FlushCacheThread -> com.podcatcher.deluxe.video.m:
+com.podcatcher.deluxe.video.Podcatcher$FlushCacheThread -> com.podcatcher.deluxe.video.n:
     void run() -> run
 com.podcatcher.deluxe.video.RemovePodcastActivity -> com.podcatcher.deluxe.video.RemovePodcastActivity:
     void onStart() -> onStart
@@ -1635,7 +1640,7 @@ com.podcatcher.deluxe.video.SelectFileActivity -> com.podcatcher.deluxe.video.Se
     void onFileSelected(java.io.File) -> a
     void onDirectoryChanged(java.io.File) -> b
     void onAccessDenied(java.io.File) -> c
-com.podcatcher.deluxe.video.SelectFileActivity$SelectionMode -> com.podcatcher.deluxe.video.n:
+com.podcatcher.deluxe.video.SelectFileActivity$SelectionMode -> com.podcatcher.deluxe.video.o:
     com.podcatcher.deluxe.video.SelectFileActivity$SelectionMode FILE -> a
     com.podcatcher.deluxe.video.SelectFileActivity$SelectionMode FOLDER -> b
     com.podcatcher.deluxe.video.SelectFileActivity$SelectionMode[] ENUM$VALUES -> c
@@ -1745,68 +1750,77 @@ com.podcatcher.deluxe.video.listeners.EpisodeListContextListener -> com.podcatch
     void onItemCheckedStateChanged(android.view.ActionMode,int,long,boolean) -> onItemCheckedStateChanged
     void update(android.view.ActionMode) -> a
     void updateMenuItems() -> a
-com.podcatcher.deluxe.video.listeners.OnAddPodcastListener -> com.podcatcher.deluxe.video.b.b:
+    com.podcatcher.deluxe.video.view.fragments.EpisodeListFragment access$0(com.podcatcher.deluxe.video.listeners.EpisodeListContextListener) -> a
+    com.podcatcher.deluxe.video.model.EpisodeManager access$1(com.podcatcher.deluxe.video.listeners.EpisodeListContextListener) -> b
+com.podcatcher.deluxe.video.listeners.EpisodeListContextListener$1 -> com.podcatcher.deluxe.video.b.b:
+    com.podcatcher.deluxe.video.listeners.EpisodeListContextListener this$0 -> a
+    com.podcatcher.deluxe.video.view.fragments.DeleteDownloadsConfirmationDialogFragment val$confirmationDialog -> b
+    android.util.SparseBooleanArray val$checkedItems -> c
+    android.view.ActionMode val$mode -> d
+    void onConfirm() -> a
+    void onCancel() -> b
+com.podcatcher.deluxe.video.listeners.OnAddPodcastListener -> com.podcatcher.deluxe.video.b.c:
     void onAddPodcast(java.lang.String) -> a
     void onShowSuggestions() -> a
     void onImportOpml() -> b
-com.podcatcher.deluxe.video.listeners.OnAddSuggestionListener -> com.podcatcher.deluxe.video.b.c:
+com.podcatcher.deluxe.video.listeners.OnAddSuggestionListener -> com.podcatcher.deluxe.video.b.d:
     void onAddPodcast(com.podcatcher.deluxe.video.model.types.Podcast) -> a
-com.podcatcher.deluxe.video.listeners.OnChangeEpisodeStateListener -> com.podcatcher.deluxe.video.b.d:
+com.podcatcher.deluxe.video.listeners.OnChangeEpisodeStateListener -> com.podcatcher.deluxe.video.b.e:
     void onStateChanged(com.podcatcher.deluxe.video.model.types.Episode) -> e
-com.podcatcher.deluxe.video.listeners.OnChangePlaylistListener -> com.podcatcher.deluxe.video.b.e:
+com.podcatcher.deluxe.video.listeners.OnChangePlaylistListener -> com.podcatcher.deluxe.video.b.f:
     void onPlaylistChanged() -> f
-com.podcatcher.deluxe.video.listeners.OnChangePodcastListListener -> com.podcatcher.deluxe.video.b.f:
+com.podcatcher.deluxe.video.listeners.OnChangePodcastListListener -> com.podcatcher.deluxe.video.b.g:
     void onPodcastAdded(com.podcatcher.deluxe.video.model.types.Podcast) -> f
     void onPodcastRemoved(com.podcatcher.deluxe.video.model.types.Podcast) -> g
-com.podcatcher.deluxe.video.listeners.OnDownloadEpisodeListener -> com.podcatcher.deluxe.video.b.g:
+com.podcatcher.deluxe.video.listeners.OnDownloadEpisodeListener -> com.podcatcher.deluxe.video.b.h:
     void onToggleDownload() -> g
     void onDownloadProgress(com.podcatcher.deluxe.video.model.types.Episode,int) -> a
     void onDownloadSuccess(com.podcatcher.deluxe.video.model.types.Episode) -> b
     void onDownloadFailed(com.podcatcher.deluxe.video.model.types.Episode) -> d
     void onDownloadDeleted(com.podcatcher.deluxe.video.model.types.Episode) -> c
-com.podcatcher.deluxe.video.listeners.OnLoadDownloadsListener -> com.podcatcher.deluxe.video.b.h:
+com.podcatcher.deluxe.video.listeners.OnLoadDownloadsListener -> com.podcatcher.deluxe.video.b.i:
     void onDownloadsLoaded(java.util.List) -> a
-com.podcatcher.deluxe.video.listeners.OnLoadEpisodeMetadataListener -> com.podcatcher.deluxe.video.b.i:
+com.podcatcher.deluxe.video.listeners.OnLoadEpisodeMetadataListener -> com.podcatcher.deluxe.video.b.j:
     void onEpisodeMetadataLoaded(java.util.Map) -> a
-com.podcatcher.deluxe.video.listeners.OnLoadPlaylistListener -> com.podcatcher.deluxe.video.b.j:
+com.podcatcher.deluxe.video.listeners.OnLoadPlaylistListener -> com.podcatcher.deluxe.video.b.k:
     void onPlaylistLoaded(java.util.List) -> b
-com.podcatcher.deluxe.video.listeners.OnLoadPodcastListListener -> com.podcatcher.deluxe.video.b.k:
+com.podcatcher.deluxe.video.listeners.OnLoadPodcastListListener -> com.podcatcher.deluxe.video.b.l:
     void onPodcastListLoaded(java.util.List) -> a_
-com.podcatcher.deluxe.video.listeners.OnLoadPodcastListener -> com.podcatcher.deluxe.video.b.l:
+com.podcatcher.deluxe.video.listeners.OnLoadPodcastListener -> com.podcatcher.deluxe.video.b.m:
     void onPodcastLoadProgress(com.podcatcher.deluxe.video.model.types.Podcast,com.podcatcher.deluxe.video.model.types.Progress) -> a
     void onPodcastLoaded(com.podcatcher.deluxe.video.model.types.Podcast) -> a
     void onPodcastLoadFailed(com.podcatcher.deluxe.video.model.types.Podcast) -> b
-com.podcatcher.deluxe.video.listeners.OnLoadPodcastLogoListener -> com.podcatcher.deluxe.video.b.m:
+com.podcatcher.deluxe.video.listeners.OnLoadPodcastLogoListener -> com.podcatcher.deluxe.video.b.n:
     void onPodcastLogoLoaded(com.podcatcher.deluxe.video.model.types.Podcast) -> d
     void onPodcastLogoLoadFailed(com.podcatcher.deluxe.video.model.types.Podcast) -> e
-com.podcatcher.deluxe.video.listeners.OnLoadSuggestionListener -> com.podcatcher.deluxe.video.b.n:
+com.podcatcher.deluxe.video.listeners.OnLoadSuggestionListener -> com.podcatcher.deluxe.video.b.o:
     void onSuggestionsLoadProgress(com.podcatcher.deluxe.video.model.types.Progress) -> a
     void onSuggestionsLoaded(java.util.List) -> a
     void onSuggestionsLoadFailed() -> a
-com.podcatcher.deluxe.video.listeners.OnReorderEpisodeListener -> com.podcatcher.deluxe.video.b.o:
+com.podcatcher.deluxe.video.listeners.OnReorderEpisodeListener -> com.podcatcher.deluxe.video.b.p:
     void onMoveEpisodeUp(com.podcatcher.deluxe.video.model.types.Episode) -> g
     void onMoveEpisodeDown(com.podcatcher.deluxe.video.model.types.Episode) -> f
-com.podcatcher.deluxe.video.listeners.OnRequestFullscreenListener -> com.podcatcher.deluxe.video.b.p:
+com.podcatcher.deluxe.video.listeners.OnRequestFullscreenListener -> com.podcatcher.deluxe.video.b.q:
     void onRequestFullscreen() -> c
-com.podcatcher.deluxe.video.listeners.OnReverseSortingListener -> com.podcatcher.deluxe.video.b.q:
+com.podcatcher.deluxe.video.listeners.OnReverseSortingListener -> com.podcatcher.deluxe.video.b.r:
     void onReverseOrder() -> y
-com.podcatcher.deluxe.video.listeners.OnSelectEpisodeListener -> com.podcatcher.deluxe.video.b.r:
+com.podcatcher.deluxe.video.listeners.OnSelectEpisodeListener -> com.podcatcher.deluxe.video.b.s:
     void onEpisodeSelected(com.podcatcher.deluxe.video.model.types.Episode) -> a
-com.podcatcher.deluxe.video.listeners.OnSelectFileListener -> com.podcatcher.deluxe.video.b.s:
+com.podcatcher.deluxe.video.listeners.OnSelectFileListener -> com.podcatcher.deluxe.video.b.t:
     void onFileSelected(java.io.File) -> a
     void onDirectoryChanged(java.io.File) -> b
     void onAccessDenied(java.io.File) -> c
-com.podcatcher.deluxe.video.listeners.OnSelectPodcastListener -> com.podcatcher.deluxe.video.b.t:
+com.podcatcher.deluxe.video.listeners.OnSelectPodcastListener -> com.podcatcher.deluxe.video.b.u:
     void onPodcastSelected(com.podcatcher.deluxe.video.model.types.Podcast) -> c
     void onAllPodcastsSelected() -> A
     void onDownloadsSelected() -> B
     void onPlaylistSelected() -> C
-com.podcatcher.deluxe.video.listeners.OnStorePodcastListListener -> com.podcatcher.deluxe.video.b.u:
+com.podcatcher.deluxe.video.listeners.OnStorePodcastListListener -> com.podcatcher.deluxe.video.b.v:
     void onPodcastListStored(java.util.List,java.io.File) -> a
     void onPodcastListStoreFailed(java.util.List,java.io.File,java.lang.Exception) -> a
-com.podcatcher.deluxe.video.listeners.OnToggleFilterListener -> com.podcatcher.deluxe.video.b.v:
+com.podcatcher.deluxe.video.listeners.OnToggleFilterListener -> com.podcatcher.deluxe.video.b.w:
     void onToggleFilter() -> z
-com.podcatcher.deluxe.video.listeners.PlayServiceListener -> com.podcatcher.deluxe.video.b.w:
+com.podcatcher.deluxe.video.listeners.PlayServiceListener -> com.podcatcher.deluxe.video.b.x:
     void onVideoAvailable() -> l
     void onPlaybackStarted() -> k
     void onPlaybackStateChanged() -> m
@@ -1815,12 +1829,12 @@ com.podcatcher.deluxe.video.listeners.PlayServiceListener -> com.podcatcher.delu
     void onBufferUpdate(int) -> b
     void onPlaybackComplete() -> p
     void onError() -> q
-com.podcatcher.deluxe.video.listeners.PlayerListener -> com.podcatcher.deluxe.video.b.x:
+com.podcatcher.deluxe.video.listeners.PlayerListener -> com.podcatcher.deluxe.video.b.y:
     void onToggleLoad() -> h
     void onTogglePlay() -> i
     void onNext() -> j
     void onReturnToPlayingEpisode() -> d
-com.podcatcher.deluxe.video.listeners.PodcastListContextListener -> com.podcatcher.deluxe.video.b.y:
+com.podcatcher.deluxe.video.listeners.PodcastListContextListener -> com.podcatcher.deluxe.video.b.z:
     com.podcatcher.deluxe.video.view.fragments.PodcastListFragment fragment -> a
     boolean onCreateActionMode(android.view.ActionMode,android.view.Menu) -> onCreateActionMode
     boolean onPrepareActionMode(android.view.ActionMode,android.view.Menu) -> onPrepareActionMode
@@ -1868,6 +1882,7 @@ com.podcatcher.deluxe.video.model.EpisodeDownloadManager$1 -> com.podcatcher.del
 com.podcatcher.deluxe.video.model.EpisodeDownloadManager$2 -> com.podcatcher.deluxe.video.c.d:
     com.podcatcher.deluxe.video.model.EpisodeDownloadManager this$0 -> a
     long val$downloadId -> b
+    java.lang.String val$filePath -> c
     void run() -> run
 com.podcatcher.deluxe.video.model.EpisodeManager -> com.podcatcher.deluxe.video.c.e:
     com.podcatcher.deluxe.video.model.EpisodeManager manager -> e
@@ -1877,13 +1892,15 @@ com.podcatcher.deluxe.video.model.EpisodePlaylistManager -> com.podcatcher.delux
     int playlistSize -> e
     java.util.Set playlistListeners -> f
     java.util.List getPlaylist() -> f
-    int getPlaylistSize() -> g
-    boolean isPlaylistEmpty() -> h
-    boolean isInPlaylist(com.podcatcher.deluxe.video.model.types.Episode) -> i
-    int getPlaylistPosition(com.podcatcher.deluxe.video.model.types.Episode) -> j
-    void appendToPlaylist(com.podcatcher.deluxe.video.model.types.Episode) -> k
+    java.util.SortedMap getDownloadedPlaylist() -> g
+    int getPlaylistSize() -> h
+    boolean isPlaylistEmpty() -> i
+    boolean isPlaylistEmptyBesides(com.podcatcher.deluxe.video.model.types.Episode) -> i
+    boolean isInPlaylist(com.podcatcher.deluxe.video.model.types.Episode) -> j
+    int getPlaylistPosition(com.podcatcher.deluxe.video.model.types.Episode) -> k
+    void appendToPlaylist(com.podcatcher.deluxe.video.model.types.Episode) -> l
     void insertAtPlaylistPosition(com.podcatcher.deluxe.video.model.types.Episode,int) -> b
-    void removeFromPlaylist(com.podcatcher.deluxe.video.model.types.Episode) -> l
+    void removeFromPlaylist(com.podcatcher.deluxe.video.model.types.Episode) -> m
     void addPlaylistListener(com.podcatcher.deluxe.video.listeners.OnChangePlaylistListener) -> a
     void removePlaylistListener(com.podcatcher.deluxe.video.listeners.OnChangePlaylistListener) -> b
     void initPlaylistCounter() -> e
@@ -1893,12 +1910,12 @@ com.podcatcher.deluxe.video.model.EpisodeStateManager -> com.podcatcher.deluxe.v
     java.util.Set podcastsCleanUpRanFor -> g
     void onEpisodeMetadataLoaded(java.util.Map) -> a
     void setState(com.podcatcher.deluxe.video.model.types.Episode,java.lang.Boolean) -> a
-    boolean getState(com.podcatcher.deluxe.video.model.types.Episode) -> m
+    boolean getState(com.podcatcher.deluxe.video.model.types.Episode) -> n
     int getNewEpisodeCount(com.podcatcher.deluxe.video.model.types.Podcast) -> c
     void addStateChangedListener(com.podcatcher.deluxe.video.listeners.OnChangeEpisodeStateListener) -> a
     void removeStateChangedListener(com.podcatcher.deluxe.video.listeners.OnChangeEpisodeStateListener) -> b
     void setResumeAt(com.podcatcher.deluxe.video.model.types.Episode,java.lang.Integer) -> a
-    int getResumeAt(com.podcatcher.deluxe.video.model.types.Episode) -> n
+    int getResumeAt(com.podcatcher.deluxe.video.model.types.Episode) -> o
     void onPodcastAdded(com.podcatcher.deluxe.video.model.types.Podcast) -> f
     void onPodcastRemoved(com.podcatcher.deluxe.video.model.types.Podcast) -> g
     void onPodcastLoaded(com.podcatcher.deluxe.video.model.types.Podcast) -> a
@@ -2053,10 +2070,12 @@ com.podcatcher.deluxe.video.model.tasks.remote.DownloadEpisodeTask -> com.podcat
     com.podcatcher.deluxe.video.model.types.Episode episode -> d
     java.io.File episodeFile -> e
     int percentProgress -> f
+    boolean needsPostDownloadMove -> g
     java.lang.Void doInBackground(com.podcatcher.deluxe.video.model.types.Episode[]) -> a
     void onProgressUpdate(java.lang.Long[]) -> a
     void onPostExecute(java.lang.Void) -> a
     void onCancelled(java.lang.Void) -> b
+    boolean moveFile(java.io.File,java.io.File) -> a
     void onPostExecute(java.lang.Object) -> onPostExecute
     void onCancelled(java.lang.Object) -> onCancelled
     java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
@@ -2497,6 +2516,22 @@ com.podcatcher.deluxe.video.view.fragments.AddPodcastFragment$3 -> com.podcatche
 com.podcatcher.deluxe.video.view.fragments.AddPodcastFragment$4 -> com.podcatcher.deluxe.video.view.fragments.e:
     com.podcatcher.deluxe.video.view.fragments.AddPodcastFragment this$0 -> a
     void onClick(android.view.View) -> onClick
+com.podcatcher.deluxe.video.view.fragments.DeleteDownloadsConfirmationDialogFragment -> com.podcatcher.deluxe.video.view.fragments.f:
+    int episodeCount -> a
+    com.podcatcher.deluxe.video.view.fragments.DeleteDownloadsConfirmationDialogFragment$DeleteDownloadsConfirmationListener listener -> b
+    void setArguments(android.os.Bundle) -> setArguments
+    android.app.Dialog onCreateDialog(android.os.Bundle) -> onCreateDialog
+    void setListener(com.podcatcher.deluxe.video.view.fragments.DeleteDownloadsConfirmationDialogFragment$DeleteDownloadsConfirmationListener) -> a
+    com.podcatcher.deluxe.video.view.fragments.DeleteDownloadsConfirmationDialogFragment$DeleteDownloadsConfirmationListener access$0(com.podcatcher.deluxe.video.view.fragments.DeleteDownloadsConfirmationDialogFragment) -> a
+com.podcatcher.deluxe.video.view.fragments.DeleteDownloadsConfirmationDialogFragment$1 -> com.podcatcher.deluxe.video.view.fragments.g:
+    com.podcatcher.deluxe.video.view.fragments.DeleteDownloadsConfirmationDialogFragment this$0 -> a
+    void onClick(android.content.DialogInterface,int) -> onClick
+com.podcatcher.deluxe.video.view.fragments.DeleteDownloadsConfirmationDialogFragment$2 -> com.podcatcher.deluxe.video.view.fragments.h:
+    com.podcatcher.deluxe.video.view.fragments.DeleteDownloadsConfirmationDialogFragment this$0 -> a
+    void onClick(android.content.DialogInterface,int) -> onClick
+com.podcatcher.deluxe.video.view.fragments.DeleteDownloadsConfirmationDialogFragment$DeleteDownloadsConfirmationListener -> com.podcatcher.deluxe.video.view.fragments.i:
+    void onConfirm() -> a
+    void onCancel() -> b
 com.podcatcher.deluxe.video.view.fragments.EpisodeFragment -> com.podcatcher.deluxe.video.view.fragments.EpisodeFragment:
     com.podcatcher.deluxe.video.listeners.OnDownloadEpisodeListener downloadListener -> a
     com.podcatcher.deluxe.video.listeners.OnRequestFullscreenListener fullscreenListener -> b
@@ -2544,16 +2579,16 @@ com.podcatcher.deluxe.video.view.fragments.EpisodeFragment -> com.podcatcher.del
     void access$0(com.podcatcher.deluxe.video.view.fragments.EpisodeFragment,boolean) -> a
     android.widget.ImageView access$1(com.podcatcher.deluxe.video.view.fragments.EpisodeFragment) -> a
     com.podcatcher.deluxe.video.listeners.OnRequestFullscreenListener access$2(com.podcatcher.deluxe.video.view.fragments.EpisodeFragment) -> b
-com.podcatcher.deluxe.video.view.fragments.EpisodeFragment$1 -> com.podcatcher.deluxe.video.view.fragments.f:
+com.podcatcher.deluxe.video.view.fragments.EpisodeFragment$1 -> com.podcatcher.deluxe.video.view.fragments.j:
     com.podcatcher.deluxe.video.view.fragments.EpisodeFragment this$0 -> a
     boolean onTouch(android.view.View,android.view.MotionEvent) -> onTouch
-com.podcatcher.deluxe.video.view.fragments.EpisodeFragment$VideoCallback -> com.podcatcher.deluxe.video.view.fragments.g:
+com.podcatcher.deluxe.video.view.fragments.EpisodeFragment$VideoCallback -> com.podcatcher.deluxe.video.view.fragments.k:
     com.podcatcher.deluxe.video.view.fragments.EpisodeFragment this$0 -> a
     void surfaceCreated(android.view.SurfaceHolder) -> surfaceCreated
     void surfaceChanged(android.view.SurfaceHolder,int,int,int) -> surfaceChanged
     void surfaceDestroyed(android.view.SurfaceHolder) -> surfaceDestroyed
     com.podcatcher.deluxe.video.view.fragments.EpisodeFragment access$1(com.podcatcher.deluxe.video.view.fragments.EpisodeFragment$VideoCallback) -> a
-com.podcatcher.deluxe.video.view.fragments.EpisodeFragment$VideoCallback$1 -> com.podcatcher.deluxe.video.view.fragments.h:
+com.podcatcher.deluxe.video.view.fragments.EpisodeFragment$VideoCallback$1 -> com.podcatcher.deluxe.video.view.fragments.l:
     com.podcatcher.deluxe.video.view.fragments.EpisodeFragment$VideoCallback this$1 -> a
     void run() -> run
 com.podcatcher.deluxe.video.view.fragments.EpisodeListFragment -> com.podcatcher.deluxe.video.view.fragments.EpisodeListFragment:
@@ -2603,20 +2638,20 @@ com.podcatcher.deluxe.video.view.fragments.EpisodeListFragment -> com.podcatcher
     void reset() -> a
     void showLoadFailed() -> b
     java.util.List getCheckedEpisodes() -> i
-com.podcatcher.deluxe.video.view.fragments.FirstRunFragment -> com.podcatcher.deluxe.video.view.fragments.i:
+com.podcatcher.deluxe.video.view.fragments.FirstRunFragment -> com.podcatcher.deluxe.video.view.fragments.m:
     com.podcatcher.deluxe.video.view.fragments.FirstRunFragment$FirstRunListener listener -> a
     void onAttach(android.app.Activity) -> onAttach
     android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
     void onViewCreated(android.view.View,android.os.Bundle) -> onViewCreated
     void onCancel(android.content.DialogInterface) -> onCancel
     com.podcatcher.deluxe.video.view.fragments.FirstRunFragment$FirstRunListener access$0(com.podcatcher.deluxe.video.view.fragments.FirstRunFragment) -> a
-com.podcatcher.deluxe.video.view.fragments.FirstRunFragment$1 -> com.podcatcher.deluxe.video.view.fragments.j:
+com.podcatcher.deluxe.video.view.fragments.FirstRunFragment$1 -> com.podcatcher.deluxe.video.view.fragments.n:
     com.podcatcher.deluxe.video.view.fragments.FirstRunFragment this$0 -> a
     void onClick(android.view.View) -> onClick
-com.podcatcher.deluxe.video.view.fragments.FirstRunFragment$2 -> com.podcatcher.deluxe.video.view.fragments.k:
+com.podcatcher.deluxe.video.view.fragments.FirstRunFragment$2 -> com.podcatcher.deluxe.video.view.fragments.o:
     com.podcatcher.deluxe.video.view.fragments.FirstRunFragment this$0 -> a
     void onClick(android.view.View) -> onClick
-com.podcatcher.deluxe.video.view.fragments.FirstRunFragment$FirstRunListener -> com.podcatcher.deluxe.video.view.fragments.l:
+com.podcatcher.deluxe.video.view.fragments.FirstRunFragment$FirstRunListener -> com.podcatcher.deluxe.video.view.fragments.p:
     void onAddPodcasts() -> a
 com.podcatcher.deluxe.video.view.fragments.PlayerFragment -> com.podcatcher.deluxe.video.view.fragments.PlayerFragment:
     com.podcatcher.deluxe.video.listeners.PlayerListener listener -> a
@@ -2656,13 +2691,13 @@ com.podcatcher.deluxe.video.view.fragments.PlayerFragment -> com.podcatcher.delu
     void updateButton(boolean,boolean,int,int) -> a
     void setErrorViewVisibility(boolean) -> f
     com.podcatcher.deluxe.video.listeners.PlayerListener access$0(com.podcatcher.deluxe.video.view.fragments.PlayerFragment) -> a
-com.podcatcher.deluxe.video.view.fragments.PlayerFragment$1 -> com.podcatcher.deluxe.video.view.fragments.m:
+com.podcatcher.deluxe.video.view.fragments.PlayerFragment$1 -> com.podcatcher.deluxe.video.view.fragments.q:
     com.podcatcher.deluxe.video.view.fragments.PlayerFragment this$0 -> a
     void onClick(android.view.View) -> onClick
-com.podcatcher.deluxe.video.view.fragments.PlayerFragment$2 -> com.podcatcher.deluxe.video.view.fragments.n:
+com.podcatcher.deluxe.video.view.fragments.PlayerFragment$2 -> com.podcatcher.deluxe.video.view.fragments.r:
     com.podcatcher.deluxe.video.view.fragments.PlayerFragment this$0 -> a
     void onClick(android.view.View) -> onClick
-com.podcatcher.deluxe.video.view.fragments.PlayerFragment$3 -> com.podcatcher.deluxe.video.view.fragments.o:
+com.podcatcher.deluxe.video.view.fragments.PlayerFragment$3 -> com.podcatcher.deluxe.video.view.fragments.s:
     com.podcatcher.deluxe.video.view.fragments.PlayerFragment this$0 -> a
     void onClick(android.view.View) -> onClick
 com.podcatcher.deluxe.video.view.fragments.PodcastListFragment -> com.podcatcher.deluxe.video.view.fragments.PodcastListFragment:
@@ -2697,37 +2732,37 @@ com.podcatcher.deluxe.video.view.fragments.PodcastListFragment -> com.podcatcher
     int access$2(com.podcatcher.deluxe.video.view.fragments.PodcastListFragment) -> b
     java.util.List access$3(com.podcatcher.deluxe.video.view.fragments.PodcastListFragment) -> c
     void access$4(com.podcatcher.deluxe.video.view.fragments.PodcastListFragment,boolean) -> a
-com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$1 -> com.podcatcher.deluxe.video.view.fragments.p:
+com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$1 -> com.podcatcher.deluxe.video.view.fragments.t:
     com.podcatcher.deluxe.video.view.fragments.PodcastListFragment this$0 -> a
     void onGlobalLayout() -> onGlobalLayout
-com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$2 -> com.podcatcher.deluxe.video.view.fragments.q:
+com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$2 -> com.podcatcher.deluxe.video.view.fragments.u:
     com.podcatcher.deluxe.video.view.fragments.PodcastListFragment this$0 -> a
     int val$index -> b
     com.podcatcher.deluxe.video.view.PodcastListItemView val$listItemView -> c
     void onAnimationEnd(android.animation.Animator) -> onAnimationEnd
-com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$3 -> com.podcatcher.deluxe.video.view.fragments.r:
+com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$3 -> com.podcatcher.deluxe.video.view.fragments.v:
     com.podcatcher.deluxe.video.view.fragments.PodcastListFragment this$0 -> a
     android.view.ViewGroup$LayoutParams val$layoutParams -> b
     void onAnimationUpdate(android.animation.ValueAnimator) -> onAnimationUpdate
-com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$4 -> com.podcatcher.deluxe.video.view.fragments.s:
+com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$4 -> com.podcatcher.deluxe.video.view.fragments.w:
     com.podcatcher.deluxe.video.view.fragments.PodcastListFragment this$0 -> a
     void onAnimationEnd(android.animation.Animator) -> onAnimationEnd
-com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$5 -> com.podcatcher.deluxe.video.view.fragments.t:
+com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$5 -> com.podcatcher.deluxe.video.view.fragments.x:
     com.podcatcher.deluxe.video.view.fragments.PodcastListFragment this$0 -> a
     android.view.ViewGroup$LayoutParams val$layoutParams -> b
     void onAnimationUpdate(android.animation.ValueAnimator) -> onAnimationUpdate
-com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$6 -> com.podcatcher.deluxe.video.view.fragments.u:
+com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$6 -> com.podcatcher.deluxe.video.view.fragments.y:
     com.podcatcher.deluxe.video.view.fragments.PodcastListFragment this$0 -> a
     android.view.ViewGroup$LayoutParams val$layoutParams -> b
     void onAnimationEnd(android.animation.Animator) -> onAnimationEnd
-com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$LogoViewMode -> com.podcatcher.deluxe.video.view.fragments.v:
+com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$LogoViewMode -> com.podcatcher.deluxe.video.view.fragments.z:
     com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$LogoViewMode NONE -> a
     com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$LogoViewMode SMALL -> b
     com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$LogoViewMode LARGE -> c
     com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$LogoViewMode[] ENUM$VALUES -> d
     com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$LogoViewMode[] values() -> values
     com.podcatcher.deluxe.video.view.fragments.PodcastListFragment$LogoViewMode valueOf(java.lang.String) -> valueOf
-com.podcatcher.deluxe.video.view.fragments.PodcatcherListFragment -> com.podcatcher.deluxe.video.view.fragments.w:
+com.podcatcher.deluxe.video.view.fragments.PodcatcherListFragment -> com.podcatcher.deluxe.video.view.fragments.aa:
     com.podcatcher.deluxe.video.adapters.PodcatcherBaseListAdapter adapter -> a
     int themeColor -> b
     int lightThemeColor -> c
@@ -2755,7 +2790,7 @@ com.podcatcher.deluxe.video.view.fragments.PodcatcherListFragment -> com.podcatc
     android.view.View findListItemViewForIndex(int) -> d
     void updateUiElementVisibility() -> h
     void updateListSelector() -> i
-com.podcatcher.deluxe.video.view.fragments.SelectFileFragment -> com.podcatcher.deluxe.video.view.fragments.x:
+com.podcatcher.deluxe.video.view.fragments.SelectFileFragment -> com.podcatcher.deluxe.video.view.fragments.ab:
     com.podcatcher.deluxe.video.listeners.OnSelectFileListener listener -> c
     java.io.File currentPath -> d
     com.podcatcher.deluxe.video.SelectFileActivity$SelectionMode selectionMode -> e
@@ -2784,21 +2819,21 @@ com.podcatcher.deluxe.video.view.fragments.SelectFileFragment -> com.podcatcher.
     android.widget.Button access$4(com.podcatcher.deluxe.video.view.fragments.SelectFileFragment) -> d
     com.podcatcher.deluxe.video.listeners.OnSelectFileListener access$5(com.podcatcher.deluxe.video.view.fragments.SelectFileFragment) -> e
     int access$6(com.podcatcher.deluxe.video.view.fragments.SelectFileFragment) -> f
-com.podcatcher.deluxe.video.view.fragments.SelectFileFragment$1 -> com.podcatcher.deluxe.video.view.fragments.y:
+com.podcatcher.deluxe.video.view.fragments.SelectFileFragment$1 -> com.podcatcher.deluxe.video.view.fragments.ac:
     com.podcatcher.deluxe.video.view.fragments.SelectFileFragment this$0 -> a
     void onClick(android.view.View) -> onClick
-com.podcatcher.deluxe.video.view.fragments.SelectFileFragment$2 -> com.podcatcher.deluxe.video.view.fragments.z:
+com.podcatcher.deluxe.video.view.fragments.SelectFileFragment$2 -> com.podcatcher.deluxe.video.view.fragments.ad:
     com.podcatcher.deluxe.video.view.fragments.SelectFileFragment this$0 -> a
     void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-com.podcatcher.deluxe.video.view.fragments.SelectFileFragment$3 -> com.podcatcher.deluxe.video.view.fragments.aa:
+com.podcatcher.deluxe.video.view.fragments.SelectFileFragment$3 -> com.podcatcher.deluxe.video.view.fragments.ae:
     com.podcatcher.deluxe.video.view.fragments.SelectFileFragment this$0 -> a
     void onClick(android.view.View) -> onClick
-com.podcatcher.deluxe.video.view.fragments.SettingsFragment -> com.podcatcher.deluxe.video.view.fragments.ab:
+com.podcatcher.deluxe.video.view.fragments.SettingsFragment -> com.podcatcher.deluxe.video.view.fragments.af:
     void onCreate(android.os.Bundle) -> onCreate
     void updateDownloadFolder(java.io.File) -> a
     void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
     void onDestroy() -> onDestroy
-com.podcatcher.deluxe.video.view.fragments.SuggestionFragment -> com.podcatcher.deluxe.video.view.fragments.ac:
+com.podcatcher.deluxe.video.view.fragments.SuggestionFragment -> com.podcatcher.deluxe.video.view.fragments.ag:
     com.podcatcher.deluxe.video.listeners.OnAddSuggestionListener listener -> a
     java.util.List suggestionList -> b
     android.widget.Spinner languageFilter -> c
@@ -2822,11 +2857,11 @@ com.podcatcher.deluxe.video.view.fragments.SuggestionFragment -> com.podcatcher.
     void updateList() -> c
     boolean matchesFilter(com.podcatcher.deluxe.video.model.types.Podcast) -> a
     void access$0(com.podcatcher.deluxe.video.view.fragments.SuggestionFragment) -> a
-com.podcatcher.deluxe.video.view.fragments.SuggestionFragment$1 -> com.podcatcher.deluxe.video.view.fragments.ad:
+com.podcatcher.deluxe.video.view.fragments.SuggestionFragment$1 -> com.podcatcher.deluxe.video.view.fragments.ah:
     com.podcatcher.deluxe.video.view.fragments.SuggestionFragment this$0 -> a
     void onItemSelected(android.widget.AdapterView,android.view.View,int,long) -> onItemSelected
     void onNothingSelected(android.widget.AdapterView) -> onNothingSelected
-com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener -> com.podcatcher.deluxe.video.view.fragments.ae:
+com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener -> com.podcatcher.deluxe.video.view.fragments.ai:
     int mSlop -> a
     int mMinFlingVelocity -> b
     int mMaxFlingVelocity -> c
@@ -2852,37 +2887,37 @@ com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener -> 
     void access$3(com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener,int) -> a
     java.util.List access$4(com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener) -> b
     com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener$ReorderCallback access$5(com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener) -> c
-com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener$1 -> com.podcatcher.deluxe.video.view.fragments.af:
+com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener$1 -> com.podcatcher.deluxe.video.view.fragments.aj:
     com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener this$0 -> a
     void onScrollStateChanged(android.widget.AbsListView,int) -> onScrollStateChanged
     void onScroll(android.widget.AbsListView,int,int,int) -> onScroll
-com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener$2 -> com.podcatcher.deluxe.video.view.fragments.ag:
+com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener$2 -> com.podcatcher.deluxe.video.view.fragments.ak:
     com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener this$0 -> a
     android.view.View val$downView -> b
     int val$downPosition -> c
     boolean val$up -> d
     void onAnimationEnd(android.animation.Animator) -> onAnimationEnd
-com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener$3 -> com.podcatcher.deluxe.video.view.fragments.ah:
+com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener$3 -> com.podcatcher.deluxe.video.view.fragments.al:
     com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener this$0 -> a
     boolean val$up -> b
     int val$originalHeight -> c
     void onAnimationEnd(android.animation.Animator) -> onAnimationEnd
-com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener$4 -> com.podcatcher.deluxe.video.view.fragments.ai:
+com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener$4 -> com.podcatcher.deluxe.video.view.fragments.am:
     com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener this$0 -> a
     android.view.ViewGroup$LayoutParams val$lp -> b
     android.view.View val$dismissView -> c
     void onAnimationUpdate(android.animation.ValueAnimator) -> onAnimationUpdate
-com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener$PendingReorderData -> com.podcatcher.deluxe.video.view.fragments.aj:
+com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener$PendingReorderData -> com.podcatcher.deluxe.video.view.fragments.an:
     int position -> a
     android.view.View view -> b
     com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener this$0 -> c
     int compareTo(com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener$PendingReorderData) -> a
     int compareTo(java.lang.Object) -> compareTo
-com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener$ReorderCallback -> com.podcatcher.deluxe.video.view.fragments.ak:
+com.podcatcher.deluxe.video.view.fragments.SwipeReorderListViewTouchListener$ReorderCallback -> com.podcatcher.deluxe.video.view.fragments.ao:
     boolean canReorder(int) -> a
     void onMoveUp(int[]) -> a
     void onMoveDown(int[]) -> b
-com.podcatcher.deluxe.video.view.fragments.VideoSurfaceProvider -> com.podcatcher.deluxe.video.view.fragments.al:
+com.podcatcher.deluxe.video.view.fragments.VideoSurfaceProvider -> com.podcatcher.deluxe.video.view.fragments.ap:
     android.view.SurfaceHolder getVideoSurface() -> a
     boolean isVideoSurfaceAvailable() -> b
     void adjustToVideoSize(int,int) -> a

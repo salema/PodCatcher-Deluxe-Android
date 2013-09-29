@@ -1027,6 +1027,9 @@ com.podcatcher.deluxe.video.view.SuggestionListItemView:
     private static final java.lang.String METADATA_SEPARATOR
 com.podcatcher.deluxe.video.view.Utils:
     28:28:public Utils()
+com.podcatcher.deluxe.video.view.fragments.DeleteDownloadsConfirmationDialogFragment:
+    public static final java.lang.String EPISODE_COUNT_KEY
+    public static final java.lang.String TAG
 com.podcatcher.deluxe.video.view.fragments.EpisodeFragment:
     private static final int HIDE_FULLSCREEN_HINT_DELAY
     private static final java.lang.String SEPARATOR
