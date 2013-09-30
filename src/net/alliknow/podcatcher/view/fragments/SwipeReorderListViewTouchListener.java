@@ -119,14 +119,13 @@ public class SwipeReorderListViewTouchListener implements View.OnTouchListener {
     }
 
     /**
-     * Returns an {@link AbsListView.OnScrollListener} to be added to the
-     * {@link ListView} using
-     * {@link ListView#setOnScrollListener(AbsListView.OnScrollListener)}. If a
-     * scroll listener is already assigned, the caller should still pass scroll
-     * changes through to this listener. This will ensure that this
-     * {@link SwipeReorderListViewTouchListener} is paused during list view
-     * scrolling.</p>
-     * 
+     * @return An {@link android.widget.AbsListView.OnScrollListener} to be
+     *         added to the {@link ListView} using
+     *         {@link ListView#setOnScrollListener(AbsListView.OnScrollListener)}
+     *         . If a scroll listener is already assigned, the caller should
+     *         still pass scroll changes through to this listener. This will
+     *         ensure that this {@link SwipeReorderListViewTouchListener} is
+     *         paused during list view scrolling.
      * @see SwipeReorderListViewTouchListener
      */
     public AbsListView.OnScrollListener makeScrollListener() {

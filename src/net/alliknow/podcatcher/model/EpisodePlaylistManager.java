@@ -131,7 +131,7 @@ public abstract class EpisodePlaylistManager extends EpisodeDownloadManager {
     /**
      * Find out whether some episode is alone in the playlist.
      * 
-     * @param Episode to exclude from empty check.
+     * @param episode Episode to exclude from empty check.
      * @return Whether the current playlist has any entries besides the episode
      *         given. Will also return <code>true</code> if the playlist has no
      *         entries at all.
