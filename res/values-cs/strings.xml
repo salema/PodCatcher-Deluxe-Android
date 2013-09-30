@@ -19,7 +19,7 @@
 -->
 <resources>
     <string name="divider">Rozdělovač</string>
-    <string name="about">O programu Video Podcatcher Deluxe</string>
+    <string name="about">O programu Podcatcher Deluxe</string>
     <string name="help">Nápověda</string>
     <string name="no_browser">Není dostupný žádný prohlížeč!</string>
     <string name="wait">Čekat</string>
