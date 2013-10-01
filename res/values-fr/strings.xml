@@ -85,8 +85,8 @@
         <item quantity="other">Supprimer %d téléchargements</item>
     </plurals>
     <plurals name="downloads_remove_text">
-        <item quantity="one">Cet épisode ne sera plus disponible hors connexion.</item>
-        <item quantity="other">Ces épisodes ne seront plus disponibles hors connexion.</item>
+        <item quantity="one">Après avoir supprimé cet épisode, celui-ci ne sera plus accessible sans connexion internet.</item>
+        <item quantity="other">Après avoir supprimé ces épisodes, ceux-ci ne seront plus accessibles sans connexion internet.</item>
     </plurals>
     <string name="downloads_none">Aucun épisode disponible. Pour sauvegarder un épisode, cliquez sur le symbole de téléchargement.</string>
     <string name="download_started">Téléchargement de\n\"%s\"\ndémarré</string>
