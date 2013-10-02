@@ -85,8 +85,8 @@
         <item quantity="other">Eliminar %d descargas</item>
     </plurals>
     <plurals name="downloads_remove_text">
-        <item quantity="one">Este episodio ya no estará disponible sin conexión.</item>
-        <item quantity="other">Estos episodios YA no estarán disponibles sin conexión.</item>
+        <item quantity="one">Tras borrar este episodio, éste ya no estará disponible sin conexión a internet.</item>
+        <item quantity="other">Tras borrar estos episodios, estos ya no estarán disponibles sin conexión a internet.</item>
     </plurals>
     <string name="downloads_none">No hay ningún episodio disponible. Para almacenar uno, hacer clic en el símbolo de descarga del menú.</string>
     <string name="download_started">Descarga activa:\n\"%s\"</string>
