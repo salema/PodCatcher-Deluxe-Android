@@ -22,6 +22,7 @@ import static android.media.RemoteControlClient.PLAYSTATE_ERROR;
 import static android.media.RemoteControlClient.PLAYSTATE_PAUSED;
 import static android.media.RemoteControlClient.PLAYSTATE_PLAYING;
 import static android.media.RemoteControlClient.PLAYSTATE_STOPPED;
+import static net.alliknow.podcatcher.Podcatcher.AUTHORIZATION_KEY;
 
 import android.app.PendingIntent;
 import android.app.Service;
@@ -37,6 +38,7 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnInfoListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Binder;
@@ -47,6 +49,7 @@ import android.util.Log;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.model.types.Episode;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Timer;
@@ -268,7 +271,19 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             // Start playback for new episode
             try {
                 initPlayer();
-                player.setDataSource(currentEpisode.getMediaUrl().toString());
+
+                // Set source (and authorization if needed)
+                if (episode.getPodcast().getAuthorization() != null) {
+                    final HashMap<String, String> headers = new HashMap<String, String>(1);
+                    headers.put(AUTHORIZATION_KEY, episode.getPodcast().getAuthorization());
+
+                    player.setDataSource(this,
+                            Uri.parse(currentEpisode.getMediaUrl().toString()), headers);
+                }
+                else
+                    player.setDataSource(currentEpisode.getMediaUrl().toString());
+
+                // Make sure the device stays alive
                 player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
                 wifiLock.acquire();
 

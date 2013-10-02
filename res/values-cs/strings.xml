@@ -26,6 +26,7 @@
     <string name="connect">Spojit</string>
     <string name="load">Nahrát</string>
     <string name="stop">Zastavit</string>
+    <string name="cancel">Zrušit</string>
     <string name="remove">Odstranit</string>
     <string name="parse">Číst</string>
     <string name="play">Přehrát</string>
@@ -64,6 +65,10 @@
         <item quantity="other">%d dílů</item>
     </plurals>
     <string name="episodes_sort_toggle">Obrátit pořadí</string>
+    <string name="auth_required">Vyžadována autorizace</string>
+    <string name="auth_username">Uživatleské jméno</string>
+    <string name="auth_password">Heslo</string>
+    <string name="auth_submit">Potvrdit</string>
     <string name="file_select">Vybrat</string>
     <string name="file_select_file">Vybrat soubor</string>
     <string name="file_select_folder">Vybrat složku</string>

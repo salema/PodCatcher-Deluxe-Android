@@ -26,6 +26,7 @@
     <string name="connect">Connecter</string>
     <string name="load">Charger</string>
     <string name="stop">Arrêter</string>
+    <string name="cancel">Annular</string>
     <string name="remove">Supprimer</string>
     <string name="parse">Analyser</string>
     <string name="play">Lecture</string>
@@ -62,6 +63,10 @@
         <item quantity="other">%d episodes</item>
     </plurals>
     <string name="episodes_sort_toggle">Inverser l\'ordre</string>
+    <string name="auth_required">Autorisation requise</string>
+    <string name="auth_username">Identifiant</string>
+    <string name="auth_password">Mot de passe</string>
+    <string name="auth_submit">Confirmer</string>
     <string name="file_select">Sélectionner</string>
     <string name="file_select_file">Sélectionner fichier</string>
     <string name="file_select_folder">Sélectionner dossier</string>

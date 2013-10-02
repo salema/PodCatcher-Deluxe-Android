@@ -29,10 +29,23 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.ByteArrayInputStream;
 
 /**
- * Loads podcast RSS file asynchronously. Implement the PodcastLoader interface
- * to be alerted on completion or failure. The downloaded file will be used as
- * the podcast's content via {@link Podcast#parse(XmlPullParser)}, use the
- * podcast object given (and returned via callbacks) to access it.
+ * Loads a podcast's RSS file from the server and parses its contents
+ * asynchronously.
+ * <p>
+ * <b>Usage:</b> Implement the {@link OnLoadPodcastListener} interface and give
+ * it to the task's constructor to be alerted on completion, progress, or
+ * failure. The downloaded file will be used as the podcast's content via
+ * {@link Podcast#parse(XmlPullParser)}, use the podcast object given (and
+ * returned via callbacks) to access it.
+ * </p>
+ * <p>
+ * <b>Authorization:</b> The task will send the credentials returned by
+ * {@link Podcast#getAuthorization()} when requesting the file from the server.
+ * If not present or wrong, the task fails and
+ * {@link OnLoadPodcastListener#onAuthorizationRequired(Podcast)} will be
+ * called. ({@link OnLoadPodcastListener#onPodcastLoadFailed(Podcast)} will
+ * <i>not</i> be called.)
+ * </p>
  */
 public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 
@@ -63,8 +76,12 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
         this.podcast = podcasts[0];
 
         try {
-            // 1. Load the file from the internets
+            // 1. Load the file from the Internet
             publishProgress(Progress.CONNECT);
+
+            // Set auth
+            this.authorization = podcast.getAuthorization();
+            // ... and go get the file
             byte[] podcastRssFile = loadFile(podcast.getUrl());
 
             if (isCancelled())
@@ -81,9 +98,8 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
             // 3. Parse as podcast content
             if (!isCancelled())
                 podcast.parse(parser);
-        } catch (Throwable throwable) {
-            Log.w(getClass().getSimpleName(), "Load failed for podcast \"" + podcasts[0] + "\"",
-                    throwable);
+        } catch (Throwable t) {
+            Log.w(getClass().getSimpleName(), "Load failed for podcast \"" + podcast + "\"", t);
 
             cancel(true);
         } finally {
@@ -114,7 +130,10 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
     protected void onCancelled(Void nothing) {
         // Background task failed to complete
         if (listener != null)
-            listener.onPodcastLoadFailed(podcast);
+            if (needsAuthorization)
+                listener.onAuthorizationRequired(podcast);
+            else
+                listener.onPodcastLoadFailed(podcast);
         else
             Log.w(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
     }

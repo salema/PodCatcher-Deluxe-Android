@@ -22,15 +22,25 @@ import net.alliknow.podcatcher.model.types.Progress;
 
 /**
  * Interface definition for a callback to be invoked when a podcast is loaded.
+ * Also provides some means to monitor the load progress.
  */
 public interface OnLoadPodcastListener {
+
+    /**
+     * Called on podcast load failure due to missing credentials. Typically, the
+     * call-back would ask the user for his/her credentials and re-start the
+     * podcast load task.
+     * 
+     * @param podcast The podcast that failed to load.
+     */
+    public void onAuthorizationRequired(Podcast podcast);
 
     /**
      * Called on progress update.
      * 
      * @param podcast Podcast loading.
      * @param progress Percent of podcast RSS file loaded or flag from
-     *            <code>Progress</code>. Note that this only works if the http
+     *            {@link Progress}. Note that this only works if the http
      *            connection reports its content length correctly. Otherwise
      *            (and this happens in the wild out there) percent might be
      *            >100.

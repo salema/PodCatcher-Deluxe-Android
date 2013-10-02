@@ -51,6 +51,11 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
 
     /** The podcast list to store */
     protected List<Podcast> podcastList;
+    /**
+     * Flag to indicate whether the task should write authorization information
+     * to the resulting file.
+     */
+    protected boolean writeAuthorization = false;
     /** The file/dir that we write to. */
     protected File exportLocation;
     /** The exception that might have been occured */
@@ -95,6 +100,18 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
      */
     public void setCustomLocation(File location) {
         this.exportLocation = location;
+    }
+
+    /**
+     * Sets the write authorization flag. If set to <code>true</code>, the
+     * resulting OPML file will contain extra information on the user's
+     * credentials for all podcasts in the list. The default is
+     * <code>false</code>. Use with care!
+     * 
+     * @param write Whether credentials should be written to output.
+     */
+    public void setWriteAuthorization(boolean write) {
+        this.writeAuthorization = write;
     }
 
     @Override
@@ -154,7 +171,7 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
             listener.onPodcastListStoreFailed(podcastList, exportLocation, exception);
     }
 
-    private static void writePodcast(BufferedWriter writer, Podcast podcast) throws IOException {
+    private void writePodcast(BufferedWriter writer, Podcast podcast) throws IOException {
         // Skip, if not a valid podcast
         if (hasNameAndUrl(podcast)) {
             String opmlString = "<" + OPML.OUTLINE + " " + OPML.TEXT + "=\"" +
@@ -163,6 +180,20 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
                     OPML.XMLURL + "=\"" +
                     TextUtils.htmlEncode(podcast.getUrl().toString()) + "\"/>";
 
+            if (writeAuthorization && podcast.getAuthorization() != null) {
+                opmlString = opmlString.substring(0, opmlString.length() - 2);
+
+                // We store the podcast password in the app's private folder
+                // (but in the clear). This is justified because it is hard to
+                // attack the file (unless you get your hands on the device) and
+                // the password is not very sensitive since it is only a
+                // podcast we are accessing, not personal information.
+                opmlString += " " + OPML.EXTRA_USER + "=\"" +
+                        TextUtils.htmlEncode(podcast.getUsername()) + "\" " +
+                        OPML.EXTRA_PASS + "=\"" +
+                        TextUtils.htmlEncode(podcast.getPassword()) + "\"/>";
+            }
+
             writeLine(writer, 2, opmlString);
         }
     }
@@ -170,12 +201,12 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
     /**
      * @return Whether given podcast has an non-empty name and an URL.
      */
-    private static boolean hasNameAndUrl(Podcast podcast) {
+    private boolean hasNameAndUrl(Podcast podcast) {
         return podcast.getName() != null && podcast.getName().length() > 0
                 && podcast.getUrl() != null;
     }
 
-    private static void writeHeader(BufferedWriter writer, String fileName) throws IOException {
+    private void writeHeader(BufferedWriter writer, String fileName) throws IOException {
         writeLine(writer, 0, "<?xml version=\"1.0\" encoding=\""
                 + PodcastManager.OPML_FILE_ENCODING + "\"?>");
         writeLine(writer, 0, "<opml version=\"2.0\">");
@@ -186,12 +217,12 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
         writeLine(writer, 1, "<body>");
     }
 
-    private static void writeFooter(BufferedWriter writer) throws IOException {
+    private void writeFooter(BufferedWriter writer) throws IOException {
         writeLine(writer, 1, "</body>");
         writeLine(writer, 0, "</opml>");
     }
 
-    private static void writeLine(BufferedWriter writer, int level, String line) throws IOException {
+    private void writeLine(BufferedWriter writer, int level, String line) throws IOException {
         for (int i = 0; i < level * 2; i++)
             writer.write(INDENT);
 

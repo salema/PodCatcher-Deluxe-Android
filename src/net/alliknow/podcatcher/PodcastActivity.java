@@ -17,6 +17,7 @@
 
 package net.alliknow.podcatcher;
 
+import android.app.DialogFragment;
 import android.app.FragmentManager.OnBackStackChangedListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,6 +31,7 @@ import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
+import net.alliknow.podcatcher.view.fragments.AuthorizationFragment;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment.LogoViewMode;
@@ -184,6 +186,18 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
         // Set podcast logo view mode
         updateLogoViewMode();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        // Prevent duplicate login dialog
+        final DialogFragment authFragment = (DialogFragment)
+                getFragmentManager().findFragmentByTag(AuthorizationFragment.TAG);
+
+        if (view.isSmallPortrait() && authFragment != null)
+            authFragment.dismiss();
     }
 
     @Override
@@ -382,6 +396,13 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             // Update UI
             updateLogoViewMode();
         }
+    }
+
+    @Override
+    public void onAuthorizationRequired(Podcast podcast) {
+        // Only react here, if the activity is visible
+        if (!view.isSmallPortrait())
+            super.onAuthorizationRequired(podcast);
     }
 
     @Override

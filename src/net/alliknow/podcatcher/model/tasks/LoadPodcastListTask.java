@@ -156,6 +156,8 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
      *         occurs, <code>null</code> is returned.
      */
     private Podcast createPodcast(XmlPullParser parser) {
+        Podcast result = null;
+
         try {
             // Make sure we start at item tag
             parser.require(XmlPullParser.START_TAG, "", OPML.OUTLINE);
@@ -167,9 +169,13 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
             else
                 name = Html.fromHtml(name).toString();
             // Get and parse podcast url
-            URL url = new URL(parser.getAttributeValue("", OPML.XMLURL));
+            final URL url = new URL(parser.getAttributeValue("", OPML.XMLURL));
             // Create the podcast
-            return new Podcast(name, url);
+            result = new Podcast(name, url);
+
+            // Set authorization information
+            result.setUsername(parser.getAttributeValue("", OPML.EXTRA_USER));
+            result.setPassword(parser.getAttributeValue("", OPML.EXTRA_PASS));
         } catch (MalformedURLException e) {
             Log.w(getClass().getSimpleName(), "OPML outline has bad URL!", e);
         } catch (XmlPullParserException e) {
@@ -177,6 +183,6 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
         } catch (IOException e) { /* pass */
         }
 
-        return null;
+        return result;
     }
 }
