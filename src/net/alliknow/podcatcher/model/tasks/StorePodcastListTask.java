@@ -49,6 +49,11 @@ public class StorePodcastListTask extends StoreFileTask<List<Podcast>> {
 
     /** The podcast list to store */
     protected List<Podcast> podcastList;
+    /**
+     * Flag to indicate whether the task should write authorization information
+     * to the resulting file.
+     */
+    protected boolean writeAuthorization = false;
     /** The file/dir that we write to. */
     protected File exportLocation;
     /** The exception that might have been occured */
@@ -91,6 +96,18 @@ public class StorePodcastListTask extends StoreFileTask<List<Podcast>> {
      */
     public void setCustomLocation(File location) {
         this.exportLocation = location;
+    }
+
+    /**
+     * Sets the write authorization flag. If set to <code>true</code>, the
+     * resulting OPML file will contain extra information on the user's
+     * credentials for all podcasts in the list. The default is
+     * <code>false</code>. Use with care!
+     * 
+     * @param write Whether credentials should be written to output.
+     */
+    public void setWriteAuthorization(boolean write) {
+        this.writeAuthorization = write;
     }
 
     @Override
@@ -157,6 +174,20 @@ public class StorePodcastListTask extends StoreFileTask<List<Podcast>> {
                     OPML.TYPE + "=\"" + OPML.RSS_TYPE + "\" " +
                     OPML.XMLURL + "=\"" +
                     TextUtils.htmlEncode(podcast.getUrl().toString()) + "\"/>";
+
+            if (writeAuthorization && podcast.getAuthorization() != null) {
+                opmlString = opmlString.substring(0, opmlString.length() - 2);
+
+                // We store the podcast password in the app's private folder
+                // (but in the clear). This is justified because it is hard to
+                // attack the file (unless you get your hands on the device) and
+                // the password is not very sensitive since it is only a
+                // podcast we are accessing, not personal information.
+                opmlString += " " + OPML.EXTRA_USER + "=\"" +
+                        TextUtils.htmlEncode(podcast.getUsername()) + "\" " +
+                        OPML.EXTRA_PASS + "=\"" +
+                        TextUtils.htmlEncode(podcast.getPassword()) + "\"/>";
+            }
 
             writeLine(2, opmlString);
         }

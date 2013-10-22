@@ -54,6 +54,9 @@ public class Podcatcher extends Application {
     public static final String USER_AGENT_KEY = "User-Agent";
     /** The user agent string we use to identify us */
     public static final String USER_AGENT_VALUE = "Podcatcher Deluxe";
+    /** The http request header field key for the authorization */
+    public static final String AUTHORIZATION_KEY = "Authorization";
+
     /** The HTTP cache size */
     public static final long HTTP_CACHE_SIZE = 8 * 1024 * 1024; // 8 MiB
 

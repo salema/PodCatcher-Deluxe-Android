@@ -23,6 +23,7 @@ import static android.app.DownloadManager.COLUMN_STATUS;
 import static android.app.DownloadManager.COLUMN_TOTAL_SIZE_BYTES;
 import static android.app.DownloadManager.STATUS_FAILED;
 import static android.app.DownloadManager.STATUS_SUCCESSFUL;
+import static net.alliknow.podcatcher.Podcatcher.AUTHORIZATION_KEY;
 import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_KEY;
 import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_VALUE;
 
@@ -175,7 +176,9 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
                     // ORF.at) that apparently block downloads based on this
                     // information
                     .addRequestHeader(USER_AGENT_KEY, USER_AGENT_VALUE)
-                    // Make sure our download dont end up in the http cache
+                    // Set auth if available
+                    .addRequestHeader(AUTHORIZATION_KEY, episode.getPodcast().getAuthorization())
+                    // Make sure our download does not end up in the http cache
                     .addRequestHeader("Cache-Control", "no-store");
 
             // Start the download

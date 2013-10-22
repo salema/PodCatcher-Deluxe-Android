@@ -96,6 +96,10 @@
     <string name="playlist_add">Ajouter à la liste de lecture</string>
     <string name="playlist_remove">Supprimer de la liste de lecture</string>
     <string name="playlist_swipe_reorder">Pour réorganiser la liste d\'épisodes, posez le doigt sur un épisode et effectuez un balayage vers la gauche ou vers la droite</string>
+    <string name="auth_required">Autorisation requise</string>
+    <string name="auth_username">Identifiant</string>
+    <string name="auth_password">Mot de passe</string>
+    <string name="auth_submit">Confirmer</string>
     <string name="file_select">Sélectionner</string>
     <string name="file_select_file">Sélectionner fichier</string>
     <string name="file_select_folder">Sélectionner dossier</string>

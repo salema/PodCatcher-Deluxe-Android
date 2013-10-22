@@ -17,6 +17,8 @@
 
 package net.alliknow.podcatcher.model.tasks.remote;
 
+import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
+import static net.alliknow.podcatcher.Podcatcher.AUTHORIZATION_KEY;
 import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_KEY;
 import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_VALUE;
 
@@ -55,6 +57,13 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
 
     /** The max stale cache control to set */
     protected int maxStale = -1;
+    /** A file size limit in bytes for the download */
+    protected int loadLimit = -1;
+
+    /** The authorization to send */
+    protected String authorization;
+    /** The flag to indicate that authorization is/was required */
+    protected boolean needsAuthorization = false;
 
     /**
      * Set a "max-stale" cache control directive when downloading the file. The
@@ -66,9 +75,6 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
     public void setMaxStale(int seconds) {
         this.maxStale = seconds;
     }
-
-    /** A file size limit in bytes for the download */
-    protected int loadLimit = -1;
 
     /**
      * Set a load limit for the actual download of the file. The default is a
@@ -103,12 +109,9 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
         // Set cache control directive
         if (maxStale >= 0)
             connection.addRequestProperty("Cache-Control", "max-stale=" + maxStale);
-
-        // TODO allow for password protected feeds
-        // String userpass = username + ":" + password;
-        // String basicAuth = "Basic " +
-        // DatatypeCon.encode(userpass.getBytes()));
-        // connection.setRequestProperty ("Authorization", basicAuth);
+        // Allow for password protected feeds
+        if (authorization != null)
+            connection.setRequestProperty(AUTHORIZATION_KEY, authorization);
 
         BufferedInputStream bufferedRemoteStream = null;
         ByteArrayOutputStream result = null;
@@ -157,6 +160,12 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
 
             // 4. Return result as a byte array
             return result.toByteArray();
+        } catch (IOException ioe) {
+            // Make sure sub-classes can react if auth is needed
+            if (connection.getResponseCode() == HTTP_UNAUTHORIZED)
+                needsAuthorization = true;
+
+            throw ioe;
         } finally {
             // Close the streams
             // To remote

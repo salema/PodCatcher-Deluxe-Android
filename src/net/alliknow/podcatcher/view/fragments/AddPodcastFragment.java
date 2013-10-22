@@ -113,7 +113,7 @@ public class AddPodcastFragment extends DialogFragment {
             podcastUrlEditText.setText(getActivity().getIntent().getDataString());
         // This is for testing only
         else if (((Podcatcher) getActivity().getApplication()).isInDebugMode())
-            podcastUrlEditText.setText("richeisen.libsyn.com/rss");
+            podcastUrlEditText.setText("https://www.theskepticsguide.org/premium");
         // This checks for a potential podcast URL in the clipboard
         // and presets it in the text field if available
         else

@@ -302,6 +302,19 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     }
 
     @Override
+    public void onAuthorizationRequired(Podcast podcast) {
+        // Remove from the map of loading task
+        loadPodcastTasks.remove(podcast);
+
+        // Notify listeners
+        if (loadPodcastListeners.isEmpty())
+            Log.w(getClass().getSimpleName(), "Podcast needs authorization, but no listeners set.");
+        else
+            for (OnLoadPodcastListener listener : loadPodcastListeners)
+                listener.onAuthorizationRequired(podcast);
+    }
+
+    @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
         // Notify listeners
         for (OnLoadPodcastListener listener : loadPodcastListeners)
@@ -450,13 +463,35 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     }
 
     /**
+     * Set and permanently store the username/password combination for the given
+     * podcast.
+     * 
+     * @param podcast Podcast to set credentials for. Needs to be in the
+     *            manager's list.
+     * @param username Username to set.
+     * @param password Password to set.
+     */
+    public void setCredentials(Podcast podcast, String username, String password) {
+        if (podcastList.contains(podcast)) {
+            podcast.setUsername(username);
+            podcast.setPassword(password);
+
+            // Mark podcast list dirty
+            podcastListChanged = true;
+        }
+    }
+
+    /**
      * Make sure the podcast manager persists its state as needed.
      */
     @SuppressWarnings("unchecked")
     public void saveState() {
         // Store podcast list if dirty
         if (podcastListChanged) {
-            new StorePodcastListTask(podcatcher.getApplicationContext()).execute(podcastList);
+            final StorePodcastListTask task =
+                    new StorePodcastListTask(podcatcher.getApplicationContext());
+            task.setWriteAuthorization(true);
+            task.execute(podcastList);
 
             // Reset the flag, so the list will only be saved if changed again
             podcastListChanged = false;
@@ -656,8 +691,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
                 "http://feeds.feedburner.com/linuxoutlaws"));
         podcastList.add(createPodcast("GEO",
                 "http://www.geo.de/GEOaudio/index.xml"));
-        podcastList.add(createPodcast("All Politics",
-                "http://www.npr.org/rss/podcast.php?id=510068"));
+        podcastList.add(createPodcast("SGU",
+                "https://www.theskepticsguide.org/premium"));
         podcastList.add(createPodcast("Planet Money",
                 "http://www.npr.org/rss/podcast.php?id=510289"));
         podcastList.add(createPodcast("Freakonomics",

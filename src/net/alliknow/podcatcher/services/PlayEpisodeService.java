@@ -22,6 +22,7 @@ import static android.media.RemoteControlClient.PLAYSTATE_ERROR;
 import static android.media.RemoteControlClient.PLAYSTATE_PAUSED;
 import static android.media.RemoteControlClient.PLAYSTATE_PLAYING;
 import static android.media.RemoteControlClient.PLAYSTATE_STOPPED;
+import static net.alliknow.podcatcher.Podcatcher.AUTHORIZATION_KEY;
 
 import android.app.PendingIntent;
 import android.app.Service;
@@ -38,6 +39,7 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnInfoListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.media.MediaPlayer.OnVideoSizeChangedListener;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Binder;
@@ -55,6 +57,7 @@ import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.view.fragments.VideoSurfaceProvider;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -375,7 +378,19 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
                     player.setDataSource(episodeManager.getLocalPath(episode));
                 // Need to resort to remote file
                 else {
-                    player.setDataSource(episode.getMediaUrl().toString());
+                    // Set source (and authorization if needed)
+                    if (episode.getPodcast().getAuthorization() != null) {
+                        final HashMap<String, String> headers = new HashMap<String, String>(1);
+                        headers.put(AUTHORIZATION_KEY, episode.getPodcast().getAuthorization());
+
+                        player.setDataSource(this,
+                                Uri.parse(currentEpisode.getMediaUrl().toString()), headers);
+                    }
+                    // No auth available we could send to the server
+                    else
+                        player.setDataSource(currentEpisode.getMediaUrl().toString());
+
+                    // We are streaming, so make wifi stay alive
                     wifiLock.acquire();
                 }
 

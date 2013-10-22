@@ -17,6 +17,8 @@
 
 package net.alliknow.podcatcher;
 
+import static net.alliknow.podcatcher.view.fragments.AuthorizationFragment.USERNAME_PRESET_KEY;
+
 import android.app.ActionBar;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,6 +26,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 
+import net.alliknow.podcatcher.listeners.OnEnterAuthorizationListener;
 import net.alliknow.podcatcher.listeners.OnLoadDownloadsListener;
 import net.alliknow.podcatcher.listeners.OnLoadPlaylistListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
@@ -38,6 +41,7 @@ import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.ContentSpinner;
+import net.alliknow.podcatcher.view.fragments.AuthorizationFragment;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 
 import java.util.ArrayList;
@@ -55,9 +59,9 @@ import java.util.TreeSet;
  * extend or simply show this layout.
  */
 public abstract class EpisodeListActivity extends EpisodeActivity implements
-        OnLoadPodcastListener, OnLoadPodcastLogoListener, OnSelectPodcastListener,
-        OnLoadDownloadsListener, OnLoadPlaylistListener, OnReorderEpisodeListener,
-        OnToggleFilterListener, OnReverseSortingListener {
+        OnLoadPodcastListener, OnEnterAuthorizationListener, OnLoadPodcastLogoListener,
+        OnSelectPodcastListener, OnLoadDownloadsListener, OnLoadPlaylistListener,
+        OnReorderEpisodeListener, OnToggleFilterListener, OnReverseSortingListener {
 
     /** Key used to save the current content mode in bundle */
     public static final String MODE_KEY = "MODE_KEY";
@@ -321,6 +325,43 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             updateFilter();
             updateDivider();
         }
+    }
+
+    @Override
+    public void onAuthorizationRequired(Podcast podcast) {
+        if (selection.isSingle() && podcast.equals(selection.getPodcast())) {
+            // Ask the user for authorization
+            final AuthorizationFragment authorizationFragment = new AuthorizationFragment();
+
+            if (podcast.getUsername() != null) {
+                // Create bundle to make dialog aware of username to pre-set
+                final Bundle args = new Bundle();
+                args.putString(USERNAME_PRESET_KEY, podcast.getUsername());
+                authorizationFragment.setArguments(args);
+            }
+
+            authorizationFragment.show(getFragmentManager(), AuthorizationFragment.TAG);
+        }
+    }
+
+    @Override
+    public void onSubmitAuthorization(String username, String password) {
+        if (selection.isPodcastSet()) {
+            final Podcast podcast = selection.getPodcast();
+            podcastManager.setCredentials(podcast, username, password);
+
+            // We need to unselect the podcast here in order to make it
+            // selectable again...
+            selection.setPodcast(null);
+
+            onPodcastSelected(podcast);
+        }
+    }
+
+    @Override
+    public void onCancelAuthorization() {
+        if (selection.isPodcastSet())
+            onPodcastLoadFailed(selection.getPodcast());
     }
 
     @Override

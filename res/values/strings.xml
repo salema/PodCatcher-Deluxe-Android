@@ -96,6 +96,10 @@
     <string name="playlist_add">Add to Playlist</string>
     <string name="playlist_remove">Remove from Playlist</string>
     <string name="playlist_swipe_reorder">Swipe episodes to re-order</string>
+    <string name="auth_required">Authorization required</string>
+    <string name="auth_username">Username</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_submit">Submit</string>
     <string name="file_select">Select</string>
     <string name="file_select_file">Select File</string>
     <string name="file_select_folder">Select Folder</string>
