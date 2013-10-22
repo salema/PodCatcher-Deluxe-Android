@@ -62,6 +62,11 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
         public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
             // System.out.println(progress);
         }
+
+        @Override
+        public void onAuthorizationRequired(Podcast podcast) {
+            // Not relevant
+        }
     }
 
     @Override

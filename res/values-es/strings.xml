@@ -96,6 +96,10 @@
     <string name="playlist_add">Añadir a la lista de reproducción</string>
     <string name="playlist_remove">Eliminar de la lista de reproducción</string>
     <string name="playlist_swipe_reorder">Para reordenar los episodios, coloque el dedo en un episodio y deslícelo hacia la izquierda o la derecha</string>
+    <string name="auth_required">Autorización requerida</string>
+    <string name="auth_username">Nombre de usuario</string>
+    <string name="auth_password">Contraseña</string>
+    <string name="auth_submit">Confirmar</string>
     <string name="file_select">Seleccionar</string>
     <string name="file_select_file">Seleccionar archivo</string>
     <string name="file_select_folder">Seleccionar carpeta</string>

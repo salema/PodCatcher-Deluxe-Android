@@ -17,6 +17,7 @@
 
 package net.alliknow.podcatcher;
 
+import android.app.DialogFragment;
 import android.app.FragmentManager.OnBackStackChangedListener;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -33,6 +34,7 @@ import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
+import net.alliknow.podcatcher.view.fragments.AuthorizationFragment;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment.LogoViewMode;
@@ -202,6 +204,19 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         }
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        // Prevent duplicate login dialog
+        final DialogFragment authFragment = (DialogFragment)
+                getFragmentManager().findFragmentByTag(AuthorizationFragment.TAG);
+
+        if (view.isSmallPortrait() && authFragment != null)
+            authFragment.dismiss();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
@@ -468,6 +483,13 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             // Update UI
             updateLogoViewMode();
         }
+    }
+
+    @Override
+    public void onAuthorizationRequired(Podcast podcast) {
+        // Only react here, if the activity is visible
+        if (!view.isSmallPortrait())
+            super.onAuthorizationRequired(podcast);
     }
 
     @Override

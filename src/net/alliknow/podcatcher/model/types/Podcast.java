@@ -19,6 +19,7 @@ package net.alliknow.podcatcher.model.types;
 
 import android.graphics.Bitmap;
 import android.text.Html;
+import android.util.Base64;
 import android.util.Log;
 
 import net.alliknow.podcatcher.model.ParserUtils;
@@ -58,6 +59,11 @@ public class Podcast implements Comparable<Podcast> {
     private Genre genre;
     /** Podcast media type */
     private MediaType mediaType;
+
+    /** Username for http authorization */
+    private String username;
+    /** Password for http authorization */
+    private String password;
 
     /** The podcast's image (logo) location */
     private URL logoUrl;
@@ -151,6 +157,55 @@ public class Podcast implements Comparable<Podcast> {
      */
     public void setMediaType(MediaType mediaType) {
         this.mediaType = mediaType;
+    }
+
+    /**
+     * @return The user name for this podcast. Maybe <code>null</code> if
+     *         unknown or unneeded.
+     */
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Set the user name for this podcast.
+     * 
+     * @param username Name to use. Give <code>null</code> to reset.
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    /**
+     * @return The password for this podcast. Maybe <code>null</code> if unknown
+     *         or unneeded.
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Set the password for this podcast.
+     * 
+     * @param password Password to use. Give <code>null</code> to reset.
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * @return Authorization string to be used as a HTTP request header or
+     *         <code>null</code> if username or password are not set.
+     */
+    public String getAuthorization() {
+        String result = null;
+
+        if (username != null && password != null) {
+            final String userpass = username + ":" + password;
+            result = "Basic " + Base64.encodeToString(userpass.getBytes(), Base64.NO_WRAP);
+        }
+
+        return result;
     }
 
     /**

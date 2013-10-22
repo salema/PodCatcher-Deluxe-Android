@@ -33,14 +33,16 @@ import java.util.Date;
 
 /**
  * An async task to load a podcast logo. Implement
- * {@link OnLoadPodcastLogoListener} to be alerted on completion or failure.<br />
- * This task has some internal image scaling and caching logic. Podcast logos
- * are only downloaded or updated if absolutely necessary. You can manipulate
- * its behaviour by calling the {@link #setLocalOnly(boolean)} and
- * {@link #setMaxAge(int)} methods.<br />
- * Once downloaded and scaled, all podcast logos are stored in the app's private
- * folders under the path <b>logoCache/<i>podcast URL hash</i>.jpeg</b>. The
+ * {@link OnLoadPodcastLogoListener} to be alerted on completion or failure.
+ * <p>
+ * <b>Scaling and caching:</b> This task has some internal image scaling and
+ * caching logic. Podcast logos are only downloaded or updated if absolutely
+ * necessary. You can manipulate its behaviour by calling the
+ * {@link #setLocalOnly(boolean)} and {@link #setMaxAge(int)} methods. Once
+ * downloaded and scaled, all podcast logos are stored in the app's private
+ * folders under the path <tt>logoCache/<i>podcast URL hash</i>.jpeg</tt>. The
  * task will prefer these downloaded copies whenever possible.
+ * </p>
  */
 public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 
@@ -48,6 +50,8 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
     private static final int LOGO_DIMENSION = 250;
     /** The name of the podcast logo cache directory */
     private static final String CACHE_DIR = "logoCache";
+    /** The file name ending for cached logos */
+    private static final String CACHED_LOGO_ENDING = ".jpeg";
 
     /** Call back */
     private final OnLoadPodcastLogoListener listener;
@@ -114,6 +118,7 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
             // the localOnly flag is set or we do not know the remote location.
             else if (!localOnly && podcast.getLogoUrl() != null) {
                 // 2a. Get logo data remotely
+                this.authorization = podcast.getAuthorization();
                 final byte[] logo = loadFile(podcast.getLogoUrl());
 
                 // 2b. Decode and sample the result
@@ -131,7 +136,7 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
             // stale cached version.
             else
                 throw new IOException();
-        } catch (Throwable throwable) {
+        } catch (Throwable t) {
             // Return the cached version even though it is stale (having an old
             // logo for the podcast is better then having none).
             if (isCachedLocally(podcast)) {
@@ -141,8 +146,7 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
             // We are out of options here
             else {
                 Log.w(getClass().getSimpleName(), "Logo failed to load for podcast \""
-                        + podcasts[0] + "\" with " + "logo URL " + podcasts[0].getLogoUrl(),
-                        throwable);
+                        + podcast + "\" with logo URL " + podcast.getLogoUrl(), t);
 
                 cancel(true);
             }
@@ -225,7 +229,7 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
     private File getLogoCacheFile(Podcast podcast) {
         // Create the complete path leading to where we expect the cached file
         return new File(context.getCacheDir(), CACHE_DIR + File.separator
-                + podcast.getUrl().hashCode() + ".jpeg");
+                + podcast.getUrl().hashCode() + CACHED_LOGO_ENDING);
     }
 
     private boolean isCachedLocally(Podcast podcast) {

@@ -17,6 +17,8 @@
 
 package net.alliknow.podcatcher;
 
+import static net.alliknow.podcatcher.view.fragments.AuthorizationFragment.USERNAME_PRESET_KEY;
+
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
@@ -24,10 +26,12 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
+import net.alliknow.podcatcher.listeners.OnEnterAuthorizationListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.fragments.AddPodcastFragment;
+import net.alliknow.podcatcher.view.fragments.AuthorizationFragment;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -37,8 +41,8 @@ import java.net.URL;
  * preset the feed url edittext, start this activity with an intent that has the
  * feed URL set as its {@link Intent#getData()} return value.
  */
-public class AddPodcastActivity extends BaseActivity
-        implements OnLoadPodcastListener, OnAddPodcastListener, OnCancelListener {
+public class AddPodcastActivity extends BaseActivity implements OnLoadPodcastListener,
+        OnAddPodcastListener, OnCancelListener, OnEnterAuthorizationListener {
 
     /** The tag we identify our add podcast fragment with */
     private static final String ADD_PODCAST_FRAGMENT_TAG = "add_podcast";
@@ -50,6 +54,8 @@ public class AddPodcastActivity extends BaseActivity
     private static final String LOADING_URL_KEY = "LOADING_URL";
     /** The URL of the podcast we are currently loading (if any) */
     private String currentLoadUrl;
+    /** The last user name that was put in */
+    private String lastUserName;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -113,6 +119,49 @@ public class AddPodcastActivity extends BaseActivity
             // Otherwise try to load it
             else
                 podcastManager.load(newPodcast);
+        } catch (MalformedURLException e) {
+            // Show failed UI
+            addPodcastFragment.showPodcastLoadFailed();
+        }
+    }
+
+    @Override
+    public void onAuthorizationRequired(final Podcast podcast) {
+        if (isCurrentlyLoadingPodcast(podcast)) {
+            // Ask the user for authorization
+            final AuthorizationFragment authorizationFragment = new AuthorizationFragment();
+
+            if (lastUserName != null) {
+                // Create bundle to make dialog aware of username to pre-set
+                final Bundle args = new Bundle();
+                args.putString(USERNAME_PRESET_KEY, lastUserName);
+                authorizationFragment.setArguments(args);
+            }
+
+            authorizationFragment.show(getFragmentManager(), AuthorizationFragment.TAG);
+        }
+    }
+
+    @Override
+    public void onSubmitAuthorization(String username, String password) {
+        // We need to keep that in order to pre-fill next time
+        lastUserName = username;
+
+        try {
+            final Podcast newPodcast = new Podcast(null, new URL(currentLoadUrl));
+            newPodcast.setUsername(username);
+            newPodcast.setPassword(password);
+
+            podcastManager.load(newPodcast);
+        } catch (MalformedURLException e) {
+            onCancelAuthorization();
+        }
+    }
+
+    @Override
+    public void onCancelAuthorization() {
+        try {
+            onPodcastLoadFailed(new Podcast(null, new URL(currentLoadUrl)));
         } catch (MalformedURLException e) {
             // Show failed UI
             addPodcastFragment.showPodcastLoadFailed();

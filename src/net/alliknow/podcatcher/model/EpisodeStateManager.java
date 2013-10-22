@@ -305,6 +305,11 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
     }
 
     @Override
+    public void onAuthorizationRequired(Podcast podcast) {
+        // pass
+    }
+
+    @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
         // pass
     }
