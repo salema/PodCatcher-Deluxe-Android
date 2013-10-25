@@ -258,7 +258,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
      * 
      * @param podcast Podcast to remove.
      */
-    public void removePodcast(Podcast podcast) {
+    public void removePodcast(final Podcast podcast) {
         final int index = currentPodcastList.indexOf(podcast);
 
         if (viewCreated) {
@@ -271,13 +271,16 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
                             @Override
                             public void onAnimationEnd(Animator animation) {
-                                currentPodcastList.remove(index);
-                                ((PodcastListAdapter) adapter).updateList(currentPodcastList);
+                                if (currentPodcastList.remove(podcast))
+                                    ((PodcastListAdapter) adapter).updateList(currentPodcastList);
                                 // Set it back to opaque because the view might
                                 // be recycled and we need it to show
                                 listItemView.setAlpha(1f);
                             }
                         });
+            // Not visible, simply remove the podcast
+            else if (currentPodcastList.remove(podcast))
+                ((PodcastListAdapter) adapter).updateList(currentPodcastList);
         }
     }
 
