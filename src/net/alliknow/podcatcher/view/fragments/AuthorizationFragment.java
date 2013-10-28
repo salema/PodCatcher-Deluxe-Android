@@ -35,7 +35,8 @@ import net.alliknow.podcatcher.listeners.OnEnterAuthorizationListener;
 
 /**
  * A podcast authorization dialog. The activity hosting this fragment needs to
- * implement {@link OnEnterAuthorizationListener}.
+ * implement {@link OnEnterAuthorizationListener}. Once the listener is called,
+ * the fragment will auto-dismiss itself.
  * <p>
  * You might also want to use {@link #setArguments(Bundle)} with a string value
  * to pre-set the user name using the key {@link #USERNAME_PRESET_KEY}. (This

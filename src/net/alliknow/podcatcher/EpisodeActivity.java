@@ -29,6 +29,7 @@ import android.widget.SeekBar;
 
 import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
 import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
+import net.alliknow.podcatcher.listeners.OnDeleteDownloadsConfirmationListener;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnRequestFullscreenListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
@@ -38,7 +39,6 @@ import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
 import net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationDialogFragment;
-import net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationDialogFragment.DeleteDownloadsConfirmationListener;
 import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.view.fragments.PlayerFragment;
 
@@ -93,8 +93,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
         public void run() {
             final EpisodeActivity episodeActivity = activityReference.get();
             if (episodeActivity != null) {
-                // Need to run on UI thread, since we want to update the play
-                // button
+                // Need to run on UI thread, since we want to update the player
                 episodeActivity.runOnUiThread(new Runnable() {
 
                     @Override
@@ -300,30 +299,27 @@ public abstract class EpisodeActivity extends BaseActivity implements
                 episodeManager.download(selection.getEpisode());
 
                 showToast(getString(R.string.download_started, selection.getEpisode().getName()));
+                updateDownloadUi();
             }
             else {
                 // For deletion, we show a confirmation dialog first
                 final DeleteDownloadsConfirmationDialogFragment confirmationDialog =
                         new DeleteDownloadsConfirmationDialogFragment();
-                confirmationDialog.setListener(new DeleteDownloadsConfirmationListener() {
+                confirmationDialog.setListener(new OnDeleteDownloadsConfirmationListener() {
 
                     @Override
-                    public void onConfirm() {
-                        confirmationDialog.dismiss();
+                    public void onConfirmDeletion() {
                         episodeManager.deleteDownload(selection.getEpisode());
                     }
 
                     @Override
-                    public void onCancel() {
-                        confirmationDialog.dismiss();
+                    public void onCancelDeletion() {
+                        // Nothing to do here...
                     }
                 });
 
                 confirmationDialog.show(getFragmentManager(), TAG);
             }
-
-            // Update the UI
-            updateDownloadUi();
         }
     }
 
