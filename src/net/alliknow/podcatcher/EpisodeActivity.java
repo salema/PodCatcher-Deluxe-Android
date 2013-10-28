@@ -254,6 +254,28 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     @Override
+    public void onRewind() {
+        if (service != null && service.isPrepared()) {
+            service.rewind();
+
+            updatePlayer();
+        } else
+            Log.w(getClass().getSimpleName(),
+                    "Cannot rewind episode (service null or unprepared)");
+    }
+
+    @Override
+    public void onFastForward() {
+        if (service != null && service.isPrepared()) {
+            service.fastForward();
+
+            updatePlayer();
+        } else
+            Log.w(getClass().getSimpleName(),
+                    "Cannot fast-forward episode (service null or unprepared)");
+    }
+
+    @Override
     public void onPlaybackStarted() {
         updatePlayer();
         startPlayProgressTimer();

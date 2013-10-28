@@ -35,6 +35,16 @@ public interface PlayerListener extends OnSeekBarChangeListener {
     public void onTogglePlay();
 
     /**
+     * Rewind of the current episode requested.
+     */
+    public void onRewind();
+
+    /**
+     * Fast-forward of the current episode requested.
+     */
+    public void onFastForward();
+
+    /**
      * Alert the listener that it should return to the currently played episode.
      */
     public void onReturnToPlayingEpisode();

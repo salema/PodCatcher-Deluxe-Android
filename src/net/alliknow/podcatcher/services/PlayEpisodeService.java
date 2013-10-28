@@ -118,7 +118,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     /** Our notification id (does not really matter) */
     private static final int NOTIFICATION_ID = 123;
     /** The amount of seconds used for any forward or rewind event */
-    private static final int SKIP_AMOUNT = 3 * 1000;
+    private static final int SKIP_AMOUNT = 10 * 1000;
     /** The volume we duck playback to */
     private static final float DUCK_VOLUME = 0.1f;
 
@@ -185,14 +185,10 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             else if (action.equals(ACTION_SKIP))
                 ;
             else if (action.equals(ACTION_REWIND)) {
-                final int newPosition = getCurrentPosition() - SKIP_AMOUNT;
-                seekTo(newPosition <= 0 ? 0 : newPosition);
+                rewind();
             }
             else if (action.equals(ACTION_FORWARD)) {
-                final int newPosition = getCurrentPosition() + SKIP_AMOUNT;
-
-                if (newPosition < getDuration())
-                    seekTo(newPosition);
+                fastForward();
             }
             else if (action.equals(ACTION_STOP))
                 reset();
@@ -338,6 +334,24 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             startForeground(NOTIFICATION_ID,
                     notification.updateProgress(getCurrentPosition(), getDuration()));
         }
+    }
+
+    /**
+     * Rewind the playback 10 secs.
+     */
+    public void rewind() {
+        final int newPosition = getCurrentPosition() - SKIP_AMOUNT;
+        seekTo(newPosition <= 0 ? 0 : newPosition);
+    }
+
+    /**
+     * Fast forward 10 secs.
+     */
+    public void fastForward() {
+        final int newPosition = getCurrentPosition() + SKIP_AMOUNT;
+
+        if (newPosition < getDuration())
+            seekTo(newPosition);
     }
 
     /**
