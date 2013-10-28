@@ -193,8 +193,13 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
                     public void run() {
                         // This should delete the download and remove all
                         // information from the download manager
-                        ((DownloadManager) podcatcher.getSystemService(Context.DOWNLOAD_SERVICE))
-                                .remove(downloadId);
+                        try {
+                            ((DownloadManager) podcatcher
+                                    .getSystemService(Context.DOWNLOAD_SERVICE))
+                                    .remove(downloadId);
+                        } catch (IllegalArgumentException e) {
+                            // There seem to be weird cases where this fails
+                        }
 
                         // Make sure the file is deleted since this might not
                         // have taken care of by DownloadManager.remove() above
