@@ -33,7 +33,6 @@ import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationDialogFragment;
-import net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationDialogFragment.DeleteDownloadsConfirmationListener;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 
 /**
@@ -147,14 +146,11 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
                 args.putInt(EPISODE_COUNT_KEY, checkedItems.size());
                 confirmationDialog.setArguments(args);
                 // Set the callback
-                confirmationDialog.setListener(new DeleteDownloadsConfirmationListener() {
+                confirmationDialog.setListener(new OnDeleteDownloadsConfirmationListener() {
 
                     @Override
-                    public void onConfirm() {
-                        // Dismiss the dialog
-                        confirmationDialog.dismiss();
-
-                        // ... and go delete the downloads
+                    public void onConfirmDeletion() {
+                        // Go delete the downloads
                         for (int position = 0; position < fragment.getListAdapter().getCount(); position++)
                             if (checkedItems.get(position))
                                 episodeManager.deleteDownload(
@@ -165,8 +161,8 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
                     }
 
                     @Override
-                    public void onCancel() {
-                        confirmationDialog.dismiss();
+                    public void onCancelDeletion() {
+                        // Nothing to do here
                     }
                 });
                 // Finally show the dialog
