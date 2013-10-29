@@ -374,8 +374,8 @@ public class PlayerFragment extends Fragment {
 
         // Only do it right away if resumed, otherwise onResume will call us.
         if (isResumed()) {
-            titleView.setVisibility(show ? GONE : VISIBLE);
-            seekBar.setVisibility(show ? GONE : VISIBLE);
+            titleView.setVisibility(show ? GONE : showPlayerTitle ? VISIBLE : GONE);
+            seekBar.setVisibility(show ? GONE : showPlayerSeekbar ? VISIBLE : GONE);
             if (rewindButton != null)
                 rewindButton.setVisibility(show ? GONE : VISIBLE);
             playPauseButton.setVisibility(show ? GONE : VISIBLE);
