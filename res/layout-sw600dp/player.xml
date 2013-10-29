@@ -89,5 +89,13 @@
             android:layout_marginLeft="2dp"
             android:src="@drawable/ic_media_forward"
             android:background="@drawable/button_orange" />
+        <ImageButton
+            android:id="@+id/player_next"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginLeft="2dp"
+            android:src="@drawable/ic_media_next"
+            android:background="@drawable/button_orange"
+            android:visibility="gone" />
     </LinearLayout>
 </LinearLayout>
