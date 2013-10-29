@@ -80,7 +80,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     protected void onResume() {
         super.onResume();
 
-        updateFilter();
+        updateFilterUi();
         updateDownloadUi();
     }
 
@@ -161,6 +161,15 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     @Override
     public void onPodcastLoaded(Podcast podcast) {
         super.onPodcastLoaded(podcast);
+
+        // We might want to show the progress bar on top of the list
+        if (selection.isAll())
+            episodeListFragment.setShowTopProgress(podcastManager.getLoadCount() > 0);
+    }
+
+    @Override
+    public void onPodcastLoadFailed(Podcast failedPodcast) {
+        super.onPodcastLoadFailed(failedPodcast);
 
         // We might want to show the progress bar on top of the list
         if (selection.isAll())

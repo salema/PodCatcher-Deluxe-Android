@@ -57,6 +57,7 @@
     <string name="podcast_load_multiple_progress">%1$d of %2$d podcasts</string>
     <string name="podcast_load_multiple_error">The podcast\n\"%s\"\nfailed to load.</string>
     <string name="episode_none">No episodes in this podcast</string>
+    <string name="episode_none_all_podcasts">No episodes</string>
     <string name="episode_no_description">No description available.</string>
     <string name="episode_none_selected">No episode selected</string>
     <plurals name="episodes">

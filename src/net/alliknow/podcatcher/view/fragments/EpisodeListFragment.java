@@ -362,18 +362,19 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
     }
 
     /**
-     * Update the progress information for the episode at the given position to
-     * reflect the percentage of given. Does nothing if the episode is off
-     * screen.
+     * Update the progress information for the episode given to reflect the
+     * percentage of given. Does nothing if the episode is off the screen.
      * 
-     * @param position The position of the episode in the current list.
+     * @param episode The episode to update progress for.
      * @param percent The percentage value to show.
      */
-    public void showProgress(int position, int percent) {
+    public void showProgress(Episode episode, int percent) {
         // To prevent this if we are not ready to handle progress update
         // e.g. on app termination
-        if (viewCreated) {
-            final EpisodeListItemView listItemView = (EpisodeListItemView) findListItemViewForIndex(position);
+        if (viewCreated && currentEpisodeList != null) {
+            final EpisodeListItemView listItemView = (EpisodeListItemView)
+                    findListItemViewForIndex(currentEpisodeList.indexOf(episode));
+
             // Is the position visible?
             if (listItemView != null)
                 listItemView.updateProgress(percent);
@@ -387,6 +388,24 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
         if (viewCreated) {
             infoBoxTextView.setBackgroundColor(color);
             infoBoxDivider.setBackgroundColor(color);
+        }
+    }
+
+    /**
+     * Select an episode in the list. Calls {@link #selectNone()} if the episode
+     * is not present in the current list. Does nothing if there is no list set
+     * or the episode is <code>null</code>.
+     * 
+     * @param episode Episode to select.
+     */
+    public void select(Episode episode) {
+        if (currentEpisodeList != null && episode != null) {
+            final int index = currentEpisodeList.indexOf(episode);
+
+            if (index >= 0)
+                select(index);
+            else
+                selectNone();
         }
     }
 

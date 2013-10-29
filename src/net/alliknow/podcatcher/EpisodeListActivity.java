@@ -45,8 +45,8 @@ import net.alliknow.podcatcher.view.fragments.AuthorizationFragment;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
@@ -64,9 +64,9 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         OnReorderEpisodeListener, OnToggleFilterListener, OnReverseSortingListener {
 
     /** Key used to save the current content mode in bundle */
-    public static final String MODE_KEY = "MODE_KEY";
+    public static final String MODE_KEY = "mode_key";
     /** Key used to store podcast URL in intent or bundle */
-    public static final String PODCAST_URL_KEY = "podcast_url";
+    public static final String PODCAST_URL_KEY = "podcast_url_key";
 
     /** The current episode list fragment */
     protected EpisodeListFragment episodeListFragment;
@@ -74,9 +74,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     protected ContentSpinner contentSpinner;
 
     /** The current episode set (ordered) */
-    protected SortedSet<Episode> currentEpisodeSet;
-    /** The filtered episode list */
-    protected List<Episode> filteredEpisodeList;
+    private SortedSet<Episode> currentEpisodeSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +116,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         super.onResume();
 
         // Make sure dividers (if any) reflect selection state
-        updateDivider();
+        updateDividerUi();
     }
 
     @Override
@@ -141,16 +139,16 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     public void onReverseOrder() {
         selection.setEpisodeOrderReversed(!selection.isEpisodeOrderReversed());
 
-        if (currentEpisodeSet != null)
-            setSortedAndFilteredEpisodeList(currentEpisodeSet);
+        updateEpisodeListUi();
+        updateSortingUi();
     }
 
     @Override
     public void onToggleFilter() {
         selection.setEpisodeFilterEnabled(!selection.isEpisodeFilterEnabled());
 
-        if (currentEpisodeSet != null)
-            setSortedAndFilteredEpisodeList(currentEpisodeSet);
+        updateEpisodeListUi();
+        updateFilterUi();
     }
 
     @Override
@@ -166,7 +164,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         selection.setPodcast(podcast);
         selection.setMode(ContentMode.SINGLE_PODCAST);
 
-        this.currentEpisodeSet = null;
+        this.currentEpisodeSet = new TreeSet<Episode>();
 
         switch (view) {
             case SMALL_LANDSCAPE:
@@ -180,9 +178,9 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 // List fragment is visible, make it show progress UI
                 episodeListFragment.resetAndSpin();
                 // Update other UI
-                updateSorting();
-                updateFilter();
-                updateDivider();
+                updateSortingUi();
+                updateFilterUi();
+                updateDividerUi();
 
                 // Load podcast
                 podcastManager.load(podcast);
@@ -199,7 +197,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         selection.resetPodcast();
         selection.setMode(ContentMode.ALL_PODCASTS);
 
-        // We need to use a set here to avoid duplicates
         this.currentEpisodeSet = new TreeSet<Episode>();
 
         switch (view) {
@@ -216,11 +213,12 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                     episodeListFragment.resetAndSpin();
                 else
                     episodeListFragment.resetUi();
+
                 episodeListFragment.setShowPodcastNames(true);
                 // Update other UI
-                updateSorting();
-                updateFilter();
-                updateDivider();
+                updateSortingUi();
+                updateFilterUi();
+                updateDividerUi();
 
                 // Go load all podcasts
                 for (Podcast podcast : podcastManager.getPodcastList())
@@ -265,10 +263,14 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     @Override
     public void onDownloadsLoaded(List<Episode> downloads) {
         this.currentEpisodeSet = new TreeSet<Episode>(downloads);
-        setSortedAndFilteredEpisodeList(currentEpisodeSet);
 
+        updateEpisodeListUi();
+
+        // Update other UI
         updateActionBar();
-        updateDivider();
+        updateSortingUi();
+        updateFilterUi();
+        updateDividerUi();
     }
 
     @Override
@@ -301,11 +303,22 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onPlaylistLoaded(List<Episode> playlist) {
-        this.currentEpisodeSet = new TreeSet<Episode>(playlist);
-        setSortedAndFilteredEpisodeList(playlist);
+        this.currentEpisodeSet = new TreeSet<Episode>(new Comparator<Episode>() {
+            @Override
+            public int compare(Episode one, Episode another) {
+                return episodeManager.getPlaylistPosition(one)
+                        - episodeManager.getPlaylistPosition(another);
+            }
+        });
+        currentEpisodeSet.addAll(playlist);
 
+        updateEpisodeListUi();
+
+        // Update other UI
         updateActionBar();
-        updateDivider();
+        updateSortingUi();
+        updateFilterUi();
+        updateDividerUi();
     }
 
     @Override
@@ -321,9 +334,9 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             episodeListFragment.resetUi();
 
             // Update other UI
-            updateSorting();
-            updateFilter();
-            updateDivider();
+            updateSortingUi();
+            updateFilterUi();
+            updateDividerUi();
         }
     }
 
@@ -378,58 +391,57 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     @Override
     public void onPodcastLoaded(Podcast podcast) {
         // Update list fragment to show episode list
-        // Select all podcasts
-        if (selection.isAll()) {
-            if (currentEpisodeSet.addAll(podcast.getEpisodes()))
-                setSortedAndFilteredEpisodeList(currentEpisodeSet);
-        } // Select single podcast
-        else if (selection.isSingle() && podcast.equals(selection.getPodcast())) {
-            currentEpisodeSet = new TreeSet<Episode>(podcast.getEpisodes());
+        if (selection.isAll() || selection.isSingle() && podcast.equals(selection.getPodcast())) {
+            currentEpisodeSet.addAll(podcast.getEpisodes());
             addSpecialEpisodes(podcast);
-            setSortedAndFilteredEpisodeList(currentEpisodeSet);
+            updateEpisodeListUi();
         }
 
         // Additionally, if on large device, process clever selection update
         if (!view.isSmall()) {
             updateEpisodeListSelection();
-            updateDivider();
+            updateDividerUi();
         }
 
         // We may want to auto-download the latest episode
         if (shouldAutoDownloadLatestEpisode(podcast))
             episodeManager.download(podcast.getEpisodes().get(0));
 
+        // Update other UI
         updateActionBar();
+        updateSortingUi();
+        updateFilterUi();
     }
 
     @Override
     public void onPodcastLoadFailed(Podcast failedPodcast) {
         // The podcast we are waiting for failed to load
         if (selection.isSingle() && failedPodcast.equals(selection.getPodcast())) {
-            this.currentEpisodeSet = new TreeSet<Episode>();
             addSpecialEpisodes(failedPodcast);
-            // We might at least be able to show the downloaded episodes
-            if (currentEpisodeSet != null && currentEpisodeSet.size() > 0) {
-                setSortedAndFilteredEpisodeList(currentEpisodeSet);
 
-                updateActionBar();
-            }
-            else {
-                currentEpisodeSet = null;
+            // We might at least be able to show downloaded/playlisted episodes
+            if (currentEpisodeSet.size() > 0)
+                updateEpisodeListUi(true);
+            else
                 episodeListFragment.showLoadFailed();
-            }
         }
-        // The last podcast failed to load and none of the others had any
-        // episodes to show in the list
-        else if (selection.isAll() && podcastManager.getLoadCount() == 0
-                && (currentEpisodeSet == null || currentEpisodeSet.isEmpty()))
-            episodeListFragment.showLoadFailed();
-        // One of many podcasts failed to load
-        else if (selection.isAll())
-            showToast(getString(R.string.podcast_load_multiple_error, failedPodcast.getName()));
+        // One of potentially many podcasts failed
+        else if (selection.isAll()) {
+            addSpecialEpisodes(failedPodcast);
+            updateEpisodeListUi();
 
-        // Update UI
+            // The last podcast failed and we have no episodes at all
+            if (podcastManager.getLoadCount() == 0 && currentEpisodeSet.isEmpty())
+                episodeListFragment.showLoadFailed();
+            // One of many podcasts failed to load
+            else
+                showToast(getString(R.string.podcast_load_multiple_error, failedPodcast.getName()));
+        }
+
+        // Update other UI
         updateActionBar();
+        updateSortingUi();
+        updateFilterUi();
     }
 
     @Override
@@ -462,7 +474,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
             }
 
-            updateDivider();
+            updateDividerUi();
         }
     }
 
@@ -478,7 +490,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             if (episodeListFragment != null)
                 episodeListFragment.selectNone();
 
-            updateDivider();
+            updateDividerUi();
         }
     }
 
@@ -525,8 +537,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             super.onDownloadProgress(episode, percent);
 
         // Check whether the episode is potentially currently displayed
-        if (filteredEpisodeList != null && filteredEpisodeList.contains(episode))
-            episodeListFragment.showProgress(filteredEpisodeList.indexOf(episode), percent);
+        if (currentEpisodeSet.contains(episode))
+            episodeListFragment.showProgress(episode, percent);
     }
 
     @Override
@@ -537,7 +549,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             // Make the UI reflect the change
             if (episodeListFragment != null)
                 episodeListFragment.setThemeColors(themeColor, lightThemeColor);
-            updateDivider();
+            updateDividerUi();
         }
     }
 
@@ -545,20 +557,17 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
      * Make sure the episode list selection matches current state.
      */
     protected void updateEpisodeListSelection() {
-        if (!view.isSmall()) {
+        if (!view.isSmall())
             // Make sure the episode selection in the list is updated
-            if (filteredEpisodeList != null && filteredEpisodeList.contains(selection.getEpisode()))
-                episodeListFragment.select(filteredEpisodeList.indexOf(selection.getEpisode()));
-            else
-                episodeListFragment.selectNone();
-        } else
+            episodeListFragment.select(selection.getEpisode());
+        else
             episodeListFragment.selectNone();
     }
 
     /**
      * Update the sorting menu icon visibility.
      */
-    protected void updateSorting() {
+    protected void updateSortingUi() {
         episodeListFragment.setSortMenuItemVisibility(
                 currentEpisodeSet != null && !currentEpisodeSet.isEmpty()
                         && !ContentMode.PLAYLIST.equals(selection.getMode()),
@@ -568,7 +577,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     /**
      * Update the filter menu icon visibility.
      */
-    protected void updateFilter() {
+    protected void updateFilterUi() {
         episodeListFragment.setFilterMenuItemVisibility(
                 currentEpisodeSet != null && !currentEpisodeSet.isEmpty()
                         && !ContentMode.PLAYLIST.equals(selection.getMode()),
@@ -602,77 +611,10 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     /**
      * Update the divider views to reflect current selection state.
      */
-    protected void updateDivider() {
+    protected void updateDividerUi() {
         colorDivider(R.id.divider_first, selection.isPodcastSet() || !selection.isSingle());
         colorDivider(R.id.divider_second, currentEpisodeSet != null && selection.isEpisodeSet()
                 && currentEpisodeSet.contains(selection.getEpisode()));
-    }
-
-    /**
-     * Filter, sort and, set the current episode list to show in the episode
-     * list fragment.
-     */
-    private void setSortedAndFilteredEpisodeList(Collection<Episode> completeList) {
-        filteredEpisodeList = new ArrayList<Episode>(completeList);
-
-        // Further refine the episode list if not in playlist mode
-        if (!ContentMode.PLAYLIST.equals(selection.getMode())) {
-            // Apply the filter
-            if (selection.isEpisodeFilterEnabled()) {
-                Iterator<Episode> iterator = filteredEpisodeList.iterator();
-
-                while (iterator.hasNext())
-                    if (episodeManager.getState(iterator.next()))
-                        iterator.remove();
-            }
-
-            // We might need to reverse the order of our list,
-            // but there is no need for sorting since we already come
-            // from a sorted set.
-            if (selection.isEpisodeOrderReversed())
-                Collections.reverse(filteredEpisodeList);
-        }
-
-        // Make sure the episode list fragment show the right empty view
-        if (ContentMode.DOWNLOADS.equals(selection.getMode()))
-            episodeListFragment.setEmptyStringId(R.string.downloads_none);
-        else if (ContentMode.PLAYLIST.equals(selection.getMode()))
-            episodeListFragment.setEmptyStringId(R.string.playlist_empty);
-        else if (selection.isEpisodeFilterEnabled()
-                && filteredEpisodeList.isEmpty() && !completeList.isEmpty())
-            episodeListFragment.setEmptyStringId(R.string.episodes_no_new);
-        else
-            episodeListFragment.setEmptyStringId(R.string.episode_none);
-
-        // Make sure the episode list fragment show the right info box
-        if (ContentMode.PLAYLIST.equals(selection.getMode()) && filteredEpisodeList.size() > 1)
-            episodeListFragment.setShowTopInfoBox(true, getString(R.string.playlist_swipe_reorder));
-        else if (selection.isEpisodeFilterEnabled()) {
-            final int filteredCount = completeList.size() - filteredEpisodeList.size();
-
-            episodeListFragment.setShowTopInfoBox(filteredCount > 0, getResources()
-                    .getQuantityString(R.plurals.episodes_filtered, filteredCount, filteredCount));
-        }
-        else
-            episodeListFragment.setShowTopInfoBox(false, null);
-
-        episodeListFragment.setEpisodeList(filteredEpisodeList);
-        updateEpisodeListSelection();
-
-        // Update other UI
-        updateSorting();
-        updateFilter();
-    }
-
-    private void colorDivider(int dividerViewId, boolean applyColor) {
-        if (getWindow() != null && getWindow().findViewById(dividerViewId) != null) {
-            View divider = getWindow().findViewById(dividerViewId);
-
-            if (applyColor)
-                divider.setBackgroundColor(themeColor);
-            else
-                divider.setBackgroundColor(getResources().getColor(R.color.divider_off));
-        }
     }
 
     /**
@@ -698,15 +640,103 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                     (podcastCount - loadingPodcastCount), podcastCount));
     }
 
+    /**
+     * Set the current episode list to show in the episode list fragment using
+     * {@link #currentEpisodeSet} as the basis. This will filter and reverse the
+     * list as needed. Will have no effect if {@link #currentEpisodeSet} is
+     * <code>null</code>.
+     */
+    private void updateEpisodeListUi() {
+        updateEpisodeListUi(false);
+    }
+
+    /**
+     * Set the current episode list to show in the episode list fragment using
+     * {@link #currentEpisodeSet} as the basis. This will filter and reverse the
+     * list as needed. Will have no effect if {@link #currentEpisodeSet} is
+     * <code>null</code>.
+     * 
+     * @param showPodcastLoadFailedWarning Whether the episode list fragment
+     *            should show a warning that some episodes might not be
+     *            displayed.
+     */
+    private void updateEpisodeListUi(boolean showPodcastLoadFailedWarning) {
+        if (currentEpisodeSet != null) {
+            final List<Episode> filteredList = new ArrayList<Episode>(currentEpisodeSet);
+
+            // Further refine the episode list if not in playlist mode
+            if (!ContentMode.PLAYLIST.equals(selection.getMode())) {
+                // Apply the filter
+                if (selection.isEpisodeFilterEnabled()) {
+                    Iterator<Episode> iterator = filteredList.iterator();
+
+                    while (iterator.hasNext())
+                        if (episodeManager.getState(iterator.next()))
+                            iterator.remove();
+                }
+
+                // We might need to reverse the order of our list,
+                // but there is no need for sorting since we already come
+                // from a sorted set.
+                if (selection.isEpisodeOrderReversed())
+                    Collections.reverse(filteredList);
+            }
+
+            // Make sure the episode list fragment show the right empty view
+            if (ContentMode.DOWNLOADS.equals(selection.getMode()))
+                episodeListFragment.setEmptyStringId(R.string.downloads_none);
+            else if (ContentMode.PLAYLIST.equals(selection.getMode()))
+                episodeListFragment.setEmptyStringId(R.string.playlist_empty);
+            else if (selection.isEpisodeFilterEnabled()
+                    && filteredList.isEmpty() && !currentEpisodeSet.isEmpty())
+                episodeListFragment.setEmptyStringId(R.string.episodes_no_new);
+            else if (selection.isAll())
+                episodeListFragment.setEmptyStringId(R.string.episode_none_all_podcasts);
+            else
+                episodeListFragment.setEmptyStringId(R.string.episode_none);
+
+            // Make sure the episode list fragment show the right info box
+            if (ContentMode.PLAYLIST.equals(selection.getMode()) && filteredList.size() > 1)
+                episodeListFragment.setShowTopInfoBox(true,
+                        getString(R.string.playlist_swipe_reorder));
+            else if (showPodcastLoadFailedWarning)
+                episodeListFragment.setShowTopInfoBox(true, getString(R.string.podcast_load_error));
+            else if (selection.isEpisodeFilterEnabled()) {
+                final int filteredCount = currentEpisodeSet.size() - filteredList.size();
+
+                episodeListFragment.setShowTopInfoBox(
+                        filteredCount > 0, getResources().getQuantityString(
+                                R.plurals.episodes_filtered, filteredCount, filteredCount));
+            }
+            else
+                episodeListFragment.setShowTopInfoBox(false, null);
+
+            // Finally set the list and make sure selection matches
+            episodeListFragment.setEpisodeList(filteredList);
+            updateEpisodeListSelection();
+        }
+    }
+
+    private void colorDivider(int dividerViewId, boolean applyColor) {
+        if (getWindow() != null && getWindow().findViewById(dividerViewId) != null) {
+            View divider = getWindow().findViewById(dividerViewId);
+
+            if (applyColor)
+                divider.setBackgroundColor(themeColor);
+            else
+                divider.setBackgroundColor(getResources().getColor(R.color.divider_off));
+        }
+    }
+
     private void addSpecialEpisodes(Podcast podcast) {
         if (currentEpisodeSet != null && podcast != null) {
             // Downloads
             for (Episode episode : episodeManager.getDownloads())
-                if (podcast.equals(episode.getPodcast()) && !currentEpisodeSet.contains(episode))
+                if (podcast.equals(episode.getPodcast()))
                     currentEpisodeSet.add(episode);
             // Playlist
             for (Episode episode : episodeManager.getPlaylist())
-                if (podcast.equals(episode.getPodcast()) && !currentEpisodeSet.contains(episode))
+                if (podcast.equals(episode.getPodcast()))
                     currentEpisodeSet.add(episode);
         }
     }
