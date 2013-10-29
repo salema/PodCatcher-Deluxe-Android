@@ -924,6 +924,7 @@ com.podcatcher.deluxe.Podcatcher:
     public static final int MIN_PIXEL_LARGE
     public static final java.lang.String USER_AGENT_KEY
     public static final java.lang.String USER_AGENT_VALUE
+    public static final java.lang.String AUTHORIZATION_KEY
     public static final long HTTP_CACHE_SIZE
 com.podcatcher.deluxe.R
 com.podcatcher.deluxe.R$anim
@@ -987,14 +988,15 @@ com.podcatcher.deluxe.model.tasks.remote.DownloadEpisodeTask:
 com.podcatcher.deluxe.model.tasks.remote.LoadPodcastLogoTask:
     private static final int LOGO_DIMENSION
     private static final java.lang.String CACHE_DIR
-    96:97:public void setMaxAge(int)
+    private static final java.lang.String CACHED_LOGO_ENDING
+    99:100:public void setMaxAge(int)
 com.podcatcher.deluxe.model.tasks.remote.LoadPodcastTask:
     public static final int MAX_RSS_FILE_SIZE
 com.podcatcher.deluxe.model.tasks.remote.LoadRemoteFileTask:
     protected static final int CONNECT_TIMEOUT
     protected static final int READ_TIMEOUT
-    187:197:private void showResponseHeaderDetails(java.net.HttpURLConnection)
-    200:211:private void reportCacheStats()
+    195:205:private void showResponseHeaderDetails(java.net.HttpURLConnection)
+    208:219:private void reportCacheStats()
 com.podcatcher.deluxe.model.tasks.remote.LoadSuggestionsTask:
     private static final java.lang.String SUGGESTIONS_ENCODING
     private static final java.lang.String SOURCE
@@ -1026,7 +1028,10 @@ com.podcatcher.deluxe.view.EpisodeListItemView:
 com.podcatcher.deluxe.view.SuggestionListItemView:
     private static final java.lang.String METADATA_SEPARATOR
 com.podcatcher.deluxe.view.Utils:
-    28:28:public Utils()
+    27:27:public Utils()
+com.podcatcher.deluxe.view.fragments.AuthorizationFragment:
+    public static final java.lang.String USERNAME_PRESET_KEY
+    public static final java.lang.String TAG
 com.podcatcher.deluxe.view.fragments.DeleteDownloadsConfirmationDialogFragment:
     public static final java.lang.String EPISODE_COUNT_KEY
     public static final java.lang.String TAG
@@ -1042,12 +1047,12 @@ com.podcatcher.deluxe.view.fragments.SuggestionFragment:
     private static final java.lang.String GENRE_FILTER_POSITION
     private static final java.lang.String MEDIATYPE_FILTER_POSITION
 net.margaritov.preference.colorpicker.ColorPickerDialog:
-    160:160:public boolean getHexValueEnabled()
+    159:159:public boolean getHexValueEnabled()
 net.margaritov.preference.colorpicker.ColorPickerPanelView:
     private static final float BORDER_WIDTH_PX
 net.margaritov.preference.colorpicker.ColorPickerPreference:
-    141:142:public void setAlphaSliderEnabled(boolean)
-    150:151:public void setHexValueEnabled(boolean)
+    140:141:public void setAlphaSliderEnabled(boolean)
+    149:150:public void setHexValueEnabled(boolean)
 net.margaritov.preference.colorpicker.ColorPickerView:
     private static final int PANEL_SAT_VAL
     private static final int PANEL_HUE
