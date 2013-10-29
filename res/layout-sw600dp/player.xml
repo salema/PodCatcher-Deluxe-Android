@@ -20,7 +20,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical">
     <ImageView
         android:id="@+id/player_divider"
         android:layout_width="match_parent"
@@ -62,6 +62,13 @@
         android:layout_marginBottom="2dp"
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp">
+        <ImageButton
+            android:id="@+id/player_rewind"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginRight="2dp"
+            android:src="@drawable/ic_media_rewind"
+            android:background="@drawable/button_orange" />
         <Button
             android:id="@+id/player_button"
             android:layout_width="0dp"
@@ -76,12 +83,11 @@
             android:singleLine="true"
             android:ellipsize="marquee" />
         <ImageButton
-            android:id="@+id/player_next"
+            android:id="@+id/player_forward"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginLeft="2dp"
-            android:src="@drawable/ic_media_next"
-            android:background="@drawable/button_orange"
-            android:visibility="gone" />
+            android:src="@drawable/ic_media_forward"
+            android:background="@drawable/button_orange" />
     </LinearLayout>
 </LinearLayout>
