@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.SeekBar;
 
 import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
@@ -343,6 +344,28 @@ public abstract class EpisodeActivity extends BaseActivity implements
     public void onNext() {
         service.playNext();
         updatePlayerUi();
+    }
+
+    @Override
+    public void onRewind() {
+        if (service != null && service.isPrepared()) {
+            service.rewind();
+
+            updatePlayerUi();
+        } else
+            Log.w(getClass().getSimpleName(),
+                    "Cannot rewind episode (service null or unprepared)");
+    }
+
+    @Override
+    public void onFastForward() {
+        if (service != null && service.isPrepared()) {
+            service.fastForward();
+
+            updatePlayerUi();
+        } else
+            Log.w(getClass().getSimpleName(),
+                    "Cannot fast-forward episode (service null or unprepared)");
     }
 
     @Override

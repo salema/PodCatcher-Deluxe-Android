@@ -23,6 +23,7 @@ import static android.view.View.VISIBLE;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,6 +31,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -78,12 +80,43 @@ public class PlayerFragment extends Fragment {
     private TextView titleView;
     /** The player's seek bar */
     private SeekBar seekBar;
+    /** The rewind button */
+    private ImageButton rewindButton;
     /** The player main button */
     private Button playPauseButton;
+    /** The fast-forward button */
+    private ImageButton forwardButton;
     /** The next button */
     private ImageButton nextButton;
     /** The error view */
     private TextView errorView;
+
+    /** The handler posting rewind and forward events */
+    private Handler transportationHandler = new Handler();
+    /** Rewind or forward active flag (button held down) */
+    private boolean transportActive = false;
+    /** Delay in between rewind or forward call-backs */
+    private static long TRANSPORT_DELAY = 500;
+    /** The rewind runnable */
+    private Runnable rewindRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            listener.onRewind();
+
+            transportationHandler.postDelayed(rewindRunnable, TRANSPORT_DELAY);
+        }
+    };
+    /** The forward runnable */
+    private Runnable forwardRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            listener.onFastForward();
+
+            transportationHandler.postDelayed(forwardRunnable, TRANSPORT_DELAY);
+        }
+    };
 
     @Override
     public void onAttach(Activity activity) {
@@ -125,6 +158,9 @@ public class PlayerFragment extends Fragment {
         seekBar = (SeekBar) view.findViewById(R.id.player_seekbar);
         seekBar.setOnSeekBarChangeListener(listener);
 
+        rewindButton = (ImageButton) view.findViewById(R.id.player_rewind);
+        prepareTransportButton(rewindButton, true);
+
         playPauseButton = (Button) view.findViewById(R.id.player_button);
         playPauseButton.setOnClickListener(new OnClickListener() {
 
@@ -133,6 +169,9 @@ public class PlayerFragment extends Fragment {
                 listener.onTogglePlay();
             }
         });
+
+        forwardButton = (ImageButton) view.findViewById(R.id.player_forward);
+        prepareTransportButton(forwardButton, false);
 
         nextButton = (ImageButton) view.findViewById(R.id.player_next);
         nextButton.setOnClickListener(new OnClickListener() {
@@ -338,33 +377,24 @@ public class PlayerFragment extends Fragment {
     public void updateButton(boolean buffering, boolean playing, int duration, int position) {
         // We can only do this after the fragment's widgets are created
         if (viewCreated) {
-            // Update button appearance
-            playPauseButton.setEnabled(!buffering);
+            final String formattedPosition = ParserUtils.formatTime(position / 1000);
+            final String formattedDuration = ParserUtils.formatTime(duration / 1000);
 
-            // Buffering...
-            if (buffering) {
-                playPauseButton.setText(R.string.player_buffering);
-                playPauseButton.setBackgroundResource(R.drawable.button_red);
-                playPauseButton.setCompoundDrawablesWithIntrinsicBounds(
-                        R.drawable.ic_menu_rotate, 0, 0, 0);
-            } // Playing or paused
-            else {
-                final String formattedPosition = ParserUtils.formatTime(position / 1000);
-                final String formattedDuration = ParserUtils.formatTime(duration / 1000);
+            if (duration == 0)
+                playPauseButton.setText(getString(R.string.player_buffering));
+            else if (showShortPlaybackPosition)
+                playPauseButton.setText(getString(R.string.player_label_short,
+                        formattedPosition, formattedDuration));
+            else
+                playPauseButton.setText(getString(playing ? R.string.pause : R.string.resume)
+                        + " " + getString(R.string.player_label, formattedPosition,
+                                formattedDuration));
 
-                if (showShortPlaybackPosition)
-                    playPauseButton.setText(getString(R.string.player_label_short,
-                            formattedPosition, formattedDuration));
-                else
-                    playPauseButton.setText(getString(playing ? R.string.pause : R.string.resume)
-                            + " " + getString(R.string.player_label, formattedPosition,
-                                    formattedDuration));
-
-                playPauseButton.setBackgroundResource(playing ?
-                        R.drawable.button_red : R.drawable.button_green);
-                playPauseButton.setCompoundDrawablesWithIntrinsicBounds(playing ?
-                        R.drawable.ic_media_pause : R.drawable.ic_media_resume, 0, 0, 0);
-            }
+            playPauseButton.setBackgroundResource(playing ?
+                    R.drawable.button_red : R.drawable.button_green);
+            playPauseButton.setCompoundDrawablesWithIntrinsicBounds(buffering ?
+                    R.drawable.ic_media_buffering : playing ?
+                            R.drawable.ic_media_pause : R.drawable.ic_media_resume, 0, 0, 0);
         }
     }
 
@@ -381,9 +411,55 @@ public class PlayerFragment extends Fragment {
         if (isResumed()) {
             titleView.setVisibility(show ? GONE : showPlayerTitle ? VISIBLE : GONE);
             seekBar.setVisibility(show ? GONE : showPlayerSeekbar ? VISIBLE : GONE);
+            if (rewindButton != null)
+                rewindButton.setVisibility(show ? GONE : VISIBLE);
             playPauseButton.setVisibility(show ? GONE : VISIBLE);
+            if (forwardButton != null)
+                forwardButton.setVisibility(show ? GONE : VISIBLE);
             nextButton.setVisibility(show ? GONE : showNextButton ? VISIBLE : GONE);
+            
             errorView.setVisibility(show ? VISIBLE : GONE);
+        }
+    }
+
+    private void prepareTransportButton(ImageButton button, final boolean rewind) {
+        // Button might not be present since some layouts (e.g. for small
+        // screens) might not include it
+        if (button != null) {
+            // The long click listener starts regular rewind/forward actions as
+            // long as the user keeps holding the button down
+            button.setOnLongClickListener(new OnLongClickListener() {
+
+                @Override
+                public boolean onLongClick(View v) {
+                    transportationHandler.post(rewind ? rewindRunnable : forwardRunnable);
+                    transportActive = true;
+
+                    return false;
+                }
+            });
+
+            // The click listener detects that the user let the button go. If it
+            // had been long-clicked, we stop sending actions otherwise we run
+            // the action once
+            button.setOnClickListener(new OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    if (transportActive) {
+                        transportationHandler.removeCallbacks(
+                                rewind ? rewindRunnable : forwardRunnable);
+
+                        transportActive = false;
+                    } else {
+                        // No long click, run once
+                        if (rewind)
+                            listener.onRewind();
+                        else
+                            listener.onFastForward();
+                    }
+                }
+            });
         }
     }
 }
