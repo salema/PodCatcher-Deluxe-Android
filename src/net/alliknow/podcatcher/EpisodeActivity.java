@@ -56,7 +56,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
         OnChangePlaylistListener, OnChangeEpisodeStateListener {
 
     /** Key used to store episode URL in intent or bundle */
-    public static final String EPISODE_URL_KEY = "episode_url";
+    public static final String EPISODE_URL_KEY = "episode_url_key";
 
     /** The current episode fragment */
     protected EpisodeFragment episodeFragment;
@@ -64,7 +64,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
     protected PlayerFragment playerFragment;
 
     /** Play service */
-    protected PlayEpisodeService service;
+    private PlayEpisodeService service;
 
     /** Play update timer */
     private Timer playUpdateTimer = new Timer();

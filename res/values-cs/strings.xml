@@ -58,6 +58,7 @@
     <string name="podcast_load_multiple_progress">%1$d z %2$d záznamů</string>
     <string name="podcast_load_multiple_error">Záznam\n\"%s\"\nse nepodařilo nahrát.</string>
     <string name="episode_none">Žádné díly v tomto záznamu</string>
+    <string name="episode_none_all_podcasts">Žádné díly</string>
     <string name="episode_no_description">Není dostupný žádný popis.</string>
     <string name="episode_none_selected">Nevybrán žádný díl</string>
     <plurals name="episodes">

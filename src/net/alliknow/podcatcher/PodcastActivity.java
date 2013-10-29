@@ -55,9 +55,9 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     /** The import from Simple Podcatcher action */
     private static final String IMPORT_ACTION = "com.podcatcher.deluxe.action.IMPORT";
     /** The key to find imported podcast name list under */
-    private static final String IMPORT_PODCAST_NAMES_KEY = "names";
+    private static final String IMPORT_PODCAST_NAMES_KEY = "podcast_names_key";
     /** The key to find imported podcast url list under */
-    private static final String IMPORT_PODCAST_URLS_KEY = "urls";
+    private static final String IMPORT_PODCAST_URLS_KEY = "podcast_urls_key";
 
     /** The current podcast list fragment */
     protected PodcastListFragment podcastListFragment;
