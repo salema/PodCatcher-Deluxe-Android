@@ -549,8 +549,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
                 // Enable/disable next button
                 final boolean showNext =
                         !episodeManager.isPlaylistEmptyBesides(service.getCurrentEpisode());
-                playerFragment.setShowShortPosition(view.isSmall() &&
-                        (showNext || service.getDuration() >= 60 * 60));
+                playerFragment.setShowShortPosition(!view.isLargePortrait() &&
+                        (showNext || service.getDuration() >= 60 * 60 * 1000));
                 playerFragment.setNextButtonVisibility(showNext);
 
                 // Update UI to reflect service status
