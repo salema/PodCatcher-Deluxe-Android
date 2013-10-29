@@ -902,7 +902,6 @@ net.alliknow.podcatcher.BaseActivity:
     public static final java.lang.String PODCAST_POSITION_LIST_KEY
 net.alliknow.podcatcher.BaseActivity$ContentSelection:
     126:126:public net.alliknow.podcatcher.BaseActivity$ContentMode getMode()
-    188:188:public boolean isSingle()
 net.alliknow.podcatcher.BuildConfig
 net.alliknow.podcatcher.EpisodeActivity:
     public static final java.lang.String EPISODE_URL_KEY
@@ -922,6 +921,7 @@ net.alliknow.podcatcher.Podcatcher:
     public static final int MIN_PIXEL_LARGE
     public static final java.lang.String USER_AGENT_KEY
     public static final java.lang.String USER_AGENT_VALUE
+    public static final java.lang.String AUTHORIZATION_KEY
     private static final long HTTP_CACHE_SIZE
 net.alliknow.podcatcher.R
 net.alliknow.podcatcher.R$anim
@@ -974,14 +974,15 @@ net.alliknow.podcatcher.model.tasks.StorePodcastListTask:
 net.alliknow.podcatcher.model.tasks.remote.LoadPodcastLogoTask:
     private static final int LOGO_DIMENSION
     private static final java.lang.String CACHE_DIR
-    95:96:public void setMaxAge(int)
+    private static final java.lang.String CACHED_LOGO_ENDING
+    99:100:public void setMaxAge(int)
 net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask:
     public static final int MAX_RSS_FILE_SIZE
 net.alliknow.podcatcher.model.tasks.remote.LoadRemoteFileTask:
     protected static final int CONNECT_TIMEOUT
     protected static final int READ_TIMEOUT
-    186:196:private void showResponseHeaderDetails(java.net.HttpURLConnection)
-    199:210:private void reportCacheStats()
+    195:205:private void showResponseHeaderDetails(java.net.HttpURLConnection)
+    208:219:private void reportCacheStats()
 net.alliknow.podcatcher.model.tasks.remote.LoadSuggestionsTask:
     private static final java.lang.String SUGGESTIONS_ENCODING
     private static final java.lang.String SOURCE
@@ -1012,6 +1013,9 @@ net.alliknow.podcatcher.view.SuggestionListItemView:
     private static final java.lang.String METADATA_SEPARATOR
 net.alliknow.podcatcher.view.Utils:
     27:27:public Utils()
+net.alliknow.podcatcher.view.fragments.AuthorizationFragment:
+    public static final java.lang.String USERNAME_PRESET_KEY
+    public static final java.lang.String TAG
 net.alliknow.podcatcher.view.fragments.EpisodeFragment:
     private static final java.lang.String SEPARATOR
 net.alliknow.podcatcher.view.fragments.FirstRunFragment:
