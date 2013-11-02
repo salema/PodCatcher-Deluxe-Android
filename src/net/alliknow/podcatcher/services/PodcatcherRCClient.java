@@ -50,9 +50,19 @@ public class PodcatcherRCClient extends RemoteControlClient {
     public PodcatcherRCClient(PendingIntent mediaButtonIntent, Episode episode) {
         super(mediaButtonIntent);
 
-        final boolean canSkip = !EpisodeManager.getInstance().isPlaylistEmptyBesides(episode);
-        setTransportControlFlags(SUPPORTED_TRANSPORTS | (canSkip ? FLAG_KEY_MEDIA_NEXT : 0));
+        showNext(!EpisodeManager.getInstance().isPlaylistEmptyBesides(episode));
         setMetadata(episode);
+    }
+
+    /**
+     * Set whether the rc should show the option to skip ahead to the next
+     * episode.
+     * 
+     * @param canSkip Give <code>true</code> for the "next" transport control to
+     *            be displayed.
+     */
+    public void showNext(boolean canSkip) {
+        setTransportControlFlags(SUPPORTED_TRANSPORTS | (canSkip ? FLAG_KEY_MEDIA_NEXT : 0));
     }
 
     private void setMetadata(Episode episode) {

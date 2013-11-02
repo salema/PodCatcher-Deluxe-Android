@@ -326,6 +326,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
         // Pop the episode off the playlist
         episodeManager.removeFromPlaylist(currentEpisode);
+        episodeManager.saveState();
         playlist.remove(currentEpisode);
 
         if (!playlist.isEmpty()) {
@@ -340,7 +341,12 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
     @Override
     public void onPlaylistChanged() {
+        // Update status bar notification
         rebuildNotification();
+
+        // Update rc if any (e.g. lock screen)
+        if (currentEpisode != null && remoteControlClient != null)
+            remoteControlClient.showNext(!episodeManager.isPlaylistEmptyBesides(currentEpisode));
     }
 
     /**
@@ -569,6 +575,9 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             stopSelfIfUnboundAndIdle();
         }
 
+        // Make sure episode state is persisted
+        episodeManager.saveState();
+
         // Alert listeners
         if (listeners.size() > 0)
             for (PlayServiceListener listener : listeners)
@@ -697,6 +706,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             // might not be true even after player called onCompletion)
             episodeManager.setResumeAt(currentEpisode,
                     position == 0 || position / (float) duration > 0.99 ? null : position);
+            // We need to store this back to file
+            episodeManager.saveState();
         }
     }
 
