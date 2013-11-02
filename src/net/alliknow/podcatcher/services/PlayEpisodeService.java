@@ -413,6 +413,7 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
 
         // Pop the episode off the playlist
         episodeManager.removeFromPlaylist(currentEpisode);
+        episodeManager.saveState();
         playlist.remove(currentEpisode);
 
         if (!playlist.isEmpty()) {
@@ -427,7 +428,12 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
 
     @Override
     public void onPlaylistChanged() {
+        // Update status bar notification
         rebuildNotification();
+
+        // Update rc if any (e.g. lock screen)
+        if (currentEpisode != null && remoteControlClient != null)
+            remoteControlClient.showNext(!episodeManager.isPlaylistEmptyBesides(currentEpisode));
     }
 
     /**
@@ -706,6 +712,9 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
                 for (PlayServiceListener listener : listeners)
                     listener.onPlaybackComplete();
         }
+
+        // Make sure episode state is persisted
+        episodeManager.saveState();
     }
 
     @Override
@@ -832,6 +841,8 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
             // might not be true even after player called onCompletion)
             episodeManager.setResumeAt(currentEpisode,
                     position == 0 || position / (float) duration > 0.99 ? null : position);
+            // We need to store this back to file
+            episodeManager.saveState();
         }
     }
 
