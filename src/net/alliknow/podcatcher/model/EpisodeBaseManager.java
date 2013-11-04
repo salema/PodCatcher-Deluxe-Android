@@ -17,8 +17,12 @@
 
 package net.alliknow.podcatcher.model;
 
+import android.os.Handler;
+import android.util.Log;
+
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
+import net.alliknow.podcatcher.listeners.OnStoreEpisodeMetadataListener;
 import net.alliknow.podcatcher.model.tasks.StoreEpisodeMetadataTask;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
@@ -35,7 +39,8 @@ import java.util.concurrent.CountDownLatch;
  * 
  * @see EpisodeManager
  */
-public abstract class EpisodeBaseManager implements OnLoadEpisodeMetadataListener {
+public abstract class EpisodeBaseManager implements OnLoadEpisodeMetadataListener,
+        OnStoreEpisodeMetadataListener {
 
     /** The file name to store local episode metadata information under */
     public static final String METADATA_FILENAME = "episodes.xml";
@@ -47,6 +52,23 @@ public abstract class EpisodeBaseManager implements OnLoadEpisodeMetadataListene
     protected Map<URL, EpisodeMetadata> metadata;
     /** Flag to indicate whether metadata is dirty */
     protected boolean metadataChanged;
+
+    /** Amount of milliseconds between {@link #saveState()} calls */
+    private long PERSIST_METADATA_INTERVAL = 60 * 1000;
+    /** Flag to indicate whether the store meta data task is active */
+    private boolean isStoreTaskRunning = false;
+    /** Handler for periodic meta data dirty checks */
+    private Handler persistMetaDataHandler = new Handler();
+    /** The runnable that calls {@link #saveState()} */
+    private Runnable persistMetaDataRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            saveState();
+
+            persistMetaDataHandler.postDelayed(persistMetaDataRunnable, PERSIST_METADATA_INTERVAL);
+        }
+    };
 
     /** Latch we use to block all threads until we have our data */
     private CountDownLatch latch = new CountDownLatch(1);
@@ -60,6 +82,12 @@ public abstract class EpisodeBaseManager implements OnLoadEpisodeMetadataListene
         // We use some of its method below, so we keep a reference to the
         // application object.
         this.podcatcher = app;
+
+        // We regularly check for the episode meta data to be dirty and run the
+        // task to persist it if needed. This is useful because the meta data is
+        // not only changed via the UI, but also from the play service or
+        // download tasks.
+        persistMetaDataHandler.postDelayed(persistMetaDataRunnable, PERSIST_METADATA_INTERVAL);
     }
 
     @Override
@@ -87,22 +115,37 @@ public abstract class EpisodeBaseManager implements OnLoadEpisodeMetadataListene
     }
 
     /**
-     * Persist the manager's data to disk.
+     * Persist the manager's data to disk. It is save to call this at any time,
+     * if there is no change in the episode meta data, no action is taken.
      */
     @SuppressWarnings("unchecked")
     public void saveState() {
-        // Store cleaned metadata if dirty
-        if (metadataChanged && metadata != null) {
+        // Run store task if it is not running and meta data is dirty
+        if (metadataChanged && metadata != null && !isStoreTaskRunning) {
+            // Make sure task does not run twice
+            isStoreTaskRunning = true;
+
             // Store a copy of the actual map, since there might come in changes
-            // to the metadata while the task is running and that would lead to
-            // a concurrent modification exception.
-            new StoreEpisodeMetadataTask(podcatcher)
+            // to the meta data while the task is running and that would lead to
+            // a concurrent modification exception
+            new StoreEpisodeMetadataTask(podcatcher, this)
                     .execute(new HashMap<URL, EpisodeMetadata>(metadata));
 
             // Reset the flag, so the list will only be saved if changed again.
-            // TODO Storing the metadata might fail?
             metadataChanged = false;
         }
+    }
+
+    @Override
+    public void onEpisodeMetadataStored() {
+        isStoreTaskRunning = false;
+    }
+
+    @Override
+    public void onEpisodeMetadataStoreFailed(Exception exception) {
+        isStoreTaskRunning = false;
+
+        Log.w(getClass().getSimpleName(), "Episode meta data could not be stored: ", exception);
     }
 
     /**

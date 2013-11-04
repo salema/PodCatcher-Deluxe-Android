@@ -56,7 +56,7 @@ public class StorePodcastListTask extends StoreFileTask<List<Podcast>> {
     protected boolean writeAuthorization = false;
     /** The file/dir that we write to. */
     protected File exportLocation;
-    /** The exception that might have been occured */
+    /** The exception that might have been occurred */
     protected Exception exception;
 
     /** Content of OPML file title tag */
