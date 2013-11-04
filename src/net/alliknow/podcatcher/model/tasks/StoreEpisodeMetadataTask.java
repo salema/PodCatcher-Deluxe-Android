@@ -34,6 +34,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import net.alliknow.podcatcher.listeners.OnStoreEpisodeMetadataListener;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
 
@@ -54,14 +55,21 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMeta
 
     /** Our context */
     protected Context context;
+    /** The call-back */
+    protected OnStoreEpisodeMetadataListener listener;
+
+    /** The exception that might have been occurred */
+    protected Exception exception;
 
     /**
      * Create a new persistence task.
      * 
      * @param context Context to use for file writing.
+     * @param listener Call-back to alert on completion or failure.
      */
-    public StoreEpisodeMetadataTask(Context context) {
+    public StoreEpisodeMetadataTask(Context context, OnStoreEpisodeMetadataListener listener) {
         this.context = context;
+        this.listener = listener;
     }
 
     @Override
@@ -81,8 +89,11 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMeta
             for (Entry<URL, EpisodeMetadata> entry : params[0].entrySet())
                 writeRecord(entry.getKey(), entry.getValue());
             writeFooter();
-        } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Cannot store episode metadata file", e);
+        } catch (Exception ex) {
+            Log.e(getClass().getSimpleName(), "Cannot store episode metadata file", ex);
+            this.exception = ex;
+
+            cancel(true);
         } finally {
             // Make sure we close the file stream
             if (writer != null)
@@ -96,6 +107,18 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMeta
         }
 
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void nothing) {
+        if (listener != null)
+            listener.onEpisodeMetadataStored();
+    }
+
+    @Override
+    protected void onCancelled(Void nothing) {
+        if (listener != null)
+            listener.onEpisodeMetadataStoreFailed(exception);
     }
 
     private void writeRecord(URL key, EpisodeMetadata value) throws IOException {
