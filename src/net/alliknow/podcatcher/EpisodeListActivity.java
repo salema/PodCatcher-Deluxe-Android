@@ -46,7 +46,7 @@ import java.util.TreeSet;
 /**
  * Show list of episodes activity. This is thought of an abstract activity for
  * an app only consisting of an episode list view, the player and the ability to
- * show an {@link ShowEpisodeActivity} on top. Sub-classes could extends or
+ * show an {@link ShowEpisodeActivity} on top. Sub-classes could extend or
  * simply show this layout.
  */
 public abstract class EpisodeListActivity extends EpisodeActivity implements
