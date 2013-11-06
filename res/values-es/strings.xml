@@ -76,7 +76,7 @@
     <string name="opml_export">Exportación OPML</string>
     <string name="opml_export_success">Archivo OPML almacenado en\n%s</string>
     <string name="opml_export_failed">La exportación ha fallado</string>
-    <string name="suggestions">Sugerencias&#8230;</string>
+    <string name="suggestions">Sugerencias</string>
     <string name="suggested_podcasts">Podcasts recomendados</string>
     <string name="suggestion_listen">Escuchar</string>
     <string name="suggestion_watch">Ver</string>
