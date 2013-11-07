@@ -24,7 +24,6 @@ import android.os.Bundle;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.AbsListView.MultiChoiceModeListener;
 
@@ -41,12 +40,12 @@ import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 public class EpisodeListContextListener implements MultiChoiceModeListener {
 
     /** The maximum number of episodes to download at once */
-    private static final int MAX_DOWNLOADS = 10;
+    private static final int MAX_DOWNLOADS = 25;
     /** The maximum number of episodes to enqueue in playlist at once */
-    private static final int MAX_TO_PLAYLIST = 25;
+    private static final int MAX_TO_PLAYLIST = 50;
 
     /** The owning fragment */
-    private EpisodeListFragment fragment;
+    private final EpisodeListFragment fragment;
     /** The episode manager handle */
     private final EpisodeManager episodeManager;
 
@@ -78,14 +77,12 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
      */
     public EpisodeListContextListener(EpisodeListFragment fragment) {
         this.fragment = fragment;
-
-        episodeManager = EpisodeManager.getInstance();
+        this.episodeManager = EpisodeManager.getInstance();
     }
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        MenuInflater inflater = mode.getMenuInflater();
-        inflater.inflate(R.menu.episode_list_context, menu);
+        mode.getMenuInflater().inflate(R.menu.episode_list_context, menu);
 
         newMenuItem = menu.findItem(R.id.episode_new_contextmenuitem);
         oldMenuItem = menu.findItem(R.id.episode_old_contextmenuitem);
@@ -231,6 +228,11 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
     }
 
     private void updateMenuItems() {
+        // Initialize counters for the number of downloads and playlist
+        // additions the current selection would trigger
+        int downloadsTriggered = 0;
+        int playlistAdditions = 0;
+
         // Make all menu items invisible
         newMenuItem.setVisible(false);
         oldMenuItem.setVisible(false);
@@ -254,23 +256,28 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
 
                 if (episodeManager.isDownloadingOrDownloaded(episode))
                     deleteMenuItem.setVisible(true);
-                else
+                else {
+                    downloadsTriggered++;
                     downloadMenuItem.setVisible(true);
+                }
 
                 if (episodeManager.isInPlaylist(episode))
                     removeFromPlaylistMenuItem.setVisible(true);
-                else
+                else {
+                    playlistAdditions++;
                     addToPlaylistMenuItem.setVisible(true);
+                }
             }
         }
 
         // Do not show some actions if too many episodes are selected
-        if (checkedItems.size() > MAX_DOWNLOADS)
+        if (downloadsTriggered > MAX_DOWNLOADS)
             downloadMenuItem.setVisible(false);
-        if (checkedItems.size() > MAX_TO_PLAYLIST)
+        if (playlistAdditions > MAX_TO_PLAYLIST)
             addToPlaylistMenuItem.setVisible(false);
 
         // Hide the select all item if all items are selected
-        selectAllMenuItem.setVisible(checkedItems.size() != fragment.getListAdapter().getCount());
+        selectAllMenuItem.setVisible(fragment.getListView().getCheckedItemCount() !=
+                fragment.getListAdapter().getCount());
     }
 }

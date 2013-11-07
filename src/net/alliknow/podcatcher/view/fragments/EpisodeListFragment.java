@@ -253,7 +253,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
             // We need to store any currently check items here because
             // setting the adapter will override their status and the
             // relevant positions in the list might change
-            List<Episode> checkedEpisodes = getCheckedEpisodes();
+            final List<Episode> checkedEpisodes = getCheckedEpisodes();
             // Clear all checked states here
             getListView().clearChoices();
 
@@ -456,9 +456,9 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
     private List<Episode> getCheckedEpisodes() {
         List<Episode> result = null;
 
-        SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
-        if (checkedItems.size() > 0) {
+        if (getListView().getCheckedItemCount() > 0) {
             result = new ArrayList<Episode>();
+            final SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
 
             for (int position = 0; position < getListAdapter().getCount(); position++)
                 if (checkedItems.get(position))
