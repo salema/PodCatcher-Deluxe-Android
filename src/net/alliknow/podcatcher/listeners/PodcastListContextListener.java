@@ -23,7 +23,6 @@ import android.content.Intent;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.AbsListView.MultiChoiceModeListener;
 
@@ -41,7 +40,7 @@ import java.util.ArrayList;
 public class PodcastListContextListener implements MultiChoiceModeListener {
 
     /** The owning fragment */
-    private PodcastListFragment fragment;
+    private final PodcastListFragment fragment;
 
     /**
      * Create new listener for the podcast list context mode.
@@ -54,8 +53,7 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        MenuInflater inflater = mode.getMenuInflater();
-        inflater.inflate(R.menu.podcast_list_context, menu);
+        mode.getMenuInflater().inflate(R.menu.podcast_list_context, menu);
 
         return true;
     }
