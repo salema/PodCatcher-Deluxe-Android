@@ -129,6 +129,15 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     }
 
     @Override
+    public void onPodcastLoadFailed(Podcast failedPodcast) {
+        super.onPodcastLoadFailed(failedPodcast);
+
+        // We might want to show the progress bar on top of the list
+        if (selection.isAll())
+            episodeListFragment.setShowTopProgress(podcastManager.getLoadCount() > 0);
+    }
+
+    @Override
     protected void updateActionBar() {
         contentSpinner.setTitle(getString(R.string.app_name));
 

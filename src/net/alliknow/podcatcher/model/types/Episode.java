@@ -181,30 +181,38 @@ public class Episode implements Comparable<Episode> {
         // We need to be "consistent with equals": only return 0 (zero) for
         // equal episodes. Failing to do so will cause episodes with equal
         // pubDates to mysteriously disappear when put in a SortedSet.
-        if (this.pubDate == null && another.getPubDate() == null) {
-
-            // This should never be zero unless the episodes are equal, since a
-            // podcast might publish two episodes at the same pubDate. If it is
-            // (and the episode are not equal) we use the original order from
-            // the feed instead.
-            return this.equals(another) ? 0 : index - another.getPositionInPodcast();
-        }
+        int result = 0;
+        // We mainly compare by the publication date of the episodes. If these
+        // are not available or are equal, we check for their position in the
+        // podcast. As a last resort we simply return something <> 0.
+        if (this.pubDate == null && another.getPubDate() == null)
+            ; // pass, this is handled below
         else if (this.pubDate == null && another.getPubDate() != null)
-            return -1;
+            result = -1;
         else if (this.pubDate != null && another.getPubDate() == null)
-            return 1;
-        else {
-            final int result = pubDate.compareTo(another.getPubDate());
+            result = 1;
+        else
+            result = -pubDate.compareTo(another.getPubDate());
 
-            // This should never be zero unless the episodes are equal, since a
-            // podcast might publish two episodes at the same pubDate. If it is
-            // (and the episode are not equal) we use the original order from
-            // the feed instead.
-            if (result == 0)
-                return this.equals(another) ? 0 : index - another.getPositionInPodcast();
-            else
-                return -1 * result;
+        // This should never be zero unless the episodes are equal, since a
+        // podcast might publish two episodes at the same pubDate. If it is
+        // (and the episodes are not equal) we use the original order from
+        // the feed instead. If all that is not available we simply return
+        // a consistent, non-zero integer since failing the do so would remove
+        // the episode from sets.
+        if (result == 0 && !this.equals(another)) {
+            // The pubDates are equal, but episode are not, try index
+            if (index >= 0 && another.getPositionInPodcast() >= 0
+                    && index != another.getPositionInPodcast())
+                result = index - another.getPositionInPodcast();
+            // As a last resort return a consistent, non-zero int
+            else {
+                final int lastResort = this.hashCode() - another.hashCode();
+                result = lastResort == 0 ? -1 : lastResort;
+            }
         }
+
+        return result;
     }
 
     /**

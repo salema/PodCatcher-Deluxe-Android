@@ -48,6 +48,9 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     private OnSelectEpisodeListener episodeSelectionListener;
     /** The activity we are in (listens to sorting toggles) */
     private OnReverseSortingListener sortingListener;
+    
+    /** Identifier for the string the empty view shows. */
+    private int emptyStringId = R.string.episode_none;
 
     /** Flag for show sort menu item state */
     private boolean showSortMenuItem = false;
@@ -172,7 +175,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
             // Update other UI elements
             if (episodeList.isEmpty())
-                emptyView.setText(R.string.episode_none);
+                emptyView.setText(emptyStringId);
 
             // Make sure to match selection state
             if (selectAll)
@@ -207,6 +210,24 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     }
 
     /**
+     * Select an episode in the list. Calls {@link #selectNone()} if the episode
+     * is not present in the current list. Does nothing if there is no list set
+     * or the episode is <code>null</code>.
+     * 
+     * @param episode Episode to select.
+     */
+    public void select(Episode episode) {
+        if (currentEpisodeList != null && episode != null) {
+            final int index = currentEpisodeList.indexOf(episode);
+
+            if (index >= 0)
+                select(index);
+            else
+                selectNone();
+        }
+    }
+
+    /**
      * Set whether the fragment should show the top progress bar. You can call
      * this any time and can expect it to happen on fragment resume at the
      * latest.
@@ -229,6 +250,17 @@ public class EpisodeListFragment extends PodcatcherListFragment {
      */
     public void setShowPodcastNames(boolean show) {
         this.showPodcastNames = show;
+    }
+
+    /**
+     * Define which text label the list's empty view shows. Will only have an
+     * effect if you call {@link #setEpisodeList(List)} with an empty list
+     * afterwards.
+     * 
+     * @param id The empty string resource identifier.
+     */
+    public void setEmptyStringId(int id) {
+        this.emptyStringId = id;
     }
 
     @Override
