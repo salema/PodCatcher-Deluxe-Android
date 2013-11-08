@@ -354,7 +354,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             }
 
             authorizationFragment.show(getFragmentManager(), AuthorizationFragment.TAG);
-        }
+        } else
+            onPodcastLoadFailed(podcast);
     }
 
     @Override
