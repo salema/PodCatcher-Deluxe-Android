@@ -120,7 +120,6 @@ public class SuggestionListItemView extends RelativeLayout {
         addButton.setEnabled(false);
         addButton.setBackgroundDrawable(null);
         addButton.setText(null);
-        addButton.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                R.drawable.ic_checkmark_light, 0);
+        addButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_checkmark, 0);
     }
 }

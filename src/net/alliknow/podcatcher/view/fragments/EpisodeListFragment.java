@@ -331,7 +331,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
             filterMenuItem.setTitle(filterMenuItemState ?
                     R.string.episodes_filter_all : R.string.episodes_filter_new);
             filterMenuItem.setIcon(filterMenuItemState ?
-                    R.drawable.ic_menu_filter_back : R.drawable.ic_menu_filter);
+                    R.drawable.ic_menu_filter_reverse : R.drawable.ic_menu_filter);
         }
     }
 
