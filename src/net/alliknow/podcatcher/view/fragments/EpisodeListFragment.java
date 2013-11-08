@@ -26,6 +26,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -250,12 +251,9 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
 
         // Update UI
         if (viewCreated) {
-            // We need to store any currently check items here because
-            // setting the adapter will override their status and the
-            // relevant positions in the list might change
+            // We need to store any currently checked items here because
+            // we might want to re-check them after updating the list
             final List<Episode> checkedEpisodes = getCheckedEpisodes();
-            // Clear all checked states here
-            getListView().clearChoices();
 
             if (adapter == null)
                 // This also set the member
@@ -266,14 +264,24 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
             // Update adapter setting
             ((EpisodeListAdapter) adapter).setShowPodcastNames(showPodcastNames);
 
-            // Restore checked items
-            if (checkedEpisodes != null)
+            // Restore checked items, if any
+            boolean shouldResetAllCheckedStates = true;
+            if (checkedEpisodes != null && checkedEpisodes.size() > 0) {
+                getListView().clearChoices();
+
                 for (Episode episode : checkedEpisodes) {
                     final int newPosition = currentEpisodeList.indexOf(episode);
 
-                    if (newPosition >= 0)
+                    if (newPosition >= 0) {
                         getListView().setItemChecked(newPosition, true);
+                        shouldResetAllCheckedStates = false;
+                    }
                 }
+            }
+
+            // This will clear all check states and end the context mode
+            if (shouldResetAllCheckedStates)
+                getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
 
             // Update other UI elements
             if (episodeList.isEmpty())
@@ -312,10 +320,10 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
     }
 
     /**
-     * <<<<<<< deluxe Set whether the fragment should show the filter icon. You
-     * can call this any time and can expect it to happen on fragment resume at
-     * the latest. You also have to set the filter icon state, <code>true</code>
-     * for "new only" and <code>false</code> for "show all".
+     * Set whether the fragment should show the filter icon. You can call this
+     * any time and can expect it to happen on fragment resume at the latest.
+     * You also have to set the filter icon state, <code>true</code> for
+     * "new only" and <code>false</code> for "show all".
      * 
      * @param show Whether to show the filter menu item.
      * @param filter State of the filter menu item (new / all)
@@ -456,7 +464,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
     private List<Episode> getCheckedEpisodes() {
         List<Episode> result = null;
 
-        if (getListView().getCheckedItemCount() > 0) {
+        if (getListAdapter() != null && getListView().getCheckedItemCount() > 0) {
             result = new ArrayList<Episode>();
             final SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
 
