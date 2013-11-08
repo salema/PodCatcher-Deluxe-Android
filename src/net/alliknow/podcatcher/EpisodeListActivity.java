@@ -628,8 +628,12 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         // Load finished for all podcasts and there are episode
         if (loadingPodcastCount == 0 && currentEpisodeSet != null) {
             final int episodeCount = currentEpisodeSet.size();
-            contentSpinner.setSubtitle(getResources()
-                    .getQuantityString(R.plurals.episodes, episodeCount, episodeCount));
+
+            if (episodeCount == 0)
+                contentSpinner.setSubtitle(null);
+            else
+                contentSpinner.setSubtitle(getResources()
+                        .getQuantityString(R.plurals.episodes, episodeCount, episodeCount));
         }
         // Load finished but no episodes
         else if (loadingPodcastCount == 0)
