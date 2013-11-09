@@ -201,10 +201,10 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
                 if (isPlaying())
                     pause();
                 else
-                    start();
+                    resume();
             }
             else if (action.equals(ACTION_PLAY))
-                start();
+                resume();
             else if (action.equals(ACTION_PAUSE))
                 pause();
             else if (action.equals(ACTION_PREVIOUS))
@@ -453,7 +453,7 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
     /**
      * Resume to play current episode.
      */
-    public void start() {
+    public void resume() {
         if (currentEpisode == null)
             Log.d(getClass().getSimpleName(), "Called resume without setting episode");
         else if (!hasFocus)
@@ -467,14 +467,19 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
         }
     }
 
+    @Override
+    public void start() {
+        resume();
+    }
+
     /**
      * Seek player to given location in media file.
      * 
-     * @param msec Milli seconds from the start to seek to.
+     * @param msecs Milli seconds from the start to seek to.
      */
-    public void seekTo(int msec) {
-        if (prepared && msec >= 0 && msec <= getDuration()) {
-            player.seekTo(msec);
+    public void seekTo(int msecs) {
+        if (prepared && msecs >= 0 && msecs <= getDuration()) {
+            player.seekTo(msecs);
 
             startForeground(NOTIFICATION_ID,
                     notification.updateProgress(getCurrentPosition(), getDuration()));
@@ -574,7 +579,10 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
      *         Does not throw any exception but returns at least zero.
      */
     public int getCurrentPosition() {
-        return isPrepared() ? player.getCurrentPosition() : 0;
+        if (player == null || !prepared)
+            return 0;
+        else
+            return player.getCurrentPosition();
     }
 
     /**
@@ -582,7 +590,10 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
      *         exception but returns at least zero.
      */
     public int getDuration() {
-        return isPrepared() ? player.getDuration() : 0;
+        if (player == null || !prepared)
+            return 0;
+        else
+            return player.getDuration();
     }
 
     @Override

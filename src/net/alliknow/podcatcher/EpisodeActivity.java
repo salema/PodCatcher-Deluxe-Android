@@ -349,7 +349,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
             stopPlayProgressTimer();
         } // Player in pause
         else {
-            service.start();
+            service.resume();
             startPlayProgressTimer();
         }
 

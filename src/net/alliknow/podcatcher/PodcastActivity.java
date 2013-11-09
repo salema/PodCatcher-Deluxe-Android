@@ -245,9 +245,8 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                 onNoEpisodeSelected(true);
         }
 
-        // Make sure we are alerted on back stack changes. The listener needs to
-        // be attached after we restored the selection state, since it will
-        // break the re-selection process otherwise
+        // Make sure we are alerted on back stack changes. This needs to be
+        // added after re-selection of the current content.
         getFragmentManager().addOnBackStackChangedListener(this);
         // Set podcast logo view mode
         updateLogoViewMode();
@@ -257,7 +256,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     protected void onPause() {
         super.onPause();
 
-        // Disable listener while we are not active.
+        // Disable listener (would interfere with resume)
         getFragmentManager().removeOnBackStackChangedListener(this);
 
         // Make sure we persist the podcast manager state
