@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingLeft="5dp"
-    android:paddingRight="5dp" >
+    android:paddingRight="5dp">
 
     <net.margaritov.preference.colorpicker.ColorPickerView
         android:id="@+id/color_picker_view"
@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <EditText
             android:id="@+id/hex_val"
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:hint="HEX"
             android:maxLength="7"
-            android:visibility="gone" >
+            android:visibility="gone">
         </EditText>
 
         <TextView

@@ -60,11 +60,11 @@
                 android:ellipsize="marquee"
                 android:textSize="@dimen/font_size_small" />
             <net.alliknow.podcatcher.view.HorizontalProgressView
-            	android:id="@+id/list_item_progress"
-            	android:layout_width="match_parent"
+                android:id="@+id/list_item_progress"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-            	android:indeterminate="true"
-            	android:visibility="gone" />
+                android:indeterminate="true"
+                android:visibility="gone" />
         </FrameLayout>
     </LinearLayout>
 </net.alliknow.podcatcher.view.PodcastListItemView>

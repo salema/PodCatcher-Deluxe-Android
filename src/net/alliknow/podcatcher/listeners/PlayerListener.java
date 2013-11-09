@@ -34,7 +34,7 @@ public interface PlayerListener extends OnSeekBarChangeListener {
      */
     public void onTogglePlay();
 
-    /*
+    /**
      * Rewind of the current episode requested.
      */
     public void onRewind();
