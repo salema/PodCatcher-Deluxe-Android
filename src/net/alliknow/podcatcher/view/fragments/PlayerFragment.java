@@ -235,6 +235,20 @@ public class PlayerFragment extends Fragment {
     }
 
     /**
+     * Set whether the fragment should show the player view at all. You can call
+     * this any time and can expect it to happen on resume at the latest.
+     * 
+     * @param show Whether to show the player view.
+     */
+    public void setPlayerVisibilility(boolean show) {
+        this.showPlayer = show;
+
+        // Only do it right away if resumed, otherwise onResume will call us.
+        if (isResumed())
+            getView().setVisibility(show ? VISIBLE : GONE);
+    }
+
+    /**
      * Set whether the fragment should show the player title view. You can call
      * this any time and can expect it to happen on resume at the latest. This
      * only makes a difference if the player itself is visible.
@@ -287,20 +301,6 @@ public class PlayerFragment extends Fragment {
         if (viewCreated && playingEpisode != null)
             titleView.setText(Html.fromHtml("<a href=\"\">" + playingEpisode.getName() + " - "
                     + playingEpisode.getPodcast().getName() + "</a>"));
-    }
-
-    /**
-     * Set whether the fragment should show the player view at all. You can call
-     * this any time and can expect it to happen on resume at the latest.
-     * 
-     * @param show Whether to show the player view.
-     */
-    public void setPlayerVisibilility(boolean show) {
-        this.showPlayer = show;
-
-        // Only do it right away if resumed, otherwise onResume will call us.
-        if (isResumed())
-            getView().setVisibility(show ? VISIBLE : GONE);
     }
 
     /**
@@ -413,7 +413,7 @@ public class PlayerFragment extends Fragment {
                     if (transportActive) {
                         transportationHandler.removeCallbacks(
                                 rewind ? rewindRunnable : forwardRunnable);
-                        
+
                         transportActive = false;
                     } else {
                         // No long click, run once

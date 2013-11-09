@@ -163,12 +163,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         // We use some of its method below, so we keep a reference to the
         // application object.
         this.podcatcher = app;
-
-        // Load list of podcasts from OPML file on start-up, listeners will be
-        // notified below.
-        LoadPodcastListTask loadListTask =
-                new LoadPodcastListTask(podcatcher.getApplicationContext(), this);
-        loadListTask.execute((Void) null);
     }
 
     /**

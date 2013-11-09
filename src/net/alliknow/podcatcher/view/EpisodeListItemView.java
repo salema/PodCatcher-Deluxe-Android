@@ -87,23 +87,24 @@ public class EpisodeListItemView extends LinearLayout {
     }
 
     private String createCaption(Episode episode, boolean showPodcastName) {
-        // This should not happen (but we cover it)
-        if (episode.getPubDate() == null && !showPodcastName)
-            return NO_DATE;
+        String result = NO_DATE;
+
         // Episode has no date, should not happen
-        else if (episode.getPubDate() == null && showPodcastName)
-            return episode.getPodcast().getName();
+        if (episode.getPubDate() == null && showPodcastName)
+            result = episode.getPodcast().getName();
         // This is the interesting case
-        else {
+        else if (episode.getPubDate() != null) {
             // Get a nice time span string for the age of the episode
             String dateString = Utils.getRelativePubDate(episode);
 
             // Append podcast name
             if (showPodcastName)
-                return dateString + SEPARATOR + episode.getPodcast().getName();
+                result = dateString + SEPARATOR + episode.getPodcast().getName();
             // Omit podcast name
             else
-                return dateString;
+                result = dateString;
         }
+
+        return result;
     }
 }

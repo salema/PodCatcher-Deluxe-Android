@@ -136,7 +136,7 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
 
         /**
          * @return The currently selected podcast. Might be <code>null</code> to
-         *         indicate no selection.
+         *         indicate "no selection".
          */
         public Podcast getPodcast() {
             return currentPodcast;
@@ -243,7 +243,7 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
         // changed for this app (all its activities) is the music stream
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
-        // Set the selection member
+        // Set the selection mode member
         selection = ContentSelection.getInstance();
         // Set the view mode member
         view = ViewMode.determineViewMode(getResources());

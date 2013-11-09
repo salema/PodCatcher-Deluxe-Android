@@ -53,12 +53,12 @@
         android:id="@+id/episode_divider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/divider"
         android:paddingLeft="2dp"
         android:paddingRight="2dp"
         android:scaleType="fitXY"
         android:src="@android:drawable/divider_horizontal_bright"
-        android:visibility="gone"
-        android:contentDescription="@string/divider" />
+        android:visibility="gone" />
     <WebView
         android:id="@+id/episode_description"
         android:layout_width="match_parent"

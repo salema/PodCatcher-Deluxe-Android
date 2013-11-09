@@ -23,10 +23,12 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.http.HttpResponseCache;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.SuggestionManager;
+import net.alliknow.podcatcher.model.tasks.LoadPodcastListTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,7 +56,7 @@ public class Podcatcher extends Application {
     public static final String AUTHORIZATION_KEY = "Authorization";
 
     /** The HTTP cache size */
-    private static final long HTTP_CACHE_SIZE = 8 * 1024 * 1024; // 8 MiB
+    public static final long HTTP_CACHE_SIZE = 8 * 1024 * 1024; // 8 MiB
 
     /** Thread to move the http cache flushing off the UI thread */
     private static class FlushCacheThread extends Thread {
@@ -73,20 +75,27 @@ public class Podcatcher extends Application {
     public void onCreate() {
         super.onCreate();
 
-        // Enabled caching for our HTTP connections
-        try {
-            File httpCacheDir = new File(getCacheDir(), "http");
-            HttpResponseCache.install(httpCacheDir, HTTP_CACHE_SIZE);
-        } catch (IOException ioe) {
-            Log.i(getClass().getSimpleName(), "HTTP response cache installation failed:" + ioe);
-        }
-
         // This will only run once in the lifetime of the app
         // since the application is an implicit singleton. We create the other
         // singletons here to make sure they know their application instance.
         PodcastManager.getInstance(this);
         // dito
         SuggestionManager.getInstance(this);
+
+        // Enabled caching for our HTTP connections
+        try {
+            File httpCacheDir = new File(getCacheDir(), "http");
+            HttpResponseCache.install(httpCacheDir, HTTP_CACHE_SIZE);
+        } catch (IOException ioe) {
+            Log.w(getClass().getSimpleName(), "HTTP response cache installation failed:" + ioe);
+        }
+
+        // Now we will trigger the preparation on start-up:
+        // Load podcast list from file async, once this is finished the
+        // podcast manager is alerted and in turn tells the controller activity.
+        // Then the UI can show the list and we are ready to go
+        new LoadPodcastListTask(this, PodcastManager.getInstance())
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
     }
 
     /**

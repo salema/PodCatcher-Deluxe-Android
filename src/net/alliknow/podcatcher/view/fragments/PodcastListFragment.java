@@ -67,7 +67,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
     private LogoViewMode logoViewMode = LogoViewMode.SMALL;
 
     /** The options available for the logo view */
-    public enum LogoViewMode {
+    public static enum LogoViewMode {
         /**
          * Do not show the podcast logo
          */

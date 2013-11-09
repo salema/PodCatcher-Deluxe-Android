@@ -41,11 +41,10 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         if (!view.isSmallPortrait() || (!selection.isAll() && !selection.isPodcastSet()))
             finish();
         else {
-            // Set the content view
+            // 1. Set the content view
             setContentView(R.layout.main);
-            // Set fragment members
+            // 2. Set, find, create the fragments
             findFragments();
-
             // During initial setup, plug in the episode list fragment.
             if (savedInstanceState == null && episodeListFragment == null) {
                 episodeListFragment = new EpisodeListFragment();
@@ -58,10 +57,13 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
                         .commit();
             }
 
-            // Act accordingly
+            // 3. Register the listeners needed to function as a controller
+            registerListeners();
+
+            // 4. Act according to selection
             if (selection.isAll())
                 onAllPodcastsSelected();
-            else if (selection.isPodcastSet())
+            else if (selection.isSingle() && selection.isPodcastSet())
                 onPodcastSelected(selection.getPodcast());
         }
     }
@@ -160,13 +162,11 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     }
 
     @Override
-    protected void updatePlayer() {
-        super.updatePlayer();
+    protected void updatePlayerUi() {
+        super.updatePlayerUi();
 
         // Make sure to show episode title in player
-        if (playerFragment != null) {
-            playerFragment.setLoadMenuItemVisibility(false, false);
-            playerFragment.setPlayerTitleVisibility(true);
-        }
+        playerFragment.setLoadMenuItemVisibility(false, false);
+        playerFragment.setPlayerTitleVisibility(true);
     }
 }

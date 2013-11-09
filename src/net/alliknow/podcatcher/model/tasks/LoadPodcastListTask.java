@@ -40,6 +40,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,6 +53,9 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
     private Context context;
     /** The listener callback */
     private OnLoadPodcastListListener listener;
+
+    /** Member to measure performance */
+    private Date startTime;
 
     /** The file that we read from. */
     protected File importFile;
@@ -83,6 +87,10 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
 
     @Override
     protected List<Podcast> doInBackground(Void... params) {
+        // Record start time
+        this.startTime = new Date();
+
+        // Create resulting data structure and file stream
         List<Podcast> result = new ArrayList<Podcast>();
         InputStream fileStream = null;
 
@@ -140,6 +148,9 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
 
     @Override
     protected void onPostExecute(List<Podcast> result) {
+        Log.i(getClass().getSimpleName(), "Added " + result.size() + " podcast(s) to list in "
+                + (new Date().getTime() - startTime.getTime()) + "ms.");
+
         if (listener != null)
             listener.onPodcastListLoaded(result);
         else

@@ -44,19 +44,16 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
- * Show list of episodes activity. This is thought of an abstract activity for
- * an app only consisting of an episode list view, the player and the ability to
- * show an {@link ShowEpisodeActivity} on top. Sub-classes could extend or
- * simply show this layout.
+ * Show list of episodes activity. This is thought of as an abstract activity
+ * for an app only consisting of an episode list view, the player and the
+ * ability to show an {@link ShowEpisodeActivity} on top. Sub-classes could
+ * extend or simply show this layout.
  */
 public abstract class EpisodeListActivity extends EpisodeActivity implements
         OnLoadPodcastListener, OnEnterAuthorizationListener, OnLoadPodcastLogoListener,
         OnSelectPodcastListener, OnReverseSortingListener {
 
-    /**
-     * Key used to save the current setting for
-     * <code>multiplePodcastsMode</code> in bundle
-     */
+    /** Key used to save the current content mode in bundle */
     public static final String MODE_KEY = "mode_key";
     /** Key used to store podcast URL in intent or bundle */
     public static final String PODCAST_URL_KEY = "podcast_url_key";
@@ -92,6 +89,11 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         // Make sure the episode fragment know our theme colors
         if (episodeListFragment != null)
             episodeListFragment.setThemeColors(themeColor, lightThemeColor);
+    }
+
+    @Override
+    protected void registerListeners() {
+        super.registerListeners();
 
         // We have to do this here instead of onCreate since we can only react
         // on the call-backs properly once we have our fragment
@@ -182,6 +184,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 updateSortingUi();
                 updateDividerUi();
 
+                // Go load all podcasts
                 for (Podcast podcast : podcastManager.getPodcastList())
                     podcastManager.load(podcast);
 
@@ -282,17 +285,10 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     @Override
     public void onPodcastLoadFailed(Podcast failedPodcast) {
         // The podcast we are waiting for failed to load
-        if (!selection.isAll() && failedPodcast.equals(selection.getPodcast()))
+        if (selection.isSingle() && failedPodcast.equals(selection.getPodcast()))
             episodeListFragment.showLoadFailed();
-        // The last podcast failed to load and none of the others had any
-        // episodes to show in the list
-        else if (selection.isAll() && podcastManager.getLoadCount() == 0
-                && (currentEpisodeSet == null || currentEpisodeSet.isEmpty()))
-            episodeListFragment.showLoadFailed();
-        // One of many podcasts failed to load
+        // One of potentially many podcasts failed
         else if (selection.isAll()) {
-            showToast(getString(R.string.podcast_load_multiple_error, failedPodcast.getName()));
-
             // The last podcast failed and we have no episodes at all
             if (podcastManager.getLoadCount() == 0 && currentEpisodeSet.isEmpty())
                 episodeListFragment.showLoadFailed();
@@ -451,7 +447,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             updateEpisodeListSelection();
         }
     }
-    
+
     private void colorDivider(int dividerViewId, boolean applyColor) {
         if (getWindow() != null && getWindow().findViewById(dividerViewId) != null) {
             View divider = getWindow().findViewById(dividerViewId);
@@ -462,5 +458,4 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 divider.setBackgroundColor(getResources().getColor(R.color.divider_off));
         }
     }
-
 }

@@ -73,12 +73,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         if (((Podcatcher) getApplication()).isInDebugMode())
             StrictMode.enableDefaults();
 
-        // 1. Register listeners
-        // Register as listener to the podcast data manager
-        podcastManager.addLoadPodcastListListener(this);
-        podcastManager.addChangePodcastListListener(this);
-
-        // 2. Create the UI via XML layouts and fragments
+        // 1. Create the UI via XML layouts and fragments
         // Inflate the main content view (depends on view mode)
         setContentView(R.layout.main);
         // Make sure all fragment member handles are properly set
@@ -89,6 +84,11 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         podcastListFragment.setThemeColors(themeColor, lightThemeColor);
         // Make sure the layout matches the preference
         updateLayout();
+
+        // 2. Register listeners (done after the fragments are available so we
+        // do not end up getting call-backs without the possibility to act on
+        // them).
+        registerListeners();
 
         // 3. Init/restore the app as needed
         // If we are newly starting up and the podcast list is empty, show add
@@ -142,6 +142,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         if (view.isSmallLandscape() && episodeListFragment == null) {
             episodeListFragment = new EpisodeListFragment();
             episodeListFragment.setThemeColors(themeColor, lightThemeColor);
+
             getFragmentManager()
                     .beginTransaction()
                     .add(R.id.right, episodeListFragment,
@@ -149,6 +150,15 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                     .commit();
         }
     }
+
+    @Override
+    protected void registerListeners() {
+        super.registerListeners();
+
+        // Register as listener to the podcast data manager
+        podcastManager.addLoadPodcastListListener(this);
+        podcastManager.addChangePodcastListListener(this);
+    };
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -181,14 +191,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-
-        // Set podcast logo view mode
-        updateLogoViewMode();
-    }
-
-    @Override
     protected void onRestart() {
         super.onRestart();
 
@@ -211,7 +213,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             // Re-select previously selected podcast(s)
             if (selection.isAll())
                 onAllPodcastsSelected(true);
-            else if (selection.isPodcastSet())
+            else if (selection.isSingle() && selection.isPodcastSet())
                 onPodcastSelected(selection.getPodcast(), true);
             else
                 onNoPodcastSelected(true);
@@ -226,6 +228,8 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // Make sure we are alerted on back stack changes. This needs to be
         // added after re-selection of the current content.
         getFragmentManager().addOnBackStackChangedListener(this);
+        // Set podcast logo view mode
+        updateLogoViewMode();
     }
 
     @Override
@@ -342,13 +346,9 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         if (forceReload || !podcast.equals(selection.getPodcast())) {
             super.onPodcastSelected(podcast);
 
-            if (view.isSmallPortrait()) {
-                // We need to launch a new activity to display the episode list
-                Intent intent = new Intent(this, ShowEpisodeListActivity.class);
-
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
-            } else
+            if (view.isSmallPortrait())
+                showEpisodeListActivity();
+            else
                 // Select in podcast list
                 podcastListFragment.select(podcastManager.indexOf(podcast));
 
@@ -369,13 +369,8 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             // Prepare podcast list fragment
             podcastListFragment.selectAll();
 
-            if (view.isSmallPortrait()) {
-                // We need to launch a new activity to display the episode list
-                Intent intent = new Intent(this, ShowEpisodeListActivity.class);
-
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
-            }
+            if (view.isSmallPortrait())
+                showEpisodeListActivity();
 
             // Update UI
             updateLogoViewMode();
@@ -492,7 +487,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     protected void updateLogoViewMode() {
         LogoViewMode logoViewMode = LogoViewMode.NONE;
 
-        if (view.isLargeLandscape() && !selection.isAll())
+        if (view.isLargeLandscape() && selection.isSingle())
             logoViewMode = LogoViewMode.LARGE;
         else if (view.isSmallPortrait())
             logoViewMode = LogoViewMode.SMALL;
@@ -512,13 +507,21 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     }
 
     @Override
-    protected void updatePlayer() {
-        super.updatePlayer();
+    protected void updatePlayerUi() {
+        super.updatePlayerUi();
 
-        if (view.isSmallPortrait() && playerFragment != null) {
+        if (view.isSmallPortrait()) {
             playerFragment.setLoadMenuItemVisibility(false, false);
             playerFragment.setPlayerTitleVisibility(true);
         }
+    }
+
+    private void showEpisodeListActivity() {
+        // We need to launch a new activity to display the episode list
+        Intent intent = new Intent(this, ShowEpisodeListActivity.class);
+
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
     }
 
     private void setMainColumnWidthWeight(View view, float weight) {

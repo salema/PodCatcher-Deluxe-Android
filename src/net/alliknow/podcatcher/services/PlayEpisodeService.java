@@ -588,6 +588,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         if (wifiLock.isHeld())
             wifiLock.release();
 
+        // Release player
         if (player != null) {
             player.release();
             player = null;

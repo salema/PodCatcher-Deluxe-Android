@@ -40,12 +40,11 @@ public class ShowEpisodeActivity extends EpisodeActivity {
         if (!view.isSmallPortrait() || !selection.isEpisodeSet())
             finish();
         else {
-            // Set the content view
+            // 1. Set the content view
             setContentView(R.layout.main);
-            // Set fragment members
+            // 2. Set, find, create the fragments
             findFragments();
-
-            // During initial setup, plug in the episode details fragment.
+            // During initial setup, plug in the details fragment.
             if (savedInstanceState == null && episodeFragment == null) {
                 episodeFragment = new EpisodeFragment();
                 getFragmentManager()
@@ -55,7 +54,10 @@ public class ShowEpisodeActivity extends EpisodeActivity {
                         .commit();
             }
 
-            // Set it
+            // 3. Register the listeners needed to function as a controller
+            registerListeners();
+
+            // 4. Set episode in fragment UI
             onEpisodeSelected(selection.getEpisode());
         }
     }
