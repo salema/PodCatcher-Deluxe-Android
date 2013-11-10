@@ -356,6 +356,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             Log.d(getClass().getSimpleName(), "Called pause without setting episode");
         else if (prepared && isPlaying()) {
             player.pause();
+            storeResumeAt();
 
             stopPlayProgressTimer();
             updateRemoteControlPlaystate(PLAYSTATE_PAUSED);
