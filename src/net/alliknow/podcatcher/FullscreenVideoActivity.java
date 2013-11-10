@@ -21,11 +21,13 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.View.OnSystemUiVisibilityChangeListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.MediaController;
 
@@ -38,12 +40,15 @@ import net.alliknow.podcatcher.view.fragments.VideoSurfaceProvider;
  * Show fullscreen video activity.
  */
 public class FullscreenVideoActivity extends BaseActivity implements VideoSurfaceProvider,
-        PlayServiceListener {
+        PlayServiceListener, OnSystemUiVisibilityChangeListener {
 
     /** Play service */
     protected PlayEpisodeService service;
     /** The media controller overlay */
     private MediaController controller;
+
+    /** Milli-seconds to wait for system ui to be dimmed */
+    private static final int DIM_SYSTEM_UI_DELAY = 1000;
 
     /** Flag to indicate whether video surface is available */
     private boolean videoSurfaceAvailable = false;
@@ -64,6 +69,9 @@ public class FullscreenVideoActivity extends BaseActivity implements VideoSurfac
             videoView = (SurfaceView) findViewById(R.id.episode_video);
             videoView.getHolder().addCallback(videoCallback);
 
+            // Needed for dimming of the system UI
+            videoView.setOnSystemUiVisibilityChangeListener(this);
+
             // Attach to play episode service
             Intent intent = new Intent(this, PlayEpisodeService.class);
             bindService(intent, connection, 0);
@@ -79,6 +87,20 @@ public class FullscreenVideoActivity extends BaseActivity implements VideoSurfac
 
         if (controller != null)
             controller.show();
+
+        videoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+    }
+
+    @Override
+    public void onSystemUiVisibilityChange(int visibility) {
+        if (visibility == View.SYSTEM_UI_FLAG_VISIBLE)
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    videoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+                }
+            }, DIM_SYSTEM_UI_DELAY);
     }
 
     @Override
@@ -99,6 +121,7 @@ public class FullscreenVideoActivity extends BaseActivity implements VideoSurfac
     @Override
     protected void onDestroy() {
         videoView.getHolder().removeCallback(videoCallback);
+        videoView.setOnSystemUiVisibilityChangeListener(null);
 
         // Detach from play service (prevents leaking)
         if (service != null) {
