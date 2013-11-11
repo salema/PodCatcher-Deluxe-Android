@@ -30,16 +30,21 @@
         <item>Obrazový záznam</item>
     </string-array>
     <string-array name="genres">
+        <item>Umění</item>
+        <item>Byznys</item>
         <item>Komedie</item>
-        <item>Výchova a vzdělávání</item>
-        <item>Zábava</item>
-        <item>Děti</item>
-        <item>Pohyb</item>
+        <item>Výchova &amp; Vzdělávání</item>
+        <item>Hry &amp; Koníčky</item>
+        <item>Vláda &amp; Organizace</item>
+        <item>Zdraví</item>
+        <item>Děti &amp; Rodina</item>
         <item>Hudba</item>
-        <item>Zprávy</item>
-        <item>Politika</item>
-        <item>Věda</item>
-        <item>Sport</item>
+        <item>Zprávy &amp; Politika</item>
+        <item>Náboženství &amp; Spiritualita</item>
+        <item>Věda &amp; Medicína</item>
+        <item>Společnost &amp; Kultura</item>
+        <item>Sport &amp; Rekreace</item>
         <item>Výroba</item>
+        <item>TV &amp; Film</item>
     </string-array>
 </resources>

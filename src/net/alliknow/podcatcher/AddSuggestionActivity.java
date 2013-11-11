@@ -25,8 +25,8 @@ import android.os.Bundle;
 import net.alliknow.podcatcher.listeners.OnAddSuggestionListener;
 import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
 import net.alliknow.podcatcher.model.SuggestionManager;
-import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
+import net.alliknow.podcatcher.model.types.Suggestion;
 import net.alliknow.podcatcher.view.fragments.SuggestionFragment;
 
 import java.util.ArrayList;
@@ -91,15 +91,13 @@ public class AddSuggestionActivity extends BaseActivity implements
     }
 
     @Override
-    public void onSuggestionsLoaded(List<Podcast> suggestions) {
-        // Currently already existing podcasts (to be filtered out)
-        List<Podcast> podcastList = podcastManager.getPodcastList();
+    public void onSuggestionsLoaded(List<Suggestion> suggestions) {
         // Resulting list
-        List<Podcast> filteredSuggestionList = new ArrayList<Podcast>();
+        List<Suggestion> filteredSuggestionList = new ArrayList<Suggestion>();
 
         // Do filter!
-        for (Podcast suggestion : suggestions)
-            if (podcastList == null || !podcastList.contains(suggestion))
+        for (Suggestion suggestion : suggestions)
+            if (!podcastManager.contains(suggestion))
                 filteredSuggestionList.add(suggestion);
 
         // Filter list and update UI
@@ -112,7 +110,7 @@ public class AddSuggestionActivity extends BaseActivity implements
     }
 
     @Override
-    public void onAddPodcast(Podcast suggestion) {
+    public void onAddSuggestion(Suggestion suggestion) {
         podcastManager.addPodcast(suggestion);
     }
 

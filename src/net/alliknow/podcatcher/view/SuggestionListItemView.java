@@ -22,13 +22,14 @@ import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnAddSuggestionListener;
 import net.alliknow.podcatcher.model.types.MediaType;
-import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.Suggestion;
 
 /**
  * A list item view to represent a podcast suggestion.
@@ -38,6 +39,8 @@ public class SuggestionListItemView extends RelativeLayout {
     /** Separator for meta data in the UI */
     private static final String METADATA_SEPARATOR = " • ";
 
+    /** The feature icon view */
+    private ImageView featuredIconView;
     /** The title text view */
     private TextView titleTextView;
     /** The meta information text view */
@@ -61,6 +64,7 @@ public class SuggestionListItemView extends RelativeLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
+        featuredIconView = (ImageView) findViewById(R.id.suggestion_featured);
         titleTextView = (TextView) findViewById(R.id.suggestion_name);
         metaTextView = (TextView) findViewById(R.id.suggestion_meta);
         addButton = (Button) findViewById(R.id.suggestion_add_button);
@@ -73,14 +77,22 @@ public class SuggestionListItemView extends RelativeLayout {
      * @param suggestion Podcast suggestion to represent.
      * @param listener Call-back to alert when the button is pressed.
      * @param alreadyAdded Whether the suggestion is already added.
+     * @param languageWildcard Whether the current filter language setting has a
+     *            wildcard.
+     * @param genreWildcard Whether the current filter setting has a genre
+     *            wildcard.
+     * @param typeWildcard Whether the current filter setting has a type
+     *            wildcard.
      */
-    public void show(final Podcast suggestion, final OnAddSuggestionListener listener,
-            boolean alreadyAdded) {
+    public void show(final Suggestion suggestion, final OnAddSuggestionListener listener,
+            boolean alreadyAdded, boolean languageWildcard, boolean genreWildcard,
+            boolean typeWildcard) {
         // 1. Set the text to display for title
         titleTextView.setText(suggestion.getName());
 
         // 2. Set the text to display for classification
-        metaTextView.setText(createClassificationLabel(suggestion));
+        metaTextView.setText(createClassificationLabel(suggestion,
+                languageWildcard, genreWildcard, typeWildcard));
 
         // 3. Set the text to display for the description
         descriptionTextView.setText(suggestion.getDescription());
@@ -100,20 +112,38 @@ public class SuggestionListItemView extends RelativeLayout {
                 public void onClick(View view) {
                     showCheckmarkInsteadOfButton();
 
-                    listener.onAddPodcast(suggestion);
+                    listener.onAddSuggestion(suggestion);
                 }
             });
         }
+
+        // 5. Decorate featured and explicit suggestions
+        featuredIconView.setVisibility(suggestion.isFeatured() || suggestion.isExplicit() ?
+                VISIBLE : GONE);
+        featuredIconView.setImageResource(suggestion.isFeatured() ?
+                R.drawable.ic_suggestion_featured : R.drawable.ic_suggestion_explicit);
+        setBackgroundColor(suggestion.isFeatured() ?
+                getResources().getColor(R.color.featured_suggestion) :
+                getResources().getColor(android.R.color.transparent));
     }
 
-    private String createClassificationLabel(final Podcast suggestion) {
+    private String createClassificationLabel(Suggestion suggestion,
+            boolean languageWildcard, boolean genreWildcard, boolean typeWildcard) {
         final Resources res = getResources();
+        String result = "";
 
-        return res.getStringArray(R.array.languages)[suggestion.getLanguage().ordinal()]
-                + METADATA_SEPARATOR
-                + res.getStringArray(R.array.genres)[suggestion.getGenre().ordinal()]
-                + METADATA_SEPARATOR
-                + res.getStringArray(R.array.types)[suggestion.getMediaType().ordinal()];
+        if (languageWildcard)
+            result += res.getStringArray(R.array.languages)[suggestion.getLanguage().ordinal()]
+                    + METADATA_SEPARATOR;
+
+        // The genre will always be shown
+        result += res.getStringArray(R.array.genres)[suggestion.getGenre().ordinal()];
+
+        if (typeWildcard)
+            result += METADATA_SEPARATOR
+                    + res.getStringArray(R.array.types)[suggestion.getMediaType().ordinal()];
+
+        return result;
     }
 
     private void showCheckmarkInsteadOfButton() {

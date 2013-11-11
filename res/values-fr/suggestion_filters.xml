@@ -30,16 +30,21 @@
         <item>Vidéo</item>
     </string-array>
     <string-array name="genres">
+        <item>Arts</item>
+        <item>Affaires</item>
         <item>Comédie</item>
         <item>Éduction</item>
-        <item>Divertissement</item>
-        <item>Enfants</item>
-        <item>Mobilité</item>
+        <item>Jeux &amp; Découvre</item>
+        <item>Gouvernement &amp; Organisations</item>
+        <item>Santé</item>
+        <item>Enfants &amp; Famille</item>
         <item>Musique</item>
-        <item>Nouvelles</item>
-        <item>Politique</item>
-        <item>Science</item>
-        <item>Sports</item>
-        <item>Technology</item>
+        <item>Nouvelles &amp; Politique</item>
+        <item>Religion &amp; Spiritualité</item>
+        <item>Science &amp; Médecine</item>
+        <item>Société &amp; Culture</item>
+        <item>Sports &amp; Loisirs</item>
+        <item>Technologie</item>
+        <item>TV &amp; Film</item>
     </string-array>
 </resources>

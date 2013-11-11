@@ -17,7 +17,7 @@
 
 package net.alliknow.podcatcher.listeners;
 
-import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.Suggestion;
 
 /**
  * Interface definition for a callback to be invoked when a podcast suggestions
@@ -30,5 +30,5 @@ public interface OnAddSuggestionListener {
      * 
      * @param suggestion Podcast to add.
      */
-    public void onAddPodcast(Podcast suggestion);
+    public void onAddSuggestion(Suggestion suggestion);
 }

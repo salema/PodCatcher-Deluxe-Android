@@ -114,6 +114,7 @@
     <string name="suggested_podcasts">Suggested podcasts</string>
     <string name="suggestion_listen">Listen</string>
     <string name="suggestion_watch">Watch</string>
+    <string name="suggestion_confirm_explicit">This podcast is marked explicit. Are you sure you want to add it to your podcast list?</string>
     <string name="suggestions_none">No suggestions, please change your filters.</string>
     <string name="suggestions_load_error">Suggestions failed to load, please check your internet connection!</string>
     <string name="suggestions_send">Submit a podcast suggestion&#8230;</string>
