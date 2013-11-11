@@ -46,8 +46,8 @@ import net.alliknow.podcatcher.listeners.OnAddSuggestionListener;
 import net.alliknow.podcatcher.model.types.Genre;
 import net.alliknow.podcatcher.model.types.Language;
 import net.alliknow.podcatcher.model.types.MediaType;
-import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
+import net.alliknow.podcatcher.model.types.Suggestion;
 import net.alliknow.podcatcher.view.ProgressView;
 
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class SuggestionFragment extends DialogFragment {
     /** The call back we work on */
     private OnAddSuggestionListener listener;
     /** The list of suggestions to show */
-    private List<Podcast> suggestionList;
+    private List<Suggestion> suggestionList;
 
     /** The language filter */
     private Spinner languageFilter;
@@ -207,7 +207,7 @@ public class SuggestionFragment extends DialogFragment {
      * 
      * @param suggestions Podcasts to show.
      */
-    public void setList(List<Podcast> suggestions) {
+    public void setList(List<Suggestion> suggestions) {
         // Set the list to show
         this.suggestionList = suggestions;
 
@@ -257,15 +257,21 @@ public class SuggestionFragment extends DialogFragment {
         // Filter the suggestion list
         if (suggestionList != null) {
             // Resulting list
-            List<Podcast> filteredSuggestionList = new ArrayList<Podcast>();
+            List<Suggestion> filteredSuggestionList = new ArrayList<Suggestion>();
             // Do filter!
-            for (Podcast suggestion : suggestionList)
+            for (Suggestion suggestion : suggestionList)
                 if (matchesFilter(suggestion))
                     filteredSuggestionList.add(suggestion);
 
             // Set filtered list
-            suggestionsListView.setAdapter(new SuggestionListAdapter(getDialog().getContext(),
-                    filteredSuggestionList, listener));
+            final SuggestionListAdapter suggestionListAdapter = new SuggestionListAdapter(
+                    getDialog().getContext(), filteredSuggestionList, listener);
+            suggestionListAdapter.setFilterConfiguration(
+                    languageFilter.getSelectedItemPosition() == 0,
+                    genreFilter.getSelectedItemPosition() == 0,
+                    mediaTypeFilter.getSelectedItemPosition() == 0);
+            suggestionsListView.setAdapter(suggestionListAdapter);
+
             // Update UI
             if (filteredSuggestionList.isEmpty()) {
                 suggestionsListView.setVisibility(GONE);
@@ -286,7 +292,7 @@ public class SuggestionFragment extends DialogFragment {
      * @param suggestion Podcast to check.
      * @return <code>true</code> if the podcast fits.
      */
-    private boolean matchesFilter(Podcast suggestion) {
+    private boolean matchesFilter(Suggestion suggestion) {
         return (languageFilter.getSelectedItemPosition() == 0 ||
                 ((Language) languageFilter.getSelectedItem()).equals(suggestion.getLanguage())) &&
                 (genreFilter.getSelectedItemPosition() == 0 ||

@@ -24,7 +24,7 @@ import android.view.ViewGroup;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnAddSuggestionListener;
 import net.alliknow.podcatcher.model.PodcastManager;
-import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.Suggestion;
 import net.alliknow.podcatcher.view.SuggestionListItemView;
 
 import java.util.List;
@@ -32,10 +32,19 @@ import java.util.List;
 /**
  * Adapter for the suggestion list.
  */
-public class SuggestionListAdapter extends PodcastListAdapter {
+public class SuggestionListAdapter extends PodcatcherBaseListAdapter {
 
     /** Owner for button call backs */
     protected final OnAddSuggestionListener listener;
+    /** The list our data resides in */
+    protected List<Suggestion> list;
+
+    /** The language filter disabled flag */
+    private boolean languageWildcard;
+    /** The genre filter disabled flag */
+    private boolean genreWildcard;
+    /** The media type filter disabled flag */
+    private boolean typeWildcard;
 
     /**
      * Create new adapter.
@@ -44,11 +53,43 @@ public class SuggestionListAdapter extends PodcastListAdapter {
      * @param suggestions List of podcasts (suggestions) to wrap.
      * @param listener Call back for the add button to attach.
      */
-    public SuggestionListAdapter(Context context, List<Podcast> suggestions,
+    public SuggestionListAdapter(Context context, List<Suggestion> suggestions,
             OnAddSuggestionListener listener) {
-        super(context, suggestions);
+        super(context);
 
+        this.list = suggestions;
         this.listener = listener;
+    }
+
+    /**
+     * Update the adapter on the current filter settings.
+     * 
+     * @param languageWildcard Give <code>true</code> if the all languages are
+     *            shown.
+     * @param genreWildcard Give <code>true</code> if the all genres are shown.
+     * @param typeWildcard Give <code>true</code> if the all media types are
+     *            shown.
+     */
+    public void setFilterConfiguration(boolean languageWildcard, boolean genreWildcard,
+            boolean typeWildcard) {
+        this.languageWildcard = languageWildcard;
+        this.genreWildcard = genreWildcard;
+        this.typeWildcard = typeWildcard;
+    }
+
+    @Override
+    public int getCount() {
+        return list.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return list.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return list.get(position).hashCode();
     }
 
     @Override
@@ -57,8 +98,10 @@ public class SuggestionListAdapter extends PodcastListAdapter {
                 findReturnView(convertView, parent, R.layout.suggestion_list_item);
 
         // Make the view represent podcast suggestion at given position
-        final Podcast suggestion = (Podcast) getItem(position);
-        returnView.show(suggestion, listener, PodcastManager.getInstance().contains(suggestion));
+        final Suggestion suggestion = (Suggestion) getItem(position);
+        returnView.show(suggestion, listener,
+                PodcastManager.getInstance().contains(suggestion),
+                languageWildcard, genreWildcard, typeWildcard);
 
         return returnView;
     }

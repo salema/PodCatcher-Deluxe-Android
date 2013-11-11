@@ -17,8 +17,8 @@
 
 package net.alliknow.podcatcher.listeners;
 
-import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
+import net.alliknow.podcatcher.model.types.Suggestion;
 
 import java.util.List;
 
@@ -44,7 +44,7 @@ public interface OnLoadSuggestionListener {
      * 
      * @param suggestions Podcast suggestions loaded.
      */
-    public void onSuggestionsLoaded(List<Podcast> suggestions);
+    public void onSuggestionsLoaded(List<Suggestion> suggestions);
 
     /**
      * Called when loading the suggestions failed.

@@ -20,8 +20,8 @@ package net.alliknow.podcatcher.model;
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
 import net.alliknow.podcatcher.model.tasks.remote.LoadSuggestionsTask;
-import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
+import net.alliknow.podcatcher.model.types.Suggestion;
 
 import java.util.HashSet;
 import java.util.List;
@@ -38,7 +38,7 @@ public class SuggestionManager implements OnLoadSuggestionListener {
     private Podcatcher podcatcher;
 
     /** The list of podcast suggestions */
-    private List<Podcast> podcastSuggestions;
+    private List<Suggestion> podcastSuggestions;
 
     /** The suggestions load task */
     private LoadSuggestionsTask loadTask;
@@ -127,7 +127,7 @@ public class SuggestionManager implements OnLoadSuggestionListener {
     }
 
     @Override
-    public void onSuggestionsLoaded(List<Podcast> suggestions) {
+    public void onSuggestionsLoaded(List<Suggestion> suggestions) {
         // Cache the load result
         this.podcastSuggestions = suggestions;
         // Reset task
