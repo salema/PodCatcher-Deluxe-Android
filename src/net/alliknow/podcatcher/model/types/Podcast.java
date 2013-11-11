@@ -60,6 +60,9 @@ public class Podcast implements Comparable<Podcast> {
     /** Podcast media type */
     private MediaType mediaType;
 
+    /** Whether the podcast contains explicit language */
+    private boolean isExplicit = false;
+
     /** Username for http authorization */
     private String username;
     /** Password for http authorization */
@@ -157,6 +160,20 @@ public class Podcast implements Comparable<Podcast> {
      */
     public void setMediaType(MediaType mediaType) {
         this.mediaType = mediaType;
+    }
+
+    /**
+     * @return Whether the podcast is considered explicit.
+     */
+    public boolean isExplicit() {
+        return isExplicit;
+    }
+
+    /**
+     * @param isExplicit The flag to set.
+     */
+    public void setExplicit(boolean isExplicit) {
+        this.isExplicit = isExplicit;
     }
 
     /**

@@ -25,8 +25,8 @@ import net.alliknow.podcatcher.model.tags.JSON;
 import net.alliknow.podcatcher.model.types.Genre;
 import net.alliknow.podcatcher.model.types.Language;
 import net.alliknow.podcatcher.model.types.MediaType;
-import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
+import net.alliknow.podcatcher.model.types.Suggestion;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,7 +47,7 @@ import java.util.Locale;
 /**
  * A task that loads and reads suggested podcasts.
  */
-public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>> {
+public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Suggestion>> {
 
     /** Call back */
     private OnLoadSuggestionListener listener;
@@ -57,10 +57,12 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
     /** The file encoding */
     private static final String SUGGESTIONS_ENCODING = "utf8";
     /** The online resource to find suggestions */
-    private static final String SOURCE = "https://raw.github.com/salema/PodCatcher-Deluxe/master/suggestions.json";
+    private static final String SOURCE = "http://www.podcatcher-deluxe.com/podcast_suggestions.json";
+    /** The text that marks isExplicit() == true */
+    private static final String EXPLICIT_POSITIVE_STRING = "yes";
 
     /** Flag to indicate the max age that would trigger re-load. */
-    private int maxAge = 60 * 24 * 7;
+    private int maxAge = 60 * 24 * 3;
 
     /**
      * Create new task.
@@ -74,8 +76,8 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
     }
 
     @Override
-    protected List<Podcast> doInBackground(Void... params) {
-        List<Podcast> result = new ArrayList<Podcast>();
+    protected List<Suggestion> doInBackground(Void... params) {
+        List<Suggestion> result = new ArrayList<Suggestion>();
         byte[] suggestions = null;
 
         // 1. Load the file from the cache or the Internet
@@ -120,12 +122,12 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
                 return null;
 
             // 2.2 Add all featured podcasts
-            addSuggestionsFromJsonArray(completeJson.getJSONArray(JSON.FEATURED), result);
+            addSuggestionsFromJsonArray(completeJson.getJSONArray(JSON.FEATURED), result, true);
             if (isCancelled())
                 return null;
 
             // 2.3 Add all suggestions
-            addSuggestionsFromJsonArray(completeJson.getJSONArray(JSON.SUGGESTION), result);
+            addSuggestionsFromJsonArray(completeJson.getJSONArray(JSON.SUGGESTION), result, false);
             if (isCancelled())
                 return null;
 
@@ -152,7 +154,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
     }
 
     @Override
-    protected void onPostExecute(List<Podcast> suggestions) {
+    protected void onPostExecute(List<Suggestion> suggestions) {
         // Suggestions loaded successfully
         if (listener != null)
             listener.onSuggestionsLoaded(suggestions);
@@ -161,7 +163,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
     }
 
     @Override
-    protected void onCancelled(List<Podcast> suggestions) {
+    protected void onCancelled(List<Suggestion> suggestions) {
         // Suggestions failed to load
         if (listener != null)
             listener.onSuggestionsLoadFailed();
@@ -176,7 +178,8 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
      * @param array JSON array to scan.
      * @param list List to add suggestions to.
      */
-    private void addSuggestionsFromJsonArray(JSONArray array, List<Podcast> list) {
+    private void addSuggestionsFromJsonArray(JSONArray array, List<Suggestion> list,
+            boolean featured) {
         for (int index = 0; index < array.length(); index++) {
             JSONObject object;
 
@@ -186,9 +189,11 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
                 continue; // If an index fails, try the next one...
             }
 
-            Podcast suggestion = createSuggestion(object);
-            if (suggestion != null)
+            Suggestion suggestion = createSuggestion(object);
+            if (suggestion != null) {
+                suggestion.setFeatured(featured);
                 list.add(suggestion);
+            }
         }
     }
 
@@ -200,18 +205,20 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Podcast>>
      * @return The podcast suggestion or <code>null</code> if any problem
      *         occurs.
      */
-    private Podcast createSuggestion(JSONObject json) {
-        Podcast suggestion = null;
+    private Suggestion createSuggestion(JSONObject json) {
+        Suggestion suggestion = null;
 
         try {
-            suggestion = new Podcast(json.getString(JSON.TITLE), new URL(json.getString(JSON.URL)));
+            suggestion = new Suggestion(json.getString(JSON.TITLE), new URL(
+                    json.getString(JSON.URL)));
             suggestion.setDescription(json.getString(JSON.DESCRIPTION).trim());
             suggestion.setLanguage(Language.valueOf(json.getString(JSON.LANGUAGE)
                     .toUpperCase(Locale.US).trim()));
             suggestion.setMediaType(MediaType.valueOf(json.getString(JSON.TYPE)
                     .toUpperCase(Locale.US).trim()));
-            suggestion.setGenre(Genre.valueOf(json.getString(JSON.CATEGORY).toUpperCase(Locale.US)
-                    .trim()));
+            suggestion.setGenre(Genre.forLabel(json.getString(JSON.CATEGORY)));
+            suggestion.setExplicit(EXPLICIT_POSITIVE_STRING.equals(json.getString(JSON.EXPLICIT)
+                    .toLowerCase(Locale.US)));
         } catch (JSONException e) {
             Log.w(getClass().getSimpleName(), "JSON parsing failed for: " + suggestion, e);
             return null;

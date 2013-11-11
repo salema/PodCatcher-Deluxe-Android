@@ -21,6 +21,7 @@ import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
 import net.alliknow.podcatcher.model.tasks.remote.LoadSuggestionsTask;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
+import net.alliknow.podcatcher.model.types.Suggestion;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -58,7 +59,7 @@ public class Utils {
         LoadSuggestionsTask task = new LoadSuggestionsTask(null, new OnLoadSuggestionListener() {
 
             @Override
-            public void onSuggestionsLoaded(List<Podcast> suggestions) {
+            public void onSuggestionsLoaded(List<Suggestion> suggestions) {
                 for (Podcast podcast : suggestions)
                     examples.add(podcast);
 

@@ -31,4 +31,5 @@ public class JSON {
     public static final String LANGUAGE = "language";
     public static final String TYPE = "type";
     public static final String CATEGORY = "category";
+    public static final String EXPLICIT = "explicit";
 }
