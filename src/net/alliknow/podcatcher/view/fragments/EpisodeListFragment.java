@@ -32,6 +32,7 @@ import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.listeners.OnReverseSortingListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
+import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Episode;
 
 import java.util.List;
@@ -48,7 +49,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     private OnSelectEpisodeListener episodeSelectionListener;
     /** The activity we are in (listens to sorting toggles) */
     private OnReverseSortingListener sortingListener;
-    
+
     /** Identifier for the string the empty view shows. */
     private int emptyStringId = R.string.episode_none;
 
@@ -276,11 +277,38 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
     /**
      * Show error view.
+     * 
+     * @param code The error code loading the podcast failed with.
      */
-    @Override
-    public void showLoadFailed() {
+    public void showLoadFailed(PodcastLoadError code) {
         if (viewCreated)
-            progressView.showError(R.string.podcast_load_error);
+            switch (code) {
+                case ACCESS_DENIED:
+                    progressView.showError(R.string.podcast_load_error_access_denied);
+                    break;
+
+                case NOT_PARSEABLE:
+                    progressView.showError(R.string.podcast_load_error_not_parseable);
+                    break;
+
+                case NOT_REACHABLE:
+                    progressView.showError(R.string.podcast_load_error_not_reachable);
+                    break;
+
+                default:
+                    progressView.showError(R.string.podcast_load_error);
+                    break;
+            }
+
+        super.showLoadFailed();
+    }
+
+    /**
+     * Show error view for "select all podcasts" failed.
+     */
+    public void showLoadAllFailed() {
+        if (viewCreated)
+            progressView.showError(R.string.podcast_load_multiple_error_all);
 
         super.showLoadFailed();
     }

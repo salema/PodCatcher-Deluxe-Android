@@ -20,6 +20,7 @@ package net.alliknow.podcatcher;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 
@@ -131,8 +132,8 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     }
 
     @Override
-    public void onPodcastLoadFailed(Podcast failedPodcast) {
-        super.onPodcastLoadFailed(failedPodcast);
+    public void onPodcastLoadFailed(Podcast failedPodcast, PodcastLoadError code) {
+        super.onPodcastLoadFailed(failedPodcast, code);
 
         // We might want to show the progress bar on top of the list
         if (selection.isAll())

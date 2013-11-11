@@ -102,6 +102,7 @@ public class ProgressView extends LinearLayout {
         progressTextView.setVisibility(VISIBLE);
         progressTextView.setText(errorId);
         progressTextView.setTextColor(getColor(R.color.text_error));
+        progressTextView.setSingleLine(false);
     }
 
     /**
@@ -113,6 +114,7 @@ public class ProgressView extends LinearLayout {
         progressTextView.setVisibility(VISIBLE);
         progressTextView.setText(R.string.wait);
         progressTextView.setTextColor(getColor(R.color.text_secondary));
+        progressTextView.setSingleLine(true);
     }
 
     /**
