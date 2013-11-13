@@ -17,6 +17,7 @@
 
 package net.alliknow.podcatcher.listeners;
 
+import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 
@@ -25,15 +26,6 @@ import net.alliknow.podcatcher.model.types.Progress;
  * Also provides some means to monitor the load progress.
  */
 public interface OnLoadPodcastListener {
-
-    /**
-     * Called on podcast load failure due to missing credentials. Typically, the
-     * call-back would ask the user for his/her credentials and re-start the
-     * podcast load task.
-     * 
-     * @param podcast The podcast that failed to load.
-     */
-    public void onAuthorizationRequired(Podcast podcast);
 
     /**
      * Called on progress update.
@@ -58,6 +50,7 @@ public interface OnLoadPodcastListener {
      * Called when loading the podcast failed.
      * 
      * @param podcast Podcast failing to load.
+     * @param code The reason for the failure.
      */
-    public void onPodcastLoadFailed(Podcast podcast);
+    public void onPodcastLoadFailed(Podcast podcast, PodcastLoadError code);
 }

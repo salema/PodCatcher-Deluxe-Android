@@ -28,6 +28,7 @@ import android.os.Bundle;
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
 import net.alliknow.podcatcher.listeners.OnEnterAuthorizationListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
+import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.fragments.AddPodcastFragment;
@@ -121,50 +122,7 @@ public class AddPodcastActivity extends BaseActivity implements OnLoadPodcastLis
                 podcastManager.load(newPodcast);
         } catch (MalformedURLException e) {
             // Show failed UI
-            addPodcastFragment.showPodcastLoadFailed();
-        }
-    }
-
-    @Override
-    public void onAuthorizationRequired(final Podcast podcast) {
-        if (isCurrentlyLoadingPodcast(podcast)) {
-            // Ask the user for authorization
-            final AuthorizationFragment authorizationFragment = new AuthorizationFragment();
-
-            if (lastUserName != null) {
-                // Create bundle to make dialog aware of username to pre-set
-                final Bundle args = new Bundle();
-                args.putString(USERNAME_PRESET_KEY, lastUserName);
-                authorizationFragment.setArguments(args);
-            }
-
-            authorizationFragment.show(getFragmentManager(), AuthorizationFragment.TAG);
-        }
-    }
-
-    @Override
-    public void onSubmitAuthorization(String username, String password) {
-        // We need to keep that in order to pre-fill next time
-        lastUserName = username;
-
-        try {
-            final Podcast newPodcast = new Podcast(null, new URL(currentLoadUrl));
-            newPodcast.setUsername(username);
-            newPodcast.setPassword(password);
-
-            podcastManager.load(newPodcast);
-        } catch (MalformedURLException e) {
-            onCancelAuthorization();
-        }
-    }
-
-    @Override
-    public void onCancelAuthorization() {
-        try {
-            onPodcastLoadFailed(new Podcast(null, new URL(currentLoadUrl)));
-        } catch (MalformedURLException e) {
-            // Show failed UI
-            addPodcastFragment.showPodcastLoadFailed();
+            addPodcastFragment.showPodcastLoadFailed(PodcastLoadError.NOT_REACHABLE);
         }
     }
 
@@ -187,13 +145,57 @@ public class AddPodcastActivity extends BaseActivity implements OnLoadPodcastLis
     }
 
     @Override
-    public void onPodcastLoadFailed(Podcast podcast) {
+    public void onPodcastLoadFailed(final Podcast podcast, PodcastLoadError code) {
         if (isCurrentlyLoadingPodcast(podcast)) {
-            // Reset current load url
-            currentLoadUrl = null;
+            // Podcasts need authorization
+            if (code == PodcastLoadError.AUTH_REQUIRED) {
+                // Ask the user for authorization
+                final AuthorizationFragment authorizationFragment = new AuthorizationFragment();
 
+                if (lastUserName != null) {
+                    // Create bundle to make dialog aware of username to pre-set
+                    final Bundle args = new Bundle();
+                    args.putString(USERNAME_PRESET_KEY, lastUserName);
+                    authorizationFragment.setArguments(args);
+                }
+
+                authorizationFragment.show(getFragmentManager(), AuthorizationFragment.TAG);
+            }
+            // Load failed for some other reason
+            else {
+                // Reset current load url
+                currentLoadUrl = null;
+
+                // Show failed UI
+                addPodcastFragment.showPodcastLoadFailed(code);
+            }
+        }
+    }
+
+    @Override
+    public void onSubmitAuthorization(String username, String password) {
+        // We need to keep that in order to pre-fill next time
+        lastUserName = username;
+
+        try {
+            final Podcast newPodcast = new Podcast(null, new URL(currentLoadUrl));
+            newPodcast.setUsername(username);
+            newPodcast.setPassword(password);
+
+            podcastManager.load(newPodcast);
+        } catch (MalformedURLException e) {
+            onCancelAuthorization();
+        }
+    }
+
+    @Override
+    public void onCancelAuthorization() {
+        try {
+            onPodcastLoadFailed(new Podcast(null, new URL(currentLoadUrl)),
+                    PodcastLoadError.ACCESS_DENIED);
+        } catch (MalformedURLException e) {
             // Show failed UI
-            addPodcastFragment.showPodcastLoadFailed();
+            addPodcastFragment.showPodcastLoadFailed(PodcastLoadError.ACCESS_DENIED);
         }
     }
 

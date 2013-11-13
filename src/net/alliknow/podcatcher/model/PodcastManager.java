@@ -31,6 +31,7 @@ import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.model.tasks.StorePodcastListTask;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastLogoTask;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask;
+import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
@@ -302,19 +303,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     }
 
     @Override
-    public void onAuthorizationRequired(Podcast podcast) {
-        // Remove from the map of loading task
-        loadPodcastTasks.remove(podcast);
-
-        // Notify listeners
-        if (loadPodcastListeners.isEmpty())
-            Log.w(getClass().getSimpleName(), "Podcast needs authorization, but no listeners set.");
-        else
-            for (OnLoadPodcastListener listener : loadPodcastListeners)
-                listener.onAuthorizationRequired(podcast);
-    }
-
-    @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
         // Notify listeners
         for (OnLoadPodcastListener listener : loadPodcastListeners)
@@ -335,7 +323,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     }
 
     @Override
-    public void onPodcastLoadFailed(Podcast podcast) {
+    public void onPodcastLoadFailed(Podcast podcast, PodcastLoadError code) {
         // Remove from the map of loading task
         loadPodcastTasks.remove(podcast);
 
@@ -344,7 +332,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             Log.w(getClass().getSimpleName(), "Podcast failed to load, but no listeners set.");
         else
             for (OnLoadPodcastListener listener : loadPodcastListeners)
-                listener.onPodcastLoadFailed(podcast);
+                listener.onPodcastLoadFailed(podcast, code);
     }
 
     /**

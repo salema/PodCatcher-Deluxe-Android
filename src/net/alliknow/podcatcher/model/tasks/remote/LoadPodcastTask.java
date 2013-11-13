@@ -25,9 +25,11 @@ import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 /**
  * Loads a podcast's RSS file from the server and parses its contents
@@ -43,9 +45,8 @@ import java.io.ByteArrayInputStream;
  * <b>Authorization:</b> The task will send the credentials returned by
  * {@link Podcast#getAuthorization()} when requesting the file from the server.
  * If not present or wrong, the task fails and
- * {@link OnLoadPodcastListener#onAuthorizationRequired(Podcast)} will be
- * called. ({@link OnLoadPodcastListener#onPodcastLoadFailed(Podcast)} will
- * <i>not</i> be called.)
+ * {@link OnLoadPodcastListener#onPodcastLoadFailed(Podcast, PodcastLoadError)}
+ * will be called with the code set to {@link PodcastLoadError#AUTH_REQUIRED}.
  * </p>
  */
 public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
@@ -53,11 +54,46 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
     /** Maximum byte size for the RSS file to load */
     public static final int MAX_RSS_FILE_SIZE = 2000000;
 
+    /**
+     * Podcast load error codes as returned by
+     * {@link OnLoadPodcastListener#onPodcastLoadFailed(Podcast, PodcastLoadError)}
+     * .
+     */
+    public static enum PodcastLoadError {
+        /**
+         * An error occurred, but the reason is unknown and/or does not fit any
+         * of the other codes.
+         */
+        UNKNOWN,
+
+        /**
+         * Authorization is required.
+         */
+        AUTH_REQUIRED,
+
+        /**
+         * The authorization failed.
+         */
+        ACCESS_DENIED,
+
+        /**
+         * The remote server could not be reached.
+         */
+        NOT_REACHABLE,
+
+        /**
+         * The URL does not point at a valid feed file
+         */
+        NOT_PARSEABLE
+    }
+
     /** Call back */
     private OnLoadPodcastListener listener;
 
     /** Podcast currently loading */
     private Podcast podcast;
+    /** The error code */
+    private PodcastLoadError errorCode = PodcastLoadError.UNKNOWN;
 
     /**
      * Create new task.
@@ -103,6 +139,14 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
             // 4. We need to wait here and make sure the episode metadata is
             // available before we return
             EpisodeManager.getInstance().blockUntilEpisodeMetadataIsLoaded();
+        } catch (XmlPullParserException xppe) {
+            errorCode = PodcastLoadError.NOT_PARSEABLE;
+
+            cancel(true);
+        } catch (IOException ioe) {
+            errorCode = PodcastLoadError.NOT_REACHABLE;
+
+            cancel(true);
         } catch (Throwable t) {
             Log.w(getClass().getSimpleName(), "Load failed for podcast \"" + podcast + "\"", t);
 
@@ -136,9 +180,9 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
         // Background task failed to complete
         if (listener != null)
             if (needsAuthorization)
-                listener.onAuthorizationRequired(podcast);
+                listener.onPodcastLoadFailed(podcast, PodcastLoadError.AUTH_REQUIRED);
             else
-                listener.onPodcastLoadFailed(podcast);
+                listener.onPodcastLoadFailed(podcast, errorCode);
         else
             Log.w(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
     }

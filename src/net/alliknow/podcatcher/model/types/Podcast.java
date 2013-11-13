@@ -289,7 +289,6 @@ public class Podcast implements Comparable<Podcast> {
     public void parse(XmlPullParser parser) throws XmlPullParserException, IOException {
         // Reset state
         episodes.clear();
-        updated = new Date();
 
         // Start parsing
         int eventType = parser.next();
@@ -318,6 +317,9 @@ public class Podcast implements Comparable<Podcast> {
             // Done, get next parsing event
             eventType = parser.next();
         }
+
+        // Parsing completed without errors, mark as updated
+        updated = new Date();
     }
 
     /**

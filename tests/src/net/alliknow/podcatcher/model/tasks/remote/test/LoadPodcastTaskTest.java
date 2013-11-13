@@ -21,6 +21,7 @@ import android.test.InstrumentationTestCase;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask;
+import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.test.Utils;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
@@ -43,6 +44,11 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
         protected boolean failed;
 
         @Override
+        public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
+            // System.out.println(progress);
+        }
+
+        @Override
         public void onPodcastLoaded(Podcast podcast) {
             this.result = podcast;
             this.failed = false;
@@ -51,21 +57,11 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
         }
 
         @Override
-        public void onPodcastLoadFailed(Podcast podcast) {
+        public void onPodcastLoadFailed(Podcast podcast, PodcastLoadError code) {
             this.result = podcast;
             this.failed = true;
 
             signal.countDown();
-        }
-
-        @Override
-        public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
-            // System.out.println(progress);
-        }
-
-        @Override
-        public void onAuthorizationRequired(Podcast podcast) {
-            // Not relevant
         }
     }
 

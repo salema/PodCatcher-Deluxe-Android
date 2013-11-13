@@ -41,6 +41,7 @@ import android.widget.TextView.OnEditorActionListener;
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
+import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.HorizontalProgressView;
 
@@ -175,19 +176,28 @@ public class AddPodcastFragment extends DialogFragment {
 
     /**
      * Show load failure in the dialog UI.
-     */
-    public void showPodcastLoadFailed() {
-        showPodcastLoadFailed(R.string.podcast_add_error);
-    }
-
-    /**
-     * Show load failure in the dialog UI.
      * 
-     * @param messageId String to show as error message.
+     * @param code The error code loading the podcast failed with.
      */
-    public void showPodcastLoadFailed(int messageId) {
-        // Show error in the UI
-        progressView.showError(messageId);
+    public void showPodcastLoadFailed(PodcastLoadError code) {
+        switch (code) {
+            case ACCESS_DENIED:
+                progressView.showError(R.string.podcast_load_error_access_denied);
+                break;
+
+            case NOT_PARSEABLE:
+                progressView.showError(R.string.podcast_load_error_not_parseable);
+                break;
+
+            case NOT_REACHABLE:
+                progressView.showError(R.string.podcast_load_error_not_reachable);
+                break;
+
+            default:
+                progressView.showError(R.string.podcast_load_error);
+                break;
+        }
+
         podcastUrlEditText.setEnabled(true);
         addPodcastButton.setEnabled(true);
     }
