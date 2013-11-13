@@ -38,6 +38,7 @@ import net.alliknow.podcatcher.listeners.OnReorderEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnReverseSortingListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnToggleFilterListener;
+import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.view.EpisodeListItemView;
 import net.alliknow.podcatcher.view.fragments.SwipeReorderListViewTouchListener.ReorderCallback;
@@ -471,11 +472,38 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
 
     /**
      * Show error view.
+     * 
+     * @param code The error code loading the podcast failed with.
      */
-    @Override
-    public void showLoadFailed() {
+    public void showLoadFailed(PodcastLoadError code) {
         if (viewCreated)
-            progressView.showError(R.string.podcast_load_error);
+            switch (code) {
+                case ACCESS_DENIED:
+                    progressView.showError(R.string.podcast_load_error_access_denied);
+                    break;
+
+                case NOT_PARSEABLE:
+                    progressView.showError(R.string.podcast_load_error_not_parseable);
+                    break;
+
+                case NOT_REACHABLE:
+                    progressView.showError(R.string.podcast_load_error_not_reachable);
+                    break;
+
+                default:
+                    progressView.showError(R.string.podcast_load_error);
+                    break;
+            }
+
+        super.showLoadFailed();
+    }
+
+    /**
+     * Show error view for "select all podcasts" failed.
+     */
+    public void showLoadAllFailed() {
+        if (viewCreated)
+            progressView.showError(R.string.podcast_load_multiple_error_all);
 
         super.showLoadFailed();
     }

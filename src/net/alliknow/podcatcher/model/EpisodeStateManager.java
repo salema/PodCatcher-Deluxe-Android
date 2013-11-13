@@ -21,6 +21,7 @@ import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
 import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
+import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
 import net.alliknow.podcatcher.model.types.Podcast;
@@ -305,17 +306,12 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
     }
 
     @Override
-    public void onAuthorizationRequired(Podcast podcast) {
-        // pass
-    }
-
-    @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
         // pass
     }
 
     @Override
-    public void onPodcastLoadFailed(Podcast podcast) {
+    public void onPodcastLoadFailed(Podcast podcast, PodcastLoadError code) {
         // pass
     }
 }

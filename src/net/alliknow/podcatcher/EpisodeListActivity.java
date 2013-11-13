@@ -37,6 +37,7 @@ import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.listeners.OnToggleFilterListener;
 import net.alliknow.podcatcher.model.tasks.LoadDownloadsTask;
 import net.alliknow.podcatcher.model.tasks.LoadPlaylistTask;
+import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
@@ -341,44 +342,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
-    public void onAuthorizationRequired(Podcast podcast) {
-        if (selection.isSingle() && podcast.equals(selection.getPodcast())) {
-            // Ask the user for authorization
-            final AuthorizationFragment authorizationFragment = new AuthorizationFragment();
-
-            if (podcast.getUsername() != null) {
-                // Create bundle to make dialog aware of username to pre-set
-                final Bundle args = new Bundle();
-                args.putString(USERNAME_PRESET_KEY, podcast.getUsername());
-                authorizationFragment.setArguments(args);
-            }
-
-            authorizationFragment.show(getFragmentManager(), AuthorizationFragment.TAG);
-        } else
-            onPodcastLoadFailed(podcast);
-    }
-
-    @Override
-    public void onSubmitAuthorization(String username, String password) {
-        if (selection.isPodcastSet()) {
-            final Podcast podcast = selection.getPodcast();
-            podcastManager.setCredentials(podcast, username, password);
-
-            // We need to unselect the podcast here in order to make it
-            // selectable again...
-            selection.setPodcast(null);
-
-            onPodcastSelected(podcast);
-        }
-    }
-
-    @Override
-    public void onCancelAuthorization() {
-        if (selection.isPodcastSet())
-            onPodcastLoadFailed(selection.getPodcast());
-    }
-
-    @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
         try {
             if (selection.isSingle() && podcast.equals(selection.getPodcast()))
@@ -415,16 +378,32 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
-    public void onPodcastLoadFailed(Podcast failedPodcast) {
+    public void onPodcastLoadFailed(final Podcast failedPodcast, PodcastLoadError code) {
         // The podcast we are waiting for failed to load
         if (selection.isSingle() && failedPodcast.equals(selection.getPodcast())) {
-            addSpecialEpisodes(failedPodcast);
+            // Podcast needs authorization
+            if (code == PodcastLoadError.AUTH_REQUIRED) {
+                // Ask the user for authorization
+                final AuthorizationFragment authorizationFragment = new AuthorizationFragment();
 
-            // We might at least be able to show downloaded/playlisted episodes
-            if (currentEpisodeSet.size() > 0)
-                updateEpisodeListUi(true);
-            else
-                episodeListFragment.showLoadFailed();
+                if (failedPodcast.getUsername() != null) {
+                    // Create bundle to make dialog aware of username to pre-set
+                    final Bundle args = new Bundle();
+                    args.putString(USERNAME_PRESET_KEY, failedPodcast.getUsername());
+                    authorizationFragment.setArguments(args);
+                }
+
+                authorizationFragment.show(getFragmentManager(), AuthorizationFragment.TAG);
+            } else {
+                addSpecialEpisodes(failedPodcast);
+
+                // We might at least be able to show downloaded/playlisted
+                // episodes
+                if (currentEpisodeSet.size() > 0)
+                    updateEpisodeListUi(true);
+                else
+                    episodeListFragment.showLoadFailed(code);
+            }
         }
         // One of potentially many podcasts failed
         else if (selection.isAll()) {
@@ -433,7 +412,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
             // The last podcast failed and we have no episodes at all
             if (podcastManager.getLoadCount() == 0 && currentEpisodeSet.isEmpty())
-                episodeListFragment.showLoadFailed();
+                episodeListFragment.showLoadAllFailed();
             // One of many podcasts failed to load
             else
                 showToast(getString(R.string.podcast_load_multiple_error, failedPodcast.getName()));
@@ -443,6 +422,26 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         updateActionBar();
         updateSortingUi();
         updateFilterUi();
+    }
+
+    @Override
+    public void onSubmitAuthorization(String username, String password) {
+        if (selection.isPodcastSet()) {
+            final Podcast podcast = selection.getPodcast();
+            podcastManager.setCredentials(podcast, username, password);
+
+            // We need to unselect the podcast here in order to make it
+            // selectable again...
+            selection.setPodcast(null);
+
+            onPodcastSelected(podcast);
+        }
+    }
+
+    @Override
+    public void onCancelAuthorization() {
+        if (selection.isPodcastSet())
+            onPodcastLoadFailed(selection.getPodcast(), PodcastLoadError.ACCESS_DENIED);
     }
 
     @Override

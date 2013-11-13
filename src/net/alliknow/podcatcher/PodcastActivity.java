@@ -31,6 +31,7 @@ import android.widget.LinearLayout.LayoutParams;
 import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
+import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
@@ -486,13 +487,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     }
 
     @Override
-    public void onAuthorizationRequired(Podcast podcast) {
-        // Only react here, if the activity is visible
-        if (!view.isSmallPortrait())
-            super.onAuthorizationRequired(podcast);
-    }
-
-    @Override
     public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
         // Only react on progress here, if the activity is visible
         if (!view.isSmallPortrait()) {
@@ -518,7 +512,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     }
 
     @Override
-    public void onPodcastLoadFailed(Podcast failedPodcast) {
+    public void onPodcastLoadFailed(Podcast failedPodcast, PodcastLoadError code) {
         podcastListFragment.refresh();
 
         // Tell the podcast manager to load podcast logo even though the podcast
@@ -527,7 +521,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
         // In small portrait mode, work is done in separate activity
         if (!view.isSmallPortrait())
-            super.onPodcastLoadFailed(failedPodcast);
+            super.onPodcastLoadFailed(failedPodcast, code);
     }
 
     @Override

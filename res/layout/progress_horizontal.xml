@@ -29,15 +29,15 @@
         android:layout_height="@dimen/progress_bar_horizontal_height"
         android:layout_weight="@integer/progress_bar_horizontal_weight"
         android:layout_gravity="center_vertical"
-        android:layout_margin="3dp"
+        android:layout_margin="@dimen/list_item_padding"
         android:indeterminate="true" />
     <TextView
         android:id="@+id/progress_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:paddingLeft="3dp"
-        android:paddingRight="3dp"
+        android:paddingLeft="@dimen/list_item_padding"
+        android:paddingRight="@dimen/list_item_padding"
         android:singleLine="true"
         android:ellipsize="marquee"
         android:gravity="center"
