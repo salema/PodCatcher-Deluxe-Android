@@ -130,7 +130,7 @@
     <string name="pref_wide_episode_list_title">Breite Episodenliste</string>
     <string name="pref_wide_episode_list_summary">Mehr Platz für Episodendetails</string>
     <string name="pref_auto_download_title">Automatischer Download</string>
-    <string name="pref_auto_download_summary">Neue Episoden offline verfügbar machen</string>
+    <string name="pref_auto_download_summary">Im WLAN neue Episoden offline verfügbar machen</string>
     <string name="pref_auto_delete_title">Automatisches Löschen</string>
     <string name="pref_auto_delete_summary">Heruntergeladene Episoden nach dem Abspielen löschen</string>
     <string name="pref_download_folder_title">Ordner für Downloads</string>
