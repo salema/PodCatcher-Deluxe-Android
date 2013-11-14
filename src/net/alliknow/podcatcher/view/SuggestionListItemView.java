@@ -19,6 +19,7 @@ package net.alliknow.podcatcher.view;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
@@ -123,8 +124,7 @@ public class SuggestionListItemView extends RelativeLayout {
         featuredIconView.setImageResource(suggestion.isFeatured() ?
                 R.drawable.ic_suggestion_featured : R.drawable.ic_suggestion_explicit);
         setBackgroundColor(suggestion.isFeatured() ?
-                getResources().getColor(R.color.featured_suggestion) :
-                getResources().getColor(android.R.color.transparent));
+                getResources().getColor(R.color.featured_suggestion) : Color.TRANSPARENT);
     }
 
     private String createClassificationLabel(Suggestion suggestion,

@@ -37,6 +37,7 @@
         android:layout_height="24dp"
         android:layout_below="@id/suggestion_name"
         android:layout_alignParentLeft="true"
+        android:paddingLeft="@dimen/list_item_padding"
         android:scaleType="centerInside"
         android:src="@drawable/ic_suggestion_featured"
         android:visibility="gone" />
