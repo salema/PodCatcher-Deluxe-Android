@@ -19,7 +19,7 @@
 -->
 <resources>
     <string name="divider">Дільник</string>
-    <string name="about">Про Simple Podcatcher</string>
+    <string name="about">Про Podcatcher Deluxe</string>
     <string name="help">Довідка</string>
     <string name="no_browser">Немає браузера!</string>
     <string name="wait">Зачекайте</string>
@@ -32,10 +32,11 @@
     <string name="play">Грати</string>
     <string name="pause">Пауза</string>
     <string name="resume">Продовжити</string>
+    <string name="next">Далі</string>
     <string name="first_run_title">Вітаємо</string>
-    <string name="first_run_text">Перш за все додайте один чи кілька подкастів. Натисніть на зелену кнопку внизу, щоб відкрити вікно додавання подкастів. Через нього ви також зможете обрати подкасти зі списку рекомендованих чи імпортувати список подкастів у форматі OPML.</string>
+    <string name="first_run_text">Перш за все, додайте один чи кілька подкастів. Натисніть на зелену кнопку внизу, щоб відкрити вікно додавання подкастів. Через нього ви також зможете обрати подкасти зі списку рекомендованих чи імпортувати список подкастів у форматі OPML.</string>
     <string name="first_run_add">Додати подкасти</string>
-    <string name="player_buffering">Буферізація&#8230;</string>
+    <string name="player_buffering">Буферизація&#8230;</string>
     <string name="player_label">на %1$s з %2$s</string>
     <string name="player_label_short">%1$s з %2$s</string>
     <string name="player_error">Помилка</string>
@@ -61,16 +62,56 @@
     <string name="podcast_load_multiple_error">Не вдалося завантажити подкаст\n\"%s\"</string>
     <string name="podcast_load_multiple_error_all">Не вдалося завантажити жодного подкасту. Будь ласка, перевірте підключення до Інтернету.</string>
     <string name="episode_none">Жодного епізоду у цьому подкасті</string>
-    <string name="episode_none_all_podcasts">Жодного епізоду</string>
+    <string name="episode_none_all_podcasts">Немає жодного епізоду</string>
     <string name="episode_no_description">Опис відсутній.</string>
-    <string name="episode_none_selected">Жодного епізоду не обрано</string>
+    <string name="episode_none_selected">Не обрано жодного епізоду</string>
     <plurals name="episodes">
         <item quantity="one">Один епізод</item>
         <item quantity="few">%d епізодів</item>
         <item quantity="many">%d епізодів</item>
         <item quantity="other">%d епізодів</item>
     </plurals>
+    <plurals name="episodes_new">
+        <item quantity="one">Один новий епізод</item>
+        <item quantity="few">%d нових епізодів</item>
+        <item quantity="many">%d нових епізодів</item>
+        <item quantity="other">%d нових епізодів</item>
+    </plurals>
+    <string name="episodes_no_new">Немає нових епізодів</string>
+    <string name="episodes_total">усього</string>
+    <plurals name="episodes_filtered">
+        <item quantity="one">Один старий епізод відфільтровано</item>
+        <item quantity="few">%d старих епізодів відфільтровано</item>
+        <item quantity="many">%d старих епізодів відфільтровано</item>
+        <item quantity="other">%d старих епізодів відфільтровано</item>
+    </plurals>
+    <string name="episodes_select_all">Обрати все</string>
+    <string name="episodes_old">Старі</string>
+    <string name="episodes_filter_all">Усі</string>
+    <string name="episodes_filter_new">Нові</string>
     <string name="episodes_sort_toggle">У зворотньому порядку</string>
+    <string name="download">Завантажити</string>
+    <string name="downloads">Завантаження</string>
+    <plurals name="downloads_remove_title">
+        <item quantity="one">Видалити завантаження</item>
+        <item quantity="few">Видалити %d завантажень</item>
+        <item quantity="many">Видалити %d завантажень</item>
+        <item quantity="other">Видалити %d завантажень</item>
+    </plurals>
+    <plurals name="downloads_remove_text">
+        <item quantity="one">Цей епізод не можна буде грати без підключення до Інтернету.</item>
+        <item quantity="few">Ці епізоди не можна буде грати без підключення до Інтернету.</item>
+        <item quantity="many">Ці епізоди не можна буде грати без підключення до Інтернету.</item>
+        <item quantity="other">Ці епізоди не можна буде грати без підключення до Інтернету.</item>
+    </plurals>
+    <string name="downloads_none">Немає завантажень. Натисніть на іконку \"Завантаження\" у меню, щоб завантажити епізоди та зробити їх доступними без підключення до Інтернету.</string>
+    <string name="download_started">Почалося завантаження епізоду\n\"%s\"</string>
+    <string name="download_failed">Не вдалося завантажити епізод\n\"%s\"</string>
+    <string name="playlist">Плейлист</string>
+    <string name="playlist_empty">Ваш плейлист порожній. Щоб додати епізоди до плейлиста, використовуйте контекстне меню списку епізодів (щоб викликати його, натисніть на будь якому епізоді й утримуйте).</string>
+    <string name="playlist_add">Додати до плейлиста</string>
+    <string name="playlist_remove">Видалити з плейлиста</string>
+    <string name="playlist_swipe_reorder">Використовуйте свайп, щоб змінювати послідовність епізодів</string>
     <string name="auth_required">Необхідна авторизація</string>
     <string name="auth_username">Ім’я користувача</string>
     <string name="auth_password">Пароль</string>
@@ -91,7 +132,7 @@
     <string name="suggestion_confirm_explicit">Цей подкаст більше не буде оновлюватись. Ви впевнені, що хочете додати його до свого списку?</string>
     <string name="suggestions_none">За вашим запитом рекомендації не знайдено. Будь ласка, спробуйте інші фільтри.</string>
     <string name="suggestions_load_error">Не вдалося завантажити рекомендації. Будь ласка, перевірте підключення до Інтернету.</string>
-    <string name="suggestions_send">Рекомендувати подкаст#8230;</string>
+    <string name="suggestions_send">Рекомендувати подкаст&#8230;</string>
     <string name="preferences">Налаштування</string>
     <string name="pref_select_all_on_start_title">Обирати усе при старті</string>
     <string name="pref_select_all_on_start_summary">Оновлювати усі підписки при старті програми</string>
@@ -101,5 +142,9 @@
     <string name="pref_theme_color_dialog_use">Натисніть на новий колір, щоб застосувати зміни</string>
     <string name="pref_wide_episode_list_title">Розширений список епізодів</string>
     <string name="pref_wide_episode_list_summary">Виділити місце для більш детальної інформації про епізоди</string>
-    <string name="ad">Спробуйте &lt;a href=\"market://details?id=com.podcatcher.deluxe\"&gt;Podcatcher Deluxe&lt;/a&gt; та &lt;a href=\"market://details?id=com.podcatcher.deluxe.video\"&gt;Video Podcatcher Deluxe&lt;/a&gt;. Завантаження, плейлисти, фільтри та багато інших додаткових можливостей!</string>
+    <string name="pref_auto_download_title">Автоматичне завантаження</string>
+    <string name="pref_auto_download_summary">Коли підключено Wi-Fi, робити нові епізоди доступними в офлайн-режимі</string>
+    <string name="pref_auto_delete_title">Автоматичне видалення</string>
+    <string name="pref_auto_delete_summary">Видаляти завантажені епізоди, коли їх перегляд завершено</string>
+    <string name="pref_download_folder_title">Директорія для завантажень</string>
 </resources>
