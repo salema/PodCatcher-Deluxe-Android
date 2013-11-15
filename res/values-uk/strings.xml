@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/** Copyright 2012, 2013 Kevin Hausmann
+ *
+ * This file is part of PodCatcher Deluxe.
+ *
+ * PodCatcher Deluxe is free software: you can redistribute it 
+ * and/or modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * PodCatcher Deluxe is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
+ */
+-->
+<resources>
+    <string name="divider">Дільник</string>
+    <string name="about">Про Simple Podcatcher</string>
+    <string name="help">Довідка</string>
+    <string name="no_browser">Немає браузера!</string>
+    <string name="wait">Зачекайте</string>
+    <string name="connect">Підключення</string>
+    <string name="load">Завантаження</string>
+    <string name="stop">Стоп</string>
+    <string name="cancel">Скасувати</string>
+    <string name="remove">Видалити</string>
+    <string name="parse">Читання</string>
+    <string name="play">Грати</string>
+    <string name="pause">Пауза</string>
+    <string name="resume">Продовжити</string>
+    <string name="first_run_title">Вітаємо</string>
+    <string name="first_run_text">Перш за все, додайте один чи кілька подкастів. Натисніть на зелену кнопку внизу, щоб відкрити вікно додавання подкастів. Через нього ви також зможете обрати подкасти зі списку рекомендованих чи імпортувати список подкастів у форматі OPML.</string>
+    <string name="first_run_add">Додати подкасти</string>
+    <string name="player_buffering">Буферизація&#8230;</string>
+    <string name="player_label">на %1$s з %2$s</string>
+    <string name="player_label_short">%1$s з %2$s</string>
+    <string name="player_error">Помилка</string>
+    <string name="podcast_image">Логотип подкасту</string>
+    <string name="podcast_none">Не додано жодного подкасту</string>
+    <string name="podcast_none_long">Не додано жодного подкасту. Будь ласка, натисніть на іконку \"плюс\" у меню, щоб додати підписки до цього списку.</string>
+    <string name="podcast_none_selected">Не обрано жодного подкасту</string>
+    <string name="podcast_select_all">Обрати усі подкасти</string>
+    <plurals name="podcasts">
+        <item quantity="one">Один подкаст</item>
+        <item quantity="few">%d подкастів</item>
+        <item quantity="many">%d подкастів</item>
+        <item quantity="other">%d подкастів</item>
+    </plurals>
+    <string name="podcast_add_title">Новий подкаст</string>
+    <string name="podcast_add_button">Додати</string>
+    <string name="podcast_enter_url_here">Вставте сюди посилання на подкаст</string>
+    <string name="podcast_load_error">Не вдалося завантажити подкаст!</string>
+    <string name="podcast_load_error_access_denied">Не вдалося завантажити подкаст. Немає доступу до новинної стрічки.</string>
+    <string name="podcast_load_error_not_reachable">Не вдалося завантажити подкаст. Сервер недосяжний або посилання недійсне.</string>
+    <string name="podcast_load_error_not_parseable">Не вдалося завантажити подкаст. Введена адреса не вказує на дійсну новинну стрічку.</string>
+    <string name="podcast_load_multiple_progress">%1$d з %2$d подкастів</string>
+    <string name="podcast_load_multiple_error">Не вдалося завантажити подкаст\n\"%s\"</string>
+    <string name="podcast_load_multiple_error_all">Не вдалося завантажити жодного подкасту. Будь ласка, перевірте підключення до Інтернету.</string>
+    <string name="episode_none">Жодного епізоду у цьому подкасті</string>
+    <string name="episode_none_all_podcasts">Немає жодного епізоду</string>
+    <string name="episode_no_description">Опис відсутній.</string>
+    <string name="episode_none_selected">Не обрано жодного епізоду</string>
+    <plurals name="episodes">
+        <item quantity="one">Один епізод</item>
+        <item quantity="few">%d епізодів</item>
+        <item quantity="many">%d епізодів</item>
+        <item quantity="other">%d епізодів</item>
+    </plurals>
+    <string name="episodes_sort_toggle">У зворотньому порядку</string>
+    <string name="auth_required">Необхідна авторизація</string>
+    <string name="auth_username">Ім’я користувача</string>
+    <string name="auth_password">Пароль</string>
+    <string name="auth_submit">Підтвердити</string>
+    <string name="file_select">Обрати</string>
+    <string name="file_select_file">Оберіть файл</string>
+    <string name="file_select_folder">Оберіть директорію</string>
+    <string name="file_select_access_denied">Доступ заборонено!</string>
+    <string name="opml_import">Імпорт OPML</string>
+    <string name="opml_import_failed">Не вдалося імпортувати OPML-файл</string>
+    <string name="opml_export">Експорт OPML</string>
+    <string name="opml_export_success">OPML-файл збережено за адресою\n%s</string>
+    <string name="opml_export_failed">Не вдалося експортувати OPML-файл</string>
+    <string name="suggestions">Рекомендації</string>
+    <string name="suggested_podcasts">Рекомендовані подкасти</string>
+    <string name="suggestion_listen">Слухати</string>
+    <string name="suggestion_watch">Дивитися</string>
+    <string name="suggestion_confirm_explicit">Цей подкаст більше не буде оновлюватись. Ви впевнені, що хочете додати його до свого списку?</string>
+    <string name="suggestions_none">За вашим запитом рекомендації не знайдено. Будь ласка, спробуйте інші фільтри.</string>
+    <string name="suggestions_load_error">Не вдалося завантажити рекомендації. Будь ласка, перевірте підключення до Інтернету.</string>
+    <string name="suggestions_send">Рекомендувати подкаст&#8230;</string>
+    <string name="preferences">Налаштування</string>
+    <string name="pref_select_all_on_start_title">Обирати усе при старті</string>
+    <string name="pref_select_all_on_start_summary">Оновлювати усі підписки при старті програми</string>
+    <string name="pref_category_interface">Зовнішній вигляд</string>
+    <string name="pref_theme_color_title">Колір теми</string>
+    <string name="pref_theme_color_dialog_title">Оберіть колір теми</string>
+    <string name="pref_theme_color_dialog_use">Натисніть на новий колір, щоб застосувати зміни</string>
+    <string name="pref_wide_episode_list_title">Розширений список епізодів</string>
+    <string name="pref_wide_episode_list_summary">Виділити місце для більш детальної інформації про епізоди</string>
+    <string name="ad">Спробуйте &lt;a href=\"market://details?id=com.podcatcher.deluxe\"&gt;Podcatcher Deluxe&lt;/a&gt; та &lt;a href=\"market://details?id=com.podcatcher.deluxe.video\"&gt;Video Podcatcher Deluxe&lt;/a&gt;. Завантаження, плейлисти, фільтри та багато інших додаткових можливостей!</string>
+</resources>
