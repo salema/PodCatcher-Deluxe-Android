@@ -408,7 +408,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      */
     public void addPodcast(Podcast newPodcast) {
         // Check whether the new podcast is already added
-        if (!contains(newPodcast)) {
+        if (newPodcast != null && !contains(newPodcast)) {
             // Add the new podcast
             podcastList.add(newPodcast);
             Collections.sort(podcastList);

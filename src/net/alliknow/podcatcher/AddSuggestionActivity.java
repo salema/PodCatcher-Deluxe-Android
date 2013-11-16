@@ -27,6 +27,8 @@ import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
 import net.alliknow.podcatcher.model.SuggestionManager;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.model.types.Suggestion;
+import net.alliknow.podcatcher.view.fragments.ConfirmExplicitSuggestionFragment;
+import net.alliknow.podcatcher.view.fragments.ConfirmExplicitSuggestionFragment.OnConfirmExplicitSuggestionListener;
 import net.alliknow.podcatcher.view.fragments.SuggestionFragment;
 
 import java.util.ArrayList;
@@ -36,7 +38,8 @@ import java.util.List;
  * Add podcast from suggestions activity.
  */
 public class AddSuggestionActivity extends BaseActivity implements
-        OnLoadSuggestionListener, OnAddSuggestionListener, OnCancelListener {
+        OnLoadSuggestionListener, OnAddSuggestionListener, OnConfirmExplicitSuggestionListener,
+        OnCancelListener {
 
     /** The tag we identify our show suggestions fragment with */
     public static final String SHOW_SUGGESTIONS_FRAGMENT_TAG = "show_suggestions";
@@ -46,6 +49,9 @@ public class AddSuggestionActivity extends BaseActivity implements
 
     /** The suggestion manager */
     private SuggestionManager suggestionManager;
+
+    /** Helper the store suggestion await confirmation */
+    private Suggestion suggestionToBeConfirmed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +117,27 @@ public class AddSuggestionActivity extends BaseActivity implements
 
     @Override
     public void onAddSuggestion(Suggestion suggestion) {
-        podcastManager.addPodcast(suggestion);
+        if (suggestion.isExplicit()) {
+            this.suggestionToBeConfirmed = suggestion;
+
+            // Show confirmation dialog
+            final ConfirmExplicitSuggestionFragment confirmFragment = new ConfirmExplicitSuggestionFragment();
+            confirmFragment.show(getFragmentManager(), ConfirmExplicitSuggestionFragment.TAG);
+        } else {
+            podcastManager.addPodcast(suggestion);
+            suggestionFragment.notifySuggestionAdded();
+        }
+    }
+
+    @Override
+    public void onConfirmExplicit() {
+        podcastManager.addPodcast(suggestionToBeConfirmed);
+        suggestionFragment.notifySuggestionAdded();
+    }
+
+    @Override
+    public void onCancelExplicit() {
+        // Nothing to do here...
     }
 
     @Override
