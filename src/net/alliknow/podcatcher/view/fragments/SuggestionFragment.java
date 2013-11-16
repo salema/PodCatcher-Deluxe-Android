@@ -71,6 +71,8 @@ public class SuggestionFragment extends DialogFragment {
     private OnAddSuggestionListener listener;
     /** The list of suggestions to show */
     private List<Suggestion> suggestionList;
+    /** The suggestion list adapter */
+    private SuggestionListAdapter suggestionListAdapter;
 
     /** The language filter */
     private Spinner languageFilter;
@@ -217,6 +219,15 @@ public class SuggestionFragment extends DialogFragment {
     }
 
     /**
+     * Notify the fragment that a suggestion as been added and the list might
+     * have to update.
+     */
+    public void notifySuggestionAdded() {
+        if (suggestionListAdapter != null)
+            suggestionListAdapter.notifyDataSetChanged();
+    }
+
+    /**
      * Show load suggestions progress.
      * 
      * @param progress Progress information to give.
@@ -264,7 +275,7 @@ public class SuggestionFragment extends DialogFragment {
                     filteredSuggestionList.add(suggestion);
 
             // Set filtered list
-            final SuggestionListAdapter suggestionListAdapter = new SuggestionListAdapter(
+            suggestionListAdapter = new SuggestionListAdapter(
                     getDialog().getContext(), filteredSuggestionList, listener);
             suggestionListAdapter.setFilterConfiguration(
                     languageFilter.getSelectedItemPosition() == 0,

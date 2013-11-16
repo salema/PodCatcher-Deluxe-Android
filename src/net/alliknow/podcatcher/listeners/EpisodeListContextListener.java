@@ -17,8 +17,8 @@
 
 package net.alliknow.podcatcher.listeners;
 
-import static net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationDialogFragment.EPISODE_COUNT_KEY;
-import static net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationDialogFragment.TAG;
+import static net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationFragment.EPISODE_COUNT_KEY;
+import static net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationFragment.TAG;
 
 import android.os.Bundle;
 import android.util.SparseBooleanArray;
@@ -31,7 +31,7 @@ import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
-import net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationDialogFragment;
+import net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationFragment;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 
 /**
@@ -141,8 +141,8 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
                 mode.finish();
                 return true;
             case R.id.episode_remove_contextmenuitem:
-                final DeleteDownloadsConfirmationDialogFragment confirmationDialog =
-                        new DeleteDownloadsConfirmationDialogFragment();
+                final DeleteDownloadsConfirmationFragment confirmationDialog =
+                        new DeleteDownloadsConfirmationFragment();
                 // Create bundle to make dialog aware of selection count
                 final Bundle args = new Bundle();
                 args.putInt(EPISODE_COUNT_KEY, deletesTriggered);

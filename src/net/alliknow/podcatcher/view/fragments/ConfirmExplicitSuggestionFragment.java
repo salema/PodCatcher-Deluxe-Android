@@ -21,7 +21,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
@@ -31,71 +30,55 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.listeners.OnDeleteDownloadsConfirmationListener;
 
 /**
- * A confirmation dialog for the user to make sure he/she really wants
- * downloaded episode files to be removed from the local storage. This fragment
- * will not survive context re-creation, but is dismissed
- * {@link Fragment#onPause()}.
+ * A confirmation dialog for the user to make sure he/she really wants an
+ * explicit podcast to be added.
  * <p>
- * <b>Register call-back:</b> The fragment will try to use the activity it is
- * part of as its listener. To make this work, the activity needs to implement
- * {@link OnDeleteDownloadsConfirmationListener}. Showing this fragment from
- * another context will <em>not</em> fail, but you need to use
- * {@link #setListener(OnDeleteDownloadsConfirmationListener)} to register and
- * override the call-back. Once the listener is called, the fragment will
- * auto-dismiss itself.
+ * <b>Register call-back:</b> The fragment will use the activity it is part of
+ * as its listener. To make this work, the activity needs to implement
+ * {@link OnConfirmExplicitSuggestionListener}.
  * <p>
- * <b>Deletion count:</b> If you are removing multiple downloads, you might want
- * to use {@link #setArguments(Bundle)} with an integer for the number of
- * episodes set using the key {@link #EPISODE_COUNT_KEY}. This needs to be done
- * before showing the dialog. The default episode count is one (1).
- * </p>
  */
-public class DeleteDownloadsConfirmationDialogFragment extends DialogFragment {
+public class ConfirmExplicitSuggestionFragment extends DialogFragment {
 
-    /** Argument key for the downloads to delete count */
-    public static final String EPISODE_COUNT_KEY = "episode_count";
     /** The tag we identify our confirmation dialog fragment with */
-    public static final String TAG = "confirm_download_delete";
-
-    /** The number episodes about to be deleted */
-    private int episodeCount = 1;
+    public static final String TAG = "confirm_explicit_suggestion";
 
     /** The callback we are working with */
-    private OnDeleteDownloadsConfirmationListener listener;
+    private OnConfirmExplicitSuggestionListener listener;
 
-    @Override
-    public void setArguments(Bundle args) {
-        super.setArguments(args);
+    /** The call-back for listeners to implement */
+    public interface OnConfirmExplicitSuggestionListener {
 
-        episodeCount = args.getInt(EPISODE_COUNT_KEY);
+        /**
+         * The user confirmed the addition.
+         */
+        public void onConfirmExplicit();
 
-        // Cannot be negative or zero
-        if (episodeCount < 1)
-            episodeCount = 1;
+        /**
+         * The user cancelled the process.
+         */
+        public void onCancelExplicit();
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        // Let's see whether the activity implements our call-back
+        // Make sure our listener is present
         try {
-            if (listener == null)
-                listener = (OnDeleteDownloadsConfirmationListener) activity;
+            this.listener = (OnConfirmExplicitSuggestionListener) activity;
         } catch (ClassCastException e) {
-            // pass
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnConfirmExplicitSuggestionListener");
         }
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final String title = getResources()
-                .getQuantityString(R.plurals.downloads_remove_title, episodeCount, episodeCount);
-        final String message = getResources()
-                .getQuantityString(R.plurals.downloads_remove_text, episodeCount, episodeCount);
+        final String title = getString(R.string.podcast_add_title);
+        final String message = getString(R.string.suggestion_confirm_explicit);
 
         // Define context to use (parent activity might have no theme)
         final ContextThemeWrapper context = new ContextThemeWrapper(getActivity(),
@@ -103,7 +86,7 @@ public class DeleteDownloadsConfirmationDialogFragment extends DialogFragment {
 
         // Inflate our custom view
         final LayoutInflater inflater = LayoutInflater.from(context);
-        final View content = inflater.inflate(R.layout.confirm_deletion, null);
+        final View content = inflater.inflate(R.layout.confirm, null);
 
         // Set message
         final TextView messageTextView = (TextView) content.findViewById(R.id.message);
@@ -111,12 +94,13 @@ public class DeleteDownloadsConfirmationDialogFragment extends DialogFragment {
 
         // Add click listeners
         final Button confirmButton = (Button) content.findViewById(R.id.confirm_button);
+        confirmButton.setText(R.string.podcast_add_button);
         confirmButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 if (listener != null)
-                    listener.onConfirmDeletion();
+                    listener.onConfirmExplicit();
 
                 dismiss();
             }
@@ -126,7 +110,7 @@ public class DeleteDownloadsConfirmationDialogFragment extends DialogFragment {
 
             @Override
             public void onClick(View v) {
-                onCancel(DeleteDownloadsConfirmationDialogFragment.this.getDialog());
+                onCancel(ConfirmExplicitSuggestionFragment.this.getDialog());
                 dismiss();
             }
         });
@@ -140,14 +124,6 @@ public class DeleteDownloadsConfirmationDialogFragment extends DialogFragment {
     }
 
     @Override
-    public void onCancel(DialogInterface dialog) {
-        super.onCancel(dialog);
-
-        if (listener != null)
-            listener.onCancelDeletion();
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
 
@@ -156,14 +132,11 @@ public class DeleteDownloadsConfirmationDialogFragment extends DialogFragment {
         dismiss();
     }
 
-    /**
-     * Register the callback. This will override any existing listener,
-     * including the owning activity that might have been or will be set as the
-     * call-back {@link Fragment#onAttach(Activity)}.
-     * 
-     * @param listener Listener to call on user action.
-     */
-    public void setListener(OnDeleteDownloadsConfirmationListener listener) {
-        this.listener = listener;
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+
+        if (listener != null)
+            listener.onCancelExplicit();
     }
 }
