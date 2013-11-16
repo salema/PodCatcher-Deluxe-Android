@@ -17,6 +17,7 @@
 
 package net.alliknow.podcatcher;
 
+import static net.alliknow.podcatcher.EpisodeListActivity.PODCAST_URL_KEY;
 import static net.alliknow.podcatcher.view.fragments.AuthorizationFragment.USERNAME_PRESET_KEY;
 
 import android.app.DialogFragment;
@@ -114,9 +115,17 @@ public class AddPodcastActivity extends BaseActivity implements OnLoadPodcastLis
             // We need to keep note which podcast we are loading
             currentLoadUrl = podcastUrl;
 
-            // No need to do anything if the podcast is present
-            if (podcastManager.contains(newPodcast))
-                onPodcastLoaded(newPodcast);
+            // If the podcast is present, select it
+            if (podcastManager.contains(newPodcast)) {
+                Intent intent = new Intent(this, PodcastActivity.class);
+                intent.putExtra(EpisodeListActivity.MODE_KEY, ContentMode.SINGLE_PODCAST);
+                intent.putExtra(PODCAST_URL_KEY, newPodcast.getUrl().toString());
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                        Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+                startActivity(intent);
+                finish();
+            }
             // Otherwise try to load it
             else
                 podcastManager.load(newPodcast);
