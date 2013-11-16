@@ -54,9 +54,9 @@
     <string name="podcast_add_button">Přidat</string>
     <string name="podcast_enter_url_here">Kopírovat adresu záznamu zde</string>
     <string name="podcast_load_error">Záznam se nepodařilo nahrát!</string>
-    <string name="podcast_load_error_access_denied">Záznam se nepodařilo nahrát, protože přístup k přívodu byl odepřen.</string>
+    <string name="podcast_load_error_access_denied">Záznam se nepodařilo nahrát, protože přístup ke kanálu byl odepřen.</string>
     <string name="podcast_load_error_not_reachable">Záznam se nepodařilo nahrát, protože se nepodařilo spojit se se serverem, nebo je adresa neplatná.</string>
-    <string name="podcast_load_error_not_parseable">Záznam se nepodařilo nahrát, protože adresa neukazuje na platný přívod záznamu.</string>
+    <string name="podcast_load_error_not_parseable">Záznam se nepodařilo nahrát, protože adresa neukazuje na platný kanál záznamu.</string>
     <string name="podcast_load_multiple_progress">%1$d z %2$d záznamů</string>
     <string name="podcast_load_multiple_error">Záznam\n\"%s\"\nse nepodařilo nahrát.</string>
     <string name="podcast_load_multiple_error_all">Všechn záznamy se nepodařilo nahrát. Prověřte, prosím, své internetové spojení!</string>
@@ -137,7 +137,7 @@
     <string name="pref_wide_episode_list_title">Rozsáhlý seznam dílů</string>
     <string name="pref_wide_episode_list_summary">Udělat prostor pro více podrobností k dílu</string>
     <string name="pref_auto_download_title">Automatické stahování</string>
-    <string name="pref_auto_download_summary">Zpřístupnit nové díly mimo internet</string>
+    <string name="pref_auto_download_summary">Nové díly je možné zpřístupnit stažením jen v přítomnosti WiFi</string>
     <string name="pref_auto_delete_title">Automatické smazání</string>
     <string name="pref_auto_delete_summary">Odstranit stažené díly, když je přehrávání dokončeno</string>
     <string name="pref_download_folder_title">Složka pro stahování</string>
