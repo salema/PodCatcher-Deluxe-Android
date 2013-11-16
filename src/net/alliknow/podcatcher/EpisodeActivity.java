@@ -17,7 +17,7 @@
 
 package net.alliknow.podcatcher;
 
-import static net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationDialogFragment.TAG;
+import static net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationFragment.TAG;
 
 import android.app.FragmentTransaction;
 import android.content.ComponentName;
@@ -39,7 +39,7 @@ import net.alliknow.podcatcher.listeners.PlayerListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
-import net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationDialogFragment;
+import net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationFragment;
 import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.view.fragments.PlayerFragment;
 
@@ -304,8 +304,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
             }
             else {
                 // For deletion, we show a confirmation dialog first
-                final DeleteDownloadsConfirmationDialogFragment confirmationDialog =
-                        new DeleteDownloadsConfirmationDialogFragment();
+                final DeleteDownloadsConfirmationFragment confirmationDialog =
+                        new DeleteDownloadsConfirmationFragment();
                 confirmationDialog.setListener(new OnDeleteDownloadsConfirmationListener() {
 
                     @Override

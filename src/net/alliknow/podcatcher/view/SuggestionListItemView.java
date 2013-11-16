@@ -100,7 +100,10 @@ public class SuggestionListItemView extends RelativeLayout {
 
         // 4. Find and prepare the add button
         if (alreadyAdded) {
-            showCheckmarkInsteadOfButton();
+            addButton.setEnabled(false);
+            addButton.setBackgroundDrawable(null);
+            addButton.setText(null);
+            addButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_checkmark, 0);
         } else {
             addButton.setEnabled(true);
             addButton.setBackgroundResource(R.drawable.button_green);
@@ -111,8 +114,6 @@ public class SuggestionListItemView extends RelativeLayout {
 
                 @Override
                 public void onClick(View view) {
-                    showCheckmarkInsteadOfButton();
-
                     listener.onAddSuggestion(suggestion);
                 }
             });
@@ -144,12 +145,5 @@ public class SuggestionListItemView extends RelativeLayout {
                     + res.getStringArray(R.array.types)[suggestion.getMediaType().ordinal()];
 
         return result;
-    }
-
-    private void showCheckmarkInsteadOfButton() {
-        addButton.setEnabled(false);
-        addButton.setBackgroundDrawable(null);
-        addButton.setText(null);
-        addButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_checkmark, 0);
     }
 }
