@@ -65,6 +65,11 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
     private MenuItem selectAllMenuItem;
 
     /**
+     * This is the number of items selected that are not downloaded or currently
+     * downloading
+     */
+    private int deletesTriggered = 0;
+    /**
      * Flag to indicate whether the mode should do potentially expensive UI
      * updates when a list item is checked
      */
@@ -140,7 +145,7 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
                         new DeleteDownloadsConfirmationDialogFragment();
                 // Create bundle to make dialog aware of selection count
                 final Bundle args = new Bundle();
-                args.putInt(EPISODE_COUNT_KEY, checkedItems.size());
+                args.putInt(EPISODE_COUNT_KEY, deletesTriggered);
                 confirmationDialog.setArguments(args);
                 // Set the callback
                 confirmationDialog.setListener(new OnDeleteDownloadsConfirmationListener() {
@@ -230,6 +235,7 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
     private void updateMenuItems() {
         // Initialize counters for the number of downloads and playlist
         // additions the current selection would trigger
+        this.deletesTriggered = 0;
         int downloadsTriggered = 0;
         int playlistAdditions = 0;
 
@@ -254,9 +260,10 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
                 else
                     oldMenuItem.setVisible(true);
 
-                if (episodeManager.isDownloadingOrDownloaded(episode))
+                if (episodeManager.isDownloadingOrDownloaded(episode)) {
+                    deletesTriggered++;
                     deleteMenuItem.setVisible(true);
-                else {
+                } else {
                     downloadsTriggered++;
                     downloadMenuItem.setVisible(true);
                 }
