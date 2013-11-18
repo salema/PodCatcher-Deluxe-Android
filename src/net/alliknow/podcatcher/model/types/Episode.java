@@ -194,7 +194,7 @@ public class Episode implements Comparable<Episode> {
 
     @Override
     public int hashCode() {
-        return mediaUrl == null ? 0 : mediaUrl.toString().hashCode();
+        return 42 + (mediaUrl == null ? 0 : mediaUrl.hashCode());
     }
 
     @Override
