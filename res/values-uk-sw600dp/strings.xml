@@ -18,5 +18,5 @@
  */
 -->
 <resources>
-    <string name="first_run_title">Вітаємо</string>
+    <string name="first_run_title">Simple Podcatcher вітає вас!</string>
 </resources>
