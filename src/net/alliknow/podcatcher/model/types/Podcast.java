@@ -352,10 +352,7 @@ public class Podcast implements Comparable<Podcast> {
 
         Podcast other = (Podcast) o;
 
-        if (url == null || other.getUrl() == null)
-            return false;
-        else
-            return url.toString().equals(((Podcast) o).getUrl().toString());
+        return url == null ? other.url == null : url.equals(other.url);
     }
 
     @Override
