@@ -556,6 +556,11 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
         return isPrepared();
     }
 
+    @Override
+    public int getAudioSessionId() {
+        return player == null ? 0 : player.getAudioSessionId();
+    }
+
     /**
      * Checks whether the currently loaded episode is equal to the one given.
      * The check we be true regardless of whether the episode has been actually
