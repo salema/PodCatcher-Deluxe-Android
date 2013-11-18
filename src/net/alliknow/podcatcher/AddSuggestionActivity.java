@@ -17,10 +17,14 @@
 
 package net.alliknow.podcatcher;
 
+import android.annotation.TargetApi;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.UserManager;
 
 import net.alliknow.podcatcher.listeners.OnAddSuggestionListener;
 import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
@@ -46,16 +50,24 @@ public class AddSuggestionActivity extends BaseActivity implements
 
     /** The fragment containing the add suggestion UI */
     private SuggestionFragment suggestionFragment;
-
     /** The suggestion manager */
     private SuggestionManager suggestionManager;
-
     /** Helper the store suggestion await confirmation */
     private Suggestion suggestionToBeConfirmed;
+
+    /**
+     * Flag to indicate whether we run in a restricted profile and should hide
+     * explicit podcast suggestions from the list
+     */
+    private boolean hideExplicit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Check whether we are in a restricted profile and therefore should
+        // filter out podcast suggestions with explicit content
+        hideExplicit = checkForRestrictedProfile();
 
         // Get suggestions manager and register call-back
         suggestionManager = SuggestionManager.getInstance();
@@ -103,7 +115,8 @@ public class AddSuggestionActivity extends BaseActivity implements
 
         // Do filter!
         for (Suggestion suggestion : suggestions)
-            if (!podcastManager.contains(suggestion))
+            if (!podcastManager.contains(suggestion) &&
+                    !(hideExplicit && suggestion.isExplicit()))
                 filteredSuggestionList.add(suggestion);
 
         // Filter list and update UI
@@ -143,5 +156,20 @@ public class AddSuggestionActivity extends BaseActivity implements
     @Override
     public void onCancel(DialogInterface dialog) {
         finish();
+    }
+
+    /**
+     * Check whether we are in a restricted profile and therefore should filter
+     * out podcast suggestions with explicit content.
+     * 
+     * @return Whether the app is run by a restricted user (<code>true</code>) .
+     */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    private boolean checkForRestrictedProfile() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+            return ((UserManager) getSystemService(Context.USER_SERVICE))
+                    .getUserRestrictions() != null;
+        else
+            return false;
     }
 }
