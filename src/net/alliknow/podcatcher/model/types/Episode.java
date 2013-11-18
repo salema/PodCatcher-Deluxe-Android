@@ -165,10 +165,7 @@ public class Episode implements Comparable<Episode> {
 
         Episode other = (Episode) o;
 
-        if (mediaUrl == null || other.getMediaUrl() == null)
-            return false;
-        else
-            return mediaUrl.toString().equals(((Episode) o).getMediaUrl().toString());
+        return mediaUrl == null ? other.mediaUrl == null : mediaUrl.equals(other.mediaUrl);
     }
 
     @Override
@@ -182,17 +179,16 @@ public class Episode implements Comparable<Episode> {
         // equal episodes. Failing to do so will cause episodes with equal
         // pubDates to mysteriously disappear when put in a SortedSet.
         int result = 0;
+
         // We mainly compare by the publication date of the episodes. If these
         // are not available or are equal, we check for their position in the
         // podcast. As a last resort we simply return something <> 0.
-        if (this.pubDate == null && another.getPubDate() == null)
-            ; // pass, this is handled below
+        if (this.pubDate != null && another.getPubDate() != null)
+            result = -pubDate.compareTo(another.getPubDate());
         else if (this.pubDate == null && another.getPubDate() != null)
             result = -1;
         else if (this.pubDate != null && another.getPubDate() == null)
             result = 1;
-        else
-            result = -pubDate.compareTo(another.getPubDate());
 
         // This should never be zero unless the episodes are equal, since a
         // podcast might publish two episodes at the same pubDate. If it is
