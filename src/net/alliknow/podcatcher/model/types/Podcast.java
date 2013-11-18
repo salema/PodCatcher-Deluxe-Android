@@ -360,7 +360,7 @@ public class Podcast implements Comparable<Podcast> {
 
     @Override
     public int hashCode() {
-        return url == null ? 0 : url.toString().hashCode();
+        return 42 + (url == null ? 0 : url.hashCode());
     }
 
     @Override
