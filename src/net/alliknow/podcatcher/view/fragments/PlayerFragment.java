@@ -104,7 +104,9 @@ public class PlayerFragment extends Fragment {
         public void run() {
             listener.onRewind();
 
-            transportationHandler.postDelayed(rewindRunnable, TRANSPORT_DELAY);
+            if (rewindButton.isPressed()) {
+                transportationHandler.postDelayed(rewindRunnable, TRANSPORT_DELAY);
+            }
         }
     };
     /** The forward runnable */
@@ -114,7 +116,10 @@ public class PlayerFragment extends Fragment {
         public void run() {
             listener.onFastForward();
 
-            transportationHandler.postDelayed(forwardRunnable, TRANSPORT_DELAY);
+            if (forwardButton.isPressed()) {
+                transportationHandler.postDelayed(forwardRunnable, TRANSPORT_DELAY);
+            }
+
         }
     };
 

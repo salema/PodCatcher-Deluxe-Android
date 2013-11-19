@@ -260,6 +260,9 @@ public class SelectFileFragment extends DialogFragment {
         StateListDrawable states = new StateListDrawable();
 
         states.addState(new int[] {
+                android.R.attr.state_focused
+        }, new ColorDrawable(lightThemeColor));
+        states.addState(new int[] {
                 android.R.attr.state_pressed
         }, new ColorDrawable(lightThemeColor));
         // Set the states drawable

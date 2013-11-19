@@ -275,6 +275,9 @@ public abstract class PodcatcherListFragment extends ListFragment {
         StateListDrawable states = new StateListDrawable();
 
         states.addState(new int[] {
+                android.R.attr.state_focused
+        }, new ColorDrawable(lightThemeColor));
+        states.addState(new int[] {
                 android.R.attr.state_pressed
         }, new ColorDrawable(lightThemeColor));
         // Set the states drawable

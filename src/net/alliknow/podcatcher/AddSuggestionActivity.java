@@ -24,7 +24,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.UserManager;
+//import android.os.UserManager;
 
 import net.alliknow.podcatcher.listeners.OnAddSuggestionListener;
 import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
@@ -87,6 +87,9 @@ public class AddSuggestionActivity extends BaseActivity implements
             suggestionFragment = new SuggestionFragment();
             suggestionFragment.setStyle(DialogFragment.STYLE_NORMAL,
                     android.R.style.Theme_Holo_Light_Dialog);
+
+            // Set theme colors
+            suggestionFragment.setThemeColors(themeColor, lightThemeColor);
 
             // Show the fragment
             suggestionFragment.show(getFragmentManager(), SHOW_SUGGESTIONS_FRAGMENT_TAG);
@@ -161,15 +164,15 @@ public class AddSuggestionActivity extends BaseActivity implements
     /**
      * Check whether we are in a restricted profile and therefore should filter
      * out podcast suggestions with explicit content.
-     * 
+     *
      * @return Whether the app is run by a restricted user (<code>true</code>) .
      */
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+//    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     private boolean checkForRestrictedProfile() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
-            return ((UserManager) getSystemService(Context.USER_SERVICE))
-                    .getUserRestrictions() != null;
-        else
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+//            return ((UserManager) getSystemService(Context.USER_SERVICE))
+//                    .getUserRestrictions() != null;
+//        else
             return false;
     }
 }

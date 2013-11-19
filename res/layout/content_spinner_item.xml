@@ -41,7 +41,7 @@
             android:gravity="center_vertical"
             android:singleLine="true"
             android:textSize="@dimen/font_size_default"
-            android:textColor="@android:color/primary_text_dark" />
+            android:textColor="@android:color/white" />
         <TextView
             android:id="@+id/subtitle"
             android:layout_width="match_parent"
@@ -49,6 +49,6 @@
             android:layout_weight="1"
             android:singleLine="true"
             android:textSize="@dimen/font_size_small"
-            android:textColor="@android:color/primary_text_dark" />
+            android:textColor="@android:color/white" />
     </LinearLayout>
 </RelativeLayout>

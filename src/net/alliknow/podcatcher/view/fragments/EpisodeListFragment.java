@@ -20,17 +20,13 @@ package net.alliknow.podcatcher.view.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.SparseBooleanArray;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import net.alliknow.podcatcher.PodcastActivity;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.listeners.EpisodeListContextListener;
@@ -51,55 +47,99 @@ import java.util.List;
  */
 public class EpisodeListFragment extends PodcatcherListFragment implements ReorderCallback {
 
-    /** The list of episodes we are currently showing. */
+    /**
+     * The list of episodes we are currently showing.
+     */
     private List<Episode> currentEpisodeList;
 
-    /** The activity we are in (listens to user selection) */
+    /**
+     * The activity we are in (listens to user selection)
+     */
     private OnSelectEpisodeListener episodeSelectionListener;
-    /** The activity we are in (listens to reorder requests) */
+    /**
+     * The activity we are in (listens to reorder requests)
+     */
     private OnReorderEpisodeListener episodeReorderListener;
-    /** The activity we are in (listens to filter toggles) */
+    /**
+     * The activity we are in (listens to filter toggles)
+     */
     private OnToggleFilterListener filterListener;
-    /** The activity we are in (listens to sorting toggles) */
+    /**
+     * The activity we are in (listens to sorting toggles)
+     */
     private OnReverseSortingListener sortingListener;
 
-    /** Out swipe to reorder listener */
+    /**
+     * Out swipe to reorder listener
+     */
     private SwipeReorderListViewTouchListener swipeReorderListener;
 
-    /** Flag for show sort menu item state */
+    /**
+     * Flag for show sort menu item state
+     */
     private boolean showSortMenuItem = false;
-    /** Flag for the state of the sort menu item */
+    /**
+     * Flag for the state of the sort menu item
+     */
     private boolean sortMenuItemState = false;
-    /** Flag for show filter menu item state */
+    /**
+     * Flag for show filter menu item state
+     */
     private boolean showFilterMenuItem = false;
-    /** Flag for the state of the filter menu item */
+    /**
+     * Flag for the state of the filter menu item
+     */
     private boolean filterMenuItemState = false;
-    /** Flag for the top progress bar state */
+    /**
+     * Flag for the top progress bar state
+     */
     private boolean showTopProgressBar = false;
-    /** Flag for show info box state state */
+    /**
+     * Flag for show info box state state
+     */
     private boolean showInfoBox = false;
-    /** The text string displayed in the info box */
+    /**
+     * The text string displayed in the info box
+     */
     private String infoBoxText;
-    /** Flag to indicate whether podcast names should be shown for episodes */
+    /**
+     * Flag to indicate whether podcast names should be shown for episodes
+     */
     private boolean showPodcastNames = false;
-    /** Flag indicating whether list items can be swiped to reorder */
+    /**
+     * Flag indicating whether list items can be swiped to reorder
+     */
     private boolean enableSwipeReorder = false;
 
-    /** Identifier for the string the empty view shows. */
+    /**
+     * Identifier for the string the empty view shows.
+     */
     private int emptyStringId = R.string.episode_none;
 
-    /** The sort episodes menu bar item */
+    /**
+     * The sort episodes menu bar item
+     */
     private MenuItem sortMenuItem;
-    /** The top progress bar */
+    /**
+     * The top progress bar
+     */
     private ProgressBar topProgressBar;
-    /** The filter episodes menu bar item */
+    /**
+     * The filter episodes menu bar item
+     */
     private MenuItem filterMenuItem;
-    /** The info box label */
+    /**
+     * The info box label
+     */
     private TextView infoBoxTextView;
-    /** The info box label divider */
+    /**
+     * The info box label divider
+     */
     private View infoBoxDivider;
 
-    /** Status flag indicating that our view is created */
+    /**
+     * Status flag indicating that our view is created
+     */
     private boolean viewCreated = false;
 
     @Override
@@ -128,7 +168,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
 
         return inflater.inflate(R.layout.episode_list, container, false);
     }
@@ -162,6 +202,43 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
             setShowTopInfoBox(showInfoBox, infoBoxText);
             setShowTopProgress(showTopProgressBar);
         }
+
+        getListView().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    return;
+                }
+                if (getActivity() instanceof PodcastActivity && ((PodcastActivity) getActivity()).isMenuOpened()) {
+                    ((PodcastActivity)getActivity()).forwardMenuFocus(v);
+                }
+            }
+        });
+//        getListView().setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                if (event.getAction() != KeyEvent.ACTION_DOWN) {
+//                    return false;
+//                }
+//                int direction;
+//                switch (keyCode) {
+//                    case KeyEvent.KEYCODE_DPAD_RIGHT:
+//                        direction = View.FOCUS_RIGHT;
+//                        break;
+//                    case KeyEvent.KEYCODE_DPAD_LEFT:
+//                        direction = View.FOCUS_LEFT;
+//                        break;
+//                    default:
+//                        return false;
+//                }
+//                View focus = v.focusSearch(direction);
+//                if (focus != null) {
+//                    focus.requestFocus();
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
     }
 
     @Override
@@ -241,7 +318,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
     /**
      * Set the list of episodes to show in this fragment. You can call this any
      * time and the view will catch up as soon as it is created.
-     * 
+     *
      * @param episodeList List of episodes to show.
      */
     public void setEpisodeList(List<Episode> episodeList) {
@@ -303,8 +380,8 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
      * time and can expect it to happen on fragment resume at the latest. You
      * also have to set the sort icon state, <code>true</code> for "reverse" and
      * <code>false</code> for "normal" (i.e. latest first).
-     * 
-     * @param show Whether to show the sort menu item.
+     *
+     * @param show    Whether to show the sort menu item.
      * @param reverse State of the sort menu item (reverse / normal)
      */
     public void setSortMenuItemVisibility(boolean show, boolean reverse) {
@@ -325,8 +402,8 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
      * any time and can expect it to happen on fragment resume at the latest.
      * You also have to set the filter icon state, <code>true</code> for
      * "new only" and <code>false</code> for "show all".
-     * 
-     * @param show Whether to show the filter menu item.
+     *
+     * @param show   Whether to show the filter menu item.
      * @param filter State of the filter menu item (new / all)
      */
     public void setFilterMenuItemVisibility(boolean show, boolean filter) {
@@ -347,7 +424,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
     /**
      * Configure whether the fragment should show the info box at the top of the
      * list.
-     * 
+     *
      * @param show Whether to show the info box at all.
      * @param info The info text to show.
      */
@@ -365,7 +442,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
     /**
      * Update the progress information for the episode given to reflect the
      * percentage of given. Does nothing if the episode is off the screen.
-     * 
+     *
      * @param episode The episode to update progress for.
      * @param percent The percentage value to show.
      */
@@ -396,7 +473,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
      * Select an episode in the list. Calls {@link #selectNone()} if the episode
      * is not present in the current list. Does nothing if there is no list set
      * or the episode is <code>null</code>.
-     * 
+     *
      * @param episode Episode to select.
      */
     public void select(Episode episode) {
@@ -413,7 +490,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
     /**
      * Set to <code>true</code> to make list items (episodes) "flingable". Uses
      * the {@link SwipeReorderListViewTouchListener} and its callback methods.
-     * 
+     *
      * @param enable Whether list item can be swiped.
      */
     public void setEnableSwipeReorder(boolean enable) {
@@ -424,7 +501,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
      * Set whether the fragment should show the top progress bar. You can call
      * this any time and can expect it to happen on fragment resume at the
      * latest.
-     * 
+     *
      * @param show Whether to show the top progress bar.
      */
     public void setShowTopProgress(boolean show) {
@@ -438,7 +515,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
      * Set whether the fragment should show the podcast name for each episode
      * item. Change will be reflected upon next call of
      * {@link #setEpisodeList(List)}
-     * 
+     *
      * @param show Whether to show the podcast names.
      */
     public void setShowPodcastNames(boolean show) {
@@ -449,7 +526,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
      * Define which text label the list's empty view shows. Will only have an
      * effect if you call {@link #setEpisodeList(List)} with an empty list
      * afterwards.
-     * 
+     *
      * @param id The empty string resource identifier.
      */
     public void setEmptyStringId(int id) {
@@ -472,7 +549,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
 
     /**
      * Show error view.
-     * 
+     *
      * @param code The error code loading the podcast failed with.
      */
     public void showLoadFailed(PodcastLoadError code) {

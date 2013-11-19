@@ -556,7 +556,7 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
         return isPrepared();
     }
 
-    @Override
+//    @Override
     public int getAudioSessionId() {
         return player == null ? 0 : player.getAudioSessionId();
     }

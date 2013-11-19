@@ -25,9 +25,12 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,10 +41,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.adapters.GenreSpinnerAdapter;
-import net.alliknow.podcatcher.adapters.LanguageSpinnerAdapter;
-import net.alliknow.podcatcher.adapters.MediaTypeSpinnerAdapter;
-import net.alliknow.podcatcher.adapters.SuggestionListAdapter;
+import net.alliknow.podcatcher.adapters.*;
 import net.alliknow.podcatcher.listeners.OnAddSuggestionListener;
 import net.alliknow.podcatcher.model.types.Genre;
 import net.alliknow.podcatcher.model.types.Language;
@@ -95,6 +95,14 @@ public class SuggestionFragment extends DialogFragment {
     private static final String GENRE_FILTER_POSITION = "genre_filter_position";
     /** Bundle key for media type filter position */
     private static final String MEDIATYPE_FILTER_POSITION = "mediatype_filter_position";
+
+    /** The theme color to use for highlighting list items */
+    protected int themeColor;
+    /** The theme color variant to use for pressed and checked items */
+    protected int lightThemeColor;
+
+    /** Status flag indicating that our view is created */
+    private boolean viewCreated = false;
 
     /** The listener to update the list on filter change */
     private final OnItemSelectedListener selectionListener = new OnItemSelectedListener() {
@@ -159,6 +167,20 @@ public class SuggestionFragment extends DialogFragment {
         progressView = (ProgressView) view.findViewById(R.id.suggestion_list_progress);
 
         suggestionsListView = (ListView) view.findViewById(R.id.suggestion_podcasts);
+        suggestionsListView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_UP && suggestionsListView.getSelectedView() != null) {
+                    switch (keyCode) {
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
+                            suggestionsListView.getSelectedView().callOnClick();
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
         noSuggestionsView = (TextView) view.findViewById(R.id.suggestion_none);
 
         sendSuggestionView = (TextView) view.findViewById(R.id.suggestion_send);
@@ -166,6 +188,9 @@ public class SuggestionFragment extends DialogFragment {
                 "?subject=" + SUGGESTION_MAIL_SUBJECT + "\">" +
                 getString(R.string.suggestions_send) + "</a>"));
         sendSuggestionView.setMovementMethod(LinkMovementMethod.getInstance());
+        updateListSelector();
+
+        viewCreated = true;
 
         // Set/restore filter settings
         // Coming from configuration change
@@ -197,6 +222,8 @@ public class SuggestionFragment extends DialogFragment {
 
     @Override
     public void onCancel(DialogInterface dialog) {
+        viewCreated = false;
+
         // Make sure the parent activity knows when we are closing
         if (listener instanceof OnCancelListener)
             ((OnCancelListener) listener).onCancel(dialog);
@@ -310,5 +337,51 @@ public class SuggestionFragment extends DialogFragment {
                 ((Genre) genreFilter.getSelectedItem()).equals(suggestion.getGenre())) &&
                 (mediaTypeFilter.getSelectedItemPosition() == 0 ||
                 ((MediaType) mediaTypeFilter.getSelectedItem()).equals(suggestion.getMediaType()));
+    }
+
+    /**
+     * Set the colors to use in the list for selection, checked item etc.
+     *
+     * @param color The theme color to use for highlighting list items.
+     * @param variantColor The theme color variant to use for pressed and
+     *            checked items.
+     */
+    public void setThemeColors(int color, int variantColor) {
+        this.themeColor = color;
+        this.lightThemeColor = variantColor;
+
+        // Set theme colors in adapter
+        if (suggestionsListView != null && suggestionsListView.getAdapter() != null)
+            ((FileListAdapter) suggestionsListView.getAdapter())
+                    .setThemeColors(themeColor, lightThemeColor);
+        // ...and for the list view
+        if (viewCreated)
+            updateListSelector();
+    }
+
+    private void updateListSelector() {
+
+        // Set the states drawable
+        suggestionsListView.setSelector(getNewStateList());
+
+        sendSuggestionView.setBackgroundDrawable(getNewStateList());
+
+        languageFilter.setBackgroundDrawable(getNewStateList());
+        genreFilter.setBackgroundDrawable(getNewStateList());
+        mediaTypeFilter.setBackgroundDrawable(getNewStateList());
+    }
+
+    private StateListDrawable getNewStateList() {
+        // This takes care of the item pressed state and its color
+        StateListDrawable states = new StateListDrawable();
+
+        states.addState(new int[] {
+                android.R.attr.state_focused
+        }, new ColorDrawable(lightThemeColor));
+        states.addState(new int[] {
+                android.R.attr.state_pressed
+        }, new ColorDrawable(lightThemeColor));
+        states.addState(new int[] {}, getActivity().getResources().getDrawable(android.R.color.transparent));
+        return states;
     }
 }

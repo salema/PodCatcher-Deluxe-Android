@@ -18,12 +18,14 @@
 package net.alliknow.podcatcher;
 
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.app.FragmentManager.OnBackStackChangedListener;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -51,16 +53,26 @@ import java.util.List;
 public class PodcastActivity extends EpisodeListActivity implements OnBackStackChangedListener,
         OnLoadPodcastListListener, OnChangePodcastListListener, OnSelectPodcastListener {
 
-    /** The request code to identify import calls */
+    /**
+     * The request code to identify import calls
+     */
     private static final int IMPORT_FROM_SIMPLE_PODCATCHER_CODE = 18;
-    /** The import from Simple Podcatcher action */
+    /**
+     * The import from Simple Podcatcher action
+     */
     private static final String IMPORT_ACTION = "com.podcatcher.deluxe.action.IMPORT";
-    /** The key to find imported podcast name list under */
+    /**
+     * The key to find imported podcast name list under
+     */
     private static final String IMPORT_PODCAST_NAMES_KEY = "podcast_names_key";
-    /** The key to find imported podcast url list under */
+    /**
+     * The key to find imported podcast url list under
+     */
     private static final String IMPORT_PODCAST_URLS_KEY = "podcast_urls_key";
 
-    /** The current podcast list fragment */
+    /**
+     * The current podcast list fragment
+     */
     protected PodcastListFragment podcastListFragment;
 
     /**
@@ -79,6 +91,9 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
      * matches the current selection state.
      */
     private boolean needsUiUpdateOnResume;
+
+    private Fragment lastFocusedFragment;
+    private boolean isMenuFocused = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +143,8 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // Finally we might also be called freshly with a podcast feed to add
         if (getIntent().getData() != null)
             onNewIntent(getIntent());
+
+        lastFocusedFragment = podcastListFragment;
     }
 
     @Override
@@ -173,7 +190,9 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // Register as listener to the podcast data manager
         podcastManager.addLoadPodcastListListener(this);
         podcastManager.addChangePodcastListListener(this);
-    };
+    }
+
+    ;
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -251,6 +270,13 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         getFragmentManager().addOnBackStackChangedListener(this);
         // Set podcast logo view mode
         updateLogoViewMode();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        isMenuFocused = false;
+        toggleMenuFocus();
     }
 
     @Override
@@ -356,7 +382,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                 // On the very first start of the app, show the first run dialog
                 if (preferences.getBoolean(SettingsActivity.KEY_FIRST_RUN, true))
                     startActivity(new Intent(this, FirstRunActivity.class));
-                // Otherwise, just show the add podcast dialog
+                    // Otherwise, just show the add podcast dialog
                 else
                     startActivity(new Intent(this, AddPodcastActivity.class));
             }
@@ -540,8 +566,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         if (key.equals(SettingsActivity.KEY_THEME_COLOR) && podcastListFragment != null) {
             // Make the UI reflect the change
             podcastListFragment.setThemeColors(themeColor, lightThemeColor);
-        }
-        else if (key.equals(SettingsActivity.KEY_WIDE_EPISODE_LIST)) {
+        } else if (key.equals(SettingsActivity.KEY_WIDE_EPISODE_LIST)) {
             updateLayout();
         }
     }
@@ -650,5 +675,108 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     private void setMainColumnWidthWeight(View view, float weight) {
         view.setLayoutParams(
                 new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, weight));
+    }
+
+    private int lastDirection = View.FOCUS_RIGHT;
+
+    public void forwardMenuFocus(View view) {
+        View focus = view.focusSearch(lastDirection);
+        if (focus != null) {
+            focus.requestFocus();
+            focus = focus.focusSearch(View.FOCUS_UP);
+            if (focus != null) {
+                focus.requestFocus();
+            }
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case 84:                        // MENU button
+                toggleMenuFocus();
+                break;
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+                if (!isMenuFocused) {
+                    boolean consumed = lastFocusedFragment.getView().dispatchKeyEvent(event);
+                    if (!consumed) {
+                        moveFocusToLeft();
+                    }
+                    return true;
+                } else {
+                    lastDirection = View.FOCUS_LEFT;
+                }
+                break;
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                if (!isMenuFocused) {
+                    boolean consumed = lastFocusedFragment.getView().dispatchKeyEvent(event);
+                    if (!consumed) {
+                        moveFocusToRight();
+                    }
+                    return true;
+//                } else {
+//                    if (episodeListFragment.getView().hasFocus()) {
+//                        View focus = episodeListFragment.getListView().focusSearch(View.FOCUS_RIGHT);
+//                        if (focus != null) {
+//                            focus.requestFocus();
+//                        }
+//                    }
+                } else {
+                    lastDirection = View.FOCUS_RIGHT;
+                }
+                break;
+            case KeyEvent.KEYCODE_DPAD_UP:
+                if (isMenuFocused) {
+                    getActionBar().getCustomView().dispatchKeyEvent(event);
+                    return true;
+                } else {
+                    lastFocusedFragment.getView().dispatchKeyEvent(event);
+                    return true;
+                }
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+                if (isMenuFocused) {
+                    return !getActionBar().getCustomView().isFocused();
+                }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void toggleMenuFocus() {
+        if (isMenuFocused) {
+            lastFocusedFragment.getView().requestFocus();
+        } else {
+            getActionBar().getCustomView().requestFocus();
+        }
+        isMenuFocused = !isMenuFocused;
+    }
+
+    private void moveFocusToLeft() {
+        if (lastFocusedFragment == episodeFragment) {
+            lastFocusedFragment = episodeListFragment;
+            episodeListFragment.getView().requestFocus();
+        } else if (lastFocusedFragment == episodeListFragment) {
+            lastFocusedFragment = podcastListFragment;
+            podcastListFragment.getView().requestFocus();
+        }
+        // otherwise podcast list fragment has focus,
+        // it's on the left edge of the screen,
+        // do nothing
+    }
+
+    private void moveFocusToRight() {
+        if (lastFocusedFragment == podcastListFragment) {
+            lastFocusedFragment = episodeListFragment;
+            episodeListFragment.getView().requestFocus();
+        } else if (lastFocusedFragment == episodeListFragment) {
+            lastFocusedFragment = episodeFragment;
+            episodeFragment.getView().requestFocus();
+        }
+        // otherwise episode fragment has focus,
+        // it's on the right edge of the screen,
+        // do nothing
+    }
+
+    public boolean isMenuOpened() {
+        return isMenuFocused;
     }
 }

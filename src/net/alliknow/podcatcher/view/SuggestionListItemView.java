@@ -117,6 +117,15 @@ public class SuggestionListItemView extends RelativeLayout {
                     listener.onAddSuggestion(suggestion);
                 }
             });
+
+            this.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!isInTouchMode() && addButton.isEnabled()) {
+                        addButton.callOnClick();
+                    }
+                }
+            });
         }
 
         // 5. Decorate featured and explicit suggestions

@@ -59,6 +59,7 @@
         android:layout_height="48dp"
         android:layout_margin="@dimen/list_item_padding"
         android:layout_alignParentRight="true"
+        android:focusable="false"
         android:paddingLeft="@dimen/suggestion_add_padding"
         android:paddingRight="@dimen/suggestion_add_padding"
         android:background="@drawable/button_green"

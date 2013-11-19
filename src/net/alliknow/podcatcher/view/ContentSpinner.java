@@ -18,6 +18,7 @@
 package net.alliknow.podcatcher.view;
 
 import android.content.Context;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -196,6 +197,9 @@ public class ContentSpinner extends Spinner implements
         closedTitleView = (TextView) spinnerAdapter.getClosedView().findViewById(R.id.title);
         closedSubtitleView = (TextView) spinnerAdapter.getClosedView().findViewById(R.id.subtitle);
 
+        closedTitleView.setTextColor(getContext().getResources().getColor(android.R.color.white));
+        closedSubtitleView.setTextColor(getContext().getResources().getColor(android.R.color.white));
+
         setAdapter(spinnerAdapter);
         setOnItemSelectedListener(this);
     }
@@ -243,5 +247,14 @@ public class ContentSpinner extends Spinner implements
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
         // pass
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+                return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
