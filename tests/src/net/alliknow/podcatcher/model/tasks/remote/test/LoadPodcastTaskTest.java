@@ -18,6 +18,7 @@
 package net.alliknow.podcatcher.model.tasks.remote.test;
 
 import android.test.InstrumentationTestCase;
+import android.util.Log;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask;
@@ -67,12 +68,12 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
 
     @Override
     protected void setUp() throws Exception {
-        System.out.println("Set up test \"LoadPodcast\" by loading example podcasts...");
+        Log.d(Utils.TEST_STATUS, "Set up test \"LoadPodcast\" by loading example podcasts...");
 
         final Date start = new Date();
-        examplePodcasts = Utils.getExamplePodcasts();
+        examplePodcasts = Utils.getExamplePodcasts(getInstrumentation().getContext(), 10);
 
-        System.out.println("Waited " + (new Date().getTime() - start.getTime())
+        Log.d(Utils.TEST_STATUS, "Waited " + (new Date().getTime() - start.getTime())
                 + "ms for example podcasts...");
     }
 
@@ -83,14 +84,16 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
         int index = 0;
         int failed = 0;
 
+        Log.d(Utils.TEST_STATUS, "Testing " + size + " example podcasts");
+
         // Actual example Podcast
         for (Podcast ep : examplePodcasts) {
-            System.out.println("---- New Podcast (" + ++index + "/" + size + ") ----");
-            System.out.println("Testing \"" + ep + "\"...");
+            Log.d(Utils.TEST_STATUS, "---- New Podcast (" + ++index + "/" + size + ") ----");
+            Log.d(Utils.TEST_STATUS, "Testing \"" + ep + "\"...");
             LoadPodcastTask task = loadAndWait(mockLoader, new Podcast(ep.getName(), ep.getUrl()));
 
             if (mockLoader.failed) {
-                System.out.println("Podcast " + ep.getName() + " failed!");
+                Log.d(Utils.TEST_STATUS, "Podcast " + ep.getName() + " failed!");
                 failed++;
             } else {
                 assertFalse(task.isCancelled());
@@ -98,11 +101,11 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
                 assertFalse(mockLoader.result.getEpisodes().isEmpty());
                 assertNotNull(mockLoader.result.getLastLoaded());
 
-                System.out.println("Tested \"" + mockLoader.result + "\" - okay...");
+                Log.d(Utils.TEST_STATUS, "Tested \"" + mockLoader.result + "\" - okay...");
             }
         }
 
-        System.out.println("*** Tested all example podcast, failed on " + failed);
+        Log.d(Utils.TEST_STATUS, "Tested all example podcast, failed on " + failed);
 
         // null
         loadAndWait(mockLoader, (Podcast) null);
@@ -135,7 +138,7 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
 
         final Date start = new Date();
         signal.await();
-        System.out.println("Waited " + (new Date().getTime() - start.getTime())
+        Log.d(Utils.TEST_STATUS, "Waited " + (new Date().getTime() - start.getTime())
                 + "ms for Podcast \"" + podcast + "\"...");
 
         return task;

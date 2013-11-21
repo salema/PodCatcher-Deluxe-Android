@@ -272,15 +272,16 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Suggestio
     }
 
     private void storeSuggestionsToFileCache(byte[] suggestions) {
-        context.getCacheDir().mkdirs();
-
         FileOutputStream out = null;
+
         // If this fails, we have no cached version, but that's okay
         try {
+            context.getCacheDir().mkdirs();
+
             out = new FileOutputStream(getSuggestionsCacheFile());
             out.write(suggestions);
             out.flush();
-        } catch (IOException e) {
+        } catch (Throwable th) {
             // pass
         } finally {
             try {
