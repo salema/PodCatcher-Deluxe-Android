@@ -17,6 +17,9 @@
 
 package net.alliknow.podcatcher.model.test;
 
+import android.content.Context;
+import android.util.Log;
+
 import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
 import net.alliknow.podcatcher.model.tasks.remote.LoadSuggestionsTask;
 import net.alliknow.podcatcher.model.types.Podcast;
@@ -28,6 +31,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -35,6 +39,8 @@ import java.util.concurrent.CountDownLatch;
  */
 @SuppressWarnings("javadoc")
 public class Utils {
+
+    public static final String TEST_STATUS = "Teststatus";
 
     public static XmlPullParser getParser(Podcast podcast) {
         try {
@@ -46,38 +52,65 @@ public class Utils {
 
             return parser;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TEST_STATUS, e.getMessage(), e);
         }
 
         return null;
     }
 
-    public static List<Podcast> getExamplePodcasts() throws InterruptedException {
+    public static List<Podcast> getExamplePodcasts(Context context) {
+        return getExamplePodcasts(context, 0);
+    }
+
+    /**
+     * @param context Context to load in.
+     * @param limit Limit the result to the given number of podcasts randomly
+     *            chosen.
+     * @return The list of podcast examples;
+     */
+    public static List<Podcast> getExamplePodcasts(Context context, final int limit) {
         final CountDownLatch signal = new CountDownLatch(1);
         final List<Podcast> examples = new ArrayList<Podcast>();
 
-        LoadSuggestionsTask task = new LoadSuggestionsTask(null, new OnLoadSuggestionListener() {
+        LoadSuggestionsTask task = new LoadSuggestionsTask(context, new OnLoadSuggestionListener() {
 
             @Override
             public void onSuggestionsLoaded(List<Suggestion> suggestions) {
-                for (Podcast podcast : suggestions)
-                    examples.add(podcast);
+                Log.d(TEST_STATUS, "Load example podcasts task complete");
+                if (limit <= 0)
+                    for (Podcast podcast : suggestions)
+                        examples.add(podcast);
+                else {
+                    int count = 0;
+
+                    while (count++ < limit && !suggestions.isEmpty())
+                        examples.add(suggestions.remove(new Random().nextInt(suggestions.size())));
+                }
 
                 signal.countDown();
             }
 
             @Override
             public void onSuggestionsLoadProgress(Progress progress) {
+                Log.d(TEST_STATUS, "Load example podcasts task progress: " + progress);
             }
 
             @Override
             public void onSuggestionsLoadFailed() {
+                Log.d(TEST_STATUS, "Load example podcasts task failed");
                 signal.countDown();
             }
         });
 
         task.execute((Void) null);
-        signal.await();
+        Log.d(TEST_STATUS, "Load example podcasts task started");
+
+        // Wait for the task to finish...
+        try {
+            signal.await();
+        } catch (InterruptedException e) {
+            Log.e(TEST_STATUS, e.getMessage(), e);
+        }
 
         return examples;
     }

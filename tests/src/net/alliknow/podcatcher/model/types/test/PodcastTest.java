@@ -1,7 +1,8 @@
 
 package net.alliknow.podcatcher.model.types.test;
 
-import junit.framework.TestCase;
+import android.test.InstrumentationTestCase;
+import android.util.Log;
 
 import net.alliknow.podcatcher.model.test.Utils;
 import net.alliknow.podcatcher.model.types.Podcast;
@@ -13,27 +14,28 @@ import java.util.Date;
 import java.util.List;
 
 @SuppressWarnings("javadoc")
-public class PodcastTest extends TestCase {
+public class PodcastTest extends InstrumentationTestCase {
 
     private static List<Podcast> examplePodcasts;
 
     @Override
     protected void setUp() throws Exception {
         if (examplePodcasts == null) {
-            System.out.println("Set up test \"Podcasts\" by loading example podcasts...");
+            Log.d(Utils.TEST_STATUS, "Set up test \"Podcasts\" by loading example podcasts...");
 
             final Date start = new Date();
-            examplePodcasts = Utils.getExamplePodcasts();
+            examplePodcasts = Utils.getExamplePodcasts(getInstrumentation().getTargetContext(), 10);
 
-            System.out.println("Waited " + (new Date().getTime() - start.getTime())
+            Log.d(Utils.TEST_STATUS, "Waited " + (new Date().getTime() - start.getTime())
                     + "ms for example podcasts...");
 
             int size = examplePodcasts.size();
             int index = 0;
 
             for (Podcast ep : examplePodcasts) {
-                System.out.println("---- Parsing podcast " + ++index + "/" + size + " ----");
+                Log.d(Utils.TEST_STATUS, "---- Parsing podcast " + ++index + "/" + size + " ----");
                 ep.parse(Utils.getParser(ep));
+                Log.d(Utils.TEST_STATUS, "---- Parsed podcast " + ep.getName() + " ----");
             }
         }
     }
