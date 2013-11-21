@@ -63,7 +63,7 @@ public class LoadPodcastLogoTaskTest extends InstrumentationTestCase {
         Log.d(Utils.TEST_STATUS, "Set up test \"LoadPodcastLogo\" by loading example podcasts...");
 
         final Date start = new Date();
-        examplePodcasts = Utils.getExamplePodcasts(getInstrumentation().getContext(), 10);
+        examplePodcasts = Utils.getExamplePodcasts(getInstrumentation().getTargetContext(), 10);
 
         Log.d(Utils.TEST_STATUS, "Waited " + (new Date().getTime() - start.getTime())
                 + "ms for example podcasts...");
@@ -98,25 +98,27 @@ public class LoadPodcastLogoTaskTest extends InstrumentationTestCase {
             Log.d(Utils.TEST_STATUS, "Tested \"" + ep + "\" - okay...");
         }
 
-        Log.d(Utils.TEST_STATUS, "*** Tested all example podcast, failed on " + failed);
+        Log.d(Utils.TEST_STATUS, "Tested all example podcast, failed on " + failed);
     }
 
     private LoadPodcastLogoTask loadAndWait(final MockPodcastLogoLoader mockLoader,
-            final Podcast podcast) throws Throwable {
-        final LoadPodcastLogoTask task = new LoadPodcastLogoTask(null, mockLoader);
-
+            final Podcast podcast) {
+        // Create task and latch
+        final LoadPodcastLogoTask task = new LoadPodcastLogoTask(
+                getInstrumentation().getTargetContext(), mockLoader);
         signal = new CountDownLatch(1);
 
-        runTestOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                task.execute(podcast);
-            }
-        });
-
+        // Go load podcast logo
         final Date start = new Date();
-        signal.await();
+        task.execute(podcast);
+
+        // Wait for the podcast logo to load
+        try {
+            signal.await();
+        } catch (InterruptedException e) {
+            Log.e(Utils.TEST_STATUS, "Interrupted while waiting for logo of " + podcast.getName());
+        }
+
         Log.d(Utils.TEST_STATUS, "Waited " + (new Date().getTime() - start.getTime())
                 + "ms for Podcast Logo \"" + podcast + "\"...");
 

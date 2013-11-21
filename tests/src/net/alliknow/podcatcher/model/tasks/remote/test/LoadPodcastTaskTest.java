@@ -27,6 +27,7 @@ import net.alliknow.podcatcher.model.test.Utils;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
@@ -41,12 +42,12 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
 
     private class MockPodcastLoader implements OnLoadPodcastListener {
 
-        protected Podcast result;
-        protected boolean failed;
+        Podcast result;
+        boolean failed;
+        PodcastLoadError code;
 
         @Override
         public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
-            // System.out.println(progress);
         }
 
         @Override
@@ -61,6 +62,7 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
         public void onPodcastLoadFailed(Podcast podcast, PodcastLoadError code) {
             this.result = podcast;
             this.failed = true;
+            this.code = code;
 
             signal.countDown();
         }
@@ -71,13 +73,13 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
         Log.d(Utils.TEST_STATUS, "Set up test \"LoadPodcast\" by loading example podcasts...");
 
         final Date start = new Date();
-        examplePodcasts = Utils.getExamplePodcasts(getInstrumentation().getContext(), 10);
+        examplePodcasts = Utils.getExamplePodcasts(getInstrumentation().getContext(), 3);
 
         Log.d(Utils.TEST_STATUS, "Waited " + (new Date().getTime() - start.getTime())
                 + "ms for example podcasts...");
     }
 
-    public final void testLoadPodcast() throws Throwable {
+    public final void testLoadExamplePodcasts() {
         final MockPodcastLoader mockLoader = new MockPodcastLoader();
 
         int size = examplePodcasts.size();
@@ -86,14 +88,18 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
 
         Log.d(Utils.TEST_STATUS, "Testing " + size + " example podcasts");
 
-        // Actual example Podcast
+        // Actual example podcasts
         for (Podcast ep : examplePodcasts) {
-            Log.d(Utils.TEST_STATUS, "---- New Podcast (" + ++index + "/" + size + ") ----");
+            Log.d(Utils.TEST_STATUS, "---- New Podcast (" + ++index + "/" + size +
+                    ") ----");
             Log.d(Utils.TEST_STATUS, "Testing \"" + ep + "\"...");
-            LoadPodcastTask task = loadAndWait(mockLoader, new Podcast(ep.getName(), ep.getUrl()));
+            LoadPodcastTask task = loadAndWait(mockLoader, new Podcast(ep.getName(),
+                    ep.getUrl()));
 
             if (mockLoader.failed) {
-                Log.d(Utils.TEST_STATUS, "Podcast " + ep.getName() + " failed!");
+                Log.w(Utils.TEST_STATUS, "Podcast " + ep.getName() + " failed!");
+                assertNull(mockLoader.result.getLastLoaded());
+
                 failed++;
             } else {
                 assertFalse(task.isCancelled());
@@ -101,43 +107,66 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
                 assertFalse(mockLoader.result.getEpisodes().isEmpty());
                 assertNotNull(mockLoader.result.getLastLoaded());
 
-                Log.d(Utils.TEST_STATUS, "Tested \"" + mockLoader.result + "\" - okay...");
+                Log.d(Utils.TEST_STATUS, "Tested \"" + mockLoader.result +
+                        "\" - okay...");
             }
         }
 
-        Log.d(Utils.TEST_STATUS, "Tested all example podcast, failed on " + failed);
+        Log.d(Utils.TEST_STATUS, "Tested all example podcast, failed on " +
+                failed);
+    }
+
+    public final void testLoadDummyPodcasts() throws MalformedURLException {
+        final MockPodcastLoader mockLoader = new MockPodcastLoader();
 
         // null
         loadAndWait(mockLoader, (Podcast) null);
         assertTrue(mockLoader.failed);
+        assertNull(mockLoader.result);
+        assertEquals(mockLoader.code, PodcastLoadError.UNKNOWN);
 
         // null URL
         loadAndWait(mockLoader, new Podcast(null, null));
         assertTrue(mockLoader.failed);
         assertNull(mockLoader.result.getLastLoaded());
+        assertEquals(mockLoader.code, PodcastLoadError.UNKNOWN);
 
         // bad URL
         loadAndWait(mockLoader, new Podcast("Mist", new URL("http://bla")));
         assertTrue(mockLoader.failed);
         assertNull(mockLoader.result.getLastLoaded());
+        assertEquals(mockLoader.code, PodcastLoadError.NOT_REACHABLE);
+
+        // no podcast feed URL
+        loadAndWait(mockLoader, new Podcast("Google", new URL("http://www.google.com")));
+        assertTrue(mockLoader.failed);
+        assertNull(mockLoader.result.getLastLoaded());
+        assertEquals(mockLoader.code, PodcastLoadError.NOT_PARSEABLE);
+
+        // Auth required
+        loadAndWait(mockLoader, new Podcast("SGU", new URL(
+                "https://www.theskepticsguide.org/premium")));
+        assertTrue(mockLoader.failed);
+        assertNull(mockLoader.result.getLastLoaded());
+        assertEquals(mockLoader.code, PodcastLoadError.AUTH_REQUIRED);
     }
 
-    private LoadPodcastTask loadAndWait(final MockPodcastLoader mockLoader, final Podcast podcast)
-            throws Throwable {
+    private LoadPodcastTask loadAndWait(final MockPodcastLoader mockLoader, final Podcast podcast) {
+        // Create task and latch
         final LoadPodcastTask task = new LoadPodcastTask(mockLoader);
-
         signal = new CountDownLatch(1);
 
-        runTestOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                task.execute(podcast);
-            }
-        });
-
+        // Go load podcast
         final Date start = new Date();
-        signal.await();
+        task.execute(podcast);
+
+        // Wait for the podcast to load
+        try {
+            signal.await();
+        } catch (InterruptedException e) {
+            Log.e(Utils.TEST_STATUS, "Interrupted while waiting for podcast " + podcast.getName());
+        }
+
         Log.d(Utils.TEST_STATUS, "Waited " + (new Date().getTime() - start.getTime())
                 + "ms for Podcast \"" + podcast + "\"...");
 

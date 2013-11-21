@@ -92,7 +92,8 @@ public class Utils {
 
             @Override
             public void onSuggestionsLoadProgress(Progress progress) {
-                Log.d(TEST_STATUS, "Load example podcasts task progress: " + progress);
+                // Log.d(TEST_STATUS, "Load example podcasts task progress: " +
+                // progress);
             }
 
             @Override
