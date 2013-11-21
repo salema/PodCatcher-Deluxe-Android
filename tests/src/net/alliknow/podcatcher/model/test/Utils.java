@@ -17,17 +17,20 @@
 
 package net.alliknow.podcatcher.model.test;
 
+import android.app.Instrumentation;
 import android.content.Context;
 import android.util.Log;
 
+import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
+import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask;
+import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.tasks.remote.LoadSuggestionsTask;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.model.types.Suggestion;
 
 import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,33 +45,83 @@ public class Utils {
 
     public static final String TEST_STATUS = "Teststatus";
 
-    public static XmlPullParser getParser(Podcast podcast) {
+    /** Error code helper for loadAndWait() */
+    private static PodcastLoadError code = null;
+
+    /**
+     * Load and parse podcast given.
+     * 
+     * @param podcast Podcast to process.
+     * @return If everything went right, <code>null</code> is returned,
+     *         otherwise the {@link PodcastLoadError}.
+     */
+    public static PodcastLoadError loadAndWait(final Podcast podcast) {
+        // Reset code
+        code = null;
+
+        // Create task and latch
+        final CountDownLatch signal = new CountDownLatch(1);
+        final LoadPodcastTask task = new LoadPodcastTask(new OnLoadPodcastListener() {
+
+            @Override
+            public void onPodcastLoadProgress(Podcast podcast, Progress progress) {
+            }
+
+            @Override
+            public void onPodcastLoaded(Podcast podcast) {
+                signal.countDown();
+            }
+
+            @Override
+            public void onPodcastLoadFailed(Podcast podcast, PodcastLoadError errorCode) {
+                code = errorCode;
+
+                signal.countDown();
+            }
+        });
+
+        // Go load podcast
+        task.execute(podcast);
+
+        // Wait for the podcast to load
         try {
-            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-
-            XmlPullParser parser = factory.newPullParser();
-            parser.setInput(podcast.getUrl().openStream(), null);
-
-            return parser;
-        } catch (Exception e) {
-            Log.e(TEST_STATUS, e.getMessage(), e);
+            signal.await();
+        } catch (InterruptedException e) {
+            Log.e(Utils.TEST_STATUS, "Interrupted while waiting for podcast " + podcast.getName());
         }
 
-        return null;
+        return code;
     }
 
-    public static List<Podcast> getExamplePodcasts(Context context) {
+    /**
+     * Load example podcasts to run tests on. These will be taken from the list
+     * of podcast suggestions.
+     * 
+     * @param context Context to load in. This needs to be able to access the
+     *            file system, you might want to use
+     *            {@link Instrumentation#getTargetContext()}.
+     * @return The list of podcast examples. These only contain the name and URL
+     *         information, {@link Podcast#parse(XmlPullParser)} has
+     *         <em>not</em> been called on them.
+     */
+    public static List<Podcast> getExamplePodcasts(final Context context) {
         return getExamplePodcasts(context, 0);
     }
 
     /**
-     * @param context Context to load in.
+     * Load example podcasts to run tests on. These will be taken from the list
+     * of podcast suggestions.
+     * 
+     * @param context Context to load in. This needs to be able to access the
+     *            file system, you might want to use
+     *            {@link Instrumentation#getTargetContext()}.
      * @param limit Limit the result to the given number of podcasts randomly
      *            chosen.
-     * @return The list of podcast examples;
+     * @return The list of podcast examples. These only contain the name and URL
+     *         information, {@link Podcast#parse(XmlPullParser)} has
+     *         <em>not</em> been called on them.
      */
-    public static List<Podcast> getExamplePodcasts(Context context, final int limit) {
+    public static List<Podcast> getExamplePodcasts(final Context context, final int limit) {
         final CountDownLatch signal = new CountDownLatch(1);
         final List<Podcast> examples = new ArrayList<Podcast>();
 
@@ -92,7 +145,8 @@ public class Utils {
 
             @Override
             public void onSuggestionsLoadProgress(Progress progress) {
-                Log.d(TEST_STATUS, "Load example podcasts task progress: " + progress);
+                // Log.d(TEST_STATUS, "Load example podcasts task progress: " +
+                // progress);
             }
 
             @Override
