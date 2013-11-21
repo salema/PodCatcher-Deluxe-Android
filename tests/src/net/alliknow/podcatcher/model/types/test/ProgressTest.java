@@ -33,5 +33,4 @@ public class ProgressTest extends TestCase {
         p = new Progress(150, 100);
         assertEquals(p.getPercentDone(), 150);
     }
-
 }
