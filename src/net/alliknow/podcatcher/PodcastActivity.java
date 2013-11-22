@@ -23,13 +23,21 @@ import android.app.FragmentManager.OnBackStackChangedListener;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.SparseBooleanArray;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
+import android.widget.ListView;
+import net.alliknow.podcatcher.listeners.ContextMenuListener;
 import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
@@ -37,6 +45,7 @@ import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadErr
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
+import net.alliknow.podcatcher.view.ContextMenuView;
 import net.alliknow.podcatcher.view.fragments.AuthorizationFragment;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
@@ -44,6 +53,7 @@ import net.alliknow.podcatcher.view.fragments.PodcastListFragment.LogoViewMode;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,7 +61,7 @@ import java.util.List;
  * state, other activities cooperate.
  */
 public class PodcastActivity extends EpisodeListActivity implements OnBackStackChangedListener,
-        OnLoadPodcastListListener, OnChangePodcastListListener, OnSelectPodcastListener {
+        OnLoadPodcastListListener, OnChangePodcastListListener, OnSelectPodcastListener, ContextMenuListener {
 
     /**
      * The request code to identify import calls
@@ -93,7 +103,11 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     private boolean needsUiUpdateOnResume;
 
     private Fragment lastFocusedFragment;
-    private boolean isMenuFocused = true;
+    private boolean isMenuFocused = false;
+
+    private PodcastMenu mMenu;
+    private ContextMenuView mEpisodeContextMenu;
+    private PodcastContextMenu mPodcastContextMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,6 +159,10 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             onNewIntent(getIntent());
 
         lastFocusedFragment = podcastListFragment;
+
+        mMenu = new PodcastMenu();
+        mEpisodeContextMenu = (ContextMenuView) findViewById(R.id.context_menu_view);
+        mPodcastContextMenu = new PodcastContextMenu();
     }
 
     @Override
@@ -162,14 +180,14 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
      */
     private void plugFragments() {
         // On small screens, add the podcast list fragment
-        if (view.isSmall() && podcastListFragment == null) {
-            podcastListFragment = new PodcastListFragment();
-            getFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.content, podcastListFragment,
-                            getString(R.string.podcast_list_fragment_tag))
-                    .commit();
-        }
+//        if (view.isSmall() && podcastListFragment == null) {
+//            podcastListFragment = new PodcastListFragment();
+//            getFragmentManager()
+//                    .beginTransaction()
+//                    .add(R.id.content, podcastListFragment,
+//                            getString(R.string.podcast_list_fragment_tag))
+//                    .commit();
+//        }
         // On small screens in landscape mode, add the episode list fragment
         if (view.isSmallLandscape() && episodeListFragment == null) {
             episodeListFragment = new EpisodeListFragment();
@@ -275,8 +293,8 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     @Override
     protected void onStart() {
         super.onStart();
-        isMenuFocused = false;
-        toggleMenuFocus();
+//        isMenuFocused = false;
+//        toggleMenuFocus();
     }
 
     @Override
@@ -323,7 +341,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         podcastListFragment.setPodcastList(podcastList);
 
         // Make action bar show number of podcasts
-        updateActionBar();
+//        updateActionBar();
 
         // If podcast list is empty we try to import from Simple Podcatcher
         if (podcastManager.size() == 0 && isInitialAppStart && !hasPodcastToAdd) {
@@ -342,6 +360,8 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             onAllPodcastsSelected();
             selection.setEpisodeFilterEnabled(true);
         }
+
+        podcastListFragment.getView().requestFocus();
     }
 
     @Override
@@ -394,7 +414,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // Update podcast list
         podcastListFragment.addPodcast(podcast);
         // Update UI
-        updateActionBar();
+//        updateActionBar();
 
         switch (view) {
             case SMALL_PORTRAIT:
@@ -421,7 +441,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // Update podcast list
         podcastListFragment.removePodcast(podcast);
         // Update UI
-        updateActionBar();
+//        updateActionBar();
 
         // Reset selection if deleted
         if (podcast.equals(selection.getPodcast()))
@@ -623,16 +643,16 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         podcastListFragment.updateLogo(logoViewMode);
     }
 
-    @Override
-    protected void updateActionBar() {
-        // Disable the home button (only used in overlaying activities)
-        getActionBar().setHomeButtonEnabled(false);
+//    @Override
+//    protected void updateActionBar() {
+//        // Disable the home button (only used in overlaying activities)
+//        getActionBar().setHomeButtonEnabled(false);
 
-        if (!view.isSmall() && selection.isAll())
-            updateActionBarSubtitleOnMultipleLoad();
-        else
-            contentSpinner.setSubtitle(null);
-    }
+//        if (!view.isSmall() && selection.isAll())
+//            updateActionBarSubtitleOnMultipleLoad();
+//        else
+//            contentSpinner.setSubtitle(null);
+//    }
 
     @Override
     protected void updateDownloadUi() {
@@ -677,77 +697,57 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                 new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, weight));
     }
 
-    private int lastDirection = View.FOCUS_RIGHT;
-
-    public void forwardMenuFocus(View view) {
-        View focus = view.focusSearch(lastDirection);
-        if (focus != null) {
-            focus.requestFocus();
-            focus = focus.focusSearch(View.FOCUS_UP);
-            if (focus != null) {
-                focus.requestFocus();
-            }
+    @Override
+    public void onBackPressed() {
+        if (mMenu.mIsOpened) {
+            // menu hides automatically
+            lastFocusedFragment.getView().requestFocus();
+            return;
         }
+        if (mEpisodeContextMenu.isOpened() || mPodcastContextMenu.mIsOpened) {
+            // menu hides automatically
+            lastFocusedFragment.getView().requestFocus();
+            return;
+        }
+        super.onBackPressed();
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case 84:                        // MENU button
-                toggleMenuFocus();
+                mMenu.toggle();
                 break;
             case KeyEvent.KEYCODE_DPAD_LEFT:
-                if (!isMenuFocused) {
+                if (!mMenu.mIsOpened && !mEpisodeContextMenu.isOpened()) {
                     boolean consumed = lastFocusedFragment.getView().dispatchKeyEvent(event);
                     if (!consumed) {
-                        moveFocusToLeft();
+                            moveFocusToLeft();
                     }
                     return true;
-                } else {
-                    lastDirection = View.FOCUS_LEFT;
                 }
                 break;
             case KeyEvent.KEYCODE_DPAD_RIGHT:
-                if (!isMenuFocused) {
                     boolean consumed = lastFocusedFragment.getView().dispatchKeyEvent(event);
                     if (!consumed) {
                         moveFocusToRight();
                     }
                     return true;
-//                } else {
-//                    if (episodeListFragment.getView().hasFocus()) {
-//                        View focus = episodeListFragment.getListView().focusSearch(View.FOCUS_RIGHT);
-//                        if (focus != null) {
-//                            focus.requestFocus();
-//                        }
-//                    }
-                } else {
-                    lastDirection = View.FOCUS_RIGHT;
-                }
-                break;
+
             case KeyEvent.KEYCODE_DPAD_UP:
-                if (isMenuFocused) {
-                    getActionBar().getCustomView().dispatchKeyEvent(event);
-                    return true;
-                } else {
-                    lastFocusedFragment.getView().dispatchKeyEvent(event);
-                    return true;
-                }
-            case KeyEvent.KEYCODE_DPAD_DOWN:
-                if (isMenuFocused) {
-                    return !getActionBar().getCustomView().isFocused();
-                }
+//                if (isMenuFocused) {
+//                    getActionBar().getCustomView().dispatchKeyEvent(event);
+//                    return true;
+//                } else {
+                lastFocusedFragment.getView().dispatchKeyEvent(event);
+                return true;
+//                }
+//            case KeyEvent.KEYCODE_DPAD_DOWN:
+//                if (isMenuFocused) {
+//                    return !getActionBar().getCustomView().isFocused();
+//                }
         }
         return super.onKeyDown(keyCode, event);
-    }
-
-    private void toggleMenuFocus() {
-        if (isMenuFocused) {
-            lastFocusedFragment.getView().requestFocus();
-        } else {
-            getActionBar().getCustomView().requestFocus();
-        }
-        isMenuFocused = !isMenuFocused;
     }
 
     private void moveFocusToLeft() {
@@ -777,6 +777,308 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     }
 
     public boolean isMenuOpened() {
-        return isMenuFocused;
+        return mMenu.mIsOpened || mEpisodeContextMenu.isOpened() || mPodcastContextMenu.mIsOpened;
+    }
+
+    @Override
+    public void onEpisodeContextMenuOpen(Episode episode) {
+        mEpisodeContextMenu.initialize(episode);
+        mEpisodeContextMenu.show();
+    }
+
+    @Override
+    public void onEpisodeContextMenuClose() {
+        mEpisodeContextMenu.hide();
+        lastFocusedFragment.getView().requestFocus();
+    }
+
+    @Override
+    public void onPodcastContextMenuOpen(Podcast podcast) {
+        mPodcastContextMenu.show(podcast);
+    }
+
+    @Override
+    public void onPodcastContextMenuClose() {
+        mPodcastContextMenu.hide();
+    }
+
+    public class PodcastMenu implements AdapterView.OnItemClickListener, View.OnFocusChangeListener {
+
+        private static final int ITEM_ADD_PODCAST = 0;
+        private static final int ITEM_REVERSE_ORDER = 1;
+        private static final int ITEM_FILTER = 2;
+        private static final int ITEM_SELECT_ALL = 3;
+        private static final int ITEM_DOWNLOADS = 4;
+        private static final int ITEM_PLAYLIST = 5;
+        private static final int ITEM_PREFERENCES = 6;
+        private static final int ITEM_HELP = 7;
+        private static final int ITEM_ABOUT = 8;
+
+        boolean mIsOpened = false;
+
+        ListView lvMenu;
+
+        public PodcastMenu() {
+            lvMenu = (ListView) findViewById(R.id.main_menu);
+            lvMenu.setAdapter(
+                    new ArrayAdapter<String>(PodcastActivity.this, android.R.layout.simple_list_item_1, formList())
+            );
+            lvMenu.setOnItemClickListener(this);
+        }
+
+        private List<String> formList() {
+            List<String> list = new ArrayList<String>(6);
+            list.add(getString(R.string.menu_add));
+            list.add(getString(R.string.menu_reverse_order));
+            list.add(getString(R.string.menu_filter));
+            list.add(getString(R.string.podcast_select_all));
+            list.add(getString(R.string.downloads));
+            list.add(getString(R.string.playlist));
+            list.add(getString(R.string.preferences));
+            list.add(getString(R.string.help));
+            list.add(getString(R.string.about));
+            return list;
+        }
+
+        public void show() {
+            lvMenu.setVisibility(View.VISIBLE);
+            lvMenu.setEnabled(true);
+            mIsOpened = true;
+            Animation animation = AnimationUtils.loadAnimation(PodcastActivity.this, R.anim.menu_show);
+            lvMenu.setAnimation(animation);
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    selectFirst();
+                    lvMenu.requestFocus();
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+            lvMenu.setOnFocusChangeListener(this);
+        }
+
+        public void hide() {
+            if (!mIsOpened) {
+                return;
+            }
+            lvMenu.clearFocus();
+            mIsOpened = false;
+            lvMenu.setAnimation(AnimationUtils.loadAnimation(PodcastActivity.this, R.anim.menu_hide));
+            lvMenu.setVisibility(View.INVISIBLE);
+            lvMenu.setEnabled(false);
+            lvMenu.setOnFocusChangeListener(null);
+
+            lastFocusedFragment.getView().requestFocus();
+        }
+
+        public void toggle() {
+            if (mIsOpened) {
+                hide();
+            } else {
+                show();
+            }
+        }
+
+        private void selectFirst() {
+            if (lvMenu != null) {
+                lvMenu.setSelection(0);
+            }
+        }
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            switch (position) {
+                case ITEM_ADD_PODCAST:
+                    startActivity(new Intent(PodcastActivity.this, AddPodcastActivity.class));
+                    break;
+
+                case ITEM_REVERSE_ORDER:
+                    onReverseOrder();
+                    break;
+
+                case ITEM_FILTER:
+                    onToggleFilter();
+                    break;
+
+//                case ITEM_DOWNLOAD:
+//                    onToggleDownload();
+//                    break;
+
+                case ITEM_SELECT_ALL:
+                    onAllPodcastsSelected();
+                    break;
+
+                case ITEM_DOWNLOADS:
+                    onDownloadsSelected();
+                    break;
+
+                case ITEM_PLAYLIST:
+                    onPlaylistSelected();
+                    break;
+
+                case ITEM_PREFERENCES:
+                    startActivity(new Intent(PodcastActivity.this, SettingsActivity.class));
+                    break;
+
+                case ITEM_HELP:
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_HELPSITE)));
+                    } catch (ActivityNotFoundException e) {
+                        // We are in a restricted profile without a browser
+                        showToast(getString(R.string.no_browser));
+                    }
+                    break;
+
+                case ITEM_ABOUT:
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_WEBSITE)));
+                    } catch (ActivityNotFoundException e) {
+                        // We are in a restricted profile without a browser
+                        showToast(getString(R.string.no_browser));
+                    }
+                    break;
+            }
+
+            hide();
+        }
+
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (!hasFocus) {
+                hide();
+            }
+        }
+    }
+
+    public class PodcastContextMenu implements AdapterView.OnItemClickListener, View.OnFocusChangeListener {
+
+        private static final int ITEM_DOWNLOAD_PODCAST = 0;
+        private static final int ITEM_REMOVE_PODCAST = 1;
+
+        boolean mIsOpened = false;
+        Podcast mPodcast;
+
+        ListView lvMenu;
+
+        public PodcastContextMenu() {
+            lvMenu = (ListView) findViewById(R.id.podcast_context_menu);
+            lvMenu.setAdapter(
+                    new ArrayAdapter<String>(PodcastActivity.this, android.R.layout.simple_list_item_1, formList())
+            );
+            lvMenu.setOnItemClickListener(this);
+        }
+
+        private List<String> formList() {
+            List<String> list = new ArrayList<String>(2);
+            list.add(getString(R.string.podcast_context_download));
+            list.add(getString(R.string.podcast_context_remove));
+            return list;
+        }
+
+        public void show(Podcast podcast) {
+            mPodcast = podcast;
+            lvMenu.setVisibility(View.VISIBLE);
+            lvMenu.setEnabled(true);
+            mIsOpened = true;
+            Animation animation = AnimationUtils.loadAnimation(PodcastActivity.this, R.anim.menu_show);
+            lvMenu.setAnimation(animation);
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    selectFirst();
+                    lvMenu.requestFocus();
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+            lvMenu.setOnFocusChangeListener(this);
+        }
+
+        public void hide() {
+            if (!mIsOpened) {
+                return;
+            }
+            lvMenu.clearFocus();
+            mIsOpened = false;
+            lvMenu.setAnimation(AnimationUtils.loadAnimation(PodcastActivity.this, R.anim.menu_hide));
+            lvMenu.setVisibility(View.INVISIBLE);
+            lvMenu.setEnabled(false);
+            lvMenu.setOnFocusChangeListener(null);
+            mPodcast = null;
+
+            lastFocusedFragment.getView().requestFocus();
+        }
+
+        public void toggle(Podcast podcast) {
+            if (mIsOpened) {
+                hide();
+            } else {
+                show(podcast);
+            }
+        }
+
+        private void selectFirst() {
+            if (lvMenu != null) {
+                lvMenu.setSelection(0);
+            }
+        }
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            // Get the checked positions
+//            SparseBooleanArray checkedItems = podcastListFragment.getListView().getCheckedItemPositions();
+//            ArrayList<Integer> positions = new ArrayList<Integer>();
+//
+//            // Prepare list of podcast positions to send to the triggered activity
+//            for (int index = 0; index < podcastListFragment.getListView().getCount(); index++)
+//                if (checkedItems.get(index))
+//                    positions.add(index);
+
+            ArrayList<Integer> positions = new ArrayList<Integer>(1);
+            positions.add(podcastManager.indexOf(mPodcast));
+
+            switch (position) {
+                case ITEM_DOWNLOAD_PODCAST:
+                    // Prepare export activity
+                    Intent export = new Intent(PodcastActivity.this, ExportOpmlActivity.class);
+                    export.putIntegerArrayListExtra(PODCAST_POSITION_LIST_KEY, positions);
+
+                    // Go export podcasts
+                    startActivity(export);
+                    break;
+
+                case ITEM_REMOVE_PODCAST:
+                    // Prepare deletion activity
+                    Intent remove = new Intent(PodcastActivity.this, RemovePodcastActivity.class);
+                    remove.putIntegerArrayListExtra(PODCAST_POSITION_LIST_KEY, positions);
+
+                    // Go remove podcasts
+                    startActivity(remove);
+                    break;
+            }
+
+            hide();
+        }
+
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (!hasFocus) {
+                hide();
+            }
+        }
+
     }
 }

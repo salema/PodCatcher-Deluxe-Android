@@ -22,7 +22,7 @@
         android:id="@+id/sort_menuitem"
         android:icon="@drawable/ic_menu_sort"
         android:showAsAction="always"
-        android:title="@string/episodes_sort_toggle"
+        android:title="@string/menu_reverse_order"
         android:orderInCategory="2" />
     <item
         android:id="@+id/filter_menuitem"

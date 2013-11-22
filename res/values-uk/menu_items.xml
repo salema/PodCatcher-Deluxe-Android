@@ -2,19 +2,19 @@
 <resources>
 
     <!-- Options menu -->
-    <string name="menu_add">Добавить подкаст</string>
-    <string name="menu_reverse_order">В обратном порядке</string>
-    <string name="menu_filter">Отфильтровывать старые</string>
+    <string name="menu_add">Додати подкаст</string>
+    <string name="menu_reverse_order">У зворотньому порядку</string>
+    <string name="menu_filter">Фiльтрувати преглянуте</string>
 
-    <string name="podcast_context_download">Скачать подкаст</string>
-    <string name="podcast_context_remove">Удалить подкаст</string>
+    <string name="podcast_context_download">Скачати подкаст</string>
+    <string name="podcast_context_remove">Видалити подкаст</string>
 
     <!-- Episode context menu -->
-    <string name="context_play">Воспроизведение</string>
-    <string name="context_mark_old">Пометить как просмотренный</string>
-    <string name="context_mark_new">Пометить как новый</string>
-    <string name="context_playlist_add">Добавить в плейлист</string>
-    <string name="context_playlist_remove">Удалить из плейлиста</string>
-    <string name="context_download">Скачать</string>
+    <string name="context_play">Грати</string>
+    <string name="context_mark_old">Маркувати як переглянутий</string>
+    <string name="context_mark_new">Маркувати як новий</string>
+    <string name="context_playlist_add">Додати до плейлиста</string>
+    <string name="context_playlist_remove">Видалити з плейлиста</string>
+    <string name="context_download">Скачати</string>
 
 </resources>

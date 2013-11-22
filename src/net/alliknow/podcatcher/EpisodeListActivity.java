@@ -82,11 +82,11 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         super.onCreate(savedInstanceState);
 
         // Create the content mode spinner and add it to the action bar
-        contentSpinner = new ContentSpinner(this, this);
-        getActionBar().setCustomView(contentSpinner);
+//        contentSpinner = new ContentSpinner(this, this);
+//        getActionBar().setCustomView(contentSpinner);
         // Make sure the action bar has the right display options set
-        getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM
-                | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_USE_LOGO);
+//        getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM
+//                | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_USE_LOGO);
     }
 
     @Override
@@ -226,7 +226,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                     podcastManager.load(podcast);
 
                 // Action bar needs update after loading has started
-                updateActionBar();
+//                updateActionBar();
                 break;
             case SMALL_PORTRAIT:
                 // This case should be handled by sub-classes
@@ -268,7 +268,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         updateEpisodeListUi();
 
         // Update other UI
-        updateActionBar();
+//        updateActionBar();
         updateSortingUi();
         updateFilterUi();
         updateDividerUi();
@@ -316,7 +316,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         updateEpisodeListUi();
 
         // Update other UI
-        updateActionBar();
+//        updateActionBar();
         updateSortingUi();
         updateFilterUi();
         updateDividerUi();
@@ -372,7 +372,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             episodeManager.download(podcast.getEpisodes().get(0));
 
         // Update other UI
-        updateActionBar();
+//        updateActionBar();
         updateSortingUi();
         updateFilterUi();
     }
@@ -419,7 +419,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         }
 
         // Update other UI
-        updateActionBar();
+//        updateActionBar();
         updateSortingUi();
         updateFilterUi();
     }
@@ -620,29 +620,29 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     /**
      * Set the action bar subtitle to reflect multiple podcast load progress
      */
-    protected void updateActionBarSubtitleOnMultipleLoad() {
-        final int podcastCount = podcastManager.size();
-        final int loadingPodcastCount = podcastManager.getLoadCount();
-
-        // Load finished for all podcasts and there are episode
-        if (loadingPodcastCount == 0 && currentEpisodeSet != null) {
-            final int episodeCount = currentEpisodeSet.size();
-
-            if (episodeCount == 0)
-                contentSpinner.setSubtitle(null);
-            else
-                contentSpinner.setSubtitle(getResources()
-                        .getQuantityString(R.plurals.episodes, episodeCount, episodeCount));
-        }
-        // Load finished but no episodes
-        else if (loadingPodcastCount == 0)
-            contentSpinner.setSubtitle(getResources()
-                    .getQuantityString(R.plurals.podcasts, podcastCount, podcastCount));
-        // Load in progress
-        else
-            contentSpinner.setSubtitle(getString(R.string.podcast_load_multiple_progress,
-                    (podcastCount - loadingPodcastCount), podcastCount));
-    }
+//    protected void updateActionBarSubtitleOnMultipleLoad() {
+//        final int podcastCount = podcastManager.size();
+//        final int loadingPodcastCount = podcastManager.getLoadCount();
+//
+//        // Load finished for all podcasts and there are episode
+//        if (loadingPodcastCount == 0 && currentEpisodeSet != null) {
+//            final int episodeCount = currentEpisodeSet.size();
+//
+//            if (episodeCount == 0)
+//                contentSpinner.setSubtitle(null);
+//            else
+//                contentSpinner.setSubtitle(getResources()
+//                        .getQuantityString(R.plurals.episodes, episodeCount, episodeCount));
+//        }
+//        // Load finished but no episodes
+//        else if (loadingPodcastCount == 0)
+//            contentSpinner.setSubtitle(getResources()
+//                    .getQuantityString(R.plurals.podcasts, podcastCount, podcastCount));
+//        // Load in progress
+//        else
+//            contentSpinner.setSubtitle(getString(R.string.podcast_load_multiple_progress,
+//                    (podcastCount - loadingPodcastCount), podcastCount));
+//    }
 
     /**
      * Set the current episode list to show in the episode list fragment using
@@ -675,7 +675,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                     Iterator<Episode> iterator = filteredList.iterator();
 
                     while (iterator.hasNext())
-                        if (episodeManager.getState(iterator.next()))
+                        if (episodeManager.isOld(iterator.next()))
                             iterator.remove();
                 }
 
@@ -754,7 +754,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             return PreferenceManager.getDefaultSharedPreferences(this)
                     .getBoolean(SettingsActivity.AUTO_DOWNLOAD_KEY, false)
                     && ((Podcatcher) getApplication()).isOnFastConnection()
-                    && !episodeManager.getState(latestEpisode);
+                    && !episodeManager.isOld(latestEpisode);
         }
     }
 }

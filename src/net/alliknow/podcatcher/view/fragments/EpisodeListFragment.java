@@ -21,19 +21,13 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.SparseBooleanArray;
 import android.view.*;
-import android.widget.AbsListView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.*;
 
+import net.alliknow.podcatcher.ContextMenuEpisodeDialog;
 import net.alliknow.podcatcher.PodcastActivity;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
-import net.alliknow.podcatcher.listeners.EpisodeListContextListener;
-import net.alliknow.podcatcher.listeners.OnReorderEpisodeListener;
-import net.alliknow.podcatcher.listeners.OnReverseSortingListener;
-import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
-import net.alliknow.podcatcher.listeners.OnToggleFilterListener;
+import net.alliknow.podcatcher.listeners.*;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.view.EpisodeListItemView;
@@ -45,7 +39,8 @@ import java.util.List;
 /**
  * List fragment to display the list of episodes.
  */
-public class EpisodeListFragment extends PodcatcherListFragment implements ReorderCallback {
+public class EpisodeListFragment extends PodcatcherListFragment implements ReorderCallback,
+        AdapterView.OnItemSelectedListener {
 
     /**
      * The list of episodes we are currently showing.
@@ -142,6 +137,8 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
      */
     private boolean viewCreated = false;
 
+    private ContextMenuEpisodeDialog contextMenu;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -163,7 +160,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
     }
 
     @Override
@@ -188,7 +185,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
         viewCreated = true;
 
         // Set list choice listener (context action mode)
-        getListView().setMultiChoiceModeListener(new EpisodeListContextListener(this));
+//        getListView().setMultiChoiceModeListener(new EpisodeListContextListener(this));
 
         // Create and set the swipe-to-reorder listener on the listview.
         swipeReorderListener = new SwipeReorderListViewTouchListener(getListView(), this);
@@ -203,42 +200,24 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
             setShowTopProgress(showTopProgressBar);
         }
 
-        getListView().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    return;
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if (contextMenu != null && contextMenu.isShowing()) {
+                    contextMenu.dismiss();
                 }
-                if (getActivity() instanceof PodcastActivity && ((PodcastActivity) getActivity()).isMenuOpened()) {
-                    ((PodcastActivity)getActivity()).forwardMenuFocus(v);
-                }
+
+                Episode episode = (Episode) getListAdapter().getItem(position);
+
+//                contextMenu = new ContextMenuEpisodeDialog(getActivity(), episode);
+//                contextMenu.show();
+
+                ((ContextMenuListener) getActivity()).onEpisodeContextMenuOpen(episode);
+
+                return true;
             }
         });
-//        getListView().setOnKeyListener(new View.OnKeyListener() {
-//            @Override
-//            public boolean onKey(View v, int keyCode, KeyEvent event) {
-//                if (event.getAction() != KeyEvent.ACTION_DOWN) {
-//                    return false;
-//                }
-//                int direction;
-//                switch (keyCode) {
-//                    case KeyEvent.KEYCODE_DPAD_RIGHT:
-//                        direction = View.FOCUS_RIGHT;
-//                        break;
-//                    case KeyEvent.KEYCODE_DPAD_LEFT:
-//                        direction = View.FOCUS_LEFT;
-//                        break;
-//                    default:
-//                        return false;
-//                }
-//                View focus = v.focusSearch(direction);
-//                if (focus != null) {
-//                    focus.requestFocus();
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
+        getListView().setOnItemSelectedListener(this);
     }
 
     @Override
@@ -274,9 +253,30 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
 
     @Override
     public void onListItemClick(ListView list, View view, int position, long id) {
-        // Find selected episode and alert listener
         Episode selectedEpisode = (Episode) adapter.getItem(position);
-        episodeSelectionListener.onEpisodeSelected(selectedEpisode);
+        if (getListView().isInTouchMode()) {
+            // Find selected episode and alert listener
+            episodeSelectionListener.onEpisodeSelected(selectedEpisode);
+        } else {
+            // TODO: start playing
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        if (!getListView().isInTouchMode()) {
+            episodeSelectionListener.onNoEpisodeSelected();
+        }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        // If we are being controlled by remote, we need to select episode when user selects it in the list
+        if (!getListView().isInTouchMode()) {
+            // Find selected episode and alert listener
+            Episode selectedEpisode = (Episode) adapter.getItem(position);
+            episodeSelectionListener.onEpisodeSelected(selectedEpisode);
+        }
     }
 
     @Override
@@ -358,8 +358,8 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
             }
 
             // This will clear all check states and end the context mode
-            if (shouldResetAllCheckedStates)
-                getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
+//            if (shouldResetAllCheckedStates)
+//                getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
 
             // Update other UI elements
             if (episodeList.isEmpty())

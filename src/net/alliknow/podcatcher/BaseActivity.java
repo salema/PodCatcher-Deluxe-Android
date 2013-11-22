@@ -314,43 +314,43 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
             textView.setGravity(Gravity.CENTER);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Add generic menu items (help, web site...)
-        getMenuInflater().inflate(R.menu.podcatcher, menu);
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Add generic menu items (help, web site...)
+//        getMenuInflater().inflate(R.menu.podcatcher, menu);
+//
+//        return true;
+//    }
 
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.settings_menuitem:
-                startActivity(new Intent(this, SettingsActivity.class));
-
-                return true;
-            case R.id.about_menuitem:
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_WEBSITE)));
-                } catch (ActivityNotFoundException e) {
-                    // We are in a restricted profile without a browser
-                    showToast(getString(R.string.no_browser));
-                }
-
-                return true;
-            case R.id.help_menuitem:
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_HELPSITE)));
-                } catch (ActivityNotFoundException e) {
-                    // We are in a restricted profile without a browser
-                    showToast(getString(R.string.no_browser));
-                }
-
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.settings_menuitem:
+//                startActivity(new Intent(this, SettingsActivity.class));
+//
+//                return true;
+//            case R.id.about_menuitem:
+//                try {
+//                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_WEBSITE)));
+//                } catch (ActivityNotFoundException e) {
+//                    // We are in a restricted profile without a browser
+//                    showToast(getString(R.string.no_browser));
+//                }
+//
+//                return true;
+//            case R.id.help_menuitem:
+//                try {
+//                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_HELPSITE)));
+//                } catch (ActivityNotFoundException e) {
+//                    // We are in a restricted profile without a browser
+//                    showToast(getString(R.string.no_browser));
+//                }
+//
+//                return true;
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//    }
 
     @Override
     protected void onDestroy() {

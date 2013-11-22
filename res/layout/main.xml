@@ -17,36 +17,91 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
-    <FrameLayout
-        android:id="@+id/content"
+
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_width="0dp"
-        android:layout_weight="2" />
-    <View
-        android:id="@+id/divider_first"
-        android:layout_width="@dimen/divider_width"
-        android:layout_height="match_parent"
-        android:background="@color/divider_off" />
+        >
+
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="3"
-        android:orientation="vertical">
-        <FrameLayout
-            android:id="@+id/right"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
         <fragment
-            class="net.alliknow.podcatcher.view.fragments.PlayerFragment"
-            android:id="@+id/player"
-            android:tag="@string/player_fragment_tag"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent" />
+                class="net.alliknow.podcatcher.view.fragments.PodcastListFragment"
+                android:id="@+id/podcast_list"
+                android:tag="@string/podcast_list_fragment_tag"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"/>
+        <View
+                android:id="@+id/divider_first"
+                android:layout_width="@dimen/divider_width"
+                android:layout_height="match_parent"
+                android:background="@color/divider_off"/>
+        <fragment
+                class="net.alliknow.podcatcher.view.fragments.EpisodeListFragment"
+                android:id="@+id/episode_list"
+                android:tag="@string/episode_list_fragment_tag"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"/>
+        <View
+                android:id="@+id/divider_second"
+                android:layout_width="@dimen/divider_width"
+                android:layout_height="match_parent"
+                android:background="@color/divider_off"/>
+        <LinearLayout
+                android:id="@+id/right_column"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:orientation="vertical">
+            <fragment
+                    class="net.alliknow.podcatcher.view.fragments.EpisodeFragment"
+                    android:id="@+id/episode"
+                    android:tag="@string/episode_fragment_tag"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+            <fragment
+                    class="net.alliknow.podcatcher.view.fragments.PlayerFragment"
+                    android:id="@+id/player"
+                    android:tag="@string/player_fragment_tag"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"/>
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+
+    <ListView
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:choiceMode="singleChoice"
+            android:visibility="invisible"
+            android:background="#EEEEEE"
+            android:id="@+id/main_menu"
+            />
+
+    <ListView
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:choiceMode="singleChoice"
+            android:visibility="invisible"
+            android:background="#EEEEEE"
+            android:id="@+id/podcast_context_menu"
+            />
+
+    <net.alliknow.podcatcher.view.ContextMenuView
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:visibility="invisible"
+            android:background="#EEEEEE"
+            android:id="@+id/context_menu_view"
+            />
+
+
+</RelativeLayout>

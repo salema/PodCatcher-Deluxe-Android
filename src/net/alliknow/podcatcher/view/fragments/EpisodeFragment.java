@@ -161,7 +161,7 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
     }
 
     @Override

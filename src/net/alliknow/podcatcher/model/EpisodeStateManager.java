@@ -115,7 +115,7 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
      * @return The state: <code>true</code> if the episode is marked old,
      *         <code>false</code> otherwise.
      */
-    public boolean getState(Episode episode) {
+    public boolean isOld(Episode episode) {
         if (episode != null && episode.getMediaUrl() != null && metadata != null) {
             EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
 
@@ -137,7 +137,7 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
 
         if (podcast != null)
             for (Episode episode : podcast.getEpisodes())
-                if (!getState(episode))
+                if (!isOld(episode))
                     count++;
 
         return count;

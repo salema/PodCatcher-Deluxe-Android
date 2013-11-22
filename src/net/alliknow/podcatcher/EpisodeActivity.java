@@ -158,7 +158,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
     protected void onResume() {
         super.onResume();
 
-        updateActionBar();
+//        updateActionBar();
         updatePlayerUi();
         updateVideoSurface();
     }
@@ -468,7 +468,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
      * Update the action bar to reflect current selection and loading state.
      * Sub-classes need to overwrite.
      */
-    protected abstract void updateActionBar();
+//    protected abstract void updateActionBar();
 
     /**
      * Update all UI related to the download state of the current selection.
@@ -503,7 +503,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
         // The episode fragment might be popped out if we are in small landscape
         // view mode and the episode list is currently visible
         if (episodeFragment != null)
-            episodeFragment.setNewIconVisibility(!episodeManager.getState(selection.getEpisode()));
+            episodeFragment.setNewIconVisibility(!episodeManager.isOld(selection.getEpisode()));
     }
 
     /**

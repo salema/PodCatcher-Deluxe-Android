@@ -255,7 +255,7 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
             if (checkedItems.get(position)) {
                 Episode episode = (Episode) fragment.getListAdapter().getItem(position);
 
-                if (episodeManager.getState(episode))
+                if (episodeManager.isOld(episode))
                     newMenuItem.setVisible(true);
                 else
                     oldMenuItem.setVisible(true);

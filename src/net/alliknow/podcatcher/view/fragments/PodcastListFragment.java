@@ -22,25 +22,22 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.ListView;
 
-import net.alliknow.podcatcher.AddPodcastActivity;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.PodcastListAdapter;
+import net.alliknow.podcatcher.listeners.ContextMenuListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
-import net.alliknow.podcatcher.listeners.PodcastListContextListener;
+import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.PodcastListItemView;
@@ -51,22 +48,34 @@ import java.util.List;
 /**
  * List fragment to display the list of podcasts.
  */
-public class PodcastListFragment extends PodcatcherListFragment {
+public class PodcastListFragment extends PodcatcherListFragment implements AdapterView.OnItemSelectedListener {
 
-    /** The listener call-back to alert on podcast selection */
+    /**
+     * The listener call-back to alert on podcast selection
+     */
     private OnSelectPodcastListener podcastSelectionListener;
 
-    /** The list of podcasts currently shown */
+    /**
+     * The list of podcasts currently shown
+     */
     private List<Podcast> currentPodcastList;
 
-    /** The logo view */
+    /**
+     * The logo view
+     */
     private ImageView logoView;
-    /** The logo view height used to make it square */
+    /**
+     * The logo view height used to make it square
+     */
     private int logoViewHeight;
-    /** The current logo view mode */
+    /**
+     * The current logo view mode
+     */
     private LogoViewMode logoViewMode = LogoViewMode.SMALL;
 
-    /** The options available for the logo view */
+    /**
+     * The options available for the logo view
+     */
     public static enum LogoViewMode {
         /**
          * Do not show the podcast logo
@@ -82,16 +91,26 @@ public class PodcastListFragment extends PodcatcherListFragment {
          * Show large podcast logo at the bottom
          */
         LARGE
-    };
+    }
 
-    /** Flag for animation currently running */
+    ;
+
+    /**
+     * Flag for animation currently running
+     */
     private boolean animating = false;
-    /** The podcast add and remove animation duration */
+    /**
+     * The podcast add and remove animation duration
+     */
     private int addRemoveDuration;
-    /** The logo view slide animation duration */
+    /**
+     * The logo view slide animation duration
+     */
     private int slideDuration;
 
-    /** Status flag indicating that our view is created */
+    /**
+     * Status flag indicating that our view is created
+     */
     private boolean viewCreated = false;
 
     @Override
@@ -114,7 +133,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
 
         // Make the UI show to be working once it is up
         showProgress = true;
@@ -122,7 +141,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
 
         return inflater.inflate(R.layout.podcast_list, container, false);
     }
@@ -151,7 +170,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
                 });
 
         // Set list choice listener (context action mode)
-        getListView().setMultiChoiceModeListener(new PodcastListContextListener(this));
+//        getListView().setMultiChoiceModeListener(new PodcastListContextListener(this));
 
         // Consider the view created successfully beyond this point
         viewCreated = true;
@@ -163,26 +182,36 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
         // Make sure logo view mode is set
         updateLogo(logoViewMode);
+
+        final ContextMenuListener listener = (ContextMenuListener) getActivity();
+        getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Podcast podcast = PodcastManager.getInstance().getPodcastList().get(position);
+                listener.onPodcastContextMenuOpen(podcast);
+                return false;
+            }
+        });
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-
-        inflater.inflate(R.menu.podcast_list, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.podcast_add_menuitem:
-                startActivity(new Intent(getActivity(), AddPodcastActivity.class));
-
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        super.onCreateOptionsMenu(menu, inflater);
+//
+//        inflater.inflate(R.menu.podcast_list, menu);
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.podcast_add_menuitem:
+//                startActivity(new Intent(getActivity(), AddPodcastActivity.class));
+//
+//                return true;
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//    }
 
     @Override
     public void onListItemClick(ListView list, View view, int position, long id) {
@@ -190,6 +219,21 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
         // Alert parent activity
         podcastSelectionListener.onPodcastSelected(selectedPodcast);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Podcast selectedPodcast = (Podcast) adapter.getItem(position);
+        if (!getListView().isInTouchMode()) {
+            podcastSelectionListener.onPodcastSelected(selectedPodcast);
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+//        if (!getListView().isInTouchMode()) {
+//            podcastSelectionListener.onNoPodcastSelected();
+//        }
     }
 
     @Override
@@ -203,7 +247,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
      * Set the list of podcasts to show in this fragment. You can call this any
      * time and the view will catch up as soon as it is created. This will also
      * reset any selection.
-     * 
+     *
      * @param podcastList List of podcasts to show.
      */
     public void setPodcastList(List<Podcast> podcastList) {
@@ -231,7 +275,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
     /**
      * Add a podcast to the list shown. Use this instead of
      * {@link #setPodcastList(List)} if you want a nice, animated addition.
-     * 
+     *
      * @param podcast Podcast to add.
      */
     public void addPodcast(Podcast podcast) {
@@ -255,7 +299,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
     /**
      * Remove a podcast from the list shown. Use this instead of
      * {@link #setPodcastList(List)} if you want a nice, animated removal.
-     * 
+     *
      * @param podcast Podcast to remove.
      */
     public void removePodcast(final Podcast podcast) {
@@ -278,7 +322,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
                                 listItemView.setAlpha(1f);
                             }
                         });
-            // Not visible, simply remove the podcast
+                // Not visible, simply remove the podcast
             else if (currentPodcastList.remove(podcast))
                 ((PodcastListAdapter) adapter).updateList(currentPodcastList);
         }
@@ -287,7 +331,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
     /**
      * Show progress for a certain position in the podcast list. Progress will
      * ignored if the item is not visible.
-     * 
+     *
      * @param position Position in list to show progress for.
      * @param progress Progress information to show.
      */
@@ -306,7 +350,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
     /**
      * Set the logo view mode. This will also update the logo(s) showing if
      * possible or needed.
-     * 
+     *
      * @param mode The logo view mode to use.
      */
     public void updateLogo(LogoViewMode mode) {

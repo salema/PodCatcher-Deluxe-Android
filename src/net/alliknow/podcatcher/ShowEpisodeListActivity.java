@@ -55,11 +55,11 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
                 episodeListFragment = new EpisodeListFragment();
                 episodeListFragment.setThemeColors(themeColor, lightThemeColor);
 
-                getFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.content, episodeListFragment,
-                                getString(R.string.episode_list_fragment_tag))
-                        .commit();
+//                getFragmentManager()
+//                        .beginTransaction()
+//                        .add(R.id.content, episodeListFragment,
+//                                getString(R.string.episode_list_fragment_tag))
+//                        .commit();
             }
 
             // 3. Register the listeners needed to function as a controller
@@ -135,7 +135,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         for (Podcast podcast : podcastManager.getPodcastList())
             podcastManager.load(podcast);
 
-        updateActionBar();
+//        updateActionBar();
     }
 
     @Override
@@ -177,38 +177,38 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
             episodeListFragment.setShowTopProgress(podcastManager.getLoadCount() > 0);
     }
 
-    @Override
-    protected void updateActionBar() {
-        contentSpinner.setTitle(getString(R.string.app_name));
-
-        switch (selection.getMode()) {
-            case SINGLE_PODCAST:
-                if (!selection.isPodcastSet())
-                    contentSpinner.setSubtitle(null);
-                else {
-                    if (selection.getPodcast().getEpisodes().isEmpty())
-                        contentSpinner.setSubtitle(null);
-                    else {
-                        final int episodeCount = selection.getPodcast().getEpisodeNumber();
-                        contentSpinner.setSubtitle(getResources()
-                                .getQuantityString(R.plurals.episodes, episodeCount, episodeCount));
-                    }
-                }
-                break;
-            case ALL_PODCASTS:
-                updateActionBarSubtitleOnMultipleLoad();
-                break;
-            case DOWNLOADS:
-                contentSpinner.setSubtitle(getString(R.string.downloads));
-                break;
-            case PLAYLIST:
-                contentSpinner.setSubtitle(getString(R.string.playlist));
-                break;
-        }
-
-        // Enable navigation
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-    }
+//    @Override
+//    protected void updateActionBar() {
+//        contentSpinner.setTitle(getString(R.string.app_name));
+//
+//        switch (selection.getMode()) {
+//            case SINGLE_PODCAST:
+//                if (!selection.isPodcastSet())
+//                    contentSpinner.setSubtitle(null);
+//                else {
+//                    if (selection.getPodcast().getEpisodes().isEmpty())
+//                        contentSpinner.setSubtitle(null);
+//                    else {
+//                        final int episodeCount = selection.getPodcast().getEpisodeNumber();
+//                        contentSpinner.setSubtitle(getResources()
+//                                .getQuantityString(R.plurals.episodes, episodeCount, episodeCount));
+//                    }
+//                }
+//                break;
+//            case ALL_PODCASTS:
+//                updateActionBarSubtitleOnMultipleLoad();
+//                break;
+//            case DOWNLOADS:
+//                contentSpinner.setSubtitle(getString(R.string.downloads));
+//                break;
+//            case PLAYLIST:
+//                contentSpinner.setSubtitle(getString(R.string.playlist));
+//                break;
+//        }
+//
+//        // Enable navigation
+//        getActionBar().setDisplayHomeAsUpEnabled(true);
+//    }
 
     @Override
     protected void updatePlayerUi() {

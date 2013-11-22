@@ -27,4 +27,9 @@
     <dimen name="suggestion_add_padding">8dp</dimen>
     <dimen name="progress_bar_horizontal_height">6dp</dimen>
     <integer name="progress_bar_horizontal_weight">3</integer>
+
+    <dimen name="menu_width">300dp</dimen>
+    <integer name="menu_width_delta">300</integer>
+    <integer name="menu_width_minus_delta">-300</integer>
+    <integer name="menu_anim_duration">800</integer>
 </resources>

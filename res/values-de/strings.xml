@@ -81,7 +81,7 @@
     <string name="episodes_old">Alt</string>
     <string name="episodes_filter_all">Alle</string>
     <string name="episodes_filter_new">Neue</string>
-    <string name="episodes_sort_toggle">Reihenfolge umdrehen</string>
+    <string name="menu_reverse_order">Reihenfolge umdrehen</string>
     <string name="download">Download</string>
     <string name="downloads">Downloads</string>
     <plurals name="downloads_remove_title">

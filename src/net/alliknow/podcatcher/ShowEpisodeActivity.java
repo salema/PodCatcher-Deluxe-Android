@@ -45,14 +45,14 @@ public class ShowEpisodeActivity extends EpisodeActivity {
             // 2. Set, find, create the fragments
             findFragments();
             // During initial setup, plug in the details fragment.
-            if (savedInstanceState == null && episodeFragment == null) {
-                episodeFragment = new EpisodeFragment();
-                getFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.content, episodeFragment,
-                                getString(R.string.episode_fragment_tag))
-                        .commit();
-            }
+//            if (savedInstanceState == null && episodeFragment == null) {
+//                episodeFragment = new EpisodeFragment();
+//                getFragmentManager()
+//                        .beginTransaction()
+//                        .add(R.id.content, episodeFragment,
+//                                getString(R.string.episode_fragment_tag))
+//                        .commit();
+//            }
 
             // 3. Register the listeners needed to function as a controller
             registerListeners();
@@ -96,12 +96,12 @@ public class ShowEpisodeActivity extends EpisodeActivity {
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
     }
 
-    @Override
-    protected void updateActionBar() {
-        getActionBar().setTitle(R.string.app_name);
-        getActionBar().setSubtitle(null);
-
-        // Enable navigation
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-    }
+//    @Override
+//    protected void updateActionBar() {
+//        getActionBar().setTitle(R.string.app_name);
+//        getActionBar().setSubtitle(null);
+//
+//        // Enable navigation
+//        getActionBar().setDisplayHomeAsUpEnabled(true);
+//    }
 }

@@ -81,7 +81,6 @@
     <string name="episodes_old">Old</string>
     <string name="episodes_filter_all">All</string>
     <string name="episodes_filter_new">New</string>
-    <string name="episodes_sort_toggle">Reverse order</string>
     <string name="download">Download</string>
     <string name="downloads">Downloads</string>
     <plurals name="downloads_remove_title">

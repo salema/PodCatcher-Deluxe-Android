@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.listeners.ContextMenuListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.view.EpisodeListItemView;
 
@@ -37,6 +38,9 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
     /** Whether the podcast name should be shown */
     protected boolean showPodcastNames = false;
 
+//    private ContextMenuEpisodeDialog contextMenu;
+    ContextMenuListener listener;
+
     /**
      * Create new adapter.
      * 
@@ -47,6 +51,9 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
         super(context);
 
         this.list = episodeList;
+        if (context instanceof ContextMenuListener) {
+            this.listener = (ContextMenuListener) context;
+        }
     }
 
     /**
@@ -97,6 +104,7 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
         // Make the view represent episode at given position
         returnView.show((Episode) getItem(position), showPodcastNames);
 
+        returnView.setTag(position);
         return returnView;
     }
 }

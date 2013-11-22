@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.listeners.ContextMenuListener;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.PodcastListItemView;
 
@@ -37,6 +38,8 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
     /** Member flag to indicate whether we show the podcast logo */
     protected boolean showLogoView = false;
 
+    ContextMenuListener listener;
+
     /**
      * Create new adapter.
      * 
@@ -47,6 +50,9 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
         super(context);
 
         this.list = podcastList;
+        if (context instanceof ContextMenuListener) {
+            this.listener = (ContextMenuListener) context;
+        }
     }
 
     /**

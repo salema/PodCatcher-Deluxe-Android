@@ -202,6 +202,7 @@ public class ContentSpinner extends Spinner implements
 
         setAdapter(spinnerAdapter);
         setOnItemSelectedListener(this);
+        setFocusable(false);
     }
 
     /**

@@ -175,7 +175,7 @@ public class EpisodeListItemView extends PodcatcherListItemView {
         final boolean downloading = episodeManager.isDownloading(episode);
         final boolean downloaded = episodeManager.isDownloaded(episode);
         final boolean downloadIconShows = downloaded || downloading;
-        final boolean isNew = !episodeManager.getState(episode);
+        final boolean isNew = !episodeManager.isOld(episode);
         final boolean willResume = episodeManager.getResumeAt(episode) > 0;
         final int position = episodeManager.getPlaylistPosition(episode);
 

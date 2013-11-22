@@ -89,7 +89,6 @@
     <string name="episodes_old">Старі</string>
     <string name="episodes_filter_all">Усі</string>
     <string name="episodes_filter_new">Нові</string>
-    <string name="episodes_sort_toggle">У зворотньому порядку</string>
     <string name="download">Завантажити</string>
     <string name="downloads">Завантаження</string>
     <plurals name="downloads_remove_title">

@@ -2,7 +2,7 @@
 
 <translate xmlns:android="http://schemas.android.com/apk/res/android"
            android:fromXDelta="0"
-           android:toXDelta="-300"
-           android:duration="800"
-           android:interpolator="@anim/interpolator"
+           android:toXDelta="@integer/menu_width_delta"
+           android:duration="@integer/menu_anim_duration"
+           android:interpolator="@anim/menu_interpolator"
            />

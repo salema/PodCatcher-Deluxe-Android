@@ -85,7 +85,7 @@
     <string name="episodes_old">Starý</string>
     <string name="episodes_filter_all">Vše</string>
     <string name="episodes_filter_new">Nový</string>
-    <string name="episodes_sort_toggle">Obrátit pořadí</string>
+    <string name="menu_reverse_order">Obrátit pořadí</string>
     <string name="download">Stahování</string>
     <string name="downloads">Stahování</string>
     <plurals name="downloads_remove_title">
