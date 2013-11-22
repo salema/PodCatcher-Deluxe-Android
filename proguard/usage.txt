@@ -1,5 +1,3 @@
-android.annotation.SuppressLint
-android.annotation.TargetApi
 android.support.v4.accessibilityservice.AccessibilityServiceInfoCompat
 android.support.v4.accessibilityservice.AccessibilityServiceInfoCompat$AccessibilityServiceInfoIcsImpl
 android.support.v4.accessibilityservice.AccessibilityServiceInfoCompat$AccessibilityServiceInfoStubImpl
@@ -1000,6 +998,7 @@ com.podcatcher.deluxe.model.tasks.remote.LoadRemoteFileTask:
 com.podcatcher.deluxe.model.tasks.remote.LoadSuggestionsTask:
     private static final java.lang.String SUGGESTIONS_ENCODING
     private static final java.lang.String SOURCE
+    private static final java.lang.String EXPLICIT_POSITIVE_STRING
 com.podcatcher.deluxe.model.types.Progress:
     private static final int PROGRESS_WAIT
     private static final int PROGRESS_CONNECT
@@ -1032,7 +1031,9 @@ com.podcatcher.deluxe.view.Utils:
 com.podcatcher.deluxe.view.fragments.AuthorizationFragment:
     public static final java.lang.String USERNAME_PRESET_KEY
     public static final java.lang.String TAG
-com.podcatcher.deluxe.view.fragments.DeleteDownloadsConfirmationDialogFragment:
+com.podcatcher.deluxe.view.fragments.ConfirmExplicitSuggestionFragment:
+    public static final java.lang.String TAG
+com.podcatcher.deluxe.view.fragments.DeleteDownloadsConfirmationFragment:
     public static final java.lang.String EPISODE_COUNT_KEY
     public static final java.lang.String TAG
 com.podcatcher.deluxe.view.fragments.EpisodeFragment:
