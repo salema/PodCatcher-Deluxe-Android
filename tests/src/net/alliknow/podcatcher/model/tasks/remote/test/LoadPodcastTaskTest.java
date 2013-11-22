@@ -73,7 +73,7 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
         Log.d(Utils.TEST_STATUS, "Set up test \"LoadPodcast\" by loading example podcasts...");
 
         final Date start = new Date();
-        examplePodcasts = Utils.getExamplePodcasts(getInstrumentation().getContext(), 3);
+        examplePodcasts = Utils.getExamplePodcasts(getInstrumentation().getContext());
 
         Log.d(Utils.TEST_STATUS, "Waited " + (new Date().getTime() - start.getTime())
                 + "ms for example podcasts...");

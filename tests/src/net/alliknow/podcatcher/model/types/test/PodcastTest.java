@@ -24,7 +24,7 @@ public class PodcastTest extends InstrumentationTestCase {
             Log.d(Utils.TEST_STATUS, "Set up test \"Podcasts\" by loading example podcasts...");
 
             final Date start = new Date();
-            examplePodcasts = Utils.getExamplePodcasts(getInstrumentation().getTargetContext(), 10);
+            examplePodcasts = Utils.getExamplePodcasts(getInstrumentation().getTargetContext(), 25);
 
             Log.d(Utils.TEST_STATUS, "Waited " + (new Date().getTime() - start.getTime())
                     + "ms for example podcasts...");
@@ -33,9 +33,10 @@ public class PodcastTest extends InstrumentationTestCase {
             int index = 0;
 
             for (Podcast ep : examplePodcasts) {
-                Log.d(Utils.TEST_STATUS, "---- Parsing podcast " + ++index + "/" + size + " ----");
+                Log.d(Utils.TEST_STATUS, "---- Parsing podcast " +
+                        ++index + "/" + size + ": " + ep.getName() + " ----");
+
                 ep.parse(Utils.getParser(ep));
-                Log.d(Utils.TEST_STATUS, "---- Parsed podcast " + ep.getName() + " ----");
             }
         }
     }
