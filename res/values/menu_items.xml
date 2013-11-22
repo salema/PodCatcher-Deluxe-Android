@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="context_play">Play</string>
+    <string name="context_mark_old">Mark as old</string>
+    <string name="context_mark_new">Mark as new</string>
+    <string name="context_add_playlist">Add to playlist</string>
+    <string name="context_download">Download</string>
+
+</resources>
