@@ -92,7 +92,7 @@
         <item quantity="one">Diese Episode ist nach dem Löschen nicht mehr ohne Internetverbindung verfügbar.</item>
         <item quantity="other">Diese Episoden sind nach dem Löschen nicht mehr ohne Internetverbindung verfügbar.</item>
     </plurals>
-    <string name="downloads_none">Keine Downloads vorhanden. Benutzen Sie das Download-Zeichen im Menü um Episoden auf dem Gerät zu speichern.</string>
+    <string name="downloads_none">Keine Downloads vorhanden. Benutzen Sie das Download-Zeichen im Menü, um Episoden auf dem Gerät zu speichern.</string>
     <string name="download_started">Download gestartet für \n\"%s\"</string>
     <string name="download_failed">Download fehlgeschlagen für \n\"%s\"</string>
     <string name="playlist">Wiedergabeliste</string>
