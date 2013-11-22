@@ -53,12 +53,12 @@
     <string name="podcast_add_button">Agregar</string>
     <string name="podcast_enter_url_here">Insertar la URL del podcast</string>
     <string name="podcast_load_error">No se ha podido cargar el podcast.</string>
-    <string name="podcast_load_error_access_denied">No se ha podido cargar el podcast.</string>
-    <string name="podcast_load_error_not_reachable">No se ha podido cargar el podcast. Comprobar la URL y la conexión a Internet.</string>
-    <string name="podcast_load_error_not_parseable">No se ha podido cargar el podcast.</string>
+    <string name="podcast_load_error_access_denied">No se ha podido cargar el podcast porque el acceso al canal ha sido denegado.</string>
+    <string name="podcast_load_error_not_reachable">No se ha podido cargar el podcast porque no se ha podido contactar con el servidor o porque la URL no es válida.</string>
+    <string name="podcast_load_error_not_parseable">No se ha podido cargar el podcast porque la URL no corresponde a ningún canal de podcasts válido.</string>
     <string name="podcast_load_multiple_progress">%1$d de %2$d podcasts</string>
     <string name="podcast_load_multiple_error">El podcast\n\"%s\"\nno se ha podido cargar.</string>
-    <string name="podcast_load_multiple_error_all">No se ha podido cargar el podcast.</string>
+    <string name="podcast_load_multiple_error_all">Los podcasts no se han podido cargar. Comprobar la conexión a Internet!</string>
     <string name="episode_none">No hay ningún episodio disponible</string>
     <string name="episode_none_all_podcasts">No hay ningún episodio disponible</string>
     <string name="episode_no_description">No hay ninguna descripción disponible.</string>
@@ -90,9 +90,9 @@
     </plurals>
     <plurals name="downloads_remove_text">
         <item quantity="one">Tras borrar este episodio, éste ya no estará disponible sin conexión a internet.</item>
-        <item quantity="other">Tras borrar estos episodios, estos ya no estarán disponibles sin conexión a internet.</item>
+        <item quantity="other">Tras borrar estos episodios, estos ya no estarán disponibles sin conexión a Internet.</item>
     </plurals>
-    <string name="downloads_none">No hay ningún episodio disponible. Para almacenar uno, hacer clic en el símbolo de descarga del menú.</string>
+    <string name="downloads_none">No hay ningún episodio disponible. Para almacenar episodios, haga clic en el símbolo de descarga del menú.</string>
     <string name="download_started">Descarga activa:\n\"%s\"</string>
     <string name="download_failed">La descarga ha fallado:\n\"%s\"</string>
     <string name="playlist">Lista de reproducción</string>
@@ -117,9 +117,10 @@
     <string name="suggested_podcasts">Podcasts recomendados</string>
     <string name="suggestion_listen">Escuchar</string>
     <string name="suggestion_watch">Ver</string>
-    <string name="suggestions_none">No hay ninguna sugerencia.</string>
+    <string name="suggestion_confirm_explicit">Este podcast está clasificado como no apto para menores. ¿Está seguro de querer añadirlo a su lista de podcasts?</string>
+    <string name="suggestions_none">No hay ninguna sugerencia. Por favor, modifique los filtros.</string>
     <string name="suggestions_load_error">Las sugerencias no se han podido cargar. Comprobar la conexión a Internet.</string>
-    <string name="suggestions_send">Envia una propuesta para incluirla en esta lista&#8230;</string>
+    <string name="suggestions_send">Envíe una propuesta para incluirla en esta lista&#8230;</string>
     <string name="preferences">Ajustes</string>
     <string name="pref_select_all_on_start_title">Seleccionar todos al inicio</string>
     <string name="pref_select_all_on_start_summary">Actualizar todos los podcasts al inicio de la aplicación</string>
@@ -130,7 +131,7 @@
     <string name="pref_wide_episode_list_title">Amplia lista de episodios</string>
     <string name="pref_wide_episode_list_summary">Hacer espacio para más detalles sobre los episodios</string>
     <string name="pref_auto_download_title">Descargas automáticas</string>
-    <string name="pref_auto_download_summary">Nuevos episodios disponibles sin conexión al internet</string>
+    <string name="pref_auto_download_summary">Hacer que nuevos episodios estén disponibles sin conexión en cuanto se conecte a una red.</string>
     <string name="pref_auto_delete_title">Eliminación automática</string>
     <string name="pref_auto_delete_summary">Elimina los episodios descargados después de reproducirlos</string>
     <string name="pref_download_folder_title">Carpeta de descargas</string>
