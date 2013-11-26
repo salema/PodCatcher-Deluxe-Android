@@ -461,6 +461,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
         if (viewCreated) {
             emptyView.setText(R.string.podcast_none_selected);
             setShowTopInfoBox(false, null);
+            setShowTopProgress(false);
         }
 
         currentEpisodeList = null;
