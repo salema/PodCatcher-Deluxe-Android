@@ -165,7 +165,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         selection.setPodcast(podcast);
         selection.setMode(ContentMode.SINGLE_PODCAST);
 
-        currentEpisodeSet.clear();
+        this.currentEpisodeSet = new TreeSet<Episode>();
 
         switch (view) {
             case SMALL_LANDSCAPE:
@@ -198,7 +198,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         selection.resetPodcast();
         selection.setMode(ContentMode.ALL_PODCASTS);
 
-        currentEpisodeSet.clear();
+        this.currentEpisodeSet = new TreeSet<Episode>();
 
         switch (view) {
             case SMALL_LANDSCAPE:
@@ -239,6 +239,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         selection.resetPodcast();
         selection.setMode(ContentMode.DOWNLOADS);
 
+        this.currentEpisodeSet = new TreeSet<Episode>();
+
         switch (view) {
             case SMALL_LANDSCAPE:
                 // This will go back to the list view in case we are showing
@@ -263,9 +265,10 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onDownloadsLoaded(List<Episode> downloads) {
-        this.currentEpisodeSet = new TreeSet<Episode>(downloads);
-
-        updateEpisodeListUi();
+        if (ContentMode.DOWNLOADS.equals(selection.getMode())) {
+            currentEpisodeSet.addAll(downloads);
+            updateEpisodeListUi();
+        }
 
         // Update other UI
         updateActionBar();
@@ -278,6 +281,15 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     public void onPlaylistSelected() {
         selection.resetPodcast();
         selection.setMode(ContentMode.PLAYLIST);
+
+        this.currentEpisodeSet = new TreeSet<Episode>(new Comparator<Episode>() {
+
+            @Override
+            public int compare(Episode one, Episode another) {
+                return episodeManager.getPlaylistPosition(one)
+                        - episodeManager.getPlaylistPosition(another);
+            }
+        });
 
         switch (view) {
             case SMALL_LANDSCAPE:
@@ -304,16 +316,14 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onPlaylistLoaded(List<Episode> playlist) {
-        this.currentEpisodeSet = new TreeSet<Episode>(new Comparator<Episode>() {
-            @Override
-            public int compare(Episode one, Episode another) {
-                return episodeManager.getPlaylistPosition(one)
-                        - episodeManager.getPlaylistPosition(another);
-            }
-        });
-        currentEpisodeSet.addAll(playlist);
+        if (ContentMode.PLAYLIST.equals(selection.getMode())) {
+            // This is needed because this method is called directly when an
+            // episode is swiped to move it up or down...
+            currentEpisodeSet.clear();
 
-        updateEpisodeListUi();
+            currentEpisodeSet.addAll(playlist);
+            updateEpisodeListUi();
+        }
 
         // Update other UI
         updateActionBar();
