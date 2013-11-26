@@ -266,8 +266,10 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
     @Override
     protected void reset() {
-        if (viewCreated)
+        if (viewCreated) {
             emptyView.setText(R.string.podcast_none_selected);
+            setShowTopProgress(false);
+        }
 
         currentEpisodeList = null;
         showPodcastNames = false;
