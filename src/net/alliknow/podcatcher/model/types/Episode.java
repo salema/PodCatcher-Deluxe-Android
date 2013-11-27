@@ -42,6 +42,17 @@ import java.util.Locale;
  */
 public class Episode implements Comparable<Episode> {
 
+    /** The date format used by RSS feeds */
+    private static final String DATE_FORMAT_TEMPLATE = "EEE, dd MMM yyyy HH:mm:ss zzz";
+    /** The alternative date format we support because it is used by some feeds */
+    private static final String DATE_FORMAT_TEMPLATE2 = "yyyy-MM-dd";
+    /** Our formatter used when reading the episode item's date string */
+    private static final DateFormat DATE_FORMATTER =
+            new SimpleDateFormat(DATE_FORMAT_TEMPLATE, Locale.ENGLISH);
+    /** Our alternative formatter */
+    private static final DateFormat DATE_FORMATTER2 =
+            new SimpleDateFormat(DATE_FORMAT_TEMPLATE2, Locale.ENGLISH);
+
     /** The podcast this episode is part of */
     private Podcast podcast;
     /**
@@ -275,13 +286,13 @@ public class Episode implements Comparable<Episode> {
 
     private Date parsePubDate(String value) {
         try {
-            // RSS/XML files use this format for dates
-            DateFormat formatter =
-                    new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
-
-            return formatter.parse(value);
+            return DATE_FORMATTER.parse(value);
         } catch (ParseException e) {
-            Log.w(getClass().getSimpleName(), "Episode has invalid publication date", e);
+            try {
+                return DATE_FORMATTER2.parse(value);
+            } catch (ParseException e1) {
+                Log.w(getClass().getSimpleName(), "Episode has invalid publication date", e);
+            }
         }
 
         return null;
