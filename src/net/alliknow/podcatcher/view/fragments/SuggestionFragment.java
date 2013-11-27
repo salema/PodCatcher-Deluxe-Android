@@ -127,7 +127,7 @@ public class SuggestionFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         // Inflate the layout
-        final View layout = inflater.inflate(R.layout.suggestions, container, false);
+        final View layout = inflater.inflate(R.layout.suggestion_list, container, false);
 
         // Get the display dimensions
         Rect displayRectangle = new Rect();
@@ -158,7 +158,7 @@ public class SuggestionFragment extends DialogFragment {
 
         progressView = (ProgressView) view.findViewById(R.id.suggestion_list_progress);
 
-        suggestionsListView = (ListView) view.findViewById(R.id.suggestion_podcasts);
+        suggestionsListView = (ListView) view.findViewById(R.id.suggestion_list);
         noSuggestionsView = (TextView) view.findViewById(R.id.suggestion_none);
 
         sendSuggestionView = (TextView) view.findViewById(R.id.suggestion_send);
