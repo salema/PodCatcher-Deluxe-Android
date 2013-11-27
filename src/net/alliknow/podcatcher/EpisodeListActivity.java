@@ -317,10 +317,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     @Override
     public void onPlaylistLoaded(List<Episode> playlist) {
         if (ContentMode.PLAYLIST.equals(selection.getMode())) {
-            // This is needed because this method is called directly when an
-            // episode is swiped to move it up or down...
-            currentEpisodeSet.clear();
-
             currentEpisodeSet.addAll(playlist);
             updateEpisodeListUi();
         }
@@ -518,6 +514,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                         currentPosition == playlistLength - 1 ? 0 : currentPosition + 1);
             }
 
+            // Clear and reset the playlist
+            currentEpisodeSet.clear();
             onPlaylistLoaded(episodeManager.getPlaylist());
         }
     }
@@ -537,6 +535,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 episodeManager.appendToPlaylist(episode);
             }
 
+            // Clear and reset the playlist
+            currentEpisodeSet.clear();
             onPlaylistLoaded(episodeManager.getPlaylist());
         }
     }
