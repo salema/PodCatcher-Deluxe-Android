@@ -244,11 +244,11 @@ com.podcatcher.deluxe.R$id: int suggestion_description
 com.podcatcher.deluxe.R$id: int suggestion_featured
 com.podcatcher.deluxe.R$id: int suggestion_genre_select
 com.podcatcher.deluxe.R$id: int suggestion_language_select
+com.podcatcher.deluxe.R$id: int suggestion_list
 com.podcatcher.deluxe.R$id: int suggestion_list_progress
 com.podcatcher.deluxe.R$id: int suggestion_meta
 com.podcatcher.deluxe.R$id: int suggestion_name
 com.podcatcher.deluxe.R$id: int suggestion_none
-com.podcatcher.deluxe.R$id: int suggestion_podcasts
 com.podcatcher.deluxe.R$id: int suggestion_send
 com.podcatcher.deluxe.R$id: int suggestion_type_select
 com.podcatcher.deluxe.R$id: int text_hex_wrapper
@@ -273,8 +273,8 @@ com.podcatcher.deluxe.R$layout: int podcast_list
 com.podcatcher.deluxe.R$layout: int podcast_list_item
 com.podcatcher.deluxe.R$layout: int progress
 com.podcatcher.deluxe.R$layout: int progress_horizontal
+com.podcatcher.deluxe.R$layout: int suggestion_list
 com.podcatcher.deluxe.R$layout: int suggestion_list_item
-com.podcatcher.deluxe.R$layout: int suggestions
 com.podcatcher.deluxe.R$menu: int episode
 com.podcatcher.deluxe.R$menu: int episode_list
 com.podcatcher.deluxe.R$menu: int episode_list_context
