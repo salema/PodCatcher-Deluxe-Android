@@ -214,11 +214,11 @@ net.alliknow.podcatcher.R$id: int suggestion_description
 net.alliknow.podcatcher.R$id: int suggestion_featured
 net.alliknow.podcatcher.R$id: int suggestion_genre_select
 net.alliknow.podcatcher.R$id: int suggestion_language_select
+net.alliknow.podcatcher.R$id: int suggestion_list
 net.alliknow.podcatcher.R$id: int suggestion_list_progress
 net.alliknow.podcatcher.R$id: int suggestion_meta
 net.alliknow.podcatcher.R$id: int suggestion_name
 net.alliknow.podcatcher.R$id: int suggestion_none
-net.alliknow.podcatcher.R$id: int suggestion_podcasts
 net.alliknow.podcatcher.R$id: int suggestion_send
 net.alliknow.podcatcher.R$id: int suggestion_type_select
 net.alliknow.podcatcher.R$id: int text_hex_wrapper
@@ -243,8 +243,8 @@ net.alliknow.podcatcher.R$layout: int podcast_list
 net.alliknow.podcatcher.R$layout: int podcast_list_item
 net.alliknow.podcatcher.R$layout: int progress
 net.alliknow.podcatcher.R$layout: int progress_horizontal
+net.alliknow.podcatcher.R$layout: int suggestion_list
 net.alliknow.podcatcher.R$layout: int suggestion_list_item
-net.alliknow.podcatcher.R$layout: int suggestions
 net.alliknow.podcatcher.R$menu: int episode_list
 net.alliknow.podcatcher.R$menu: int player
 net.alliknow.podcatcher.R$menu: int podcast_list

@@ -985,6 +985,9 @@ net.alliknow.podcatcher.model.tasks.remote.LoadSuggestionsTask:
     private static final java.lang.String SUGGESTIONS_ENCODING
     private static final java.lang.String SOURCE
     private static final java.lang.String EXPLICIT_POSITIVE_STRING
+net.alliknow.podcatcher.model.types.Episode:
+    private static final java.lang.String DATE_FORMAT_TEMPLATE
+    private static final java.lang.String DATE_FORMAT_TEMPLATE2
 net.alliknow.podcatcher.model.types.Progress:
     private static final int PROGRESS_WAIT
     private static final int PROGRESS_CONNECT
