@@ -249,11 +249,11 @@ com.podcatcher.deluxe.video.R$id: int suggestion_description
 com.podcatcher.deluxe.video.R$id: int suggestion_featured
 com.podcatcher.deluxe.video.R$id: int suggestion_genre_select
 com.podcatcher.deluxe.video.R$id: int suggestion_language_select
+com.podcatcher.deluxe.video.R$id: int suggestion_list
 com.podcatcher.deluxe.video.R$id: int suggestion_list_progress
 com.podcatcher.deluxe.video.R$id: int suggestion_meta
 com.podcatcher.deluxe.video.R$id: int suggestion_name
 com.podcatcher.deluxe.video.R$id: int suggestion_none
-com.podcatcher.deluxe.video.R$id: int suggestion_podcasts
 com.podcatcher.deluxe.video.R$id: int suggestion_send
 com.podcatcher.deluxe.video.R$id: int suggestion_type_select
 com.podcatcher.deluxe.video.R$id: int surface
@@ -280,8 +280,8 @@ com.podcatcher.deluxe.video.R$layout: int podcast_list
 com.podcatcher.deluxe.video.R$layout: int podcast_list_item
 com.podcatcher.deluxe.video.R$layout: int progress
 com.podcatcher.deluxe.video.R$layout: int progress_horizontal
+com.podcatcher.deluxe.video.R$layout: int suggestion_list
 com.podcatcher.deluxe.video.R$layout: int suggestion_list_item
-com.podcatcher.deluxe.video.R$layout: int suggestions
 com.podcatcher.deluxe.video.R$menu: int episode
 com.podcatcher.deluxe.video.R$menu: int episode_list
 com.podcatcher.deluxe.video.R$menu: int episode_list_context
