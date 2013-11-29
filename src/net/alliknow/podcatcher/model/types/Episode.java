@@ -48,10 +48,10 @@ public class Episode implements Comparable<Episode> {
     private static final String DATE_FORMAT_TEMPLATE2 = "yyyy-MM-dd";
     /** Our formatter used when reading the episode item's date string */
     private static final DateFormat DATE_FORMATTER =
-            new SimpleDateFormat(DATE_FORMAT_TEMPLATE, Locale.ENGLISH);
+            new SimpleDateFormat(DATE_FORMAT_TEMPLATE, Locale.US);
     /** Our alternative formatter */
     private static final DateFormat DATE_FORMATTER2 =
-            new SimpleDateFormat(DATE_FORMAT_TEMPLATE2, Locale.ENGLISH);
+            new SimpleDateFormat(DATE_FORMAT_TEMPLATE2, Locale.US);
 
     /** The podcast this episode is part of */
     private Podcast podcast;
@@ -250,7 +250,7 @@ public class Episode implements Comparable<Episode> {
             // Episode publication date (2 options)
             else if (tagName.equalsIgnoreCase(RSS.DATE) && pubDate == null)
                 pubDate = parsePubDate(parser.nextText());
-            else if (tagName.equalsIgnoreCase(RSS.PUBDATE) && pubDate == null)
+            else if (tagName.equalsIgnoreCase(RSS.PUBDATE))
                 pubDate = parsePubDate(parser.nextText());
             // Episode duration
             else if (tagName.equalsIgnoreCase(RSS.DURATION))
@@ -286,10 +286,15 @@ public class Episode implements Comparable<Episode> {
 
     private Date parsePubDate(String value) {
         try {
-            return DATE_FORMATTER.parse(value);
+            // SimpleDateFormat is not thread safe
+            synchronized (DATE_FORMATTER) {
+                return DATE_FORMATTER.parse(value);
+            }
         } catch (ParseException e) {
             try {
-                return DATE_FORMATTER2.parse(value);
+                synchronized (DATE_FORMATTER2) {
+                    return DATE_FORMATTER2.parse(value);
+                }
             } catch (ParseException e1) {
                 Log.w(getClass().getSimpleName(), "Episode has invalid publication date", e);
             }
