@@ -190,8 +190,7 @@ public abstract class EpisodePlaylistManager extends EpisodeDownloadManager {
     public void insertAtPlaylistPosition(Episode episode, int position) {
         if (episode != null && position >= 0) {
             // Only insert the episode if it is not already part of the playlist
-            final List<Episode> playlist = getPlaylist();
-            if (!playlist.contains(episode)) {
+            if (!isInPlaylist(episode)) {
                 // Find or create the metadata information holder
                 EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
                 if (meta == null) {
