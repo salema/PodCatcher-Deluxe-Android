@@ -36,7 +36,7 @@ public class PodcastTest extends InstrumentationTestCase {
                 Log.d(Utils.TEST_STATUS, "---- Parsing podcast " +
                         ++index + "/" + size + ": " + ep.getName() + " ----");
 
-                ep.parse(Utils.getParser(ep));
+                Utils.loadAndWait(ep);
             }
         }
     }

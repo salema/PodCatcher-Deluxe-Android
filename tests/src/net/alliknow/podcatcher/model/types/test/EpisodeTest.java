@@ -35,7 +35,7 @@ public class EpisodeTest extends InstrumentationTestCase {
 
             for (Podcast ep : examplePodcasts) {
                 System.out.println("---- Parsing podcast " + ++index + "/" + size + " ----");
-                ep.parse(Utils.getParser(ep));
+                Utils.loadAndWait(ep);
                 Log.d(Utils.TEST_STATUS, "---- Parsed podcast " + ep.getName() + " ----");
             }
         }

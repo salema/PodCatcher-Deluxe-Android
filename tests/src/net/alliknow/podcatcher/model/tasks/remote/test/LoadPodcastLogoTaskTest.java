@@ -23,10 +23,13 @@ import android.util.Log;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastLogoTask;
+import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.test.Utils;
 import net.alliknow.podcatcher.model.types.Podcast;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -63,7 +66,7 @@ public class LoadPodcastLogoTaskTest extends InstrumentationTestCase {
         Log.d(Utils.TEST_STATUS, "Set up test \"LoadPodcastLogo\" by loading example podcasts...");
 
         final Date start = new Date();
-        examplePodcasts = Utils.getExamplePodcasts(getInstrumentation().getTargetContext(), 10);
+        examplePodcasts = Utils.getExamplePodcasts(getInstrumentation().getTargetContext());
 
         Log.d(Utils.TEST_STATUS, "Waited " + (new Date().getTime() - start.getTime())
                 + "ms for example podcasts...");
@@ -75,38 +78,57 @@ public class LoadPodcastLogoTaskTest extends InstrumentationTestCase {
         int size = examplePodcasts.size();
         int index = 0;
         int failed = 0;
+        List<String> noLogo = new ArrayList<String>();
 
         // Actual example Podcast
-        for (Podcast ep : examplePodcasts) {
+        Iterator<Podcast> podcasts = examplePodcasts.iterator();
+        while (podcasts.hasNext()) {
+            Podcast ep = podcasts.next();
             Log.d(Utils.TEST_STATUS, "---- New Podcast (" + ++index + "/" + size + ") ----");
             Log.d(Utils.TEST_STATUS, "Testing \"" + ep + "\"...");
-            Podcast podcast = new Podcast(ep.getName(), ep.getUrl());
-            podcast.parse(Utils.getParser(podcast));
 
-            LoadPodcastLogoTask task = loadAndWait(mockLoader, podcast);
+            // Load and parse podcast
+            PodcastLoadError errorCode = Utils.loadAndWait(ep);
+            if (errorCode != null)
+                Log.w(Utils.TEST_STATUS, "Podcast \"" + ep + "\" failed to load: " + errorCode);
+            else {
+                // Load and check podcast logo
+                LoadPodcastLogoTask task = loadAndWait(mockLoader, ep);
 
-            if (mockLoader.failed) {
-                Log.d(Utils.TEST_STATUS, "Podcast " + ep.getName() + " failed!");
-                failed++;
-            } else {
-                assertFalse(task.isCancelled());
-                assertFalse(mockLoader.failed);
-                assertNotNull(mockLoader.result);
-                assertTrue(mockLoader.result.getByteCount() > 0);
+                if (mockLoader.failed) {
+                    Log.w(Utils.TEST_STATUS, "Logo for podcast " + ep.getName()
+                            + " failed to load!");
+
+                    failed++;
+                    noLogo.add(ep.getName());
+                } else {
+                    assertFalse(task.isCancelled());
+                    assertFalse(mockLoader.failed);
+
+                    if (mockLoader.result == null || mockLoader.result.getByteCount() == 0)
+                        noLogo.add(ep.getName());
+                }
             }
 
-            Log.d(Utils.TEST_STATUS, "Tested \"" + ep + "\" - okay...");
+            // Discard the complete podcast and its logo because otherwise
+            // the memory would fill up quickly...
+            podcasts.remove();
         }
 
         Log.d(Utils.TEST_STATUS, "Tested all example podcast, failed on " + failed);
+
+        if (failed > 0)
+            for (String name : noLogo)
+                Log.w(Utils.TEST_STATUS, name);
     }
 
     private LoadPodcastLogoTask loadAndWait(final MockPodcastLogoLoader mockLoader,
             final Podcast podcast) {
         // Create task and latch
+        signal = new CountDownLatch(1);
         final LoadPodcastLogoTask task = new LoadPodcastLogoTask(
                 getInstrumentation().getTargetContext(), mockLoader);
-        signal = new CountDownLatch(1);
+        task.setMaxAge(1);
 
         // Go load podcast logo
         final Date start = new Date();

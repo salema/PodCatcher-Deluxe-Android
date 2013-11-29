@@ -30,6 +30,7 @@ import net.alliknow.podcatcher.model.types.Progress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -73,7 +74,7 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
         Log.d(Utils.TEST_STATUS, "Set up test \"LoadPodcast\" by loading example podcasts...");
 
         final Date start = new Date();
-        examplePodcasts = Utils.getExamplePodcasts(getInstrumentation().getContext());
+        examplePodcasts = Utils.getExamplePodcasts(getInstrumentation().getTargetContext());
 
         Log.d(Utils.TEST_STATUS, "Waited " + (new Date().getTime() - start.getTime())
                 + "ms for example podcasts...");
@@ -89,7 +90,9 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
         Log.d(Utils.TEST_STATUS, "Testing " + size + " example podcasts");
 
         // Actual example podcasts
-        for (Podcast ep : examplePodcasts) {
+        Iterator<Podcast> podcasts = examplePodcasts.iterator();
+        while (podcasts.hasNext()) {
+            Podcast ep = podcasts.next();
             Log.d(Utils.TEST_STATUS, "---- New Podcast (" + ++index + "/" + size +
                     ") ----");
             Log.d(Utils.TEST_STATUS, "Testing \"" + ep + "\"...");
@@ -110,6 +113,10 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
                 Log.d(Utils.TEST_STATUS, "Tested \"" + mockLoader.result +
                         "\" - okay...");
             }
+
+            // Discard the complete podcast because otherwise
+            // the memory would fill up quickly...
+            podcasts.remove();
         }
 
         Log.d(Utils.TEST_STATUS, "Tested all example podcast, failed on " +
