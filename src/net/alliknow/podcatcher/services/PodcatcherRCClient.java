@@ -76,7 +76,7 @@ public class PodcatcherRCClient extends RemoteControlClient {
             if (episode.getPodcast() != null) {
                 editor.putString(METADATA_KEY_ARTIST, episode.getPodcast().getName());
 
-                if (episode.getPodcast().getLogo() != null)
+                if (episode.getPodcast().isLogoCached())
                     editor.putBitmap(BITMAP_KEY_ARTWORK, episode.getPodcast().getLogo());
             }
 

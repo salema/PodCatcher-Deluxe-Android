@@ -33,6 +33,6 @@ public interface OnLoadEpisodeMetadataListener {
      * 
      * @param metadata Episode metadata loaded.
      */
-    public void onEpisodeMetadataLoaded(Map<URL, EpisodeMetadata> metadata);
+    public void onEpisodeMetadataLoaded(Map<String, EpisodeMetadata> metadata);
 
 }

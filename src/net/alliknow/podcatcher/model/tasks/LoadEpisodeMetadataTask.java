@@ -38,7 +38,6 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
@@ -48,7 +47,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Load the episode metadata from the file system.
  */
-public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, EpisodeMetadata>> {
+public class LoadEpisodeMetadataTask extends
+        AsyncTask<Void, Progress, Map<String, EpisodeMetadata>> {
 
     /** Our context */
     private Context context;
@@ -73,12 +73,12 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
     }
 
     @Override
-    protected Map<URL, EpisodeMetadata> doInBackground(Void... params) {
+    protected Map<String, EpisodeMetadata> doInBackground(Void... params) {
         // Record start time
         this.startTime = new Date();
 
         // Create resulting data structure and file stream
-        Map<URL, EpisodeMetadata> result = new ConcurrentHashMap<URL, EpisodeMetadata>();
+        Map<String, EpisodeMetadata> result = new ConcurrentHashMap<String, EpisodeMetadata>();
         InputStream fileStream = null;
 
         try {
@@ -102,8 +102,8 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
 
                     // Metadata found
                     if (tagName.equalsIgnoreCase(METADATA.METADATA)) {
-                        URL key = new URL(parser.getAttributeValue(null, METADATA.EPISODE_URL));
-                        EpisodeMetadata metadata = readMetadata(parser);
+                        final String key = parser.getAttributeValue(null, METADATA.EPISODE_URL);
+                        final EpisodeMetadata metadata = readMetadata(parser);
 
                         result.put(key, metadata);
                     }
@@ -135,7 +135,7 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
     }
 
     @Override
-    protected void onPostExecute(Map<URL, EpisodeMetadata> result) {
+    protected void onPostExecute(Map<String, EpisodeMetadata> result) {
         Log.i(getClass().getSimpleName(), "Read " + result.size() + " metadata records in "
                 + (new Date().getTime() - startTime.getTime()) + "ms.");
 
@@ -192,7 +192,7 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
         return result;
     }
 
-    private void cleanMetadata(Map<URL, EpisodeMetadata> result) {
+    private void cleanMetadata(Map<String, EpisodeMetadata> result) {
         // Find download folder
         File podcastDir = new File(PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(SettingsActivity.DOWNLOAD_FOLDER_KEY,
@@ -201,16 +201,16 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
         // Handle the case where the download finished while the application was
         // not running. In this case, there would be a downloadId but no
         // filePath while the episode media file is actually there.
-        Iterator<Entry<URL, EpisodeMetadata>> iterator = result.entrySet().iterator();
+        Iterator<Entry<String, EpisodeMetadata>> iterator = result.entrySet().iterator();
 
         while (iterator.hasNext()) {
-            Entry<URL, EpisodeMetadata> entry = iterator.next();
+            Entry<String, EpisodeMetadata> entry = iterator.next();
             // Skip all entries without a download id
             if (entry.getValue().downloadId == null)
                 continue;
 
             final File downloadPath = new File(podcastDir,
-                    EpisodeDownloadManager.sanitizeAsFilePath(entry.getKey().getPath(),
+                    EpisodeDownloadManager.sanitizeAsFilePath(entry.getKey(),
                             entry.getValue().episodeName, entry.getValue().podcastName));
 
             if (entry.getValue().filePath == null && downloadPath.exists())
@@ -223,7 +223,7 @@ public class LoadEpisodeMetadataTask extends AsyncTask<Void, Progress, Map<URL, 
         iterator = result.entrySet().iterator();
 
         while (iterator.hasNext()) {
-            Entry<URL, EpisodeMetadata> entry = iterator.next();
+            Entry<String, EpisodeMetadata> entry = iterator.next();
             // Skip all entries without a download id
             if (entry.getValue().downloadId == null)
                 continue;

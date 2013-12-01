@@ -28,7 +28,6 @@ import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -139,20 +138,19 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
         assertEquals(mockLoader.code, PodcastLoadError.UNKNOWN);
 
         // bad URL
-        loadAndWait(mockLoader, new Podcast("Mist", new URL("http://bla")));
+        loadAndWait(mockLoader, new Podcast("Mist", "http://bla"));
         assertTrue(mockLoader.failed);
         assertNull(mockLoader.result.getLastLoaded());
         assertEquals(mockLoader.code, PodcastLoadError.NOT_REACHABLE);
 
         // no podcast feed URL
-        loadAndWait(mockLoader, new Podcast("Google", new URL("http://www.google.com")));
+        loadAndWait(mockLoader, new Podcast("Google", "http://www.google.com"));
         assertTrue(mockLoader.failed);
         assertNull(mockLoader.result.getLastLoaded());
         assertEquals(mockLoader.code, PodcastLoadError.NOT_PARSEABLE);
 
         // Auth required
-        loadAndWait(mockLoader, new Podcast("SGU", new URL(
-                "https://www.theskepticsguide.org/premium")));
+        loadAndWait(mockLoader, new Podcast("SGU", "https://www.theskepticsguide.org/premium"));
         assertTrue(mockLoader.failed);
         assertNull(mockLoader.result.getLastLoaded());
         assertEquals(mockLoader.code, PodcastLoadError.AUTH_REQUIRED);

@@ -40,8 +40,6 @@ import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment.LogoViewMode;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 /**
@@ -335,15 +333,8 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                     // Make sure dialog does not pop up
                     needsAddPodcastDialog = false;
                     // Import all podcasts
-                    for (String name : names) {
-                        final int index = names.indexOf(name);
-
-                        try {
-                            podcastManager.addPodcast(new Podcast(name, new URL(urls.get(index))));
-                        } catch (MalformedURLException e) {
-                            // pass
-                        }
-                    }
+                    for (String name : names)
+                        podcastManager.addPodcast(new Podcast(name, urls.get(names.indexOf(name))));
                 }
             }
 

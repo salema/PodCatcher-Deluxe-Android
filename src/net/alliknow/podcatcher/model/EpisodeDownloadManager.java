@@ -41,6 +41,7 @@ import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -308,9 +309,9 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
         // This is only possible if the metadata is available
         if (metadata != null) {
             // Find downloads from metadata
-            Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+            Iterator<Entry<String, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
             while (iterator.hasNext()) {
-                Entry<URL, EpisodeMetadata> entry = iterator.next();
+                Entry<String, EpisodeMetadata> entry = iterator.next();
 
                 // Find records for downloaded episodes
                 if (isDownloaded(entry.getValue())) {
@@ -421,9 +422,9 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
         // Nothing we can do if the meta data is not available
         if (metadata != null) {
             // Find download from metadata
-            Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+            Iterator<Entry<String, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
             while (iterator.hasNext()) {
-                final Entry<URL, EpisodeMetadata> entry = iterator.next();
+                final Entry<String, EpisodeMetadata> entry = iterator.next();
                 final EpisodeMetadata data = entry.getValue();
 
                 // Only act if we care for this download
@@ -435,9 +436,9 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
                                 PodcastActivity.class)
                                 .putExtra(EpisodeListActivity.MODE_KEY, ContentMode.SINGLE_PODCAST)
                                 .putExtra(EpisodeListActivity.PODCAST_URL_KEY,
-                                        download.getPodcast().getUrl().toString())
+                                        download.getPodcast().getUrl())
                                 .putExtra(EpisodeActivity.EPISODE_URL_KEY,
-                                        download.getMediaUrl().toString())
+                                        download.getMediaUrl())
                                 .addFlags(
                                         Intent.FLAG_ACTIVITY_CLEAR_TOP |
                                                 Intent.FLAG_ACTIVITY_NEW_TASK
@@ -483,7 +484,13 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
     public static String sanitizeAsFilePath(String episodeUrl, String episodeName,
             String podcastName) {
         // Extract file ending
-        final int endingIndex = episodeUrl.lastIndexOf('.');
+        int endingIndex = 0;
+        try {
+            endingIndex = new URL(episodeUrl).getPath().lastIndexOf('.');
+        } catch (MalformedURLException mex) {
+            endingIndex = episodeUrl.lastIndexOf('.');
+        }
+
         final String fileEnding = endingIndex > 0 ? episodeUrl.substring(endingIndex) : "";
 
         // Create sanitized path <podcast>/<episode>.<ending>

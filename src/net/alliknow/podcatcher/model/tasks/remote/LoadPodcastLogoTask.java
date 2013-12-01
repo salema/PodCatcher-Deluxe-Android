@@ -29,6 +29,7 @@ import net.alliknow.podcatcher.model.types.Progress;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Date;
 
 /**
@@ -119,7 +120,7 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
             else if (!localOnly && podcast.getLogoUrl() != null) {
                 // 2a. Get logo data remotely
                 this.authorization = podcast.getAuthorization();
-                final byte[] logo = loadFile(podcast.getLogoUrl());
+                final byte[] logo = loadFile(new URL(podcast.getLogoUrl()));
 
                 // 2b. Decode and sample the result
                 if (!isCancelled()) {

@@ -42,7 +42,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.net.URL;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
@@ -51,7 +50,7 @@ import java.util.Map.Entry;
 /**
  * Stores the episode metadata information to the file system.
  */
-public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMetadata>> {
+public class StoreEpisodeMetadataTask extends StoreFileTask<Map<String, EpisodeMetadata>> {
 
     /** Our context */
     protected Context context;
@@ -73,7 +72,7 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMeta
     }
 
     @Override
-    protected Void doInBackground(Map<URL, EpisodeMetadata>... params) {
+    protected Void doInBackground(Map<String, EpisodeMetadata>... params) {
         try {
             // 1. Do house keeping and remove all metadata instances without
             // data
@@ -86,7 +85,7 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMeta
 
             // 3. Write new file content
             writeHeader();
-            for (Entry<URL, EpisodeMetadata> entry : params[0].entrySet())
+            for (Entry<String, EpisodeMetadata> entry : params[0].entrySet())
                 writeRecord(entry.getKey(), entry.getValue());
             writeFooter();
         } catch (Exception ex) {
@@ -121,9 +120,8 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMeta
             listener.onEpisodeMetadataStoreFailed(exception);
     }
 
-    private void writeRecord(URL key, EpisodeMetadata value) throws IOException {
-        writeLine(1, "<" + METADATA + " " + EPISODE_URL
-                + "=\"" + TextUtils.htmlEncode(key.toString()) + "\">");
+    private void writeRecord(String key, EpisodeMetadata value) throws IOException {
+        writeLine(1, "<" + METADATA + " " + EPISODE_URL + "=\"" + TextUtils.htmlEncode(key) + "\">");
 
         writeData(value.episodeName, EPISODE_NAME);
         if (value.episodePubDate != null)
@@ -167,11 +165,11 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<URL, EpisodeMeta
         writeLine(0, "</xml>");
     }
 
-    private void cleanMetadata(Map<URL, EpisodeMetadata> metadata) {
-        Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+    private void cleanMetadata(Map<String, EpisodeMetadata> metadata) {
+        Iterator<Entry<String, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
 
         while (iterator.hasNext()) {
-            Entry<URL, EpisodeMetadata> entry = iterator.next();
+            Entry<String, EpisodeMetadata> entry = iterator.next();
 
             if (!entry.getValue().hasData())
                 iterator.remove();

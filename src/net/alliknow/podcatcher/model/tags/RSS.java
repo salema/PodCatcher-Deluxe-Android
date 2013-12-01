@@ -32,6 +32,7 @@ public class RSS {
     public static final String URL = "url";
     public static final String TYPE = "type";
     public static final String HREF = "href";
+    public static final String LINK = "link";
     public static final String DATE = "date";
     public static final String PUBDATE = "pubDate";
     public static final String DURATION = "duration";

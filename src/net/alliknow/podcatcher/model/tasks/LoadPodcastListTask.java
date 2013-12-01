@@ -36,8 +36,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -179,16 +177,13 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
                 name = null;
             else
                 name = Html.fromHtml(name).toString();
-            // Get and parse podcast url
-            final URL url = new URL(parser.getAttributeValue("", OPML.XMLURL));
+            
             // Create the podcast
-            result = new Podcast(name, url);
+            result = new Podcast(name, parser.getAttributeValue("", OPML.XMLURL));
 
             // Set authorization information
             result.setUsername(parser.getAttributeValue("", OPML.EXTRA_USER));
             result.setPassword(parser.getAttributeValue("", OPML.EXTRA_PASS));
-        } catch (MalformedURLException e) {
-            Log.w(getClass().getSimpleName(), "OPML outline has bad URL!", e);
         } catch (XmlPullParserException e) {
             Log.w(getClass().getSimpleName(), "OPML outline not parsable!", e);
         } catch (IOException e) { /* pass */

@@ -35,9 +35,6 @@ import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.fragments.AddPodcastFragment;
 import net.alliknow.podcatcher.view.fragments.AuthorizationFragment;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 /**
  * Add new podcast(s) activity. This simply shows the add podcast fragment. To
  * preset the feed url edittext, start this activity with an intent that has the
@@ -110,28 +107,25 @@ public class AddPodcastActivity extends BaseActivity implements OnLoadPodcastLis
     @Override
     public void onAddPodcast(String podcastUrl) {
         // Try to load the given online resource
-        try {
-            final Podcast newPodcast = new Podcast(null, new URL(podcastUrl));
+        final Podcast newPodcast = new Podcast(null, podcastUrl);
+
+        // If the podcast is present, select it
+        if (podcastManager.contains(newPodcast)) {
+            Intent intent = new Intent(this, PodcastActivity.class);
+            intent.putExtra(EpisodeListActivity.MODE_KEY, ContentMode.SINGLE_PODCAST);
+            intent.putExtra(PODCAST_URL_KEY, newPodcast.getUrl());
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+            startActivity(intent);
+            finish();
+        }
+        // Otherwise try to load it
+        else {
             // We need to keep note which podcast we are loading
             currentLoadUrl = podcastUrl;
-
-            // If the podcast is present, select it
-            if (podcastManager.contains(newPodcast)) {
-                Intent intent = new Intent(this, PodcastActivity.class);
-                intent.putExtra(EpisodeListActivity.MODE_KEY, ContentMode.SINGLE_PODCAST);
-                intent.putExtra(PODCAST_URL_KEY, newPodcast.getUrl().toString());
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                        Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-                startActivity(intent);
-                finish();
-            }
-            // Otherwise try to load it
-            else
-                podcastManager.load(newPodcast);
-        } catch (MalformedURLException e) {
-            // Show failed UI
-            addPodcastFragment.showPodcastLoadFailed(PodcastLoadError.NOT_REACHABLE);
+        
+            podcastManager.load(newPodcast);
         }
     }
 
@@ -186,26 +180,16 @@ public class AddPodcastActivity extends BaseActivity implements OnLoadPodcastLis
         // We need to keep that in order to pre-fill next time
         lastUserName = username;
 
-        try {
-            final Podcast newPodcast = new Podcast(null, new URL(currentLoadUrl));
-            newPodcast.setUsername(username);
-            newPodcast.setPassword(password);
+        final Podcast newPodcast = new Podcast(null, currentLoadUrl);
+        newPodcast.setUsername(username);
+        newPodcast.setPassword(password);
 
-            podcastManager.load(newPodcast);
-        } catch (MalformedURLException e) {
-            onCancelAuthorization();
-        }
+        podcastManager.load(newPodcast);
     }
 
     @Override
     public void onCancelAuthorization() {
-        try {
-            onPodcastLoadFailed(new Podcast(null, new URL(currentLoadUrl)),
-                    PodcastLoadError.ACCESS_DENIED);
-        } catch (MalformedURLException e) {
-            // Show failed UI
-            addPodcastFragment.showPodcastLoadFailed(PodcastLoadError.ACCESS_DENIED);
-        }
+        onPodcastLoadFailed(new Podcast(null, currentLoadUrl), PodcastLoadError.ACCESS_DENIED);
     }
 
     @Override
@@ -233,6 +217,6 @@ public class AddPodcastActivity extends BaseActivity implements OnLoadPodcastLis
     }
 
     private boolean isCurrentlyLoadingPodcast(Podcast podcast) {
-        return podcast.getUrl().toString().equalsIgnoreCase(currentLoadUrl);
+        return podcast.getUrl().equalsIgnoreCase(currentLoadUrl);
     }
 }

@@ -70,9 +70,9 @@ public abstract class EpisodePlaylistManager extends EpisodeDownloadManager {
         // This is only possible if the metadata is available
         if (metadata != null) {
             // Find playlist entries from metadata
-            Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+            Iterator<Entry<String, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
             while (iterator.hasNext()) {
-                Entry<URL, EpisodeMetadata> entry = iterator.next();
+                Entry<String, EpisodeMetadata> entry = iterator.next();
 
                 // Find records for playlist entries
                 if (entry.getValue().playlistPosition != null) {
@@ -235,7 +235,7 @@ public abstract class EpisodePlaylistManager extends EpisodeDownloadManager {
             if (meta != null && meta.playlistPosition != null) {
                 // Update the playlist positions for all entries beyond the one
                 // we are removing
-                Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+                Iterator<Entry<String, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
                 while (iterator.hasNext()) {
                     EpisodeMetadata other = iterator.next().getValue();
 
