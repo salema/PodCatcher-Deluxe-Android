@@ -29,7 +29,6 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -43,18 +42,20 @@ import java.util.Locale;
 public class Episode implements Comparable<Episode> {
 
     /** The date format used by RSS feeds */
-    private static final String DATE_FORMAT_TEMPLATE = "EEE, dd MMM yyyy HH:mm:ss zzz";
-    /** The alternative date format we support because it is used by some feeds */
-    private static final String DATE_FORMAT_TEMPLATE2 = "yyyy-MM-dd";
+    private static final String DATE_FORMAT_TEMPLATE = "EEE, dd MMM yy HH:mm:ss zzz";
     /** Our formatter used when reading the episode item's date string */
-    private static final DateFormat DATE_FORMATTER =
+    private static final SimpleDateFormat DATE_FORMATTER =
             new SimpleDateFormat(DATE_FORMAT_TEMPLATE, Locale.US);
-    /** Our alternative formatter */
-    private static final DateFormat DATE_FORMATTER2 =
-            new SimpleDateFormat(DATE_FORMAT_TEMPLATE2, Locale.US);
+    /**
+     * The alternative date formats supported because they are used by some
+     * feeds, these are all tried in the given order if the default fails
+     */
+    private static final String[] DATE_FORMAT_TEMPLATE_ALTERNATIVES = {
+            "EEE, dd MMM yy", "yy-MM-dd"
+    };
 
     /** The podcast this episode is part of */
-    private Podcast podcast;
+    private final Podcast podcast;
     /**
      * The index (starting with zero at the top of the feed) this episode is in
      * its podcast. -1 means that we do not have this information.
@@ -66,7 +67,7 @@ public class Episode implements Comparable<Episode> {
     /** The episode's online location */
     private URL mediaUrl;
     /** The episode's release date */
-    private Date pubDate;
+    protected Date pubDate;
     /** The episode duration */
     private int duration = -1;
     /** The episode's description */
@@ -164,7 +165,7 @@ public class Episode implements Comparable<Episode> {
 
     @Override
     public String toString() {
-        return getName();
+        return name;
     }
 
     @Override
@@ -194,11 +195,11 @@ public class Episode implements Comparable<Episode> {
         // We mainly compare by the publication date of the episodes. If these
         // are not available or are equal, we check for their position in the
         // podcast. As a last resort we simply return something <> 0.
-        if (this.pubDate != null && another.getPubDate() != null)
-            result = -pubDate.compareTo(another.getPubDate());
-        else if (this.pubDate == null && another.getPubDate() != null)
+        if (this.pubDate != null && another.pubDate != null)
+            result = -pubDate.compareTo(another.pubDate);
+        else if (this.pubDate == null && another.pubDate != null)
             result = -1;
-        else if (this.pubDate != null && another.getPubDate() == null)
+        else if (this.pubDate != null && another.pubDate == null)
             result = 1;
 
         // This should never be zero unless the episodes are equal, since a
@@ -209,9 +210,8 @@ public class Episode implements Comparable<Episode> {
         // the episode from sets.
         if (result == 0 && !this.equals(another)) {
             // The pubDates are equal, but episode are not, try index
-            if (index >= 0 && another.getPositionInPodcast() >= 0
-                    && index != another.getPositionInPodcast())
-                result = index - another.getPositionInPodcast();
+            if (index >= 0 && another.index >= 0 && index != another.index)
+                result = index - another.index;
             // As a last resort return a consistent, non-zero int
             else {
                 final int lastResort = this.hashCode() - another.hashCode();
@@ -284,44 +284,54 @@ public class Episode implements Comparable<Episode> {
         return null;
     }
 
-    private Date parsePubDate(String value) {
+    private Date parsePubDate(String dateString) {
         try {
             // SimpleDateFormat is not thread safe
             synchronized (DATE_FORMATTER) {
-                return DATE_FORMATTER.parse(value);
+                return DATE_FORMATTER.parse(dateString);
             }
         } catch (ParseException e) {
-            try {
-                synchronized (DATE_FORMATTER2) {
-                    return DATE_FORMATTER2.parse(value);
+            // The default format is not available, try all the other formats we
+            // support...
+            for (String format : DATE_FORMAT_TEMPLATE_ALTERNATIVES)
+                try {
+                    return new SimpleDateFormat(format, Locale.US).parse(dateString);
+                } catch (ParseException e1) {
+                    // Does not fit the format, pass and try next
                 }
-            } catch (ParseException e1) {
-                Log.w(getClass().getSimpleName(), "Episode has invalid publication date", e);
-            }
+
+            // None of the formats matched
+            Log.w(getClass().getSimpleName(), "Episode " + name + " (" + podcast.getName()
+                    + ") has invalid publication date");
         }
 
         return null;
     }
 
     private int parseDuration(String durationString) {
+        int result = -1;
+
         try {
             // Duration simply given as number of seconds
-            return Integer.parseInt(durationString);
+            result = Integer.parseInt(durationString);
         } catch (NumberFormatException e) {
             // The duration is given as something like "1:12:34" instead
             try {
                 final String[] split = durationString.split(":");
 
+                // e.g. 12:34
                 if (split.length == 2)
-                    return Integer.parseInt(split[1]) + Integer.parseInt(split[0]) * 60;
+                    result = Integer.parseInt(split[1]) + Integer.parseInt(split[0]) * 60;
+                // e.g. 01:12:34
                 else if (split.length == 3)
-                    return Integer.parseInt(split[2]) + Integer.parseInt(split[1]) * 60
+                    result = Integer.parseInt(split[2]) + Integer.parseInt(split[1]) * 60
                             + Integer.parseInt(split[0]) * 3600;
-                else
-                    return -1;
             } catch (NumberFormatException ex) {
-                return -1;
+                // Pass, duration not available
             }
         }
+
+        // Never return zero as a duration since that does not make sense.
+        return result == 0 ? -1 : result;
     }
 }
