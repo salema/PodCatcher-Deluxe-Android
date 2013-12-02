@@ -379,12 +379,11 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
                         final HashMap<String, String> headers = new HashMap<String, String>(1);
                         headers.put(AUTHORIZATION_KEY, episode.getPodcast().getAuthorization());
 
-                        player.setDataSource(this,
-                                Uri.parse(currentEpisode.getMediaUrl().toString()), headers);
+                        player.setDataSource(this, Uri.parse(currentEpisode.getMediaUrl()), headers);
                     }
                     // No auth available we could send to the server
                     else
-                        player.setDataSource(currentEpisode.getMediaUrl().toString());
+                        player.setDataSource(currentEpisode.getMediaUrl());
 
                     // We are streaming, so make wifi stay alive
                     wifiLock.acquire();

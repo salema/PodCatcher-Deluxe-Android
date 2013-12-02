@@ -61,7 +61,7 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
     }
 
     @Override
-    public void onEpisodeMetadataLoaded(Map<URL, EpisodeMetadata> metadata) {
+    public void onEpisodeMetadataLoaded(Map<String, EpisodeMetadata> metadata) {
         super.onEpisodeMetadataLoaded(metadata);
 
         // We register to be alerted on podcast loads and podcast list changes
@@ -97,7 +97,7 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
             // deleted or the episode is not in the feed anymore, we can delete
             // the metadata for the episode).
             if (meta != null && meta.isOld != null && episode.getPodcast() != null)
-                meta.podcastUrl = episode.getPodcast().getUrl().toString();
+                meta.podcastUrl = episode.getPodcast().getUrl();
 
             // Mark metadata record as dirty
             metadataChanged = true;
@@ -189,7 +189,7 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
             // deleted or the episode is not in the feed anymore, we can delete
             // the metadata for the episode).
             if (meta != null && meta.resumeAt != null && episode.getPodcast() != null)
-                meta.podcastUrl = episode.getPodcast().getUrl().toString();
+                meta.podcastUrl = episode.getPodcast().getUrl();
 
             // Mark metadata record as dirty
             metadataChanged = true;
@@ -231,12 +231,12 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
 
                     // Clean all state meta data information for episodes of the
                     // deleted feed
-                    Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+                    Iterator<Entry<String, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
                     while (iterator.hasNext()) {
-                        final Entry<URL, EpisodeMetadata> entry = iterator.next();
+                        final Entry<String, EpisodeMetadata> entry = iterator.next();
 
                         // Find metadata records with matching podcast
-                        if (podcast.getUrl().toString().equals(entry.getValue().podcastUrl)
+                        if (podcast.getUrl().equals(entry.getValue().podcastUrl)
                                 && entry.getValue().hasOnlyStateData()) {
                             // This is actually enough since the task storing
                             // the metadata will clean empty records
@@ -254,11 +254,11 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
         // We do not want to run this too frequently and for all podcasts at
         // once. In addition it should run only once per podcast during the
         // lifetime of this EpisodeManager
-        if (podcast != null && !podcastsCleanUpRanFor.contains(podcast.getUrl().toString())
+        if (podcast != null && !podcastsCleanUpRanFor.contains(podcast.getUrl())
                 && podcastLoadCounter % 10 == 0) {
             // Update helpers
             podcastLoadCounter++;
-            podcastsCleanUpRanFor.add(podcast.getUrl().toString());
+            podcastsCleanUpRanFor.add(podcast.getUrl());
 
             // Go off the main thread, we rely on getting an iterator from the
             // metadata being thread safe here!
@@ -271,12 +271,12 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
 
                     // Clean all state meta data information for episodes no
                     // longer present in the podcast feed
-                    Iterator<Entry<URL, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+                    Iterator<Entry<String, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
                     while (iterator.hasNext()) {
-                        final Entry<URL, EpisodeMetadata> entry = iterator.next();
+                        final Entry<String, EpisodeMetadata> entry = iterator.next();
 
                         // Podcast matches
-                        if (podcast.getUrl().toString().equals(entry.getValue().podcastUrl)) {
+                        if (podcast.getUrl().equals(entry.getValue().podcastUrl)) {
                             boolean stillInPodcast = false;
 
                             // Check whether the episode is still there

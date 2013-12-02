@@ -27,7 +27,6 @@ import net.alliknow.podcatcher.model.tasks.StoreEpisodeMetadataTask;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,7 +48,7 @@ public abstract class EpisodeBaseManager implements OnLoadEpisodeMetadataListene
     protected Podcatcher podcatcher;
 
     /** The metadata information held for episodes */
-    protected Map<URL, EpisodeMetadata> metadata;
+    protected Map<String, EpisodeMetadata> metadata;
     /** Flag to indicate whether metadata is dirty */
     protected boolean metadataChanged;
 
@@ -91,10 +90,10 @@ public abstract class EpisodeBaseManager implements OnLoadEpisodeMetadataListene
     }
 
     @Override
-    public void onEpisodeMetadataLoaded(Map<URL, EpisodeMetadata> metadata) {
+    public void onEpisodeMetadataLoaded(Map<String, EpisodeMetadata> metadata) {
         // We want our metadata to be thread safe, since we might load some
         // clean-up work off to other threads.
-        this.metadata = new ConcurrentHashMap<URL, EpisodeMetadata>(metadata);
+        this.metadata = new ConcurrentHashMap<String, EpisodeMetadata>(metadata);
         this.metadataChanged = false;
 
         // Here we need to release all threads (AsyncTasks) that might be
@@ -129,7 +128,7 @@ public abstract class EpisodeBaseManager implements OnLoadEpisodeMetadataListene
             // to the meta data while the task is running and that would lead to
             // a concurrent modification exception
             new StoreEpisodeMetadataTask(podcatcher, this)
-                    .execute(new HashMap<URL, EpisodeMetadata>(metadata));
+                    .execute(new HashMap<String, EpisodeMetadata>(metadata));
 
             // Reset the flag, so the list will only be saved if changed again.
             metadataChanged = false;
@@ -161,7 +160,7 @@ public abstract class EpisodeBaseManager implements OnLoadEpisodeMetadataListene
             meta.episodePubDate = episode.getPubDate();
             meta.episodeDescription = episode.getDescription();
             meta.podcastName = episode.getPodcast().getName();
-            meta.podcastUrl = episode.getPodcast().getUrl().toString();
+            meta.podcastUrl = episode.getPodcast().getUrl();
         }
     }
 }

@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 @SuppressWarnings("javadoc")
-public class TypeTest extends InstrumentationTestCase {
+public abstract class SuggestionsAsExamplesTest extends InstrumentationTestCase {
 
     protected static List<Podcast> examplePodcasts;
     protected static int sampleSize = 5;
@@ -19,7 +19,7 @@ public class TypeTest extends InstrumentationTestCase {
     @Override
     protected void setUp() throws Exception {
         if (examplePodcasts == null) {
-            Log.d(Utils.TEST_STATUS, "Set up test \"Episodes\" by loading example podcasts...");
+            Log.d(Utils.TEST_STATUS, "Set up test by loading example podcasts...");
 
             final Date start = new Date();
             examplePodcasts = Utils.getExamplePodcasts(getInstrumentation().getTargetContext(),

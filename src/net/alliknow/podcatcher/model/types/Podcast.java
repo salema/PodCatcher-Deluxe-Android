@@ -20,7 +20,6 @@ package net.alliknow.podcatcher.model.types;
 import android.graphics.Bitmap;
 import android.text.Html;
 import android.util.Base64;
-import android.util.Log;
 
 import net.alliknow.podcatcher.model.ParserUtils;
 import net.alliknow.podcatcher.model.tags.RSS;
@@ -29,8 +28,6 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,43 +35,51 @@ import java.util.List;
 /**
  * The podcast type. This represents the most important type in the podcatcher
  * application. To create a podcast, give its name and an online location to
- * load its RSS/XML file from. Call {@link #parse(XmlPullParser)} before you
- * expect any additional data to show up.
+ * load its RSS/XML file from. The online location is not verified or checked
+ * inside the podcast type.
+ * <p>
+ * <b>Parsing:</b> Call {@link #parse(XmlPullParser)} with the parser set up to
+ * the correct content in order to make the podcast object read and refresh its
+ * members. Use {@link #getLastLoaded()} to find out whether and when this last
+ * happened to a given podcast instance.
+ * </p>
+ * <p>
+ * <b>Comparisons and Equals:</b> For the purpose of the podcatcher app, two
+ * podcasts are equal iff they point at the same online feed resource. The
+ * {@link #compareTo(Podcast)} method works on the podcast's name though and is
+ * therefore <em>not</em> consistent with {@link #equals(Object)}.
+ * </p>
+ * <p>
+ * <b>Logo:</b> Podcast often have logos. This podcast type allows for access to
+ * the logo's online location (after {@link #parse(XmlPullParser)}, of course)
+ * and for caching of the logo using {@link #setLogo(Bitmap)}. Use
+ * {@link #isLogoCached()} to find the current state, {@link #getLogo()} will
+ * return an immutable copy.
+ * </p>
  */
-public class Podcast implements Comparable<Podcast> {
+public class Podcast extends FeedEntity implements Comparable<Podcast> {
 
-    /** Name of the podcast */
-    private String name;
-    /** Location of the podcast's RSS file */
-    private URL url;
-
-    /** The podcasts list of episodes */
-    private List<Episode> episodes = new ArrayList<Episode>();
-
-    /** Podcast's description */
-    private String description;
     /** Broadcast language */
-    private Language language;
+    protected Language language;
     /** Podcast genre */
-    private Genre genre;
+    protected Genre genre;
     /** Podcast media type */
-    private MediaType mediaType;
-
-    /** Whether the podcast contains explicit language */
-    private boolean isExplicit = false;
-
-    /** Username for http authorization */
-    private String username;
-    /** Password for http authorization */
-    private String password;
+    protected MediaType mediaType;
 
     /** The podcast's image (logo) location */
-    private URL logoUrl;
+    protected String logoUrl;
     /** The cached logo bitmap */
-    private Bitmap logo;
+    protected Bitmap logo;
+
+    /** Username for http authorization */
+    protected String username;
+    /** Password for http authorization */
+    protected String password;
 
     /** The point in time when the RSS file as last been set */
-    private Date updated;
+    protected Date lastLoaded;
+    /** The podcasts list of episodes */
+    protected List<Episode> episodes = new ArrayList<Episode>();
 
     /**
      * Create a new podcast by name and RSS file location. The name will not be
@@ -83,41 +88,14 @@ public class Podcast implements Comparable<Podcast> {
      * be available after {@link #parse(XmlPullParser)} was called.
      * 
      * @param name The podcast's name, if you give <code>null</code> the name
-     *            will be read from the RSS file (if set afterwards).
+     *            will be read from the RSS file on
+     *            {@link #parse(XmlPullParser)}.
      * @param url The location of the podcast's RSS file.
      * @see #parse(XmlPullParser)
      */
-    public Podcast(String name, URL url) {
+    public Podcast(String name, String url) {
         this.name = name;
         this.url = url;
-    }
-
-    /**
-     * @return The podcast's name.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @return The podcast's online location.
-     */
-    public URL getUrl() {
-        return url;
-    }
-
-    /**
-     * @return The description.
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * @param description The description to set.
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     /**
@@ -128,13 +106,6 @@ public class Podcast implements Comparable<Podcast> {
     }
 
     /**
-     * @param language The language to set.
-     */
-    public void setLanguage(Language language) {
-        this.language = language;
-    }
-
-    /**
      * @return The genre.
      */
     public Genre getGenre() {
@@ -142,38 +113,10 @@ public class Podcast implements Comparable<Podcast> {
     }
 
     /**
-     * @param genre The genre to set.
-     */
-    public void setGenre(Genre genre) {
-        this.genre = genre;
-    }
-
-    /**
      * @return The mediaType.
      */
     public MediaType getMediaType() {
         return mediaType;
-    }
-
-    /**
-     * @param mediaType The mediaType to set.
-     */
-    public void setMediaType(MediaType mediaType) {
-        this.mediaType = mediaType;
-    }
-
-    /**
-     * @return Whether the podcast is considered explicit.
-     */
-    public boolean isExplicit() {
-        return isExplicit;
-    }
-
-    /**
-     * @param isExplicit The flag to set.
-     */
-    public void setExplicit(boolean isExplicit) {
-        this.isExplicit = isExplicit;
     }
 
     /**
@@ -212,7 +155,7 @@ public class Podcast implements Comparable<Podcast> {
 
     /**
      * @return Authorization string to be used as a HTTP request header or
-     *         <code>null</code> if username or password are not set.
+     *         <code>null</code> if user name or password are not set.
      */
     public String getAuthorization() {
         String result = null;
@@ -241,19 +184,19 @@ public class Podcast implements Comparable<Podcast> {
 
     /**
      * @return The number of episode for this podcast (always >= 0).
+     * @see #parse(XmlPullParser)
      */
     public int getEpisodeNumber() {
         return episodes.size();
     }
 
     /**
-     * Find and return the podcast's image location (logo). Only works after RSS
-     * file is set.
+     * Find and return the podcast's image location (logo).
      * 
      * @return URL pointing at the logo location.
      * @see #parse(XmlPullParser)
      */
-    public URL getLogoUrl() {
+    public String getLogoUrl() {
         return logoUrl;
     }
 
@@ -261,14 +204,22 @@ public class Podcast implements Comparable<Podcast> {
      * Get a cached logo for this podcast.
      * 
      * @return The cached logo if it was previously set using
-     *         <code>setLogo()</code>, <code>null</code> otherwise.
+     *         {@link #setLogo(Bitmap)}, <code>null</code> otherwise.
      */
     public Bitmap getLogo() {
-        return logo;
+        return logo == null ? null : Bitmap.createBitmap(logo);
     }
 
     /**
-     * Cache the podcast given.
+     * @return Whether the podcast's logo is currently cached and returned by
+     *         {@link #getLogo()}.
+     */
+    public boolean isLogoCached() {
+        return logo != null;
+    }
+
+    /**
+     * Cache the podcast logo given.
      * 
      * @param logo Logo to use for this podcast.
      */
@@ -277,10 +228,54 @@ public class Podcast implements Comparable<Podcast> {
     }
 
     /**
+     * @return The point in time this podcast has last been loaded or
+     *         <code>null</code> iff it had not been loaded before.
+     */
+    public Date getLastLoaded() {
+        return lastLoaded == null ? null : new Date(lastLoaded.getTime());
+    }
+
+    @Override
+    public String toString() {
+        return name + " at " + url;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        else if (!(o instanceof Podcast))
+            return false;
+
+        final Podcast another = (Podcast) o;
+
+        // Podcasts are equal iff they point at the same online content
+        return url == null ? false : url.equals(another.url);
+    }
+
+    @Override
+    public int hashCode() {
+        return 42 + (url == null ? 0 : url.hashCode());
+    }
+
+    @Override
+    public int compareTo(Podcast another) {
+        if (name != null && another.name != null)
+            return name.compareToIgnoreCase(another.name);
+        else if (name == null && another.name != null)
+            return -1;
+        else if (name != null && another.name == null)
+            return 1;
+        else
+            return 0;
+    }
+
+    /**
      * Set the RSS file parser representing this podcast. This is were the
      * object gets its information from. Many of its methods will not return
-     * valid results unless this method was called. Calling this method also
-     * resets all information read earlier.
+     * valid results unless this method was called. Calling this method resets
+     * all episode information that might have been read earlier, other meta
+     * data is preserved and will only change if the feed has actually changed.
      * 
      * @param parser Parser used to read the RSS/XML file.
      * @throws IOException If we encounter problems read the file.
@@ -300,18 +295,18 @@ public class Podcast implements Comparable<Podcast> {
             if (eventType == XmlPullParser.START_TAG) {
                 String tagName = parser.getName();
 
-                // Podcast name found
-                if (tagName.equalsIgnoreCase(RSS.TITLE))
-                    loadName(parser);
+                // Podcast name found and not set yet
+                if (tagName.equalsIgnoreCase(RSS.TITLE) && name == null)
+                    name = Html.fromHtml(parser.nextText().trim()).toString();
                 // Image found
                 else if (tagName.equalsIgnoreCase(RSS.IMAGE))
-                    loadImage(parser);
-                // Thumbnail found
-                else if (tagName.equalsIgnoreCase(RSS.THUMBNAIL))
-                    loadThumbnail(parser);
+                    parseLogo(parser);
+                // Thumbnail found (used by some podcast instead of image)
+                else if (tagName.equalsIgnoreCase(RSS.THUMBNAIL) && logoUrl == null)
+                    logoUrl = parser.getAttributeValue("", RSS.URL);
                 // Episode found
                 else if (tagName.equalsIgnoreCase(RSS.ITEM))
-                    loadEpisode(parser, episodeIndex++);
+                    parseEpisode(parser, episodeIndex++);
             }
 
             // Done, get next parsing event
@@ -319,70 +314,14 @@ public class Podcast implements Comparable<Podcast> {
         }
 
         // Parsing completed without errors, mark as updated
-        updated = new Date();
+        lastLoaded = new Date();
     }
 
-    /**
-     * @return The point in time this podcast has last been loaded or
-     *         <code>null</code> iff it had not been loaded before.
-     */
-    public Date getLastLoaded() {
-        if (updated == null)
-            return null;
-        else
-            return new Date(updated.getTime());
-    }
-
-    @Override
-    public String toString() {
-        if (name == null)
-            return "Unnamed podcast";
-        if (url == null)
-            return name;
-        else
-            return name + " at " + url.toString();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        else if (!(o instanceof Podcast))
-            return false;
-
-        Podcast other = (Podcast) o;
-
-        return url == null ? other.url == null : url.equals(other.url);
-    }
-
-    @Override
-    public int hashCode() {
-        return 42 + (url == null ? 0 : url.hashCode());
-    }
-
-    @Override
-    public int compareTo(Podcast another) {
-        if (this.name == null && another.getName() == null)
-            return 0;
-        else if (this.name == null && another.getName() != null)
-            return -1;
-        else if (this.name != null && another.getName() == null)
-            return 1;
-        else
-            return getName().compareToIgnoreCase(another.getName());
-    }
-
-    private void loadName(XmlPullParser parser) throws XmlPullParserException, IOException {
-        // Only update the name if not set
-        if (name == null)
-            name = Html.fromHtml(parser.nextText().trim()).toString();
-    }
-
-    private void loadImage(XmlPullParser parser) throws XmlPullParserException, IOException {
+    private void parseLogo(XmlPullParser parser) throws XmlPullParserException, IOException {
         try {
             // HREF attribute used?
             if (parser.getAttributeValue("", RSS.HREF) != null)
-                logoUrl = createLogoUrl(parser.getAttributeValue("", RSS.HREF));
+                logoUrl = parser.getAttributeValue("", RSS.HREF);
             // URL tag used! We do not override any previous setting, because
             // the HREF is from the <itunes:image> tag which tends to have
             // better pics.
@@ -394,7 +333,7 @@ public class Podcast implements Comparable<Podcast> {
                 while (parser.nextTag() == XmlPullParser.START_TAG) {
                     // URL tag found
                     if (parser.getName().equalsIgnoreCase(RSS.URL))
-                        logoUrl = createLogoUrl(parser.nextText());
+                        logoUrl = parser.nextText();
                     // Unneeded node, skip...
                     else
                         ParserUtils.skipSubTree(parser);
@@ -409,22 +348,7 @@ public class Podcast implements Comparable<Podcast> {
         }
     }
 
-    private void loadThumbnail(XmlPullParser parser) {
-        // Some podcasts use thumbnails instead of images
-        logoUrl = createLogoUrl(parser.getAttributeValue("", RSS.URL));
-    }
-
-    private URL createLogoUrl(String nodeValue) {
-        try {
-            return new URL(nodeValue);
-        } catch (MalformedURLException e) {
-            Log.e(getClass().getSimpleName(), "Podcast has invalid logo URL", e);
-        }
-
-        return null;
-    }
-
-    private void loadEpisode(XmlPullParser parser, int index)
+    private void parseEpisode(XmlPullParser parser, int index)
             throws XmlPullParserException, IOException {
         // Create episode and parse the data
         Episode newEpisode = new Episode(this, index);
