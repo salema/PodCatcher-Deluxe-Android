@@ -129,7 +129,7 @@
     <string name="suggested_podcasts">Рекомендовані подкасти</string>
     <string name="suggestion_listen">Слухати</string>
     <string name="suggestion_watch">Дивитися</string>
-    <string name="suggestion_confirm_explicit">Цей подкаст більше не буде оновлюватись. Ви впевнені, що хочете додати його до свого списку?</string>
+    <string name="suggestion_confirm_explicit">Схоже, що у цьому подкасті є матеріали відвертого змісту. Ви впевнені, що хочете додати його до свого списку?</string>
     <string name="suggestions_none">За вашим запитом рекомендації не знайдено. Будь ласка, спробуйте інші фільтри.</string>
     <string name="suggestions_load_error">Не вдалося завантажити рекомендації. Будь ласка, перевірте підключення до Інтернету.</string>
     <string name="suggestions_send">Рекомендувати подкаст&#8230;</string>
