@@ -29,6 +29,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * Loads a podcast's RSS file from the server and parses its contents
@@ -118,7 +119,7 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
             // Set auth
             this.authorization = podcast.getAuthorization();
             // ... and go get the file
-            byte[] podcastRssFile = loadFile(podcast.getUrl());
+            byte[] podcastRssFile = loadFile(new URL(podcast.getUrl()));
 
             if (isCancelled())
                 return null;
@@ -139,6 +140,7 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 
             cancel(true);
         } catch (IOException ioe) {
+        	// This is also catch mal-formed URLs 
             errorCode = PodcastLoadError.NOT_REACHABLE;
 
             cancel(true);

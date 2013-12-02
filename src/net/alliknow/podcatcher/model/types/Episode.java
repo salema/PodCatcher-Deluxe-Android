@@ -18,7 +18,6 @@
 package net.alliknow.podcatcher.model.types;
 
 import android.text.Html;
-import android.util.Log;
 
 import net.alliknow.podcatcher.model.ParserUtils;
 import net.alliknow.podcatcher.model.tags.RSS;
@@ -27,58 +26,36 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * The episode type. Each episode represents an item from a podcast's RSS/XML
  * feed. Episodes are created when the podcast is loaded (parsed), you should
  * have no need to create instances yourself.
  */
-public class Episode implements Comparable<Episode> {
-
-    /** The date format used by RSS feeds */
-    private static final String DATE_FORMAT_TEMPLATE = "EEE, dd MMM yy HH:mm:ss zzz";
-    /** Our formatter used when reading the episode item's date string */
-    private static final SimpleDateFormat DATE_FORMATTER =
-            new SimpleDateFormat(DATE_FORMAT_TEMPLATE, Locale.US);
-    /**
-     * The alternative date formats supported because they are used by some
-     * feeds, these are all tried in the given order if the default fails
-     */
-    private static final String[] DATE_FORMAT_TEMPLATE_ALTERNATIVES = {
-            "EEE, dd MMM yy", "yy-MM-dd"
-    };
+public class Episode extends FeedEntity implements Comparable<Episode> {
 
     /** The podcast this episode is part of */
-    private final Podcast podcast;
+    protected final Podcast podcast;
     /**
      * The index (starting with zero at the top of the feed) this episode is in
      * its podcast. -1 means that we do not have this information.
      */
-    private final int index;
+    protected final int index;
 
-    /** This episode title */
-    private String name;
-    /** The episode's online location */
-    private URL mediaUrl;
+    /** The episode's long content description */
+    protected String content;
     /** The episode's release date */
     protected Date pubDate;
-    /** The episode duration */
-    private int duration = -1;
-    /** The episode's description */
-    private String description;
-    /** The episode's long content description */
-    private String content;
+    /** The episode's duration */
+    protected int duration = -1;
+    /** The episode's media file location */
+    protected String mediaUrl;
 
     /**
      * Create a new episode.
      * 
-     * @param podcast Podcast this episode belongs to. Cannot be
+     * @param podcast The podcast this episode belongs to. Cannot be
      *            <code>null</code>.
      * @param index The index of the episode created in the podcast's feed (used
      *            for sorting if the publication date is not available).
@@ -107,16 +84,9 @@ public class Episode implements Comparable<Episode> {
     }
 
     /**
-     * @return The episode's title.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
      * @return The media content online location.
      */
-    public URL getMediaUrl() {
+    public String getMediaUrl() {
         return mediaUrl;
     }
 
@@ -148,14 +118,6 @@ public class Episode implements Comparable<Episode> {
     }
 
     /**
-     * @return The description for this episode (if any). Might be
-     *         <code>null</code>.
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
      * @return The long content description for this episode from the
      *         content:encoded tag (if any). Might be <code>null</code>.
      */
@@ -175,9 +137,9 @@ public class Episode implements Comparable<Episode> {
         else if (!(o instanceof Episode))
             return false;
 
-        Episode other = (Episode) o;
+        Episode another = (Episode) o;
 
-        return mediaUrl == null ? other.mediaUrl == null : mediaUrl.equals(other.mediaUrl);
+        return mediaUrl == null ? false : mediaUrl.equals(another.mediaUrl);
     }
 
     @Override
@@ -189,7 +151,9 @@ public class Episode implements Comparable<Episode> {
     public int compareTo(Episode another) {
         // We need to be "consistent with equals": only return 0 (zero) for
         // equal episodes. Failing to do so will cause episodes with equal
-        // pubDates to mysteriously disappear when put in a SortedSet.
+        // pubDates to mysteriously disappear when put in a SortedSet. At the
+        // same time, we do accept equal episodes that have different dates,
+        // because it does not hurt much.
         int result = 0;
 
         // We mainly compare by the publication date of the episodes. If these
@@ -242,16 +206,19 @@ public class Episode implements Comparable<Episode> {
             // Episode title
             if (tagName.equalsIgnoreCase(RSS.TITLE))
                 name = Html.fromHtml(parser.nextText().trim()).toString();
+            // Episode online location
+            else if (tagName.equalsIgnoreCase(RSS.LINK))
+                url = parser.nextText();
             // Episode media URL
             else if (tagName.equalsIgnoreCase(RSS.ENCLOSURE)) {
-                mediaUrl = createMediaUrl(parser.getAttributeValue("", RSS.URL));
+                mediaUrl = parser.getAttributeValue("", RSS.URL);
                 parser.nextText();
             }
             // Episode publication date (2 options)
             else if (tagName.equalsIgnoreCase(RSS.DATE) && pubDate == null)
-                pubDate = parsePubDate(parser.nextText());
+                pubDate = parseDate(parser.nextText());
             else if (tagName.equalsIgnoreCase(RSS.PUBDATE))
-                pubDate = parsePubDate(parser.nextText());
+                pubDate = parseDate(parser.nextText());
             // Episode duration
             else if (tagName.equalsIgnoreCase(RSS.DURATION))
                 duration = parseDuration(parser.nextText());
@@ -269,46 +236,7 @@ public class Episode implements Comparable<Episode> {
         parser.require(XmlPullParser.END_TAG, "", RSS.ITEM);
     }
 
-    private boolean isContentEncodedTag(XmlPullParser parser) {
-        return RSS.CONTENT_ENCODED.equals(parser.getName()) &&
-                RSS.CONTENT_NAMESPACE.equals(parser.getNamespace(parser.getPrefix()));
-    }
-
-    private URL createMediaUrl(String url) {
-        try {
-            return new URL(url);
-        } catch (MalformedURLException e) {
-            Log.e(getClass().getSimpleName(), "Episode has invalid URL", e);
-        }
-
-        return null;
-    }
-
-    private Date parsePubDate(String dateString) {
-        try {
-            // SimpleDateFormat is not thread safe
-            synchronized (DATE_FORMATTER) {
-                return DATE_FORMATTER.parse(dateString);
-            }
-        } catch (ParseException e) {
-            // The default format is not available, try all the other formats we
-            // support...
-            for (String format : DATE_FORMAT_TEMPLATE_ALTERNATIVES)
-                try {
-                    return new SimpleDateFormat(format, Locale.US).parse(dateString);
-                } catch (ParseException e1) {
-                    // Does not fit the format, pass and try next
-                }
-
-            // None of the formats matched
-            Log.w(getClass().getSimpleName(), "Episode " + name + " (" + podcast.getName()
-                    + ") has invalid publication date");
-        }
-
-        return null;
-    }
-
-    private int parseDuration(String durationString) {
+    protected int parseDuration(String durationString) {
         int result = -1;
 
         try {
@@ -328,10 +256,17 @@ public class Episode implements Comparable<Episode> {
                             + Integer.parseInt(split[0]) * 3600;
             } catch (NumberFormatException ex) {
                 // Pass, duration not available
+            } catch (NullPointerException nex) {
+                // Pass, duration string is null
             }
         }
 
         // Never return zero as a duration since that does not make sense.
         return result == 0 ? -1 : result;
+    }
+
+    protected boolean isContentEncodedTag(XmlPullParser parser) {
+        return RSS.CONTENT_ENCODED.equals(parser.getName()) &&
+                RSS.CONTENT_NAMESPACE.equals(parser.getNamespace(parser.getPrefix()));
     }
 }

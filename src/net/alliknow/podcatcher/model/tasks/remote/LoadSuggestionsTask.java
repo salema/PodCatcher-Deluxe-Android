@@ -36,7 +36,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -209,8 +208,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Suggestio
         Suggestion suggestion = null;
 
         try {
-            suggestion = new Suggestion(json.getString(JSON.TITLE), new URL(
-                    json.getString(JSON.URL)));
+            suggestion = new Suggestion(json.getString(JSON.TITLE), json.getString(JSON.URL));
             suggestion.setDescription(json.getString(JSON.DESCRIPTION).trim());
             suggestion.setLanguage(Language.valueOf(json.getString(JSON.LANGUAGE)
                     .toUpperCase(Locale.US).trim()));
@@ -224,9 +222,6 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Suggestio
             return null;
         } catch (IllegalArgumentException e) {
             Log.w(getClass().getSimpleName(), "Enum value missing for: " + suggestion, e);
-            return null;
-        } catch (MalformedURLException e) {
-            Log.w(getClass().getSimpleName(), "Bad URL for: " + suggestion, e);
             return null;
         }
 

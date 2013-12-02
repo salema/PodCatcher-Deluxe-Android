@@ -19,7 +19,6 @@ package net.alliknow.podcatcher.model;
 
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.text.Html;
 import android.util.Log;
 
 import net.alliknow.podcatcher.Podcatcher;
@@ -38,8 +37,6 @@ import net.alliknow.podcatcher.model.types.Progress;
 
 import org.xmlpull.v1.XmlPullParser;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -347,7 +344,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
 
     private void loadLogo(Podcast podcast, boolean localOnly) {
         // Only load podcast logo if it is not there yet
-        if (podcast.getLogo() != null)
+        if (podcast.isLogoCached())
             onPodcastLogoLoaded(podcast);
         // Only start the load task if it is not already active
         else if (!loadPodcastLogoTasks.containsKey(podcast)) {
@@ -529,7 +526,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
 
             // Find the podcast object
             for (Podcast podcast : podcastList)
-                if (podcast.getUrl().toString().equals(url))
+                if (podcast.getUrl().equals(url))
                     return podcast;
         }
 
@@ -550,7 +547,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             // Go try find the episode
             for (Podcast podcast : podcastList)
                 for (Episode episode : podcast.getEpisodes())
-                    if (episode.getMediaUrl().toString().equals(url))
+                    if (episode.getMediaUrl().equals(url))
                         return episode;
         }
 
@@ -668,36 +665,25 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     private void putSamplePodcasts() {
         podcastList.clear();
 
-        podcastList.add(createPodcast("This American Life",
+        podcastList.add(new Podcast("This American Life",
                 "http://feeds.thisamericanlife.org/talpodcast"));
-        podcastList.add(createPodcast("Radiolab",
+        podcastList.add(new Podcast("Radiolab",
                 "http://feeds.wnyc.org/radiolab"));
-        podcastList.add(createPodcast("Linux' Outlaws",
+        podcastList.add(new Podcast("Linux' Outlaws",
                 "http://feeds.feedburner.com/linuxoutlaws"));
-        podcastList.add(createPodcast("GEO",
+        podcastList.add(new Podcast("GEO",
                 "http://www.geo.de/GEOaudio/index.xml"));
-        podcastList.add(createPodcast("SGU",
+        podcastList.add(new Podcast("SGU",
                 "https://www.theskepticsguide.org/premium"));
-        podcastList.add(createPodcast("Planet Money",
+        podcastList.add(new Podcast("Planet Money",
                 "http://www.npr.org/rss/podcast.php?id=510289"));
-        podcastList.add(createPodcast("Freakonomics",
+        podcastList.add(new Podcast("Freakonomics",
                 "http://feeds.feedburner.com/freakonomicsradio"));
-        podcastList.add(createPodcast("neo",
+        podcastList.add(new Podcast("neo",
                 "http://www.zdf.de/ZDFmediathek/podcast/1446344?view=podcast"));
-
-        // Remove null elements if accidentally create and added above
-        while (podcastList.remove(null))
-            ;
+        podcastList.add(new Podcast("Little Letter for Gaelic Learners",
+                "http://downloads.bbc.co.uk/podcasts/scotland/litirbheag/rss.xml"));
 
         Collections.sort(podcastList);
-    }
-
-    private static Podcast createPodcast(String name, String url) {
-        try {
-            return new Podcast(Html.fromHtml(name).toString(), new URL(url));
-        } catch (MalformedURLException e) {
-            Log.e("Podcatcher", "Cannot add sample podcast: " + name, e);
-            return null;
-        }
     }
 }

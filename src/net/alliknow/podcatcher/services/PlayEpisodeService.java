@@ -273,8 +273,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                     final HashMap<String, String> headers = new HashMap<String, String>(1);
                     headers.put(AUTHORIZATION_KEY, episode.getPodcast().getAuthorization());
 
-                    player.setDataSource(this,
-                            Uri.parse(currentEpisode.getMediaUrl().toString()), headers);
+                    player.setDataSource(this, Uri.parse(currentEpisode.getMediaUrl()), headers);
                 }
                 else
                     player.setDataSource(currentEpisode.getMediaUrl().toString());

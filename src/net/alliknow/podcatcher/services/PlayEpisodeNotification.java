@@ -118,8 +118,8 @@ public class PlayEpisodeNotification {
      */
     public Notification build(Episode episode, boolean paused, int position, int duration) {
         // Prepare the main intent (leading back to the app)
-        appIntent.putExtra(PODCAST_URL_KEY, episode.getPodcast().getUrl().toString());
-        appIntent.putExtra(EPISODE_URL_KEY, episode.getMediaUrl().toString());
+        appIntent.putExtra(PODCAST_URL_KEY, episode.getPodcast().getUrl());
+        appIntent.putExtra(EPISODE_URL_KEY, episode.getMediaUrl());
         final PendingIntent backToAppIntent = PendingIntent.getActivity(context, 0,
                 appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -172,7 +172,7 @@ public class PlayEpisodeNotification {
     }
 
     private boolean isPodcastLogoAvailable(Episode episode) {
-        return episode.getPodcast().getLogo() != null;
+        return episode.getPodcast().isLogoCached();
     }
 
     private boolean isLargeDevice() {
@@ -180,7 +180,7 @@ public class PlayEpisodeNotification {
     }
 
     private Bitmap getScaledBitmap(Podcast podcast) {
-        final String cacheKey = podcast.getUrl().toString();
+        final String cacheKey = podcast.getUrl();
 
         if (!bitmapCache.containsKey(cacheKey)) {
             final Resources res = context.getResources();

@@ -405,7 +405,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
             final Podcast selectedPodcast = currentPodcastList.get(selectedPosition);
 
             // Check for logo and show it if available
-            if (selectedPodcast.getLogo() != null) {
+            if (selectedPodcast.isLogoCached()) {
                 logoView.setImageBitmap(selectedPodcast.getLogo());
                 logoView.setScaleType(ScaleType.FIT_XY);
             } else
