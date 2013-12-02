@@ -43,7 +43,7 @@
     <string name="podcast_image">Логотип подкаста</string>
     <string name="podcast_none">Не добавлено ни одного подкаста</string>
     <string name="podcast_none_long">Не добавлено ни одного подкаста. Чтобы добавить подкасты, нажмите на значок \"плюс\" в меню.</string>
-    <string name="podcast_none_selected">Нет выбранных подкастов</string>
+    <string name="podcast_none_selected">Не выбрано ни одного подкаста</string>
     <string name="podcast_select_all">Выбрать все подкасты</string>
     <plurals name="podcasts">
         <item quantity="one">Один подкаст</item>
@@ -129,7 +129,7 @@
     <string name="suggested_podcasts">Рекомендуемые подкасты</string>
     <string name="suggestion_listen">Слушать</string>
     <string name="suggestion_watch">Смотреть</string>
-    <string name="suggestion_confirm_explicit">Этот подкаст больше не обновляется. Вы уверены, что хотите добавить его в список?</string>
+    <string name="suggestion_confirm_explicit">Похоже, в этом подкасте есть материалы откровенного содержания. Вы уверены, что хотите добавить его в список?</string>
     <string name="suggestions_none">По вашему запросу рекомендаций не найдено. Попробуйте указать другие фильтры.</string>
     <string name="suggestions_load_error">Не удалось загрузить рекомендации. Проверьте подключение к Интернету.</string>
     <string name="suggestions_send">Рекомендовать подкаст&#8230;</string>
