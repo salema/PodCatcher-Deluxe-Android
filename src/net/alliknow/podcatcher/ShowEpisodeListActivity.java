@@ -146,7 +146,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
 
         // Single podcast selected
         if (selection.isPodcastSet()) {
-            final int episodeCount = selection.getPodcast().getEpisodeNumber();
+            final int episodeCount = selection.getPodcast().getEpisodeCount();
 
             if (episodeCount == 0)
                 contentSpinner.setSubtitle(null);

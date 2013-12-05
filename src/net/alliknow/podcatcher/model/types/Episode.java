@@ -209,6 +209,9 @@ public class Episode extends FeedEntity implements Comparable<Episode> {
             // Episode online location
             else if (tagName.equalsIgnoreCase(RSS.LINK))
                 url = parser.nextText();
+            // Explicit info found
+            else if (tagName.equalsIgnoreCase(RSS.EXPLICIT))
+                explicit = parseExplicit(parser.nextText());
             // Episode media URL
             else if (tagName.equalsIgnoreCase(RSS.ENCLOSURE)) {
                 mediaUrl = parser.getAttributeValue("", RSS.URL);

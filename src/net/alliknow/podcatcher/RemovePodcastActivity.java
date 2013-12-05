@@ -43,7 +43,7 @@ public class RemovePodcastActivity extends BaseActivity {
 
             // Remove podcasts starting with the last one
             while (li.hasPrevious())
-                podcastManager.remove(li.previous());
+                podcastManager.removePodcast(li.previous());
         }
 
         // Make sure we stop here

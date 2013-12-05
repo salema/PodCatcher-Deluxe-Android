@@ -70,12 +70,12 @@ public class PodcastTest extends InstrumentationTestCase {
     }
 
     public final void testGetEpisodeNumber() {
-        assertEquals(0, new Podcast(null, null).getEpisodeNumber());
+        assertEquals(0, new Podcast(null, null).getEpisodeCount());
 
         Podcast tal = new Podcast("TAL", "http://feeds.thisamericanlife.org/talpodcast");
-        assertEquals(0, tal.getEpisodeNumber());
+        assertEquals(0, tal.getEpisodeCount());
         Utils.loadAndWait(tal);
-        assertEquals(1, tal.getEpisodeNumber());
+        assertEquals(1, tal.getEpisodeCount());
     }
 
     public final void testGetEpisodes() {
@@ -124,10 +124,10 @@ public class PodcastTest extends InstrumentationTestCase {
     public final void testIsExplicit() {
         assertFalse(new Podcast(null, null).isExplicit());
 
-        Podcast wtf = new Podcast("WTFPod", "http://www.wtfpod.com/podcast/rss");
-        assertFalse(wtf.isExplicit());
-        Utils.loadAndWait(wtf);
-        assertTrue(wtf.isExplicit());
+        Podcast colt = new Podcast("Colt", "http://tsmradio.com/coltcabana/feed");
+        assertFalse(colt.isExplicit());
+        Utils.loadAndWait(colt);
+        assertTrue(colt.isExplicit());
 
         Podcast tal = new Podcast("TAL", "http://feeds.thisamericanlife.org/talpodcast");
         assertFalse(tal.isExplicit());
@@ -138,7 +138,6 @@ public class PodcastTest extends InstrumentationTestCase {
     public final void testGetAuth() {
         Podcast podcast = new Podcast(null, null);
         assertNull(podcast.getAuthorization());
-
         podcast.setUsername("kevin");
         assertNull(podcast.getAuthorization());
 

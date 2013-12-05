@@ -28,6 +28,7 @@ public class RSS {
     public static final String ITEM = "item";
     public static final String IMAGE = "image";
     public static final String TITLE = "title";
+    public static final String EXPLICIT = "explicit";
     public static final String ENCLOSURE = "enclosure";
     public static final String URL = "url";
     public static final String TYPE = "type";
@@ -41,4 +42,5 @@ public class RSS {
     public static final String CONTENT_ENCODED = "encoded";
 
     public static final String CONTENT_NAMESPACE = "http://purl.org/rss/1.0/modules/content/";
+    public static final String EXPLICIT_POSITIVE_VALUE = "yes";
 }

@@ -56,6 +56,19 @@ public class Utils {
      *         otherwise the {@link PodcastLoadError}.
      */
     public static PodcastLoadError loadAndWait(final Podcast podcast) {
+        return loadAndWait(podcast, false);
+    }
+
+    /**
+     * Load and parse podcast given.
+     * 
+     * @param podcast Podcast to process.
+     * @param blockExplicit Whether the task should run with block explicit
+     *            enabled.
+     * @return If everything went right, <code>null</code> is returned,
+     *         otherwise the {@link PodcastLoadError}.
+     */
+    public static PodcastLoadError loadAndWait(final Podcast podcast, boolean blockExplicit) {
         // Reset code
         code = null;
 
@@ -81,6 +94,7 @@ public class Utils {
         });
 
         // Go load podcast
+        task.setBlockExplicitEpisodes(blockExplicit);
         task.execute(podcast);
 
         // Wait for the podcast to load
