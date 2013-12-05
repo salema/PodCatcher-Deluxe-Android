@@ -135,14 +135,23 @@ public class EpisodeListItemView extends PodcatcherListItemView {
 
     private String createTitle(Episode episode) {
         final String episodeName = episode.getName();
-        final String redundantPrefix = episode.getPodcast().getName() + " ";
-        final String redundantPrefixAlt = episode.getPodcast().getName() + ": ";
+        final String podcastName = episode.getPodcast().getName();
+
+        final String redundantPrefix1 = podcastName + ": ";
+        final String redundantPrefix2 = podcastName + " - ";
+        final String redundantPrefix3 = podcastName + ", ";
+        final String redundantPrefix4 = podcastName + " ";
+
         // Remove podcast name from the episode title because it takes to much
         // space and is redundant anyway
-        if (episodeName.startsWith(redundantPrefix))
-            return episodeName.substring(redundantPrefix.length(), episodeName.length());
-        else if (episodeName.startsWith(redundantPrefixAlt))
-            return episodeName.substring(redundantPrefixAlt.length(), episodeName.length());
+        if (episodeName.startsWith(redundantPrefix1))
+            return episodeName.substring(redundantPrefix1.length(), episodeName.length());
+        else if (episodeName.startsWith(redundantPrefix2))
+            return episodeName.substring(redundantPrefix2.length(), episodeName.length());
+        else if (episodeName.startsWith(redundantPrefix3))
+            return episodeName.substring(redundantPrefix3.length(), episodeName.length());
+        else if (episodeName.startsWith(redundantPrefix4))
+            return episodeName.substring(redundantPrefix4.length(), episodeName.length());
         else
             return episodeName;
     }
