@@ -30,7 +30,6 @@ import android.widget.SeekBar;
 
 import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
 import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
-import net.alliknow.podcatcher.listeners.OnDeleteDownloadsConfirmationListener;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
@@ -39,6 +38,7 @@ import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
 import net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationFragment;
+import net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationFragment.OnDeleteDownloadsConfirmationListener;
 import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.view.fragments.PlayerFragment;
 

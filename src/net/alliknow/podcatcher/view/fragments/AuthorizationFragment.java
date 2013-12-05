@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -31,16 +32,24 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.listeners.OnEnterAuthorizationListener;
 
 /**
- * A podcast authorization dialog. The activity hosting this fragment needs to
- * implement {@link OnEnterAuthorizationListener}. Once the listener is called,
- * the fragment will auto-dismiss itself.
+ * A podcast authorization dialog. Let's the user supply a name/password
+ * combination.
  * <p>
- * You might also want to use {@link #setArguments(Bundle)} with a string value
- * to pre-set the user name using the key {@link #USERNAME_PRESET_KEY}. (This
- * needs to be done before showing the dialog.)
+ * <b>Register call-back:</b> The fragment will try to use the activity it is
+ * part of as its listener. To make this work, the activity needs to implement
+ * {@link OnEnterAuthorizationListener}. Showing this fragment from another
+ * context will <em>not</em> fail, but you need to use
+ * {@link #setListener(OnEnterAuthorizationListener)} to register and override
+ * the call-back. Once the listener is called, the fragment will auto-dismiss
+ * itself.
+ * </p>
+ * <p>
+ * <b>Presets: </b> You might also want to use {@link #setArguments(Bundle)}
+ * with a string value to pre-set the user name using the key
+ * {@link #USERNAME_PRESET_KEY}. (This needs to be done before showing the
+ * dialog.)
  * </p>
  */
 public class AuthorizationFragment extends DialogFragment {
@@ -50,9 +59,6 @@ public class AuthorizationFragment extends DialogFragment {
     /** The tag we identify our authorization dialog fragment with */
     public static final String TAG = "authorization";
 
-    /** The callback we are working with */
-    private OnEnterAuthorizationListener listener;
-
     /** The user name to display onShow() */
     private String usernamePreset = null;
 
@@ -60,6 +66,31 @@ public class AuthorizationFragment extends DialogFragment {
     private EditText usernameTextView;
     /** The password text view */
     private EditText passwordTextView;
+
+    /** Flag on whether our activity listens to us */
+    private boolean autoDismissOnPause = false;
+
+    /** The callback we are working with */
+    private OnEnterAuthorizationListener listener;
+
+    /**
+     * The callback definition, needs to implemented by the activity showing
+     * this dialog.
+     */
+    public interface OnEnterAuthorizationListener {
+        /**
+         * Called on the listener if the user submitted credentials.
+         * 
+         * @param username User name entered.
+         * @param password Password entered.
+         */
+        public void onSubmitAuthorization(String username, String password);
+
+        /**
+         * Called on the listener if the user cancelled the dialog.
+         */
+        public void onCancelAuthorization();
+    }
 
     @Override
     public void setArguments(Bundle args) {
@@ -72,13 +103,17 @@ public class AuthorizationFragment extends DialogFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        // Make sure our listener is present
-        try {
-            this.listener = (OnEnterAuthorizationListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnEnterAuthorizationListener");
-        }
+        // Let's see whether the activity implements our call-back, we will only
+        // pick it if the listener is not yet set:
+        if (listener == null)
+            try {
+                this.listener = (OnEnterAuthorizationListener) activity;
+            } catch (ClassCastException e) {
+                // Our activity does not listen to us, so we want to dismiss the
+                // fragment when it pauses since the listener is likely to be
+                // gone onRestart()
+                autoDismissOnPause = true;
+            }
     }
 
     @Override
@@ -105,7 +140,8 @@ public class AuthorizationFragment extends DialogFragment {
                 final CharSequence username = usernameTextView.getText();
                 final CharSequence password = passwordTextView.getText();
 
-                listener.onSubmitAuthorization(username.toString(), password.toString());
+                if (listener != null)
+                    listener.onSubmitAuthorization(username.toString(), password.toString());
                 dismiss();
             }
         });
@@ -131,6 +167,31 @@ public class AuthorizationFragment extends DialogFragment {
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
 
-        listener.onCancelAuthorization();
+        if (listener != null)
+            listener.onCancelAuthorization();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        // We auto-dismiss here, because the fragment should not survive
+        // configuration changes when the activity does not implement our
+        // listener
+        if (autoDismissOnPause)
+            dismiss();
+    }
+
+    /**
+     * Register the callback. This will override any existing listener,
+     * including the owning activity that might have been or will be set as the
+     * call-back {@link Fragment#onAttach(Activity)}. Setting the listener using
+     * this method will cause the fragment to auto-dismiss {@link #onPause()}.
+     * 
+     * @param listener Listener to call on user action.
+     */
+    public void setListener(OnEnterAuthorizationListener listener) {
+        this.listener = listener;
+        this.autoDismissOnPause = true;
     }
 }

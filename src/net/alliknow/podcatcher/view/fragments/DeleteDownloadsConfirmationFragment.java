@@ -31,7 +31,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.listeners.OnDeleteDownloadsConfirmationListener;
 
 /**
  * A confirmation dialog for the user to make sure he/she really wants
@@ -63,8 +62,28 @@ public class DeleteDownloadsConfirmationFragment extends DialogFragment {
     /** The number episodes about to be deleted */
     private int episodeCount = 1;
 
+    /** Flag on whether our activity listens to us */
+    private boolean autoDismissOnPause = false;
+
     /** The callback we are working with */
     private OnDeleteDownloadsConfirmationListener listener;
+
+    /**
+     * The callback definition for the dialog that confirms deletion of
+     * downloaded episodes.
+     */
+    public interface OnDeleteDownloadsConfirmationListener {
+
+        /**
+         * Called on the listener if the user confirmed the deletion.
+         */
+        public void onConfirmDeletion();
+
+        /**
+         * Called on the listener if the user cancelled the deletion.
+         */
+        public void onCancelDeletion();
+    }
 
     @Override
     public void setArguments(Bundle args) {
@@ -81,13 +100,17 @@ public class DeleteDownloadsConfirmationFragment extends DialogFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        // Let's see whether the activity implements our call-back
-        try {
-            if (listener == null)
-                listener = (OnDeleteDownloadsConfirmationListener) activity;
-        } catch (ClassCastException e) {
-            // pass
-        }
+        // Let's see whether the activity implements our call-back, we will only
+        // pick it if the listener is not yet set:
+        if (listener == null)
+            try {
+                this.listener = (OnDeleteDownloadsConfirmationListener) activity;
+            } catch (ClassCastException e) {
+                // Our activity does not listen to us, so we want to dismiss the
+                // fragment when it pauses since the listener is likely to be
+                // gone onRestart()
+                autoDismissOnPause = true;
+            }
     }
 
     @Override
@@ -155,18 +178,22 @@ public class DeleteDownloadsConfirmationFragment extends DialogFragment {
         super.onPause();
 
         // We auto-dismiss here, because the fragment should not survive
-        // configuration changes
-        dismiss();
+        // configuration changes when the activity does not implement our
+        // listener
+        if (autoDismissOnPause)
+            dismiss();
     }
 
     /**
      * Register the callback. This will override any existing listener,
      * including the owning activity that might have been or will be set as the
-     * call-back {@link Fragment#onAttach(Activity)}.
+     * call-back {@link Fragment#onAttach(Activity)}. Setting the listener using
+     * this method will cause the fragment to auto-dismiss {@link #onPause()}.
      * 
      * @param listener Listener to call on user action.
      */
     public void setListener(OnDeleteDownloadsConfirmationListener listener) {
         this.listener = listener;
+        this.autoDismissOnPause = true;
     }
 }
