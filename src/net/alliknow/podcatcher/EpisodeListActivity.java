@@ -25,7 +25,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
-import net.alliknow.podcatcher.listeners.OnEnterAuthorizationListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.listeners.OnReverseSortingListener;
@@ -36,6 +35,7 @@ import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.ContentSpinner;
 import net.alliknow.podcatcher.view.fragments.AuthorizationFragment;
+import net.alliknow.podcatcher.view.fragments.AuthorizationFragment.OnEnterAuthorizationListener;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 
 import java.util.ArrayList;

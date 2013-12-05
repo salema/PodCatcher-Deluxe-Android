@@ -19,6 +19,11 @@
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/edit_auth_contextmenuitem"
+        android:icon="@drawable/ic_menu_authorization"
+        android:showAsAction="ifRoom"
+        android:title="@string/auth_edit" />
+    <item
         android:id="@+id/opml_export_contextmenuitem"
         android:icon="@drawable/ic_menu_export"
         android:showAsAction="ifRoom"

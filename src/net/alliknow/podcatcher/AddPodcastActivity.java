@@ -27,13 +27,13 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
-import net.alliknow.podcatcher.listeners.OnEnterAuthorizationListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.fragments.AddPodcastFragment;
 import net.alliknow.podcatcher.view.fragments.AuthorizationFragment;
+import net.alliknow.podcatcher.view.fragments.AuthorizationFragment.OnEnterAuthorizationListener;
 
 /**
  * Add new podcast(s) activity. This simply shows the add podcast fragment. To
