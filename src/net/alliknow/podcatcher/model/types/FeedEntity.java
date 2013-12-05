@@ -17,6 +17,8 @@
 
 package net.alliknow.podcatcher.model.types;
 
+import net.alliknow.podcatcher.model.tags.RSS;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -79,6 +81,18 @@ public abstract class FeedEntity {
      */
     public boolean isExplicit() {
         return explicit;
+    }
+
+    /**
+     * Check whether the given string values indicated that the feed entity is
+     * considered explicit.
+     * 
+     * @param value The string value from the feed.
+     * @return The explicit flag.
+     */
+    protected boolean parseExplicit(String value) {
+        return value != null
+                && value.trim().toLowerCase(Locale.US).equals(RSS.EXPLICIT_POSITIVE_VALUE);
     }
 
     /**

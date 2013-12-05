@@ -78,6 +78,11 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
         ACCESS_DENIED,
 
         /**
+         * The restricted profile blocks explicit podcasts
+         */
+        EXPLICIT_BLOCKED,
+
+        /**
          * The remote server could not be reached.
          */
         NOT_REACHABLE,
@@ -96,6 +101,9 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
     /** The error code */
     private PodcastLoadError errorCode = PodcastLoadError.UNKNOWN;
 
+    /** Flag whether we strip out explicit episodes */
+    private boolean blockExplicit = false;
+
     /**
      * Create new task.
      * 
@@ -107,6 +115,16 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
         // huge feeds out there and user's really do not understand why they are
         // unable to access them.
         // this.loadLimit = MAX_RSS_FILE_SIZE;
+    }
+
+    /**
+     * @param block Whether the task should block explicit episodes from showing
+     *            up in the episode list of the loaded podcast. If set and the
+     *            episode list collapses to zero episodes, the task will fail
+     *            with {@link PodcastLoadError#EXPLICIT_BLOCKED}.
+     */
+    public void setBlockExplicitEpisodes(boolean block) {
+        this.blockExplicit = block;
     }
 
     @Override
@@ -137,7 +155,19 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
             if (!isCancelled())
                 podcast.parse(parser);
 
-            // 4. We need to wait here and make sure the episode metadata is
+            // 4. Clean out explicit episodes
+            if (!isCancelled() && blockExplicit) {
+                final int episodeCount = podcast.getEpisodeCount();
+                final int cleanEpisodeCount = podcast.removeExplicitEpisodes();
+
+                if (cleanEpisodeCount == 0 && episodeCount > 0) {
+                    errorCode = PodcastLoadError.EXPLICIT_BLOCKED;
+
+                    cancel(true);
+                }
+            }
+
+            // 5. We need to wait here and make sure the episode metadata is
             // available before we return
             EpisodeManager.getInstance().blockUntilEpisodeMetadataIsLoaded();
         } catch (XmlPullParserException xppe) {
@@ -145,7 +175,7 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 
             cancel(true);
         } catch (IOException ioe) {
-        	// This is also catch mal-formed URLs 
+            // This is also catch mal-formed URLs
             errorCode = PodcastLoadError.NOT_REACHABLE;
 
             cancel(true);

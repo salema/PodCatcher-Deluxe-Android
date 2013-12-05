@@ -27,7 +27,6 @@ import net.alliknow.podcatcher.model.test.Utils;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 
-import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -54,6 +53,7 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
         public void onPodcastLoaded(Podcast podcast) {
             this.result = podcast;
             this.failed = false;
+            this.code = null;
 
             signal.countDown();
         }
@@ -70,12 +70,15 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
 
     @Override
     protected void setUp() throws Exception {
-        Log.d(Utils.TEST_STATUS, "Set up test \"LoadPodcast\" by loading example podcasts...");
+        Log.d(Utils.TEST_STATUS,
+                "Set up test \"LoadPodcast\" by loading example podcasts...");
 
         final Date start = new Date();
-        examplePodcasts = Utils.getExamplePodcasts(getInstrumentation().getTargetContext());
+        examplePodcasts =
+                Utils.getExamplePodcasts(getInstrumentation().getTargetContext());
 
-        Log.d(Utils.TEST_STATUS, "Waited " + (new Date().getTime() - start.getTime())
+        Log.d(Utils.TEST_STATUS, "Waited " + (new Date().getTime() -
+                start.getTime())
                 + "ms for example podcasts...");
     }
 
@@ -96,7 +99,7 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
                     ") ----");
             Log.d(Utils.TEST_STATUS, "Testing \"" + ep + "\"...");
             LoadPodcastTask task = loadAndWait(mockLoader, new Podcast(ep.getName(),
-                    ep.getUrl()));
+                    ep.getUrl()), false);
 
             if (mockLoader.failed) {
                 Log.w(Utils.TEST_STATUS, "Podcast " + ep.getName() + " failed!");
@@ -122,43 +125,78 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
                 failed);
     }
 
-    public final void testLoadDummyPodcasts() throws MalformedURLException {
+    public final void testLoadDummyPodcasts() {
         final MockPodcastLoader mockLoader = new MockPodcastLoader();
 
         // null
-        loadAndWait(mockLoader, (Podcast) null);
+        loadAndWait(mockLoader, (Podcast) null, false);
         assertTrue(mockLoader.failed);
         assertNull(mockLoader.result);
         assertEquals(mockLoader.code, PodcastLoadError.UNKNOWN);
 
         // null URL
-        loadAndWait(mockLoader, new Podcast(null, null));
+        loadAndWait(mockLoader, new Podcast(null, null), false);
         assertTrue(mockLoader.failed);
         assertNull(mockLoader.result.getLastLoaded());
         assertEquals(mockLoader.code, PodcastLoadError.UNKNOWN);
 
         // bad URL
-        loadAndWait(mockLoader, new Podcast("Mist", "http://bla"));
+        loadAndWait(mockLoader, new Podcast("Mist", "http://bla"), false);
         assertTrue(mockLoader.failed);
         assertNull(mockLoader.result.getLastLoaded());
         assertEquals(mockLoader.code, PodcastLoadError.NOT_REACHABLE);
 
         // no podcast feed URL
-        loadAndWait(mockLoader, new Podcast("Google", "http://www.google.com"));
+        loadAndWait(mockLoader, new Podcast("Google", "http://www.google.com"),
+                false);
         assertTrue(mockLoader.failed);
         assertNull(mockLoader.result.getLastLoaded());
         assertEquals(mockLoader.code, PodcastLoadError.NOT_PARSEABLE);
 
         // Auth required
-        loadAndWait(mockLoader, new Podcast("SGU", "https://www.theskepticsguide.org/premium"));
+        loadAndWait(mockLoader, new Podcast("SGU",
+                "https://www.theskepticsguide.org/premium"),
+                false);
         assertTrue(mockLoader.failed);
         assertNull(mockLoader.result.getLastLoaded());
         assertEquals(mockLoader.code, PodcastLoadError.AUTH_REQUIRED);
     }
 
-    private LoadPodcastTask loadAndWait(final MockPodcastLoader mockLoader, final Podcast podcast) {
+    public final void testLoadWithBlockExplicitEpisodes() {
+        final MockPodcastLoader mockLoader = new MockPodcastLoader();
+
+        Podcast colt = new Podcast("Colt", "http://tsmradio.com/coltcabana/feed");
+        loadAndWait(mockLoader, colt, false);
+        assertTrue(colt.isExplicit());
+        assertTrue(colt.getEpisodeCount() > 0);
+        assertTrue(colt.getEpisodes().get(0).isExplicit());
+        assertFalse(mockLoader.failed);
+        Podcast colt2 = new Podcast("Colt", "http://tsmradio.com/coltcabana/feed");
+        loadAndWait(mockLoader, colt2, true);
+        assertTrue(colt2.isExplicit());
+        assertTrue(colt2.getEpisodeCount() == 0);
+        assertTrue(mockLoader.failed);
+        assertEquals(mockLoader.code, PodcastLoadError.EXPLICIT_BLOCKED);
+
+        Podcast tal = new Podcast("TAL", "http://feeds.thisamericanlife.org/talpodcast");
+        loadAndWait(mockLoader, tal, false);
+        assertFalse(tal.isExplicit());
+        assertTrue(tal.getEpisodeCount() > 0);
+        assertFalse(tal.getEpisodes().get(0).isExplicit());
+        assertFalse(mockLoader.failed);
+        Podcast tal2 = new Podcast("TAL", "http://feeds.thisamericanlife.org/talpodcast");
+        loadAndWait(mockLoader, tal2, true);
+        assertFalse(tal2.isExplicit());
+        assertTrue(tal2.getEpisodeCount() > 0);
+        assertFalse(tal2.getEpisodes().get(0).isExplicit());
+        assertFalse(mockLoader.failed);
+    }
+
+    private LoadPodcastTask loadAndWait(final MockPodcastLoader mockLoader, final Podcast podcast,
+            boolean blockExplicit) {
         // Create task and latch
         final LoadPodcastTask task = new LoadPodcastTask(mockLoader);
+        task.setBlockExplicitEpisodes(blockExplicit);
         signal = new CountDownLatch(1);
 
         // Go load podcast

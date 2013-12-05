@@ -17,11 +17,17 @@
 
 package net.alliknow.podcatcher.model;
 
+import android.annotation.TargetApi;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.UserManager;
 import android.preference.PreferenceManager;
 import android.text.Html;
 import android.util.Log;
 
+import net.alliknow.podcatcher.GetRestrictionsReceiver;
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.SettingsActivity;
 import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
@@ -97,6 +103,12 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     /** Flag to indicate whether podcast list is dirty */
     private boolean podcastListChanged;
 
+    /**
+     * Flag to indicate whether we run in a restricted profile and should block
+     * explicit podcasts from loading and suggestions from the being added
+     */
+    private boolean blockExplicit = false;
+
     /** The current podcast load tasks */
     private Map<Podcast, LoadPodcastTask> loadPodcastTasks = new HashMap<Podcast, LoadPodcastTask>();
     /** The current podcast logo load tasks */
@@ -137,6 +149,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
                                     triggerIfLoadedBefore))) {
                         // Download podcast RSS feed (async)
                         final LoadPodcastTask task = new LoadPodcastTask(PodcastManager.this);
+                        task.setBlockExplicitEpisodes(blockExplicit);
                         try {
                             task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, podcast);
 
@@ -163,6 +176,9 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         // We use some of its method below, so we keep a reference to the
         // application object.
         this.podcatcher = app;
+
+        // Check for preferences
+        this.blockExplicit = checkForRestrictedProfileBlocksExplicit();
     }
 
     /**
@@ -265,6 +281,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         else if (!loadPodcastTasks.containsKey(podcast)) {
             // Download podcast RSS feed (async)
             final LoadPodcastTask task = new LoadPodcastTask(this);
+            task.setBlockExplicitEpisodes(blockExplicit);
             // We will accept stale versions from the cache in certain
             // situations
             task.setMaxStale(podcatcher.isOnline() ?
@@ -317,6 +334,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         // Notify listeners
         if (loadPodcastListeners.isEmpty())
             Log.w(getClass().getSimpleName(), "Podcast loaded, but no listeners attached.");
+        else if (blockExplicit && podcast.isExplicit())
+            onPodcastLoadFailed(podcast, PodcastLoadError.EXPLICIT_BLOCKED);
         else
             for (OnLoadPodcastListener listener : loadPodcastListeners)
                 listener.onPodcastLoaded(podcast);
@@ -434,7 +453,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      * @param index Index of podcast to remove.
      * @see OnChangePodcastListListener
      */
-    public void remove(int index) {
+    public void removePodcast(int index) {
         if (index >= 0 && index < size()) {
             // Remove podcast at given position
             Podcast removedPodcast = podcastList.remove(index);
@@ -448,6 +467,14 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         } else
             Log.w(getClass().getSimpleName(), "Attempted to remove podcast at invalid position: "
                     + index);
+    }
+
+    /**
+     * @return Whether the app runs in a restricted environment where access to
+     *         podcast with explicit content is blocked.
+     */
+    public boolean blockExplicit() {
+        return blockExplicit;
     }
 
     /**
@@ -661,6 +688,27 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             final long age = new Date().getTime() - podcast.getLastLoaded().getTime();
             return age > (podcatcher.isOnFastConnection() ? TIME_TO_LIFE : TIME_TO_LIFE_MOBILE);
         }
+    }
+
+    /**
+     * Check whether we are in a restricted profile and should filter out
+     * podcasts (suggestions) with explicit content.
+     * 
+     * @return Whether the app is run by a restricted user with restricted
+     *         access to podcasts and suggestions (<code>true</code>) .
+     */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    private boolean checkForRestrictedProfileBlocksExplicit() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            final Bundle restrictions = ((UserManager) podcatcher
+                    .getSystemService(Context.USER_SERVICE))
+                    .getApplicationRestrictions(podcatcher.getPackageName());
+
+            return restrictions != null && restrictions
+                    .getBoolean(GetRestrictionsReceiver.BLOCK_EXPLICIT_RESTRICTION_KEY);
+        }
+        else
+            return false;
     }
 
     /**

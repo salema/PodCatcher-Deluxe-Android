@@ -66,7 +66,7 @@ public class PodcastExamplesTest extends SuggestionsAsExamplesTest {
 
     public final void testGetEpisodeNumber() {
         for (Podcast podcast : examplePodcasts)
-            assertTrue(podcast.getEpisodeNumber() > 0);
+            assertTrue(podcast.getEpisodeCount() > 0);
     }
 
     public final void testGetEpisodes() {

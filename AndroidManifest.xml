@@ -147,5 +147,11 @@
                 <action android:name="android.media.AUDIO_BECOMING_NOISY" />
             </intent-filter>
         </receiver>
+        <receiver 
+            android:name=".GetRestrictionsReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.GET_RESTRICTION_ENTRIES" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>
