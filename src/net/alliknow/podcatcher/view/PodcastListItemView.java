@@ -71,7 +71,7 @@ public class PodcastListItemView extends PodcatcherListItemView {
     public void show(final Podcast podcast, boolean showLogo, boolean showProgress) {
         // 0. Check podcast state
         final boolean loading = podcastManager.isLoading(podcast);
-        final int episodeNumber = podcast.getEpisodeNumber();
+        final int episodeNumber = podcast.getEpisodeCount();
         final boolean showLogoView = showLogo && podcast.isLogoCached();
         final boolean progressShouldFade = podcast.hashCode() == lastItemId;
 

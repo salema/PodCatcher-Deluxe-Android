@@ -189,7 +189,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
                     if (selection.getPodcast().getEpisodes().isEmpty())
                         contentSpinner.setSubtitle(null);
                     else {
-                        final int episodeCount = selection.getPodcast().getEpisodeNumber();
+                        final int episodeCount = selection.getPodcast().getEpisodeCount();
                         contentSpinner.setSubtitle(getResources()
                                 .getQuantityString(R.plurals.episodes, episodeCount, episodeCount));
                     }

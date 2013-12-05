@@ -3,6 +3,7 @@ package net.alliknow.podcatcher.model.types.test;
 
 import android.test.InstrumentationTestCase;
 
+import net.alliknow.podcatcher.model.test.Utils;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 
@@ -52,8 +53,10 @@ public class EpisodeTest extends InstrumentationTestCase {
         EpisodeForTesting third = new EpisodeForTesting(dummy, 1);
         third.setPubDate(other);
 
-        assertTrue(first.compareTo(second) == 0);
-        assertTrue(second.compareTo(first) == 0);
+        assertEquals(first.getPositionInPodcast() - second.getPositionInPodcast(),
+                first.compareTo(second));
+        assertEquals(second.getPositionInPodcast() - first.getPositionInPodcast(),
+                second.compareTo(first));
         assertEquals(one.compareTo(other), -first.compareTo(third));
         assertEquals(other.compareTo(one), -third.compareTo(first));
     }
@@ -111,5 +114,16 @@ public class EpisodeTest extends InstrumentationTestCase {
         assertEquals("1:01:01", e.getDurationString());
         e.setDuration(12 * 3600 + 59 * 60 + 33);
         assertEquals("12:59:33", e.getDurationString());
+    }
+
+    public final void testIsExplicit() {
+        Podcast wtf = new Podcast("Adam Carolla",
+                "http://feeds.feedburner.com/TheAdamCarollaPodcast");
+        Utils.loadAndWait(wtf);
+        assertTrue(wtf.getEpisodes().get(0).isExplicit());
+
+        Podcast tal = new Podcast("TAL", "http://feeds.thisamericanlife.org/talpodcast");
+        Utils.loadAndWait(tal);
+        assertFalse(tal.getEpisodes().get(0).isExplicit());
     }
 }

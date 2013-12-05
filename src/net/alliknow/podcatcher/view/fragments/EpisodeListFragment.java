@@ -491,6 +491,10 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
                     progressView.showError(R.string.podcast_load_error_not_reachable);
                     break;
 
+                case EXPLICIT_BLOCKED:
+                    progressView.showError(R.string.podcast_load_error_explicit);
+                    break;
+
                 default:
                     progressView.showError(R.string.podcast_load_error);
                     break;

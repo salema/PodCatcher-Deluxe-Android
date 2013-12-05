@@ -30,6 +30,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -183,10 +184,30 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
     }
 
     /**
+     * Clean all explicit episodes from the podcast. Once called, the
+     * {@link #getEpisodes()} method will only return episodes <em>not</em>
+     * marked explicit until {@link #parse(XmlPullParser)} is called.
+     * 
+     * @return The number of clean episodes left.
+     */
+    public int removeExplicitEpisodes() {
+        Iterator<Episode> episodeIterator = episodes.iterator();
+
+        while (episodeIterator.hasNext()) {
+            final Episode episode = episodeIterator.next();
+
+            if (episode.isExplicit())
+                episodeIterator.remove();
+        }
+
+        return episodes.size();
+    }
+
+    /**
      * @return The number of episode for this podcast (always >= 0).
      * @see #parse(XmlPullParser)
      */
-    public int getEpisodeNumber() {
+    public int getEpisodeCount() {
         return episodes.size();
     }
 
@@ -298,6 +319,9 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
                 // Podcast name found and not set yet
                 if (tagName.equalsIgnoreCase(RSS.TITLE) && name == null)
                     name = Html.fromHtml(parser.nextText().trim()).toString();
+                // Explicit info found
+                else if (tagName.equalsIgnoreCase(RSS.EXPLICIT))
+                    explicit = parseExplicit(parser.nextText());
                 // Image found
                 else if (tagName.equalsIgnoreCase(RSS.IMAGE))
                     parseLogo(parser);
@@ -317,7 +341,7 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
         lastLoaded = new Date();
     }
 
-    private void parseLogo(XmlPullParser parser) throws XmlPullParserException, IOException {
+    protected void parseLogo(XmlPullParser parser) throws XmlPullParserException, IOException {
         try {
             // HREF attribute used?
             if (parser.getAttributeValue("", RSS.HREF) != null)
@@ -348,7 +372,7 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
         }
     }
 
-    private void parseEpisode(XmlPullParser parser, int index)
+    protected void parseEpisode(XmlPullParser parser, int index)
             throws XmlPullParserException, IOException {
         // Create episode and parse the data
         Episode newEpisode = new Episode(this, index);
