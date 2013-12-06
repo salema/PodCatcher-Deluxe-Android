@@ -1,29 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<merge
-        xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <LinearLayout
-        android:layout_width="300dp"
+<ListView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:choiceMode="singleChoice"
+        android:listSelector="@drawable/list_item_bg_focused_fragment"
+        android:divider="@color/divider_color"
+        android:dividerHeight="1dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:padding="10dp"
-        android:id="@+id/context_menu"
-        >
-
-    <ListView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:choiceMode="singleChoice"
-            android:id="@+id/context_menu_list"
-            />
-
-    <FrameLayout
-            android:id="@+id/right"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-
-    </LinearLayout>
-
-</merge>
+        />

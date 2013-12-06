@@ -134,4 +134,7 @@
     <string name="pref_auto_delete_title">Auto delete</string>
     <string name="pref_auto_delete_summary">Remove downloaded episodes when playback completes</string>
     <string name="pref_download_folder_title">Download folder</string>
+
+    <string name="rewind">Rewind</string>
+    <string name="forward">Forward</string>
 </resources>

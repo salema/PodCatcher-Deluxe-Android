@@ -21,24 +21,26 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+        >
     <TextView
         android:id="@+id/info_box"
+        style="@style/PodcatcherTheme.Text.Small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingBottom="2dp"
         android:background="@color/theme_dark"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/font_size_small"
         android:visibility="gone" />
-    <ImageView
+    <!--<ImageView
         android:id="@+id/info_box_divider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scaleType="fitXY"
         android:src="@android:drawable/divider_horizontal_bright"
-        android:contentDescription="@string/divider" />
+        android:contentDescription="@string/divider" />-->
     <ProgressBar
         android:id="@+id/progress_bar_top"
         style="@android:style/Widget.ProgressBar.Horizontal"
@@ -51,17 +53,20 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:choiceMode="singleChoice" />
+        android:choiceMode="singleChoice"
+        android:divider="@color/divider_color"
+        android:listSelector="@drawable/list_item_bg_focused_fragment"
+        android:dividerHeight="1dp"
+            />
     <TextView
         android:id="@id/android:empty"
+        style="@style/PodcatcherTheme.Text.Small"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_margin="20dp"
         android:gravity="center"
-        android:text="@string/podcast_none_selected"
-        android:textColor="@color/text_secondary"
-        android:textSize="@dimen/font_size_small" />
+        android:text="@string/podcast_none_selected" />
     <net.alliknow.podcatcher.view.ProgressView
         android:id="@+id/progress"
         android:layout_width="match_parent"

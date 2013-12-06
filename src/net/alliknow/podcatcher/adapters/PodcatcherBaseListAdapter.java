@@ -21,6 +21,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.SparseBooleanArray;
 import android.view.View;
+import net.alliknow.podcatcher.R;
 
 /**
  * Abstract super class for this app's list adapters. Handles the
@@ -121,10 +122,14 @@ public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
      */
     protected void setBackgroundColorForPosition(View view, int position) {
         // This handles the selected, checked and none states
-        if (checkedPositions.get(position))
-            view.setBackgroundColor(lightThemeColor);
-        else if (selectedPositions.get(position))
-            view.setBackgroundColor(themeColor);
+//        if (checkedPositions.get(position))
+//            view.setBackgroundColor(lightThemeColor);
+//        else
+        if (view.hasFocus()) {
+            return;
+        }
+        if (selectedPositions.get(position))
+            view.setBackgroundColor(view.getContext().getResources().getColor(R.color.list_item_bg_selected_unfocused));
         else {
             view.setBackgroundColor(Color.TRANSPARENT);
         }

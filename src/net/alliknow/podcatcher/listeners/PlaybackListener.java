@@ -1,11 +1,14 @@
 package net.alliknow.podcatcher.listeners;
 
-/**
- * Created with IntelliJ IDEA.
- * User: user
- * Date: 25.11.13
- * Time: 13:46
- * To change this template use File | Settings | File Templates.
- */
+import net.alliknow.podcatcher.model.types.Episode;
+
 public interface PlaybackListener {
+
+    void onPlay();
+    void onPause();
+    void onStop();
+    void onUpdateProgress(int progress);
+    void onSetNewEpisode(Episode episode, int duration);
+    void onNothingSet();
+
 }

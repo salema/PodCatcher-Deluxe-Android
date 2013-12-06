@@ -11,4 +11,6 @@ public interface ContextMenuListener {
     void onPodcastContextMenuOpen(Podcast podcast);
     void onPodcastContextMenuClose();
 
+    void onPodcastListFocused();
+
 }

@@ -28,17 +28,11 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.SeekBar;
 
-import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
-import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
-import net.alliknow.podcatcher.listeners.OnDeleteDownloadsConfirmationListener;
-import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
-import net.alliknow.podcatcher.listeners.OnRequestFullscreenListener;
-import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
-import net.alliknow.podcatcher.listeners.PlayServiceListener;
-import net.alliknow.podcatcher.listeners.PlayerListener;
+import net.alliknow.podcatcher.listeners.*;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
+import net.alliknow.podcatcher.view.ControllerView;
 import net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationFragment;
 import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.view.fragments.PlayerFragment;
@@ -57,33 +51,52 @@ public abstract class EpisodeActivity extends BaseActivity implements
         OnDownloadEpisodeListener, OnRequestFullscreenListener, OnChangePlaylistListener,
         OnChangeEpisodeStateListener {
 
-    /** Key used to store episode URL in intent or bundle */
+    /**
+     * Key used to store episode URL in intent or bundle
+     */
     public static final String EPISODE_URL_KEY = "episode_url_key";
 
-    /** The current episode fragment */
+    /**
+     * The current episode fragment
+     */
     protected EpisodeFragment episodeFragment;
-    /** The current player fragment */
-    protected PlayerFragment playerFragment;
+    /**
+     * The current player fragment
+     */
+//    protected PlayerFragment playerFragment;
+    protected boolean episodeFragmentShown = false;
 
-    /** Play service */
+    /**
+     * Play service
+     */
     private PlayEpisodeService service;
 
-    /** Play update timer */
+    /**
+     * Play update timer
+     */
     private Timer playUpdateTimer = new Timer();
-    /** Play update timer task */
+    /**
+     * Play update timer task
+     */
     private TimerTask playUpdateTimerTask;
-    /** Flag for visibility, coordinating timer */
+    /**
+     * Flag for visibility, coordinating timer
+     */
     private boolean visible = false;
 
-    /** The actual task to regularly update the UI on playback */
+    /**
+     * The actual task to regularly update the UI on playback
+     */
     private static class PlayProgressTask extends TimerTask {
 
-        /** Use weak reference to avoid any leaking of activities */
+        /**
+         * Use weak reference to avoid any leaking of activities
+         */
         private final WeakReference<EpisodeActivity> activityReference;
 
         /**
          * Create a new update task.
-         * 
+         *
          * @param episodeActivity Activity to call update player for.
          */
         public PlayProgressTask(EpisodeActivity episodeActivity) {
@@ -116,8 +129,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
      */
     protected void findFragments() {
         // The player fragment to use
-        if (playerFragment == null)
-            playerFragment = (PlayerFragment) findByTagId(R.string.player_fragment_tag);
+//        if (playerFragment == null)
+//            playerFragment = (PlayerFragment) findByTagId(R.string.player_fragment_tag);
 
         // The episode fragment to use
         if (episodeFragment == null)
@@ -203,41 +216,41 @@ public abstract class EpisodeActivity extends BaseActivity implements
     public void onEpisodeSelected(Episode selectedEpisode) {
         selection.setEpisode(selectedEpisode);
 
-        switch (view) {
-            case LARGE_PORTRAIT:
-            case LARGE_LANDSCAPE:
-                // Set episode in episode fragment
-                episodeFragment.setEpisode(selectedEpisode);
+//        switch (view) {
+//            case LARGE_PORTRAIT:
+//            case LARGE_LANDSCAPE:
+//                // Set episode in episode fragment
+//                episodeFragment.setEpisode(selectedEpisode);
+//
+//                break;
+//            case SMALL_LANDSCAPE:
+        // We need to create new episode fragment here each time to
+        // renew the video surface
+//                episodeFragment = new EpisodeFragment();
 
-                break;
-            case SMALL_LANDSCAPE:
-                // We need to create new episode fragment here each time to
-                // renew the video surface
-                episodeFragment = new EpisodeFragment();
+        // Add the fragment to the UI, replacing the list fragment if it
+        // is not already there
+//                if (getFragmentManager().getBackStackEntryCount() == 0) {
+//                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//                    transaction.replace(R.id.right, episodeFragment,
+//                            getString(R.string.episode_fragment_tag));
+//                    transaction.addToBackStack(null);
+//                    transaction.commit();
+//
+//                    getFragmentManager().executePendingTransactions();
+//                }
 
-                // Add the fragment to the UI, replacing the list fragment if it
-                // is not already there
-                if (getFragmentManager().getBackStackEntryCount() == 0) {
-                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                    transaction.replace(R.id.right, episodeFragment,
-                            getString(R.string.episode_fragment_tag));
-                    transaction.addToBackStack(null);
-                    transaction.commit();
+        // Set the episode
+//                episodeFragment.setEpisode(selectedEpisode);
+//                episodeFragment.setShowEpisodeDate(true);
 
-                    getFragmentManager().executePendingTransactions();
-                }
+//                updateVideoSurface();
 
-                // Set the episode
-                episodeFragment.setEpisode(selectedEpisode);
-                episodeFragment.setShowEpisodeDate(true);
-
-                updateVideoSurface();
-
-                break;
-            case SMALL_PORTRAIT:
-                // This should be handled by sub-class
-                break;
-        }
+//                break;
+//            case SMALL_PORTRAIT:
+//                // This should be handled by sub-class
+//                break;
+//        }
 
         updatePlayerUi();
         updateDownloadUi();
@@ -290,7 +303,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     @Override
-    public void onToggleDownload() {
+    public void onToggleDownload(final OnDeleteDownloadsConfirmationListener listener) {
         if (selection.isEpisodeSet()) {
             // Check for action to perform
             boolean download = !episodeManager.isDownloadingOrDownloaded(selection.getEpisode());
@@ -301,8 +314,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
                 showToast(getString(R.string.download_started, selection.getEpisode().getName()));
                 updateDownloadUi();
-            }
-            else {
+            } else {
                 // For deletion, we show a confirmation dialog first
                 final DeleteDownloadsConfirmationFragment confirmationDialog =
                         new DeleteDownloadsConfirmationFragment();
@@ -311,11 +323,16 @@ public abstract class EpisodeActivity extends BaseActivity implements
                     @Override
                     public void onConfirmDeletion() {
                         episodeManager.deleteDownload(selection.getEpisode());
+                        if (listener != null) {
+                            listener.onConfirmDeletion();
+                        }
                     }
 
                     @Override
                     public void onCancelDeletion() {
-                        // Nothing to do here...
+                        if (listener != null) {
+                            listener.onCancelDeletion();
+                        }
                     }
                 });
 
@@ -332,13 +349,13 @@ public abstract class EpisodeActivity extends BaseActivity implements
         // Stop called: unload episode
         if (service.isLoadedEpisode(selection.getEpisode()))
             service.reset();
-        // Play called on unloaded episode
+            // Play called on unloaded episode
         else if (selection.isEpisodeSet())
             service.playEpisode(selection.getEpisode());
 
         // Update UI
         updatePlayerUi();
-        playerFragment.updateSeekBarSecondaryProgress(0);
+//        playerFragment.updateSeekBarSecondaryProgress(0);
     }
 
     @Override
@@ -437,7 +454,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
     @Override
     public void onBufferUpdate(int seconds) {
-        playerFragment.updateSeekBarSecondaryProgress(seconds);
+//        playerFragment.updateSeekBarSecondaryProgress(seconds);
     }
 
     @Override
@@ -460,8 +477,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
             episodeFragment.setShowVideoView(false, false);
 
         updatePlayerUi();
-        playerFragment.setPlayerVisibilility(true);
-        playerFragment.setErrorViewVisibility(true);
+//        playerFragment.setPlayerVisibilility(true);
+//        playerFragment.setErrorViewVisibility(true);
     }
 
     /**
@@ -510,8 +527,8 @@ public abstract class EpisodeActivity extends BaseActivity implements
      * Broadcast the video surface to the episode playback service.
      */
     protected void updateVideoSurface() {
-        if (service != null && episodeFragment != null && !selection.isFullscreenEnabled())
-            service.setVideoSurfaceProvider(episodeFragment);
+//        if (service != null && episodeFragment != null && !selection.isFullscreenEnabled())
+//            service.setVideoSurfaceProvider(episodeFragment);
     }
 
     /**
@@ -524,9 +541,9 @@ public abstract class EpisodeActivity extends BaseActivity implements
             final boolean currentEpisodeIsShowing = service.isLoadedEpisode(selection.getEpisode());
 
             // Show/hide menu item
-            playerFragment.setLoadMenuItemVisibility(selection.isEpisodeSet(),
-                    !currentEpisodeIsShowing, !currentEpisodeIsShowing
-                            && episodeManager.getResumeAt(selection.getEpisode()) > 0);
+//            playerFragment.setLoadMenuItemVisibility(selection.isEpisodeSet(),
+//                    !currentEpisodeIsShowing, !currentEpisodeIsShowing
+//                            && episodeManager.getResumeAt(selection.getEpisode()) > 0);
 
             // Show/hide video output
             final boolean showVideo = service.isPrepared() && service.isVideo()
@@ -537,29 +554,29 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
             // Make sure player is shown if and as needed (update the details
             // only if they are actually visible)
-            final boolean showPlayer = service.isPreparing() || service.isPrepared();
-            playerFragment.setPlayerVisibilility(showPlayer);
-            if (showPlayer) {
-                // Make sure error view is hidden
-                playerFragment.setErrorViewVisibility(false);
-                // Show(hide episode title and seek bar
-                playerFragment.setPlayerTitleVisibility(
-                        !view.isSmallLandscape() && !currentEpisodeIsShowing);
-                playerFragment.setPlayerSeekbarVisibility(!view.isSmallLandscape());
-                // Enable/disable next button
-                final boolean showNext =
-                        !episodeManager.isPlaylistEmptyBesides(service.getCurrentEpisode());
-                playerFragment.setShowShortPosition(!view.isLargePortrait() &&
-                        (showNext || service.getDuration() >= 60 * 60 * 1000));
-                playerFragment.setNextButtonVisibility(showNext);
-
-                // Update UI to reflect service status
-                playerFragment.updatePlayerTitle(service.getCurrentEpisode());
-                playerFragment.updateSeekBar(!service.isPreparing(), service.getDuration(),
-                        service.getCurrentPosition());
-                playerFragment.updateButton(service.isBuffering(), service.isPlaying(),
-                        service.getDuration(), service.getCurrentPosition());
-            }
+//            final boolean showPlayer = service.isPreparing() || service.isPrepared();
+//            playerFragment.setPlayerVisibilility(showPlayer);
+//            if (showPlayer) {
+//                // Make sure error view is hidden
+//                playerFragment.setErrorViewVisibility(false);
+//                // Show(hide episode title and seek bar
+//                playerFragment.setPlayerTitleVisibility(
+//                        !view.isSmallLandscape() && !currentEpisodeIsShowing);
+//                playerFragment.setPlayerSeekbarVisibility(!view.isSmallLandscape());
+//                // Enable/disable next button
+//                final boolean showNext =
+//                        !episodeManager.isPlaylistEmptyBesides(service.getCurrentEpisode());
+//                playerFragment.setShowShortPosition(!view.isLargePortrait() &&
+//                        (showNext || service.getDuration() >= 60 * 60 * 1000));
+//                playerFragment.setNextButtonVisibility(showNext);
+//
+//                // Update UI to reflect service status
+//                playerFragment.updatePlayerTitle(service.getCurrentEpisode());
+//                playerFragment.updateSeekBar(!service.isPreparing(), service.getDuration(),
+//                        service.getCurrentPosition());
+//                playerFragment.updateButton(service.isBuffering(), service.isPlaying(),
+//                        service.getDuration(), service.getCurrentPosition());
+//            }
         }
     }
 
@@ -590,7 +607,9 @@ public abstract class EpisodeActivity extends BaseActivity implements
         }
     }
 
-    /** Defines callbacks for service binding, passed to bindService() */
+    /**
+     * Defines callbacks for service binding, passed to bindService()
+     */
     private ServiceConnection connection = new ServiceConnection() {
 
         @Override
@@ -599,6 +618,14 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
             // Register listener
             service.addPlayServiceListener(EpisodeActivity.this);
+            service.addPlayBackListener(
+                    (PlaybackListener) getActionBar().getCustomView().findViewById(R.id.player_view)
+            );
+
+            ControllerView controllerView = ((ControllerView) findViewById(R.id.controller_view));
+            if (controllerView != null) {
+                controllerView.connectToService(service);
+            }
 
             // Update player UI
             updatePlayerUi();
@@ -611,7 +638,10 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            // Nothing to do here
+            ControllerView controllerView = ((ControllerView) findViewById(R.id.controller_view));
+            if (controllerView != null) {
+                controllerView.disconnectFromService();
+            }
         }
     };
 }

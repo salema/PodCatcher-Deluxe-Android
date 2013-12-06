@@ -40,7 +40,7 @@ import java.util.List;
  * List fragment to display the list of episodes.
  */
 public class EpisodeListFragment extends PodcatcherListFragment implements ReorderCallback,
-        AdapterView.OnItemSelectedListener {
+        AdapterView.OnItemSelectedListener, View.OnFocusChangeListener {
 
     /**
      * The list of episodes we are currently showing.
@@ -130,14 +130,12 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
     /**
      * The info box label divider
      */
-    private View infoBoxDivider;
+//    private View infoBoxDivider;
 
     /**
      * Status flag indicating that our view is created
      */
     private boolean viewCreated = false;
-
-    private ContextMenuEpisodeDialog contextMenu;
 
     @Override
     public void onAttach(Activity activity) {
@@ -177,10 +175,10 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
         topProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar_top);
 
         infoBoxTextView = (TextView) view.findViewById(R.id.info_box);
-        infoBoxDivider = view.findViewById(R.id.info_box_divider);
+//        infoBoxDivider = view.findViewById(R.id.info_box_divider);
 
         infoBoxTextView.setBackgroundColor(themeColor);
-        infoBoxDivider.setBackgroundColor(themeColor);
+//        infoBoxDivider.setBackgroundColor(themeColor);
 
         viewCreated = true;
 
@@ -200,24 +198,8 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
             setShowTopProgress(showTopProgressBar);
         }
 
-        getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                if (contextMenu != null && contextMenu.isShowing()) {
-                    contextMenu.dismiss();
-                }
-
-                Episode episode = (Episode) getListAdapter().getItem(position);
-
-//                contextMenu = new ContextMenuEpisodeDialog(getActivity(), episode);
-//                contextMenu.show();
-
-                ((ContextMenuListener) getActivity()).onEpisodeContextMenuOpen(episode);
-
-                return true;
-            }
-        });
         getListView().setOnItemSelectedListener(this);
+        getListView().setOnFocusChangeListener(this);
     }
 
     @Override
@@ -257,9 +239,10 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
         if (getListView().isInTouchMode()) {
             // Find selected episode and alert listener
             episodeSelectionListener.onEpisodeSelected(selectedEpisode);
-        } else {
-            // TODO: start playing
+//            onFocusChange(list, true);
         }
+        Episode episode = (Episode) getListAdapter().getItem(position);
+        ((ContextMenuListener) getActivity()).onEpisodeContextMenuOpen(episode);
     }
 
     @Override
@@ -276,6 +259,14 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
             // Find selected episode and alert listener
             Episode selectedEpisode = (Episode) adapter.getItem(position);
             episodeSelectionListener.onEpisodeSelected(selectedEpisode);
+        }
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        super.onFocusChange(v, hasFocus);
+        if (getListView().getAdapter() != null) {
+            ((EpisodeListAdapter) getListView().getAdapter()).setShowSelected(!hasFocus);
         }
     }
 
@@ -434,7 +425,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
 
         if (viewCreated) {
             infoBoxTextView.setVisibility(show ? View.VISIBLE : View.GONE);
-            infoBoxDivider.setVisibility(show ? View.VISIBLE : View.GONE);
+//            infoBoxDivider.setVisibility(show ? View.VISIBLE : View.GONE);
             infoBoxTextView.setText(info);
         }
     }
@@ -456,16 +447,6 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
             // Is the position visible?
             if (listItemView != null)
                 listItemView.updateProgress(percent);
-        }
-    }
-
-    @Override
-    public void setThemeColors(int color, int variantColor) {
-        super.setThemeColors(color, variantColor);
-
-        if (viewCreated) {
-            infoBoxTextView.setBackgroundColor(color);
-            infoBoxDivider.setBackgroundColor(color);
         }
     }
 

@@ -1,8 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="80dp"
+              android:paddingLeft="13dp"
+              android:gravity="center_vertical"
+        >
+
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher"
+            android:focusable="false"
+            />
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            style="@style/PodcatcherTheme.ActionBar.Title"
+            android:text="@string/app_name"
+            />
+
+    <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
+
+    <ImageView
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="1dp"
+            android:src="@drawable/action_bar_divider"
+            />
+
+    <net.alliknow.podcatcher.view.PlayerView
+            android:id="@+id/player_view"
+            android:layout_width="550dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:background="@drawable/btn_menu_bg"
+            />
+
+    <ImageView
+        android:layout_width="2dp"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="1dp"
+        android:src="@drawable/action_bar_divider"
+        />
+
+    <ImageButton
+            android:id="@+id/menu_button"
+            android:layout_width="78dp"
+            android:layout_height="78dp"
+            android:background="@drawable/btn_menu_bg"
+            android:src="@drawable/btn_menu_default"
+            android:scaleType="centerInside"
+            android:onClick="onMenuButtonClick"
+            android:focusable="false"
+            />
 
 </LinearLayout>

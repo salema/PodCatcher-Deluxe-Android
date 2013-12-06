@@ -53,13 +53,6 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
             // During initial setup, plug in the episode list fragment.
             if (savedInstanceState == null && episodeListFragment == null) {
                 episodeListFragment = new EpisodeListFragment();
-                episodeListFragment.setThemeColors(themeColor, lightThemeColor);
-
-//                getFragmentManager()
-//                        .beginTransaction()
-//                        .add(R.id.content, episodeListFragment,
-//                                getString(R.string.episode_list_fragment_tag))
-//                        .commit();
             }
 
             // 3. Register the listeners needed to function as a controller
@@ -215,7 +208,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         super.updatePlayerUi();
 
         // Make sure to show episode title in player
-        playerFragment.setLoadMenuItemVisibility(false, false, false);
-        playerFragment.setPlayerTitleVisibility(true);
+//        playerFragment.setLoadMenuItemVisibility(false, false, false);
+//        playerFragment.setPlayerTitleVisibility(true);
     }
 }

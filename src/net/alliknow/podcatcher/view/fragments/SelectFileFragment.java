@@ -141,7 +141,7 @@ public class SelectFileFragment extends DialogFragment {
                 }
             }
         });
-        updateListSelector();
+//        updateListSelector();
 
         selectButton = (Button) view.findViewById(R.id.select_file);
         selectButton.setOnClickListener(new OnClickListener() {
@@ -196,8 +196,8 @@ public class SelectFileFragment extends DialogFragment {
             ((FileListAdapter) fileListView.getAdapter())
                     .setThemeColors(themeColor, lightThemeColor);
         // ...and for the list view
-        if (viewCreated)
-            updateListSelector();
+//        if (viewCreated)
+//            updateListSelector();
     }
 
     /**
@@ -255,17 +255,17 @@ public class SelectFileFragment extends DialogFragment {
             getDialog().setTitle(R.string.file_select_file);
     }
 
-    private void updateListSelector() {
-        // This takes care of the item pressed state and its color
-        StateListDrawable states = new StateListDrawable();
-
-        states.addState(new int[] {
-                android.R.attr.state_focused
-        }, new ColorDrawable(lightThemeColor));
-        states.addState(new int[] {
-                android.R.attr.state_pressed
-        }, new ColorDrawable(lightThemeColor));
-        // Set the states drawable
-        fileListView.setSelector(states);
-    }
+//    private void updateListSelector() {
+//        // This takes care of the item pressed state and its color
+//        StateListDrawable states = new StateListDrawable();
+//
+//        states.addState(new int[] {
+//                android.R.attr.state_focused
+//        }, new ColorDrawable(lightThemeColor));
+//        states.addState(new int[] {
+//                android.R.attr.state_pressed
+//        }, new ColorDrawable(lightThemeColor));
+//        // Set the states drawable
+//        fileListView.setSelector(states);
+//    }
 }

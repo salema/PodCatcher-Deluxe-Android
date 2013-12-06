@@ -1,8 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:background="@drawable/btn_menu_bg"
+                android:clickable="true"
+                android:gravity="center"
+        >
 
-</LinearLayout>
+    <TextView
+            android:id="@+id/tv_title"
+            style="@style/PodcatcherTheme.Text.Default"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:textColor="@android:color/white"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            />
+
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_title"
+            android:gravity="center"
+            android:baselineAligned="false"
+            >
+
+        <TextView
+                android:id="@+id/tv_current_time"
+                style="@style/PodcatcherTheme.Text.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                />
+
+        <SeekBar
+                android:id="@+id/progress_bar"
+                style="@style/PodcatcherTheme.Seekbar"
+                android:thumb="@drawable/action_bar_thumb"
+                android:layout_width="300dp"
+                android:layout_height="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_gravity="center_vertical"
+                />
+
+        <TextView
+                android:id="@+id/tv_full_time"
+                style="@style/PodcatcherTheme.Text.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                />
+
+    </LinearLayout>
+
+</RelativeLayout>

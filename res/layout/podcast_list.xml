@@ -21,39 +21,45 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+        >
     <ListView
         android:id="@id/android:list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:choiceMode="singleChoice" />
+        android:divider="@color/divider_color"
+        android:listSelector="@drawable/list_item_bg_focused_fragment"
+        android:dividerHeight="1dp"
+        android:choiceMode="singleChoice"
+            />
     <TextView
         android:id="@id/android:empty"
+        style="@style/PodcatcherTheme.Text.Small"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_margin="20dp"
         android:gravity="center"
-        android:text="@string/podcast_none_long"
-        android:textColor="@color/text_secondary"
-        android:textSize="@dimen/font_size_small" />
+        android:text="@string/podcast_none_long" />
     <net.alliknow.podcatcher.view.ProgressView
         android:id="@+id/progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
-    <ImageView
+   <!-- <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scaleType="fitXY"
         android:src="@android:drawable/divider_horizontal_bright"
-        android:contentDescription="@string/divider" />
-    <ImageView
+        android:contentDescription="@string/divider" />-->
+   <!-- <ImageView
         android:id="@+id/podcast_image"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:contentDescription="@string/podcast_image"
         android:scaleType="centerInside"
-        android:src="@drawable/default_podcast_logo" />
+        android:src="@drawable/default_podcast_logo" />-->
 </LinearLayout>

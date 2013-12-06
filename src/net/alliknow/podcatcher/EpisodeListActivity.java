@@ -96,10 +96,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         // The episode list fragment
         if (episodeListFragment == null)
             episodeListFragment = (EpisodeListFragment) findByTagId(R.string.episode_list_fragment_tag);
-
-        // Make sure the episode fragment know our theme colors
-        if (episodeListFragment != null)
-            episodeListFragment.setThemeColors(themeColor, lightThemeColor);
     }
 
     @Override
@@ -110,14 +106,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         // on the call-backs properly once we have our fragment
         podcastManager.addLoadPodcastListener(this);
         podcastManager.addLoadPodcastLogoListener(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // Make sure dividers (if any) reflect selection state
-        updateDividerUi();
     }
 
     @Override
@@ -181,7 +169,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 // Update other UI
                 updateSortingUi();
                 updateFilterUi();
-                updateDividerUi();
 
                 // Load podcast
                 podcastManager.load(podcast);
@@ -219,7 +206,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 // Update other UI
                 updateSortingUi();
                 updateFilterUi();
-                updateDividerUi();
 
                 // Go load all podcasts
                 for (Podcast podcast : podcastManager.getPodcastList())
@@ -271,7 +257,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 //        updateActionBar();
         updateSortingUi();
         updateFilterUi();
-        updateDividerUi();
     }
 
     @Override
@@ -319,7 +304,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 //        updateActionBar();
         updateSortingUi();
         updateFilterUi();
-        updateDividerUi();
     }
 
     @Override
@@ -337,7 +321,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             // Update other UI
             updateSortingUi();
             updateFilterUi();
-            updateDividerUi();
         }
     }
 
@@ -364,7 +347,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         // Additionally, if on large device, process clever selection update
         if (!view.isSmall()) {
             updateEpisodeListSelection();
-            updateDividerUi();
         }
 
         // We may want to auto-download the latest episode
@@ -473,8 +455,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
             }
-
-            updateDividerUi();
         }
     }
 
@@ -489,8 +469,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
             if (episodeListFragment != null)
                 episodeListFragment.selectNone();
-
-            updateDividerUi();
         }
     }
 
@@ -539,18 +517,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         // Check whether the episode is potentially currently displayed
         if (currentEpisodeSet.contains(episode))
             episodeListFragment.showProgress(episode, percent);
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        super.onSharedPreferenceChanged(sharedPreferences, key);
-
-        if (key.equals(SettingsActivity.KEY_THEME_COLOR)) {
-            // Make the UI reflect the change
-            if (episodeListFragment != null)
-                episodeListFragment.setThemeColors(themeColor, lightThemeColor);
-            updateDividerUi();
-        }
     }
 
     /**
@@ -606,15 +572,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             super.updateStateUi();
 
         episodeListFragment.refresh();
-    }
-
-    /**
-     * Update the divider views to reflect current selection state.
-     */
-    protected void updateDividerUi() {
-        colorDivider(R.id.divider_first, selection.isPodcastSet() || !selection.isSingle());
-        colorDivider(R.id.divider_second, currentEpisodeSet != null && selection.isEpisodeSet()
-                && currentEpisodeSet.contains(selection.getEpisode()));
     }
 
     /**
@@ -721,16 +678,16 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         }
     }
 
-    private void colorDivider(int dividerViewId, boolean applyColor) {
-        if (getWindow() != null && getWindow().findViewById(dividerViewId) != null) {
-            View divider = getWindow().findViewById(dividerViewId);
-
-            if (applyColor)
-                divider.setBackgroundColor(themeColor);
-            else
-                divider.setBackgroundColor(getResources().getColor(R.color.divider_off));
-        }
-    }
+//    private void colorDivider(int dividerViewId, boolean applyColor) {
+//        if (getWindow() != null && getWindow().findViewById(dividerViewId) != null) {
+//            View divider = getWindow().findViewById(dividerViewId);
+//
+//            if (applyColor)
+//                divider.setBackgroundColor(themeColor);
+//            else
+//                divider.setBackgroundColor(getResources().getColor(R.color.divider_off));
+//        }
+//    }
 
     private void addSpecialEpisodes(Podcast podcast) {
         if (currentEpisodeSet != null && podcast != null) {

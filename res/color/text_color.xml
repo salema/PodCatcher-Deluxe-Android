@@ -10,6 +10,10 @@
           android:state_selected="true"
             />
 
+    <item android:color="@color/text_focused"
+          android:state_pressed="true"
+            />
+
     <item android:color="@color/text_default"
             />
 

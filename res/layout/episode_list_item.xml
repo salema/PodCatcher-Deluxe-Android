@@ -20,89 +20,136 @@
 <net.alliknow.podcatcher.view.EpisodeListItemView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="104dp"
+    android:padding="10dp"
+        >
+
     <ImageView
-        android:id="@+id/state_icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_media_new"
-        android:visibility="gone" />
-    <TextView
-        android:id="@+id/playlist_position"
-        android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:minWidth="24dp"
-        android:paddingRight="2dp"
-        android:layout_below="@id/state_icon"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:includeFontPadding="false"
-        android:gravity="center"
-        android:textSize="@dimen/font_size_large"
-        android:textColor="@color/text_secondary"
-        android:visibility="gone" />
-    <ImageView
-        android:id="@+id/resume_icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_below="@id/state_icon"
-        android:layout_toLeftOf="@id/playlist_position"
-        android:layout_alignParentBottom="true"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_media_resume_dark"
-        android:visibility="gone" />
-    <ImageView
-        android:id="@+id/download_icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_below="@id/state_icon"
-        android:layout_toLeftOf="@id/resume_icon"
-        android:layout_alignParentBottom="true"
-        android:scaleType="centerInside"
-        android:visibility="gone" />
-    <LinearLayout
-        android:id="@+id/list_item_main_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:layout_toLeftOf="@id/download_icon"
-        android:orientation="vertical">
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            android:scaleType="fitXY"
+            android:layout_centerVertical="true"
+            android:id="@+id/episode_logo"
+            />
+
+    <RelativeLayout
+            android:id="@+id/list_item_main_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:minHeight="48dp"
+            android:layout_toRightOf="@id/episode_logo"
+            android:orientation="vertical">
+
         <TextView
-            android:id="@+id/list_item_title"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="4"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/list_item_padding"
-            android:singleLine="true"
-            android:ellipsize="marquee"
-            android:textSize="@dimen/font_size_large" />
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3"
-            android:minHeight="20dp">
-            <TextView
-                android:id="@+id/list_item_caption"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:id="@+id/episode_date"
+                style="@style/PodcatcherTheme.Text.Default"
+                android:textColor="@color/text_info_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:paddingLeft="@dimen/list_item_padding"
+                android:singleLine="true" />
+
+        <TextView
+                android:id="@+id/episode_title"
+                style="@style/PodcatcherTheme.Text.Default"
+                android:textColor="@color/text_info_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@id/episode_date"
+                android:layout_marginRight="10dp"
                 android:paddingLeft="@dimen/list_item_padding"
                 android:singleLine="true"
-                android:ellipsize="marquee"
-                android:textSize="@dimen/font_size_small" />
+                />
+
+        <LinearLayout
+                android:id="@+id/states_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/episode_title"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:gravity="center_vertical"
+                >
+            <ImageView
+                    android:id="@+id/playlist_icon"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_margin="@dimen/episode_list_icons_padding"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_playlist"
+                    android:visibility="gone" />
+            <TextView
+                    android:id="@+id/playlist_position"
+                    style="@style/PodcatcherTheme.Text.Small"
+                    android:textColor="@color/text_info_color"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_margin="@dimen/episode_list_icons_padding"
+                    android:minWidth="22dp"
+                    android:paddingRight="2dp"
+                    android:includeFontPadding="false"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:singleLine="true"
+                    android:visibility="gone" />
+            <ImageView
+                    android:id="@+id/resume_icon"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_margin="@dimen/episode_list_icons_padding"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_play"
+                    android:visibility="gone" />
+            <ImageView
+                    android:id="@+id/download_icon"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_margin="@dimen/episode_list_icons_padding"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_downloaded"
+                    android:visibility="gone" />
+            <ImageView
+                    android:id="@+id/state_icon"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_margin="@dimen/episode_list_icons_padding"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_new"
+                    android:visibility="gone" />
+
+        </LinearLayout>
+
+        <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@id/states_container"
+                android:layout_marginRight="10dp"
+                android:layout_below="@id/episode_title"
+                android:minHeight="20dp"
+                >
+            <TextView
+                    android:id="@+id/episode_description"
+                    style="@style/PodcatcherTheme.Text.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/list_item_padding"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    />
             <ProgressBar
-                android:id="@+id/list_item_progress"
-                style="@style/ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/progress_bar_horizontal_height"
-                android:layout_gravity="center_vertical"            
-                android:layout_marginLeft="@dimen/list_item_padding"
-                android:layout_marginRight="@dimen/list_item_padding"
-                android:indeterminate="true"
-                android:visibility="gone" />
-        </FrameLayout>     
-    </LinearLayout>
+                    android:id="@+id/list_item_progress"
+                    style="@style/PodcatcherTheme.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/progress_bar_horizontal_height"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/list_item_padding"
+                    android:layout_marginRight="@dimen/list_item_padding"
+                    android:indeterminate="true"
+                    android:visibility="gone" />
+        </FrameLayout>
+    </RelativeLayout>
 </net.alliknow.podcatcher.view.EpisodeListItemView>

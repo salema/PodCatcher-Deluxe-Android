@@ -20,10 +20,13 @@ package net.alliknow.podcatcher.view;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.PodcastManager;
 
@@ -46,6 +49,8 @@ abstract class PodcatcherListItemView extends RelativeLayout {
     /** The animation duration to use for crossfade */
     private final int crossfadeDuration;
 
+    protected static Bitmap DEFAULT_LOGO = null;
+
     /**
      * Create an item list view.
      * 
@@ -60,6 +65,10 @@ abstract class PodcatcherListItemView extends RelativeLayout {
 
         this.crossfadeDuration = context.getResources()
                 .getInteger(android.R.integer.config_shortAnimTime);
+
+        if (DEFAULT_LOGO == null) {
+            DEFAULT_LOGO = BitmapFactory.decodeResource(context.getResources(), R.drawable.no_logo);
+        }
     }
 
     /**

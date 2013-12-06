@@ -40,6 +40,9 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
 
     ContextMenuListener listener;
 
+    private static final float ALPHA_NON_SELECTED = 0.5f;
+    private static final float ALPHA_SELECTED = 1.0f;
+
     /**
      * Create new adapter.
      * 
@@ -102,6 +105,13 @@ public class PodcastListAdapter extends PodcatcherBaseListAdapter {
         setBackgroundColorForPosition(returnView, position);
         // Make the view represent podcast at given position
         returnView.show((Podcast) getItem(position), showLogoView, selectAll);
+
+//        View image = returnView.findViewById(R.id.podcast_logo);
+//        if (selectedPositions.get(position)) {
+//            image.setAlpha(ALPHA_SELECTED);
+//        } else {
+//            image.setAlpha(ALPHA_NON_SELECTED);
+//        }
 
         return returnView;
     }

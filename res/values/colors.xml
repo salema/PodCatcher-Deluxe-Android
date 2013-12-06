@@ -40,6 +40,24 @@
     <color name="divider_off">@android:color/darker_gray</color>
     <color name="featured_suggestion">#ffafaf</color>
 
-    <color name="divider_color">#28e6cb78</color>
-    <color name="podcast_list_item_focused">#28dece9c</color>
+    <color name="divider_color">#66e6cb78</color>
+
+    <color name="list_item_bg_selected_unfocused">#66dece9c</color>           <!-- 40% transparency -->
+    <color name="list_item_bg_selected_focused">#FFdece9c</color>             <!-- 100% transparency -->
+    <color name="list_item_bg_unfocused">@android:color/transparent</color>
+    <color name="list_item_bg_focused">@android:color/transparent</color>
+
+    <color name="fragment_bg_focused">#4D000000</color>                       <!-- 30% transparency -->
+    <color name="fragment_bg_default">@android:color/transparent</color>
+
+    <color name="text_default">#e6cb78</color>
+    <color name="text_focused">#1e320a</color>
+    <color name="text_info">#ed9c3e</color>
+
+    <color name="action_bar_progress_bg">#80000000</color>                  <!-- 50% transparency -->
+    <color name="action_bar_thumb">#e6cb78</color>
+
+    <color name="action_bar_bg_hovered">#33000000</color>                    <!-- 20% transparency -->
+
+    <color name="menu_bg">#161a12</color>
 </resources>

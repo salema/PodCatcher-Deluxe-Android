@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
 
-</selector>
+    <!--<size android:width="20dp"
+          android:height="10dp"
+          />-->
+
+    <solid android:color="@color/action_bar_thumb" />
+    <size android:height="10dp"
+          android:width="20dp"
+          />
+
+</shape>

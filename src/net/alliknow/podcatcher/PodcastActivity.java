@@ -17,6 +17,7 @@
 
 package net.alliknow.podcatcher;
 
+import android.app.ActionBar;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager.OnBackStackChangedListener;
@@ -26,17 +27,16 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.util.SparseBooleanArray;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
+import android.view.animation.TranslateAnimation;
+import android.widget.*;
 import android.widget.LinearLayout.LayoutParams;
 
-import android.widget.ListView;
 import net.alliknow.podcatcher.listeners.ContextMenuListener;
 import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
@@ -46,10 +46,10 @@ import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.ContextMenuView;
+import net.alliknow.podcatcher.view.ControllerView;
+import net.alliknow.podcatcher.view.ExpandCollapseAnimation;
 import net.alliknow.podcatcher.view.fragments.AuthorizationFragment;
-import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
-import net.alliknow.podcatcher.view.fragments.PodcastListFragment.LogoViewMode;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -109,6 +109,31 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     private ContextMenuView mEpisodeContextMenu;
     private PodcastContextMenu mPodcastContextMenu;
 
+    private ViewGroup podcastListFragmentLayout;
+    private ViewGroup episodeListFragmentLayout;
+    private ViewGroup episodeFragmentLayout;
+    private ViewGroup commonLayout;
+
+    private ImageView moreButton;
+
+    public void fragmentSelected(Fragment fragment) {
+        boolean inTouchMode = getWindow().getDecorView().isInTouchMode();
+        lastFocusedFragment = fragment;
+        if (mMenu.mIsOpened) {
+            mMenu.hide();
+        }
+        if (mPodcastContextMenu.mIsOpened) {
+            mPodcastContextMenu.hide();
+        }
+        updateBackgrounds(lastFocusedFragment);
+    }
+
+    private void updateBackgrounds(Fragment selected) {
+        podcastListFragment.updateBackground(selected == podcastListFragment);
+        episodeListFragment.updateBackground(selected == episodeListFragment);
+        episodeFragment.updateBackground(selected == episodeFragment);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,17 +147,43 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         setContentView(R.layout.main);
         // Make sure all fragment member handles are properly set
         findFragments();
-        // Add extra fragments needed in some view modes
-        plugFragments();
-        // Make sure the podcast list knows about our theme colors.
-        podcastListFragment.setThemeColors(themeColor, lightThemeColor);
-        // Make sure the layout matches the preference
-        updateLayout();
 
         // 2. Register listeners (done after the fragments are available so we
         // do not end up getting call-backs without the possibility to act on
         // them).
         registerListeners();
+
+        lastFocusedFragment = podcastListFragment;
+
+        mMenu = new PodcastMenu();
+        mPodcastContextMenu = new PodcastContextMenu();
+
+        podcastListFragmentLayout = (ViewGroup) findViewById(R.id.podcast_list_layout);
+        episodeListFragmentLayout = (ViewGroup) findViewById(R.id.episode_list_layout);
+        episodeFragmentLayout = (ViewGroup) findViewById(R.id.episode_layout);
+        commonLayout = (ViewGroup) findViewById(R.id.move_me);
+
+        moreButton = (ImageView) findViewById(R.id.more_button);
+        moreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v.isInTouchMode() && selection.getEpisode() != null) {
+                    showEpisodeBlock(selection.getEpisode());
+                }
+            }
+        });
+
+        getActionBar().setCustomView(R.layout.action_bar);
+        getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+
+        getWindow().getDecorView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mMenu.mIsOpened && v != mMenu.lvMenu) {
+                    mMenu.hide();
+                }
+            }
+        });
 
         // 3. Init/restore the app as needed
         // If we are newly starting up and the podcast list is empty, show add
@@ -142,7 +193,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // dialog anyway.
         isInitialAppStart = (savedInstanceState == null);
         hasPodcastToAdd = (getIntent().getData() != null);
-        needsUiUpdateOnResume = !isInitialAppStart;
+        needsUiUpdateOnResume = true;
         // Check if podcast list is available - if so, set it
         List<Podcast> podcastList = podcastManager.getPodcastList();
         if (podcastList != null) {
@@ -157,12 +208,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // Finally we might also be called freshly with a podcast feed to add
         if (getIntent().getData() != null)
             onNewIntent(getIntent());
-
-        lastFocusedFragment = podcastListFragment;
-
-        mMenu = new PodcastMenu();
-        mEpisodeContextMenu = (ContextMenuView) findViewById(R.id.context_menu_view);
-        mPodcastContextMenu = new PodcastContextMenu();
     }
 
     @Override
@@ -174,33 +219,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             podcastListFragment = (PodcastListFragment) findByTagId(R.string.podcast_list_fragment_tag);
     }
 
-    /**
-     * In certain view modes, we need to add some fragments because they are not
-     * set in the layout XML files. Member variables will be set if needed.
-     */
-    private void plugFragments() {
-        // On small screens, add the podcast list fragment
-//        if (view.isSmall() && podcastListFragment == null) {
-//            podcastListFragment = new PodcastListFragment();
-//            getFragmentManager()
-//                    .beginTransaction()
-//                    .add(R.id.content, podcastListFragment,
-//                            getString(R.string.podcast_list_fragment_tag))
-//                    .commit();
-//        }
-        // On small screens in landscape mode, add the episode list fragment
-        if (view.isSmallLandscape() && episodeListFragment == null) {
-            episodeListFragment = new EpisodeListFragment();
-            episodeListFragment.setThemeColors(themeColor, lightThemeColor);
-
-            getFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.right, episodeListFragment,
-                            getString(R.string.episode_list_fragment_tag))
-                    .commit();
-        }
-    }
-
     @Override
     protected void registerListeners() {
         super.registerListeners();
@@ -209,8 +227,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         podcastManager.addLoadPodcastListListener(this);
         podcastManager.addChangePodcastListListener(this);
     }
-
-    ;
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -287,7 +303,19 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // added after re-selection of the current content.
         getFragmentManager().addOnBackStackChangedListener(this);
         // Set podcast logo view mode
-        updateLogoViewMode();
+//        updateLogoViewMode();
+    }
+
+    @Override
+    public void onEpisodeSelected(Episode selectedEpisode) {
+        super.onEpisodeSelected(selectedEpisode);
+        updateEpisodeBlock(selectedEpisode);
+        if (mMenu.mIsOpened) {
+            mMenu.hide();
+        }
+        if (mPodcastContextMenu.mIsOpened) {
+            mPodcastContextMenu.hide();
+        }
     }
 
     @Override
@@ -466,7 +494,14 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                 podcastListFragment.select(podcastManager.indexOf(podcast));
 
             // Update UI
-            updateLogoViewMode();
+//            updateLogoViewMode();
+        }
+
+        if (mMenu.mIsOpened) {
+            mMenu.hide();
+        }
+        if (mPodcastContextMenu.mIsOpened) {
+            mPodcastContextMenu.hide();
         }
     }
 
@@ -486,7 +521,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                 showEpisodeListActivity();
 
             // Update UI
-            updateLogoViewMode();
+//            updateLogoViewMode();
         }
     }
 
@@ -501,7 +536,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             showEpisodeListActivity();
 
         // Update UI
-        updateLogoViewMode();
+//        updateLogoViewMode();
     }
 
     @Override
@@ -515,7 +550,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             showEpisodeListActivity();
 
         // Update UI
-        updateLogoViewMode();
+//        updateLogoViewMode();
     }
 
     @Override
@@ -530,7 +565,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             // Reset podcast list fragment
             podcastListFragment.selectNone();
             // Update UI
-            updateLogoViewMode();
+//            updateLogoViewMode();
         }
     }
 
@@ -576,19 +611,10 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     public void onPodcastLogoLoaded(Podcast podcast) {
         super.onPodcastLogoLoaded(podcast);
 
-        updateLogoViewMode();
-    }
+        // marshal it to the podcast list fragment
+        podcastListFragment.onPodcastLogoLoaded(podcast);
 
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        super.onSharedPreferenceChanged(sharedPreferences, key);
-
-        if (key.equals(SettingsActivity.KEY_THEME_COLOR) && podcastListFragment != null) {
-            // Make the UI reflect the change
-            podcastListFragment.setThemeColors(themeColor, lightThemeColor);
-        } else if (key.equals(SettingsActivity.KEY_WIDE_EPISODE_LIST)) {
-            updateLayout();
-        }
+//        updateLogoViewMode();
     }
 
     @Override
@@ -609,39 +635,39 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     /**
      * Update the layout to match user's preference
      */
-    protected void updateLayout() {
-        final boolean useWide = preferences
-                .getBoolean(SettingsActivity.KEY_WIDE_EPISODE_LIST, false);
-
-        switch (view) {
-            case LARGE_PORTRAIT:
-                setMainColumnWidthWeight(episodeListFragment.getView(), useWide ? 3.5f : 3f);
-
-                break;
-            case LARGE_LANDSCAPE:
-                setMainColumnWidthWeight(episodeListFragment.getView(), useWide ? 3.5f : 3f);
-                setMainColumnWidthWeight(findViewById(R.id.right_column), useWide ? 3.5f : 4f);
-
-                break;
-            default:
-                // Nothing to do in small views
-                break;
-        }
-    }
+//    protected void updateLayout() {
+//        final boolean useWide = preferences
+//                .getBoolean(SettingsActivity.KEY_WIDE_EPISODE_LIST, false);
+//
+//        switch (view) {
+//            case LARGE_PORTRAIT:
+//                setMainColumnWidthWeight(episodeListFragment.getView(), useWide ? 3.5f : 3f);
+//
+//                break;
+//            case LARGE_LANDSCAPE:
+//                setMainColumnWidthWeight(episodeListFragment.getView(), useWide ? 3.5f : 3f);
+//                setMainColumnWidthWeight(findViewById(R.id.right_column), useWide ? 3.5f : 4f);
+//
+//                break;
+//            default:
+//                // Nothing to do in small views
+//                break;
+//        }
+//    }
 
     /**
      * Update the logo view mode according to current app state.
      */
-    protected void updateLogoViewMode() {
-        LogoViewMode logoViewMode = LogoViewMode.NONE;
-
-        if (view.isLargeLandscape() && selection.isSingle())
-            logoViewMode = LogoViewMode.LARGE;
-        else if (view.isSmallPortrait())
-            logoViewMode = LogoViewMode.SMALL;
-
-        podcastListFragment.updateLogo(logoViewMode);
-    }
+//    protected void updateLogoViewMode() {
+//        LogoViewMode logoViewMode = LogoViewMode.NONE;
+//
+//        if (view.isLargeLandscape() && selection.isSingle())
+//            logoViewMode = LogoViewMode.LARGE;
+//        else if (view.isSmallPortrait())
+//            logoViewMode = LogoViewMode.SMALL;
+//
+//        podcastListFragment.updateLogo(logoViewMode);
+//    }
 
 //    @Override
 //    protected void updateActionBar() {
@@ -653,7 +679,6 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 //        else
 //            contentSpinner.setSubtitle(null);
 //    }
-
     @Override
     protected void updateDownloadUi() {
         if (!view.isSmallPortrait())
@@ -678,10 +703,10 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     protected void updatePlayerUi() {
         super.updatePlayerUi();
 
-        if (view.isSmallPortrait()) {
-            playerFragment.setLoadMenuItemVisibility(false, false, false);
-            playerFragment.setPlayerTitleVisibility(true);
-        }
+//        if (view.isSmallPortrait()) {
+//            playerFragment.setLoadMenuItemVisibility(false, false, false);
+//            playerFragment.setPlayerTitleVisibility(true);
+//        }
     }
 
     private void showEpisodeListActivity() {
@@ -699,14 +724,20 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
     @Override
     public void onBackPressed() {
-        if (mMenu.mIsOpened) {
+        boolean inTouchMode = getWindow().getDecorView().isInTouchMode();
+        if (mMenu.mIsOpened || mPodcastContextMenu.mIsOpened) {
             // menu hides automatically
-            lastFocusedFragment.getView().requestFocus();
+            mMenu.hide();
+            if (!inTouchMode) {
+                lastFocusedFragment.getView().requestFocus();
+            }
             return;
         }
-        if (mEpisodeContextMenu.isOpened() || mPodcastContextMenu.mIsOpened) {
-            // menu hides automatically
-            lastFocusedFragment.getView().requestFocus();
+        if (episodeFragmentShown) {
+            hideEpisodeBlock();
+            if (!inTouchMode) {
+                episodeListFragment.getView().requestFocus();
+            }
             return;
         }
         super.onBackPressed();
@@ -719,30 +750,36 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                 mMenu.toggle();
                 break;
             case KeyEvent.KEYCODE_DPAD_LEFT:
-                if (!mMenu.mIsOpened && !mEpisodeContextMenu.isOpened()) {
-                    boolean consumed = lastFocusedFragment.getView().dispatchKeyEvent(event);
-                    if (!consumed) {
-                            moveFocusToLeft();
-                    }
+                if (podcastListFragment.getView().hasFocus()) {
                     return true;
                 }
                 break;
             case KeyEvent.KEYCODE_DPAD_RIGHT:
-                    boolean consumed = lastFocusedFragment.getView().dispatchKeyEvent(event);
-                    if (!consumed) {
-                        moveFocusToRight();
-                    }
+                if (episodeListFragment.getView().hasFocus() && selection.getEpisode() != null) {
+                    showEpisodeBlock(selection.getEpisode());
                     return true;
+                }
+                if (episodeFragment.getView().hasFocus()) {
+                    return true;
+                }
+                break;
 
             case KeyEvent.KEYCODE_DPAD_UP:
-//                if (isMenuFocused) {
-//                    getActionBar().getCustomView().dispatchKeyEvent(event);
-//                    return true;
-//                } else {
-                lastFocusedFragment.getView().dispatchKeyEvent(event);
+                if (mMenu.mIsOpened) {
+                    mMenu.controllerView.requestFocus();
+                } else {
+//                    lastFocusedFragment.getView().onKeyDown(keyCode, event);
+                    if (lastFocusedFragment == episodeFragment) {
+                        episodeFragment.onKey(null, keyCode, event);
+                    }
+                }
                 return true;
-//                }
-//            case KeyEvent.KEYCODE_DPAD_DOWN:
+
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+                if (lastFocusedFragment == episodeFragment) {
+                    episodeFragment.onKey(null, keyCode, event);
+                }
+                return true;
 //                if (isMenuFocused) {
 //                    return !getActionBar().getCustomView().isFocused();
 //                }
@@ -750,46 +787,203 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         return super.onKeyDown(keyCode, event);
     }
 
-    private void moveFocusToLeft() {
-        if (lastFocusedFragment == episodeFragment) {
-            lastFocusedFragment = episodeListFragment;
-            episodeListFragment.getView().requestFocus();
-        } else if (lastFocusedFragment == episodeListFragment) {
-            lastFocusedFragment = podcastListFragment;
-            podcastListFragment.getView().requestFocus();
-        }
-        // otherwise podcast list fragment has focus,
-        // it's on the left edge of the screen,
-        // do nothing
-    }
+//    @Override
+//    public boolean onKeyUp(int keyCode, KeyEvent event) {
+//        switch (keyCode) {
+//            case KeyEvent.KEYCODE_DPAD_DOWN:
+//            case KeyEvent.KEYCODE_DPAD_UP:
+//                lastFocusedFragment.getView().onKeyUp(keyCode, event);
+//        }
+//        return super.onKeyUp(keyCode, event);
+//    }
 
-    private void moveFocusToRight() {
-        if (lastFocusedFragment == podcastListFragment) {
-            lastFocusedFragment = episodeListFragment;
-            episodeListFragment.getView().requestFocus();
-        } else if (lastFocusedFragment == episodeListFragment) {
-            lastFocusedFragment = episodeFragment;
+    public void showEpisodeBlock(Episode episode) {
+        episodeFragment.setEpisode(episode);
+        if (!episodeFragmentShown) {
+//            final Integer delta = getResources().getInteger(R.integer.podcast_list_width_delta);
+
+            final int startOffset = 200;
+            final int duration = getResources().getInteger(R.integer.episode_show_anim_duration);
+            final int podcastListWidth = podcastListFragmentLayout.getWidth();
+
+//            Animation podcastListAnimation = new TranslateAnimation(
+//                    0, -1 * podcastListWidth, 0, 0
+//            );
+//            podcastListAnimation.setDuration(duration);
+//            podcastListAnimation.setFillAfter(true);
+//            podcastListAnimation.setAnimationListener(new Animation.AnimationListener() {
+//                @Override
+//                public void onAnimationStart(Animation animation) {
+//                }
+//
+//                @Override
+//                public void onAnimationEnd(Animation animation) {
+////                    podcastListFragmentLayout.setVisibility(View.GONE);
+////                    episodeListFragmentLayout.startAnimation(episodeListAnimation);
+//                }
+//
+//                @Override
+//                public void onAnimationRepeat(Animation animation) {
+//                }
+//            });
+            Animation podcastListAnimation = new ExpandCollapseAnimation(
+                    podcastListFragmentLayout,
+                    (int) getResources().getDimension(R.dimen.podcast_list_collapsed_width),
+                    ExpandCollapseAnimation.DIRECTION_COLLAPSE
+            );
+            podcastListAnimation.setDuration(duration);
+//
+//            final Animation episodeListAnimation = new ExpandCollapseAnimation(
+//                    episodeListFragmentLayout,
+//                    (int) getResources().getDimension(R.dimen.episode_list_collapsed_width),
+//                    ExpandCollapseAnimation.DIRECTION_COLLAPSE
+//            );
+//            episodeListAnimation.setDuration(duration);
+//
+//            Animation episodeListTranslate = new TranslateAnimation(
+//                    0, -1 * podcastListWidth, 0, 0
+//            );
+//            episodeListTranslate.setDuration(duration);
+//            episodeListTranslate.setAnimationListener(new Animation.AnimationListener() {
+//                @Override
+//                public void onAnimationStart(Animation animation) {
+//                }
+//
+//                @Override
+//                public void onAnimationEnd(Animation animation) {
+//                    podcastListFragmentLayout.setVisibility(View.INVISIBLE);
+//
+////                    podcastListFragmentLayout.setVisibility(View.GONE);
+////                    episodeListFragmentLayout.startAnimation(episodeListAnimation);
+//                }
+//
+//                @Override
+//                public void onAnimationRepeat(Animation animation) {
+//                }
+//            });
+//            episodeListTranslate.setFillAfter(true);
+//
+            Animation episodeAnimation = AnimationUtils.loadAnimation(this, R.anim.context_menu_expand);
+//            Animation episodeAnimation = new TranslateAnimation(
+//                    episodeFragmentLayout.getWidth(), 0, 0, 0
+//            );
+            episodeAnimation.setDuration(duration);
+            episodeAnimation.setFillAfter(true);
+            episodeAnimation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+//                    podcastListFragmentLayout.setVisibility(View.GONE);
+                    episodeFragmentLayout.setVisibility(View.VISIBLE);
+                    episodeFragment.focusOnMenu();
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    episodeFragmentShown = true;
+                    episodeFragment.getView().requestFocus();
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+//            episodeAnimation.setStartOffset(startOffset);
+
+//            Animation commonAnimation = new TranslateAnimation(
+//                    0, -1 * podcastListWidth, 0, 0
+//            );
+//            commonAnimation.setDuration(duration);
+//            commonAnimation.setFillAfter(true);
+
+            Animation moreButtonAnimation = AnimationUtils.loadAnimation(this, R.anim.disappear);
+            moreButtonAnimation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    episodeFragmentLayout.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    moreButton.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+
+//            commonLayout.startAnimation(commonAnimation);
+//            episodeListFragmentLayout.startAnimation(episodeListAnimation);
+            podcastListFragmentLayout.setAnimation(podcastListAnimation);
+//            podcastListFragmentLayout.startAnimation(episodeListAnimation);
+//            episodeListFragmentLayout.setAnimation(episodeListTranslate);
+            moreButton.setAnimation(moreButtonAnimation);
+            episodeFragmentLayout.startAnimation(episodeAnimation);
+        } else {
             episodeFragment.getView().requestFocus();
         }
-        // otherwise episode fragment has focus,
-        // it's on the right edge of the screen,
-        // do nothing
     }
 
-    public boolean isMenuOpened() {
-        return mMenu.mIsOpened || mEpisodeContextMenu.isOpened() || mPodcastContextMenu.mIsOpened;
+    public void updateEpisodeBlock(Episode episode) {
+        if (episodeFragmentShown) {
+            episodeFragment.setEpisode(episode);
+        }
+    }
+
+    public void hideEpisodeBlock() {
+        if (episodeFragmentShown) {
+
+            final int startOffset = 200;
+
+            Animation podcastListAnimation = new ExpandCollapseAnimation(
+                    podcastListFragmentLayout,
+                    (int) getResources().getDimension(R.dimen.podcast_list_expanded_width),
+                    ExpandCollapseAnimation.DIRECTION_EXPAND
+            );
+            podcastListAnimation.setDuration(getResources().getInteger(R.integer.episode_show_anim_duration));
+
+            final Animation moreButtonAnimation = AnimationUtils.loadAnimation(this, R.anim.appear);
+            moreButtonAnimation.setStartOffset(startOffset);
+
+            Animation episodeAnimation = AnimationUtils.loadAnimation(this, R.anim.context_menu_collapse);
+            episodeAnimation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    podcastListFragment.getView().requestFocus();
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    episodeFragmentLayout.setVisibility(View.GONE);
+                    episodeFragmentShown = false;
+                    moreButton.setVisibility(View.VISIBLE);
+                    moreButton.startAnimation(moreButtonAnimation);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+            episodeAnimation.setStartOffset(startOffset);
+
+            podcastListFragmentLayout.startAnimation(podcastListAnimation);
+            episodeFragmentLayout.startAnimation(episodeAnimation);
+        }
     }
 
     @Override
     public void onEpisodeContextMenuOpen(Episode episode) {
-        mEpisodeContextMenu.initialize(episode);
-        mEpisodeContextMenu.show();
+//        mEpisodeContextMenu.initialize(episode);
+//        mEpisodeContextMenu.show();
+//        episodeFragment.setEpisode(episode);
+        showEpisodeBlock(episode);
     }
 
     @Override
     public void onEpisodeContextMenuClose() {
-        mEpisodeContextMenu.hide();
-        lastFocusedFragment.getView().requestFocus();
+//        mEpisodeContextMenu.hide();
+//        lastFocusedFragment.getView().requestFocus();
+//        hideEpisodeBlock();
     }
 
     @Override
@@ -800,6 +994,17 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     @Override
     public void onPodcastContextMenuClose() {
         mPodcastContextMenu.hide();
+    }
+
+    @Override
+    public void onPodcastListFocused() {
+        if (episodeFragmentShown) {
+            hideEpisodeBlock();
+        }
+    }
+
+    public void onMenuButtonClick(View v) {
+        mMenu.toggle();
     }
 
     public class PodcastMenu implements AdapterView.OnItemClickListener, View.OnFocusChangeListener {
@@ -816,14 +1021,20 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
         boolean mIsOpened = false;
 
+        LinearLayout layout;
+        ControllerView controllerView;
         ListView lvMenu;
 
         public PodcastMenu() {
-            lvMenu = (ListView) findViewById(R.id.main_menu);
+            layout = (LinearLayout) findViewById(R.id.main_menu);
+
+            lvMenu = (ListView) layout.findViewById(R.id.main_menu_list);
             lvMenu.setAdapter(
-                    new ArrayAdapter<String>(PodcastActivity.this, android.R.layout.simple_list_item_1, formList())
+                    new ArrayAdapter<String>(PodcastActivity.this, R.layout.options_menu_item, formList())
             );
             lvMenu.setOnItemClickListener(this);
+
+            controllerView = (ControllerView) layout.findViewById(R.id.controller_view);
         }
 
         private List<String> formList() {
@@ -841,11 +1052,11 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         }
 
         public void show() {
-            lvMenu.setVisibility(View.VISIBLE);
-            lvMenu.setEnabled(true);
+            layout.setVisibility(View.VISIBLE);
+            layout.setEnabled(true);
             mIsOpened = true;
             Animation animation = AnimationUtils.loadAnimation(PodcastActivity.this, R.anim.menu_show);
-            lvMenu.setAnimation(animation);
+            layout.setAnimation(animation);
             animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -861,6 +1072,8 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                 public void onAnimationRepeat(Animation animation) {
                 }
             });
+
+            controllerView.setOnFocusChangeListener(this);
             lvMenu.setOnFocusChangeListener(this);
         }
 
@@ -868,14 +1081,16 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             if (!mIsOpened) {
                 return;
             }
-            lvMenu.clearFocus();
-            mIsOpened = false;
-            lvMenu.setAnimation(AnimationUtils.loadAnimation(PodcastActivity.this, R.anim.menu_hide));
-            lvMenu.setVisibility(View.INVISIBLE);
-            lvMenu.setEnabled(false);
-            lvMenu.setOnFocusChangeListener(null);
-
             lastFocusedFragment.getView().requestFocus();
+//            layout.clearFocus();
+            mIsOpened = false;
+            layout.setAnimation(AnimationUtils.loadAnimation(PodcastActivity.this, R.anim.menu_hide));
+            layout.setVisibility(View.INVISIBLE);
+            layout.setEnabled(false);
+            layout.setOnFocusChangeListener(null);
+
+//            if (!layout.isInTouchMode()) {
+//            }
         }
 
         public void toggle() {
@@ -951,7 +1166,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            if (!hasFocus) {
+            if (!layout.hasFocus()) {
                 hide();
             }
         }
@@ -1019,7 +1234,9 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             lvMenu.setOnFocusChangeListener(null);
             mPodcast = null;
 
-            lastFocusedFragment.getView().requestFocus();
+            if (!getWindow().getDecorView().isInTouchMode()) {
+                lastFocusedFragment.getView().requestFocus();
+            }
         }
 
         public void toggle(Podcast podcast) {

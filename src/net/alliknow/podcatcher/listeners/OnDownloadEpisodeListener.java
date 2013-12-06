@@ -28,7 +28,7 @@ public interface OnDownloadEpisodeListener {
     /**
      * Start/stop the download for the current episode.
      */
-    public void onToggleDownload();
+    public void onToggleDownload(OnDeleteDownloadsConfirmationListener listener);
 
     /**
      * Called on the listener to alert it about a download progress update.

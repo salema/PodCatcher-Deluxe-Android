@@ -20,10 +20,7 @@ package net.alliknow.podcatcher.view;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.*;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.model.types.Episode;
@@ -41,7 +38,9 @@ public class EpisodeListItemView extends PodcatcherListItemView {
     /** The title text view */
     private TextView titleTextView;
     /** The caption text view */
-    private TextView captionTextView;
+    private TextView dateTextView;
+    /** The description text view */
+    private TextView descriptionTextView;
     /** The progress bar view */
     private ProgressBar progressBarView;
     /** The playlist position view */
@@ -52,6 +51,10 @@ public class EpisodeListItemView extends PodcatcherListItemView {
     private ImageView resumeIconView;
     /** The state icon view */
     private ImageView stateIconView;
+    /** The logo view */
+    private ImageView logoImageView;
+
+    private ImageView playlistIconView;
 
     /**
      * Create an episode item list view.
@@ -67,13 +70,16 @@ public class EpisodeListItemView extends PodcatcherListItemView {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        titleTextView = (TextView) findViewById(R.id.list_item_title);
-        captionTextView = (TextView) findViewById(R.id.list_item_caption);
+        titleTextView = (TextView) findViewById(R.id.episode_title);
+        descriptionTextView = (TextView) findViewById(R.id.episode_description);
+        dateTextView = (TextView) findViewById(R.id.episode_date);
         progressBarView = (ProgressBar) findViewById(R.id.list_item_progress);
         playlistPositionView = (TextView) findViewById(R.id.playlist_position);
         downloadIconView = (ImageView) findViewById(R.id.download_icon);
         resumeIconView = (ImageView) findViewById(R.id.resume_icon);
         stateIconView = (ImageView) findViewById(R.id.state_icon);
+        logoImageView = (ImageView) findViewById(R.id.episode_logo);
+        playlistIconView = (ImageView) findViewById(R.id.playlist_icon);
     }
 
     /**
@@ -87,21 +93,22 @@ public class EpisodeListItemView extends PodcatcherListItemView {
         final boolean downloading = episodeManager.isDownloading(episode);
         final boolean progressShouldFade = episode.hashCode() == lastItemId;
 
-        // 1. Set episode title
+        // 1. Set episode title and date
         titleTextView.setText(createTitle(episode));
+        descriptionTextView.setText(episode.getDescription());
 
-        // 2. Set caption and make sure it shows
-        captionTextView.setText(createCaption(episode, showPodcastName));
+        // 2. Set  and description and make sure it is shown
+        dateTextView.setText(createCaption(episode, showPodcastName));
         // If this is the same episode, crossfade (otherwise just set it)
         if (!downloading && isShowingProgress && progressShouldFade)
-            crossfade(captionTextView, progressBarView);
+            crossfade(descriptionTextView, progressBarView);
         else
-            captionTextView.setVisibility(downloading ? GONE : VISIBLE);
+            descriptionTextView.setVisibility(downloading ? GONE : VISIBLE);
 
         // 3. Hide/show progress bar
         // If this is the same episode, crossfade (otherwise just set it)
         if (downloading && !isShowingProgress && progressShouldFade)
-            crossfade(progressBarView, captionTextView);
+            crossfade(progressBarView, descriptionTextView);
         else
             progressBarView.setVisibility(downloading ? VISIBLE : GONE);
         // We need to reset the progress here, because the view might be
@@ -116,6 +123,10 @@ public class EpisodeListItemView extends PodcatcherListItemView {
         // called and we can decide whether to crossfade or not
         this.isShowingProgress = downloading;
         this.lastItemId = episode.hashCode();
+
+        this.logoImageView.setImageBitmap(
+                episode.getLogo() != null ? episode.getLogo() : DEFAULT_LOGO
+        );
     }
 
     /**
@@ -180,24 +191,26 @@ public class EpisodeListItemView extends PodcatcherListItemView {
         final int position = episodeManager.getPlaylistPosition(episode);
 
         // 2. Set the view content and visibility accordingly
-        if (downloading)
-            downloadIconView.setImageResource(R.drawable.ic_media_downloading);
-        else if (downloaded)
-            downloadIconView.setImageResource(R.drawable.ic_media_downloaded);
+//        if (downloading)
+//            downloadIconView.setImageResource(R.drawable.ic_media_downloading);
+//        else if (downloaded)
+//            downloadIconView.setImageResource(R.drawable.ic_media_downloaded);
 
         playlistPositionView.setText(String.valueOf(position + 1));
 
         downloadIconView.setVisibility(downloading || downloaded ? View.VISIBLE : View.GONE);
         resumeIconView.setVisibility(willResume ? View.VISIBLE : View.GONE);
+        playlistIconView.setVisibility(position >= 0 ? View.VISIBLE : View.GONE);
         playlistPositionView.setVisibility(position >= 0 ? View.VISIBLE : View.GONE);
         stateIconView.setVisibility(isNew ? View.VISIBLE : View.GONE);
 
         // 3. Fix the layout params of our views in the lower right corner
         // depending on the metadata showing:
-        adjustLayout(playlistPositionView, true, -1);
-        adjustLayout(resumeIconView, position < 0, R.id.playlist_position);
-        adjustLayout(downloadIconView, position < 0 && !willResume,
-                willResume ? R.id.resume_icon : R.id.playlist_position);
+//        adjustLayout(playlistIconView, true, -1);
+//        adjustLayout(playlistPositionView, true, -1);
+//        adjustLayout(resumeIconView, position < 0, R.id.playlist_position);
+//        adjustLayout(downloadIconView, position < 0 && !willResume,
+//                willResume ? R.id.resume_icon : R.id.playlist_position);
 
         // 4. Switch right hand anchor for the main content to whatever metadata
         // is showing:
@@ -209,11 +222,11 @@ public class EpisodeListItemView extends PodcatcherListItemView {
     }
 
     private void adjustLayout(View view, boolean atParentRight, int isLeftOf) {
-        LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
-
-        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, atParentRight ? RelativeLayout.TRUE : 0);
-        params.addRule(RelativeLayout.LEFT_OF, atParentRight ? -1 : isLeftOf);
-
-        view.setLayoutParams(params);
+//        LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
+//
+//        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, atParentRight ? RelativeLayout.TRUE : 0);
+//        params.addRule(RelativeLayout.LEFT_OF, atParentRight ? -1 : isLeftOf);
+//
+//        view.setLayoutParams(params);
     }
 }

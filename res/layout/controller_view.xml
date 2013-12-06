@@ -1,8 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:gravity="center_vertical"
+        >
 
-</LinearLayout>
+    <ImageButton
+            android:id="@+id/btn_rewind"
+            android:layout_width="@dimen/control_view_button_width"
+            android:layout_height="@dimen/control_view_button_height"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/btn_rewind"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/rewind"
+            />
+
+    <ImageButton
+            android:id="@+id/btn_play"
+            android:layout_width="@dimen/control_view_button_width"
+            android:layout_height="@dimen/control_view_button_height"
+            android:layout_toRightOf="@id/btn_rewind"
+            android:src="@drawable/btn_play"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/play"
+            />
+
+    <ImageButton
+            android:id="@+id/btn_pause"
+            android:layout_width="@dimen/control_view_button_width"
+            android:layout_height="@dimen/control_view_button_height"
+            android:layout_toRightOf="@id/btn_rewind"
+            android:src="@drawable/btn_pause"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/pause"
+            android:visibility="invisible"
+            />
+
+    <ImageButton
+            android:id="@+id/btn_stop"
+            android:layout_width="@dimen/control_view_button_width"
+            android:layout_height="@dimen/control_view_button_height"
+            android:layout_toRightOf="@id/btn_play"
+            android:src="@drawable/btn_stop"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/stop"
+            />
+
+    <ImageButton
+            android:id="@+id/btn_forward"
+            android:layout_width="@dimen/control_view_button_width"
+            android:layout_height="@dimen/control_view_button_height"
+            android:layout_toRightOf="@id/btn_stop"
+            android:src="@drawable/btn_forward"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/forward"
+            />
+
+</RelativeLayout>

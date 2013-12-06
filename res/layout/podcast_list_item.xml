@@ -20,24 +20,28 @@
 <net.alliknow.podcatcher.view.PodcastListItemView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="140dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+        >
     <ImageView
         android:id="@+id/podcast_logo"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_alignParentRight="true"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:contentDescription="@string/podcast_image"
-        android:scaleType="fitXY"
-        android:padding="1dp"
-        android:visibility="gone" />
+        android:scaleType="fitXY" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
         android:minHeight="48dp"
-        android:layout_toLeftOf="@id/podcast_logo"
+        android:layout_toRightOf="@id/podcast_logo"
         android:orientation="vertical">
         <TextView
-            android:id="@+id/list_item_title"
+            style="@style/PodcatcherTheme.Text.Title"
+            android:id="@+id/episode_title"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="4"
@@ -45,20 +49,20 @@
             android:paddingLeft="@dimen/list_item_padding"
             android:singleLine="true"
             android:ellipsize="marquee"
-            android:textSize="@dimen/font_size_large" />
+                />
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="3"
             android:visibility="gone">
             <TextView
-                android:id="@+id/list_item_caption"
+                style="@style/PodcatcherTheme.Text.Default"
+                android:id="@+id/episode_date"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingLeft="@dimen/list_item_padding"
                 android:singleLine="true"
-                android:ellipsize="marquee"
-                android:textSize="@dimen/font_size_small" />
+                android:ellipsize="marquee" />
             <net.alliknow.podcatcher.view.HorizontalProgressView
                 android:id="@+id/list_item_progress"
                 android:layout_width="match_parent"

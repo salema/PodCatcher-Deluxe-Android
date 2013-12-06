@@ -17,6 +17,7 @@
 
 package net.alliknow.podcatcher.model.types;
 
+import android.graphics.Bitmap;
 import android.text.Html;
 import android.util.Log;
 
@@ -328,5 +329,9 @@ public class Episode implements Comparable<Episode> {
                 return -1;
             }
         }
+    }
+
+    public Bitmap getLogo() {
+        return podcast.getLogo();
     }
 }

@@ -28,6 +28,7 @@ import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import net.alliknow.podcatcher.PodcastActivity;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.PodcatcherBaseListAdapter;
 import net.alliknow.podcatcher.model.types.Progress;
@@ -37,7 +38,7 @@ import net.alliknow.podcatcher.view.ProgressView;
  * Generic list fragment sub-class for podcatcher list fragments. Defines some
  * helpers and common functionality.
  */
-public abstract class PodcatcherListFragment extends ListFragment {
+public abstract class PodcatcherListFragment extends ListFragment implements View.OnFocusChangeListener {
 
     /** The list adapter */
     protected PodcatcherBaseListAdapter adapter;
@@ -72,7 +73,9 @@ public abstract class PodcatcherListFragment extends ListFragment {
         progressView = (ProgressView) getView().findViewById(R.id.progress);
 
         viewCreated = true;
-        updateListSelector();
+//        updateListSelector();
+
+        getListView().setOnFocusChangeListener(this);
     }
 
     @Override
@@ -107,19 +110,19 @@ public abstract class PodcatcherListFragment extends ListFragment {
      * @param variantColor The theme color variant to use for pressed and
      *            checked item.
      */
-    public void setThemeColors(int color, int variantColor) {
-        this.themeColor = color;
-        this.lightThemeColor = variantColor;
-
-        // Set theme colors in adapter
-        if (adapter != null)
-            this.adapter.setThemeColors(themeColor, lightThemeColor);
-        // ...and for the list view
-        if (viewCreated)
-            updateListSelector();
-
-        refresh();
-    }
+//    public void setThemeColors(int color, int variantColor) {
+//        this.themeColor = color;
+//        this.lightThemeColor = variantColor;
+//
+//        // Set theme colors in adapter
+//        if (adapter != null)
+//            this.adapter.setThemeColors(themeColor, lightThemeColor);
+//        // ...and for the list view
+////        if (viewCreated)
+////            updateListSelector();
+//
+//        refresh();
+//    }
 
     /**
      * Select an item.
@@ -270,17 +273,36 @@ public abstract class PodcatcherListFragment extends ListFragment {
         }
     }
 
-    private void updateListSelector() {
-        // This takes care of the item pressed state and its color
-        StateListDrawable states = new StateListDrawable();
+//    private void updateListSelector() {
+//        // This takes care of the item pressed state and its color
+//        StateListDrawable states = new StateListDrawable();
+//
+//        states.addState(new int[] {
+//                android.R.attr.state_focused
+//        }, new ColorDrawable(lightThemeColor));
+//        states.addState(new int[] {
+//                android.R.attr.state_pressed
+//        }, new ColorDrawable(lightThemeColor));
+//        // Set the states drawable
+//        getListView().setSelector(states);
+//    }
 
-        states.addState(new int[] {
-                android.R.attr.state_focused
-        }, new ColorDrawable(lightThemeColor));
-        states.addState(new int[] {
-                android.R.attr.state_pressed
-        }, new ColorDrawable(lightThemeColor));
-        // Set the states drawable
-        getListView().setSelector(states);
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+//        updateBackground(hasFocus);
+        if (hasFocus) {
+            ((PodcastActivity) getActivity()).fragmentSelected(this);
+        }
+    }
+
+    public void updateBackground(boolean hasFocus) {
+        int bgResource;
+        if (hasFocus) {
+            bgResource = R.color.fragment_bg_focused;
+        } else {
+            bgResource = R.color.fragment_bg_default;
+        }
+        getView().setBackgroundColor(getResources().getColor(bgResource));
     }
 }

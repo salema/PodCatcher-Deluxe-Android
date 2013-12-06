@@ -1,18 +1,19 @@
 package net.alliknow.podcatcher.view;
 
 import android.content.Context;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.*;
 import net.alliknow.podcatcher.PodcastActivity;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.ContextMenuListener;
+import net.alliknow.podcatcher.listeners.OnDeleteDownloadsConfirmationListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
@@ -20,25 +21,23 @@ import net.alliknow.podcatcher.model.types.Episode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContextMenuView extends LinearLayout implements AdapterView.OnItemClickListener,
-        View.OnFocusChangeListener {
+public class ContextMenuView extends ListView implements AdapterView.OnItemClickListener {
 
-    public static final int ITEM_CANCEL = -1;
     public static final int ITEM_PLAY = 0;
     public static final int ITEM_REVERSE_MARKER = 1;
     public static final int ITEM_ADD_TO_PLAYLIST = 2;
     public static final int ITEM_DOWNLOAD = 3;
 
-    ListView lvContextMenu;
-
     OnSelectEpisodeListener selectEpisodeListener;
     ContextMenuListener episodeContextMenuListener;
     private boolean isNew;
     private boolean isInPlaylist;
+    private boolean isDownloaded;
     private Episode episode;
-    private boolean mIsOpened;
 
-    /** The episode manager handle */
+    /**
+     * The episode manager handle
+     */
     private EpisodeManager episodeManager;
 
     public ContextMenuView(Context context) {
@@ -56,28 +55,41 @@ public class ContextMenuView extends LinearLayout implements AdapterView.OnItemC
         prepare(context);
     }
 
+//    @Override
+//    public Drawable getDivider() {
+//        return getResources().getDrawable(R.color.divider_color);
+//    }
+//
+//    @Override
+//    public int getDividerHeight() {
+//        return 2;
+//    }
+//
+//    @Override
+//    public Drawable getSelector() {
+//        return getResources().getDrawable(R.drawable.list_item_bg_focused_fragment);
+//    }
+//
+//    @Override
+//    public int getChoiceMode() {
+//        return CHOICE_MODE_SINGLE;
+//    }
+//
+
+
     private void prepare(Context context) {
-        LayoutInflater.from(context).inflate(R.layout.context_menu, this, true);
+//        LayoutInflater.from(context).inflate(R.layout.context_menu, this, false);
         selectEpisodeListener = (OnSelectEpisodeListener) context;
         episodeContextMenuListener = (ContextMenuListener) context;
     }
 
     public void initialize(Episode episode) {
         this.episode = episode;
+        refreshState();
 
-        this.episodeManager = EpisodeManager.getInstance();
-        this.isNew = !episodeManager.isOld(episode);
-        this.isInPlaylist = episodeManager.isInPlaylist(episode);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                getContext(),
-                android.R.layout.simple_list_item_1,
-                formList()
-        );
-        lvContextMenu = (ListView) findViewById(R.id.context_menu_list);
-        lvContextMenu.setAdapter(adapter);
-        lvContextMenu.setOnItemClickListener(this);
-        lvContextMenu.setOnFocusChangeListener(this);
+        ContextMenuAdapter adapter = new ContextMenuAdapter(formList(), formIconsList());
+        setAdapter(adapter);
+        setOnItemClickListener(this);
     }
 
     private List<String> formList() {
@@ -87,10 +99,37 @@ public class ContextMenuView extends LinearLayout implements AdapterView.OnItemC
                 isNew ? R.string.context_mark_old : R.string.context_mark_new)
         );
         list.add(getContext().getString(
-                isInPlaylist? R.string.context_playlist_remove : R.string.context_playlist_add)
+                isInPlaylist ? R.string.context_playlist_remove : R.string.context_playlist_add)
         );
-        list.add(getContext().getString(R.string.context_download));
+        list.add(
+                isDownloaded ?
+                        getResources().getQuantityString(R.plurals.downloads_remove_title, 1) :
+                        getResources().getString(R.string.context_download)
+        );
         return list;
+    }
+
+    private List<Drawable> formIconsList() {
+        List<Drawable> list = new ArrayList<Drawable>(4);
+        list.add(getResources().getDrawable(R.drawable.ic_play));
+        list.add(getResources().getDrawable(R.drawable.ic_new));
+        list.add(getResources().getDrawable(R.drawable.ic_playlist));
+        list.add(getResources().getDrawable(R.drawable.ic_downloaded));
+        return list;
+    }
+
+    protected void refreshState() {
+        this.episodeManager = EpisodeManager.getInstance();
+        this.isNew = !episodeManager.isOld(episode);
+        this.isInPlaylist = episodeManager.isInPlaylist(episode);
+        this.isDownloaded = episodeManager.isDownloadingOrDownloaded(episode);
+    }
+
+    protected void refreshList() {
+        refreshState();
+        int selection = getSelectedItemPosition();
+        setAdapter(new ContextMenuAdapter(formList(), formIconsList()));
+        setSelection(selection);
     }
 
     @Override
@@ -99,20 +138,31 @@ public class ContextMenuView extends LinearLayout implements AdapterView.OnItemC
 
         switch (position) {
 
-            // todo: does not work
             case ITEM_PLAY:
-                    activity.onToggleLoad();
+                activity.onToggleLoad();
                 break;
 
-            // todo: does not work
             case ITEM_REVERSE_MARKER:
                 episodeManager.setState(episode, isNew);
                 activity.onStateChanged(episode);
+                refreshList();
                 break;
 
-            // todo: does not refresh the layout
             case ITEM_DOWNLOAD:
-                activity.onToggleDownload();
+                boolean nowRemoving = isDownloaded;
+                activity.onToggleDownload(new OnDeleteDownloadsConfirmationListener() {
+                    @Override
+                    public void onConfirmDeletion() {
+                        refreshList();
+                    }
+
+                    @Override
+                    public void onCancelDeletion() {
+                    }
+                });
+                if (!nowRemoving) {
+                    refreshList();
+                }
                 break;
 
 //            case R.id.episode_remove_contextmenuitem:
@@ -153,6 +203,7 @@ public class ContextMenuView extends LinearLayout implements AdapterView.OnItemC
                 else
                     episodeManager.appendToPlaylist(episode);
                 activity.onPlaylistChanged();
+                refreshList();
                 break;
 
 //            case R.id.episode_select_all_contextmenuitem:
@@ -169,67 +220,110 @@ public class ContextMenuView extends LinearLayout implements AdapterView.OnItemC
 //                return false;
         }
 
-        hide();
+//        hide();
     }
 
-    public void show() {
-        setVisibility(View.VISIBLE);
-        setEnabled(true);
-        mIsOpened = true;
-        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.menu_show);
-        setAnimation(animation);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                selectFirst();
-                lvContextMenu.requestFocus();
-            }
+//    public void show() {
+//        setEnabled(true);
+//        mIsOpened = true;
+//        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.menu_show);
+//        setAnimation(animation);
+//        animation.setAnimationListener(new Animation.AnimationListener() {
+//            @Override
+//            public void onAnimationStart(Animation animation) {
+//                selectFirst();
+//                requestFocus();
+//            }
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation) {
+//            }
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation) {
+//            }
+//        });
+//    }
 
-            @Override
-            public void onAnimationEnd(Animation animation) {
-            }
+//    public void hide() {
+//        if (!mIsOpened) {
+//            return;
+//        }
+//        clearFocus();
+//        mIsOpened = false;
+//        setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.menu_hide));
+////        setVisibility(View.INVISIBLE);
+//        setEnabled(false);
+//
+//        episodeContextMenuListener.onEpisodeContextMenuClose();
+//    }
 
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
-    }
-
-    public void hide() {
-        if (!mIsOpened) {
-            return;
-        }
-        clearFocus();
-        mIsOpened = false;
-        setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.menu_hide));
-        setVisibility(View.INVISIBLE);
-        setEnabled(false);
-
-        episodeContextMenuListener.onEpisodeContextMenuClose();
-    }
-
-    public void toggle() {
-        if (mIsOpened) {
-            hide();
-        } else {
-            show();
-        }
-    }
+//    public void toggle() {
+//        if (mIsOpened) {
+//            hide();
+//        } else {
+//            show();
+//        }
+//    }
 
     private void selectFirst() {
-        if (lvContextMenu != null) {
-            lvContextMenu.setSelection(0);
+            setSelection(0);
+    }
+
+//    @Override
+//    public void onFocusChange(View v, boolean hasFocus) {
+//        if (!hasFocus) {
+//            hide();
+//        }
+//    }
+
+    public class ContextMenuAdapter extends BaseAdapter {
+
+        List<String> items;
+        List<Drawable> icons;
+        LayoutInflater inflater;
+        private static final int ITEM_RESOURCE = R.layout.context_menu_item;
+        private static final int COMPOUND_DRAWABLE_PADDING = 5;
+
+        public ContextMenuAdapter(List<String> strings, List<Drawable> icons) {
+            super();
+            this.items = strings;
+            this.icons = icons;
+            inflater = LayoutInflater.from(getContext());
         }
-    }
 
-    public boolean isOpened() {
-        return mIsOpened;
-    }
+        @Override
+        public int getCount() {
+            return items.size();
+        }
 
-    @Override
-    public void onFocusChange(View v, boolean hasFocus) {
-        if (!hasFocus) {
-            hide();
+        @Override
+        public String getItem(int position) {
+            return items.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            View v;
+            if (convertView == null) {
+                v = inflater.inflate(ITEM_RESOURCE, parent, false);
+            } else {
+                v = convertView;
+            }
+
+            TextView textView = (TextView) v.findViewById(android.R.id.text1);
+
+            textView.setText(items.get(position));
+            textView.setCompoundDrawablesWithIntrinsicBounds(icons.get(position), null, null, null);
+            textView.setCompoundDrawablePadding(COMPOUND_DRAWABLE_PADDING);
+
+            return v;
         }
     }
 }

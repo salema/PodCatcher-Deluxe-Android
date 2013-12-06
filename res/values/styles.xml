@@ -18,7 +18,53 @@
  */
 -->
 <resources>
-    <style name="ProgressBar.Horizontal" parent="@android:style/Widget.ProgressBar.Horizontal">
-        <item name="android:progressDrawable">@drawable/progress_horizontal</item>
+    <style name="PodcatcherTheme" parent="android:Theme.Holo">
+        <item name="android:actionBarStyle">@style/PodcatcherTheme.ActionBar</item>
+        <item name="android:actionBarSize">80dp</item>
+        <item name="android:windowBackground">@drawable/background</item>
     </style>
+
+    <style name="PodcatcherTheme.ActionBar" parent="android:Widget.Holo.ActionBar">
+        <item name="android:background">@drawable/action_bar_bg</item>
+        <item name="android:titleTextStyle">@style/PodcatcherTheme.ActionBar.Title</item>
+    </style>
+
+    <style name="PodcatcherTheme.ActionBar.Title" parent="android:TextAppearance">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="PodcatcherTheme.Text" parent="android:TextAppearance">
+        <item name="android:textColor">@color/text_color</item>
+    </style>
+
+    <style name="PodcatcherTheme.Text.Title" parent="PodcatcherTheme.Text">
+        <item name="android:textSize">@dimen/font_size_large</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">marquee</item>
+    </style>
+    <style name="PodcatcherTheme.Text.Small" parent="PodcatcherTheme.Text">
+        <item name="android:textSize">@dimen/font_size_small</item>
+    </style>
+
+    <style name="PodcatcherTheme.Text.Default" parent="PodcatcherTheme.Text">
+        <item name="android:textSize">@dimen/font_size_default</item>
+    </style>
+
+    <style name="PodcatcherTheme.ProgressBar" parent="android:Widget.Holo.ProgressBar">
+        <item name="android:indeterminateDrawable">@drawable/progress_indeterminate</item>
+    </style>
+
+    <style name="PodcatcherTheme.ProgressBar.Horizontal" parent="android:Widget.Holo.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/action_bar_progress</item>
+        <item name="android:minHeight">10dp</item>
+        <item name="android:maxHeight">10dp</item>
+    </style>
+
+    <style name="PodcatcherTheme.Seekbar" parent="PodcatcherTheme.ProgressBar.Horizontal">
+        <item name="android:background">@color/action_bar_progress_bg</item>
+        <item name="android:progressDrawable">@android:color/transparent</item>
+        <item name="android:thumb">@drawable/action_bar_thumb</item>
+    </style>
+
 </resources>

@@ -75,7 +75,7 @@ public class ProgressView extends LinearLayout {
     public void publishProgress(Progress progress) {
         progressBar.setVisibility(VISIBLE);
 
-        progressTextView.setTextColor(getColor(R.color.text_secondary));
+//        progressTextView.setTextColor(getColor(R.color.text_secondary));
 
         if (progress.equals(Progress.WAIT))
             progressTextView.setText(R.string.wait);
@@ -101,7 +101,7 @@ public class ProgressView extends LinearLayout {
 
         progressTextView.setVisibility(VISIBLE);
         progressTextView.setText(errorId);
-        progressTextView.setTextColor(getColor(R.color.text_error));
+//        progressTextView.setTextColor(getColor(R.color.text_error));
         progressTextView.setSingleLine(false);
     }
 
@@ -113,7 +113,7 @@ public class ProgressView extends LinearLayout {
 
         progressTextView.setVisibility(VISIBLE);
         progressTextView.setText(R.string.wait);
-        progressTextView.setTextColor(getColor(R.color.text_secondary));
+//        progressTextView.setTextColor(getColor(R.color.text_secondary));
         progressTextView.setSingleLine(true);
     }
 

@@ -17,6 +17,7 @@
 
 package net.alliknow.podcatcher.view.fragments;
 
+import static android.view.View.FOCUSABLES_ALL;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
@@ -25,34 +26,30 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
+import android.view.*;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import net.alliknow.podcatcher.PodcastActivity;
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
 import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnRequestFullscreenListener;
 import net.alliknow.podcatcher.model.types.Episode;
+import net.alliknow.podcatcher.view.ContextMenuView;
 import net.alliknow.podcatcher.view.Utils;
 
 /**
  * Fragment showing episode details.
  */
-public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
+public class EpisodeFragment extends Fragment implements View.OnFocusChangeListener, View.OnKeyListener {
 
     /** Delay after the fullscreen hint is take off the video */
-    private static final int HIDE_FULLSCREEN_HINT_DELAY = 3000;
+//    private static final int HIDE_FULLSCREEN_HINT_DELAY = 3000;
 
     /** The listener for the menu item */
     private OnDownloadEpisodeListener downloadListener;
@@ -101,47 +98,48 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
     private ImageView downloadIconView;
     /** The divider view between title and description */
     private View dividerView;
-    /** The episode video view */
-    private View videoView;
+    private ImageView logoImageView;
+
+    private ContextMenuView contextMenuView;
     /** The actual video surface */
-    private SurfaceView surfaceView;
+//    private SurfaceView surfaceView;
     /** The go to fullscreen icon */
-    private ImageView fullscreenButton;
+//    private ImageView fullscreenButton;
     /** The episode description web view */
     private WebView descriptionView;
 
     /** Flag to indicate whether video surface is available */
-    private boolean videoSurfaceAvailable = false;
+//    private boolean videoSurfaceAvailable = false;
     /** Our video surface holder callback to update availability */
-    private VideoCallback videoCallback = new VideoCallback();
+//    private VideoCallback videoCallback = new VideoCallback();
 
     /** The callback implementation */
-    private final class VideoCallback implements SurfaceHolder.Callback {
-
-        @Override
-        public void surfaceCreated(SurfaceHolder holder) {
-            videoSurfaceAvailable = true;
-
-            // We need to hide the fullscreen hint after a while
-            new Handler().postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    fullscreenButton.setVisibility(GONE);
-                }
-            }, HIDE_FULLSCREEN_HINT_DELAY);
-        }
-
-        @Override
-        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-            // pass
-        }
-
-        @Override
-        public void surfaceDestroyed(SurfaceHolder holder) {
-            videoSurfaceAvailable = false;
-        }
-    }
+//    private final class VideoCallback implements SurfaceHolder.Callback {
+//
+//        @Override
+//        public void surfaceCreated(SurfaceHolder holder) {
+//            videoSurfaceAvailable = true;
+//
+//            // We need to hide the fullscreen hint after a while
+//            new Handler().postDelayed(new Runnable() {
+//
+//                @Override
+//                public void run() {
+//                    fullscreenButton.setVisibility(GONE);
+//                }
+//            }, HIDE_FULLSCREEN_HINT_DELAY);
+//        }
+//
+//        @Override
+//        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+//            // pass
+//        }
+//
+//        @Override
+//        public void surfaceDestroyed(SurfaceHolder holder) {
+//            videoSurfaceAvailable = false;
+//        }
+//    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -182,24 +180,27 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
         stateIconView = (ImageView) getView().findViewById(R.id.state_icon);
         downloadIconView = (ImageView) getView().findViewById(R.id.download_icon);
         dividerView = getView().findViewById(R.id.episode_divider);
+        logoImageView = (ImageView) getView().findViewById(R.id.logo);
 
-        videoView = getView().findViewById(R.id.episode_video);
-        videoView.setOnTouchListener(new OnTouchListener() {
+//        videoView = getView().findViewById(R.id.episode_video);
+//        videoView.setOnTouchListener(new OnTouchListener() {
+//
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                if (event.getAction() == MotionEvent.ACTION_DOWN)
+//                    fullscreenListener.onRequestFullscreen();
+//
+//                return event.getAction() == MotionEvent.ACTION_DOWN;
+//            }
+//        });
 
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN)
-                    fullscreenListener.onRequestFullscreen();
-
-                return event.getAction() == MotionEvent.ACTION_DOWN;
-            }
-        });
-
-        surfaceView = (SurfaceView) getView().findViewById(R.id.surface);
-        surfaceView.getHolder().addCallback(videoCallback);
-        fullscreenButton = (ImageView) getView().findViewById(R.id.fullscreen);
+//        surfaceView = (SurfaceView) getView().findViewById(R.id.surface);
+//        surfaceView.getHolder().addCallback(videoCallback);
+//        fullscreenButton = (ImageView) getView().findViewById(R.id.fullscreen);
 
         descriptionView = (WebView) getView().findViewById(R.id.episode_description);
+
+        contextMenuView = (ContextMenuView) getView().findViewById(R.id.context_menu);
 
         viewCreated = true;
 
@@ -211,6 +212,13 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
             setDownloadIconVisibility(showDownloadIcon, downloadIconState);
             setShowVideoView(showVideo, videoFillsSpace);
         }
+
+        contextMenuView.setOnFocusChangeListener(this);
+        descriptionView.setOnFocusChangeListener(this);
+        getView().setOnKeyListener(this);
+
+//        contextMenuView.setNextFocusDownId(R.id.episode_description);
+//        descriptionView.setNextFocusUpId(R.id.context_menu);
     }
 
     @Override
@@ -226,7 +234,7 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
         switch (item.getItemId()) {
             case R.id.episode_download_menuitem:
                 // Tell activity to load/unload the current episode
-                downloadListener.onToggleDownload();
+                downloadListener.onToggleDownload(null);
 
                 return true;
             default:
@@ -236,7 +244,7 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
 
     @Override
     public void onDestroyView() {
-        surfaceView.getHolder().removeCallback(videoCallback);
+//        surfaceView.getHolder().removeCallback(videoCallback);
         viewCreated = false;
 
         super.onDestroyView();
@@ -251,6 +259,8 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
         // Set handle to episode in case we are not resumed
         this.currentEpisode = selectedEpisode;
 
+        this.contextMenuView.initialize(selectedEpisode);
+
         // If the fragment's view is actually visible and the episode is
         // valid,
         // show episode information
@@ -258,6 +268,14 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
             // Title and sub-title
             titleView.setText(currentEpisode.getName());
             subtitleView.setText(currentEpisode.getPodcast().getName());
+            // Set logo
+            // TODO: logo!
+//            if (selectedEpisode.getLogo() != null) {
+//                logoImageView.setVisibility(VISIBLE);
+//                logoImageView.setImageBitmap(selectedEpisode.getLogo());
+//            } else {
+//                logoImageView.setVisibility(GONE);
+//            }
             // Episode publication data
             if (showEpisodeDate && currentEpisode.getPubDate() != null)
                 subtitleView.setText(subtitleView.getText() + SEPARATOR
@@ -274,6 +292,11 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
                 description = getString(R.string.episode_no_description);
             // Set episode description
             descriptionView.loadDataWithBaseURL(null, description, "text/html", "utf-8", null);
+
+//            descriptionView.setBackgroundColor(0x000000);
+            WebSettings settings = descriptionView.getSettings();
+            settings.setDefaultFontSize(getResources().getDimensionPixelSize(R.dimen.font_size_default));
+            settings.setMinimumFontSize(getResources().getDimensionPixelSize(R.dimen.font_size_small));
         }
 
         // Update the UI widget's visibility to reflect state
@@ -295,6 +318,11 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
                 needsLayoutTransitionFix = false;
             }
         }
+    }
+
+    public void focusOnMenu() {
+        if (contextMenuView != null)
+            contextMenuView.requestFocus();
     }
 
     /**
@@ -351,8 +379,8 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
         // otherwise onResume or the menu creation callback will call us.
         if (viewCreated) {
             downloadIconView.setVisibility(show ? VISIBLE : GONE);
-            downloadIconView.setImageResource(downloaded ?
-                    R.drawable.ic_media_downloaded : R.drawable.ic_media_downloading);
+//            downloadIconView.setImageResource(downloaded ?
+//                    R.drawable.ic_media_downloaded : R.drawable.ic_media_downloading);
         }
     }
 
@@ -384,35 +412,35 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
             updateUiElementVisibility();
     }
 
-    @Override
-    public SurfaceHolder getVideoSurface() {
-        return surfaceView.getHolder();
-    }
+//    @Override
+//    public SurfaceHolder getVideoSurface() {
+//        return surfaceView.getHolder();
+//    }
 
-    @Override
-    public boolean isVideoSurfaceAvailable() {
-        return videoSurfaceAvailable;
-    }
+//    @Override
+//    public boolean isVideoSurfaceAvailable() {
+//        return videoSurfaceAvailable;
+//    }
 
-    @Override
-    public void adjustToVideoSize(int width, int height) {
-        if (viewCreated) {
-            LinearLayout.LayoutParams layoutParams =
-                    (LinearLayout.LayoutParams) videoView.getLayoutParams();
-
-            if (videoFillsSpace) {
-                layoutParams.height = 0;
-                layoutParams.weight = 1;
-            }
-            else {
-                layoutParams.height = (int) (((float) height / (float) width) *
-                        (float) getView().getWidth());
-                layoutParams.weight = 0;
-            }
-
-            videoView.setLayoutParams(layoutParams);
-        }
-    }
+//    @Override
+//    public void adjustToVideoSize(int width, int height) {
+//        if (viewCreated) {
+//            LinearLayout.LayoutParams layoutParams =
+//                    (LinearLayout.LayoutParams) videoView.getLayoutParams();
+//
+//            if (videoFillsSpace) {
+//                layoutParams.height = 0;
+//                layoutParams.weight = 1;
+//            }
+//            else {
+//                layoutParams.height = (int) (((float) height / (float) width) *
+//                        (float) getView().getWidth());
+//                layoutParams.weight = 0;
+//            }
+//
+//            videoView.setLayoutParams(layoutParams);
+//        }
+//    }
 
     private void updateUiElementVisibility() {
         if (viewCreated) {
@@ -421,9 +449,48 @@ public class EpisodeFragment extends Fragment implements VideoSurfaceProvider {
             titleView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
             subtitleView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
             dividerView.setVisibility(currentEpisode == null ? GONE : VISIBLE);
-            videoView.setVisibility(showVideo ? VISIBLE : GONE);
+//            videoView.setVisibility(showVideo ? VISIBLE : GONE);
             descriptionView.setVisibility(currentEpisode == null ||
                     (showVideo && videoFillsSpace) ? GONE : VISIBLE);
         }
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+//        updateBackground(getView().hasFocus());
+        if (hasFocus) {
+            ((PodcastActivity) getActivity()).fragmentSelected(this);
+        }
+    }
+
+    public void updateBackground(boolean hasFocus) {
+        int bgResource;
+        if (hasFocus) {
+            bgResource = R.color.fragment_bg_focused;
+        } else {
+            bgResource = R.color.fragment_bg_default;
+        }
+        getView().setBackgroundColor(getResources().getColor(bgResource));
+    }
+
+    @Override
+    public boolean onKey(View v, int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+                if (getActivity().getCurrentFocus() == contextMenuView) {
+                    descriptionView.requestFocus();
+                    return true;
+                }
+                break;
+            case KeyEvent.KEYCODE_DPAD_UP:
+                if (getActivity().getCurrentFocus() == descriptionView) {
+                    contextMenuView.requestFocus();
+                    return true;
+                }
+                break;
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                return true;
+        }
+        return false;
     }
 }

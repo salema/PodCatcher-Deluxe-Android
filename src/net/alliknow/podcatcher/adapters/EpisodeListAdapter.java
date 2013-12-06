@@ -33,18 +33,24 @@ import java.util.List;
  */
 public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
 
-    /** The list our data resides in */
+    /**
+     * The list our data resides in
+     */
     protected List<Episode> list;
-    /** Whether the podcast name should be shown */
+    /**
+     * Whether the podcast name should be shown
+     */
     protected boolean showPodcastNames = false;
 
-//    private ContextMenuEpisodeDialog contextMenu;
-    ContextMenuListener listener;
+    //    private ContextMenuEpisodeDialog contextMenu;
+    private ContextMenuListener listener;
+
+    private boolean showSelected = true;
 
     /**
      * Create new adapter.
-     * 
-     * @param context The activity.
+     *
+     * @param context     The activity.
      * @param episodeList The list of episodes to show in list.
      */
     public EpisodeListAdapter(Context context, List<Episode> episodeList) {
@@ -58,7 +64,7 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
 
     /**
      * Replace the current episode list with a new one.
-     * 
+     *
      * @param episodeList The new list (not <code>null</code>).
      */
     public void updateList(List<Episode> episodeList) {
@@ -70,7 +76,7 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
     /**
      * Set whether the podcast name for the episode should be shown. This will
      * redraw the list and take effect immediately.
-     * 
+     *
      * @param show Whether to show each episode's podcast name.
      */
     public void setShowPodcastNames(boolean show) {
@@ -94,13 +100,22 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
         return list.get(position).hashCode();
     }
 
+    public void setShowSelected(boolean showSelected) {
+        this.showSelected = showSelected;
+        notifyDataSetChanged();
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         final EpisodeListItemView returnView = (EpisodeListItemView)
                 findReturnView(convertView, parent, R.layout.episode_list_item);
 
         // Make sure the coloring is right
-        setBackgroundColorForPosition(returnView, position);
+        if (showSelected) {
+            setBackgroundColorForPosition(returnView, position);
+        } else {
+            returnView.setBackgroundResource(R.drawable.list_item_bg_unfocused_fragment);
+        }
         // Make the view represent episode at given position
         returnView.show((Episode) getItem(position), showPodcastNames);
 

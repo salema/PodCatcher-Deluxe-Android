@@ -55,8 +55,8 @@ public class PodcastListItemView extends PodcatcherListItemView {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        titleTextView = (TextView) findViewById(R.id.list_item_title);
-        captionTextView = (TextView) findViewById(R.id.list_item_caption);
+        titleTextView = (TextView) findViewById(R.id.episode_title);
+        captionTextView = (TextView) findViewById(R.id.episode_date);
         logoView = (ImageView) findViewById(R.id.podcast_logo);
         progressView = (HorizontalProgressView) findViewById(R.id.list_item_progress);
     }
@@ -72,8 +72,9 @@ public class PodcastListItemView extends PodcatcherListItemView {
         // 0. Check podcast state
         final boolean loading = podcastManager.isLoading(podcast);
         final int episodeNumber = podcast.getEpisodeNumber();
-        final boolean showLogoView = showLogo && podcast.getLogo() != null;
+//        final boolean showLogoView = /*showLogo &&*/ podcast.getLogo() != null;
         final boolean progressShouldFade = podcast.hashCode() == lastItemId;
+        final boolean hasLogo = podcast.getLogo() != null;
 
         // 1. Set podcast title
         titleTextView.setText(podcast.getName());
@@ -100,8 +101,8 @@ public class PodcastListItemView extends PodcatcherListItemView {
         progressView.publishProgress(Progress.WAIT);
 
         // 4. Set podcast logo if available
-        logoView.setVisibility(showLogoView ? VISIBLE : GONE);
-        logoView.setImageBitmap(showLogoView ? podcast.getLogo() : null);
+//        logoView.setVisibility(has ? VISIBLE : GONE);
+        logoView.setImageBitmap(hasLogo ? podcast.getLogo() : DEFAULT_LOGO);
 
         // 5. Store state to make sure it is available next time show() is
         // called and we can decide whether to crossfade or not
