@@ -39,4 +39,7 @@
     <color name="text_secondary">@android:color/darker_gray</color>
     <color name="divider_off">@android:color/darker_gray</color>
     <color name="featured_suggestion">#ffafaf</color>
+
+    <color name="divider_color">#28e6cb78</color>
+    <color name="podcast_list_item_focused">#28dece9c</color>
 </resources>
