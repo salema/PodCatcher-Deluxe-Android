@@ -55,7 +55,7 @@ public abstract class FeedEntity {
     protected boolean explicit = false;
 
     /**
-     * @return The entity's title.
+     * @return The entity's title. This might by empty or <code>null</code>.
      */
     public String getName() {
         return name;

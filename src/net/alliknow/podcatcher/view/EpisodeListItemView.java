@@ -33,7 +33,9 @@ import net.alliknow.podcatcher.model.types.Episode;
  */
 public class EpisodeListItemView extends PodcatcherListItemView {
 
-    /** String to use if no episode publication date available */
+    /** String to use if there is no episode title available */
+    private static final String NO_TITLE = "???";
+    /** String to use if there is no episode publication date available */
     private static final String NO_DATE = "---";
     /** Separator for date and podcast name */
     private static final String SEPARATOR = " • ";
@@ -134,26 +136,31 @@ public class EpisodeListItemView extends PodcatcherListItemView {
     }
 
     private String createTitle(Episode episode) {
-        final String episodeName = episode.getName();
-        final String podcastName = episode.getPodcast().getName();
+        String result = episode.getName();
 
-        final String redundantPrefix1 = podcastName + ": ";
-        final String redundantPrefix2 = podcastName + " - ";
-        final String redundantPrefix3 = podcastName + ", ";
-        final String redundantPrefix4 = podcastName + " ";
+        if (result != null && !result.isEmpty()) {
+            final String podcastName = episode.getPodcast().getName();
 
-        // Remove podcast name from the episode title because it takes to much
-        // space and is redundant anyway
-        if (episodeName.startsWith(redundantPrefix1))
-            return episodeName.substring(redundantPrefix1.length(), episodeName.length());
-        else if (episodeName.startsWith(redundantPrefix2))
-            return episodeName.substring(redundantPrefix2.length(), episodeName.length());
-        else if (episodeName.startsWith(redundantPrefix3))
-            return episodeName.substring(redundantPrefix3.length(), episodeName.length());
-        else if (episodeName.startsWith(redundantPrefix4))
-            return episodeName.substring(redundantPrefix4.length(), episodeName.length());
+            final String redundantPrefix1 = podcastName + ": ";
+            final String redundantPrefix2 = podcastName + " - ";
+            final String redundantPrefix3 = podcastName + ", ";
+            final String redundantPrefix4 = podcastName + " ";
+
+            // Remove podcast name from the episode title because it takes too
+            // much space and is redundant anyway
+            if (result.startsWith(redundantPrefix1))
+                result = result.substring(redundantPrefix1.length(), result.length());
+            else if (result.startsWith(redundantPrefix2))
+                result = result.substring(redundantPrefix2.length(), result.length());
+            else if (result.startsWith(redundantPrefix3))
+                result = result.substring(redundantPrefix3.length(), result.length());
+            else if (result.startsWith(redundantPrefix4))
+                result = result.substring(redundantPrefix4.length(), result.length());
+        }
         else
-            return episodeName;
+            result = NO_TITLE;
+
+        return result;
     }
 
     private String createCaption(Episode episode, boolean showPodcastName) {
