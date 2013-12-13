@@ -23,8 +23,10 @@ import static android.media.MediaMetadataRetriever.METADATA_KEY_DURATION;
 import static android.media.MediaMetadataRetriever.METADATA_KEY_TITLE;
 import static android.media.RemoteControlClient.MetadataEditor.BITMAP_KEY_ARTWORK;
 
+import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.media.RemoteControlClient;
+import android.os.Build;
 
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
@@ -45,12 +47,43 @@ public class PodcatcherRCClient extends RemoteControlClient {
      * Create the remote control client.
      * 
      * @param mediaButtonIntent The pending intent to use for the media buttons.
+     * @param service The episode playback service controlled by this remote.
      * @param episode The episode to get metadata from.
      */
-    public PodcatcherRCClient(PendingIntent mediaButtonIntent, Episode episode) {
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    public PodcatcherRCClient(PendingIntent mediaButtonIntent, final PlayEpisodeService service,
+            Episode episode) {
+
         super(mediaButtonIntent);
 
+        // This will set the transport control flags
         showNext(!EpisodeManager.getInstance().isPlaylistEmptyBesides(episode));
+
+        // On Android 4.3 and later we also add playback progress and scrubbing
+        // support for the remote control client
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            setOnGetPlaybackPositionListener(new OnGetPlaybackPositionListener() {
+
+                @Override
+                public long onGetPlaybackPosition() {
+                    if (!service.isPrepared())
+                        return -1;
+                    else
+                        return service.getCurrentPosition();
+                }
+            });
+            setPlaybackPositionUpdateListener(new OnPlaybackPositionUpdateListener() {
+
+                @Override
+                public void onPlaybackPositionUpdate(long newPosition) {
+                    service.seekTo((int) newPosition);
+
+                    setPlaybackState(service.isPlaying() ? PLAYSTATE_PLAYING : PLAYSTATE_PAUSED,
+                            service.getCurrentPosition(), 1.0f);
+                }
+            });
+        }
+
         setMetadata(episode);
     }
 
@@ -62,23 +95,22 @@ public class PodcatcherRCClient extends RemoteControlClient {
      *            be displayed.
      */
     public void showNext(boolean canSkip) {
-        setTransportControlFlags(SUPPORTED_TRANSPORTS | (canSkip ? FLAG_KEY_MEDIA_NEXT : 0));
+        setTransportControlFlags(SUPPORTED_TRANSPORTS | (canSkip ? FLAG_KEY_MEDIA_NEXT : 0)
+                | (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 ?
+                        FLAG_KEY_MEDIA_POSITION_UPDATE : 0));
     }
 
     private void setMetadata(Episode episode) {
         if (episode != null) {
-            MetadataEditor editor = editMetadata(true);
+            final MetadataEditor editor = editMetadata(true);
 
-            editor.putString(METADATA_KEY_TITLE, episode.getName());
-            editor.putString(METADATA_KEY_DATE, Utils.getRelativePubDate(episode));
-            editor.putLong(METADATA_KEY_DURATION, episode.getDuration() * 1000);
+            editor.putString(METADATA_KEY_TITLE, episode.getName())
+                    .putString(METADATA_KEY_ARTIST, episode.getPodcast().getName())
+                    .putString(METADATA_KEY_DATE, Utils.getRelativePubDate(episode))
+                    .putLong(METADATA_KEY_DURATION, episode.getDuration() * 1000);
 
-            if (episode.getPodcast() != null) {
-                editor.putString(METADATA_KEY_ARTIST, episode.getPodcast().getName());
-
-                if (episode.getPodcast().isLogoCached())
-                    editor.putBitmap(BITMAP_KEY_ARTWORK, episode.getPodcast().getLogo());
-            }
+            if (episode.getPodcast().isLogoCached())
+                editor.putBitmap(BITMAP_KEY_ARTWORK, episode.getPodcast().getLogo());
 
             editor.apply();
         }
