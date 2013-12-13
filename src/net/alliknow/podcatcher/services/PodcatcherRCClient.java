@@ -23,8 +23,10 @@ import static android.media.MediaMetadataRetriever.METADATA_KEY_DURATION;
 import static android.media.MediaMetadataRetriever.METADATA_KEY_TITLE;
 import static android.media.RemoteControlClient.MetadataEditor.BITMAP_KEY_ARTWORK;
 
+import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.media.RemoteControlClient;
+import android.os.Build;
 
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.view.Utils;
@@ -44,12 +46,43 @@ public class PodcatcherRCClient extends RemoteControlClient {
      * Create the remote control client.
      * 
      * @param mediaButtonIntent The pending intent to use for the media buttons.
+     * @param service The episode playback service controlled by this remote.
      * @param episode The episode to get metadata from.
      */
-    public PodcatcherRCClient(PendingIntent mediaButtonIntent, Episode episode) {
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    public PodcatcherRCClient(PendingIntent mediaButtonIntent, final PlayEpisodeService service,
+            Episode episode) {
+
         super(mediaButtonIntent);
 
-        setTransportControlFlags(SUPPORTED_TRANSPORTS);
+        // On Android 4.3 and later we also add playback progress and scrubbing
+        // support for the remote control client
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            setTransportControlFlags(SUPPORTED_TRANSPORTS | FLAG_KEY_MEDIA_POSITION_UPDATE);
+            setOnGetPlaybackPositionListener(new OnGetPlaybackPositionListener() {
+
+                @Override
+                public long onGetPlaybackPosition() {
+                    if (!service.isPrepared())
+                        return -1;
+                    else
+                        return service.getCurrentPosition();
+                }
+            });
+            setPlaybackPositionUpdateListener(new OnPlaybackPositionUpdateListener() {
+
+                @Override
+                public void onPlaybackPositionUpdate(long newPosition) {
+                    service.seekTo((int) newPosition);
+
+                    setPlaybackState(service.isPlaying() ? PLAYSTATE_PLAYING : PLAYSTATE_PAUSED,
+                            service.getCurrentPosition(), 1.0f);
+                }
+            });
+        }
+        else
+            setTransportControlFlags(SUPPORTED_TRANSPORTS);
+
         setMetadata(episode);
     }
 
