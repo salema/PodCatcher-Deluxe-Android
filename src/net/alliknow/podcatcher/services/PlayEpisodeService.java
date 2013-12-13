@@ -791,7 +791,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 PendingIntent.getBroadcast(getApplicationContext(), 0, mediaButtonIntent, 0);
 
         // Create and register the remote control client
-        remoteControlClient = new PodcatcherRCClient(mediaPendingIntent, currentEpisode);
+        remoteControlClient = new PodcatcherRCClient(mediaPendingIntent, this, currentEpisode);
         audioManager.registerRemoteControlClient(remoteControlClient);
     }
 

@@ -131,8 +131,8 @@ public class Episode extends FeedEntity implements Comparable<Episode> {
     }
 
     /**
-     * @return The episode's duration as given by the podcast feed or -1 if not
-     *         available.
+     * @return The episode's duration in seconds as given by the podcast feed or
+     *         -1 if not available.
      */
     public int getDuration() {
         return duration;
