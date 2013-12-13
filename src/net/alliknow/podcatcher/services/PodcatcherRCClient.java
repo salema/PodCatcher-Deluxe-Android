@@ -88,18 +88,15 @@ public class PodcatcherRCClient extends RemoteControlClient {
 
     private void setMetadata(Episode episode) {
         if (episode != null) {
-            MetadataEditor editor = editMetadata(true);
+            final MetadataEditor editor = editMetadata(true);
 
-            editor.putString(METADATA_KEY_TITLE, episode.getName());
-            editor.putString(METADATA_KEY_DATE, Utils.getRelativePubDate(episode));
-            editor.putLong(METADATA_KEY_DURATION, episode.getDuration() * 1000);
+            editor.putString(METADATA_KEY_TITLE, episode.getName())
+                    .putString(METADATA_KEY_ARTIST, episode.getPodcast().getName())
+                    .putString(METADATA_KEY_DATE, Utils.getRelativePubDate(episode))
+                    .putLong(METADATA_KEY_DURATION, episode.getDuration() * 1000);
 
-            if (episode.getPodcast() != null) {
-                editor.putString(METADATA_KEY_ARTIST, episode.getPodcast().getName());
-
-                if (episode.getPodcast().isLogoCached())
-                    editor.putBitmap(BITMAP_KEY_ARTWORK, episode.getPodcast().getLogo());
-            }
+            if (episode.getPodcast().isLogoCached())
+                editor.putBitmap(BITMAP_KEY_ARTWORK, episode.getPodcast().getLogo());
 
             editor.apply();
         }
