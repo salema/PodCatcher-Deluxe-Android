@@ -126,7 +126,7 @@
     <string name="suggestion_confirm_explicit">Tento záznam je označen jako výslovný. Opravdu jej chcete přidat do seznamu svých záznamů?</string>
     <string name="suggestions_none">Žádné návrhy. Změňte, prosím, své filtry.</string>
     <string name="suggestions_load_error">Návrhy se nepodařilo nahrát. Prověřte, prosím, své internetové spojení!</string>
-    <string name="suggestions_send">Odeslat návrh záznamu&#8230;</string>
+    <string name="suggestions_send">Odeslat návrh záznamu</string>
     <string name="preferences">Nastavení</string>
     <string name="pref_select_all_on_start_title">Vybrat vše při spuštění</string>
     <string name="pref_select_all_on_start_summary">Nahrát všechny odběry, když se program spouští</string>
