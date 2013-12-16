@@ -58,7 +58,8 @@
     <string name="podcast_load_error_not_reachable">The podcast failed to load because the server could not be reached or the address is invalid.</string>
     <string name="podcast_load_error_not_parseable">The podcast failed to load because the address does not point to a valid podcast feed.</string>
     <string name="podcast_load_multiple_progress">%1$d of %2$d podcasts</string>
-    <string name="podcast_load_multiple_error">The podcast\n\"%s\"\nfailed to load.</string>
+    <string name="podcast_load_multiple_error">The podcast\n\"%s\"\nfailed to load!</string>
+    <string name="podcast_load_multiple_error_some">One or more podcasts failed to load!</string>
     <string name="podcast_load_multiple_error_all">All podcasts failed to load, please check your Internet connection!</string>
     <string name="podcast_block_explicit">Block podcasts with explicit content</string>
     <string name="episode_none">No episodes in this podcast</string>

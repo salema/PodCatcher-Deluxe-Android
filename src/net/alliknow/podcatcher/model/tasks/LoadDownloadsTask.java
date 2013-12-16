@@ -23,8 +23,10 @@ import android.util.Log;
 import net.alliknow.podcatcher.listeners.OnLoadDownloadsListener;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
+import net.alliknow.podcatcher.model.types.Podcast;
 
 import java.lang.ref.WeakReference;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -33,7 +35,10 @@ import java.util.List;
 public class LoadDownloadsTask extends AsyncTask<Void, Void, List<Episode>> {
 
     /** Call back */
-    private WeakReference<OnLoadDownloadsListener> listener;
+    private final WeakReference<OnLoadDownloadsListener> listener;
+
+    /** Filter */
+    private final Podcast podcast;
 
     /**
      * Create new task.
@@ -41,18 +46,39 @@ public class LoadDownloadsTask extends AsyncTask<Void, Void, List<Episode>> {
      * @param listener Callback to be alerted on completion. The listener is
      *            held as a weak reference, so you can safely call this from an
      *            activity without leaking it.
+     * @param podcast Podcast to use as a filter. The returned list of downloads
+     *            will only contain episodes that belong to the given podcast.
+     *            Setting this to <code>null</code> disables the filter and all
+     *            downloaded episodes are returned.
      */
-    public LoadDownloadsTask(OnLoadDownloadsListener listener) {
+    public LoadDownloadsTask(OnLoadDownloadsListener listener, Podcast podcast) {
         this.listener = new WeakReference<OnLoadDownloadsListener>(listener);
+        this.podcast = podcast;
     }
 
     @Override
     protected List<Episode> doInBackground(Void... nothing) {
         try {
-            // Block if episode metadata not yet available
+            // 0. Block if episode metadata not yet available
             EpisodeManager.getInstance().blockUntilEpisodeMetadataIsLoaded();
-            // Get the list of downloads
-            return EpisodeManager.getInstance().getDownloads();
+
+            // 1. Get the list of downloads
+            final List<Episode> downloads = EpisodeManager.getInstance().getDownloads();
+
+            // 2. Filter the downloads if podcast is set
+            if (podcast != null && !downloads.isEmpty()) {
+                final Iterator<Episode> episodes = downloads.iterator();
+
+                while (episodes.hasNext()) {
+                    final Episode current = episodes.next();
+
+                    if (!current.getPodcast().equals(podcast))
+                        episodes.remove();
+                }
+            }
+
+            // 3. Return the result
+            return downloads;
         } catch (Exception e) {
             Log.w(getClass().getSimpleName(), "Load failed for download list", e);
 

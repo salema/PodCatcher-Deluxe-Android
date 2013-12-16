@@ -20,8 +20,6 @@ package net.alliknow.podcatcher;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import net.alliknow.podcatcher.model.tasks.LoadDownloadsTask;
-import net.alliknow.podcatcher.model.tasks.LoadPlaylistTask;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
@@ -117,8 +115,11 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
 
         // Init the list view...
         episodeListFragment.resetAndSpin();
-        // ...and start loading
+        // ... and start loading
         podcastManager.load(podcast);
+        // ... plus special episodes
+        episodeManager.getDownloadsAsync(this, podcast);
+        episodeManager.getPlaylistAsync(this, podcast);
     }
 
     @Override
@@ -131,9 +132,13 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         else
             episodeListFragment.resetUi();
         episodeListFragment.setShowPodcastNames(true);
-        // ...and go get the data
+
+        // ... and go get the podcast data
         for (Podcast podcast : podcastManager.getPodcastList())
             podcastManager.load(podcast);
+        // ... plus special episodes
+        episodeManager.getDownloadsAsync(this);
+        episodeManager.getPlaylistAsync(this);
 
         updateActionBar();
     }
@@ -145,7 +150,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         episodeListFragment.resetAndSpin();
         episodeListFragment.setShowPodcastNames(true);
 
-        new LoadDownloadsTask(this).execute((Void) null);
+        episodeManager.getDownloadsAsync(this);
     }
 
     @Override
@@ -156,7 +161,7 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
         episodeListFragment.setShowPodcastNames(true);
         episodeListFragment.setEnableSwipeReorder(true);
 
-        new LoadPlaylistTask(this).execute((Void) null);
+        episodeManager.getPlaylistAsync(this);
     }
 
     @Override

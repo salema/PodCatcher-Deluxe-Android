@@ -39,6 +39,7 @@ import net.alliknow.podcatcher.model.tasks.remote.DownloadEpisodeTask;
 import net.alliknow.podcatcher.model.tasks.remote.DownloadEpisodeTask.DownloadTaskListener;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
+import net.alliknow.podcatcher.model.types.Podcast;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -300,6 +301,7 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
      * @return The list of downloaded episodes (might be empty, but not
      *         <code>null</code>).
      * @see LoadDownloadsTask
+     * @see #getDownloadsAsync(OnLoadDownloadsListener)
      * @see OnLoadDownloadsListener
      */
     public List<Episode> getDownloads() {
@@ -331,6 +333,29 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
         // Sort and return the list
         Collections.sort(result);
         return result;
+    }
+
+    /**
+     * Get the list of downloaded episodes asynchronously.
+     * 
+     * @param listener The listener to alert once the downloads are available.
+     * @see #getDownloads()
+     */
+    public void getDownloadsAsync(OnLoadDownloadsListener listener) {
+        getDownloadsAsync(listener, null);
+    }
+
+    /**
+     * Get the list of downloaded episodes asynchronously and for the given
+     * podcast only.
+     * 
+     * @param listener The listener to alert once the downloads are available.
+     * @param podcast The podcast to filter for.
+     * @see #getDownloads()
+     */
+    public void getDownloadsAsync(OnLoadDownloadsListener listener, Podcast podcast) {
+        new LoadDownloadsTask(listener, podcast)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
     }
 
     /**
