@@ -87,7 +87,7 @@
     <string name="suggestion_confirm_explicit">Dieser Podcast hat Inhalte, die als nicht jugendfrei markiert sind. Wollen Sie ihn trotzdem hinzufügen?</string>
     <string name="suggestions_none">Keine Empfehlungen, bitte ändern Sie Ihre Filter.</string>
     <string name="suggestions_load_error">Empfehlungen können nicht geladen werden, bitte prüfen Sie Ihre Internetverbindung!</string>
-    <string name="suggestions_send">Ich möchte einen Podcast empfehlen&#8230;</string>
+    <string name="suggestions_send">Podcast empfehlen</string>
     <string name="preferences">Einstellungen</string>
     <string name="pref_select_all_on_start_title">Alle Podcasts laden</string>
     <string name="pref_select_all_on_start_summary">Beim Start der App alle Podcasts aktualisieren</string>

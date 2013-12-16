@@ -17,9 +17,6 @@
 
 package net.alliknow.podcatcher.view.fragments;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -31,8 +28,10 @@ import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -84,8 +83,8 @@ public class SuggestionFragment extends DialogFragment {
     private ProgressView progressView;
     /** The suggestions list view */
     private ListView suggestionsListView;
-    /** The no suggestions view */
-    private TextView noSuggestionsView;
+    /** The suggestions list empty view */
+    private ViewStub suggestionsListEmptyView;
     /** The send a suggestion view */
     private TextView sendSuggestionView;
 
@@ -157,9 +156,29 @@ public class SuggestionFragment extends DialogFragment {
         mediaTypeFilter.setOnItemSelectedListener(selectionListener);
 
         progressView = (ProgressView) view.findViewById(R.id.suggestion_list_progress);
-
         suggestionsListView = (ListView) view.findViewById(R.id.suggestion_list);
-        noSuggestionsView = (TextView) view.findViewById(R.id.suggestion_none);
+        suggestionsListEmptyView = (ViewStub) view.findViewById(R.id.suggestion_list_empty);
+        suggestionsListEmptyView.setOnInflateListener(new ViewStub.OnInflateListener() {
+
+            @Override
+            public void onInflate(ViewStub stub, View inflated) {
+                final Button resetFilters = (Button) inflated
+                        .findViewById(R.id.reset_filters_button);
+
+                resetFilters.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        setInitialFilterSelection();
+                    }
+                });
+            }
+        });
+
+        // For now (while loading the suggestions) set the empty view of the
+        // list to be the progress view.
+        suggestionsListEmptyView.setVisibility(View.GONE);
+        suggestionsListView.setEmptyView(progressView);
 
         sendSuggestionView = (TextView) view.findViewById(R.id.suggestion_send);
         sendSuggestionView.setText(Html.fromHtml("<a href=\"mailto:" + SUGGESTION_MAIL_ADDRESS +
@@ -283,17 +302,10 @@ public class SuggestionFragment extends DialogFragment {
                     mediaTypeFilter.getSelectedItemPosition() == 0);
             suggestionsListView.setAdapter(suggestionListAdapter);
 
-            // Update UI
-            if (filteredSuggestionList.isEmpty()) {
-                suggestionsListView.setVisibility(GONE);
-                noSuggestionsView.setVisibility(VISIBLE);
-            }
-            else {
-                noSuggestionsView.setVisibility(GONE);
-                suggestionsListView.setVisibility(VISIBLE);
-            }
-
-            progressView.setVisibility(GONE);
+            // As soon as the list is available, hide progress and switch to the
+            // "real" empty view for the list
+            progressView.setVisibility(View.GONE);
+            suggestionsListView.setEmptyView(suggestionsListEmptyView);
         }
     }
 

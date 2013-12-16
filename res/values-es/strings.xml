@@ -87,7 +87,7 @@
     <string name="suggestion_confirm_explicit">Este podcast está clasificado como no apto para menores. ¿Está seguro de querer añadirlo a su lista de podcasts?</string>
     <string name="suggestions_none">No hay ninguna sugerencia. Por favor, modifique los filtros.</string>
     <string name="suggestions_load_error">Las sugerencias no se han podido cargar. Comprobar la conexión a Internet.</string>
-    <string name="suggestions_send">Envíe una propuesta para incluirla en esta lista&#8230;</string>
+    <string name="suggestions_send">Envíe una propuesta</string>
     <string name="preferences">Ajustes</string>
     <string name="pref_select_all_on_start_title">Seleccionar todos al inicio</string>
     <string name="pref_select_all_on_start_summary">Actualizar todos los podcasts al inicio de la aplicación</string>

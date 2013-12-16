@@ -91,7 +91,7 @@
     <string name="suggestion_confirm_explicit">Похоже, в этом подкасте есть материалы откровенного содержания. Вы уверены, что хотите добавить его в список?</string>
     <string name="suggestions_none">По вашему запросу рекомендаций не найдено. Попробуйте указать другие фильтры.</string>
     <string name="suggestions_load_error">Не удалось загрузить рекомендации. Проверьте подключение к Интернету.</string>
-    <string name="suggestions_send">Рекомендовать подкаст&#8230;</string>
+    <string name="suggestions_send">Рекомендовать подкаст</string>
     <string name="preferences">Настройки</string>
     <string name="pref_select_all_on_start_title">Выбирать все при запуске</string>
     <string name="pref_select_all_on_start_summary">Подгружать все подписки при запуске приложения</string>

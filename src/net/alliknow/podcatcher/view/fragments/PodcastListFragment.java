@@ -59,6 +59,8 @@ public class PodcastListFragment extends PodcatcherListFragment {
     /** The list of podcasts currently shown */
     private List<Podcast> currentPodcastList;
 
+    /** The divider view between list and the logo */
+    private View logoDividerView;
     /** The logo view */
     private ImageView logoView;
     /** The logo view height used to make it square */
@@ -131,6 +133,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        logoDividerView = getView().findViewById(R.id.podcast_image_divider);
         // Find logo view member handle
         logoView = (ImageView) view.findViewById(R.id.podcast_image);
         // ... and make sure the logo view is square
@@ -328,6 +331,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
             // LARGE shows the big image view below the list
             if (LogoViewMode.LARGE.equals(logoViewMode)) {
                 updatePodcastLogoView();
+                logoDividerView.setVisibility(View.VISIBLE);
                 logoView.setVisibility(View.VISIBLE);
 
                 if (needsSlide && logoViewHeight > 0)
@@ -337,8 +341,10 @@ public class PodcastListFragment extends PodcatcherListFragment {
             else {
                 if (needsSlide)
                     slideOutLogoView();
-                else if (!animating)
+                else if (!animating) {
+                    logoDividerView.setVisibility(View.GONE);
                     logoView.setVisibility(View.GONE);
+                }
             }
         }
     }
@@ -387,6 +393,7 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
             @Override
             public void onAnimationEnd(Animator animation) {
+                logoDividerView.setVisibility(View.GONE);
                 logoView.setVisibility(View.GONE);
                 // Reset to old layout params
                 layoutParams.height = logoViewHeight;
