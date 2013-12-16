@@ -23,8 +23,10 @@ import android.util.Log;
 import net.alliknow.podcatcher.listeners.OnLoadPlaylistListener;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
+import net.alliknow.podcatcher.model.types.Podcast;
 
 import java.lang.ref.WeakReference;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -33,7 +35,10 @@ import java.util.List;
 public class LoadPlaylistTask extends AsyncTask<Void, Void, List<Episode>> {
 
     /** Call back */
-    private WeakReference<OnLoadPlaylistListener> listener;
+    private final WeakReference<OnLoadPlaylistListener> listener;
+
+    /** Filter */
+    private final Podcast podcast;
 
     /**
      * Create new task.
@@ -41,18 +46,39 @@ public class LoadPlaylistTask extends AsyncTask<Void, Void, List<Episode>> {
      * @param listener Callback to be alerted on completion. The listener is
      *            held as a weak reference, so you can safely call this from an
      *            activity without leaking it.
+     * @param podcast Podcast to use as a filter. The returned playlist will
+     *            only contain episodes that belong to the given podcast.
+     *            Setting this to <code>null</code> disables the filter and all
+     *            episodes in the playlist are returned.
      */
-    public LoadPlaylistTask(OnLoadPlaylistListener listener) {
+    public LoadPlaylistTask(OnLoadPlaylistListener listener, Podcast podcast) {
         this.listener = new WeakReference<OnLoadPlaylistListener>(listener);
+        this.podcast = podcast;
     }
 
     @Override
     protected List<Episode> doInBackground(Void... nothing) {
         try {
-            // Block if episode metadata not yet available
+            // 0. Block if episode metadata not yet available
             EpisodeManager.getInstance().blockUntilEpisodeMetadataIsLoaded();
-            // Get the playlist
-            return EpisodeManager.getInstance().getPlaylist();
+
+            // 1. Get the playlist
+            final List<Episode> playlist = EpisodeManager.getInstance().getPlaylist();
+
+            // 2. Filter the playlist if podcast is set
+            if (podcast != null && !playlist.isEmpty()) {
+                final Iterator<Episode> episodes = playlist.iterator();
+
+                while (episodes.hasNext()) {
+                    final Episode current = episodes.next();
+
+                    if (!current.getPodcast().equals(podcast))
+                        episodes.remove();
+                }
+            }
+
+            // 3. Return the result
+            return playlist;
         } catch (Exception e) {
             Log.w(getClass().getSimpleName(), "Load failed for playlist", e);
 

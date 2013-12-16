@@ -19,7 +19,6 @@ package net.alliknow.podcatcher.listeners;
 
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
 
-import java.net.URL;
 import java.util.Map;
 
 /**

@@ -34,8 +34,6 @@ import net.alliknow.podcatcher.listeners.OnReorderEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnReverseSortingListener;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.listeners.OnToggleFilterListener;
-import net.alliknow.podcatcher.model.tasks.LoadDownloadsTask;
-import net.alliknow.podcatcher.model.tasks.LoadPlaylistTask;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
@@ -76,6 +74,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     /** The current episode set (ordered) */
     private SortedSet<Episode> currentEpisodeSet = new TreeSet<Episode>();
+    /** Load failed counter for all podcasts selected mode */
+    private int loadFailedCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,6 +166,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         selection.setMode(ContentMode.SINGLE_PODCAST);
 
         this.currentEpisodeSet = new TreeSet<Episode>();
+        this.loadFailedCounter = 0;
 
         switch (view) {
             case SMALL_LANDSCAPE:
@@ -183,8 +184,11 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 updateFilterUi();
                 updateDividerUi();
 
-                // Load podcast
+                // Load podcast...
                 podcastManager.load(podcast);
+                // ... and special episodes
+                episodeManager.getDownloadsAsync(this, podcast);
+                episodeManager.getPlaylistAsync(this, podcast);
 
                 break;
             case SMALL_PORTRAIT:
@@ -199,6 +203,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         selection.setMode(ContentMode.ALL_PODCASTS);
 
         this.currentEpisodeSet = new TreeSet<Episode>();
+        this.loadFailedCounter = 0;
 
         switch (view) {
             case SMALL_LANDSCAPE:
@@ -221,9 +226,12 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 updateFilterUi();
                 updateDividerUi();
 
-                // Go load all podcasts
+                // Go load all podcasts...
                 for (Podcast podcast : podcastManager.getPodcastList())
                     podcastManager.load(podcast);
+                // ... and special episodes
+                episodeManager.getDownloadsAsync(this);
+                episodeManager.getPlaylistAsync(this);
 
                 // Action bar needs update after loading has started
                 updateActionBar();
@@ -231,6 +239,25 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             case SMALL_PORTRAIT:
                 // This case should be handled by sub-classes
                 break;
+        }
+    }
+
+    @Override
+    public void onNoPodcastSelected() {
+        selection.resetPodcast();
+        selection.setMode(ContentMode.SINGLE_PODCAST);
+
+        currentEpisodeSet.clear();
+
+        if (!view.isSmallPortrait()) {
+            // If there is an episode list visible, reset it
+            episodeListFragment.selectNone();
+            episodeListFragment.resetUi();
+
+            // Update other UI
+            updateSortingUi();
+            updateFilterUi();
+            updateDividerUi();
         }
     }
 
@@ -254,27 +281,13 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 episodeListFragment.resetAndSpin();
                 episodeListFragment.setShowPodcastNames(true);
 
-                new LoadDownloadsTask(this).execute((Void) null);
+                episodeManager.getDownloadsAsync(this);
 
                 break;
             case SMALL_PORTRAIT:
                 // This case should be handled by sub-classes
                 break;
         }
-    }
-
-    @Override
-    public void onDownloadsLoaded(List<Episode> downloads) {
-        if (ContentMode.DOWNLOADS.equals(selection.getMode())) {
-            currentEpisodeSet.addAll(downloads);
-            updateEpisodeListUi();
-        }
-
-        // Update other UI
-        updateActionBar();
-        updateSortingUi();
-        updateFilterUi();
-        updateDividerUi();
     }
 
     @Override
@@ -305,45 +318,12 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 episodeListFragment.setShowPodcastNames(true);
                 episodeListFragment.setEnableSwipeReorder(true);
 
-                new LoadPlaylistTask(this).execute((Void) null);
+                episodeManager.getPlaylistAsync(this);
 
                 break;
             case SMALL_PORTRAIT:
                 // This case should be handled by sub-classes
                 break;
-        }
-    }
-
-    @Override
-    public void onPlaylistLoaded(List<Episode> playlist) {
-        if (ContentMode.PLAYLIST.equals(selection.getMode())) {
-            currentEpisodeSet.addAll(playlist);
-            updateEpisodeListUi();
-        }
-
-        // Update other UI
-        updateActionBar();
-        updateSortingUi();
-        updateFilterUi();
-        updateDividerUi();
-    }
-
-    @Override
-    public void onNoPodcastSelected() {
-        selection.resetPodcast();
-        selection.setMode(ContentMode.SINGLE_PODCAST);
-
-        currentEpisodeSet.clear();
-
-        if (!view.isSmallPortrait()) {
-            // If there is an episode list visible, reset it
-            episodeListFragment.selectNone();
-            episodeListFragment.resetUi();
-
-            // Update other UI
-            updateSortingUi();
-            updateFilterUi();
-            updateDividerUi();
         }
     }
 
@@ -363,14 +343,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         // Update list fragment to show episode list
         if (selection.isAll() || selection.isSingle() && podcast.equals(selection.getPodcast())) {
             currentEpisodeSet.addAll(podcast.getEpisodes());
-            addSpecialEpisodes(podcast);
             updateEpisodeListUi();
-        }
-
-        // Additionally, if on large device, process clever selection update
-        if (!view.isSmall()) {
-            updateEpisodeListSelection();
-            updateDividerUi();
         }
 
         // We may want to auto-download the latest episode
@@ -381,10 +354,13 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         updateActionBar();
         updateSortingUi();
         updateFilterUi();
+        updateDividerUi();
     }
 
     @Override
     public void onPodcastLoadFailed(final Podcast failedPodcast, PodcastLoadError code) {
+        this.loadFailedCounter++;
+
         // The podcast we are waiting for failed to load
         if (selection.isSingle() && failedPodcast.equals(selection.getPodcast())) {
             // Podcast needs authorization
@@ -401,33 +377,68 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
                 authorizationFragment.show(getFragmentManager(), AuthorizationFragment.TAG);
             } else {
-                addSpecialEpisodes(failedPodcast);
-
-                // We might at least be able to show downloaded/playlisted
-                // episodes
+                // We might at least be able to show special episodes
                 if (currentEpisodeSet.size() > 0)
-                    updateEpisodeListUi(true);
+                    updateEpisodeListUi();
                 else
                     episodeListFragment.showLoadFailed(code);
             }
         }
         // One of potentially many podcasts failed
         else if (selection.isAll()) {
-            addSpecialEpisodes(failedPodcast);
-            updateEpisodeListUi();
-
             // The last podcast failed and we have no episodes at all
             if (podcastManager.getLoadCount() == 0 && currentEpisodeSet.isEmpty())
                 episodeListFragment.showLoadAllFailed();
             // One of many podcasts failed to load
-            else
+            else {
+                updateEpisodeListUi();
                 showToast(getString(R.string.podcast_load_multiple_error, failedPodcast.getName()));
+            }
         }
 
         // Update other UI
         updateActionBar();
         updateSortingUi();
         updateFilterUi();
+        updateDividerUi();
+    }
+
+    @Override
+    public void onDownloadsLoaded(List<Episode> downloads) {
+        // If showing downloads or in one of the podcast modes, add downloaded
+        // episodes to the episode list
+        if (!ContentMode.PLAYLIST.equals(selection.getMode())) {
+            currentEpisodeSet.addAll(downloads);
+
+            // Update the UI unless the podcast is still loading
+            if (!(selection.isSingle() && podcastManager.isLoading(selection.getPodcast())))
+                updateEpisodeListUi();
+        }
+
+        // Update other UI
+        updateActionBar();
+        updateSortingUi();
+        updateFilterUi();
+        updateDividerUi();
+    }
+
+    @Override
+    public void onPlaylistLoaded(List<Episode> playlist) {
+        // If showing playlist or in one of the podcast modes, add enqueued
+        // episodes to the episode list
+        if (!ContentMode.DOWNLOADS.equals(selection.getMode())) {
+            currentEpisodeSet.addAll(playlist);
+
+            // Update the UI unless the podcast is still loading
+            if (!(selection.isSingle() && podcastManager.isLoading(selection.getPodcast())))
+                updateEpisodeListUi();
+        }
+
+        // Update other UI
+        updateActionBar();
+        updateSortingUi();
+        updateFilterUi();
+        updateDividerUi();
     }
 
     @Override
@@ -658,19 +669,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
      * list as needed.
      */
     private void updateEpisodeListUi() {
-        updateEpisodeListUi(false);
-    }
-
-    /**
-     * Set the current episode list to show in the episode list fragment using
-     * {@link #currentEpisodeSet} as the basis. This will filter and reverse the
-     * list as needed.
-     * 
-     * @param showPodcastLoadFailedWarning Whether the episode list fragment
-     *            should show a warning that some episodes might not be
-     *            displayed.
-     */
-    private void updateEpisodeListUi(boolean showPodcastLoadFailedWarning) {
         final List<Episode> filteredList = new ArrayList<Episode>(currentEpisodeSet);
 
         // Further refine the episode list if not in playlist mode
@@ -706,10 +704,14 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
         // Make sure the episode list fragment show the right info box
         if (ContentMode.PLAYLIST.equals(selection.getMode()) && filteredList.size() > 1)
-            episodeListFragment.setShowTopInfoBox(true,
-                    getString(R.string.playlist_swipe_reorder));
-        else if (showPodcastLoadFailedWarning)
-            episodeListFragment.setShowTopInfoBox(true, getString(R.string.podcast_load_error));
+            episodeListFragment
+                    .setShowTopInfoBox(true, getString(R.string.playlist_swipe_reorder));
+        else if (selection.isSingle() && loadFailedCounter > 0)
+            episodeListFragment
+                    .setShowTopInfoBox(true, getString(R.string.podcast_load_error));
+        else if (selection.isAll() && loadFailedCounter > 0)
+            episodeListFragment
+                    .setShowTopInfoBox(true, getString(R.string.podcast_load_multiple_error_some));
         else if (selection.isEpisodeFilterEnabled()) {
             final int filteredCount = currentEpisodeSet.size() - filteredList.size();
 
@@ -733,20 +735,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 divider.setBackgroundColor(themeColor);
             else
                 divider.setBackgroundColor(getResources().getColor(R.color.divider_off));
-        }
-    }
-
-    private void addSpecialEpisodes(Podcast podcast) {
-        if (podcast != null) {
-            // Downloads
-            for (Episode episode : episodeManager.getDownloads())
-                if (podcast.equals(episode.getPodcast()))
-                    currentEpisodeSet.add(episode);
-
-            // Playlist
-            for (Episode episode : episodeManager.getPlaylist())
-                if (podcast.equals(episode.getPodcast()))
-                    currentEpisodeSet.add(episode);
         }
     }
 

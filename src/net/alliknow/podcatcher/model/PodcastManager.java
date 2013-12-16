@@ -24,7 +24,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.UserManager;
 import android.preference.PreferenceManager;
-import android.text.Html;
 import android.util.Log;
 
 import net.alliknow.podcatcher.GetRestrictionsReceiver;
@@ -44,8 +43,6 @@ import net.alliknow.podcatcher.model.types.Progress;
 
 import org.xmlpull.v1.XmlPullParser;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;

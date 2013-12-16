@@ -17,14 +17,16 @@
 
 package net.alliknow.podcatcher.model;
 
+import android.os.AsyncTask;
+
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
 import net.alliknow.podcatcher.listeners.OnLoadPlaylistListener;
 import net.alliknow.podcatcher.model.tasks.LoadPlaylistTask;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
+import net.alliknow.podcatcher.model.types.Podcast;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -61,6 +63,7 @@ public abstract class EpisodePlaylistManager extends EpisodeDownloadManager {
      *         Only call this if you are sure the metadata is already available,
      *         if in doubt use {@link LoadPlaylistTask}.
      * @see LoadPlaylistTask
+     * @see #getPlaylistAsync(OnLoadPlaylistListener)
      * @see OnLoadPlaylistListener
      */
     public List<Episode> getPlaylist() {
@@ -88,6 +91,29 @@ public abstract class EpisodePlaylistManager extends EpisodeDownloadManager {
         }
 
         return new ArrayList<Episode>(playlist.values());
+    }
+
+    /**
+     * Get the list of enqueued episodes asynchronously.
+     * 
+     * @param listener The listener to alert once the playlist is available.
+     * @see #getPlaylist()
+     */
+    public void getPlaylistAsync(OnLoadPlaylistListener listener) {
+        getPlaylistAsync(listener, null);
+    }
+
+    /**
+     * Get the list of enqueued episodes asynchronously and for the given
+     * podcast only.
+     * 
+     * @param listener The listener to alert once the playlist is available.
+     * @param podcast The podcast to filter for.
+     * @see #getPlaylist()
+     */
+    public void getPlaylistAsync(OnLoadPlaylistListener listener, Podcast podcast) {
+        new LoadPlaylistTask(listener, podcast)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
     }
 
     /**

@@ -27,7 +27,6 @@ import net.alliknow.podcatcher.model.types.EpisodeMetadata;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -231,7 +230,8 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
 
                     // Clean all state meta data information for episodes of the
                     // deleted feed
-                    Iterator<Entry<String, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+                    Iterator<Entry<String, EpisodeMetadata>> iterator = metadata.entrySet()
+                            .iterator();
                     while (iterator.hasNext()) {
                         final Entry<String, EpisodeMetadata> entry = iterator.next();
 
@@ -271,7 +271,8 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
 
                     // Clean all state meta data information for episodes no
                     // longer present in the podcast feed
-                    Iterator<Entry<String, EpisodeMetadata>> iterator = metadata.entrySet().iterator();
+                    Iterator<Entry<String, EpisodeMetadata>> iterator = metadata.entrySet()
+                            .iterator();
                     while (iterator.hasNext()) {
                         final Entry<String, EpisodeMetadata> entry = iterator.next();
 
