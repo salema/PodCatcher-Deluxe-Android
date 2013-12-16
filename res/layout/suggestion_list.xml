@@ -46,40 +46,47 @@
             android:layout_margin="3dp"
             android:layout_weight="1" />
     </LinearLayout>
-    <net.alliknow.podcatcher.view.ProgressView
-        android:id="@+id/suggestion_list_progress"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-    <ListView
-        android:id="@+id/suggestion_list"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:choiceMode="none"
-        android:visibility="gone" />
-    <TextView
-        android:id="@+id/suggestion_none"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:padding="20dp"
-        android:text="@string/suggestions_none"
-        android:visibility="gone" />
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="2dp"
-        android:paddingRight="2dp"
+        android:scaleType="fitXY"
+        android:src="@android:drawable/divider_horizontal_bright"
+        android:contentDescription="@string/divider" />
+    <FrameLayout 
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+	    <net.alliknow.podcatcher.view.ProgressView
+	        android:id="@+id/suggestion_list_progress"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent" />
+	    <ListView
+	        android:id="@+id/suggestion_list"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:choiceMode="none" />
+	    <ViewStub
+	        android:id="@+id/suggestion_list_empty"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:layout="@layout/suggestion_list_empty" />
+    </FrameLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:scaleType="fitXY"
         android:src="@android:drawable/divider_horizontal_bright"
         android:contentDescription="@string/divider" />
     <TextView
         android:id="@+id/suggestion_send"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="3dp"
-        android:textSize="@dimen/font_size_default" />
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:textSize="@dimen/font_size_large"
+        android:drawableLeft="@drawable/ic_email"
+        android:singleLine="true"
+        android:ellipsize="end" />
 </LinearLayout>

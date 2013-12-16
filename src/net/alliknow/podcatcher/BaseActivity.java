@@ -366,7 +366,6 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
             // Set new color members
             themeColor = preferences.getInt(SettingsActivity.KEY_THEME_COLOR, themeColor);
             lightThemeColor = calculateLightThemeColor();
-
         }
     }
 
