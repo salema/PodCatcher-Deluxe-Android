@@ -17,10 +17,15 @@
 
 package net.alliknow.podcatcher.listeners;
 
+import static android.net.Uri.encode;
 import static net.alliknow.podcatcher.BaseActivity.PODCAST_POSITION_LIST_KEY;
 import static net.alliknow.podcatcher.view.fragments.AuthorizationFragment.USERNAME_PRESET_KEY;
+import static net.alliknow.podcatcher.view.fragments.SuggestionFragment.SUGGESTION_MAIL_ADDRESS;
+import static net.alliknow.podcatcher.view.fragments.SuggestionFragment.SUGGESTION_MAIL_SUBJECT;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -50,6 +55,8 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
 
     /** The edit authorization menu item */
     private MenuItem editAuthMenuItem;
+    /** The send suggestion menu item */
+    private MenuItem sendSuggestionMenuItem;
 
     /**
      * Create new listener for the podcast list context mode.
@@ -65,6 +72,7 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
         mode.getMenuInflater().inflate(R.menu.podcast_list_context, menu);
 
         editAuthMenuItem = menu.findItem(R.id.edit_auth_contextmenuitem);
+        sendSuggestionMenuItem = menu.findItem(R.id.suggest_podcast_contextmenuitem);
 
         return true;
     }
@@ -125,6 +133,25 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
                         .show(fragment.getFragmentManager(), AuthorizationFragment.TAG);
 
                 return true;
+            case R.id.suggest_podcast_contextmenuitem:
+                // There is only one podcast checked...
+                final Podcast suggestion =
+                        (Podcast) fragment.getListAdapter().getItem(positions.get(0));
+
+                // Construct the email
+                final String uriText = "mailto:" + encode(SUGGESTION_MAIL_ADDRESS)
+                        + "?subject=" + encode(SUGGESTION_MAIL_SUBJECT)
+                        + "&body=" + encode(suggestion.getName() + " at " + suggestion.getUrl());
+
+                // Go start the mail app
+                final Intent sendTo = new Intent(Intent.ACTION_SENDTO, Uri.parse(uriText));
+                try {
+                    fragment.getActivity().startActivity(sendTo);
+                } catch (ActivityNotFoundException ex) {
+                    // No mail app, this should not happen...
+                }
+
+                return true;
             case R.id.podcast_remove_contextmenuitem:
                 // Prepare deletion activity
                 Intent remove = new Intent(fragment.getActivity(), RemovePodcastActivity.class);
@@ -174,5 +201,6 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
 
         // Show/hide edit auth menu item
         editAuthMenuItem.setVisible(checkedItemCount == 1);
+        sendSuggestionMenuItem.setVisible(checkedItemCount == 1);
     }
 }
