@@ -19,18 +19,27 @@
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/podcast_remove_contextmenuitem"
+        android:icon="@drawable/ic_menu_delete"
+        android:showAsAction="always"
+        android:title="@string/remove"
+        android:orderInCategory="1" />
+    <item
         android:id="@+id/edit_auth_contextmenuitem"
         android:icon="@drawable/ic_menu_authorization"
         android:showAsAction="ifRoom"
-        android:title="@string/auth_edit" />
+        android:title="@string/auth_edit"
+        android:orderInCategory="10" />
     <item
         android:id="@+id/opml_export_contextmenuitem"
         android:icon="@drawable/ic_menu_export"
         android:showAsAction="ifRoom"
-        android:title="@string/opml_export" />
+        android:title="@string/opml_export"
+        android:orderInCategory="11" />
     <item
-        android:id="@+id/podcast_remove_contextmenuitem"
-        android:icon="@drawable/ic_menu_delete"
-        android:showAsAction="always"
-        android:title="@string/remove" />
+        android:id="@+id/suggest_podcast_contextmenuitem"
+        android:icon="@drawable/ic_menu_email"
+        android:showAsAction="ifRoom"
+        android:title="@string/suggestions_send"
+        android:orderInCategory="12" />
 </menu>
