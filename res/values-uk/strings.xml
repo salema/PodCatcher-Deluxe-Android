@@ -42,7 +42,6 @@
     <string name="player_error">Помилка</string>
     <string name="podcast_image">Логотип подкасту</string>
     <string name="podcast_none">Не додано жодного подкасту</string>
-    <string name="podcast_none_long">Не додано жодного подкасту. Будь ласка, натисніть на іконку \"плюс\" у меню, щоб додати підписки до цього списку.</string>
     <string name="podcast_none_selected">Не обрано жодного подкасту</string>
     <string name="podcast_select_all">Обрати усі подкасти</string>
     <plurals name="podcasts">

@@ -25,10 +25,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 /**
- * Abstract super class for this app's adapters. Allows access to resources.
+ * Abstract super class for this app's adapters. The keeps some handles useful
+ * for all adapters.
  */
 public abstract class PodcatcherBaseAdapter extends BaseAdapter {
 
+    /** The resources handle */
+    protected final Context context;
     /** The resources handle */
     protected final Resources resources;
     /** The inflater we use */
@@ -40,12 +43,15 @@ public abstract class PodcatcherBaseAdapter extends BaseAdapter {
      * @param context The current context.
      */
     public PodcatcherBaseAdapter(Context context) {
+        this.context = context;
         this.resources = context.getResources();
         this.inflater = LayoutInflater.from(context);
     }
 
     @Override
     public boolean hasStableIds() {
+        // All our adapters have stable ids by default so the framework can
+        // optimize our list views.
         return true;
     }
 

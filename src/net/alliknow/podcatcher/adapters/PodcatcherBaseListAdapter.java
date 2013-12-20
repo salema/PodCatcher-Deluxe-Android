@@ -24,8 +24,10 @@ import android.view.View;
 
 /**
  * Abstract super class for this app's list adapters. Handles the
- * selection/choice parts. All lists are single choice or select all and have
- * their background changed for the selected item.
+ * selection/choice parts. All lists are single selection and have their
+ * background changed for the selected item. Some lists offer a context mode and
+ * allow multiple choices when it is activated (see
+ * {@link #setCheckedPositions(SparseBooleanArray)}.
  */
 public abstract class PodcatcherBaseListAdapter extends PodcatcherBaseAdapter {
 

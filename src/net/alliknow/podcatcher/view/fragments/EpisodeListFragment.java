@@ -286,7 +286,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
 
             // Update other UI elements
             if (episodeList.isEmpty())
-                emptyView.setText(emptyStringId);
+                ((TextView) emptyView).setText(emptyStringId);
 
             // Make sure to match selection state
             if (selectAll)
@@ -459,7 +459,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
     @Override
     protected void reset() {
         if (viewCreated) {
-            emptyView.setText(R.string.podcast_none_selected);
+            ((TextView) emptyView).setText(R.string.podcast_none_selected);
             setShowTopInfoBox(false, null);
             setShowTopProgress(false);
         }
