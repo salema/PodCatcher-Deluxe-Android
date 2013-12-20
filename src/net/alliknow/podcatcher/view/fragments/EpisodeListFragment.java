@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
@@ -176,7 +177,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
             // Update other UI elements
             if (episodeList.isEmpty())
-                emptyView.setText(emptyStringId);
+                ((TextView) emptyView).setText(emptyStringId);
 
             // Make sure to match selection state
             if (selectAll)
@@ -267,7 +268,7 @@ public class EpisodeListFragment extends PodcatcherListFragment {
     @Override
     protected void reset() {
         if (viewCreated) {
-            emptyView.setText(R.string.podcast_none_selected);
+            ((TextView) emptyView).setText(R.string.podcast_none_selected);
             setShowTopProgress(false);
         }
 

@@ -26,7 +26,6 @@ import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListAdapter;
-import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.PodcatcherBaseListAdapter;
@@ -48,7 +47,7 @@ public abstract class PodcatcherListFragment extends ListFragment {
     protected int lightThemeColor;
 
     /** The empty view */
-    protected TextView emptyView;
+    protected View emptyView;
     /** The progress bar */
     protected ProgressView progressView;
 
@@ -68,7 +67,7 @@ public abstract class PodcatcherListFragment extends ListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        emptyView = (TextView) getView().findViewById(android.R.id.empty);
+        emptyView = getView().findViewById(R.id.empty);
         progressView = (ProgressView) getView().findViewById(R.id.progress);
 
         viewCreated = true;
@@ -130,10 +129,8 @@ public abstract class PodcatcherListFragment extends ListFragment {
         selectAll = false;
         selectedPosition = position;
 
-        if (adapter != null && !showProgress) {
+        if (adapter != null && !showProgress)
             adapter.setSelectedPosition(position);
-            getListView().smoothScrollToPosition(position);
-        }
 
         updateUiElementVisibility();
     }
@@ -277,6 +274,7 @@ public abstract class PodcatcherListFragment extends ListFragment {
         states.addState(new int[] {
                 android.R.attr.state_pressed
         }, new ColorDrawable(lightThemeColor));
+
         // Set the states drawable
         getListView().setSelector(states);
     }

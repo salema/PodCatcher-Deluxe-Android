@@ -50,10 +50,14 @@ public class SelectFileFragment extends DialogFragment {
 
     /** The call back we work on */
     private OnSelectFileListener listener;
+    /** The file list view adapter */
+    private FileListAdapter fileListAdapter;
     /** The path we are currently showing */
     private File currentPath;
     /** The current selection mode */
     private SelectionMode selectionMode = SelectionMode.FILE;
+    /** The key to store the selected position under */
+    private static final String SELECTED_POSITION_KEY = "selected_position";
     /** The currently selected position in list (used only for file selection) */
     private int selectedPosition = -1;
 
@@ -88,10 +92,18 @@ public class SelectFileFragment extends DialogFragment {
     };
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null)
+            this.selectedPosition = savedInstanceState.getInt(SELECTED_POSITION_KEY);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         // Inflate the layout
-        final View layout = inflater.inflate(R.layout.file_dialog, container, false);
+        final View layout = inflater.inflate(R.layout.file_list, container, false);
 
         // Get the display dimensions
         Rect displayRectangle = new Rect();
@@ -117,28 +129,27 @@ public class SelectFileFragment extends DialogFragment {
                 final File up = currentPath.getParentFile();
 
                 // Switch to parent if not root
-                if (up != null)
+                if (up != null) {
+                    updateSelection(-1);
                     setPath(up);
+                }
             }
         });
 
         fileListView = (ListView) view.findViewById(R.id.files);
+        fileListView.setEmptyView(view.findViewById(android.R.id.empty));
         fileListView.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final File subFile = (File) fileListView.getAdapter().getItem(position);
+                final File subFile = (File) fileListView.getItemAtPosition(position);
 
                 // Switch down to sub directory
-                if (subFile.isDirectory())
+                if (subFile.isDirectory()) {
+                    updateSelection(-1);
                     setPath(subFile);
-                else if (SelectionMode.FILE.equals(selectionMode)) {
-                    // Mark file as selected
-                    selectedPosition = position;
-
-                    selectButton.setEnabled(true);
-                    ((FileListAdapter) fileListView.getAdapter()).setSelectedPosition(position);
-                }
+                } else
+                    updateSelection(position);
             }
         });
         updateListSelector();
@@ -151,8 +162,7 @@ public class SelectFileFragment extends DialogFragment {
                 if (SelectionMode.FOLDER.equals(selectionMode))
                     listener.onFileSelected(currentPath);
                 else if (selectedPosition >= 0)
-                    listener.onFileSelected(
-                            (File) fileListView.getAdapter().getItem(selectedPosition));
+                    listener.onFileSelected((File) fileListView.getItemAtPosition(selectedPosition));
             }
         });
 
@@ -165,8 +175,19 @@ public class SelectFileFragment extends DialogFragment {
 
         updateDialogTitle();
 
-        if (currentPath != null)
+        if (currentPath != null) {
             setPath(currentPath);
+
+            updateSelection(selectedPosition);
+            fileListView.smoothScrollToPosition(selectedPosition);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(SELECTED_POSITION_KEY, selectedPosition);
     }
 
     @Override
@@ -192,9 +213,8 @@ public class SelectFileFragment extends DialogFragment {
         this.lightThemeColor = variantColor;
 
         // Set theme colors in adapter
-        if (fileListView != null && fileListView.getAdapter() != null)
-            ((FileListAdapter) fileListView.getAdapter())
-                    .setThemeColors(themeColor, lightThemeColor);
+        if (fileListAdapter != null)
+            fileListAdapter.setThemeColors(themeColor, lightThemeColor);
         // ...and for the list view
         if (viewCreated)
             updateListSelector();
@@ -210,22 +230,19 @@ public class SelectFileFragment extends DialogFragment {
     public void setPath(File path) {
         this.currentPath = path;
 
-        if (isResumed() && path != null && path.isDirectory() && path.exists()) {
+        if (viewCreated && path != null && path.isDirectory() && path.exists()) {
             if (path.canRead()) {
-                selectedPosition = -1;
-
                 currentPathView.setText(path.getAbsolutePath());
                 upButton.setEnabled(path.getParent() != null);
 
-                final FileListAdapter adapter =
-                        new FileListAdapter(getDialog().getContext(), path);
-                adapter.setThemeColors(themeColor, lightThemeColor);
-                fileListView.setAdapter(adapter);
+                if (fileListAdapter == null) {
+                    fileListAdapter = new FileListAdapter(getDialog().getContext(), path);
+                    fileListAdapter.setThemeColors(themeColor, lightThemeColor);
+                    fileListView.setAdapter(fileListAdapter);
+                } else
+                    fileListAdapter.setPath(path);
 
-                if (SelectionMode.FOLDER.equals(selectionMode))
-                    selectButton.setEnabled(true);
-                else
-                    selectButton.setEnabled(false);
+                selectButton.setEnabled(SelectionMode.FOLDER.equals(selectionMode));
 
                 listener.onDirectoryChanged(path);
             }
@@ -244,8 +261,18 @@ public class SelectFileFragment extends DialogFragment {
     public void setSelectionMode(SelectionMode selectionMode) {
         this.selectionMode = selectionMode;
 
-        if (isResumed())
+        if (viewCreated)
             updateDialogTitle();
+    }
+
+    private void updateSelection(int position) {
+        if (SelectionMode.FILE.equals(selectionMode)) {
+            // Mark file as selected
+            selectedPosition = position;
+
+            selectButton.setEnabled(position >= 0);
+            fileListAdapter.setSelectedPosition(position);
+        }
     }
 
     private void updateDialogTitle() {
@@ -262,6 +289,7 @@ public class SelectFileFragment extends DialogFragment {
         states.addState(new int[] {
                 android.R.attr.state_pressed
         }, new ColorDrawable(lightThemeColor));
+
         // Set the states drawable
         fileListView.setSelector(states);
     }

@@ -41,7 +41,6 @@
     <string name="player_error">Přehrávání se nezdařilo</string>
     <string name="podcast_image">Logo záznamu</string>
     <string name="podcast_none">Nepřidán žádný záznam</string>
-    <string name="podcast_none_long">Nepřidán žádný záznam (podcast). Použijte, prosím, ikonu plus v nabídce pro přidání odběrů do tohoto seznamu.</string>
     <string name="podcast_none_selected">Nevybrán žádný záznam</string>
     <string name="podcast_select_all">Vybrat všechny záznamy</string>
     <plurals name="podcasts">

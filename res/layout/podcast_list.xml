@@ -22,27 +22,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <ListView
-        android:id="@id/android:list"
+    <FrameLayout 
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:choiceMode="multipleChoiceModal" />
-    <TextView
-        android:id="@id/android:empty"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_margin="20dp"
-        android:gravity="center"
-        android:text="@string/podcast_none_long"
-        android:textColor="@color/text_secondary"
-        android:textSize="@dimen/font_size_small" />
-    <net.alliknow.podcatcher.view.ProgressView
-        android:id="@+id/progress"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
+        android:layout_weight="1">
+        <net.alliknow.podcatcher.view.ProgressView
+	        android:id="@+id/progress"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent" />
+	    <ListView
+	        android:id="@id/android:list"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:choiceMode="multipleChoiceModal" />
+	    <ViewStub
+	        android:id="@+id/empty"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:layout="@layout/podcast_list_empty" />   
+    </FrameLayout>
     <ImageView
         android:id="@+id/podcast_image_divider"
         android:layout_width="match_parent"

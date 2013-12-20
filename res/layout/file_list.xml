@@ -44,15 +44,31 @@
             android:background="@drawable/button_orange"
             android:src="@drawable/ic_file_up" />
     </LinearLayout>
-    <View
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider_off" />
-    <ListView
-        android:id="@+id/files"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:src="@android:drawable/divider_horizontal_bright"
+        android:contentDescription="@string/divider" />
+    <FrameLayout 
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1">
+	    <ListView
+	        android:id="@+id/files"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:choiceMode="none" />
+	    <TextView
+	        android:id="@android:id/empty"
+       	    android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:text="@string/file_select_folder_empty"
+            android:textSize="@dimen/font_size_default"
+            android:textColor="@color/text_secondary" />
+    </FrameLayout>
     <Button 
         android:id="@+id/select_file"
         android:layout_width="match_parent"

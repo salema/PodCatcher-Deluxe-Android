@@ -18,6 +18,9 @@
 package net.alliknow.podcatcher.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -35,7 +38,7 @@ import java.util.Arrays;
 public class FileListAdapter extends PodcatcherBaseListAdapter {
 
     /** The current path items */
-    private final File[] files;
+    private File[] files;
     /** The default file filter to apply */
     private static final FileFilter filter = new FileFilter() {
 
@@ -55,8 +58,18 @@ public class FileListAdapter extends PodcatcherBaseListAdapter {
     public FileListAdapter(Context context, File path) {
         super(context);
 
-        this.files = path.listFiles(filter);
-        Arrays.sort(files);
+        readFilesAndFolders(path);
+    }
+
+    /**
+     * Switch to new folder. Triggers {@link #notifyDataSetChanged()}.
+     * 
+     * @param path Folder to represent.
+     */
+    public void setPath(File path) {
+        readFilesAndFolders(path);
+
+        notifyDataSetChanged();
     }
 
     @Override
@@ -85,5 +98,10 @@ public class FileListAdapter extends PodcatcherBaseListAdapter {
         returnView.show((File) getItem(position));
 
         return returnView;
+    }
+
+    private void readFilesAndFolders(File path) {
+        this.files = path.listFiles(filter);
+        Arrays.sort(files);
     }
 }

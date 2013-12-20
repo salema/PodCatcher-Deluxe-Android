@@ -41,7 +41,6 @@
     <string name="player_error">Playback failed</string>
     <string name="podcast_image">Podcast logo</string>
     <string name="podcast_none">No podcast added</string>
-    <string name="podcast_none_long">No podcasts added. Please use the plus icon in the menu to add subscriptions to this list.</string>
     <string name="podcast_none_selected">No podcast selected</string>
     <string name="podcast_select_all">Select all podcasts</string>
     <plurals name="podcasts">
@@ -78,6 +77,7 @@
     <string name="file_select">Select</string>
     <string name="file_select_file">Select File</string>
     <string name="file_select_folder">Select Folder</string>
+    <string name="file_select_folder_empty">This folder is empty.</string>
     <string name="file_select_access_denied">Access denied!</string>
     <string name="opml_import">Import OPML</string>
     <string name="opml_import_failed">OPML import failed</string>
