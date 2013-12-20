@@ -29,18 +29,18 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:gravity="center_horizontal"
-        android:text="@string/suggestions_none"
-        android:textSize="@dimen/font_size_default"
-        android:textColor="@color/text_secondary" />
+        android:text="@string/podcast_none"
+	    android:textColor="@color/text_secondary"
+	    android:textSize="@dimen/font_size_default" />
     <Button
-        android:id="@+id/reset_filters_button"
+        android:id="@+id/add_podcast_button"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:background="@drawable/button_orange"
-        android:text="@string/suggestions_reset_filters"
+        android:background="@drawable/button_green"
+        android:text="@string/podcast_add_button"
         android:textColor="@drawable/button_label" />
 </LinearLayout>

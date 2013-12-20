@@ -31,7 +31,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewStub;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.ListView;
@@ -133,6 +135,22 @@ public class PodcastListFragment extends PodcatcherListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        ((ViewStub) emptyView).setOnInflateListener(new ViewStub.OnInflateListener() {
+
+            @Override
+            public void onInflate(ViewStub stub, View inflated) {
+                final Button addPodcast = (Button) inflated.findViewById(R.id.add_podcast_button);
+
+                addPodcast.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(getActivity(), AddPodcastActivity.class));
+                    }
+                });
+            }
+        });
+
         logoDividerView = getView().findViewById(R.id.podcast_image_divider);
         // Find logo view member handle
         logoView = (ImageView) view.findViewById(R.id.podcast_image);
@@ -231,6 +249,14 @@ public class PodcastListFragment extends PodcatcherListFragment {
         }
     }
 
+    @Override
+    public void select(int position) {
+        super.select(position);
+
+        if (adapter != null && !showProgress)
+            getListView().smoothScrollToPosition(position);
+    }
+
     /**
      * Add a podcast to the list shown. Use this instead of
      * {@link #setPodcastList(List)} if you want a nice, animated addition.
@@ -240,7 +266,9 @@ public class PodcastListFragment extends PodcatcherListFragment {
     public void addPodcast(Podcast podcast) {
         currentPodcastList.add(podcast);
         Collections.sort(currentPodcastList);
+
         ((PodcastListAdapter) adapter).updateList(currentPodcastList);
+        updateUiElementVisibility();
 
         final int index = currentPodcastList.indexOf(podcast);
 
@@ -262,9 +290,8 @@ public class PodcastListFragment extends PodcatcherListFragment {
      * @param podcast Podcast to remove.
      */
     public void removePodcast(final Podcast podcast) {
-        final int index = currentPodcastList.indexOf(podcast);
-
         if (viewCreated) {
+            final int index = currentPodcastList.indexOf(podcast);
             final PodcastListItemView listItemView = (PodcastListItemView) findListItemViewForIndex(index);
 
             // Is the position visible?
@@ -279,11 +306,14 @@ public class PodcastListFragment extends PodcatcherListFragment {
                                 // Set it back to opaque because the view might
                                 // be recycled and we need it to show
                                 listItemView.setAlpha(1f);
+                                updateUiElementVisibility();
                             }
                         });
             // Not visible, simply remove the podcast
-            else if (currentPodcastList.remove(podcast))
+            else if (currentPodcastList.remove(podcast)) {
                 ((PodcastListAdapter) adapter).updateList(currentPodcastList);
+                updateUiElementVisibility();
+            }
         }
     }
 

@@ -29,7 +29,7 @@
         android:gravity="center"
         android:text="@string/episode_none_selected"
         android:textColor="@color/text_secondary"
-        android:textSize="@dimen/font_size_small" />
+        android:textSize="@dimen/font_size_default" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
