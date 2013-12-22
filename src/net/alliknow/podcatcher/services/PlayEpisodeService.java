@@ -50,6 +50,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.widget.MediaController.MediaPlayerControl;
 
+import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.SettingsActivity;
 import net.alliknow.podcatcher.listeners.OnChangePlaylistListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
@@ -374,16 +375,18 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
                     player.setDataSource(episodeManager.getLocalPath(episode));
                 // Need to resort to remote file
                 else {
-                    // Set source (and authorization if needed)
-                    if (episode.getPodcast().getAuthorization() != null) {
-                        final HashMap<String, String> headers = new HashMap<String, String>(1);
-                        headers.put(AUTHORIZATION_KEY, episode.getPodcast().getAuthorization());
+                    // We add some request headers to overwrite the default user
+                    // agent because this is blocked by some servers
+                    final HashMap<String, String> headers = new HashMap<String, String>(2);
+                    headers.put(Podcatcher.USER_AGENT_KEY, Podcatcher.USER_AGENT_VALUE);
 
-                        player.setDataSource(this, Uri.parse(currentEpisode.getMediaUrl()), headers);
-                    }
-                    // No auth available we could send to the server
-                    else
-                        player.setDataSource(currentEpisode.getMediaUrl());
+                    // Also set the authorization header data if needed
+                    final String auth = episode.getPodcast().getAuthorization();
+                    if (auth != null)
+                        headers.put(AUTHORIZATION_KEY, auth);
+
+                    // Actually set the remote source for the playback
+                    player.setDataSource(this, Uri.parse(currentEpisode.getMediaUrl()), headers);
 
                     // We are streaming, so make wifi stay alive
                     wifiLock.acquire();
