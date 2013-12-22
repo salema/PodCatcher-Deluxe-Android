@@ -18,6 +18,7 @@
 package net.alliknow.podcatcher.model.types;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.text.Html;
 import android.util.Base64;
 
@@ -345,7 +346,7 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
         try {
             // HREF attribute used?
             if (parser.getAttributeValue("", RSS.HREF) != null)
-                logoUrl = parser.getAttributeValue("", RSS.HREF);
+                logoUrl = toAbsoluteLogoUrl(parser.getAttributeValue("", RSS.HREF));
             // URL tag used! We do not override any previous setting, because
             // the HREF is from the <itunes:image> tag which tends to have
             // better pics.
@@ -357,7 +358,7 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
                 while (parser.nextTag() == XmlPullParser.START_TAG) {
                     // URL tag found
                     if (parser.getName().equalsIgnoreCase(RSS.URL))
-                        logoUrl = parser.nextText();
+                        logoUrl = toAbsoluteLogoUrl(parser.nextText());
                     // Unneeded node, skip...
                     else
                         ParserUtils.skipSubTree(parser);
@@ -372,14 +373,31 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
         }
     }
 
-    protected void parseEpisode(XmlPullParser parser, int index)
-            throws XmlPullParserException, IOException {
+    protected void parseEpisode(XmlPullParser parser, int index) {
         // Create episode and parse the data
-        Episode newEpisode = new Episode(this, index);
-        newEpisode.parse(parser);
+        final Episode newEpisode = new Episode(this, index);
 
-        // Only add if there is some actual content to play
-        if (newEpisode.getMediaUrl() != null)
-            episodes.add(newEpisode);
+        try {
+            newEpisode.parse(parser);
+
+            // Only add if there is a title and some actual content to play
+            final String title = newEpisode.getName();
+            if (title != null && !title.isEmpty() && newEpisode.getMediaUrl() != null)
+                episodes.add(newEpisode);
+        } catch (XmlPullParserException e) {
+            // pass, episode not added
+        } catch (IOException e) {
+            // pass, episode not added
+        }
+    }
+
+    private String toAbsoluteLogoUrl(String logoUrl) {
+        if (logoUrl != null && !Uri.parse(logoUrl).isAbsolute()) {
+            final Uri podcastUrl = Uri.parse(url);
+
+            logoUrl = podcastUrl.getScheme() + "://" + podcastUrl.getAuthority() + logoUrl;
+        }
+
+        return logoUrl;
     }
 }

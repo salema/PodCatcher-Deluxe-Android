@@ -66,7 +66,7 @@ public class LoadPodcastLogoTaskTest extends InstrumentationTestCase {
         Log.d(Utils.TEST_STATUS, "Set up test \"LoadPodcastLogo\" by loading example podcasts...");
 
         final Date start = new Date();
-        examplePodcasts = Utils.getExamplePodcasts(getInstrumentation().getTargetContext());
+        examplePodcasts = Utils.getExamplePodcasts(getInstrumentation().getTargetContext(), 5);
 
         Log.d(Utils.TEST_STATUS, "Waited " + (new Date().getTime() - start.getTime())
                 + "ms for example podcasts...");
@@ -120,6 +120,29 @@ public class LoadPodcastLogoTaskTest extends InstrumentationTestCase {
         if (failed > 0)
             for (String name : noLogo)
                 Log.w(Utils.TEST_STATUS, name);
+    }
+
+    public final void testLoadWithRelativeLogoPath() {
+        Podcast merkel = new Podcast("Merkel",
+                "http://www.bundeskanzlerin.de/SiteGlobals/Functions/Webs/BKin/RSSFeed/rssVideoAbo.xml");
+
+        MockPodcastLogoLoader mockLoader = new MockPodcastLogoLoader();
+        PodcastLoadError errorCode = Utils.loadAndWait(merkel);
+        if (errorCode != null)
+            Log.w(Utils.TEST_STATUS, "Podcast \"" + merkel + "\" failed to load: " + errorCode);
+        else {
+            // Load and check podcast logo
+            LoadPodcastLogoTask task = loadAndWait(mockLoader, merkel);
+
+            if (mockLoader.failed) {
+                Log.w(Utils.TEST_STATUS, "Logo for podcast " + merkel.getName()
+                        + " failed to load!");
+            } else {
+                assertFalse(task.isCancelled());
+                assertFalse(mockLoader.failed);
+                assertFalse(mockLoader.result == null);
+            }
+        }
     }
 
     private LoadPodcastLogoTask loadAndWait(final MockPodcastLogoLoader mockLoader,

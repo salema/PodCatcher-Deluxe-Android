@@ -85,6 +85,12 @@ public class PodcastTest extends InstrumentationTestCase {
         assertTrue(tal.getEpisodes().isEmpty());
         Utils.loadAndWait(tal);
         assertFalse(tal.getEpisodes().isEmpty());
+
+        Podcast merkel = new Podcast("Merkel",
+                "http://www.bundeskanzlerin.de/SiteGlobals/Functions/Webs/BKin/RSSFeed/rssVideoAbo.xml");
+        assertTrue(merkel.getEpisodes().isEmpty());
+        Utils.loadAndWait(merkel);
+        assertFalse(merkel.getEpisodes().isEmpty());
     }
 
     public final void testGetLogoUrl() {

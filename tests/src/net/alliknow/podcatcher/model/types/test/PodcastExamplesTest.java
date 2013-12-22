@@ -12,7 +12,7 @@ public class PodcastExamplesTest extends SuggestionsAsExamplesTest {
 
     @Override
     protected void setUp() throws Exception {
-        sampleSize = 10;
+        sampleSize = 25;
 
         super.setUp();
     }
