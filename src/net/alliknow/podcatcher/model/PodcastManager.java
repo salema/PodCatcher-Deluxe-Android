@@ -419,25 +419,27 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
      * already is in the list, it will not be added and no notification takes
      * place.
      * 
-     * @param newPodcast Podcast to add.
+     * @param newPodcast Podcast to add. Given <code>null</code> will make the
+     *            method return without any action.
      * @see OnChangePodcastListListener
      */
     public void addPodcast(Podcast newPodcast) {
-        // Check whether the new podcast is already added
-        if (newPodcast != null && !contains(newPodcast)) {
-            // Add the new podcast
-            podcastList.add(newPodcast);
-            Collections.sort(podcastList);
+        if (newPodcast != null)
+            // Check whether the new podcast is already added
+            if (!contains(newPodcast)) {
+                // Add the new podcast
+                podcastList.add(newPodcast);
+                Collections.sort(podcastList);
 
-            // Alert listeners of new podcast
-            for (OnChangePodcastListListener listener : changePodcastListListeners)
-                listener.onPodcastAdded(newPodcast);
+                // Alert listeners of new podcast
+                for (OnChangePodcastListListener listener : changePodcastListListeners)
+                    listener.onPodcastAdded(newPodcast);
 
-            // Mark podcast list dirty
-            podcastListChanged = true;
-        } else
-            Log.i(getClass().getSimpleName(), "Podcast \"" + newPodcast.getName()
-                    + "\" is already in list.");
+                // Mark podcast list dirty
+                podcastListChanged = true;
+            } else
+                Log.i(getClass().getSimpleName(), "Podcast \"" + newPodcast.getName()
+                        + "\" is already in list.");
     }
 
     /**
