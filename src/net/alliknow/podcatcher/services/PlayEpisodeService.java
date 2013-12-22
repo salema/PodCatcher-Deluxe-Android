@@ -46,6 +46,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 
+import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.model.types.Episode;
 
@@ -268,15 +269,18 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             try {
                 initPlayer();
 
-                // Set source (and authorization if needed)
-                if (episode.getPodcast().getAuthorization() != null) {
-                    final HashMap<String, String> headers = new HashMap<String, String>(1);
-                    headers.put(AUTHORIZATION_KEY, episode.getPodcast().getAuthorization());
+                // We add some request headers to overwrite the default user
+                // agent because this is blocked by some servers
+                final HashMap<String, String> headers = new HashMap<String, String>(2);
+                headers.put(Podcatcher.USER_AGENT_KEY, Podcatcher.USER_AGENT_VALUE);
+                
+                // Also set the authorization header data if needed
+                final String auth = episode.getPodcast().getAuthorization();
+                if (auth != null)
+                    headers.put(AUTHORIZATION_KEY, auth);
 
-                    player.setDataSource(this, Uri.parse(currentEpisode.getMediaUrl()), headers);
-                }
-                else
-                    player.setDataSource(currentEpisode.getMediaUrl().toString());
+                // Actually set the remote source for the playback
+                player.setDataSource(this, Uri.parse(currentEpisode.getMediaUrl()), headers);
 
                 // Make sure the device stays alive
                 player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
