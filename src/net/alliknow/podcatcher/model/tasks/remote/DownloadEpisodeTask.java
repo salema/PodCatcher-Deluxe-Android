@@ -215,7 +215,7 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
                 // Find download information
                 final Cursor info = downloadManager.query(new Query().setFilterById(downloadId));
                 // There should be information on the download
-                if (info.moveToFirst()) {
+                if (info != null && info.moveToFirst()) {
                     final int state = info.getInt(info.getColumnIndex(COLUMN_STATUS));
                     switch (state) {
                         case STATUS_SUCCESSFUL:
@@ -258,8 +258,10 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
                                 publishProgress((long) (((float) progress / (float) total) * 100));
                     }
                 }
+
                 // Close cursor
-                info.close();
+                if (info != null)
+                    info.close();
             }
         }
 
