@@ -44,11 +44,11 @@ public abstract class FeedEntity {
             "EEE, dd MMM yy", "yy-MM-dd"
     };
 
-    /** Name of the podcast */
+    /** Name of the entity */
     protected String name;
-    /** Location of the podcast's RSS file */
+    /** Location of the entity's file */
     protected String url;
-    /** Podcast's description */
+    /** Entity's description */
     protected String description;
 
     /** Whether the element contains explicit language or pics */

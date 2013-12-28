@@ -293,6 +293,38 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
     }
 
     /**
+     * Rewrite given relative URL to an absolute URL for this podcast. If the
+     * given URL is already absolute (or empty or <code>null</code>) it is
+     * returned unchanged.
+     * 
+     * @param relativeUrl URL to rewrite.
+     * @return An absolute URL based on the podcast URL. E.g. if "test/pic.jpg"
+     *         is provided, "http://www.example.com/feed/test/pic.jpg" might be
+     *         returned.
+     */
+    public String toAbsoluteUrl(String relativeUrl) {
+        String result = relativeUrl;
+
+        // Rewrite logo url to be absolute
+        if (url != null && relativeUrl != null && !relativeUrl.isEmpty()
+                && Uri.parse(relativeUrl).isRelative()) {
+            final Uri podcastUrl = Uri.parse(url);
+            final String prefix = podcastUrl.getScheme() + "://" + podcastUrl.getAuthority();
+
+            if (relativeUrl.startsWith("/"))
+                result = prefix + relativeUrl;
+            else {
+                final String path = podcastUrl.getPath();
+
+                result = prefix + path.substring(0, path.length()
+                        - podcastUrl.getLastPathSegment().length()) + relativeUrl;
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Set the RSS file parser representing this podcast. This is were the
      * object gets its information from. Many of its methods will not return
      * valid results unless this method was called. Calling this method resets
@@ -346,7 +378,7 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
         try {
             // HREF attribute used?
             if (parser.getAttributeValue("", RSS.HREF) != null)
-                logoUrl = toAbsoluteLogoUrl(parser.getAttributeValue("", RSS.HREF));
+                logoUrl = toAbsoluteUrl(parser.getAttributeValue("", RSS.HREF));
             // URL tag used! We do not override any previous setting, because
             // the HREF is from the <itunes:image> tag which tends to have
             // better pics.
@@ -358,7 +390,7 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
                 while (parser.nextTag() == XmlPullParser.START_TAG) {
                     // URL tag found
                     if (parser.getName().equalsIgnoreCase(RSS.URL))
-                        logoUrl = toAbsoluteLogoUrl(parser.nextText());
+                        logoUrl = toAbsoluteUrl(parser.nextText());
                     // Unneeded node, skip...
                     else
                         ParserUtils.skipSubTree(parser);
@@ -389,15 +421,5 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
         } catch (IOException e) {
             // pass, episode not added
         }
-    }
-
-    private String toAbsoluteLogoUrl(String logoUrl) {
-        if (logoUrl != null && !Uri.parse(logoUrl).isAbsolute()) {
-            final Uri podcastUrl = Uri.parse(url);
-
-            logoUrl = podcastUrl.getScheme() + "://" + podcastUrl.getAuthority() + logoUrl;
-        }
-
-        return logoUrl;
     }
 }

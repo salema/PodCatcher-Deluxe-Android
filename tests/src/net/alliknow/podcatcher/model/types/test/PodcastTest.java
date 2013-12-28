@@ -156,4 +156,17 @@ public class PodcastTest extends InstrumentationTestCase {
         assertEquals(podcast.getAuthorization(),
                 "Basic " + Base64.encodeToString("kevin:monkey".getBytes(), Base64.NO_WRAP));
     }
+
+    public final void testToAbsoluteUrl() {
+        String url = "http://some-server.com/feeds/podcast.xml";
+        Podcast dummy = new Podcast(null, url);
+
+        assertEquals(null, dummy.toAbsoluteUrl(null));
+        assertEquals("", dummy.toAbsoluteUrl(""));
+        assertEquals(url, dummy.toAbsoluteUrl(url));
+        assertEquals("http://some-server.com/feeds/blödsinn", dummy.toAbsoluteUrl("blödsinn"));
+        assertEquals("http://some-server.com/bla/image.png", dummy.toAbsoluteUrl("/bla/image.png"));
+        assertEquals("http://some-server.com/feeds/bla/image.png",
+                dummy.toAbsoluteUrl("bla/image.png"));
+    }
 }
