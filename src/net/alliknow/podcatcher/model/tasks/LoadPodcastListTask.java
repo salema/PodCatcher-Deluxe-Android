@@ -115,18 +115,20 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
                 if (eventType == XmlPullParser.START_TAG) {
                     String tagName = parser.getName();
 
-                    // Podcast found
-                    if (tagName.equalsIgnoreCase(OPML.OUTLINE))
-                        result.add(createPodcast(parser));
+                    // Podcast found, add it
+                    if (tagName.equalsIgnoreCase(OPML.OUTLINE)) {
+                        final Podcast listItem = createPodcast(parser);
+
+                        if (listItem != null)
+                            result.add(listItem);
+                    }
                 }
 
                 // Done, get next parsing event
                 eventType = parser.next();
             }
 
-            // 4. Sort and tidy up!
-            while (result.remove(null))
-                ;
+            // 4. Sort
             Collections.sort(result);
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), "Load failed for podcast list!", e);
@@ -177,7 +179,7 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
                 name = null;
             else
                 name = Html.fromHtml(name).toString();
-            
+
             // Create the podcast
             result = new Podcast(name, parser.getAttributeValue("", OPML.XMLURL));
 
