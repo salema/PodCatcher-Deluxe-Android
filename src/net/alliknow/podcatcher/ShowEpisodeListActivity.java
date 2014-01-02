@@ -21,8 +21,11 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
+import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.fragments.EpisodeListFragment;
+
+import java.util.List;
 
 /**
  * Activity to show only the episode list and possibly the player. Used in small
@@ -168,18 +171,30 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
     public void onPodcastLoaded(Podcast podcast) {
         super.onPodcastLoaded(podcast);
 
-        // We might want to show the progress bar on top of the list
-        if (selection.isAll())
-            episodeListFragment.setShowTopProgress(podcastManager.getLoadCount() > 0);
+        updateTopProgress();
     }
 
     @Override
     public void onPodcastLoadFailed(Podcast failedPodcast, PodcastLoadError code) {
         super.onPodcastLoadFailed(failedPodcast, code);
 
-        // We might want to show the progress bar on top of the list
-        if (selection.isAll())
-            episodeListFragment.setShowTopProgress(podcastManager.getLoadCount() > 0);
+        updateTopProgress();
+    }
+
+    @Override
+    public void onDownloadsLoaded(List<Episode> downloads) {
+        super.onDownloadsLoaded(downloads);
+
+        if (!downloads.isEmpty())
+            updateTopProgress();
+    }
+
+    @Override
+    public void onPlaylistLoaded(List<Episode> playlist) {
+        super.onPlaylistLoaded(playlist);
+
+        if (!playlist.isEmpty())
+            updateTopProgress();
     }
 
     @Override
@@ -213,6 +228,15 @@ public class ShowEpisodeListActivity extends EpisodeListActivity {
 
         // Enable navigation
         getActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    /**
+     * Update the progress bar above list view.
+     */
+    protected void updateTopProgress() {
+        // This should show if there is still a podcast loading.
+        episodeListFragment.setShowTopProgress(selection.isAll()
+                && podcastManager.getLoadCount() > 0);
     }
 
     @Override
