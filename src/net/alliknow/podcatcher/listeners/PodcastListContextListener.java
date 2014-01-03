@@ -1,4 +1,4 @@
-/** Copyright 2012, 2013 Kevin Hausmann
+/** Copyright 2012-2014 Kevin Hausmann
  *
  * This file is part of PodCatcher Deluxe.
  *
