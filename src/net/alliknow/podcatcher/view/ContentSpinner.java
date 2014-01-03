@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -40,22 +41,18 @@ import net.alliknow.podcatcher.model.PodcastManager;
  * to show the selected view when closed. Instead, we show another view with
  * name and status information.
  */
-public class ContentSpinner extends Spinner implements
-        AdapterView.OnItemSelectedListener {
+public class ContentSpinner extends Spinner implements OnItemSelectedListener {
 
     /** The listener call-back to alert on content mode selection */
-    private OnSelectPodcastListener listener;
-
-    /** Flag allowing use to skip the first selection on creation */
-    private boolean isInitialSelection = true;
+    private final OnSelectPodcastListener listener;
 
     /** Handle to the closed spinner title text view */
-    private TextView closedTitleView;
+    private final TextView closedTitleView;
     /** Handle to the closed spinner subtitle text view */
-    private TextView closedSubtitleView;
+    private final TextView closedSubtitleView;
 
     /** Our spinner handle */
-    private NavigationSpinnerAdapter spinnerAdapter;
+    private final NavigationSpinnerAdapter spinnerAdapter;
 
     /** The data adapter used to populate the spinner */
     private static class NavigationSpinnerAdapter extends BaseAdapter {
@@ -69,7 +66,7 @@ public class ContentSpinner extends Spinner implements
             this.inflater = LayoutInflater.from(parent.getContext());
             this.closedView = inflater.inflate(R.layout.content_spinner_item, parent, false);
 
-            // FOr the closed view, no padding is needed
+            // For the closed view, no padding is needed
             closedView.setPadding(0, 0, 0, 0);
 
             // Set the initial name and status
@@ -90,7 +87,7 @@ public class ContentSpinner extends Spinner implements
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
         @Override
@@ -100,12 +97,13 @@ public class ContentSpinner extends Spinner implements
 
         @Override
         public long getItemId(int position) {
+            // case 0: is the dummy view
             switch (position) {
-                case 0:
-                    return R.string.podcast_select_all;
                 case 1:
-                    return R.string.downloads;
+                    return R.string.podcast_select_all;
                 case 2:
+                    return R.string.downloads;
+                case 3:
                     return R.string.playlist;
                 default:
                     return 0;
@@ -131,6 +129,9 @@ public class ContentSpinner extends Spinner implements
 
             switch (position) {
                 case 0:
+                    // The initial selection dummy view should be hidden
+                    spinnerItemView.getLayoutParams().height = 1;
+                case 1:
                     imageView.setImageResource(R.drawable.ic_menu_select_all);
                     titleView.setText(R.string.podcast_select_all);
 
@@ -142,7 +143,7 @@ public class ContentSpinner extends Spinner implements
                         subtitleView.setText(parent.getContext().getResources()
                                 .getQuantityString(R.plurals.podcasts, podcastCount, podcastCount));
                     break;
-                case 1:
+                case 2:
                     imageView.setImageResource(R.drawable.ic_menu_download);
                     titleView.setText(R.string.downloads);
 
@@ -151,7 +152,7 @@ public class ContentSpinner extends Spinner implements
                     setEpisodeNumberText(parent, subtitleView, downloadsCount);
 
                     break;
-                case 2:
+                case 3:
                     imageView.setImageResource(R.drawable.ic_menu_playlist);
                     titleView.setText(R.string.playlist);
 
@@ -221,7 +222,9 @@ public class ContentSpinner extends Spinner implements
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (!isInitialSelection)
+        // The initial selection on creation of position 0 is ignored and
+        // actions are only triggered for real user selections.
+        if (position > 0) {
             switch (Long.valueOf(id).intValue()) {
                 case R.string.podcast_select_all:
                     listener.onAllPodcastsSelected();
@@ -232,12 +235,14 @@ public class ContentSpinner extends Spinner implements
                 case R.string.playlist:
                     listener.onPlaylistSelected();
                     break;
+                default:
+                    // Nothing to do here
+                    break;
             }
 
-        // This invalidates the selection, so the same item can be picked again
-        setSelection(getAdapter().getCount());
-        // Reset flag to check whether this is the activity start-up selection
-        isInitialSelection = false;
+            // This invalidates the selection, the same item can be picked again
+            setSelection(getAdapter().getCount());
+        }
     }
 
     @Override

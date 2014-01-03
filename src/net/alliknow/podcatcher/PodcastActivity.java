@@ -30,7 +30,6 @@ import android.widget.LinearLayout.LayoutParams;
 
 import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
-import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
@@ -47,7 +46,7 @@ import java.util.List;
  * state, other activities cooperate.
  */
 public class PodcastActivity extends EpisodeListActivity implements OnBackStackChangedListener,
-        OnLoadPodcastListListener, OnChangePodcastListListener, OnSelectPodcastListener {
+        OnLoadPodcastListListener, OnChangePodcastListListener {
 
     /** The request code to identify import calls */
     private static final int IMPORT_FROM_SIMPLE_PODCATCHER_CODE = 18;
