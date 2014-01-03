@@ -25,6 +25,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.AsyncTask;
 
 import net.alliknow.podcatcher.BaseActivity.ContentMode;
@@ -42,8 +43,6 @@ import net.alliknow.podcatcher.model.types.EpisodeMetadata;
 import net.alliknow.podcatcher.model.types.Podcast;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -498,28 +497,30 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
      * Get the relative file path for the episode entry given. This reflects
      * where it would have been or should be stored locally when downloaded.
      * Note that this is still relative to the download directory set. Uses
-     * {@link #sanitizeAsFilename(String)}.
+     * {@link #sanitizeAsFilename(String)}. None of the parameter inputs is
+     * allowed to be <code>null</code> or empty.
      * 
+     * @param podcast The episode's owning podcast's name
+     * @param episode The episode's name
      * @param episodeUrl The episode's URL (used to determine the file ending)
-     * @param episodeName The episode's name
-     * @param podcastName The episode's owning podcast's name
      * @return The path string as podcast/episode.ending without reserved
      *         characters
      */
-    public static String sanitizeAsFilePath(String episodeUrl, String episodeName,
-            String podcastName) {
+    public static String sanitizeAsFilePath(String podcast, String episode, String episodeUrl) {
         // Extract file ending
-        int endingIndex = 0;
+        String fileEnding = "";
         try {
-            endingIndex = new URL(episodeUrl).getPath().lastIndexOf('.');
-        } catch (MalformedURLException mex) {
-            endingIndex = episodeUrl.lastIndexOf('.');
+            final String path = Uri.parse(episodeUrl).getLastPathSegment();
+            final int endingIndex = path.lastIndexOf('.');
+
+            if (endingIndex > 0 && (endingIndex + 1) < path.length())
+                fileEnding = path.substring(endingIndex);
+        } catch (NullPointerException nex) {
+            // Leave out file ending if URL is invalid
         }
 
-        final String fileEnding = endingIndex > 0 ? episodeUrl.substring(endingIndex) : "";
-
         // Create sanitized path <podcast>/<episode>.<ending>
-        return sanitizeAsFilename(podcastName) + File.separatorChar
-                + sanitizeAsFilename(episodeName) + fileEnding;
+        return sanitizeAsFilename(podcast) + File.separatorChar
+                + sanitizeAsFilename(episode + fileEnding);
     }
 }

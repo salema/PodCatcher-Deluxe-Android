@@ -144,7 +144,7 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
                 .getString(SettingsActivity.DOWNLOAD_FOLDER_KEY,
                         DownloadFolderPreference.getDefaultDownloadFolder().getAbsolutePath()));
         final String subPath = EpisodeDownloadManager.sanitizeAsFilePath(
-                episode.getMediaUrl(), episode.getName(), episode.getPodcast().getName());
+                episode.getPodcast().getName(), episode.getName(), episode.getMediaUrl());
         // The actual episode file
         final File localFile = new File(podcastDir, subPath);
 

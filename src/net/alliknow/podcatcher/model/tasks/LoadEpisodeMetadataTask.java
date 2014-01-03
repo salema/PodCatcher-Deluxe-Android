@@ -210,8 +210,8 @@ public class LoadEpisodeMetadataTask extends
                 continue;
 
             final File downloadPath = new File(podcastDir,
-                    EpisodeDownloadManager.sanitizeAsFilePath(entry.getKey(),
-                            entry.getValue().episodeName, entry.getValue().podcastName));
+                    EpisodeDownloadManager.sanitizeAsFilePath(entry.getValue().podcastName,
+                            entry.getValue().episodeName, entry.getKey()));
 
             if (entry.getValue().filePath == null && downloadPath.exists())
                 entry.getValue().filePath = downloadPath.getAbsolutePath();
