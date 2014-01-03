@@ -170,7 +170,7 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 
             cancel(true);
         } catch (IOException ioe) {
-            // This is also catch mal-formed URLs
+            // This will also catch mal-formed URLs
             errorCode = PodcastLoadError.NOT_REACHABLE;
 
             cancel(true);

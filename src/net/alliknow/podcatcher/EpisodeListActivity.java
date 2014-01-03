@@ -431,7 +431,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         if (selection.isEpisodeOrderReversed())
             Collections.reverse(filteredList);
 
-        // Make sure the episode list fragment show the right empty view
+        // Make sure the episode list fragment shows the right empty view
         else if (selection.isAll())
             episodeListFragment.setEmptyStringId(R.string.episode_none_all_podcasts);
         else
