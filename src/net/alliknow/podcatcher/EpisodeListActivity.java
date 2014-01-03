@@ -689,7 +689,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 Collections.reverse(filteredList);
         }
 
-        // Make sure the episode list fragment show the right empty view
+        // Make sure the episode list fragment shows the right empty view
         if (ContentMode.DOWNLOADS.equals(selection.getMode()))
             episodeListFragment.setEmptyStringId(R.string.downloads_none);
         else if (ContentMode.PLAYLIST.equals(selection.getMode()))
@@ -702,7 +702,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         else
             episodeListFragment.setEmptyStringId(R.string.episode_none);
 
-        // Make sure the episode list fragment show the right info box
+        // Make sure the episode list fragment shows the right info box
         if (ContentMode.PLAYLIST.equals(selection.getMode()) && filteredList.size() > 1)
             episodeListFragment
                     .setShowTopInfoBox(true, getString(R.string.playlist_swipe_reorder));

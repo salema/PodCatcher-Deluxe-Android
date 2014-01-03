@@ -72,7 +72,7 @@ public class LoadPlaylistTask extends AsyncTask<Void, Void, List<Episode>> {
                 while (episodes.hasNext()) {
                     final Episode current = episodes.next();
 
-                    if (!current.getPodcast().equals(podcast))
+                    if (!podcast.equals(current.getPodcast()))
                         episodes.remove();
                 }
             }
