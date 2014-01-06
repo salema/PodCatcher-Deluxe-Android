@@ -397,7 +397,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         final int podcastCount = podcastManager.size();
         final int loadingPodcastCount = podcastManager.getLoadCount();
 
-        // Load finished for all podcasts and there are episode
+        // Load finished for all podcasts and there are episodes
         if (loadingPodcastCount == 0 && !currentEpisodeSet.isEmpty()) {
             final int episodeCount = currentEpisodeSet.size();
 

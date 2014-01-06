@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -39,22 +40,18 @@ import net.alliknow.podcatcher.model.PodcastManager;
  * to show the selected view when closed. Instead, we show another view with
  * name and status information.
  */
-public class ContentSpinner extends Spinner implements
-        AdapterView.OnItemSelectedListener {
+public class ContentSpinner extends Spinner implements OnItemSelectedListener {
 
     /** The listener call-back to alert on content mode selection */
-    private OnSelectPodcastListener listener;
-
-    /** Flag allowing use to skip the first selection on creation */
-    private boolean isInitialSelection = true;
+    private final OnSelectPodcastListener listener;
 
     /** Handle to the closed spinner title text view */
-    private TextView closedTitleView;
+    private final TextView closedTitleView;
     /** Handle to the closed spinner subtitle text view */
-    private TextView closedSubtitleView;
+    private final TextView closedSubtitleView;
 
     /** Our spinner handle */
-    private NavigationSpinnerAdapter spinnerAdapter;
+    private final NavigationSpinnerAdapter spinnerAdapter;
 
     /** The data adapter used to populate the spinner */
     private static class NavigationSpinnerAdapter extends BaseAdapter {
@@ -68,7 +65,7 @@ public class ContentSpinner extends Spinner implements
             this.inflater = LayoutInflater.from(parent.getContext());
             this.closedView = inflater.inflate(R.layout.content_spinner_item, parent, false);
 
-            // FOr the closed view, no padding is needed
+            // For the closed view, no padding is needed
             closedView.setPadding(0, 0, 0, 0);
 
             // Set the initial name and status
@@ -89,17 +86,17 @@ public class ContentSpinner extends Spinner implements
 
         @Override
         public int getCount() {
-            return 1;
+            return 2;
         }
 
         @Override
         public Object getItem(int position) {
-            return position == 0 ? R.string.podcast_select_all : 0;
+            return null;
         }
 
         @Override
         public long getItemId(int position) {
-            return position == 0 ? R.string.podcast_select_all : 0;
+            return position == 1 ? R.string.podcast_select_all : 0;
         }
 
         @Override
@@ -114,22 +111,32 @@ public class ContentSpinner extends Spinner implements
             final View spinnerItemView = inflater.inflate(
                     R.layout.content_spinner_item, parent, false);
 
-            // Set the icon
+            // Get handles on the view we need to update
             final ImageView imageView = (ImageView) spinnerItemView.findViewById(R.id.icon);
-            imageView.setImageResource(R.drawable.ic_menu_select_all);
-
-            // Set the title view
             final TextView titleView = (TextView) spinnerItemView.findViewById(R.id.title);
-            titleView.setText(R.string.podcast_select_all);
-
-            // Set the subtitle
             final TextView subtitleView = (TextView) spinnerItemView.findViewById(R.id.subtitle);
-            final int podcastCount = PodcastManager.getInstance().size();
-            if (podcastCount == 0)
-                subtitleView.setText(R.string.podcast_none);
-            else
-                subtitleView.setText(parent.getContext().getResources()
-                        .getQuantityString(R.plurals.podcasts, podcastCount, podcastCount));
+
+            switch (position) {
+                case 0:
+                    // The initial selection dummy view should be hidden
+                    spinnerItemView.getLayoutParams().height = 1;
+                case 1:
+                    imageView.setImageResource(R.drawable.ic_menu_select_all);
+                    titleView.setText(R.string.podcast_select_all);
+
+                    // Set the subtitle
+                    final int podcastCount = PodcastManager.getInstance().size();
+                    if (podcastCount == 0)
+                        subtitleView.setText(R.string.podcast_none);
+                    else
+                        subtitleView.setText(parent.getContext().getResources()
+                                .getQuantityString(R.plurals.podcasts, podcastCount, podcastCount));
+                    break;
+            }
+
+            // Make sure to hide empty sub-titles
+            if (subtitleView.getText().length() == 0)
+                subtitleView.setVisibility(View.GONE);
 
             return spinnerItemView;
         }
@@ -177,16 +184,21 @@ public class ContentSpinner extends Spinner implements
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (!isInitialSelection)
+        // The initial selection on creation of position 0 is ignored and
+        // actions are only triggered for real user selections.
+        if (position > 0) {
             switch (Long.valueOf(id).intValue()) {
                 case R.string.podcast_select_all:
                     listener.onAllPodcastsSelected();
+                    break;
+                default:
+                    // Nothing to do here
+                    break;
             }
 
-        // This invalidates the selection, so the same item can be picked again
-        setSelection(getAdapter().getCount());
-        // Reset flag to check whether this is the activity start-up selection
-        isInitialSelection = false;
+            // This invalidates the selection, the same item can be picked again
+            setSelection(getAdapter().getCount());
+        }
     }
 
     @Override
