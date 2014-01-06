@@ -157,7 +157,7 @@ public class AuthorizationFragment extends DialogFragment {
 
         // Build the dialog
         final AlertDialog.Builder abuilder = new AlertDialog.Builder(context);
-        abuilder.setTitle(R.string.auth_required)
+        abuilder.setTitle(R.string.auth)
                 .setView(content);
 
         return abuilder.create();
