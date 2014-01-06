@@ -193,10 +193,25 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 resume();
             else if (action.equals(ACTION_PAUSE))
                 pause();
-            else if (action.equals(ACTION_PREVIOUS))
+            else if (action.equals(ACTION_PREVIOUS)) {
+                // Store the resume at value because we want to handle the case
+                // where the user invokes this action accidentally.
+                storeResumeAt();
+
                 seekTo(0);
-            else if (action.equals(ACTION_SKIP))
-                playNext();
+            }
+            else if (action.equals(ACTION_SKIP)) {
+                // "Skip" can mean two things here: Move ahead in the current
+                // episode to the stored "resume at" value, or (if that is not
+                // available or actually "behind" us) go to the next item in the
+                // playlist.
+                final int resumeAt = episodeManager.getResumeAt(currentEpisode);
+
+                if (resumeAt > getCurrentPosition())
+                    player.seekTo(resumeAt);
+                else
+                    playNext();
+            }
             else if (action.equals(ACTION_REWIND)) {
                 rewind();
             }
