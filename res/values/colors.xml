@@ -18,7 +18,6 @@
  */
 -->
 <resources>
-    <color name="transparent">@android:color/transparent</color>
     <color name="theme_light">@android:color/holo_red_light</color>
     <color name="theme_dark">@android:color/holo_red_dark</color>
     <color name="button_label_enabled">@android:color/white</color>
