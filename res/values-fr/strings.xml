@@ -49,14 +49,16 @@
     </plurals>
     <string name="podcast_add_title">Nouveau podcast</string>
     <string name="podcast_add_button">Ajouter</string>
-    <string name="podcast_enter_url_here">Insérez l\'URL du podcast ici</string>
+    <string name="podcast_enter_url_here">Insérez l’URL du podcast ici</string>
     <string name="podcast_load_error">Impossible de charger le podcast.</string>
-    <string name="podcast_load_error_access_denied">Le chargement du podcast a échoué car l\'accès au flux a été refusé.</string>
-    <string name="podcast_load_error_not_reachable">Le chargement du podcast a échoué car le serveur ne peut pas être contacté ou l\'URL n\'est pas valide.</string>
-    <string name="podcast_load_error_not_parseable">Le chargement du podcast a échoué car l\'URL ne correspond pas à un flux de podcast valide.</string>
+    <string name="podcast_load_error_access_denied">Le chargement du podcast a échoué car l’accès au flux a été refusé.</string>
+    <string name="podcast_load_error_explicit">Le chargement du podcast a échoué car dans votre profil l’accès au contenu réservé aux adultes est bloqué.</string>
+    <string name="podcast_load_error_not_reachable">Le chargement du podcast a échoué car le serveur ne peut pas être contacté ou l’URL n’est pas valide.</string>
+    <string name="podcast_load_error_not_parseable">Le chargement du podcast a échoué car l’URL ne correspond pas à un flux de podcast valide.</string>
     <string name="podcast_load_multiple_progress">%1$d de %2$d podcasts</string>
-    <string name="podcast_load_multiple_error">Le chargement du podcast\n\"%s\"\na échoué.</string>
+    <string name="podcast_load_multiple_error">Le podcast\n\"%s\"\nne peut pas être chargé.</string>
     <string name="podcast_load_multiple_error_all">Le chargement des podcasts a échoué. Vérifiez votre connexion Internet!</string>
+    <string name="podcast_block_explicit">Bloquer tous les podcasts présentant du contenu réservé aux adultes</string>
     <string name="episode_none">Ce podcast ne contient aucun épisode</string>
     <string name="episode_none_all_podcasts">Aucun épisode disponible</string>
     <string name="episode_no_description">Aucune description disponible.</string>
@@ -65,36 +67,39 @@
         <item quantity="one">Un épisode</item>
         <item quantity="other">%d épisodes</item>
     </plurals>
-    <string name="episodes_sort_toggle">Inverser l\'ordre</string>
-    <string name="auth_required">Autorisation requise</string>
+    <string name="episodes_sort_toggle">Inverser l’ordre</string>
+    <string name="auth">Autorisation</string>
+    <string name="auth_edit">Modifier l’autorisation</string>
     <string name="auth_username">Identifiant</string>
     <string name="auth_password">Mot de passe</string>
     <string name="auth_submit">Confirmer</string>
     <string name="file_select">Sélectionner</string>
     <string name="file_select_file">Sélectionner fichier</string>
     <string name="file_select_folder">Sélectionner dossier</string>
+    <string name="file_select_folder_empty">Ce dossier est vide.</string>
     <string name="file_select_access_denied">Accès refusé!</string>
     <string name="opml_import">Import OPML</string>
-    <string name="opml_import_failed">L\'import a échoué</string>
+    <string name="opml_import_failed">L’import a échoué</string>
     <string name="opml_export">Export OPML</string>
     <string name="opml_export_success">Fichier OPML est enregistré sous\n%s</string>
-    <string name="opml_export_failed">L\'export a échoué</string>
+    <string name="opml_export_failed">L’export a échoué</string>
     <string name="suggestions">Suggestions</string>
     <string name="suggested_podcasts">Podcasts suggérés</string>
     <string name="suggestion_listen">Écouter</string>
     <string name="suggestion_watch">Regarder</string>
-    <string name="suggestion_confirm_explicit">Ce podcast présente des contenus réservés aux adultes. Êtes-vous sûr de vouloir l\'ajouter à votre liste de podcasts?</string>
+    <string name="suggestion_confirm_explicit">Ce podcast présente du contenu réservé aux adultes. Êtes-vous sûr de vouloir l’ajouter à votre liste de podcasts?</string>
     <string name="suggestions_none">Aucune suggestion. Veuillez modifier les critères de filtre.</string>
+    <string name="suggestions_reset_filters">Réinitialiser les filtres</string>
     <string name="suggestions_load_error">Impossible de charger les suggestions. Vérifiez votre connexion Internet!</string>
     <string name="suggestions_send">Suggérer un podcast</string>
     <string name="preferences">Paramètres</string>
     <string name="pref_select_all_on_start_title">Charger tous les podcasts</string>
-    <string name="pref_select_all_on_start_summary">Actualiser tous les podcasts lorsque l\'application se lance</string>
+    <string name="pref_select_all_on_start_summary">Actualiser tous les podcasts lorsque l’application se lance</string>
     <string name="pref_category_interface">Interface</string>
     <string name="pref_theme_color_title">Thème de couleur</string>
     <string name="pref_theme_color_dialog_title">Sélectionner couleur</string>
-    <string name="pref_theme_color_dialog_use">Appuyez sur la nouvelle couleur pour l\'appliquer</string>
-    <string name="pref_wide_episode_list_title">Grande liste d\'épisodes</string>
-    <string name="pref_wide_episode_list_summary">Plus d\'espace pour les détails d\'épisode</string>
-    <string name="ad">Testez &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; et &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt;, les applications qui vous offrent plus d\'options que la version simple: le téléchargement d’épisodes, la création de listes de lecture, des filtres et beaucoup d’autres fonctions!</string>
+    <string name="pref_theme_color_dialog_use">Appuyez sur la nouvelle couleur pour l’appliquer</string>
+    <string name="pref_wide_episode_list_title">Grande liste d’épisodes</string>
+    <string name="pref_wide_episode_list_summary">Plus d’espace pour les détails d’épisode</string>
+    <string name="ad">Testez &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; et &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt;, les applications qui vous offrent plus d’options que la version simple: le téléchargement d’épisodes, la création de listes de lecture, des filtres et beaucoup d’autres fonctions!</string>
 </resources>

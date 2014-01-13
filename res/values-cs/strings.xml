@@ -53,11 +53,13 @@
     <string name="podcast_enter_url_here">Kopírovat adresu záznamu zde</string>
     <string name="podcast_load_error">Záznam se nepodařilo nahrát!</string>
     <string name="podcast_load_error_access_denied">Záznam se nepodařilo nahrát, protože přístup ke kanálu byl odepřen.</string>
+    <string name="podcast_load_error_explicit">Záznam se nepodařilo nahrát, protože přístup k určitému obsahu je v tomto uživatelském profilu blokován.</string>
     <string name="podcast_load_error_not_reachable">Záznam se nepodařilo nahrát, protože se nepodařilo spojit se se serverem, nebo je adresa neplatná.</string>
     <string name="podcast_load_error_not_parseable">Záznam se nepodařilo nahrát, protože adresa neukazuje na platný kanál záznamu.</string>
     <string name="podcast_load_multiple_progress">%1$d z %2$d záznamů</string>
     <string name="podcast_load_multiple_error">Záznam\n\"%s\"\nse nepodařilo nahrát.</string>
     <string name="podcast_load_multiple_error_all">Všechn záznamy se nepodařilo nahrát. Prověřte, prosím, své internetové spojení!</string>
+    <string name="podcast_block_explicit">Blokovat záznamy s určitým obsahem</string>
     <string name="episode_none">Žádné díly v tomto záznamu</string>
     <string name="episode_none_all_podcasts">Žádné díly</string>
     <string name="episode_no_description">Není dostupný žádný popis.</string>
@@ -68,13 +70,15 @@
         <item quantity="other">%d dílů</item>
     </plurals>
     <string name="episodes_sort_toggle">Obrátit pořadí</string>
-    <string name="auth_required">Vyžadována autorizace</string>
+    <string name="auth">Oprávnění</string>
+    <string name="auth_edit">Upravit oprávnění</string>
     <string name="auth_username">Uživatleské jméno</string>
     <string name="auth_password">Heslo</string>
     <string name="auth_submit">Potvrdit</string>
     <string name="file_select">Vybrat</string>
     <string name="file_select_file">Vybrat soubor</string>
     <string name="file_select_folder">Vybrat složku</string>
+    <string name="file_select_folder_empty">Tato složka je prázdná.</string>
     <string name="file_select_access_denied">Přístup odepřen!</string>
     <string name="opml_import">Zavést OPML</string>
     <string name="opml_import_failed">Zavedení OPML se nezdařilo</string>
@@ -87,6 +91,7 @@
     <string name="suggestion_watch">Dívat se</string>
     <string name="suggestion_confirm_explicit">Tento záznam je označen jako výslovný. Opravdu jej chcete přidat do seznamu svých záznamů?</string>
     <string name="suggestions_none">Žádné návrhy. Změňte, prosím, své filtry.</string>
+    <string name="suggestions_reset_filters">Nastavit filtry znovu</string>
     <string name="suggestions_load_error">Návrhy se nepodařilo nahrát. Prověřte, prosím, své internetové spojení!</string>
     <string name="suggestions_send">Odeslat návrh záznamu</string>
     <string name="preferences">Nastavení</string>

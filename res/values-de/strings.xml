@@ -52,11 +52,13 @@
     <string name="podcast_enter_url_here">Podcast-Adresse hier einfügen</string>
     <string name="podcast_load_error">Der Podcast kann nicht geladen werden!</string>
     <string name="podcast_load_error_access_denied">Der Podcast kann nicht geladen werden, der Zugriff wurde verweigert.</string>
+    <string name="podcast_load_error_explicit">Der Podcast konnte nicht geladen werden, da in diesem Profil nicht jugendfreie Inhalte gesperrt sind.</string>
     <string name="podcast_load_error_not_reachable">Der Podcast kann nicht geladen werden, da der Server nicht erreicht wurde oder die Adresse ungültig ist.</string>
     <string name="podcast_load_error_not_parseable">Der Podcast kann nicht geladen werden, da die Adresse nicht auf einen gültigen Podcast-Feed zeigt.</string>
     <string name="podcast_load_multiple_progress">%1$d von %2$d Podcasts</string>
     <string name="podcast_load_multiple_error">Der Podcast\n\"%s\"\nkonnte nicht geladen werden.</string>
     <string name="podcast_load_multiple_error_all">Keiner der Podcasts kann geladen werden, bitte prüfen Sie Ihre Internetverbindung!</string>
+    <string name="podcast_block_explicit">Podcasts mit nicht jugendfreien Inhalten blockieren</string>
     <string name="episode_none">Dieser Podcast enthält keine Episoden</string>
     <string name="episode_none_all_podcasts">Keine Episoden</string>
     <string name="episode_no_description">Keine Beschreibung verfügbar.</string>
@@ -66,13 +68,15 @@
         <item quantity="other">%d Episoden</item>
     </plurals>
     <string name="episodes_sort_toggle">Reihenfolge umdrehen</string>
-    <string name="auth_required">Anmeldung erforderlich</string>
+    <string name="auth">Anmeldung</string>
+    <string name="auth_edit">Anmeldung bearbeiten</string>
     <string name="auth_username">Benutzername</string>
     <string name="auth_password">Passwort</string>
     <string name="auth_submit">Senden</string>
     <string name="file_select">Auswählen</string>
     <string name="file_select_file">Datei wählen</string>
     <string name="file_select_folder">Ordner wählen</string>
+    <string name="file_select_folder_empty">Dieser Ordner ist leer.</string>
     <string name="file_select_access_denied">Zugriff verweigert!</string>
     <string name="opml_import">OPML-Import</string>
     <string name="opml_import_failed">OPML-Import fehlgeschlagen</string>
@@ -85,6 +89,7 @@
     <string name="suggestion_watch">Anschauen</string>
     <string name="suggestion_confirm_explicit">Dieser Podcast hat Inhalte, die als nicht jugendfrei markiert sind. Wollen Sie ihn trotzdem hinzufügen?</string>
     <string name="suggestions_none">Keine Empfehlungen, bitte ändern Sie Ihre Filter.</string>
+    <string name="suggestions_reset_filters">Filter zurücksetzen</string>
     <string name="suggestions_load_error">Empfehlungen können nicht geladen werden, bitte prüfen Sie Ihre Internetverbindung!</string>
     <string name="suggestions_send">Podcast empfehlen</string>
     <string name="preferences">Einstellungen</string>
