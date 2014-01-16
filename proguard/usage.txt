@@ -908,6 +908,8 @@ net.alliknow.podcatcher.EpisodeListActivity:
     public static final java.lang.String PODCAST_URL_KEY
 net.alliknow.podcatcher.FirstRunActivity:
     private static final java.lang.String FIRST_RUN_FRAGMENT_TAG
+net.alliknow.podcatcher.GetRestrictionsReceiver:
+    public static final java.lang.String BLOCK_EXPLICIT_RESTRICTION_KEY
 net.alliknow.podcatcher.ImportPodcastActivity:
     private static final int LAUNCHER_FLAGS
     private static final java.lang.String HTTP
@@ -973,7 +975,7 @@ net.alliknow.podcatcher.model.tasks.remote.LoadPodcastLogoTask:
     private static final int LOGO_DIMENSION
     private static final java.lang.String CACHE_DIR
     private static final java.lang.String CACHED_LOGO_ENDING
-    99:100:public void setMaxAge(int)
+    100:101:public void setMaxAge(int)
 net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask:
     public static final int MAX_RSS_FILE_SIZE
 net.alliknow.podcatcher.model.tasks.remote.LoadRemoteFileTask:
@@ -986,8 +988,9 @@ net.alliknow.podcatcher.model.tasks.remote.LoadSuggestionsTask:
     private static final java.lang.String SOURCE
     private static final java.lang.String EXPLICIT_POSITIVE_STRING
 net.alliknow.podcatcher.model.types.Episode:
+    83:83:public int getPositionInPodcast()
+net.alliknow.podcatcher.model.types.FeedEntity:
     private static final java.lang.String DATE_FORMAT_TEMPLATE
-    private static final java.lang.String DATE_FORMAT_TEMPLATE2
 net.alliknow.podcatcher.model.types.Progress:
     private static final int PROGRESS_WAIT
     private static final int PROGRESS_CONNECT
@@ -1009,6 +1012,7 @@ net.alliknow.podcatcher.services.PlayEpisodeService:
 net.alliknow.podcatcher.services.PodcatcherRCClient:
     private static final int SUPPORTED_TRANSPORTS
 net.alliknow.podcatcher.view.EpisodeListItemView:
+    private static final java.lang.String NO_TITLE
     private static final java.lang.String NO_DATE
     private static final java.lang.String SEPARATOR
 net.alliknow.podcatcher.view.SuggestionListItemView:
@@ -1026,10 +1030,12 @@ net.alliknow.podcatcher.view.fragments.EpisodeFragment:
     private static final java.lang.String SEPARATOR
 net.alliknow.podcatcher.view.fragments.FirstRunFragment:
     private static final java.lang.String PODCATCHER_HELPSITE
+net.alliknow.podcatcher.view.fragments.SelectFileFragment:
+    private static final java.lang.String SELECTED_POSITION_KEY
 net.alliknow.podcatcher.view.fragments.SuggestionFragment:
     public static final java.lang.String FILTER_WILDCARD
-    private static final java.lang.String SUGGESTION_MAIL_ADDRESS
-    private static final java.lang.String SUGGESTION_MAIL_SUBJECT
+    public static final java.lang.String SUGGESTION_MAIL_ADDRESS
+    public static final java.lang.String SUGGESTION_MAIL_SUBJECT
     private static final java.lang.String LANGUAGE_FILTER_POSITION
     private static final java.lang.String GENRE_FILTER_POSITION
     private static final java.lang.String MEDIATYPE_FILTER_POSITION
