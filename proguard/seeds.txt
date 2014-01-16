@@ -77,6 +77,8 @@ com.podcatcher.deluxe.video.FirstRunActivity
 com.podcatcher.deluxe.video.FirstRunActivity: FirstRunActivity()
 com.podcatcher.deluxe.video.FullscreenVideoActivity
 com.podcatcher.deluxe.video.FullscreenVideoActivity: FullscreenVideoActivity()
+com.podcatcher.deluxe.video.GetRestrictionsReceiver
+com.podcatcher.deluxe.video.GetRestrictionsReceiver: GetRestrictionsReceiver()
 com.podcatcher.deluxe.video.ImportOpmlActivity
 com.podcatcher.deluxe.video.ImportOpmlActivity: ImportOpmlActivity()
 com.podcatcher.deluxe.video.ImportPodcastActivity
@@ -112,7 +114,6 @@ com.podcatcher.deluxe.video.R$color: int text_error
 com.podcatcher.deluxe.video.R$color: int text_secondary
 com.podcatcher.deluxe.video.R$color: int theme_dark
 com.podcatcher.deluxe.video.R$color: int theme_light
-com.podcatcher.deluxe.video.R$color: int transparent
 com.podcatcher.deluxe.video.R$dimen: int divider_width
 com.podcatcher.deluxe.video.R$dimen: int episode_view_padding
 com.podcatcher.deluxe.video.R$dimen: int font_size_default
@@ -128,6 +129,7 @@ com.podcatcher.deluxe.video.R$drawable: int button_orange
 com.podcatcher.deluxe.video.R$drawable: int button_red
 com.podcatcher.deluxe.video.R$drawable: int default_podcast_logo
 com.podcatcher.deluxe.video.R$drawable: int ic_checkmark
+com.podcatcher.deluxe.video.R$drawable: int ic_email
 com.podcatcher.deluxe.video.R$drawable: int ic_file
 com.podcatcher.deluxe.video.R$drawable: int ic_file_folder
 com.podcatcher.deluxe.video.R$drawable: int ic_file_up
@@ -146,8 +148,10 @@ com.podcatcher.deluxe.video.R$drawable: int ic_media_resume_dark
 com.podcatcher.deluxe.video.R$drawable: int ic_media_rewind
 com.podcatcher.deluxe.video.R$drawable: int ic_media_stop
 com.podcatcher.deluxe.video.R$drawable: int ic_menu_add
+com.podcatcher.deluxe.video.R$drawable: int ic_menu_authorization
 com.podcatcher.deluxe.video.R$drawable: int ic_menu_delete
 com.podcatcher.deluxe.video.R$drawable: int ic_menu_download
+com.podcatcher.deluxe.video.R$drawable: int ic_menu_email
 com.podcatcher.deluxe.video.R$drawable: int ic_menu_export
 com.podcatcher.deluxe.video.R$drawable: int ic_menu_filter
 com.podcatcher.deluxe.video.R$drawable: int ic_menu_filter_reverse
@@ -165,6 +169,7 @@ com.podcatcher.deluxe.video.R$drawable: int ic_suggestion_explicit
 com.podcatcher.deluxe.video.R$drawable: int ic_suggestion_featured
 com.podcatcher.deluxe.video.R$drawable: int progress_horizontal
 com.podcatcher.deluxe.video.R$id: int about_menuitem
+com.podcatcher.deluxe.video.R$id: int add_podcast_button
 com.podcatcher.deluxe.video.R$id: int add_podcast_progress
 com.podcatcher.deluxe.video.R$id: int cancel_button
 com.podcatcher.deluxe.video.R$id: int color_picker_view
@@ -175,6 +180,8 @@ com.podcatcher.deluxe.video.R$id: int current_path
 com.podcatcher.deluxe.video.R$id: int divider_first
 com.podcatcher.deluxe.video.R$id: int divider_second
 com.podcatcher.deluxe.video.R$id: int download_icon
+com.podcatcher.deluxe.video.R$id: int edit_auth_contextmenuitem
+com.podcatcher.deluxe.video.R$id: int empty
 com.podcatcher.deluxe.video.R$id: int episode
 com.podcatcher.deluxe.video.R$id: int episode_add_to_playlist_contextmenuitem
 com.podcatcher.deluxe.video.R$id: int episode_description
@@ -226,6 +233,7 @@ com.podcatcher.deluxe.video.R$id: int playlist_position
 com.podcatcher.deluxe.video.R$id: int podcast_add_button
 com.podcatcher.deluxe.video.R$id: int podcast_add_menuitem
 com.podcatcher.deluxe.video.R$id: int podcast_image
+com.podcatcher.deluxe.video.R$id: int podcast_image_divider
 com.podcatcher.deluxe.video.R$id: int podcast_list
 com.podcatcher.deluxe.video.R$id: int podcast_logo
 com.podcatcher.deluxe.video.R$id: int podcast_remove_contextmenuitem
@@ -235,6 +243,7 @@ com.podcatcher.deluxe.video.R$id: int progress
 com.podcatcher.deluxe.video.R$id: int progress_bar
 com.podcatcher.deluxe.video.R$id: int progress_bar_top
 com.podcatcher.deluxe.video.R$id: int progress_text
+com.podcatcher.deluxe.video.R$id: int reset_filters_button
 com.podcatcher.deluxe.video.R$id: int resume_icon
 com.podcatcher.deluxe.video.R$id: int right
 com.podcatcher.deluxe.video.R$id: int right_column
@@ -244,16 +253,17 @@ com.podcatcher.deluxe.video.R$id: int sort_menuitem
 com.podcatcher.deluxe.video.R$id: int state_icon
 com.podcatcher.deluxe.video.R$id: int submit_button
 com.podcatcher.deluxe.video.R$id: int subtitle
+com.podcatcher.deluxe.video.R$id: int suggest_podcast_contextmenuitem
 com.podcatcher.deluxe.video.R$id: int suggestion_add_button
 com.podcatcher.deluxe.video.R$id: int suggestion_description
 com.podcatcher.deluxe.video.R$id: int suggestion_featured
 com.podcatcher.deluxe.video.R$id: int suggestion_genre_select
 com.podcatcher.deluxe.video.R$id: int suggestion_language_select
 com.podcatcher.deluxe.video.R$id: int suggestion_list
+com.podcatcher.deluxe.video.R$id: int suggestion_list_empty
 com.podcatcher.deluxe.video.R$id: int suggestion_list_progress
 com.podcatcher.deluxe.video.R$id: int suggestion_meta
 com.podcatcher.deluxe.video.R$id: int suggestion_name
-com.podcatcher.deluxe.video.R$id: int suggestion_none
 com.podcatcher.deluxe.video.R$id: int suggestion_send
 com.podcatcher.deluxe.video.R$id: int suggestion_type_select
 com.podcatcher.deluxe.video.R$id: int surface
@@ -270,17 +280,19 @@ com.podcatcher.deluxe.video.R$layout: int dialog_color_picker
 com.podcatcher.deluxe.video.R$layout: int episode
 com.podcatcher.deluxe.video.R$layout: int episode_list
 com.podcatcher.deluxe.video.R$layout: int episode_list_item
-com.podcatcher.deluxe.video.R$layout: int file_dialog
+com.podcatcher.deluxe.video.R$layout: int file_list
 com.podcatcher.deluxe.video.R$layout: int file_list_item
 com.podcatcher.deluxe.video.R$layout: int first_run
 com.podcatcher.deluxe.video.R$layout: int fullscreen_video
 com.podcatcher.deluxe.video.R$layout: int main
 com.podcatcher.deluxe.video.R$layout: int player
 com.podcatcher.deluxe.video.R$layout: int podcast_list
+com.podcatcher.deluxe.video.R$layout: int podcast_list_empty
 com.podcatcher.deluxe.video.R$layout: int podcast_list_item
 com.podcatcher.deluxe.video.R$layout: int progress
 com.podcatcher.deluxe.video.R$layout: int progress_horizontal
 com.podcatcher.deluxe.video.R$layout: int suggestion_list
+com.podcatcher.deluxe.video.R$layout: int suggestion_list_empty
 com.podcatcher.deluxe.video.R$layout: int suggestion_list_item
 com.podcatcher.deluxe.video.R$menu: int episode
 com.podcatcher.deluxe.video.R$menu: int episode_list
@@ -297,8 +309,9 @@ com.podcatcher.deluxe.video.R$plurals: int episodes_new
 com.podcatcher.deluxe.video.R$plurals: int podcasts
 com.podcatcher.deluxe.video.R$string: int about
 com.podcatcher.deluxe.video.R$string: int app_name
+com.podcatcher.deluxe.video.R$string: int auth
+com.podcatcher.deluxe.video.R$string: int auth_edit
 com.podcatcher.deluxe.video.R$string: int auth_password
-com.podcatcher.deluxe.video.R$string: int auth_required
 com.podcatcher.deluxe.video.R$string: int auth_submit
 com.podcatcher.deluxe.video.R$string: int auth_username
 com.podcatcher.deluxe.video.R$string: int cancel
@@ -326,6 +339,7 @@ com.podcatcher.deluxe.video.R$string: int file_select
 com.podcatcher.deluxe.video.R$string: int file_select_access_denied
 com.podcatcher.deluxe.video.R$string: int file_select_file
 com.podcatcher.deluxe.video.R$string: int file_select_folder
+com.podcatcher.deluxe.video.R$string: int file_select_folder_empty
 com.podcatcher.deluxe.video.R$string: int first_run_add
 com.podcatcher.deluxe.video.R$string: int first_run_text
 com.podcatcher.deluxe.video.R$string: int first_run_title
@@ -353,18 +367,20 @@ com.podcatcher.deluxe.video.R$string: int playlist_remove
 com.podcatcher.deluxe.video.R$string: int playlist_swipe_reorder
 com.podcatcher.deluxe.video.R$string: int podcast_add_button
 com.podcatcher.deluxe.video.R$string: int podcast_add_title
+com.podcatcher.deluxe.video.R$string: int podcast_block_explicit
 com.podcatcher.deluxe.video.R$string: int podcast_enter_url_here
 com.podcatcher.deluxe.video.R$string: int podcast_image
 com.podcatcher.deluxe.video.R$string: int podcast_list_fragment_tag
 com.podcatcher.deluxe.video.R$string: int podcast_load_error
 com.podcatcher.deluxe.video.R$string: int podcast_load_error_access_denied
+com.podcatcher.deluxe.video.R$string: int podcast_load_error_explicit
 com.podcatcher.deluxe.video.R$string: int podcast_load_error_not_parseable
 com.podcatcher.deluxe.video.R$string: int podcast_load_error_not_reachable
 com.podcatcher.deluxe.video.R$string: int podcast_load_multiple_error
 com.podcatcher.deluxe.video.R$string: int podcast_load_multiple_error_all
+com.podcatcher.deluxe.video.R$string: int podcast_load_multiple_error_some
 com.podcatcher.deluxe.video.R$string: int podcast_load_multiple_progress
 com.podcatcher.deluxe.video.R$string: int podcast_none
-com.podcatcher.deluxe.video.R$string: int podcast_none_long
 com.podcatcher.deluxe.video.R$string: int podcast_none_selected
 com.podcatcher.deluxe.video.R$string: int podcast_select_all
 com.podcatcher.deluxe.video.R$string: int pref_auto_delete_summary
@@ -391,6 +407,7 @@ com.podcatcher.deluxe.video.R$string: int suggestion_watch
 com.podcatcher.deluxe.video.R$string: int suggestions
 com.podcatcher.deluxe.video.R$string: int suggestions_load_error
 com.podcatcher.deluxe.video.R$string: int suggestions_none
+com.podcatcher.deluxe.video.R$string: int suggestions_reset_filters
 com.podcatcher.deluxe.video.R$string: int suggestions_send
 com.podcatcher.deluxe.video.R$string: int wait
 com.podcatcher.deluxe.video.R$string: int wildcard
