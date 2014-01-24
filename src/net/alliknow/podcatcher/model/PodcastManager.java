@@ -232,7 +232,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             loadLogo(podcast, true);
 
         // Run podcast update task every five minutes
-        final int fiveMinutes = 1000 * 60 * 60 * 5;
+        final int fiveMinutes = 1000 * 60 * 5;
         final boolean isSelectAllOnStart = PreferenceManager.getDefaultSharedPreferences(
                 podcatcher.getApplicationContext()).getBoolean(
                 SettingsActivity.KEY_SELECT_ALL_ON_START, false);
