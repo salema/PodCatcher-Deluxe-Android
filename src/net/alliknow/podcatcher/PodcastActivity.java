@@ -22,6 +22,7 @@ import android.app.FragmentManager.OnBackStackChangedListener;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
@@ -114,7 +115,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         // Check if podcast list is available - if so, set it
         List<Podcast> podcastList = podcastManager.getPodcastList();
         if (podcastList != null) {
-            onPodcastListLoaded(podcastList);
+            onPodcastListLoaded(podcastList, null);
 
             // We only reset our state if the podcast list is available, because
             // otherwise we will not be able to select anything.
@@ -289,7 +290,7 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     }
 
     @Override
-    public void onPodcastListLoaded(List<Podcast> podcastList) {
+    public void onPodcastListLoaded(List<Podcast> podcastList, Uri location) {
         // Make podcast list show
         podcastListFragment.setPodcastList(podcastList);
 
@@ -351,6 +352,11 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                     startActivity(new Intent(this, AddPodcastActivity.class));
             }
         }
+    }
+
+    @Override
+    public void onPodcastListLoadFailed(Uri inputFile, Exception error) {
+        // Nothing to do here
     }
 
     @Override

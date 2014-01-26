@@ -115,7 +115,8 @@
     <string name="opml_import">Importación OPML</string>
     <string name="opml_import_failed">La importación ha fallado</string>
     <string name="opml_export">Exportación OPML</string>
-    <string name="opml_export_success">Archivo OPML almacenado en\n%s</string>
+    <string name="opml_export_success">Archivo OPML almacenado</string>
+    <string name="opml_export_success_at">Archivo OPML almacenado en\n%s</string>
     <string name="opml_export_failed">La exportación ha fallado</string>
     <string name="suggestions">Sugerencias</string>
     <string name="suggested_podcasts">Podcasts recomendados</string>

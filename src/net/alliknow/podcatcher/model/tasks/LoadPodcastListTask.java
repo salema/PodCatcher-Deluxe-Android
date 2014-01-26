@@ -17,10 +17,12 @@
 
 package net.alliknow.podcatcher.model.tasks;
 
+import static net.alliknow.podcatcher.model.PodcastManager.OPML_FILENAME;
+
 import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.Html;
-import android.util.Log;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
 import net.alliknow.podcatcher.model.PodcastManager;
@@ -33,30 +35,27 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 /**
- * Loads the default podcast list from the file system asynchronously. On
- * failure, an empty podcast list is returned.
+ * Loads the default podcast list from the file system asynchronously. Use
+ * {@link OnLoadPodcastListListener} as a call-back for this task.
  */
 public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>> {
 
-    /** Our context */
-    private Context context;
     /** The listener callback */
-    private OnLoadPodcastListListener listener;
-
-    /** Member to measure performance */
-    private Date startTime;
+    private final OnLoadPodcastListListener listener;
+    /** Our context */
+    private final Context context;
 
     /** The file that we read from. */
-    protected File importFile;
+    protected Uri importFile;
+    /** The exception that might have been occurred */
+    protected Exception exception;
 
     /**
      * Create new task.
@@ -70,6 +69,9 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
     public LoadPodcastListTask(Context context, OnLoadPodcastListListener listener) {
         this.context = context;
         this.listener = listener;
+
+        // This is the default case, read from the app's private dir
+        this.importFile = Uri.fromFile(new File(context.getFilesDir(), OPML_FILENAME));
     }
 
     /**
@@ -79,25 +81,19 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
      * 
      * @param location The location to read from.
      */
-    public void setCustomLocation(File location) {
+    public void setCustomLocation(Uri location) {
         this.importFile = location;
     }
 
     @Override
     protected List<Podcast> doInBackground(Void... params) {
-        // Record start time
-        this.startTime = new Date();
-
         // Create resulting data structure and file stream
-        List<Podcast> result = new ArrayList<Podcast>();
+        final List<Podcast> result = new ArrayList<Podcast>();
         InputStream fileStream = null;
 
         try {
-            // 1. Open the podcast file
-            if (importFile == null)
-                fileStream = context.openFileInput(PodcastManager.OPML_FILENAME);
-            else
-                fileStream = new FileInputStream(importFile);
+            // 1. Open the OPML file
+            fileStream = context.getContentResolver().openInputStream(importFile);
 
             // 2. Build parser
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
@@ -130,16 +126,17 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
 
             // 4. Sort
             Collections.sort(result);
-        } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Load failed for podcast list!", e);
+        } catch (Exception ex) {
+            this.exception = ex;
+
+            cancel(true);
         } finally {
             // Make sure we close the file stream
             if (fileStream != null)
                 try {
                     fileStream.close();
                 } catch (IOException e) {
-                    /* Nothing we can do here */
-                    Log.w(getClass().getSimpleName(), "Failed to close podcast file stream!", e);
+                    // Nothing we can do here
                 }
         }
 
@@ -148,13 +145,14 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
 
     @Override
     protected void onPostExecute(List<Podcast> result) {
-        Log.i(getClass().getSimpleName(), "Added " + result.size() + " podcast(s) to list in "
-                + (new Date().getTime() - startTime.getTime()) + "ms.");
-
         if (listener != null)
-            listener.onPodcastListLoaded(result);
-        else
-            Log.w(getClass().getSimpleName(), "Podcast list loaded, but no listener attached");
+            listener.onPodcastListLoaded(result, importFile);
+    }
+
+    @Override
+    protected void onCancelled(List<Podcast> result) {
+        if (listener != null)
+            listener.onPodcastListLoadFailed(importFile, exception);
     }
 
     /**
@@ -187,8 +185,9 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
             result.setUsername(parser.getAttributeValue("", OPML.EXTRA_USER));
             result.setPassword(parser.getAttributeValue("", OPML.EXTRA_PASS));
         } catch (XmlPullParserException e) {
-            Log.w(getClass().getSimpleName(), "OPML outline not parsable!", e);
-        } catch (IOException e) { /* pass */
+            /* Bad outline, skip */
+        } catch (IOException e) {
+            /* pass */
         }
 
         return result;

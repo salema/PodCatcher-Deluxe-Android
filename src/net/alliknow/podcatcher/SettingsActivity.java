@@ -64,13 +64,12 @@ public class SettingsActivity extends BaseActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent result) {
         // This is used to fetch the result from the select folder dialog. The
         // result is forwarded to the preference object via the fragment.
         if (resultCode == RESULT_OK && requestCode == DownloadFolderPreference.REQUEST_CODE)
-            if (settingsFragment != null && data != null) {
-                final File folder = new File(data
-                        .getStringExtra(SelectFileActivity.RESULT_PATH_KEY));
+            if (settingsFragment != null && result != null) {
+                final File folder = new File(result.getData().getPath());
 
                 // Only accept folder we can write to.
                 if (folder.canWrite())

@@ -19,6 +19,7 @@ package net.alliknow.podcatcher.model;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -211,7 +212,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     }
 
     @Override
-    public void onPodcastListLoaded(List<Podcast> list) {
+    public void onPodcastListLoaded(List<Podcast> list, Uri input) {
         // Set the member
         this.podcastList = list;
         this.podcastListChanged = false;
@@ -225,7 +226,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             Log.w(getClass().getSimpleName(), "Podcast list loaded, but no listeners set.");
         else
             for (OnLoadPodcastListListener listener : loadPodcastListListeners)
-                listener.onPodcastListLoaded(getPodcastList());
+                listener.onPodcastListLoaded(getPodcastList(), input);
 
         // Go load all podcast logo available offline
         for (Podcast podcast : podcastList)
@@ -239,6 +240,13 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         new Timer().schedule(new PodcastUpdateTask(),
                 isSelectAllOnStart || podcatcher.isInDebugMode() ?
                         fiveMinutes : 0, fiveMinutes);
+    }
+
+    @Override
+    public void onPodcastListLoadFailed(Uri inputFile, Exception error) {
+        // This should not happen, the app's private OPML file could not be
+        // read. We simply push an empty list and pretend things are fine.
+        onPodcastListLoaded(new ArrayList<Podcast>(), inputFile);
     }
 
     /**
@@ -502,7 +510,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     public void saveState() {
         // Store podcast list if dirty
         if (podcastListChanged && podcastList != null) {
-            final StorePodcastListTask task = new StorePodcastListTask(podcatcher);
+            final StorePodcastListTask task = new StorePodcastListTask(podcatcher, null);
             task.setWriteAuthorization(true);
             task.execute(new ArrayList<Podcast>(podcastList));
 
