@@ -32,7 +32,6 @@ import android.support.v4.app.NotificationCompat;
 import net.alliknow.podcatcher.BaseActivity.ContentMode;
 import net.alliknow.podcatcher.EpisodeListActivity;
 import net.alliknow.podcatcher.PodcastActivity;
-import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
@@ -49,9 +48,14 @@ public class PlayEpisodeNotification {
     /** The single instance */
     private static PlayEpisodeNotification instance;
     /** The context the notifications live in */
-    private Context context;
+    private final Context context;
 
-    /** The actual intent that brings back the app */
+    /** Large icon width for the device (used for down-scaling) */
+    private final int largeIconWidth;
+    /** Large icon height for the device (used for down-scaling) */
+    private final int largeIconHeight;
+
+    /** The intent that brings back the app */
     private final Intent appIntent;
     /** The pending intents for the actions */
     private final PendingIntent stopPendingIntent;
@@ -64,6 +68,12 @@ public class PlayEpisodeNotification {
 
     private PlayEpisodeNotification(Context context) {
         this.context = context;
+
+        final Resources res = context.getResources();
+        this.largeIconWidth =
+                (int) res.getDimension(android.R.dimen.notification_large_icon_width);
+        this.largeIconHeight =
+                (int) res.getDimension(android.R.dimen.notification_large_icon_height);
 
         // Create all the static intents we need for every build
         appIntent = new Intent(context, PodcastActivity.class)
@@ -133,11 +143,13 @@ public class PlayEpisodeNotification {
                 .setWhen(0)
                 .setProgress(duration, position, false)
                 .setOngoing(true);
+        // Add large image if available
+        if (episode.getPodcast().isLogoCached())
+            notificationBuilder.setLargeIcon(getScaledBitmap(episode.getPodcast()));
 
         // Add stop action
         notificationBuilder.addAction(R.drawable.ic_media_stop,
                 context.getString(R.string.stop), stopPendingIntent);
-
         // Add other actions according to playback state
         if (paused)
             notificationBuilder.addAction(R.drawable.ic_media_resume,
@@ -145,13 +157,6 @@ public class PlayEpisodeNotification {
         else
             notificationBuilder.addAction(R.drawable.ic_media_pause,
                     context.getString(R.string.pause), tooglePendingIntent);
-
-        // Apply the notification style
-        if (isLargeDevice() && isPodcastLogoAvailable(episode))
-            notificationBuilder.setStyle(new NotificationCompat.BigPictureStyle()
-                    .bigPicture(episode.getPodcast().getLogo()));
-        else if (isPodcastLogoAvailable(episode))
-            notificationBuilder.setLargeIcon(getScaledBitmap(episode.getPodcast()));
 
         return notificationBuilder.build();
     }
@@ -161,7 +166,7 @@ public class PlayEpisodeNotification {
      * rebuild it leaving all the other data intact. Only call this after having
      * called one of the build() methods before.
      * 
-     * @param position The new progrss position.
+     * @param position The new progress position.
      * @param duration The length of the current episode.
      * @return The updated notification to display.
      */
@@ -171,25 +176,12 @@ public class PlayEpisodeNotification {
         return notificationBuilder.build();
     }
 
-    private boolean isPodcastLogoAvailable(Episode episode) {
-        return episode.getPodcast().isLogoCached();
-    }
-
-    private boolean isLargeDevice() {
-        return context.getResources().getConfiguration().smallestScreenWidthDp >= Podcatcher.MIN_PIXEL_LARGE;
-    }
-
     private Bitmap getScaledBitmap(Podcast podcast) {
         final String cacheKey = podcast.getUrl();
 
-        if (!bitmapCache.containsKey(cacheKey)) {
-            final Resources res = context.getResources();
-            int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
-            int width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
-
-            bitmapCache.put(cacheKey,
-                    Bitmap.createScaledBitmap(podcast.getLogo(), width, height, false));
-        }
+        if (!bitmapCache.containsKey(cacheKey))
+            bitmapCache.put(cacheKey, Bitmap.createScaledBitmap(podcast.getLogo(),
+                    largeIconWidth, largeIconHeight, false));
 
         return bitmapCache.get(cacheKey);
     }

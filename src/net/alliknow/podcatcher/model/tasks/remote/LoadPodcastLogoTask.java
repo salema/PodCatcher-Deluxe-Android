@@ -48,7 +48,7 @@ import java.util.Date;
 public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 
     /** The maximum size we sample podcast logos down to */
-    private static final int LOGO_DIMENSION = 250;
+    private static final int LOGO_DIMENSION = 500;
     /** The name of the podcast logo cache directory */
     private static final String CACHE_DIR = "logoCache";
     /** The file name ending for cached logos */
