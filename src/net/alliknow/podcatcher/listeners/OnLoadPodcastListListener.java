@@ -17,6 +17,8 @@
 
 package net.alliknow.podcatcher.listeners;
 
+import android.net.Uri;
+
 import net.alliknow.podcatcher.model.types.Podcast;
 
 import java.util.List;
@@ -32,5 +34,13 @@ public interface OnLoadPodcastListListener {
      * 
      * @param podcastList Podcast list loaded.
      */
-    public void onPodcastListLoaded(List<Podcast> podcastList);
+    public void onPodcastListLoaded(List<Podcast> podcastList, Uri inputFile);
+
+    /**
+     * Called on failure.
+     * 
+     * @param inputFile The file that failed to load as a podcast list.
+     * @param error The exception that occurred when trying to load the list
+     */
+    public void onPodcastListLoadFailed(Uri inputFile, Exception error);
 }

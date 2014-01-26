@@ -17,9 +17,10 @@
 
 package net.alliknow.podcatcher.listeners;
 
+import android.net.Uri;
+
 import net.alliknow.podcatcher.model.types.Podcast;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -32,17 +33,17 @@ public interface OnStorePodcastListListener {
      * Called on successful completion.
      * 
      * @param podcastList Podcast list stored.
-     * @param outputFile The file the list was written to.
+     * @param outputFile The destination the list was written to.
      */
-    public void onPodcastListStored(List<Podcast> podcastList, File outputFile);
+    public void onPodcastListStored(List<Podcast> podcastList, Uri outputFile);
 
     /**
      * Called on failure.
      * 
      * @param podcastList Podcast list attempted to store.
-     * @param outputFile The file the list was not written to.
+     * @param outputFile The destination the list was not written to.
      * @param exception The reason for the failure.
      */
-    public void onPodcastListStoreFailed(List<Podcast> podcastList, File outputFile,
+    public void onPodcastListStoreFailed(List<Podcast> podcastList, Uri outputFile,
             Exception exception);
 }

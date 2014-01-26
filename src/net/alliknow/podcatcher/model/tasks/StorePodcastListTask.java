@@ -17,9 +17,11 @@
 
 package net.alliknow.podcatcher.model.tasks;
 
+import static net.alliknow.podcatcher.model.PodcastManager.OPML_FILENAME;
+
 import android.content.Context;
+import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnStorePodcastListListener;
@@ -29,6 +31,7 @@ import net.alliknow.podcatcher.model.types.Podcast;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -42,37 +45,24 @@ import java.util.List;
  */
 public class StorePodcastListTask extends StoreFileTask<List<Podcast>> {
 
-    /** Our context */
-    protected Context context;
     /** The call-back */
-    protected OnStorePodcastListListener listener;
+    protected final OnStorePodcastListListener listener;
+    /** Our context */
+    protected final Context context;
+    /** Content of OPML file title tag */
+    protected final String opmlFileTitle;
 
     /** The podcast list to store */
     protected List<Podcast> podcastList;
+    /** The file/dir that we write to. */
+    protected Uri exportLocation;
     /**
      * Flag to indicate whether the task should write authorization information
      * to the resulting file.
      */
     protected boolean writeAuthorization = false;
-    /** The file/dir that we write to. */
-    protected File exportLocation;
     /** The exception that might have been occurred */
     protected Exception exception;
-
-    /** Content of OPML file title tag */
-    protected String opmlFileTitle = "podcast file";
-
-    /**
-     * Create new task.
-     * 
-     * @param context Context to get file handle from (not <code>null</code>).
-     * @see PodcastManager#OPML_FILENAME
-     */
-    public StorePodcastListTask(Context context) {
-        this.context = context;
-
-        opmlFileTitle = context.getString(R.string.app_name) + " " + opmlFileTitle;
-    }
 
     /**
      * Create new task with a call-back attached.
@@ -82,9 +72,12 @@ public class StorePodcastListTask extends StoreFileTask<List<Podcast>> {
      * @see PodcastManager#OPML_FILENAME
      */
     public StorePodcastListTask(Context context, OnStorePodcastListListener listener) {
-        this(context);
-
+        this.context = context;
         this.listener = listener;
+
+        // This is the default case, write to the private app directory
+        this.exportLocation = Uri.fromFile(new File(context.getFilesDir(), OPML_FILENAME));
+        this.opmlFileTitle = context.getString(R.string.app_name) + " podcast file";
     }
 
     /**
@@ -94,7 +87,7 @@ public class StorePodcastListTask extends StoreFileTask<List<Podcast>> {
      * 
      * @param location The location to write to.
      */
-    public void setCustomLocation(File location) {
+    public void setCustomLocation(Uri location) {
         this.exportLocation = location;
     }
 
@@ -116,17 +109,17 @@ public class StorePodcastListTask extends StoreFileTask<List<Podcast>> {
 
         try {
             // 1. Open the file and get a writer
-            // Store to the default location if nothing else was set
-            if (exportLocation == null)
-                exportLocation = context.getFilesDir();
-            // Make sure the required folders exist
-            exportLocation.mkdirs();
-            // Make sure we point to the actual file, not the dir
-            if (exportLocation.isDirectory())
-                exportLocation = new File(exportLocation, PodcastManager.OPML_FILENAME);
-            // Create the stream
-            OutputStream fileStream = new FileOutputStream(exportLocation);
-            // ... and finally the writer
+            OutputStream fileStream = null;
+            try {
+                fileStream = context.getContentResolver().openOutputStream(exportLocation);
+            } catch (FileNotFoundException fnfe) {
+                // As a fall-back, we try to write into the directory of
+                // the URI's path under the default name
+                exportLocation = Uri.fromFile(
+                        new File(exportLocation.getPath(), PodcastManager.OPML_FILENAME));
+                fileStream = new FileOutputStream(exportLocation.getPath());
+            }
+            // Finally get the writer
             writer = new BufferedWriter(new OutputStreamWriter(fileStream,
                     PodcastManager.OPML_FILE_ENCODING));
 
@@ -136,7 +129,6 @@ public class StorePodcastListTask extends StoreFileTask<List<Podcast>> {
                 writePodcast(podcast);
             writeFooter();
         } catch (Exception ex) {
-            Log.e(getClass().getSimpleName(), "Cannot store podcast OPML file", ex);
             this.exception = ex;
 
             cancel(true);
@@ -146,8 +138,7 @@ public class StorePodcastListTask extends StoreFileTask<List<Podcast>> {
                 try {
                     writer.close();
                 } catch (IOException e) {
-                    /* Nothing we can do here */
-                    Log.w(getClass().getSimpleName(), "Failed to close podcast file writer!", e);
+                    // Nothing we can do here
                 }
         }
 
