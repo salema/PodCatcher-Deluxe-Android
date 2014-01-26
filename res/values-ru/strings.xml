@@ -85,7 +85,8 @@
     <string name="opml_import">Импорт OPML</string>
     <string name="opml_import_failed">Не удалось импортировать OPML</string>
     <string name="opml_export">Экспорт OPML</string>
-    <string name="opml_export_success">OPML-файл сохранён по адресу\n%s</string>
+    <string name="opml_export_success">OPML-файл сохранён</string>
+    <string name="opml_export_success_at">OPML-файл сохранён по адресу\n%s</string>
     <string name="opml_export_failed">Не удалось экспортировать OPML</string>
     <string name="suggestions">Рекомендации</string>
     <string name="suggested_podcasts">Рекомендуемые подкасты</string>

@@ -18,6 +18,7 @@
 package net.alliknow.podcatcher;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
@@ -47,11 +48,11 @@ public class ScrapePodcastsActivity extends BaseActivity implements OnLoadPodcas
 
         List<Podcast> podcastList = podcastManager.getPodcastList();
         if (podcastList != null)
-            onPodcastListLoaded(podcastList);
+            onPodcastListLoaded(podcastList, null);
     }
 
     @Override
-    public void onPodcastListLoaded(List<Podcast> podcastList) {
+    public void onPodcastListLoaded(List<Podcast> podcastList, Uri location) {
         final ArrayList<String> names = new ArrayList<String>();
         final ArrayList<String> urls = new ArrayList<String>();
 
@@ -69,6 +70,11 @@ public class ScrapePodcastsActivity extends BaseActivity implements OnLoadPodcas
 
         // Make sure we stop here
         finish();
+    }
+
+    @Override
+    public void onPodcastListLoadFailed(Uri inputFile, Exception error) {
+        onPodcastListLoaded(new ArrayList<Podcast>(), inputFile);
     }
 
     @Override

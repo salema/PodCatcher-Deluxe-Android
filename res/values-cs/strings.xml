@@ -83,7 +83,8 @@
     <string name="opml_import">Zavést OPML</string>
     <string name="opml_import_failed">Zavedení OPML se nezdařilo</string>
     <string name="opml_export">Vyvést OPML</string>
-    <string name="opml_export_success">Soubor OPML uložen v\n%s</string>
+    <string name="opml_export_success">Soubor OPML uložen</string>
+    <string name="opml_export_success_at">Soubor OPML uložen v\n%s</string>
     <string name="opml_export_failed">Vyvedení OPML se nezdařilo</string>
     <string name="suggestions">Návrhy</string>
     <string name="suggested_podcasts">Navržené záznamy</string>
