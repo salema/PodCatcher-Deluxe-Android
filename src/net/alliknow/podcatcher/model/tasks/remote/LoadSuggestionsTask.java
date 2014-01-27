@@ -59,6 +59,8 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Suggestio
     private static final String SOURCE = "http://www.podcatcher-deluxe.com/podcast_suggestions.json";
     /** The text that marks isExplicit() == true */
     private static final String EXPLICIT_POSITIVE_STRING = "yes";
+    /** Our log tag */
+    private static final String TAG = "LoadSuggestionsTask";
 
     /** Flag to indicate the max age that would trigger re-load. */
     private int maxAge = 60 * 24 * 3;
@@ -104,8 +106,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Suggestio
                     return null; // Nothing more we could do here
                 }
             else {
-                Log.w(getClass().getSimpleName(), "Load failed for podcast suggestions file",
-                        throwable);
+                Log.d(TAG, "Load failed for podcast suggestions file", throwable);
 
                 cancel(true);
                 return null;
@@ -133,8 +134,8 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Suggestio
             // 2.4 Sort the result
             Collections.sort(result);
             publishProgress(Progress.DONE);
-        } catch (Exception e) {
-            Log.w(getClass().getSimpleName(), "Parse failed for podcast suggestions ", e);
+        } catch (Exception ex) {
+            Log.d(TAG, "Parse failed for podcast suggestions ", ex);
 
             cancel(true);
             return null;
@@ -147,9 +148,6 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Suggestio
     protected void onProgressUpdate(Progress... progress) {
         if (listener != null)
             listener.onSuggestionsLoadProgress(progress[0]);
-        else if (listener == null)
-            Log.w(getClass().getSimpleName(),
-                    "Suggestions progress update, but no listener attached");
     }
 
     @Override
@@ -157,8 +155,6 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Suggestio
         // Suggestions loaded successfully
         if (listener != null)
             listener.onSuggestionsLoaded(suggestions);
-        else
-            Log.w(getClass().getSimpleName(), "Suggestions loaded, but no listener attached");
     }
 
     @Override
@@ -166,9 +162,6 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Suggestio
         // Suggestions failed to load
         if (listener != null)
             listener.onSuggestionsLoadFailed();
-        else
-            Log.w(getClass().getSimpleName(),
-                    "Suggestions failed to load, but no listener attached");
     }
 
     /**
@@ -218,10 +211,12 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Suggestio
             suggestion.setExplicit(EXPLICIT_POSITIVE_STRING.equals(json.getString(JSON.EXPLICIT)
                     .toLowerCase(Locale.US)));
         } catch (JSONException e) {
-            Log.w(getClass().getSimpleName(), "JSON parsing failed for: " + suggestion, e);
+            Log.d(TAG, "JSON parsing failed for: " + suggestion, e);
+
             return null;
         } catch (IllegalArgumentException e) {
-            Log.w(getClass().getSimpleName(), "Enum value missing for: " + suggestion, e);
+            Log.d(TAG, "Enum value missing for: " + suggestion, e);
+
             return null;
         }
 

@@ -24,7 +24,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.http.HttpResponseCache;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.SuggestionManager;
@@ -87,7 +86,7 @@ public class Podcatcher extends Application {
             File httpCacheDir = new File(getCacheDir(), "http");
             HttpResponseCache.install(httpCacheDir, HTTP_CACHE_SIZE);
         } catch (IOException ioe) {
-            Log.w(getClass().getSimpleName(), "HTTP response cache installation failed:" + ioe);
+            // This should not happen, but the app works without the cache
         }
 
         // Now we will trigger the preparation on start-up:

@@ -53,6 +53,8 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
     private static final String CACHE_DIR = "logoCache";
     /** The file name ending for cached logos */
     private static final String CACHED_LOGO_ENDING = ".jpeg";
+    /** Our log tag */
+    private static final String TAG = "LoadPodcastLogoTask";
 
     /** Call back */
     private final OnLoadPodcastLogoListener listener;
@@ -137,7 +139,7 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
             // stale cached version.
             else
                 throw new IOException();
-        } catch (Throwable t) {
+        } catch (Throwable throwable) {
             // Return the cached version even though it is stale (having an old
             // logo for the podcast is better then having none).
             if (isCachedLocally(podcast)) {
@@ -146,8 +148,8 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
             }
             // We are out of options here
             else {
-                Log.w(getClass().getSimpleName(), "Logo failed to load for podcast \""
-                        + podcast + "\" with logo URL " + podcast.getLogoUrl(), t);
+                Log.d(TAG, "Logo failed to load for podcast \"" + podcast +
+                        "\" with logo URL " + podcast.getLogoUrl(), throwable);
 
                 cancel(true);
             }
@@ -166,9 +168,6 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
         // Podcast logo was loaded
         if (listener != null)
             listener.onPodcastLogoLoaded(podcast);
-        else
-            Log.w(getClass().getSimpleName(), "Podcast logo loaded, but no listener attached");
-
     }
 
     @Override
@@ -176,8 +175,6 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
         // Background task failed to complete
         if (listener != null)
             listener.onPodcastLogoLoadFailed(podcast);
-        else
-            Log.w(getClass().getSimpleName(), "Podcast logo load failed, but no listener attached");
     }
 
     /**
