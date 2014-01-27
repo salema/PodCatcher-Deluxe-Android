@@ -25,7 +25,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.UserManager;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import net.alliknow.podcatcher.GetRestrictionsReceiver;
 import net.alliknow.podcatcher.Podcatcher;
@@ -126,8 +125,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
 
         @Override
         public void run() {
-            Log.i(getClass().getSimpleName(), "Running podcast background update");
-
             final boolean online = podcatcher.isOnline();
             // This is the current time minus the time to life for the podcast
             // minus some extra time to make sure we refresh before it if
@@ -157,8 +154,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
                             loadPodcastTasks.put(podcast, task);
                         } catch (RejectedExecutionException ree) {
                             // Skip update
-                            Log.d(getClass().getSimpleName(), "Cannot update podcast \"" + podcast
-                                    + "\"", ree);
                         }
                     }
                 }
@@ -222,11 +217,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
             putSamplePodcasts();
 
         // Alert call-backs (if any)
-        if (loadPodcastListListeners.isEmpty())
-            Log.w(getClass().getSimpleName(), "Podcast list loaded, but no listeners set.");
-        else
-            for (OnLoadPodcastListListener listener : loadPodcastListListeners)
-                listener.onPodcastListLoaded(getPodcastList(), input);
+        for (OnLoadPodcastListListener listener : loadPodcastListListeners)
+            listener.onPodcastListLoaded(getPodcastList(), input);
 
         // Go load all podcast logo available offline
         for (Podcast podcast : podcastList)
@@ -301,8 +293,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
                 loadPodcastTasks.put(podcast, task);
             } catch (RejectedExecutionException ree) {
                 // Skip update TODO We might need a better solution here?
-                Log.d(getClass().getSimpleName(), "Cannot update podcast \"" + podcast
-                        + "\"", ree);
             }
         }
     }
@@ -337,9 +327,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         loadPodcastTasks.remove(podcast);
 
         // Notify listeners
-        if (loadPodcastListeners.isEmpty())
-            Log.w(getClass().getSimpleName(), "Podcast loaded, but no listeners attached.");
-        else if (blockExplicit && podcast.isExplicit())
+        if (blockExplicit && podcast.isExplicit())
             onPodcastLoadFailed(podcast, PodcastLoadError.EXPLICIT_BLOCKED);
         else
             for (OnLoadPodcastListener listener : loadPodcastListeners)
@@ -352,11 +340,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         loadPodcastTasks.remove(podcast);
 
         // Notify listeners
-        if (loadPodcastListeners.isEmpty())
-            Log.w(getClass().getSimpleName(), "Podcast failed to load, but no listeners set.");
-        else
-            for (OnLoadPodcastListener listener : loadPodcastListeners)
-                listener.onPodcastLoadFailed(podcast, code);
+        for (OnLoadPodcastListener listener : loadPodcastListeners)
+            listener.onPodcastLoadFailed(podcast, code);
     }
 
     /**
@@ -395,8 +380,6 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
                 loadPodcastLogoTasks.put(podcast, task);
             } catch (RejectedExecutionException ree) {
                 // Skip logo loading
-                Log.d(getClass().getSimpleName(), "Cannot load logo for podcast \"" + podcast
-                        + "\"", ree);
             }
         }
     }
@@ -405,22 +388,16 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     public void onPodcastLogoLoaded(Podcast podcast) {
         loadPodcastLogoTasks.remove(podcast);
 
-        if (loadPodcastLogoListeners.isEmpty())
-            Log.w(getClass().getSimpleName(), "Podcast logo loaded, but no listener set.");
-        else
-            for (OnLoadPodcastLogoListener listener : loadPodcastLogoListeners)
-                listener.onPodcastLogoLoaded(podcast);
+        for (OnLoadPodcastLogoListener listener : loadPodcastLogoListeners)
+            listener.onPodcastLogoLoaded(podcast);
     }
 
     @Override
     public void onPodcastLogoLoadFailed(Podcast podcast) {
         loadPodcastLogoTasks.remove(podcast);
 
-        if (loadPodcastLogoListeners.isEmpty())
-            Log.w(getClass().getSimpleName(), "Podcast logo failed to load, but no listener set.");
-        else
-            for (OnLoadPodcastLogoListener listener : loadPodcastLogoListeners)
-                listener.onPodcastLogoLoadFailed(podcast);
+        for (OnLoadPodcastLogoListener listener : loadPodcastLogoListeners)
+            listener.onPodcastLogoLoadFailed(podcast);
     }
 
     /**
@@ -447,9 +424,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
 
                 // Mark podcast list dirty
                 podcastListChanged = true;
-            } else
-                Log.i(getClass().getSimpleName(), "Podcast \"" + newPodcast.getName()
-                        + "\" is already in list.");
+            }
     }
 
     /**
@@ -471,9 +446,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
 
             // Mark podcast list dirty
             podcastListChanged = true;
-        } else
-            Log.w(getClass().getSimpleName(), "Attempted to remove podcast at invalid position: "
-                    + index);
+        }
     }
 
     /**

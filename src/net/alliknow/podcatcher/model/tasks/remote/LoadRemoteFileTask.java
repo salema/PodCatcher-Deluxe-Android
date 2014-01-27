@@ -22,9 +22,7 @@ import static net.alliknow.podcatcher.Podcatcher.AUTHORIZATION_KEY;
 import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_KEY;
 import static net.alliknow.podcatcher.Podcatcher.USER_AGENT_VALUE;
 
-import android.net.http.HttpResponseCache;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import net.alliknow.podcatcher.model.types.Progress;
 
@@ -33,9 +31,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
 
 /**
  * Abstract super class for file download tasks.
@@ -173,7 +168,7 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
                 try {
                     bufferedRemoteStream.close();
                 } catch (Exception e) {
-                    Log.w(getClass().getSimpleName(), "Failed to close remote stream", e);
+                    // Nothing we can do here
                 }
 
             // To the local byte array
@@ -181,40 +176,13 @@ public abstract class LoadRemoteFileTask<Params, Result> extends
                 try {
                     result.close();
                 } catch (Exception e) {
-                    Log.w(getClass().getSimpleName(), "Failed to close local output stream", e);
+                    // Nothing we can do here
                 }
 
             // Disconnect
             connection.disconnect();
 
             // reportCacheStats();
-        }
-    }
-
-    private void showResponseHeaderDetails(HttpURLConnection connection) {
-        Iterator<Entry<String, List<String>>> iterator = connection.getHeaderFields()
-                .entrySet().iterator();
-
-        while (iterator.hasNext()) {
-            final Entry<String, List<String>> entry = iterator.next();
-
-            Log.i(getClass().getSimpleName(), "Header: " + entry.getKey());
-            for (String value : entry.getValue())
-                Log.i(getClass().getSimpleName(), " " + value);
-        }
-    }
-
-    private void reportCacheStats() {
-        HttpResponseCache cache = HttpResponseCache.getInstalled();
-        if (cache != null) {
-            Log.i(getClass().getSimpleName(),
-                    "HTTP cache size: " + cache.size() + " / " + cache.maxSize());
-            Log.i(getClass().getSimpleName(),
-                    "HTTP request count: " + cache.getRequestCount());
-            Log.i(getClass().getSimpleName(),
-                    "HTTP network requests: " + cache.getNetworkCount());
-            Log.i(getClass().getSimpleName(),
-                    "HTTP cache hits: " + cache.getHitCount());
         }
     }
 }

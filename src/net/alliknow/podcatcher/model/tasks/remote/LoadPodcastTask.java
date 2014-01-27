@@ -54,6 +54,8 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
 
     /** Maximum byte size for the RSS file to load */
     public static final int MAX_RSS_FILE_SIZE = 2000000;
+    /** Our log tag */
+    private static final String TAG = "LoadPodcastTask";
 
     /**
      * Podcast load error codes as returned by
@@ -179,8 +181,8 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
             errorCode = PodcastLoadError.NOT_REACHABLE;
 
             cancel(true);
-        } catch (Throwable t) {
-            Log.w(getClass().getSimpleName(), "Load failed for podcast \"" + podcast + "\"", t);
+        } catch (Throwable throwable) {
+            Log.d(TAG, "Load failed for podcast \"" + podcast + "\"", throwable);
 
             cancel(true);
         } finally {
@@ -194,8 +196,6 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
     protected void onProgressUpdate(Progress... progress) {
         if (listener != null)
             listener.onPodcastLoadProgress(podcast, progress[0]);
-        else if (listener == null)
-            Log.w(getClass().getSimpleName(), "Podcast progress update, but no listener attached");
     }
 
     @Override
@@ -203,8 +203,6 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
         // Podcast was loaded
         if (listener != null)
             listener.onPodcastLoaded(podcast);
-        else
-            Log.w(getClass().getSimpleName(), "Podcast loaded, but no listener attached");
     }
 
     @Override
@@ -215,7 +213,5 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
                 listener.onPodcastLoadFailed(podcast, PodcastLoadError.AUTH_REQUIRED);
             else
                 listener.onPodcastLoadFailed(podcast, errorCode);
-        else
-            Log.w(getClass().getSimpleName(), "Podcast failed to load, but no listener attached");
     }
 }

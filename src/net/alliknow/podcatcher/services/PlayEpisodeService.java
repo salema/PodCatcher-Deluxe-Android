@@ -130,6 +130,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     private static final int SKIP_AMOUNT = 10 * 1000;
     /** The volume we duck playback to */
     private static final float DUCK_VOLUME = 0.1f;
+    /** Our log tag */
+    private static final String TAG = "PlayEpisodeService";
 
     /** The call-back set for the play service listeners */
     private Set<PlayServiceListener> listeners = new HashSet<PlayServiceListener>();
@@ -323,7 +325,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
                 player.prepareAsync(); // might take long! (for buffering, etc)
             } catch (Exception e) {
-                Log.e(getClass().getSimpleName(), "Prepare/Play failed for episode: " + episode, e);
+                Log.d(TAG, "Prepare/Play failed for episode: " + episode, e);
             }
         }
     }
@@ -369,9 +371,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
      * Pause current playback.
      */
     public void pause() {
-        if (currentEpisode == null)
-            Log.d(getClass().getSimpleName(), "Called pause without setting episode");
-        else if (prepared && isPlaying()) {
+        if (prepared && isPlaying()) {
             player.pause();
             storeResumeAt();
 
@@ -385,11 +385,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
      * Resume to play current episode.
      */
     public void resume() {
-        if (currentEpisode == null)
-            Log.d(getClass().getSimpleName(), "Called resume without setting episode");
-        else if (!hasFocus)
-            Log.d(getClass().getSimpleName(), "Called resume without having audio focus");
-        else if (prepared && !isPlaying()) {
+        if (prepared && !isPlaying()) {
             player.start();
 
             startPlayProgressTimer();
@@ -524,11 +520,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             startPlayProgressTimer();
 
             // Alert the listeners
-            if (listeners.size() > 0)
-                for (PlayServiceListener listener : listeners)
-                    listener.onPlaybackStarted();
-            else
-                Log.d(getClass().getSimpleName(), "Episode prepared, but no listener attached");
+            for (PlayServiceListener listener : listeners)
+                listener.onPlaybackStarted();
         } else
             onError(mediaPlayer, 0, 0);
     }
@@ -633,7 +626,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             reset();
             stopSelfIfUnboundAndIdle();
 
-            Log.e(getClass().getSimpleName(), "Media player send error: " + what + "/" + extra);
+            Log.d(TAG, "Media player send error: " + what + "/" + extra);
         }
 
         return true;
@@ -790,12 +783,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     }
 
     private void stopSelfIfUnboundAndIdle() {
-        if (!bound && currentEpisode == null) {
+        if (!bound && currentEpisode == null)
             stopSelf();
-
-            Log.d(getClass().getSimpleName(),
-                    "Service stopped since no clients are bound anymore and no episode is loaded");
-        }
     }
 
     private void updateAudioManager() {
