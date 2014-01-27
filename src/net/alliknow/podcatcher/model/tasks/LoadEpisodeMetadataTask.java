@@ -20,7 +20,6 @@ package net.alliknow.podcatcher.model.tasks;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import net.alliknow.podcatcher.SettingsActivity;
 import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
@@ -55,9 +54,6 @@ public class LoadEpisodeMetadataTask extends
     /** The listener callback */
     private OnLoadEpisodeMetadataListener listener;
 
-    /** Member to measure performance */
-    private Date startTime;
-
     /**
      * Create new task.
      * 
@@ -74,9 +70,6 @@ public class LoadEpisodeMetadataTask extends
 
     @Override
     protected Map<String, EpisodeMetadata> doInBackground(Void... params) {
-        // Record start time
-        this.startTime = new Date();
-
         // Create resulting data structure and file stream
         Map<String, EpisodeMetadata> result = new ConcurrentHashMap<String, EpisodeMetadata>();
         InputStream fileStream = null;
@@ -118,16 +111,14 @@ public class LoadEpisodeMetadataTask extends
             // changed
             cleanMetadata(result);
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Load failed for episode metadata!", e);
+            // Pass, metadata might be empty, that's okay
         } finally {
             // Make sure we close the file stream
             if (fileStream != null)
                 try {
                     fileStream.close();
                 } catch (IOException e) {
-                    /* Nothing we can do here */
-                    Log.w(getClass().getSimpleName(),
-                            "Failed to close episode metadata file stream!", e);
+                    // Nothing we can do here
                 }
         }
 
@@ -136,13 +127,8 @@ public class LoadEpisodeMetadataTask extends
 
     @Override
     protected void onPostExecute(Map<String, EpisodeMetadata> result) {
-        Log.i(getClass().getSimpleName(), "Read " + result.size() + " metadata records in "
-                + (new Date().getTime() - startTime.getTime()) + "ms.");
-
         if (listener != null)
             listener.onEpisodeMetadataLoaded(result);
-        else
-            Log.w(getClass().getSimpleName(), "Episode metadata loaded, but no listener attached");
     }
 
     private EpisodeMetadata readMetadata(XmlPullParser parser)

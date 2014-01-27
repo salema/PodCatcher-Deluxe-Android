@@ -32,7 +32,6 @@ import static net.alliknow.podcatcher.model.tags.METADATA.PODCAST_URL;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import net.alliknow.podcatcher.listeners.OnStoreEpisodeMetadataListener;
 import net.alliknow.podcatcher.model.EpisodeManager;
@@ -89,7 +88,6 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<String, EpisodeM
                 writeRecord(entry.getKey(), entry.getValue());
             writeFooter();
         } catch (Exception ex) {
-            Log.e(getClass().getSimpleName(), "Cannot store episode metadata file", ex);
             this.exception = ex;
 
             cancel(true);
@@ -99,9 +97,7 @@ public class StoreEpisodeMetadataTask extends StoreFileTask<Map<String, EpisodeM
                 try {
                     writer.close();
                 } catch (IOException e) {
-                    /* Nothing we can do here */
-                    Log.w(getClass().getSimpleName(),
-                            "Failed to close episode metadata file writer!", e);
+                    // Nothing we can do here
                 }
         }
 

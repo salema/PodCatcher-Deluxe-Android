@@ -18,7 +18,6 @@
 package net.alliknow.podcatcher.model;
 
 import android.os.Handler;
-import android.util.Log;
 
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.listeners.OnLoadEpisodeMetadataListener;
@@ -143,8 +142,6 @@ public abstract class EpisodeBaseManager implements OnLoadEpisodeMetadataListene
     @Override
     public void onEpisodeMetadataStoreFailed(Exception exception) {
         isStoreTaskRunning = false;
-
-        Log.w(getClass().getSimpleName(), "Episode meta data could not be stored: ", exception);
     }
 
     /**

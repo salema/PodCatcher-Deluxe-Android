@@ -18,7 +18,6 @@
 package net.alliknow.podcatcher.model.tasks;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import net.alliknow.podcatcher.listeners.OnLoadPlaylistListener;
 import net.alliknow.podcatcher.model.EpisodeManager;
@@ -80,8 +79,6 @@ public class LoadPlaylistTask extends AsyncTask<Void, Void, List<Episode>> {
             // 3. Return the result
             return playlist;
         } catch (Exception e) {
-            Log.w(getClass().getSimpleName(), "Load failed for playlist", e);
-
             cancel(true);
         }
 
@@ -95,7 +92,5 @@ public class LoadPlaylistTask extends AsyncTask<Void, Void, List<Episode>> {
 
         if (listener != null)
             listener.onPlaylistLoaded(playlist);
-        else
-            Log.w(getClass().getSimpleName(), "Playlist loaded, but no listener attached");
     }
 }
