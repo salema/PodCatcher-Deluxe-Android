@@ -17,10 +17,14 @@
 
 package net.alliknow.podcatcher.model.tasks.remote;
 
+import static java.lang.Math.round;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.WindowManager;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.model.types.Podcast;
@@ -195,7 +199,6 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 
         // Calculate inSampleSize
         options.inSampleSize = calculateInSampleSize(options);
-
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
 
@@ -212,16 +215,18 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
         // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
-        int inSampleSize = 1;
+        int sampleSize = 1;
 
-        if (height > LOGO_DIMENSION || width > LOGO_DIMENSION) {
-            if (width > height) {
-                inSampleSize = Math.round((float) height / (float) LOGO_DIMENSION);
-            } else {
-                inSampleSize = Math.round((float) width / (float) LOGO_DIMENSION);
-            }
-        }
-        return inSampleSize;
+        // Adjust max height/width according to screen resolution
+        final DisplayMetrics dm = new DisplayMetrics();
+        ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
+                .getDefaultDisplay().getMetrics(dm);
+        final int max = round(LOGO_DIMENSION * dm.density);
+
+        if (height > max || width > max)
+            sampleSize = round((width > height ? (float) height : (float) width) / (float) max);
+
+        return sampleSize;
     }
 
     private File getLogoCacheFile(Podcast podcast) {
