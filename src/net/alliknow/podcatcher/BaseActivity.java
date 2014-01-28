@@ -64,6 +64,8 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
     /** The light theme color set */
     protected int lightThemeColor;
 
+    /** The amount of min-dp for the large screen bucket */
+    public static final int MIN_PIXEL_LARGE = 600;
     /** The currently active view mode */
     protected ViewMode view;
     /** The currently active selection */

@@ -20,7 +20,7 @@ package net.alliknow.podcatcher.view;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 
-import net.alliknow.podcatcher.Podcatcher;
+import net.alliknow.podcatcher.BaseActivity;
 
 /**
  * These are the four view modes we want adapt to.
@@ -93,15 +93,15 @@ public enum ViewMode {
      */
     public static ViewMode determineViewMode(Resources resources) {
         // Get config information
-        Configuration config = resources.getConfiguration();
+        final Configuration config = resources.getConfiguration();
 
         // Determine view mode
         switch (config.orientation) {
             case Configuration.ORIENTATION_PORTRAIT:
-                return config.smallestScreenWidthDp >= Podcatcher.MIN_PIXEL_LARGE ?
+                return config.smallestScreenWidthDp >= BaseActivity.MIN_PIXEL_LARGE ?
                         LARGE_PORTRAIT : SMALL_PORTRAIT;
             default: // Landscape and square
-                return config.smallestScreenWidthDp >= Podcatcher.MIN_PIXEL_LARGE ?
+                return config.smallestScreenWidthDp >= BaseActivity.MIN_PIXEL_LARGE ?
                         LARGE_LANDSCAPE : SMALL_LANDSCAPE;
         }
     }

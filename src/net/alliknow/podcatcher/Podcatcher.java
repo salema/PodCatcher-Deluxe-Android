@@ -17,6 +17,8 @@
 
 package net.alliknow.podcatcher;
 
+import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
+
 import android.app.Application;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -24,6 +26,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.http.HttpResponseCache;
 import android.os.AsyncTask;
+import android.os.Process;
 
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.SuggestionManager;
@@ -41,12 +44,6 @@ import java.io.IOException;
  */
 public class Podcatcher extends Application {
 
-    /**
-     * The amount of dp establishing the border between small and large screen
-     * buckets
-     */
-    public static final int MIN_PIXEL_LARGE = 600;
-
     /** The http request header field key for the user agent */
     public static final String USER_AGENT_KEY = "User-Agent";
     /** The user agent string we use to identify us */
@@ -62,9 +59,9 @@ public class Podcatcher extends Application {
 
         @Override
         public void run() {
-            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+            Process.setThreadPriority(THREAD_PRIORITY_BACKGROUND);
 
-            HttpResponseCache cache = HttpResponseCache.getInstalled();
+            final HttpResponseCache cache = HttpResponseCache.getInstalled();
             if (cache != null)
                 cache.flush();
         }
@@ -148,9 +145,8 @@ public class Podcatcher extends Application {
         boolean debug = false;
 
         PackageManager manager = getApplicationContext().getPackageManager();
-        try
-        {
-            ApplicationInfo info = manager.getApplicationInfo(
+        try {
+            final ApplicationInfo info = manager.getApplicationInfo(
                     getApplicationContext().getPackageName(), 0);
             debug = (0 != (info.flags &= ApplicationInfo.FLAG_DEBUGGABLE));
         } catch (Exception e) {
@@ -161,9 +157,8 @@ public class Podcatcher extends Application {
     }
 
     private NetworkInfo getNetworkInfo() {
-        ConnectivityManager manager =
-                (ConnectivityManager) getApplicationContext()
-                        .getSystemService(CONNECTIVITY_SERVICE);
+        final ConnectivityManager manager = (ConnectivityManager) getApplicationContext()
+                .getSystemService(CONNECTIVITY_SERVICE);
 
         return manager.getActiveNetworkInfo();
     }
