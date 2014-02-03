@@ -17,8 +17,27 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="ProgressBar.Horizontal" parent="@android:style/Widget.ProgressBar.Horizontal">
         <item name="android:progressDrawable">@drawable/progress_horizontal</item>
+    </style>
+    <style name="ListItem.Title" parent="@android:style/TextAppearance.Large">
+        <item name="android:textSize">@dimen/font_size_large</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">@dimen/list_item_padding</item>
+    </style>
+    <style name="ListItem.SubTitle" parent="@android:style/TextAppearance.Small">
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:paddingLeft">@dimen/list_item_padding</item>
+    </style>
+    <style name="ListView.Empty" parent="@android:style/TextAppearance.Medium">
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/text_secondary</item>
     </style>
 </resources>

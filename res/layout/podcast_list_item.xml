@@ -38,14 +38,10 @@
         android:orientation="vertical">
         <TextView
             android:id="@+id/list_item_title"
+            style="@style/ListItem.Title"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="4"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/list_item_padding"
-            android:singleLine="true"
-            android:ellipsize="marquee"
-            android:textSize="@dimen/font_size_large" />
+            android:layout_weight="4" />
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -53,12 +49,9 @@
             android:visibility="gone">
             <TextView
                 android:id="@+id/list_item_caption"
+                style="@style/ListItem.SubTitle"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="@dimen/list_item_padding"
-                android:singleLine="true"
-                android:ellipsize="marquee"
-                android:textSize="@dimen/font_size_small" />
+                android:layout_height="match_parent" />
             <net.alliknow.podcatcher.view.HorizontalProgressView
                 android:id="@+id/list_item_progress"
                 android:layout_width="match_parent"

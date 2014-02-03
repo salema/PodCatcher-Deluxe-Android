@@ -43,12 +43,9 @@
 	        android:layout_height="match_parent" />
 	    <TextView
 	        android:id="@+id/empty"
+	        style="@style/ListView.Empty"
 	        android:layout_width="match_parent"
 	        android:layout_height="match_parent"
-	        android:layout_margin="20dp"
-	        android:gravity="center"
-	        android:text="@string/podcast_none_selected"
-	        android:textColor="@color/text_secondary"
-	        android:textSize="@dimen/font_size_default" />
+	        android:text="@string/podcast_none_selected" />
     </FrameLayout>
 </LinearLayout>

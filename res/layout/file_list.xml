@@ -33,7 +33,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:textSize="@dimen/font_size_default"
+            android:textAppearance="?android:textAppearanceMedium"
             android:singleLine="true"
             android:ellipsize="start" />
         <ImageButton 
@@ -61,13 +61,10 @@
 	        android:choiceMode="none" />
 	    <TextView
 	        android:id="@android:id/empty"
+	        style="@style/ListView.Empty"
        	    android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center_horizontal"
-            android:text="@string/file_select_folder_empty"
-            android:textSize="@dimen/font_size_default"
-            android:textColor="@color/text_secondary" />
+            android:text="@string/file_select_folder_empty" />
     </FrameLayout>
     <Button 
         android:id="@+id/select_file"
