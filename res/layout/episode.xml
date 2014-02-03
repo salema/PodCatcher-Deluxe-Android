@@ -23,13 +23,11 @@
     android:orientation="vertical">
     <TextView
         android:id="@id/android:empty"
+        style="@style/ListView.Empty"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="center"
-        android:text="@string/episode_none_selected"
-        android:textColor="@color/text_secondary"
-        android:textSize="@dimen/font_size_default" />
+        android:text="@string/episode_none_selected" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,6 +44,7 @@
                 android:layout_height="wrap_content"
                 android:minHeight="28dp"
                 android:paddingLeft="@dimen/episode_view_padding"
+                android:textAppearance="?android:textAppearanceLarge"
                 android:textSize="@dimen/font_size_large"
                 android:visibility="gone" />
             <TextView
@@ -54,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:minHeight="20dp"
                 android:paddingLeft="@dimen/episode_view_padding"
-                android:textSize="@dimen/font_size_small"
+                android:textAppearance="?android:textAppearanceSmall"
                 android:visibility="gone"
                 android:singleLine="true"
                 android:ellipsize="end" />

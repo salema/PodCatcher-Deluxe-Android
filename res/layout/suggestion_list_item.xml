@@ -30,7 +30,7 @@
         android:paddingLeft="@dimen/list_item_padding"
         android:singleLine="true"
         android:ellipsize="marquee"
-        android:textSize="@dimen/font_size_large" />
+        android:textAppearance="?android:textAppearanceLarge" />
     <ImageView
         android:id="@+id/suggestion_featured"
         android:layout_width="24dp"
@@ -51,8 +51,8 @@
         android:paddingLeft="@dimen/list_item_padding"
         android:singleLine="true"
         android:ellipsize="marquee"
-        android:textColor="@color/text_secondary"
-        android:textSize="@dimen/font_size_default" />
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textColor="@color/text_secondary" />
     <Button
         android:id="@+id/suggestion_add_button"
         android:layout_width="wrap_content"
@@ -72,5 +72,5 @@
         android:paddingBottom="2dp"
         android:paddingLeft="@dimen/list_item_padding"
         android:paddingRight="@dimen/list_item_padding"
-        android:textSize="@dimen/font_size_small" />
+        android:textAppearance="?android:textAppearanceSmall" />
 </net.alliknow.podcatcher.view.SuggestionListItemView>

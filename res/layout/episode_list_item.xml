@@ -41,7 +41,7 @@
         android:layout_alignParentBottom="true"
         android:includeFontPadding="false"
         android:gravity="center"
-        android:textSize="@dimen/font_size_large"
+        android:textAppearance="?android:textAppearanceLarge"
         android:textColor="@color/text_secondary"
         android:visibility="gone" />
     <ImageView
@@ -72,14 +72,10 @@
         android:orientation="vertical">
         <TextView
             android:id="@+id/list_item_title"
+            style="@style/ListItem.Title"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="4"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/list_item_padding"
-            android:singleLine="true"
-            android:ellipsize="marquee"
-            android:textSize="@dimen/font_size_large" />
+            android:layout_weight="4" />
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -87,12 +83,9 @@
             android:minHeight="20dp">
             <TextView
                 android:id="@+id/list_item_caption"
+                style="@style/ListItem.SubTitle"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="@dimen/list_item_padding"
-                android:singleLine="true"
-                android:ellipsize="marquee"
-                android:textSize="@dimen/font_size_small" />
+                android:layout_height="match_parent" />
             <ProgressBar
                 android:id="@+id/list_item_progress"
                 style="@style/ProgressBar.Horizontal"

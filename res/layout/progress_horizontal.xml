@@ -41,6 +41,6 @@
         android:singleLine="true"
         android:ellipsize="marquee"
         android:gravity="center"
-        android:textSize="@dimen/font_size_small"
+        android:textAppearance="?android:textAppearanceSmall"
         android:text="@string/wait" />
 </LinearLayout>
