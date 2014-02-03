@@ -25,13 +25,10 @@
     android:orientation="vertical"
     android:padding="20dp" >
     <TextView
+        style="@style/ListView.Empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_horizontal"
-        android:text="@string/podcast_none"
-	    android:textColor="@color/text_secondary"
-	    android:textSize="@dimen/font_size_default" />
+        android:text="@string/podcast_none" />
     <Button
         android:id="@+id/add_podcast_button"
         android:layout_width="wrap_content"

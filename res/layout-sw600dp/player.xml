@@ -46,7 +46,7 @@
         android:layout_marginRight="@dimen/episode_view_padding"
         android:layout_marginBottom="3dp"
         android:singleLine="true"
-        android:textSize="@dimen/font_size_default"
+        android:textAppearance="?android:textAppearanceMedium"
         android:visibility="gone" />
     <SeekBar
         android:id="@+id/player_seekbar"
@@ -79,7 +79,7 @@
             android:paddingRight="32dp"
             android:text="@string/pause"
             android:textColor="@drawable/button_label"
-            android:textSize="@dimen/font_size_default"
+            android:textAppearance="?android:textAppearanceMedium"
             android:singleLine="true"
             android:ellipsize="marquee" />
         <ImageButton

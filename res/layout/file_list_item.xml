@@ -29,11 +29,9 @@
         android:scaleType="centerInside" />
     <TextView
         android:id="@+id/file_name"
+        style="@style/ListItem.Title"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:textSize="@dimen/font_size_default"
-        android:singleLine="true"
         android:ellipsize="middle" />
 </net.alliknow.podcatcher.view.FileListItemView>
