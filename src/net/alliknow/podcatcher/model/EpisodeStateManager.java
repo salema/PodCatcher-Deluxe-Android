@@ -17,6 +17,10 @@
 
 package net.alliknow.podcatcher.model;
 
+import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
+
+import android.os.Process;
+
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.listeners.OnChangeEpisodeStateListener;
 import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
@@ -225,8 +229,7 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
 
                 @Override
                 public void run() {
-                    android.os.Process
-                            .setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+                    Process.setThreadPriority(THREAD_PRIORITY_BACKGROUND);
 
                     // Clean all state meta data information for episodes of the
                     // deleted feed
@@ -254,7 +257,8 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
         // We do not want to run this too frequently and for all podcasts at
         // once. In addition it should run only once per podcast during the
         // lifetime of this EpisodeManager
-        if (podcast != null && !podcastsCleanUpRanFor.contains(podcast.getUrl())
+        if (podcast != null && podcast.getEpisodeCount() > 0
+                && !podcastsCleanUpRanFor.contains(podcast.getUrl())
                 && podcastLoadCounter % 10 == 0) {
             // Update helpers
             podcastLoadCounter++;
@@ -266,8 +270,7 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
 
                 @Override
                 public void run() {
-                    android.os.Process
-                            .setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+                    Process.setThreadPriority(THREAD_PRIORITY_BACKGROUND);
 
                     // Clean all state meta data information for episodes no
                     // longer present in the podcast feed

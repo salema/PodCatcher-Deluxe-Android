@@ -42,7 +42,7 @@ public class FirstRunActivity extends BaseActivity implements FirstRunListener {
         super.onCreate(savedInstanceState);
 
         // Make sure we only run once
-        preferences.edit().putBoolean(SettingsActivity.KEY_FIRST_RUN, false).commit();
+        preferences.edit().putBoolean(SettingsActivity.KEY_FIRST_RUN, false).apply();
     }
 
     @Override
