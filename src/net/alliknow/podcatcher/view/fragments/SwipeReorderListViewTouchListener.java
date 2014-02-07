@@ -39,6 +39,7 @@ import java.util.List;
  * swipe-to-dismiss: https://github.com/romannurik/android-swipetodismiss
  * (originally Apache licensed).
  */
+@SuppressWarnings("javadoc")
 public class SwipeReorderListViewTouchListener implements View.OnTouchListener {
     // Cached ViewConfiguration and system-wide constant values
     private int mSlop;

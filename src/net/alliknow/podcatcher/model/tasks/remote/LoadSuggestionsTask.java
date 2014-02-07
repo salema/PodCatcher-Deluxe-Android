@@ -57,6 +57,8 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Suggestio
     private static final String SUGGESTIONS_ENCODING = "utf8";
     /** The online resource to find suggestions */
     private static final String SOURCE = "http://www.podcatcher-deluxe.com/podcast_suggestions.json";
+    /** The local file name for the cached suggestions */
+    private static final String LOCAL_SUGGESTIONS_FILE = "suggestions.json";
     /** The text that marks isExplicit() == true */
     private static final String EXPLICIT_POSITIVE_STRING = "yes";
     /** Our log tag */
@@ -135,7 +137,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Suggestio
             Collections.sort(result);
             publishProgress(Progress.DONE);
         } catch (Exception ex) {
-            Log.d(TAG, "Parse failed for podcast suggestions ", ex);
+            Log.d(TAG, "Parse failed for podcast suggestions", ex);
 
             cancel(true);
             return null;
@@ -225,7 +227,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Suggestio
 
     private File getSuggestionsCacheFile() {
         // Create the complete path leading to where we expect the cached file
-        return new File(context.getCacheDir(), "suggestions.json");
+        return new File(context.getCacheDir(), LOCAL_SUGGESTIONS_FILE);
     }
 
     private boolean isCachedLocally() {

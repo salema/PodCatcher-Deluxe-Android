@@ -33,6 +33,7 @@ public interface OnLoadPodcastListListener {
      * Called on completion.
      * 
      * @param podcastList Podcast list loaded.
+     * @param inputFile The file location loaded from.
      */
     public void onPodcastListLoaded(List<Podcast> podcastList, Uri inputFile);
 
