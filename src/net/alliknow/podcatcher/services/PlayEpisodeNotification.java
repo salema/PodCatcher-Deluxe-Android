@@ -21,13 +21,14 @@ import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static net.alliknow.podcatcher.EpisodeActivity.EPISODE_URL_KEY;
 import static net.alliknow.podcatcher.EpisodeListActivity.PODCAST_URL_KEY;
 
+import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.support.v4.app.NotificationCompat;
+import android.os.Build;
 
 import net.alliknow.podcatcher.BaseActivity.ContentMode;
 import net.alliknow.podcatcher.EpisodeListActivity;
@@ -62,7 +63,7 @@ public class PlayEpisodeNotification {
     private final PendingIntent tooglePendingIntent;
 
     /** Our builder */
-    private NotificationCompat.Builder notificationBuilder;
+    private Notification.Builder notificationBuilder;
     /** The cache for the scaled bitmaps */
     private Map<String, Bitmap> bitmapCache = new HashMap<String, Bitmap>();
 
@@ -126,6 +127,7 @@ public class PlayEpisodeNotification {
      * @param duration The length of the current episode.
      * @return The notification to display.
      */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public Notification build(Episode episode, boolean paused, int position, int duration) {
         // Prepare the main intent (leading back to the app)
         appIntent.putExtra(PODCAST_URL_KEY, episode.getPodcast().getUrl());
@@ -134,7 +136,7 @@ public class PlayEpisodeNotification {
                 appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Create the notification builder and set values
-        notificationBuilder = new NotificationCompat.Builder(context)
+        notificationBuilder = new Notification.Builder(context)
                 .setContentIntent(backToAppIntent)
                 .setTicker(episode.getName())
                 .setSmallIcon(R.drawable.ic_stat)
@@ -147,18 +149,22 @@ public class PlayEpisodeNotification {
         if (episode.getPodcast().isLogoCached())
             notificationBuilder.setLargeIcon(getScaledBitmap(episode.getPodcast()));
 
-        // Add stop action
-        notificationBuilder.addAction(R.drawable.ic_media_stop,
-                context.getString(R.string.stop), stopPendingIntent);
-        // Add other actions according to playback state
-        if (paused)
-            notificationBuilder.addAction(R.drawable.ic_media_resume,
-                    context.getString(R.string.resume), tooglePendingIntent);
-        else
-            notificationBuilder.addAction(R.drawable.ic_media_pause,
-                    context.getString(R.string.pause), tooglePendingIntent);
+        // Adding actions to notification is only supported in Android >4.1
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            // Add stop action
+            notificationBuilder.addAction(R.drawable.ic_media_stop,
+                    context.getString(R.string.stop), stopPendingIntent);
+            // Add other actions according to playback state
+            if (paused)
+                notificationBuilder.addAction(R.drawable.ic_media_resume,
+                        context.getString(R.string.resume), tooglePendingIntent);
+            else
+                notificationBuilder.addAction(R.drawable.ic_media_pause,
+                        context.getString(R.string.pause), tooglePendingIntent);
+        }
 
-        return notificationBuilder.build();
+        // This will call build(), not available before Android 4.1
+        return notificationBuilder.getNotification();
     }
 
     /**
@@ -173,7 +179,8 @@ public class PlayEpisodeNotification {
     public Notification updateProgress(int position, int duration) {
         notificationBuilder.setProgress(duration, position, false);
 
-        return notificationBuilder.build();
+        // This will call build(), not available before Android 4.1
+        return notificationBuilder.getNotification();
     }
 
     private Bitmap getScaledBitmap(Podcast podcast) {
