@@ -176,10 +176,13 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
                     // ORF.at) that apparently block downloads based on this
                     // information
                     .addRequestHeader(USER_AGENT_KEY, USER_AGENT_VALUE)
-                    // Set auth if available
-                    .addRequestHeader(AUTHORIZATION_KEY, episode.getPodcast().getAuthorization())
                     // Make sure our download does not end up in the http cache
                     .addRequestHeader("Cache-Control", "no-store");
+
+            // Set auth if available
+            final String auth = episode.getPodcast().getAuthorization();
+            if (auth != null)
+                download.addRequestHeader(AUTHORIZATION_KEY, auth);
 
             // Start the download
             long downloadId;
