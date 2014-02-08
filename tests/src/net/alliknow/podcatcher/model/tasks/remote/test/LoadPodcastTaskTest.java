@@ -138,7 +138,7 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
         loadAndWait(mockLoader, new Podcast(null, null), false);
         assertTrue(mockLoader.failed);
         assertNull(mockLoader.result.getLastLoaded());
-        assertEquals(mockLoader.code, PodcastLoadError.UNKNOWN);
+        assertEquals(mockLoader.code, PodcastLoadError.NOT_REACHABLE);
 
         // bad URL
         loadAndWait(mockLoader, new Podcast("Mist", "http://bla"), false);
