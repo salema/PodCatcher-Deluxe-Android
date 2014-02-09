@@ -1,67 +1,3 @@
-android.support.v4.app.BackStackState
-android.support.v4.app.BackStackState: android.os.Parcelable$Creator CREATOR
-android.support.v4.app.Fragment$SavedState
-android.support.v4.app.Fragment$SavedState: android.os.Parcelable$Creator CREATOR
-android.support.v4.app.FragmentManagerState
-android.support.v4.app.FragmentManagerState: android.os.Parcelable$Creator CREATOR
-android.support.v4.app.FragmentState
-android.support.v4.app.FragmentState: android.os.Parcelable$Creator CREATOR
-android.support.v4.app.FragmentTabHost: void setOnTabChangedListener(android.widget.TabHost$OnTabChangeListener)
-android.support.v4.app.FragmentTabHost$SavedState
-android.support.v4.app.FragmentTabHost$SavedState: android.os.Parcelable$Creator CREATOR
-android.support.v4.content.ModernAsyncTask$Status: android.support.v4.content.ModernAsyncTask$Status[] values()
-android.support.v4.content.ModernAsyncTask$Status: android.support.v4.content.ModernAsyncTask$Status valueOf(java.lang.String)
-android.support.v4.view.PagerTabStrip: void setTabIndicatorColor(int)
-android.support.v4.view.PagerTabStrip: void setTabIndicatorColorResource(int)
-android.support.v4.view.PagerTabStrip: int getTabIndicatorColor()
-android.support.v4.view.PagerTabStrip: void setTextSpacing(int)
-android.support.v4.view.PagerTabStrip: void setBackgroundDrawable(android.graphics.drawable.Drawable)
-android.support.v4.view.PagerTabStrip: void setBackgroundColor(int)
-android.support.v4.view.PagerTabStrip: void setBackgroundResource(int)
-android.support.v4.view.PagerTabStrip: void setDrawFullUnderline(boolean)
-android.support.v4.view.PagerTabStrip: boolean getDrawFullUnderline()
-android.support.v4.view.PagerTabStrip: int getMinHeight()
-android.support.v4.view.PagerTitleStrip: void setSingleLineAllCaps(android.widget.TextView)
-android.support.v4.view.PagerTitleStrip: void setTextSpacing(int)
-android.support.v4.view.PagerTitleStrip: int getTextSpacing()
-android.support.v4.view.PagerTitleStrip: void setNonPrimaryAlpha(float)
-android.support.v4.view.PagerTitleStrip: void setTextColor(int)
-android.support.v4.view.PagerTitleStrip: void setGravity(int)
-android.support.v4.view.PagerTitleStrip: int getMinHeight()
-android.support.v4.view.ViewPager: void setScrollState(int)
-android.support.v4.view.ViewPager: void setAdapter(android.support.v4.view.PagerAdapter)
-android.support.v4.view.ViewPager: android.support.v4.view.PagerAdapter getAdapter()
-android.support.v4.view.ViewPager: void setOnAdapterChangeListener(android.support.v4.view.ViewPager$OnAdapterChangeListener)
-android.support.v4.view.ViewPager: int getClientWidth()
-android.support.v4.view.ViewPager: void setCurrentItem(int)
-android.support.v4.view.ViewPager: int getCurrentItem()
-android.support.v4.view.ViewPager: void setOnPageChangeListener(android.support.v4.view.ViewPager$OnPageChangeListener)
-android.support.v4.view.ViewPager: void setChildrenDrawingOrderEnabledCompat(boolean)
-android.support.v4.view.ViewPager: int getOffscreenPageLimit()
-android.support.v4.view.ViewPager: void setOffscreenPageLimit(int)
-android.support.v4.view.ViewPager: void setPageMargin(int)
-android.support.v4.view.ViewPager: int getPageMargin()
-android.support.v4.view.ViewPager: void setPageMarginDrawable(android.graphics.drawable.Drawable)
-android.support.v4.view.ViewPager: void setPageMarginDrawable(int)
-android.support.v4.view.ViewPager: void setScrollingCacheEnabled(boolean)
-android.support.v4.view.ViewPager$SavedState
-android.support.v4.view.ViewPager$SavedState: android.os.Parcelable$Creator CREATOR
-android.support.v4.widget.DrawerLayout: void setScrimColor(int)
-android.support.v4.widget.DrawerLayout: void setDrawerListener(android.support.v4.widget.DrawerLayout$DrawerListener)
-android.support.v4.widget.DrawerLayout: void setDrawerLockMode(int)
-android.support.v4.widget.DrawerLayout$SavedState
-android.support.v4.widget.DrawerLayout$SavedState: android.os.Parcelable$Creator CREATOR
-android.support.v4.widget.SlidingPaneLayout: void setParallaxDistance(int)
-android.support.v4.widget.SlidingPaneLayout: int getParallaxDistance()
-android.support.v4.widget.SlidingPaneLayout: void setSliderFadeColor(int)
-android.support.v4.widget.SlidingPaneLayout: int getSliderFadeColor()
-android.support.v4.widget.SlidingPaneLayout: void setCoveredFadeColor(int)
-android.support.v4.widget.SlidingPaneLayout: int getCoveredFadeColor()
-android.support.v4.widget.SlidingPaneLayout: void setPanelSlideListener(android.support.v4.widget.SlidingPaneLayout$PanelSlideListener)
-android.support.v4.widget.SlidingPaneLayout: void setShadowDrawable(android.graphics.drawable.Drawable)
-android.support.v4.widget.SlidingPaneLayout: void setShadowResource(int)
-android.support.v4.widget.SlidingPaneLayout$SavedState
-android.support.v4.widget.SlidingPaneLayout$SavedState: android.os.Parcelable$Creator CREATOR
 com.podcatcher.deluxe.video.AddPodcastActivity
 com.podcatcher.deluxe.video.AddPodcastActivity: AddPodcastActivity()
 com.podcatcher.deluxe.video.AddSuggestionActivity
@@ -116,9 +52,7 @@ com.podcatcher.deluxe.video.R$color: int theme_dark
 com.podcatcher.deluxe.video.R$color: int theme_light
 com.podcatcher.deluxe.video.R$dimen: int divider_width
 com.podcatcher.deluxe.video.R$dimen: int episode_view_padding
-com.podcatcher.deluxe.video.R$dimen: int font_size_default
 com.podcatcher.deluxe.video.R$dimen: int font_size_large
-com.podcatcher.deluxe.video.R$dimen: int font_size_small
 com.podcatcher.deluxe.video.R$dimen: int list_item_padding
 com.podcatcher.deluxe.video.R$dimen: int progress_bar_horizontal_height
 com.podcatcher.deluxe.video.R$dimen: int suggestion_add_padding
@@ -350,6 +284,7 @@ com.podcatcher.deluxe.video.R$string: int no_browser
 com.podcatcher.deluxe.video.R$string: int opml_export
 com.podcatcher.deluxe.video.R$string: int opml_export_failed
 com.podcatcher.deluxe.video.R$string: int opml_export_success
+com.podcatcher.deluxe.video.R$string: int opml_export_success_at
 com.podcatcher.deluxe.video.R$string: int opml_import
 com.podcatcher.deluxe.video.R$string: int opml_import_failed
 com.podcatcher.deluxe.video.R$string: int parse
@@ -411,6 +346,9 @@ com.podcatcher.deluxe.video.R$string: int suggestions_reset_filters
 com.podcatcher.deluxe.video.R$string: int suggestions_send
 com.podcatcher.deluxe.video.R$string: int wait
 com.podcatcher.deluxe.video.R$string: int wildcard
+com.podcatcher.deluxe.video.R$style: int ListItem_SubTitle
+com.podcatcher.deluxe.video.R$style: int ListItem_Title
+com.podcatcher.deluxe.video.R$style: int ListView_Empty
 com.podcatcher.deluxe.video.R$style: int ProgressBar_Horizontal
 com.podcatcher.deluxe.video.R$xml: int preferences
 com.podcatcher.deluxe.video.RemovePodcastActivity
