@@ -20,8 +20,6 @@ package net.alliknow.podcatcher.listeners;
 import static android.net.Uri.encode;
 import static net.alliknow.podcatcher.BaseActivity.PODCAST_POSITION_LIST_KEY;
 import static net.alliknow.podcatcher.view.fragments.AuthorizationFragment.USERNAME_PRESET_KEY;
-import static net.alliknow.podcatcher.view.fragments.SuggestionFragment.SUGGESTION_MAIL_ADDRESS;
-import static net.alliknow.podcatcher.view.fragments.SuggestionFragment.SUGGESTION_MAIL_SUBJECT;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -139,8 +137,9 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
                         (Podcast) fragment.getListAdapter().getItem(positions.get(0));
 
                 // Construct the email
-                final String uriText = "mailto:" + encode(SUGGESTION_MAIL_ADDRESS)
-                        + "?subject=" + encode(SUGGESTION_MAIL_SUBJECT)
+                final String uriText = "mailto:"
+                        + encode(fragment.getString(R.string.suggestion_address))
+                        + "?subject=" + encode(fragment.getString(R.string.suggestion_subject))
                         + "&body=" + encode(suggestion.getName() + " at " + suggestion.getUrl());
 
                 // Go start the mail app

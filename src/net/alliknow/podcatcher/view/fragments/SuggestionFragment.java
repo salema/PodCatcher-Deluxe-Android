@@ -61,11 +61,6 @@ public class SuggestionFragment extends DialogFragment {
     /** The filter wildcard */
     public static final String FILTER_WILDCARD = "ALL";
 
-    /** Mail address to send new suggestions to */
-    public static final String SUGGESTION_MAIL_ADDRESS = "suggestion@podcatcher-deluxe.com";
-    /** Subject for mail with new suggestions */
-    public static final String SUGGESTION_MAIL_SUBJECT = "A proposal for a podcast suggestion in the Podcatcher Android apps";
-
     /** The call back we work on */
     private OnAddSuggestionListener listener;
     /** The list of suggestions to show */
@@ -181,8 +176,9 @@ public class SuggestionFragment extends DialogFragment {
         suggestionsListView.setEmptyView(progressView);
 
         sendSuggestionView = (TextView) view.findViewById(R.id.suggestion_send);
-        sendSuggestionView.setText(Html.fromHtml("<a href=\"mailto:" + SUGGESTION_MAIL_ADDRESS +
-                "?subject=" + SUGGESTION_MAIL_SUBJECT + "\">" +
+        sendSuggestionView.setText(Html.fromHtml("<a href=\"mailto:" +
+                getString(R.string.suggestion_address) + "?subject=" +
+                getString(R.string.suggestion_subject) + "\">" +
                 getString(R.string.suggestions_send) + "</a>"));
         sendSuggestionView.setMovementMethod(LinkMovementMethod.getInstance());
 
