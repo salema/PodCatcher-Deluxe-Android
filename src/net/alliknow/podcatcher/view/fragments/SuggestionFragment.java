@@ -280,8 +280,10 @@ public class SuggestionFragment extends DialogFragment {
     }
 
     private void updateList() {
-        // Filter the suggestion list
-        if (suggestionList != null) {
+        // Filter the suggestion list and update the list adapter. This should
+        // not run too early since some pieces might not be in place and
+        // onResume() will call us anyway.
+        if (suggestionList != null && isResumed()) {
             // Resulting list
             List<Suggestion> filteredSuggestionList = new ArrayList<Suggestion>();
             // Do filter!
