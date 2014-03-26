@@ -86,4 +86,17 @@ public class Suggestion extends Podcast {
     public void setExplicit(boolean explicit) {
         this.explicit = explicit;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        // We do not need to do anything special here, suggestions are equal if
+        // the podcasts they represent are equal
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        // dito
+        return super.hashCode();
+    }
 }
