@@ -120,6 +120,7 @@ public class ContentSpinner extends Spinner implements OnItemSelectedListener {
                 case 0:
                     // The initial selection dummy view should be hidden
                     spinnerItemView.getLayoutParams().height = 1;
+                    break;
                 case 1:
                     imageView.setImageResource(R.drawable.ic_menu_select_all);
                     titleView.setText(R.string.podcast_select_all);

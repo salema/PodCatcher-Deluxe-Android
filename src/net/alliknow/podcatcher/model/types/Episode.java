@@ -160,7 +160,7 @@ public class Episode extends FeedEntity implements Comparable<Episode> {
         // are not available or are equal, we check for their position in the
         // podcast. As a last resort we simply return something <> 0.
         if (this.pubDate != null && another.pubDate != null)
-            result = -pubDate.compareTo(another.pubDate);
+            result = another.pubDate.compareTo(pubDate);
         else if (this.pubDate == null && another.pubDate != null)
             result = -1;
         else if (this.pubDate != null && another.pubDate == null)

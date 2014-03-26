@@ -99,10 +99,9 @@ public class FirstRunFragment extends DialogFragment {
 
     @Override
     public void onCancel(DialogInterface dialog) {
-        // Make sure the parent activity knows when we are closing
-        if (listener instanceof OnCancelListener)
-            ((OnCancelListener) listener).onCancel(getDialog());
-
         super.onCancel(dialog);
+
+        if (listener != null)
+            listener.onCancel(getDialog());
     }
 }
