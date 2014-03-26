@@ -270,8 +270,10 @@ public class SelectFileFragment extends DialogFragment {
             // Mark file as selected
             selectedPosition = position;
 
-            selectButton.setEnabled(position >= 0);
-            fileListAdapter.setSelectedPosition(position);
+            if (viewCreated && fileListAdapter != null) {
+                selectButton.setEnabled(position >= 0);
+                fileListAdapter.setSelectedPosition(position);
+            }
         }
     }
 
