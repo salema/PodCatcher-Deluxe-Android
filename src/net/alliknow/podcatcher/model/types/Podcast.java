@@ -29,6 +29,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -164,7 +165,9 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
 
         if (username != null && password != null) {
             final String userpass = username + ":" + password;
-            result = "Basic " + Base64.encodeToString(userpass.getBytes(), Base64.NO_WRAP);
+            final byte[] authBytes = userpass.getBytes(Charset.forName("UTF-8"));
+
+            result = "Basic " + Base64.encodeToString(authBytes, Base64.NO_WRAP);
         }
 
         return result;
