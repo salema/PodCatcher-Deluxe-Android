@@ -99,7 +99,7 @@ public class EpisodeMetadata {
         // No luck, create episode
         if (result == null) {
             // Try to get podcast from the podcast manager
-            Podcast podcast = manager.findPodcastForUrl(podcastUrl.toString());
+            Podcast podcast = manager.findPodcastForUrl(podcastUrl);
             // No luck, create podcast
             if (podcast == null)
                 podcast = new Podcast(podcastName, podcastUrl);
