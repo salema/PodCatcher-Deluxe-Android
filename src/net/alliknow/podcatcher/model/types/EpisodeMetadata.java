@@ -95,7 +95,7 @@ public class EpisodeMetadata {
         PodcastManager manager = PodcastManager.getInstance();
 
         // Try to get episode from the podcast manager
-        Episode result = manager.findEpisodeForUrl(episodeUrl);
+        Episode result = manager.findEpisodeForUrl(episodeUrl, podcastUrl);
         // No luck, create episode
         if (result == null) {
             // Try to get podcast from the podcast manager

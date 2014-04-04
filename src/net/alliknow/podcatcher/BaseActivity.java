@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.PodcastManager;
+import net.alliknow.podcatcher.model.SyncManager;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.view.ViewMode;
@@ -59,6 +60,8 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
     protected PodcastManager podcastManager;
     /** The episode manager handle */
     protected EpisodeManager episodeManager;
+    /** The sync manager handle */
+    protected SyncManager syncManager;
     /** The shared app preferences */
     protected SharedPreferences preferences;
 
@@ -280,6 +283,8 @@ public abstract class BaseActivity extends Activity implements OnSharedPreferenc
         // Set the data managers
         podcastManager = PodcastManager.getInstance();
         episodeManager = EpisodeManager.getInstance();
+        syncManager = SyncManager.getInstance();
+
         // Get our preferences and listen to changes
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferences.registerOnSharedPreferenceChangeListener(this);

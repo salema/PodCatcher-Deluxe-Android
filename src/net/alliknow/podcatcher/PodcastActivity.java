@@ -193,11 +193,12 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         }
         // This is an internal call to update the selection
         else if (intent.hasExtra(MODE_KEY)) {
+            final String podcastUrl = intent.getStringExtra(PODCAST_URL_KEY);
+            final String episodeUrl = intent.getStringExtra(EPISODE_URL_KEY);
+
             selection.setMode((ContentMode) intent.getSerializableExtra(MODE_KEY));
-            selection.setPodcast(podcastManager.findPodcastForUrl(
-                    intent.getStringExtra(PODCAST_URL_KEY)));
-            selection.setEpisode(podcastManager.findEpisodeForUrl(
-                    intent.getStringExtra(EPISODE_URL_KEY)));
+            selection.setPodcast(podcastManager.findPodcastForUrl(podcastUrl));
+            selection.setEpisode(podcastManager.findEpisodeForUrl(episodeUrl, podcastUrl));
 
             needsUiUpdateOnResume = true;
         }
@@ -241,6 +242,10 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             else
                 onNoEpisodeSelected(true);
         }
+
+        // Trigger sync event
+        if (((Podcatcher) getApplication()).isOnFastConnection())
+            syncManager.syncAll();
 
         // Make sure we are alerted on back stack changes. This needs to be
         // added after re-selection of the current content.

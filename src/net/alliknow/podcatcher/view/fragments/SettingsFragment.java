@@ -20,6 +20,7 @@ package net.alliknow.podcatcher.view.fragments;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -28,6 +29,7 @@ import android.widget.BaseAdapter;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.SettingsActivity;
 import net.alliknow.podcatcher.preferences.DownloadFolderPreference;
+import net.alliknow.podcatcher.preferences.SynchronizationPreference;
 
 import java.io.File;
 
@@ -69,7 +71,7 @@ public class SettingsFragment extends PreferenceFragment implements
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(SettingsActivity.KEY_THEME_COLOR)) {
+        if (SettingsActivity.KEY_THEME_COLOR.equals(key)) {
             // Update the color preview widget since this is not done
             // automatically by the color picker preference
             final View previewColorView = getView().findViewById(R.id.color_preview);
@@ -77,6 +79,13 @@ public class SettingsFragment extends PreferenceFragment implements
             if (previewColorView != null)
                 previewColorView.setBackgroundColor(sharedPreferences.getInt(key,
                         getActivity().getResources().getColor(R.color.theme_dark)));
+        } else if (SettingsActivity.KEY_SYNC_ACTIVE.equals(key)
+                || SettingsActivity.KEY_SYNC_RECEIVE.equals(key)) {
+            final Preference syncPreference = findPreference(SynchronizationPreference.KEY);
+
+            // Update preference summary
+            if (syncPreference != null)
+                syncPreference.setSummary(syncPreference.getSummary());
         }
     }
 

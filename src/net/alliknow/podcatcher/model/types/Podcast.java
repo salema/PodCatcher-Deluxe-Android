@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * The podcast type. This represents the most important type in the podcatcher
@@ -98,7 +99,7 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
      */
     public Podcast(String name, String url) {
         this.name = name;
-        this.url = url;
+        this.url = normalizeUrl(url);
     }
 
     /**
@@ -424,5 +425,32 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
         } catch (IOException e) {
             // pass, episode not added
         }
+    }
+
+    @Override
+    protected String normalizeUrl(String spec) {
+        // We put some extra bit in here to that only apply to podcast URLs and
+        // then call the base class method.
+        if (spec != null) {
+            if (spec.toLowerCase(Locale.US).startsWith("feed://") ||
+                    spec.toLowerCase(Locale.US).startsWith("itpc://") ||
+                    spec.toLowerCase(Locale.US).startsWith("itms://"))
+                spec = "http" + spec.substring(4);
+            if (spec.toLowerCase(Locale.US).startsWith("fb:"))
+                spec = "http://feeds.feedburner.com/" + spec.substring(3);
+        }
+
+        spec = super.normalizeUrl(spec);
+
+        if (spec != null) {
+            if (spec.startsWith("http://feeds2.feedburner.com"))
+                spec = spec.replaceFirst("feeds2", "feeds");
+            if (spec.startsWith("https://feeds2.feedburner.com"))
+                spec = spec.replaceFirst("feeds2", "feeds");
+            if (spec.contains("://feeds.feedburner.com") && spec.endsWith("?format=xml"))
+                spec = spec.replace("?format=xml", "");
+        }
+
+        return spec;
     }
 }

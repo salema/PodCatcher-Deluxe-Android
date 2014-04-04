@@ -20,7 +20,6 @@ package net.alliknow.podcatcher.view.fragments;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.StateListDrawable;
@@ -44,7 +43,7 @@ import net.alliknow.podcatcher.listeners.OnSelectFileListener;
 import java.io.File;
 
 /**
- * Fragment for file selection.
+ * Fragment dialog for file and folder selection.
  */
 public class SelectFileFragment extends DialogFragment {
 
@@ -193,10 +192,7 @@ public class SelectFileFragment extends DialogFragment {
     @Override
     public void onCancel(DialogInterface dialog) {
         viewCreated = false;
-
-        // Make sure the parent activity knows when we are closing
-        if (listener instanceof OnCancelListener)
-            ((OnCancelListener) listener).onCancel(dialog);
+        listener.onCancel(dialog);
 
         super.onCancel(dialog);
     }

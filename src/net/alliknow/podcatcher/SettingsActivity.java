@@ -47,6 +47,13 @@ public class SettingsActivity extends BaseActivity {
     /** The key for the download folder preference */
     public static final String DOWNLOAD_FOLDER_KEY = "download_folder";
 
+    /** Setting key for the sync receive field */
+    public static final String KEY_SYNC_RECEIVE = "receive_controller";
+    /** Setting key for the sync field */
+    public static final String KEY_SYNC_ACTIVE = "enabled_sync_controllers";
+    /** Setting key for the last sync field */
+    public static final String KEY_LAST_SYNC = "last_full_sync";
+
     /** The settings fragment we display */
     private SettingsFragment settingsFragment;
 

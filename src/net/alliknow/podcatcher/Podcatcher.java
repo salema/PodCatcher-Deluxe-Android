@@ -31,6 +31,7 @@ import android.os.Process;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.SuggestionManager;
+import net.alliknow.podcatcher.model.SyncManager;
 import net.alliknow.podcatcher.model.tasks.LoadEpisodeMetadataTask;
 import net.alliknow.podcatcher.model.tasks.LoadPodcastListTask;
 
@@ -81,6 +82,8 @@ public class Podcatcher extends Application {
         EpisodeManager.getInstance(this);
         // dito
         SuggestionManager.getInstance(this);
+        // and sync as well
+        SyncManager.getInstance(this);
 
         // Enabled caching for our HTTP connections
         try {

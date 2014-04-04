@@ -19,6 +19,10 @@ package net.alliknow.podcatcher.model.types;
 
 import net.alliknow.podcatcher.model.tags.RSS;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -81,6 +85,47 @@ public abstract class FeedEntity {
      */
     public boolean isExplicit() {
         return explicit;
+    }
+
+    /**
+     * Normalize the given URL string. See
+     * http://en.wikipedia.org/wiki/URL_normalization for details.
+     * 
+     * @param spec The URL string to normalize.
+     * @return The same URL string with unchanged semantics, but normalized
+     *         syntax. When not a valid URL or <code>null</code>, the string
+     *         given is returned unaltered.
+     */
+    protected String normalizeUrl(final String spec) {
+        try {
+            // Trim white spaces, normalize path, throw exception if mal-formed
+            final URL url = new URI(spec.trim()).normalize().toURL();
+
+            // Make sure protocol and server are lower case
+            final String scheme = url.getProtocol().toLowerCase(Locale.US);
+            final String host = url.getHost().toLowerCase(Locale.US);
+
+            // Normalize path to be at least "/"
+            String path = url.getPath();
+            if (path == null || path.isEmpty())
+                path = "/";
+            else if (path.length() > 1 && path.endsWith("/"))
+                path = path.substring(0, path.length() - 1);
+
+            // Look at ports and only keep non-defaults
+            boolean needsPort = url.getPort() != -1;
+            if ((scheme.equals("http") && url.getPort() == 80)
+                    || (scheme.equals("https") && url.getPort() == 443))
+                needsPort = false;
+
+            // Reconstruct the string
+            return scheme + "://" + host + (needsPort ? ":" + url.getPort() : "")
+                    + path + (url.getQuery() == null ? "" : "?" + url.getQuery());
+        } catch (MalformedURLException | NullPointerException | URISyntaxException
+                | IllegalArgumentException e) {
+            // We simply return the original string
+            return spec;
+        }
     }
 
     /**
