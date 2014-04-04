@@ -59,19 +59,21 @@ public class PodcastExamplesTest extends SuggestionsAsExamplesTest {
     }
 
     public final void testGetName() throws XmlPullParserException, IOException {
-        for (Podcast ep : examplePodcasts) {
-            assertNotNull(ep.getName());
+        for (Podcast podcast : examplePodcasts) {
+            assertNotNull("Podcast " + podcast.getName() + " has no name!", podcast.getName());
         }
     }
 
     public final void testGetEpisodeNumber() {
         for (Podcast podcast : examplePodcasts)
-            assertTrue(podcast.getEpisodeCount() > 0);
+            assertTrue("Podcast " + podcast.getName() + " has no episodes!",
+                    podcast.getEpisodeCount() > 0);
     }
 
     public final void testGetEpisodes() {
         for (Podcast podcast : examplePodcasts)
-            assertNotNull(podcast.getEpisodes());
+            assertNotNull("Podcast " + podcast.getName() + " has no episode list!",
+                    podcast.getEpisodes());
     }
 
     public final void testGetLogoUrl() {
@@ -81,6 +83,7 @@ public class PodcastExamplesTest extends SuggestionsAsExamplesTest {
 
     public final void testLastLoaded() {
         for (Podcast podcast : examplePodcasts)
-            assertNotNull(podcast.getLastLoaded());
+            assertNotNull("Podcast " + podcast.getName() + " has no last loaded date!",
+                    podcast.getLastLoaded());
     }
 }

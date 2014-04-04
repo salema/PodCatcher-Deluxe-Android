@@ -119,7 +119,7 @@ public class Progress {
 
         Progress other = (Progress) o;
 
-        return progress == other.getProgress() && total == other.getTotal();
+        return progress == other.progress && total == other.total;
     }
 
     @Override

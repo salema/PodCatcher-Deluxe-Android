@@ -213,8 +213,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         this.podcastListChanged = false;
 
         // Put some nice sample podcasts for testing
-        if (podcatcher.isInDebugMode())
-            putSamplePodcasts();
+        // if (podcatcher.isInDebugMode())
+        // putSamplePodcasts();
 
         // Alert call-backs (if any)
         for (OnLoadPodcastListListener listener : loadPodcastListListeners)
@@ -561,6 +561,35 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
                 for (Episode episode : podcast.getEpisodes())
                     if (episode.getMediaUrl().equals(url))
                         return episode;
+        }
+
+        return null;
+    }
+
+    /**
+     * Find the episode object for given URL in the podcast given. Note that
+     * this will only search episodes currently loaded.
+     * 
+     * @param episodeUrl URL of episode to look for.
+     * @param podcastUrl URL of the podcast to look in.
+     * @return The episode object, or <code>null</code> if not found.
+     */
+    public Episode findEpisodeForUrl(String episodeUrl, String podcastUrl) {
+        // Make sure search only runs once the podcast list is actually
+        // available.
+        if (podcastList != null && episodeUrl != null) {
+            // No podcast info given, use regular method
+            if (podcastUrl == null)
+                return findEpisodeForUrl(episodeUrl);
+            else {
+                final Podcast podcast = findPodcastForUrl(podcastUrl);
+
+                // Go try find the episode
+                if (podcast != null)
+                    for (Episode episode : podcast.getEpisodes())
+                        if (episode.getMediaUrl().equals(episodeUrl))
+                            return episode;
+            }
         }
 
         return null;

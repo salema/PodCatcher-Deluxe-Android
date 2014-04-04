@@ -284,7 +284,12 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     @Override
-    public void onStateChanged(Episode episode) {
+    public void onStateChanged(Episode episode, boolean newState) {
+        updateStateUi();
+    }
+
+    @Override
+    public void onResumeAtChanged(Episode episode, Integer millis) {
         updateStateUi();
     }
 

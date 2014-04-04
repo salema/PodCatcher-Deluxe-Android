@@ -107,7 +107,7 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
 
             // Alert listeners
             for (OnChangeEpisodeStateListener listener : stateListeners)
-                listener.onStateChanged(episode);
+                listener.onStateChanged(episode, isOld == null ? false : isOld);
         }
     }
 
@@ -196,6 +196,10 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
 
             // Mark metadata record as dirty
             metadataChanged = true;
+
+            // Alert listeners
+            for (OnChangeEpisodeStateListener listener : stateListeners)
+                listener.onResumeAtChanged(episode, at);
         }
     }
 

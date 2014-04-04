@@ -29,7 +29,17 @@ public interface OnChangeEpisodeStateListener {
      * Called on the listener when the state (old/new) of an episode is altered.
      * 
      * @param episode Episode the state was changed for.
+     * @param newState The new state the episode is in.
      */
-    public void onStateChanged(Episode episode);
+    public void onStateChanged(Episode episode, boolean newState);
 
+    /**
+     * Called on the listener when the resume at point for an episode is
+     * changed.
+     * 
+     * @param episode Episode the metadata was changed for.
+     * @param millis The player position in milli-seconds from the start,
+     *            <code>null</code> if the data has been reset.
+     */
+    public void onResumeAtChanged(Episode episode, Integer millis);
 }
