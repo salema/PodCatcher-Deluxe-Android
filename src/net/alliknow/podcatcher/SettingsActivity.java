@@ -24,6 +24,7 @@ import net.alliknow.podcatcher.preferences.DownloadFolderPreference;
 import net.alliknow.podcatcher.view.fragments.SettingsFragment;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Update settings activity.
@@ -71,11 +72,14 @@ public class SettingsActivity extends BaseActivity {
             if (settingsFragment != null && result != null) {
                 final File folder = new File(result.getData().getPath());
 
-                // Only accept folder we can write to.
-                if (folder.canWrite())
+                try {
+                    // Make sure we can actually write to this folder
+                    File.createTempFile("test", "tmp", folder).delete();
+
                     settingsFragment.updateDownloadFolder(folder);
-                else
+                } catch (IOException e) {
                     showToast(getString(R.string.file_select_access_denied));
+                }
             }
     }
 }
