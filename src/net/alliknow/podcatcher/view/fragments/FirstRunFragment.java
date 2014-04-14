@@ -84,6 +84,8 @@ public class FirstRunFragment extends DialogFragment {
 
             @Override
             public void onClick(View v) {
+                dismiss();
+
                 listener.onAddPodcasts();
             }
         });
