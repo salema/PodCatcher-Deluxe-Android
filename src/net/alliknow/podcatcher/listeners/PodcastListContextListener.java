@@ -189,17 +189,23 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
     }
 
     private void update(ActionMode mode) {
-        // Let list adapter know which items to mark checked (row color)
-        ((PodcastListAdapter) fragment.getListAdapter()).setCheckedPositions(
-                fragment.getListView().getCheckedItemPositions());
+        try {
+            // Let list adapter know which items to mark checked (row color)
+            ((PodcastListAdapter) fragment.getListAdapter()).setCheckedPositions(
+                    fragment.getListView().getCheckedItemPositions());
 
-        // Update the mode title text
-        final int checkedItemCount = fragment.getListView().getCheckedItemCount();
-        mode.setTitle(fragment.getResources()
-                .getQuantityString(R.plurals.podcasts, checkedItemCount, checkedItemCount));
+            // Update the mode title text
+            final int checkedItemCount = fragment.getListView().getCheckedItemCount();
+            mode.setTitle(fragment.getResources()
+                    .getQuantityString(R.plurals.podcasts, checkedItemCount, checkedItemCount));
 
-        // Show/hide edit auth menu item
-        editAuthMenuItem.setVisible(checkedItemCount == 1);
-        sendSuggestionMenuItem.setVisible(checkedItemCount == 1);
+            // Show/hide edit auth menu item
+            editAuthMenuItem.setVisible(checkedItemCount == 1);
+            sendSuggestionMenuItem.setVisible(checkedItemCount == 1);
+        } catch (NullPointerException npe) {
+            // pass, this happens when some of the parts (fragment or listview)
+            // are not there yet, we simply ignore this since update will be
+            // called again.
+        }
     }
 }

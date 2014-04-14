@@ -215,22 +215,24 @@ public class EpisodeListContextListener implements MultiChoiceModeListener {
     }
 
     private void update(ActionMode mode) {
-        // This also avoids crashed when the app has been hidden for some time
-        // while the context mode was activated and (parts of) the fragment is
-        // (are) gone
-        if (updateUi && fragment != null &&
-                fragment.getListAdapter() != null && fragment.getListView() != null) {
-            updateMenuItems();
+        // Only run if UI updates are enabled
+        if (updateUi)
+            try {
+                updateMenuItems();
 
-            // Let list adapter know which items to mark checked (row color)
-            ((EpisodeListAdapter) fragment.getListAdapter()).setCheckedPositions(
-                    fragment.getListView().getCheckedItemPositions());
+                // Let list adapter know which items to mark checked (row color)
+                ((EpisodeListAdapter) fragment.getListAdapter()).setCheckedPositions(
+                        fragment.getListView().getCheckedItemPositions());
 
-            // Update the mode title text
-            final int checkedItemCount = fragment.getListView().getCheckedItemCount();
-            mode.setTitle(fragment.getResources()
-                    .getQuantityString(R.plurals.episodes, checkedItemCount, checkedItemCount));
-        }
+                // Update the mode title text
+                final int checkedItemCount = fragment.getListView().getCheckedItemCount();
+                mode.setTitle(fragment.getResources()
+                        .getQuantityString(R.plurals.episodes, checkedItemCount, checkedItemCount));
+            } catch (NullPointerException npe) {
+                // This also avoids crashes when the app has been hidden for
+                // some time while the context mode was activated and (parts of)
+                // the fragment is (are) gone
+            }
     }
 
     private void updateMenuItems() {
