@@ -35,11 +35,6 @@ public class FirstRunActivity extends BaseActivity implements FirstRunListener {
 
     /** The podcatcher help website URL (add anchor) */
     private static final String PODCATCHER_HELPSITE_ADD = "http://www.podcatcher-deluxe.com/help#add";
-    /** The tag we identify our fragment with */
-    private static final String FIRST_RUN_FRAGMENT_TAG = "first_run";
-
-    /** The fragment containing the UI */
-    private FirstRunFragment firstRunFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,30 +42,17 @@ public class FirstRunActivity extends BaseActivity implements FirstRunListener {
 
         // Make sure we only run once
         preferences.edit().putBoolean(SettingsActivity.KEY_FIRST_RUN, false).apply();
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+        // Create and show the fragment
+        final FirstRunFragment firstRunFragment = new FirstRunFragment();
+        firstRunFragment.setStyle(DialogFragment.STYLE_NORMAL,
+                android.R.style.Theme_Holo_Light_Dialog);
 
-        // Try to find existing fragment
-        firstRunFragment = (FirstRunFragment) getFragmentManager().findFragmentByTag(
-                FIRST_RUN_FRAGMENT_TAG);
-
-        // No fragment found, create it
-        if (firstRunFragment == null) {
-            firstRunFragment = new FirstRunFragment();
-            firstRunFragment.setStyle(DialogFragment.STYLE_NORMAL,
-                    android.R.style.Theme_Holo_Light_Dialog);
-
-            // Show the fragment
-            firstRunFragment.show(getFragmentManager(), FIRST_RUN_FRAGMENT_TAG);
-        }
+        firstRunFragment.show(getFragmentManager(), null);
     }
 
     @Override
     public void onAddPodcasts() {
-        firstRunFragment.dismiss();
         finish();
 
         startActivity(new Intent(this, AddPodcastActivity.class));
