@@ -98,14 +98,10 @@ public class AddPodcastFragment extends DialogFragment {
 
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                switch (actionId) {
-                    case EditorInfo.IME_ACTION_GO:
-                        addPodcast();
+                if (EditorInfo.IME_ACTION_GO == actionId)
+                    addPodcast();
 
-                        return true;
-                    default:
-                        return false;
-                }
+                return EditorInfo.IME_ACTION_GO == actionId;
             }
         });
 
