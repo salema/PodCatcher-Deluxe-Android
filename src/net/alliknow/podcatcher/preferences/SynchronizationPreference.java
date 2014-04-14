@@ -31,9 +31,6 @@ import net.alliknow.podcatcher.model.sync.SyncController.SyncMode;
  */
 public class SynchronizationPreference extends Preference {
 
-    /** The key for the sync preference */
-    public static final String KEY = "synchronization";
-
     /** Our {@link SyncManager} handle. */
     private final SyncManager syncManager;
 

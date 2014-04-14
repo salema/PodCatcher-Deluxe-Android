@@ -20,14 +20,13 @@ package net.alliknow.podcatcher.view.fragments;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.view.View;
+import android.widget.BaseAdapter;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.SettingsActivity;
-import net.alliknow.podcatcher.preferences.SynchronizationPreference;
 
 /**
  * Fragment for settings.
@@ -58,11 +57,9 @@ public class SettingsFragment extends PreferenceFragment implements
                         getActivity().getResources().getColor(R.color.theme_dark)));
         } else if (SettingsActivity.KEY_SYNC_ACTIVE.equals(key)
                 || SettingsActivity.KEY_SYNC_RECEIVE.equals(key)) {
-            final Preference syncPreference = findPreference(SynchronizationPreference.KEY);
 
-            // Update preference summary
-            if (syncPreference != null)
-                syncPreference.setSummary(syncPreference.getSummary());
+            // Update the summaries to reflect new settings
+            ((BaseAdapter) getPreferenceScreen().getRootAdapter()).notifyDataSetChanged();
         }
     }
 

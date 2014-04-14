@@ -31,6 +31,8 @@ public class SettingsActivity extends BaseActivity {
 
     /** The select all podcast on start-up preference key */
     public static final String KEY_SELECT_ALL_ON_START = "select_all_on_startup";
+    /** The key for the sync preference */
+    public static final String KEY_SYNC = "synchronization";
     /** The theme color preference key */
     public static final String KEY_THEME_COLOR = "theme_color";
     /** The episode list width preference key */
