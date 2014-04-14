@@ -20,7 +20,6 @@ package net.alliknow.podcatcher.view.fragments;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -28,10 +27,6 @@ import android.widget.BaseAdapter;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.SettingsActivity;
-import net.alliknow.podcatcher.preferences.DownloadFolderPreference;
-import net.alliknow.podcatcher.preferences.SynchronizationPreference;
-
-import java.io.File;
 
 /**
  * Fragment for settings.
@@ -50,25 +45,6 @@ public class SettingsFragment extends PreferenceFragment implements
                 .registerOnSharedPreferenceChangeListener(this);
     }
 
-    /**
-     * Update the download folder preference to given folder.
-     * 
-     * @param newFolder The new folder to store downloads in. Needs to be
-     *            writable.
-     */
-    public void updateDownloadFolder(File newFolder) {
-        // Get the corresponding preference
-        DownloadFolderPreference folderPreference =
-                (DownloadFolderPreference) findPreference(SettingsActivity.DOWNLOAD_FOLDER_KEY);
-
-        if (folderPreference != null && newFolder != null && newFolder.canWrite()) {
-            folderPreference.update(newFolder);
-
-            // Make sure the summary shows the folder path
-            ((BaseAdapter) getPreferenceScreen().getRootAdapter()).notifyDataSetChanged();
-        }
-    }
-
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (SettingsActivity.KEY_THEME_COLOR.equals(key)) {
@@ -80,12 +56,11 @@ public class SettingsFragment extends PreferenceFragment implements
                 previewColorView.setBackgroundColor(sharedPreferences.getInt(key,
                         getActivity().getResources().getColor(R.color.theme_dark)));
         } else if (SettingsActivity.KEY_SYNC_ACTIVE.equals(key)
-                || SettingsActivity.KEY_SYNC_RECEIVE.equals(key)) {
-            final Preference syncPreference = findPreference(SynchronizationPreference.KEY);
+                || SettingsActivity.KEY_SYNC_RECEIVE.equals(key)
+                || SettingsActivity.KEY_DOWNLOAD_FOLDER.equals(key)) {
 
-            // Update preference summary
-            if (syncPreference != null)
-                syncPreference.setSummary(syncPreference.getSummary());
+            // Update the summaries to reflect new settings
+            ((BaseAdapter) getPreferenceScreen().getRootAdapter()).notifyDataSetChanged();
         }
     }
 

@@ -36,16 +36,18 @@ public class SettingsActivity extends BaseActivity {
 
     /** The select all podcast on start-up preference key */
     public static final String KEY_SELECT_ALL_ON_START = "select_all_on_startup";
+    /** The key for the sync preference */
+    public static final String KEY_SYNC = "synchronization";
     /** The theme color preference key */
     public static final String KEY_THEME_COLOR = "theme_color";
     /** The episode list width preference key */
     public static final String KEY_WIDE_EPISODE_LIST = "wide_episode_list";
     /** The preference key for the auto download flag */
-    public static final String AUTO_DOWNLOAD_KEY = "auto_download";
+    public static final String KEY_AUTO_DOWNLOAD = "auto_download";
     /** The preference key for the auto delete flag */
-    public static final String AUTO_DELETE_KEY = "auto_delete";
+    public static final String KEY_AUTO_DELETE = "auto_delete";
     /** The key for the download folder preference */
-    public static final String DOWNLOAD_FOLDER_KEY = "download_folder";
+    public static final String KEY_DOWNLOAD_FOLDER = "download_folder";
 
     /** Setting key for the sync receive field */
     public static final String KEY_SYNC_RECEIVE = "receive_controller";
@@ -77,13 +79,19 @@ public class SettingsActivity extends BaseActivity {
         // result is forwarded to the preference object via the fragment.
         if (resultCode == RESULT_OK && requestCode == DownloadFolderPreference.REQUEST_CODE)
             if (settingsFragment != null && result != null) {
-                final File folder = new File(result.getData().getPath());
+                final File downloadFolder = new File(result.getData().getPath());
 
                 try {
                     // Make sure we can actually write to this folder
-                    File.createTempFile("test", "tmp", folder).delete();
+                    File.createTempFile("test", "tmp", downloadFolder).delete();
 
-                    settingsFragment.updateDownloadFolder(folder);
+                    // Get the corresponding preference
+                    final DownloadFolderPreference folderPreference =
+                            (DownloadFolderPreference) settingsFragment
+                                    .findPreference(KEY_DOWNLOAD_FOLDER);
+
+                    if (folderPreference != null)
+                        folderPreference.update(downloadFolder);
                 } catch (IOException e) {
                     showToast(getString(R.string.file_select_access_denied));
                 }

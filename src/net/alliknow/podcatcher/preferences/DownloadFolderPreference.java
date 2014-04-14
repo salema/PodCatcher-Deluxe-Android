@@ -82,13 +82,13 @@ public class DownloadFolderPreference extends Preference {
     /**
      * Set new value for the preference.
      * 
-     * @param newFolder Updated folder to use.
+     * @param newFolder Updated folder to use (not <code>null</code>).
      */
     public void update(File newFolder) {
-        this.downloadFolder = newFolder;
-
-        if (newFolder != null)
+        if (newFolder != null) {
+            this.downloadFolder = newFolder;
             persistString(newFolder.getAbsolutePath());
+        }
     }
 
     /**

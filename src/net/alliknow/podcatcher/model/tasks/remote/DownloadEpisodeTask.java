@@ -141,7 +141,7 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
 
         // Find the podcast directory and the path to store episode under
         final File podcastDir = new File(PreferenceManager.getDefaultSharedPreferences(podcatcher)
-                .getString(SettingsActivity.DOWNLOAD_FOLDER_KEY,
+                .getString(SettingsActivity.KEY_DOWNLOAD_FOLDER,
                         DownloadFolderPreference.getDefaultDownloadFolder().getAbsolutePath()));
         final String subPath = EpisodeDownloadManager.sanitizeAsFilePath(
                 episode.getPodcast().getName(), episode.getName(), episode.getMediaUrl());

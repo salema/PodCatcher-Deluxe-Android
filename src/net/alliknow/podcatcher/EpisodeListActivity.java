@@ -745,7 +745,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             final Episode latestEpisode = podcast.getEpisodes().get(0);
 
             return PreferenceManager.getDefaultSharedPreferences(this)
-                    .getBoolean(SettingsActivity.AUTO_DOWNLOAD_KEY, false)
+                    .getBoolean(SettingsActivity.KEY_AUTO_DOWNLOAD, false)
                     && ((Podcatcher) getApplication()).isOnFastConnection()
                     && !episodeManager.getState(latestEpisode);
         }

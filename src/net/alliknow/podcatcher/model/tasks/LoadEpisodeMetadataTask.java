@@ -181,7 +181,7 @@ public class LoadEpisodeMetadataTask extends
     private void cleanMetadata(Map<String, EpisodeMetadata> result) {
         // Find download folder
         File podcastDir = new File(PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(SettingsActivity.DOWNLOAD_FOLDER_KEY,
+                .getString(SettingsActivity.KEY_DOWNLOAD_FOLDER,
                         DownloadFolderPreference.getDefaultDownloadFolder().getAbsolutePath()));
 
         // Handle the case where the download finished while the application was

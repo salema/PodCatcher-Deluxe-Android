@@ -809,6 +809,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
     private boolean shouldAutoDeleteCompletedEpisode(Episode episode) {
         return PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(SettingsActivity.AUTO_DELETE_KEY, false);
+                .getBoolean(SettingsActivity.KEY_AUTO_DELETE, false);
     }
 }
