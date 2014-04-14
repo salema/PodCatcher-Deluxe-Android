@@ -43,16 +43,18 @@ import net.alliknow.podcatcher.view.fragments.AuthorizationFragment.OnEnterAutho
 public class AddPodcastActivity extends BaseActivity implements OnLoadPodcastListener,
         OnAddPodcastListener, OnCancelListener, OnEnterAuthorizationListener {
 
-    /** The tag we identify our add podcast fragment with */
-    private static final String ADD_PODCAST_FRAGMENT_TAG = "add_podcast";
-
     /** The fragment containing the add URL UI */
     private AddPodcastFragment addPodcastFragment;
+    /** The enter authorization dialog fragement we use */
+    private AuthorizationFragment authorizationFragment;
 
     /** Key to find current load url under */
     private static final String LOADING_URL_KEY = "LOADING_URL";
     /** The URL of the podcast we are currently loading (if any) */
     private String currentLoadUrl;
+
+    /** Key to find last user name under */
+    private static final String LAST_USER_KEY = "LAST_USER_NAME";
     /** The last user name that was put in */
     private String lastUserName;
 
@@ -65,27 +67,17 @@ public class AddPodcastActivity extends BaseActivity implements OnLoadPodcastLis
 
         // If we are coming from a config change, we need to know whether there
         // is currently a podcast loading.
-        if (savedInstanceState != null)
+        if (savedInstanceState != null) {
             currentLoadUrl = savedInstanceState.getString(LOADING_URL_KEY);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        // Try to find existing fragment
-        addPodcastFragment = (AddPodcastFragment) getFragmentManager().findFragmentByTag(
-                ADD_PODCAST_FRAGMENT_TAG);
-
-        // No fragment found, create it
-        if (addPodcastFragment == null) {
-            addPodcastFragment = new AddPodcastFragment();
-            addPodcastFragment.setStyle(DialogFragment.STYLE_NORMAL,
-                    android.R.style.Theme_Holo_Light_Dialog);
-
-            // Show the fragment
-            addPodcastFragment.show(getFragmentManager(), ADD_PODCAST_FRAGMENT_TAG);
+            lastUserName = savedInstanceState.getString(LAST_USER_KEY);
         }
+
+        // Create and show the add podcast fragment
+        this.addPodcastFragment = new AddPodcastFragment();
+        addPodcastFragment.setStyle(DialogFragment.STYLE_NORMAL,
+                android.R.style.Theme_Holo_Light_Dialog);
+
+        addPodcastFragment.show(getFragmentManager(), null);
     }
 
     @Override
@@ -94,6 +86,16 @@ public class AddPodcastActivity extends BaseActivity implements OnLoadPodcastLis
 
         // Make sure we know which podcast we are loading (if any)
         outState.putString(LOADING_URL_KEY, currentLoadUrl);
+        outState.putString(LAST_USER_KEY, lastUserName);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Hide the auth fragment (if visible)
+        if (authorizationFragment != null)
+            authorizationFragment.dismiss();
     }
 
     @Override
@@ -102,6 +104,7 @@ public class AddPodcastActivity extends BaseActivity implements OnLoadPodcastLis
 
         // Unregister from data manager
         podcastManager.removeLoadPodcastListener(this);
+
     }
 
     @Override
@@ -124,7 +127,7 @@ public class AddPodcastActivity extends BaseActivity implements OnLoadPodcastLis
         else {
             // We need to keep note which podcast we are loading
             currentLoadUrl = podcastUrl;
-        
+
             podcastManager.load(newPodcast);
         }
     }
@@ -153,7 +156,7 @@ public class AddPodcastActivity extends BaseActivity implements OnLoadPodcastLis
             // Podcasts need authorization
             if (code == PodcastLoadError.AUTH_REQUIRED) {
                 // Ask the user for authorization
-                final AuthorizationFragment authorizationFragment = new AuthorizationFragment();
+                this.authorizationFragment = new AuthorizationFragment();
 
                 if (lastUserName != null) {
                     // Create bundle to make dialog aware of username to pre-set
@@ -197,7 +200,6 @@ public class AddPodcastActivity extends BaseActivity implements OnLoadPodcastLis
         addPodcastFragment.dismiss();
         finish();
 
-        // TODO what happens if we are currently loading?
         startActivity(new Intent(this, AddSuggestionActivity.class));
     }
 
@@ -206,13 +208,11 @@ public class AddPodcastActivity extends BaseActivity implements OnLoadPodcastLis
         addPodcastFragment.dismiss();
         finish();
 
-        // TODO what happens if we are currently loading?
         startActivity(new Intent(this, ImportOpmlActivity.class));
     }
 
     @Override
     public void onCancel(DialogInterface dialog) {
-        // TODO Cancel the load task in podcast manager if running
         finish();
     }
 

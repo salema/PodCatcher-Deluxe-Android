@@ -41,9 +41,6 @@ public class AddSuggestionActivity extends BaseActivity implements
         OnLoadSuggestionListener, OnAddSuggestionListener, OnConfirmExplicitSuggestionListener,
         OnCancelListener {
 
-    /** The tag we identify our show suggestions fragment with */
-    public static final String SHOW_SUGGESTIONS_FRAGMENT_TAG = "show_suggestions";
-
     /** The fragment containing the add suggestion UI */
     private SuggestionFragment suggestionFragment;
     /** The suggestion manager */
@@ -58,25 +55,18 @@ public class AddSuggestionActivity extends BaseActivity implements
         // Get suggestions manager and register call-back
         suggestionManager = SuggestionManager.getInstance();
         suggestionManager.addLoadSuggestionListListener(this);
+
+        // Create and show suggestion fragment
+        this.suggestionFragment = new SuggestionFragment();
+        suggestionFragment.setStyle(DialogFragment.STYLE_NORMAL,
+                android.R.style.Theme_Holo_Light_Dialog);
+
+        suggestionFragment.show(getFragmentManager(), null);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
-        // Try to find existing fragment
-        suggestionFragment = (SuggestionFragment) getFragmentManager().findFragmentByTag(
-                SHOW_SUGGESTIONS_FRAGMENT_TAG);
-
-        // No fragment found, create it
-        if (suggestionFragment == null) {
-            suggestionFragment = new SuggestionFragment();
-            suggestionFragment.setStyle(DialogFragment.STYLE_NORMAL,
-                    android.R.style.Theme_Holo_Light_Dialog);
-
-            // Show the fragment
-            suggestionFragment.show(getFragmentManager(), SHOW_SUGGESTIONS_FRAGMENT_TAG);
-        }
 
         // Load suggestions (this has to be called after UI fragment is created)
         suggestionManager.load();
