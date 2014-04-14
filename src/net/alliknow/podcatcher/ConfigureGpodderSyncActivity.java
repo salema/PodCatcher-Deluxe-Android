@@ -1,0 +1,92 @@
+/** Copyright 2012-2014 Kevin Hausmann
+ *
+ * This file is part of PodCatcher Deluxe.
+ *
+ * PodCatcher Deluxe is free software: you can redistribute it 
+ * and/or modify it under the terms of the GNU General Public License as 
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * PodCatcher Deluxe is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package net.alliknow.podcatcher;
+
+import android.content.DialogInterface;
+import android.os.Bundle;
+
+import com.dragontek.mygpoclient.api.MygPodderClient;
+
+import net.alliknow.podcatcher.model.sync.ControllerImpl;
+import net.alliknow.podcatcher.model.sync.gpodder.GpodderSyncController;
+import net.alliknow.podcatcher.view.fragments.GpodderSyncConfigFragment;
+import net.alliknow.podcatcher.view.fragments.GpodderSyncConfigFragment.OnConfigureGpodderSyncListener;
+
+/**
+ * Non-UI activity to configure the gpodder synchronization settings.
+ */
+public class ConfigureGpodderSyncActivity extends BaseActivity implements
+        OnConfigureGpodderSyncListener {
+
+    /** The fragment containing the configuration UI */
+    private GpodderSyncConfigFragment configFragment;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Create and show dialog fragment
+        this.configFragment = new GpodderSyncConfigFragment();
+        configFragment.show(getFragmentManager(), null);
+    }
+
+    @Override
+    public void onSubmitConfiguration(final String username, final String password,
+            final String deviceId) {
+        // The device id is fine (checked by fragment), make sure we keep that
+        preferences.edit().putString(GpodderSyncController.DEVICE_ID_KEY, deviceId).apply();
+
+        // We also need to check the user/pass combination, this has to be
+        // done off the main thread because we need to connect to the
+        // gpodder.net service.
+        // Show progress bar in dialog while checking
+        configFragment.showProgress(true, false);
+        // Create gpodder.net client and run auth check off-thread
+        final MygPodderClient client = new MygPodderClient(username, password);
+        new Thread() {
+            public void run() {
+                if (client.authenticate(username, password)) {
+                    // All fine, store the credentials
+                    preferences.edit()
+                            .putString(GpodderSyncController.USERNAME_KEY, username)
+                            .putString(GpodderSyncController.PASSWORD_KEY, password).apply();
+
+                    // Reset the current sync controller (if any)
+                    syncManager.setSyncMode(ControllerImpl.GPODDER, null);
+
+                    // Close dialog and end activity
+                    configFragment.dismiss();
+                    setResult(RESULT_OK);
+                    finish();
+                } else
+                    // Hide progress bar in dialog and show error
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            configFragment.showProgress(false, true);
+                        }
+                    });
+            }
+        }.start();
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        setResult(RESULT_CANCELED);
+        finish();
+    }
+}

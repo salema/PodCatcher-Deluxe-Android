@@ -214,7 +214,12 @@ public class Episode extends FeedEntity implements Comparable<Episode> {
                 explicit = parseExplicit(parser.nextText());
             // Episode media URL
             else if (tagName.equalsIgnoreCase(RSS.ENCLOSURE)) {
-                mediaUrl = parser.getAttributeValue("", RSS.URL);
+                // Only set the media URL if it is actually there, this will
+                // prevent overriding it when there are multiple enclosures
+                final String urlAttribute = parser.getAttributeValue("", RSS.URL);
+                if (urlAttribute != null)
+                    mediaUrl = normalizeUrl(urlAttribute);
+
                 parser.nextText();
             }
             // Episode publication date (2 options)

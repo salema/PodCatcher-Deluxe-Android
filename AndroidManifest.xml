@@ -127,6 +127,9 @@
         <activity
             android:name=".SelectFileActivity"
             android:theme="@android:style/Theme.NoDisplay" />
+        <activity
+            android:name=".ConfigureSyncActivity"
+            android:theme="@android:style/Theme.NoDisplay" />
         <service
             android:name=".services.PlayEpisodeService"
             android:exported="false">
@@ -161,5 +164,26 @@
                 <action android:name="android.intent.action.GET_RESTRICTION_ENTRIES" />
             </intent-filter>
         </receiver>
+        <activity
+            android:name=".ConfigureGpodderSyncActivity"
+            android:theme="@android:style/Theme.NoDisplay" />
+        <activity
+            android:name=".ConfigureDropboxSyncActivity"
+            android:theme="@android:style/Theme.NoDisplay" />
+        <activity android:name="com.dropbox.sync.android.DbxAuthActivity" />
+        <activity android:name="com.dropbox.client2.android.AuthActivity"
+            android:launchMode="singleTask" >
+            <intent-filter>
+                <data android:scheme="@string/dropbox_scheme" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <service
+            android:name="com.dropbox.sync.android.DbxSyncService"
+            android:enabled="true"
+            android:exported="false"
+            android:label="Dropbox Sync" />
     </application>
 </manifest>

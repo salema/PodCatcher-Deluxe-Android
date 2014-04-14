@@ -26,10 +26,14 @@ import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 import net.alliknow.podcatcher.R;
 
@@ -63,9 +67,9 @@ public class AuthorizationFragment extends DialogFragment {
     private String usernamePreset = null;
 
     /** The username text view */
-    private EditText usernameTextView;
+    private EditText usernameEditText;
     /** The password text view */
-    private EditText passwordTextView;
+    private EditText passwordEditText;
 
     /** Flag on whether our activity listens to us */
     private boolean autoDismissOnPause = false;
@@ -126,10 +130,22 @@ public class AuthorizationFragment extends DialogFragment {
         final LayoutInflater inflater = LayoutInflater.from(context);
         final View content = inflater.inflate(R.layout.authorization, null);
 
-        this.usernameTextView = (EditText) content.findViewById(R.id.username);
-        usernameTextView.setText(usernamePreset);
-        this.passwordTextView = (EditText) content.findViewById(R.id.password);
-        passwordTextView.setTypeface(Typeface.SANS_SERIF);
+        this.usernameEditText = (EditText) content.findViewById(R.id.username);
+        usernameEditText.setText(usernamePreset);
+        this.passwordEditText = (EditText) content.findViewById(R.id.password);
+        passwordEditText.setTypeface(Typeface.SANS_SERIF);
+        passwordEditText.setOnEditorActionListener(new OnEditorActionListener() {
+
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (EditorInfo.IME_ACTION_SEND == actionId) {
+                    submitAuthorization();
+                    return true;
+                }
+
+                return false;
+            }
+        });
 
         // Add click listeners
         final Button submitButton = (Button) content.findViewById(R.id.submit_button);
@@ -137,12 +153,7 @@ public class AuthorizationFragment extends DialogFragment {
 
             @Override
             public void onClick(View v) {
-                final CharSequence username = usernameTextView.getText();
-                final CharSequence password = passwordTextView.getText();
-
-                if (listener != null)
-                    listener.onSubmitAuthorization(username.toString(), password.toString());
-                dismiss();
+                submitAuthorization();
             }
         });
         final Button cancelButton = (Button) content.findViewById(R.id.cancel_button);
@@ -193,5 +204,14 @@ public class AuthorizationFragment extends DialogFragment {
     public void setListener(OnEnterAuthorizationListener listener) {
         this.listener = listener;
         this.autoDismissOnPause = true;
+    }
+
+    private void submitAuthorization() {
+        final CharSequence username = usernameEditText.getText();
+        final CharSequence password = passwordEditText.getText();
+
+        if (listener != null)
+            listener.onSubmitAuthorization(username.toString(), password.toString());
+        dismiss();
     }
 }

@@ -17,13 +17,15 @@
 
 package net.alliknow.podcatcher.listeners;
 
+import android.content.DialogInterface.OnCancelListener;
+
 import java.io.File;
 
 /**
  * Interface definition for a callback to be invoked when an file or folder is
  * selected.
  */
-public interface OnSelectFileListener {
+public interface OnSelectFileListener extends OnCancelListener {
 
     /**
      * A file/folder was selected by the user in the dialog.

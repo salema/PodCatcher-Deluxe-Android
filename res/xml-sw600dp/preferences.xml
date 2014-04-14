@@ -23,6 +23,13 @@
         android:title="@string/pref_select_all_on_start_title"
         android:summary="@string/pref_select_all_on_start_summary"
         android:defaultValue="false" />
+    <net.alliknow.podcatcher.preferences.SynchronizationPreference
+        android:key="synchronization"
+        android:title="@string/pref_sync_title">
+        <intent 
+            android:targetPackage="net.alliknow.podcatcher"
+            android:targetClass="net.alliknow.podcatcher.ConfigureSyncActivity" />
+    </net.alliknow.podcatcher.preferences.SynchronizationPreference>
     <PreferenceCategory
         android:title="@string/pref_category_interface">
         <net.margaritov.preference.colorpicker.ColorPickerPreference

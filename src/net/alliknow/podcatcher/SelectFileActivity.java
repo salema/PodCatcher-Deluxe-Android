@@ -20,9 +20,9 @@ package net.alliknow.podcatcher;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 
 import net.alliknow.podcatcher.listeners.OnSelectFileListener;
@@ -47,11 +47,7 @@ import java.io.File;
  * {@link Intent#getData()}.
  * </p>
  */
-public class SelectFileActivity extends BaseActivity implements OnSelectFileListener,
-        OnCancelListener {
-
-    /** The tag we identify our file selection fragment with */
-    private static final String SELECT_FILE_FRAGMENT_TAG = "select_file";
+public class SelectFileActivity extends BaseActivity implements OnSelectFileListener {
 
     /** The key to store initial path under in intent */
     public static final String INITIAL_PATH_KEY = "initial_path";
@@ -71,19 +67,13 @@ public class SelectFileActivity extends BaseActivity implements OnSelectFileList
     private SelectFileFragment selectFileFragment;
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        // Try to find existing fragment
-        selectFileFragment = (SelectFileFragment) getFragmentManager().findFragmentByTag(
-                SELECT_FILE_FRAGMENT_TAG);
-
-        // No fragment found, create it
-        if (selectFileFragment == null) {
-            selectFileFragment = new SelectFileFragment();
-            selectFileFragment.setStyle(DialogFragment.STYLE_NORMAL,
-                    android.R.style.Theme_Holo_Light_Dialog);
-        }
+        // Create the dialog fragment
+        this.selectFileFragment = new SelectFileFragment();
+        selectFileFragment.setStyle(DialogFragment.STYLE_NORMAL,
+                android.R.style.Theme_Holo_Light_Dialog);
 
         // Use getIntent() to configure selection mode
         final SelectionMode modeFromIntent =
@@ -104,13 +94,7 @@ public class SelectFileActivity extends BaseActivity implements OnSelectFileList
         selectFileFragment.setThemeColors(themeColor, lightThemeColor);
 
         // Show the fragment
-        selectFileFragment.show(getFragmentManager(), SELECT_FILE_FRAGMENT_TAG);
-    }
-
-    @Override
-    public void onCancel(DialogInterface dialog) {
-        setResult(RESULT_CANCELED);
-        finish();
+        selectFileFragment.show(getFragmentManager(), null);
     }
 
     @Override
@@ -126,11 +110,19 @@ public class SelectFileActivity extends BaseActivity implements OnSelectFileList
 
     @Override
     public void onDirectoryChanged(File path) {
+        // This will make sure the path is kept when the activity is re-created,
+        // on configuration changes
         getIntent().putExtra(INITIAL_PATH_KEY, path.getAbsolutePath());
     }
 
     @Override
     public void onAccessDenied(File path) {
         showToast(getString(R.string.file_select_access_denied));
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        setResult(RESULT_CANCELED);
+        finish();
     }
 }

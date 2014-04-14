@@ -40,6 +40,7 @@
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="8dp"
+        android:imeOptions="actionSend"
         android:hint="@string/auth_password"/>
     <LinearLayout
         android:layout_width="match_parent"

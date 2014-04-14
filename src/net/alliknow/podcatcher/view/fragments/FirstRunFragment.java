@@ -19,11 +19,8 @@ package net.alliknow.podcatcher.view.fragments;
 
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,9 +34,6 @@ import net.alliknow.podcatcher.R;
  */
 public class FirstRunFragment extends DialogFragment {
 
-    /** The podcatcher help website URL (add anchor) */
-    private static final String PODCATCHER_HELPSITE = "http://www.podcatcher-deluxe.com/help#add";
-
     /** The listener we report back to */
     private FirstRunListener listener;
 
@@ -48,6 +42,9 @@ public class FirstRunFragment extends DialogFragment {
 
         /** Called when the add podcast button is pressed */
         public void onAddPodcasts();
+
+        /** Called when the help button is pressed */
+        public void onShowHelp();
     }
 
     @Override
@@ -78,12 +75,7 @@ public class FirstRunFragment extends DialogFragment {
 
             @Override
             public void onClick(View v) {
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_HELPSITE)));
-                } catch (ActivityNotFoundException e) {
-                    // We are in a restricted profile without a browser, pass
-                    // TODO Find a better solution here
-                }
+                listener.onShowHelp();
             }
         });
 

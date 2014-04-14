@@ -18,8 +18,10 @@
 package net.alliknow.podcatcher;
 
 import android.app.DialogFragment;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import net.alliknow.podcatcher.view.fragments.FirstRunFragment;
@@ -31,6 +33,8 @@ import net.alliknow.podcatcher.view.fragments.FirstRunFragment.FirstRunListener;
  */
 public class FirstRunActivity extends BaseActivity implements FirstRunListener {
 
+    /** The podcatcher help website URL (add anchor) */
+    private static final String PODCATCHER_HELPSITE_ADD = "http://www.podcatcher-deluxe.com/help#add";
     /** The tag we identify our fragment with */
     private static final String FIRST_RUN_FRAGMENT_TAG = "first_run";
 
@@ -70,6 +74,16 @@ public class FirstRunActivity extends BaseActivity implements FirstRunListener {
         finish();
 
         startActivity(new Intent(this, AddPodcastActivity.class));
+    }
+
+    @Override
+    public void onShowHelp() {
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PODCATCHER_HELPSITE_ADD)));
+        } catch (ActivityNotFoundException e) {
+            // We are in a restricted profile without a browser, pass
+            showToast(getString(R.string.no_browser));
+        }
     }
 
     @Override

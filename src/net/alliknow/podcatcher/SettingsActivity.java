@@ -36,6 +36,13 @@ public class SettingsActivity extends BaseActivity {
     /** The episode list width preference key */
     public static final String KEY_WIDE_EPISODE_LIST = "wide_episode_list";
 
+    /** Setting key for the sync receive field */
+    public static final String KEY_SYNC_RECEIVE = "receive_controller";
+    /** Setting key for the sync field */
+    public static final String KEY_SYNC_ACTIVE = "enabled_sync_controllers";
+    /** Setting key for the last sync field */
+    public static final String KEY_LAST_SYNC = "last_full_sync";
+
     /** The settings fragment we display */
     private SettingsFragment settingsFragment;
 
