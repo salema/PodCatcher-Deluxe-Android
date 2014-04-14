@@ -138,12 +138,10 @@ public class AuthorizationFragment extends DialogFragment {
 
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (EditorInfo.IME_ACTION_SEND == actionId) {
+                if (EditorInfo.IME_ACTION_SEND == actionId)
                     submitAuthorization();
-                    return true;
-                }
 
-                return false;
+                return EditorInfo.IME_ACTION_SEND == actionId;
             }
         });
 

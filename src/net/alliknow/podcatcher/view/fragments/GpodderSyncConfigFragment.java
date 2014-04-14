@@ -133,12 +133,10 @@ public class GpodderSyncConfigFragment extends DialogFragment {
 
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (EditorInfo.IME_ACTION_SEND == actionId) {
+                if (EditorInfo.IME_ACTION_SEND == actionId)
                     submitConfiguration();
-                    return true;
-                }
 
-                return false;
+                return EditorInfo.IME_ACTION_SEND == actionId;
             }
         });
         this.loginCheckProgressView = content.findViewById(R.id.check_login_progress);
@@ -177,12 +175,10 @@ public class GpodderSyncConfigFragment extends DialogFragment {
 
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (EditorInfo.IME_ACTION_SEND == actionId) {
+                if (EditorInfo.IME_ACTION_SEND == actionId)
                     submitConfiguration();
-                    return true;
-                }
 
-                return false;
+                return EditorInfo.IME_ACTION_SEND == actionId;
             }
         });
 
