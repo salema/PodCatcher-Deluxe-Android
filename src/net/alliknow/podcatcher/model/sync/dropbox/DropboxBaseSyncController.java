@@ -102,7 +102,7 @@ abstract class DropboxBaseSyncController extends SyncController
                         } else
                             status = store.getSyncStatus();
                     }
-            } catch (DbxException | IllegalStateException e) {
+            } catch (DbxException | IllegalStateException | NullPointerException e) {
                 this.cause = e;
                 cancel(true);
             }
