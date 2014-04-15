@@ -26,8 +26,6 @@ import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
 
-import net.alliknow.podcatcher.R;
-
 /**
  * A preference type that allows a user to choose a time
  * 

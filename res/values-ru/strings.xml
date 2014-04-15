@@ -155,8 +155,6 @@
     <string name="pref_sync_now">Синхронизироваться</string>
     <string name="pref_category_interface">Интерфейс</string>
     <string name="pref_theme_color_title">Цвет темы</string>
-    <string name="pref_theme_color_dialog_title">Выберите цвет темы</string>
-    <string name="pref_theme_color_dialog_use">Нажмите на новый цвет, чтобы применить изменения</string>
     <string name="pref_wide_episode_list_title">Широкий список эпизодов</string>
     <string name="pref_wide_episode_list_summary">Выделить место для более подробной информации об эпизодах</string>
     <string name="pref_auto_download_title">Автоматическая загрузка</string>

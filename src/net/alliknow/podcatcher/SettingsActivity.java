@@ -78,23 +78,20 @@ public class SettingsActivity extends BaseActivity {
         // This is used to fetch the result from the select folder dialog. The
         // result is forwarded to the preference object via the fragment.
         if (resultCode == RESULT_OK && requestCode == DownloadFolderPreference.REQUEST_CODE)
-            if (settingsFragment != null && result != null) {
+            try {
                 final File downloadFolder = new File(result.getData().getPath());
+                final DownloadFolderPreference folderPreference = (DownloadFolderPreference)
+                        settingsFragment.findPreference(KEY_DOWNLOAD_FOLDER);
 
-                try {
-                    // Make sure we can actually write to this folder
-                    File.createTempFile("test", "tmp", downloadFolder).delete();
+                // Make sure we can actually write to this folder
+                File.createTempFile("test", "tmp", downloadFolder).delete();
 
-                    // Get the corresponding preference
-                    final DownloadFolderPreference folderPreference =
-                            (DownloadFolderPreference) settingsFragment
-                                    .findPreference(KEY_DOWNLOAD_FOLDER);
-
-                    if (folderPreference != null)
-                        folderPreference.update(downloadFolder);
-                } catch (IOException e) {
-                    showToast(getString(R.string.file_select_access_denied));
-                }
+                // Update the preference
+                folderPreference.update(downloadFolder);
+            } catch (IOException e) {
+                showToast(getString(R.string.file_select_access_denied));
+            } catch (NullPointerException npe) {
+                // pass, this should not happen
             }
     }
 }

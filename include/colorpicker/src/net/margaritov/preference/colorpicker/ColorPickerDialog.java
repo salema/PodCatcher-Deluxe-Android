@@ -30,8 +30,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import net.alliknow.podcatcher.R;
-
 public class ColorPickerDialog
         extends
         Dialog

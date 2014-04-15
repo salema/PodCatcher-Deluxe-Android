@@ -149,8 +149,6 @@
     <string name="pref_sync_now">Synchronizovat</string>
     <string name="pref_category_interface">Rozhraní</string>
     <string name="pref_theme_color_title">Barva motivu</string>
-    <string name="pref_theme_color_dialog_title">Vybrat barvu motivu</string>
-    <string name="pref_theme_color_dialog_use">Stiskněte, aby se nová barva použila</string>
     <string name="pref_wide_episode_list_title">Rozsáhlý seznam dílů</string>
     <string name="pref_wide_episode_list_summary">Udělat prostor pro více podrobností k dílu</string>
     <string name="pref_auto_download_title">Automatické stahování</string>

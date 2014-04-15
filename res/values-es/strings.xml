@@ -143,8 +143,6 @@
     <string name="pref_sync_now">Sincronizar ahora</string>
     <string name="pref_category_interface">Interfaz</string>
     <string name="pref_theme_color_title">Color de tema</string>
-    <string name="pref_theme_color_dialog_title">Seleccionar color</string>
-    <string name="pref_theme_color_dialog_use">Presione nuevo color para aplicarlo</string>
     <string name="pref_wide_episode_list_title">Amplia lista de episodios</string>
     <string name="pref_wide_episode_list_summary">Hacer espacio para más detalles sobre los episodios</string>
     <string name="pref_auto_download_title">Descargas automáticas</string>

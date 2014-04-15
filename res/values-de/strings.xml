@@ -143,8 +143,6 @@
     <string name="pref_sync_now">Jetzt starten</string>
     <string name="pref_category_interface">Oberfläche</string>
     <string name="pref_theme_color_title">Farbthema</string>
-    <string name="pref_theme_color_dialog_title">Farbe auswählen</string>
-    <string name="pref_theme_color_dialog_use">Zum Anwenden neue Farbe drücken</string>
     <string name="pref_wide_episode_list_title">Breite Episodenliste</string>
     <string name="pref_wide_episode_list_summary">Mehr Platz für Episodendetails</string>
     <string name="pref_auto_download_title">Automatischer Download</string>
