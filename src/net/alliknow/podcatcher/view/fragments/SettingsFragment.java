@@ -22,7 +22,6 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.view.View;
 import android.widget.BaseAdapter;
 
 import net.alliknow.podcatcher.R;
@@ -47,21 +46,12 @@ public class SettingsFragment extends PreferenceFragment implements
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (SettingsActivity.KEY_THEME_COLOR.equals(key)) {
-            // Update the color preview widget since this is not done
-            // automatically by the color picker preference
-            final View previewColorView = getView().findViewById(R.id.color_preview);
-
-            if (previewColorView != null)
-                previewColorView.setBackgroundColor(sharedPreferences.getInt(key,
-                        getActivity().getResources().getColor(R.color.theme_dark)));
-        } else if (SettingsActivity.KEY_SYNC_ACTIVE.equals(key)
+        if (SettingsActivity.KEY_THEME_COLOR.equals(key)
+                || SettingsActivity.KEY_SYNC_ACTIVE.equals(key)
                 || SettingsActivity.KEY_SYNC_RECEIVE.equals(key)
-                || SettingsActivity.KEY_DOWNLOAD_FOLDER.equals(key)) {
-
-            // Update the summaries to reflect new settings
+                || SettingsActivity.KEY_DOWNLOAD_FOLDER.equals(key))
+            // Update the preference UIs to reflect new setting
             ((BaseAdapter) getPreferenceScreen().getRootAdapter()).notifyDataSetChanged();
-        }
     }
 
     @Override

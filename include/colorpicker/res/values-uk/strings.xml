@@ -17,9 +17,7 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<View xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/color_preview"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@color/theme_dark">
-</View>
+<resources>
+    <string name="pref_theme_color_dialog_title">Оберіть колір теми</string>
+    <string name="pref_theme_color_dialog_use">Натисніть на новий колір, щоб застосувати зміни</string>
+</resources>
