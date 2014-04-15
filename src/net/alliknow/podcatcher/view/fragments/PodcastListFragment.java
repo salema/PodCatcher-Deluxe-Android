@@ -353,6 +353,9 @@ public class PodcastListFragment extends PodcatcherListFragment {
 
         // Only act if the view is actually created
         if (viewCreated) {
+            // First, hide/show the scrollbar so it does not overlay our logos
+            getListView().setVerticalScrollBarEnabled(!LogoViewMode.SMALL.equals(mode));
+
             // SMALL means that the adapter needs to make the individual podcast
             // list item view show the podcast icon, see there
             if (adapter != null)
