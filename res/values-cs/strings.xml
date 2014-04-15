@@ -111,8 +111,6 @@
     <string name="pref_sync_now">Synchronizovat</string>
     <string name="pref_category_interface">Rozhraní</string>
     <string name="pref_theme_color_title">Barva motivu</string>
-    <string name="pref_theme_color_dialog_title">Vybrat barvu motivu</string>
-    <string name="pref_theme_color_dialog_use">Stiskněte, aby se nová barva použila</string>
     <string name="pref_wide_episode_list_title">Rozsáhlý seznam dílů</string>
     <string name="pref_wide_episode_list_summary">Udělat prostor pro více podrobností k dílu</string>
     <string name="ad">Zkuste &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; a &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt; kvůli stahování, seznamům skladeb, filtrům a mnoha dalším prémiovým funkcím!</string>

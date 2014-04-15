@@ -113,8 +113,6 @@
     <string name="pref_sync_now">Синхронізуватися</string>
     <string name="pref_category_interface">Зовнішній вигляд</string>
     <string name="pref_theme_color_title">Колір теми</string>
-    <string name="pref_theme_color_dialog_title">Оберіть колір теми</string>
-    <string name="pref_theme_color_dialog_use">Натисніть на новий колір, щоб застосувати зміни</string>
     <string name="pref_wide_episode_list_title">Розширений список епізодів</string>
     <string name="pref_wide_episode_list_summary">Виділити місце для більш детальної інформації про епізоди</string>
     <string name="ad">Спробуйте &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; та &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt;. Завантаження, плейлисти, фільтри та багато інших додаткових можливостей!</string>
