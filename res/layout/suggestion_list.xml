@@ -64,7 +64,8 @@
 	        android:id="@+id/suggestion_list"
 	        android:layout_width="match_parent"
 	        android:layout_height="match_parent"
-	        android:choiceMode="none" />
+	        android:choiceMode="none"
+            android:scrollbars="none" />
 	    <ViewStub
 	        android:id="@+id/suggestion_list_empty"
 	        android:layout_width="wrap_content"
