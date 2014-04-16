@@ -93,8 +93,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     private boolean prepared = false;
     /** Is the player currently buffering ? */
     private boolean buffering = false;
-    /** Do we have audio focus ? */
-    private boolean hasFocus = false;
     /** Are we bound to any activity ? */
     private boolean bound = false;
 
@@ -436,7 +434,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             // So we have audio focus and we tell the audio manager all the
             // details about our playback and that it should route media buttons
             // to us
-            hasFocus = true;
             updateAudioManager();
             updateRemoteControlPlaystate(PLAYSTATE_PLAYING);
 
@@ -527,16 +524,12 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     public void onAudioFocusChange(int focusChange) {
         switch (focusChange) {
             case AudioManager.AUDIOFOCUS_GAIN:
-                hasFocus = true;
-
                 player.setVolume(1.0f, 1.0f);
                 break;
 
             case AudioManager.AUDIOFOCUS_LOSS:
                 // Lost focus for an unbounded amount of time: stop playback and
                 // release media player
-                hasFocus = false;
-
                 reset();
                 break;
 
@@ -544,16 +537,12 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
                 // Lost focus for a short time, but we have to stop
                 // playback. We don't release the media player because playback
                 // is likely to resume
-                hasFocus = false;
-
                 pause();
                 break;
 
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
                 // Lost focus for a short time, but it's ok to keep playing
                 // at an attenuated level
-                hasFocus = false;
-
                 player.setVolume(DUCK_VOLUME, DUCK_VOLUME);
                 break;
         }
@@ -578,7 +567,6 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
         // Release resources
         audioManager.abandonAudioFocus(this);
-        hasFocus = false;
         audioManager.unregisterRemoteControlClient(remoteControlClient);
         audioManager.unregisterMediaButtonEventReceiver(mediaButtonReceiver);
         if (wifiLock.isHeld())
