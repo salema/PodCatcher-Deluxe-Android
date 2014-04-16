@@ -1,2 +1,3 @@
 Make sure class renaming are done properly, in particular for custom preferences and views
 Update Dropbox app key and secret to production mode
+Update version number for gpodder.net user agent
