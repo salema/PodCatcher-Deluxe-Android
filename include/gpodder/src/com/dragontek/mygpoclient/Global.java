@@ -3,14 +3,14 @@ package com.dragontek.mygpoclient;
 
 public class Global {
 
-    public static boolean DEBUG = false;
+    public static final boolean DEBUG = false;
 
-    public static String HOST = "gpodder.net";
-    public static int VERSION = 2;
-    public static int TOPLIST_DEFAULT = 25;
-    public static String WEBSITE = "http://dragontek.github.com/mygpoclient-java";
+    public static final String HOST = "gpodder.net";
+    public static final int VERSION = 2;
+    public static final int TOPLIST_DEFAULT = 25;
+    public static final String WEBSITE = "http://www.podcatcher-deluxe.com";
 
-    public static String USER_AGENT = String.format("mygpoclient-java/%s (%s)",
-            VERSION, WEBSITE);
+    public static final String USER_AGENT =
+            String.format("PodcatcherDeluxe/4.0 (%s)", WEBSITE);
 
 }
