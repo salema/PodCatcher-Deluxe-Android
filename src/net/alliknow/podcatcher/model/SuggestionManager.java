@@ -44,7 +44,7 @@ public class SuggestionManager implements OnLoadSuggestionListener {
     private LoadSuggestionsTask loadTask;
 
     /** The call-back set for the suggestion list load listeners */
-    private Set<OnLoadSuggestionListener> loadSuggestionListListeners = new HashSet<OnLoadSuggestionListener>();
+    private Set<OnLoadSuggestionListener> loadSuggestionListListeners = new HashSet<>();
 
     /**
      * Init the suggestion manager.

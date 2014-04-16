@@ -65,7 +65,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     protected ContentSpinner contentSpinner;
 
     /** The current episode set (ordered) */
-    private SortedSet<Episode> currentEpisodeSet = new TreeSet<Episode>();
+    private SortedSet<Episode> currentEpisodeSet = new TreeSet<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -423,7 +423,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
      * list as needed.
      */
     private void updateEpisodeListUi() {
-        final List<Episode> filteredList = new ArrayList<Episode>(currentEpisodeSet);
+        final List<Episode> filteredList = new ArrayList<>(currentEpisodeSet);
 
         // We might need to reverse the order of our list,
         // but there is no need for sorting since we already come

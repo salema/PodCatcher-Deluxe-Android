@@ -53,8 +53,8 @@ public class ScrapePodcastsActivity extends BaseActivity implements OnLoadPodcas
 
     @Override
     public void onPodcastListLoaded(List<Podcast> podcastList, Uri location) {
-        final ArrayList<String> names = new ArrayList<String>();
-        final ArrayList<String> urls = new ArrayList<String>();
+        final ArrayList<String> names = new ArrayList<>();
+        final ArrayList<String> urls = new ArrayList<>();
 
         // Add all podcasts to the list
         for (Podcast podcast : podcastList) {

@@ -87,7 +87,7 @@ public class ExportOpmlActivity extends BaseActivity implements OnStorePodcastLi
                 // If list is there, export podcasts at given positions
                 if (positions != null) {
                     final List<Podcast> podcasts = podcastManager.getPodcastList();
-                    final List<Podcast> exports = new ArrayList<Podcast>();
+                    final List<Podcast> exports = new ArrayList<>();
 
                     for (Integer position : positions)
                         exports.add(podcasts.get(position));

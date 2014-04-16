@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 public class HttpClient extends DefaultHttpClient {
 
@@ -42,10 +43,10 @@ public class HttpClient extends DefaultHttpClient {
         // TODO: add params to uri if it's a GET instead of a post
         HttpUriRequest request = new HttpGet(uri);
 
-        if (method == "POST") {
+        if (method.equals("POST")) {
             request = new HttpPost(uri);
             ((HttpPost) request).setEntity(entity);
-        } else if (method == "PUT") {
+        } else if (method.equals("PUT")) {
             request = new HttpPut(uri);
             ((HttpPut) request).setEntity(entity);
         }
@@ -145,7 +146,8 @@ public class HttpClient extends DefaultHttpClient {
 
     public static String convertStreamToString(InputStream is)
             throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is,
+                Charset.forName("UTF-8")));
         StringBuilder sb = new StringBuilder();
         String line = null;
         try {

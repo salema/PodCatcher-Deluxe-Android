@@ -107,18 +107,18 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     private boolean blockExplicit = false;
 
     /** The current podcast load tasks */
-    private Map<Podcast, LoadPodcastTask> loadPodcastTasks = new HashMap<Podcast, LoadPodcastTask>();
+    private Map<Podcast, LoadPodcastTask> loadPodcastTasks = new HashMap<>();
     /** The current podcast logo load tasks */
-    private Map<Podcast, LoadPodcastLogoTask> loadPodcastLogoTasks = new HashMap<Podcast, LoadPodcastLogoTask>();
+    private Map<Podcast, LoadPodcastLogoTask> loadPodcastLogoTasks = new HashMap<>();
 
     /** The call-back set for the podcast list load listeners */
-    private Set<OnLoadPodcastListListener> loadPodcastListListeners = new HashSet<OnLoadPodcastListListener>();
+    private Set<OnLoadPodcastListListener> loadPodcastListListeners = new HashSet<>();
     /** The call-back set for the podcast list changed listeners */
-    private Set<OnChangePodcastListListener> changePodcastListListeners = new HashSet<OnChangePodcastListListener>();
+    private Set<OnChangePodcastListListener> changePodcastListListeners = new HashSet<>();
     /** The call-back set for the podcast load listeners */
-    private Set<OnLoadPodcastListener> loadPodcastListeners = new HashSet<OnLoadPodcastListener>();
+    private Set<OnLoadPodcastListener> loadPodcastListeners = new HashSet<>();
     /** The call-back set for the podcast logo load listeners */
-    private Set<OnLoadPodcastLogoListener> loadPodcastLogoListeners = new HashSet<OnLoadPodcastLogoListener>();
+    private Set<OnLoadPodcastLogoListener> loadPodcastLogoListeners = new HashSet<>();
 
     /** This is the background update task */
     private class PodcastUpdateTask extends TimerTask {
@@ -257,7 +257,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         // return copy in order to make sure
         // nobody changes this list on us.
         else
-            return new ArrayList<Podcast>(podcastList);
+            return new ArrayList<>(podcastList);
     }
 
     /**
@@ -483,7 +483,7 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         if (podcastListChanged && podcastList != null) {
             final StorePodcastListTask task = new StorePodcastListTask(podcatcher, null);
             task.setWriteAuthorization(true);
-            task.execute(new ArrayList<Podcast>(podcastList));
+            task.execute(new ArrayList<>(podcastList));
 
             // Reset the flag, so the list will only be saved if changed again
             podcastListChanged = false;

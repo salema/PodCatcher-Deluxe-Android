@@ -124,7 +124,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     private static final String TAG = "PlayEpisodeService";
 
     /** The call-back set for the play service listeners */
-    private Set<PlayServiceListener> listeners = new HashSet<PlayServiceListener>();
+    private Set<PlayServiceListener> listeners = new HashSet<>();
     /** Binder given to clients */
     private final IBinder binder = new PlayServiceBinder();
 
@@ -271,7 +271,7 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
 
                 // We add some request headers to overwrite the default user
                 // agent because this is blocked by some servers
-                final HashMap<String, String> headers = new HashMap<String, String>(2);
+                final HashMap<String, String> headers = new HashMap<>(2);
                 headers.put(Podcatcher.USER_AGENT_KEY, Podcatcher.USER_AGENT_VALUE);
 
                 // Also set the authorization header data if needed

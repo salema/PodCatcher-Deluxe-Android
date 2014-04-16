@@ -83,7 +83,7 @@ abstract class GpodderPodcastListSyncController extends GpodderBaseSyncControlle
                     for (Podcast podcast : podcastManager.getPodcastList())
                         synced.add(podcast.getUrl());
 
-                    client.putSubscriptions(deviceId, new ArrayList<String>(synced));
+                    client.putSubscriptions(deviceId, new ArrayList<>(synced));
                 }
                 // 2b. Sync mode is set to send/receive: consolidate local and
                 // remote lists
@@ -125,7 +125,7 @@ abstract class GpodderPodcastListSyncController extends GpodderBaseSyncControlle
                     }
 
                     // 2b5. Push synced list to the server
-                    client.putSubscriptions(deviceId, new ArrayList<String>(synced));
+                    client.putSubscriptions(deviceId, new ArrayList<>(synced));
 
                     // 2b6. Wait for all the LoadPodcastTasks triggered by
                     // adding podcasts to finish, otherwise we would mess up the

@@ -1,3 +1,4 @@
+
 package com.dragontek.mygpoclient.pub;
 
 /**
@@ -9,31 +10,25 @@ package com.dragontek.mygpoclient.pub;
  * 
  */
 public class ToplistPodcast {
-	/** The feed URL of the podcast */
-	public String url;
-	/** The title of the podcast */
-	public String title;
-	/** The description of the podcast */
-	public String description;
-	/** The current subscriber count */
-	public int subscribers;
-	/** Last week's subscriber count */
-	public int subscribersLastWeek;
+    /** The feed URL of the podcast */
+    public String url;
+    /** The title of the podcast */
+    public String title;
+    /** The description of the podcast */
+    public String description;
+    /** The current subscriber count */
+    public int subscribers;
+    /** Last week's subscriber count */
+    public int subscribersLastWeek;
 
-	// TODO: Shouldn't this just extend Podcast?
+    // TODO: Shouldn't this just extend Podcast?
 
-	public ToplistPodcast(String url, String title, String description,
-			int subscribers, int subscribersLastWeek) {
-		this.url = url;
-		this.title = title;
-		this.description = description;
-		this.subscribers = subscribers;
-		this.subscribersLastWeek = subscribersLastWeek;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		// TODO Auto-generated method stub
-		return super.equals(o);
-	}
+    public ToplistPodcast(String url, String title, String description,
+            int subscribers, int subscribersLastWeek) {
+        this.url = url;
+        this.title = title;
+        this.description = description;
+        this.subscribers = subscribers;
+        this.subscribersLastWeek = subscribersLastWeek;
+    }
 }

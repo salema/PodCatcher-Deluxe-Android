@@ -86,7 +86,7 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
     public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
         // Get the checked positions
         SparseBooleanArray checkedItems = fragment.getListView().getCheckedItemPositions();
-        ArrayList<Integer> positions = new ArrayList<Integer>();
+        ArrayList<Integer> positions = new ArrayList<>();
 
         // Prepare list of podcast positions to send to the triggered activity
         for (int index = 0; index < fragment.getListView().getCount(); index++)

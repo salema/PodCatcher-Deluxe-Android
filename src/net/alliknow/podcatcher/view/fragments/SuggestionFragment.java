@@ -285,7 +285,7 @@ public class SuggestionFragment extends DialogFragment {
         // onResume() will call us anyway.
         if (suggestionList != null && isResumed()) {
             // Resulting list
-            List<Suggestion> filteredSuggestionList = new ArrayList<Suggestion>();
+            List<Suggestion> filteredSuggestionList = new ArrayList<>();
             // Do filter!
             for (Suggestion suggestion : suggestionList)
                 if (matchesFilter(suggestion))

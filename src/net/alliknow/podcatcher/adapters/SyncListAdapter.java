@@ -58,7 +58,7 @@ public class SyncListAdapter extends PodcatcherBaseAdapter {
 
         // Create the list of available sync controller implementation for the
         // environment we live in
-        this.impls = new ArrayList<ControllerImpl>(ControllerImpl.values().length);
+        this.impls = new ArrayList<>(ControllerImpl.values().length);
         for (ControllerImpl impl : ControllerImpl.values())
             if (impl.isAvailable(context))
                 impls.add(impl);
