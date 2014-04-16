@@ -51,7 +51,7 @@ public class GetRestrictionsReceiver extends BroadcastReceiver {
                 hideExplicit.setTitle(context.getString(R.string.podcast_block_explicit));
 
                 // Put everything together and send it back
-                final ArrayList<RestrictionEntry> list = new ArrayList<RestrictionEntry>();
+                final ArrayList<RestrictionEntry> list = new ArrayList<>();
                 list.add(hideExplicit);
 
                 extras.putParcelableArrayList(Intent.EXTRA_RESTRICTIONS_LIST, list);

@@ -92,7 +92,7 @@ public abstract class EpisodeBaseManager implements OnLoadEpisodeMetadataListene
     public void onEpisodeMetadataLoaded(Map<String, EpisodeMetadata> metadata) {
         // We want our metadata to be thread safe, since we might load some
         // clean-up work off to other threads.
-        this.metadata = new ConcurrentHashMap<String, EpisodeMetadata>(metadata);
+        this.metadata = new ConcurrentHashMap<>(metadata);
         this.metadataChanged = false;
 
         // Here we need to release all threads (AsyncTasks) that might be
@@ -126,8 +126,7 @@ public abstract class EpisodeBaseManager implements OnLoadEpisodeMetadataListene
             // Store a copy of the actual map, since there might come in changes
             // to the meta data while the task is running and that would lead to
             // a concurrent modification exception
-            new StoreEpisodeMetadataTask(podcatcher, this)
-                    .execute(new HashMap<String, EpisodeMetadata>(metadata));
+            new StoreEpisodeMetadataTask(podcatcher, this).execute(new HashMap<>(metadata));
 
             // Reset the flag, so the list will only be saved if changed again.
             metadataChanged = false;

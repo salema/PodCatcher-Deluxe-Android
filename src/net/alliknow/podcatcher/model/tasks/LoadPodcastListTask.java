@@ -88,7 +88,7 @@ public class LoadPodcastListTask extends AsyncTask<Void, Progress, List<Podcast>
     @Override
     protected List<Podcast> doInBackground(Void... params) {
         // Create resulting data structure and file stream
-        final List<Podcast> result = new ArrayList<Podcast>();
+        final List<Podcast> result = new ArrayList<>();
         InputStream fileStream = null;
 
         try {

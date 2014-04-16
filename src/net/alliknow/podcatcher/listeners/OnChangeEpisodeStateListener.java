@@ -26,10 +26,13 @@ import net.alliknow.podcatcher.model.types.Episode;
 public interface OnChangeEpisodeStateListener {
 
     /**
-     * Called on the listener when the state (old/new) of an episode is altered.
+     * Called on the listener to indicate that the state (old/new) of an episode
+     * has been altered.
      * 
      * @param episode Episode the state was changed for.
-     * @param newState The new state the episode is in.
+     * @param newState The new state the episode is in, i.e. <code>true</code>
+     *            if the episode is considered 'old' and <code>false</code>
+     *            otherwise.
      */
     public void onStateChanged(Episode episode, boolean newState);
 

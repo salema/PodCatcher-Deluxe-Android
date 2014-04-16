@@ -517,7 +517,7 @@ public class EpisodeListFragment extends PodcatcherListFragment implements Reord
         List<Episode> result = null;
 
         if (getListAdapter() != null && getListView().getCheckedItemCount() > 0) {
-            result = new ArrayList<Episode>();
+            result = new ArrayList<>();
             final SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
 
             for (int position = 0; position < getListAdapter().getCount(); position++)

@@ -51,7 +51,7 @@ public class LoadPlaylistTask extends AsyncTask<Void, Void, List<Episode>> {
      *            episodes in the playlist are returned.
      */
     public LoadPlaylistTask(OnLoadPlaylistListener listener, Podcast podcast) {
-        this.listener = new WeakReference<OnLoadPlaylistListener>(listener);
+        this.listener = new WeakReference<>(listener);
         this.podcast = podcast;
     }
 

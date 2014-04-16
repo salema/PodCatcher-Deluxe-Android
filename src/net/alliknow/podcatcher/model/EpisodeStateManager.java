@@ -47,12 +47,12 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
         OnLoadPodcastListener, OnChangePodcastListListener {
 
     /** The call-back set for the episode state changed listeners */
-    private Set<OnChangeEpisodeStateListener> stateListeners = new HashSet<OnChangeEpisodeStateListener>();
+    private Set<OnChangeEpisodeStateListener> stateListeners = new HashSet<>();
 
     /** Helper to prevent clean-up from running too often */
     private int podcastLoadCounter = 0;
     /** Helper to prevent clean-up to run twice for the same podcast */
-    private Set<String> podcastsCleanUpRanFor = new HashSet<String>();
+    private Set<String> podcastsCleanUpRanFor = new HashSet<>();
 
     /**
      * Init the episode state manager.
@@ -77,8 +77,9 @@ public abstract class EpisodeStateManager extends EpisodePlaylistManager impleme
      * Set the old/new state for an episode.
      * 
      * @param episode Episode to set state for (not <code>null</code>).
-     * @param isOld State to set, give <code>null</code> to reset the value to
-     *            the default.
+     * @param isOld State to set, i.e. <code>true</code> if the episode is now
+     *            'old' and <code>false</code> otherwise. Give <code>null</code>
+     *            to reset the value to the default.
      */
     public void setState(Episode episode, Boolean isOld) {
         if (episode != null && episode.getMediaUrl() != null && metadata != null) {

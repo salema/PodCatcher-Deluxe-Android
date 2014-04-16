@@ -80,7 +80,7 @@ public class LoadSuggestionsTask extends LoadRemoteFileTask<Void, List<Suggestio
 
     @Override
     protected List<Suggestion> doInBackground(Void... params) {
-        List<Suggestion> result = new ArrayList<Suggestion>();
+        List<Suggestion> result = new ArrayList<>();
         byte[] suggestions = null;
 
         // 1. Load the file from the cache or the Internet

@@ -71,7 +71,7 @@ public class LoadEpisodeMetadataTask extends
     @Override
     protected Map<String, EpisodeMetadata> doInBackground(Void... params) {
         // Create resulting data structure and file stream
-        Map<String, EpisodeMetadata> result = new ConcurrentHashMap<String, EpisodeMetadata>();
+        Map<String, EpisodeMetadata> result = new ConcurrentHashMap<>();
         InputStream fileStream = null;
 
         try {

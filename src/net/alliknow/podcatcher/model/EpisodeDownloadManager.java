@@ -68,7 +68,7 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
     protected int downloadsSize = -1;
 
     /** The call-back set for the complete download listeners */
-    private Set<OnDownloadEpisodeListener> downloadListeners = new HashSet<OnDownloadEpisodeListener>();
+    private Set<OnDownloadEpisodeListener> downloadListeners = new HashSet<>();
 
     /**
      * Init the download episode manager.
@@ -305,7 +305,7 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
      */
     public List<Episode> getDownloads() {
         // Create empty result list
-        List<Episode> result = new ArrayList<Episode>();
+        List<Episode> result = new ArrayList<>();
 
         // This is only possible if the metadata is available
         if (metadata != null) {
