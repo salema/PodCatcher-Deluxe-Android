@@ -48,6 +48,7 @@ import java.util.TimeZone;
  */
 abstract class GpodderEpisodeMetadataSyncController extends GpodderPodcastListSyncController {
 
+    /** The list of changes to sync out to the service */
     private List<EpisodeAction> actions = Collections
             .synchronizedList(new ArrayList<EpisodeAction>());
 
@@ -73,6 +74,9 @@ abstract class GpodderEpisodeMetadataSyncController extends GpodderPodcastListSy
     private class SyncEpisodeMetadataTask extends
             AsyncTask<Void, Entry<Episode, EpisodeAction>, Void> {
 
+        /** The reason for failure if it occurs */
+        private Throwable cause;
+
         @Override
         protected Void doInBackground(Void... params) {
             try {
@@ -81,10 +85,11 @@ abstract class GpodderEpisodeMetadataSyncController extends GpodderPodcastListSy
                 // 1. Get the episode actions from server and apply them to the
                 // local model if the episode is actually present. Giving no
                 // device id here will make sure that we get changes from all
-                // devices.
+                // devices. We do give the last sync time stamp, so only changed
+                // that occurred afterwards are returned.
                 final EpisodeActionChanges changes =
                         client.downloadEpisodeActions(lastSyncTimeStamp);
-                // Go walk through action and act on them
+                // Go walk through actions and act on them
                 for (EpisodeAction action : changes.actions) {
                     // Only act if we know the podcast
                     if (podcastManager.findPodcastForUrl(action.podcast) == null)
@@ -101,22 +106,25 @@ abstract class GpodderEpisodeMetadataSyncController extends GpodderPodcastListSy
 
                 Log.d(TAG, "Changes occured on the server: " + changes.actions);
 
-                // 2. Upload local changes and clear them from list
+                // 2. Upload local changes and clear them from the local action
+                // list, the actions triggered above are not included since the
+                // controller set the ignoreNewActions flag before applying
+                // those.
                 Log.d(TAG, "Sending changes to the server: " + actions);
                 final List<EpisodeAction> copy = new ArrayList<>(actions);
-                // if (copy.size() > 0)
                 lastSyncTimeStamp = client.uploadEpisodeActions(copy);
 
                 // 3. Remove all actions already taken care of (we can call this
-                // there since the list is synchronized)
+                // here because the list is synchronized). Unless new action
+                // arrived while the controller was busy, the local action list
+                // should be empty afterwards.
                 actions.removeAll(changes.actions);
                 actions.removeAll(copy);
 
                 Log.d(TAG, "Changes left after clean-up: " + actions);
             } catch (AuthenticationException | IOException e) {
+                this.cause = e;
                 cancel(true);
-
-                Log.d(TAG, "Syncing episode data failed!", e);
             }
 
             return null;
@@ -138,6 +146,7 @@ abstract class GpodderEpisodeMetadataSyncController extends GpodderPodcastListSy
                     break;
                 case NEW:
                     episodeManager.setResumeAt(episode, null);
+                    episodeManager.setState(episode, true);
                     break;
                 default:
                     break;
@@ -152,11 +161,15 @@ abstract class GpodderEpisodeMetadataSyncController extends GpodderPodcastListSy
             preferences.edit().putLong(GPODDER_LAST_SYNC_ACTIONS, lastSyncTimeStamp).apply();
 
             syncRunning = false;
+
+            listener.onSyncCompleted(getImpl());
         }
 
         @Override
         protected void onCancelled(Void nothing) {
             syncRunning = false;
+
+            listener.onSyncFailed(getImpl(), cause);
         }
     }
 
@@ -188,7 +201,10 @@ abstract class GpodderEpisodeMetadataSyncController extends GpodderPodcastListSy
 
     @Override
     public void onStateChanged(Episode episode, boolean newState) {
-        // TODO Add EpisodeAction to list
+        if (!ignoreNewActions && newState)
+            actions.add(prepareAction(episode, Action.NEW, 0));
+
+        Log.d(TAG, "Action waiting in gpodder.net controller: " + actions);
     }
 
     @Override
