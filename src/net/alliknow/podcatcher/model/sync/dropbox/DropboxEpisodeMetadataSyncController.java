@@ -51,14 +51,15 @@ abstract class DropboxEpisodeMetadataSyncController extends DropboxPodcastListSy
 
     /** The episode table handle */
     private DbxTable episodeTable;
-    /** The device id we use */
-    private String device;
 
     /** The sync running flag */
     private boolean syncRunning = false;
 
     /** Our async task that does the actual work for us */
     private class ApplyEpisodeMetadataTask extends AsyncTask<Void, Entry<Episode, DbxRecord>, Void> {
+
+        /** The reason for failure if it occurs */
+        private Throwable cause;
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -84,9 +85,8 @@ abstract class DropboxEpisodeMetadataSyncController extends DropboxPodcastListSy
                         publishProgress(new AbstractMap.SimpleEntry<>(episode, record));
                 }
             } catch (DbxException | NullPointerException e) {
+                this.cause = e;
                 cancel(true);
-
-                Log.d(TAG, "Updating local episode states failed!", e);
             }
 
             return null;
@@ -98,19 +98,36 @@ abstract class DropboxEpisodeMetadataSyncController extends DropboxPodcastListSy
             final DbxRecord record = values[0].getValue();
 
             // Update the state (old/new) information
-            updateEpisodeStateFromRecord(episode, record);
+            if (record.hasField(EPISODE_STATE)) {
+                final boolean remoteState = record.getBoolean(EPISODE_STATE);
+                final boolean localState = episodeManager.getState(episode);
+
+                if (localState != remoteState)
+                    episodeManager.setState(episode, remoteState);
+            }
 
             // Update the resume at information
-            updateResumeAtFromRecord(episode, record);
+            if (record.hasField(EPISODE_RESUME_AT)) {
+                final long remoteValue = record.getLong(EPISODE_RESUME_AT);
+                final long localValue = episodeManager.getResumeAt(episode);
+
+                if (localValue != remoteValue)
+                    episodeManager.setResumeAt(episode,
+                            remoteValue == RESUME_AT_RESET ? null : (int) remoteValue);
+            }
         }
 
         protected void onPostExecute(Void nothing) {
             syncRunning = false;
+
+            listener.onSyncCompleted(getImpl());
         }
 
         @Override
         protected void onCancelled(Void nothing) {
             syncRunning = false;
+
+            listener.onSyncFailed(getImpl(), cause);
         }
     }
 
@@ -135,7 +152,7 @@ abstract class DropboxEpisodeMetadataSyncController extends DropboxPodcastListSy
 
         // In a later stage, one could actually walk through all episodes here
         // and publish their state to the Dropbox data store. That way, even
-        // changes do when the sync controller was inactive would be included.
+        // changes done when the sync controller was inactive would be included.
     }
 
     @Override
@@ -174,7 +191,7 @@ abstract class DropboxEpisodeMetadataSyncController extends DropboxPodcastListSy
 
     @Override
     public void onDownloadDeleted(Episode episode) {
-        // pass, download events are not synced via Dropbox
+        // pass, deletion events are not synced via Dropbox
     }
 
     @Override
@@ -187,29 +204,6 @@ abstract class DropboxEpisodeMetadataSyncController extends DropboxPodcastListSy
 
             new ApplyEpisodeMetadataTask()
                     .executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, (Void) null);
-        }
-    }
-
-    private void updateEpisodeStateFromRecord(Episode episode, DbxRecord record) {
-        // Only act if there is some information
-        if (record.hasField(EPISODE_STATE)) {
-            final boolean remoteState = record.getBoolean(EPISODE_STATE);
-            final boolean localState = episodeManager.getState(episode);
-
-            if (localState != remoteState)
-                episodeManager.setState(episode, remoteState);
-        }
-    }
-
-    private void updateResumeAtFromRecord(Episode episode, DbxRecord record) {
-        // Only act if there is some information
-        if (record.hasField(EPISODE_RESUME_AT)) {
-            final long remoteValue = record.getLong(EPISODE_RESUME_AT);
-            final long localValue = episodeManager.getResumeAt(episode);
-
-            if (localValue != remoteValue)
-                episodeManager.setResumeAt(episode,
-                        remoteValue == RESUME_AT_RESET ? null : (int) remoteValue);
         }
     }
 
