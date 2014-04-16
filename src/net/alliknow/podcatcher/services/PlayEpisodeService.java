@@ -139,7 +139,7 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
     private static final String TAG = "PlayEpisodeService";
 
     /** The call-back set for the play service listeners */
-    private Set<PlayServiceListener> listeners = new HashSet<PlayServiceListener>();
+    private Set<PlayServiceListener> listeners = new HashSet<>();
     /** The registered video surface provider */
     private VideoSurfaceProvider videoSurfaceProvider;
     /**
@@ -392,7 +392,7 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
                 else {
                     // We add some request headers to overwrite the default user
                     // agent because this is blocked by some servers
-                    final HashMap<String, String> headers = new HashMap<String, String>(2);
+                    final HashMap<String, String> headers = new HashMap<>(2);
                     headers.put(Podcatcher.USER_AGENT_KEY, Podcatcher.USER_AGENT_VALUE);
 
                     // Also set the authorization header data if needed

@@ -27,7 +27,7 @@ public class EpisodeAction {
     /** The total time of the episode (for play events) */
     public Integer total = null;
 
-    public static String[] VALID_ACTIONS = new String[] {
+    final static String[] VALID_ACTIONS = new String[] {
             "download", "play",
             "delete", "new"
     };
@@ -96,5 +96,11 @@ public class EpisodeAction {
                 episode.equals(other.episode) &&
                 action.equals(other.action) &&
                 timestamp.equals(other.timestamp);
+    }
+
+    @Override
+    public int hashCode() {
+        assert false : "hashCode not designed";
+        return 42; // any arbitrary constant will do
     }
 }

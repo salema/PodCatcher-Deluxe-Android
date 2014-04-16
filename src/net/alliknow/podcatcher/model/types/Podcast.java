@@ -83,7 +83,7 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
     /** The point in time when the RSS file as last been set */
     protected Date lastLoaded;
     /** The podcasts list of episodes */
-    protected List<Episode> episodes = new ArrayList<Episode>();
+    protected List<Episode> episodes = new ArrayList<>();
 
     /**
      * Create a new podcast by name and RSS file location. The name will not be
@@ -185,7 +185,7 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
     public List<Episode> getEpisodes() {
         // Need to return a copy, so nobody can change this on us and changes
         // made in the model do not make problems in the UI
-        return new ArrayList<Episode>(episodes);
+        return new ArrayList<>(episodes);
     }
 
     /**

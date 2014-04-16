@@ -67,7 +67,7 @@ public class PlayEpisodeNotification {
     /** Our builder */
     private Notification.Builder notificationBuilder;
     /** The cache for the scaled bitmaps */
-    private Map<String, Bitmap> bitmapCache = new HashMap<String, Bitmap>();
+    private Map<String, Bitmap> bitmapCache = new HashMap<>();
 
     private PlayEpisodeNotification(Context context) {
         this.context = context;

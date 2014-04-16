@@ -47,7 +47,7 @@ public abstract class EpisodePlaylistManager extends EpisodeDownloadManager {
     private int playlistSize = -1;
 
     /** The call-back set for the playlist listeners */
-    private Set<OnChangePlaylistListener> playlistListeners = new HashSet<OnChangePlaylistListener>();
+    private Set<OnChangePlaylistListener> playlistListeners = new HashSet<>();
 
     /**
      * Init the episode playlist manager.
@@ -68,7 +68,7 @@ public abstract class EpisodePlaylistManager extends EpisodeDownloadManager {
      */
     public List<Episode> getPlaylist() {
         // The resulting playlist
-        TreeMap<Integer, Episode> playlist = new TreeMap<Integer, Episode>();
+        TreeMap<Integer, Episode> playlist = new TreeMap<>();
 
         // This is only possible if the metadata is available
         if (metadata != null) {
@@ -90,7 +90,7 @@ public abstract class EpisodePlaylistManager extends EpisodeDownloadManager {
             this.playlistSize = playlist.size();
         }
 
-        return new ArrayList<Episode>(playlist.values());
+        return new ArrayList<>(playlist.values());
     }
 
     /**
@@ -125,7 +125,7 @@ public abstract class EpisodePlaylistManager extends EpisodeDownloadManager {
      */
     public SortedMap<Integer, Episode> getDownloadedPlaylist() {
         final List<Episode> playlist = getPlaylist();
-        final SortedMap<Integer, Episode> filteredPlaylist = new TreeMap<Integer, Episode>();
+        final SortedMap<Integer, Episode> filteredPlaylist = new TreeMap<>();
 
         for (int index = 0; index < playlist.size(); index++) {
             final Episode episode = playlist.get(index);

@@ -87,7 +87,7 @@ public class AddSuggestionActivity extends BaseActivity implements
     @Override
     public void onSuggestionsLoaded(List<Suggestion> suggestions) {
         // Resulting list
-        List<Suggestion> filteredSuggestionList = new ArrayList<Suggestion>();
+        List<Suggestion> filteredSuggestionList = new ArrayList<>();
 
         // Do filter!
         for (Suggestion suggestion : suggestions)

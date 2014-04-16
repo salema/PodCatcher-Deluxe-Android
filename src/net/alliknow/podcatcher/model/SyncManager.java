@@ -354,7 +354,7 @@ public class SyncManager implements SyncControllerListener {
     }
 
     private void writeToSyncPreferences() {
-        final Set<String> controllerIds = new HashSet<String>();
+        final Set<String> controllerIds = new HashSet<>();
         String receivingController = null;
 
         for (SyncController controller : activeControllers) {

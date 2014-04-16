@@ -51,7 +51,7 @@ public class LoadDownloadsTask extends AsyncTask<Void, Void, List<Episode>> {
      *            downloaded episodes are returned.
      */
     public LoadDownloadsTask(OnLoadDownloadsListener listener, Podcast podcast) {
-        this.listener = new WeakReference<OnLoadDownloadsListener>(listener);
+        this.listener = new WeakReference<>(listener);
         this.podcast = podcast;
     }
 

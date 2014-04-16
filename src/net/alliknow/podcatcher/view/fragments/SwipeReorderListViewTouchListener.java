@@ -53,7 +53,7 @@ public class SwipeReorderListViewTouchListener implements View.OnTouchListener {
     private int mViewWidth = 1; // 1 and not 0 to prevent dividing by zero
 
     // Transient properties
-    private List<PendingReorderData> mPendingDismisses = new ArrayList<PendingReorderData>();
+    private List<PendingReorderData> mPendingDismisses = new ArrayList<>();
     private int mDismissAnimationRefCount = 0;
     private float mDownX;
     private boolean mSwiping;
@@ -274,7 +274,7 @@ public class SwipeReorderListViewTouchListener implements View.OnTouchListener {
         return false;
     }
 
-    class PendingReorderData implements Comparable<PendingReorderData> {
+    static class PendingReorderData implements Comparable<PendingReorderData> {
         public int position;
         public View view;
 
@@ -287,6 +287,23 @@ public class SwipeReorderListViewTouchListener implements View.OnTouchListener {
         public int compareTo(PendingReorderData other) {
             // Sort by descending position
             return other.position - position;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            else if (!(o instanceof PendingReorderData))
+                return false;
+
+            PendingReorderData other = (PendingReorderData) o;
+
+            return position == other.position;
+        }
+
+        @Override
+        public int hashCode() {
+            return 42 + position;
         }
     }
 

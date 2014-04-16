@@ -73,7 +73,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     protected ContentSpinner contentSpinner;
 
     /** The current episode set (ordered) */
-    private SortedSet<Episode> currentEpisodeSet = new TreeSet<Episode>();
+    private SortedSet<Episode> currentEpisodeSet = new TreeSet<>();
     /** Load failed counter for all podcasts selected mode */
     private int loadFailedCounter = 0;
 
@@ -165,7 +165,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         selection.setPodcast(podcast);
         selection.setMode(ContentMode.SINGLE_PODCAST);
 
-        this.currentEpisodeSet = new TreeSet<Episode>();
+        this.currentEpisodeSet = new TreeSet<>();
         this.loadFailedCounter = 0;
 
         switch (view) {
@@ -202,7 +202,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         selection.resetPodcast();
         selection.setMode(ContentMode.ALL_PODCASTS);
 
-        this.currentEpisodeSet = new TreeSet<Episode>();
+        this.currentEpisodeSet = new TreeSet<>();
         this.loadFailedCounter = 0;
 
         switch (view) {
@@ -266,7 +266,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         selection.resetPodcast();
         selection.setMode(ContentMode.DOWNLOADS);
 
-        this.currentEpisodeSet = new TreeSet<Episode>();
+        this.currentEpisodeSet = new TreeSet<>();
 
         switch (view) {
             case SMALL_LANDSCAPE:
@@ -295,7 +295,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         selection.resetPodcast();
         selection.setMode(ContentMode.PLAYLIST);
 
-        this.currentEpisodeSet = new TreeSet<Episode>(new Comparator<Episode>() {
+        this.currentEpisodeSet = new TreeSet<>(new Comparator<Episode>() {
 
             @Override
             public int compare(Episode one, Episode another) {
@@ -669,7 +669,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
      * list as needed.
      */
     private void updateEpisodeListUi() {
-        final List<Episode> filteredList = new ArrayList<Episode>(currentEpisodeSet);
+        final List<Episode> filteredList = new ArrayList<>(currentEpisodeSet);
 
         // Further refine the episode list if not in playlist mode
         if (!ContentMode.PLAYLIST.equals(selection.getMode())) {

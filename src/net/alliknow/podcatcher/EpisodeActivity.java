@@ -86,7 +86,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
          * @param episodeActivity Activity to call update player for.
          */
         public PlayProgressTask(EpisodeActivity episodeActivity) {
-            activityReference = new WeakReference<EpisodeActivity>(episodeActivity);
+            activityReference = new WeakReference<>(episodeActivity);
         }
 
         @Override
