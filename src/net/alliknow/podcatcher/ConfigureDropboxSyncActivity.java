@@ -27,13 +27,13 @@ import com.dropbox.sync.android.DbxAccountManager;
 import net.alliknow.podcatcher.model.sync.ControllerImpl;
 import net.alliknow.podcatcher.model.sync.dropbox.DropboxSyncController;
 import net.alliknow.podcatcher.view.fragments.ConfirmUnlinkDropboxFragment;
-import net.alliknow.podcatcher.view.fragments.ConfirmUnlinkDropboxFragment.OnConfirmUnlinkDropboxListener;
+import net.alliknow.podcatcher.view.fragments.ConfirmUnlinkDropboxFragment.ConfirmUnlinkDropboxDialogListener;
 
 /**
  * Non-UI activity to configure the Dropbox synchronization settings.
  */
 public class ConfigureDropboxSyncActivity extends BaseActivity implements
-        OnConfirmUnlinkDropboxListener {
+        ConfirmUnlinkDropboxDialogListener {
 
     /** Our account manager handle */
     private DbxAccountManager accountManager;
@@ -44,14 +44,16 @@ public class ConfigureDropboxSyncActivity extends BaseActivity implements
 
         this.accountManager = DropboxSyncController.getAccountManager(this);
 
-        // Toggle link/unlink depending on current state
-        if (accountManager.hasLinkedAccount()) {
-            // Show confirmation dialog, action occurs in call-back
-            // implementations below
-            new ConfirmUnlinkDropboxFragment().show(getFragmentManager(), null);
+        if (savedInstanceState == null) {
+            // Toggle link/unlink depending on current state
+            if (accountManager.hasLinkedAccount()) {
+                // Show confirmation dialog, action occurs in call-back
+                // implementations below
+                new ConfirmUnlinkDropboxFragment().show(getFragmentManager(), null);
+            }
+            else
+                accountManager.startLink((Activity) this, 42);
         }
-        else
-            accountManager.startLink((Activity) this, 42);
     }
 
     @Override

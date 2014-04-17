@@ -20,6 +20,7 @@ package net.alliknow.podcatcher.view.fragments;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.StateListDrawable;
@@ -38,7 +39,6 @@ import android.widget.TextView;
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.SelectFileActivity.SelectionMode;
 import net.alliknow.podcatcher.adapters.FileListAdapter;
-import net.alliknow.podcatcher.listeners.OnSelectFileListener;
 
 import java.io.File;
 
@@ -47,8 +47,6 @@ import java.io.File;
  */
 public class SelectFileFragment extends DialogFragment {
 
-    /** The call back we work on */
-    private OnSelectFileListener listener;
     /** The file list view adapter */
     private FileListAdapter fileListAdapter;
     /** The path we are currently showing */
@@ -77,16 +75,47 @@ public class SelectFileFragment extends DialogFragment {
     /** Status flag indicating that our view is created */
     private boolean viewCreated = false;
 
+    /** The call back we work on */
+    private SelectFileDialogListener listener;
+
+    /**
+     * Interface definition for a callback to be invoked when an file or folder
+     * is selected by the user in the select file dialog.
+     */
+    public interface SelectFileDialogListener extends OnCancelListener {
+
+        /**
+         * A file/folder was selected by the user in the dialog.
+         * 
+         * @param selectedFile The file/folder selected.
+         */
+        public void onFileSelected(File selectedFile);
+
+        /**
+         * The current folder set in the file dialog changed.
+         * 
+         * @param path The new path.
+         */
+        public void onDirectoryChanged(File path);
+
+        /**
+         * The user tried to navigate to an unavailable path.
+         * 
+         * @param path The path.
+         */
+        public void onAccessDenied(File path);
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
         // Make sure our listener is present
         try {
-            this.listener = (OnSelectFileListener) activity;
+            this.listener = (SelectFileDialogListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnSelectFileListener");
+                    + " must implement SelectFileDialogListener");
         }
     };
 

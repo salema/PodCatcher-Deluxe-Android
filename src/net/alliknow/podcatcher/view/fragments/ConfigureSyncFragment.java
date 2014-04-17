@@ -20,6 +20,7 @@ package net.alliknow.podcatcher.view.fragments;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -32,8 +33,10 @@ import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.SyncListAdapter;
-import net.alliknow.podcatcher.listeners.OnConfigureSyncListener;
 import net.alliknow.podcatcher.model.SyncManager;
+import net.alliknow.podcatcher.model.sync.ControllerImpl;
+import net.alliknow.podcatcher.model.sync.SyncController;
+import net.alliknow.podcatcher.model.sync.SyncController.SyncMode;
 
 import java.util.Date;
 
@@ -42,8 +45,6 @@ import java.util.Date;
  */
 public class ConfigureSyncFragment extends DialogFragment {
 
-    /** The call back we work on */
-    private OnConfigureSyncListener listener;
     /** The sync list adapter */
     private SyncListAdapter syncListAdapter;
     /** Our sync manager handle */
@@ -61,17 +62,56 @@ public class ConfigureSyncFragment extends DialogFragment {
     /** Status flag indicating that our view is created */
     private boolean viewCreated = false;
 
+    /** The call back we work on */
+    private ConfigureSyncDialogListener listener;
+
+    /**
+     * Interface definition for a callback to be invoked when sync settings are
+     * changed in the dialog.
+     */
+    public interface ConfigureSyncDialogListener extends OnCancelListener {
+
+        /**
+         * Called on the listener when the user request the
+         * {@link SyncController}'s settings to be displayed (and possibly
+         * changed).
+         * 
+         * @param impl The controller to present settings for.
+         */
+        public void onUpdateSettings(ControllerImpl impl);
+
+        /**
+         * Called on the listener when the user set the {@link SyncMode} for a
+         * {@link SyncController}.
+         * 
+         * @param impl The controller mode is set for.
+         * @param mode The new sync mode. By giving <code>null</code> here, the
+         *            controller is disabled.
+         */
+        public void onUpdateMode(ControllerImpl impl, SyncMode mode);
+
+        /**
+         * Called on the listener when the user wants to see the help screen.
+         */
+        public void onShowHelp();
+
+        /**
+         * Called on the listener when the user triggered a sync all event.
+         */
+        public void onSyncNow();
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
         // Make sure our listener is present
         try {
-            this.listener = (OnConfigureSyncListener) activity;
+            this.listener = (ConfigureSyncDialogListener) activity;
             this.syncManager = SyncManager.getInstance();
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnConfigureSyncListener");
+                    + " must implement ConfigureSyncDialogListener");
         }
     };
 

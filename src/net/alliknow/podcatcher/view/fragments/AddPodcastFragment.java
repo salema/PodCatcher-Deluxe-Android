@@ -40,19 +40,15 @@ import android.widget.TextView.OnEditorActionListener;
 
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.listeners.OnAddPodcastListener;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.HorizontalProgressView;
 
 /**
  * A dialog to let the user add a podcast. The activity that shows this need to
- * implement the {@link OnAddPodcastListener}.
+ * implement the {@link AddPodcastDialogListener}.
  */
 public class AddPodcastFragment extends DialogFragment {
-
-    /** The listener we report back to */
-    private OnAddPodcastListener listener;
 
     /** The podcast URL text field */
     private EditText podcastUrlEditText;
@@ -65,16 +61,44 @@ public class AddPodcastFragment extends DialogFragment {
     /** The import OPML button */
     private Button importOpmlButton;
 
+    /** The listener we report back to */
+    private AddPodcastDialogListener listener;
+
+    /**
+     * Interface definition for a callback to be invoked when the user interacts
+     * with the add podcast dialog.
+     */
+    public interface AddPodcastDialogListener extends OnCancelListener {
+
+        /**
+         * Called on listener when podcast url is given.
+         * 
+         * @param podcastUrl Podcast URL spec to add.
+         */
+        public void onAddPodcast(String podcastUrl);
+
+        /**
+         * Called on listener if the user wants to see suggestions for podcasts
+         * to add.
+         */
+        public void onShowSuggestions();
+
+        /**
+         * Called on listener if the user wants to import an OPML file.
+         */
+        public void onImportOpml();
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
         // Make sure our listener is present
         try {
-            this.listener = (OnAddPodcastListener) activity;
+            this.listener = (AddPodcastDialogListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnAddPodcastListener");
+                    + " must implement AddPodcastDialogListener");
         }
     }
 
@@ -149,8 +173,7 @@ public class AddPodcastFragment extends DialogFragment {
     @Override
     public void onCancel(DialogInterface dialog) {
         // Make sure the parent activity knows when we are closing
-        if (listener instanceof OnCancelListener)
-            ((OnCancelListener) listener).onCancel(dialog);
+        listener.onCancel(dialog);
 
         super.onCancel(dialog);
     }

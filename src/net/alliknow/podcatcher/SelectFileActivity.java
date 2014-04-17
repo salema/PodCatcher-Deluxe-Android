@@ -25,8 +25,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 
-import net.alliknow.podcatcher.listeners.OnSelectFileListener;
 import net.alliknow.podcatcher.view.fragments.SelectFileFragment;
+import net.alliknow.podcatcher.view.fragments.SelectFileFragment.SelectFileDialogListener;
 
 import java.io.File;
 
@@ -47,7 +47,7 @@ import java.io.File;
  * {@link Intent#getData()}.
  * </p>
  */
-public class SelectFileActivity extends BaseActivity implements OnSelectFileListener {
+public class SelectFileActivity extends BaseActivity implements SelectFileDialogListener {
 
     /** The key to store initial path under in intent */
     public static final String INITIAL_PATH_KEY = "initial_path";
@@ -63,6 +63,8 @@ public class SelectFileActivity extends BaseActivity implements OnSelectFileList
         FOLDER
     }
 
+    /** Tag to find the add suggestion dialog fragment under */
+    private static final String SELECT_FILE_DIALOG_TAG = "select_file_dialog";
     /** The fragment containing the select file UI */
     private SelectFileFragment selectFileFragment;
 
@@ -71,9 +73,16 @@ public class SelectFileActivity extends BaseActivity implements OnSelectFileList
         super.onCreate(savedInstanceState);
 
         // Create the dialog fragment
-        this.selectFileFragment = new SelectFileFragment();
-        selectFileFragment.setStyle(DialogFragment.STYLE_NORMAL,
-                android.R.style.Theme_Holo_Light_Dialog);
+        if (savedInstanceState == null) {
+            this.selectFileFragment = new SelectFileFragment();
+            selectFileFragment.setStyle(DialogFragment.STYLE_NORMAL,
+                    android.R.style.Theme_Holo_Light_Dialog);
+
+            // Show the fragment
+            selectFileFragment.show(getFragmentManager(), SELECT_FILE_DIALOG_TAG);
+        } else
+            this.selectFileFragment = (SelectFileFragment)
+                    getFragmentManager().findFragmentByTag(SELECT_FILE_DIALOG_TAG);
 
         // Use getIntent() to configure selection mode
         final SelectionMode modeFromIntent =
@@ -90,11 +99,8 @@ public class SelectFileActivity extends BaseActivity implements OnSelectFileList
         else
             selectFileFragment.setPath(Environment.getExternalStorageDirectory());
 
-        // Set theme colors
+        // Apply theme color
         selectFileFragment.setThemeColors(themeColor, lightThemeColor);
-
-        // Show the fragment
-        selectFileFragment.show(getFragmentManager(), null);
     }
 
     @Override
