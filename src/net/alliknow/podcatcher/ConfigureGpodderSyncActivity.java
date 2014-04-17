@@ -25,14 +25,16 @@ import com.dragontek.mygpoclient.api.MygPodderClient;
 import net.alliknow.podcatcher.model.sync.ControllerImpl;
 import net.alliknow.podcatcher.model.sync.gpodder.GpodderSyncController;
 import net.alliknow.podcatcher.view.fragments.GpodderSyncConfigFragment;
-import net.alliknow.podcatcher.view.fragments.GpodderSyncConfigFragment.OnConfigureGpodderSyncListener;
+import net.alliknow.podcatcher.view.fragments.GpodderSyncConfigFragment.ConfigureGpodderSyncDialogListener;
 
 /**
  * Non-UI activity to configure the gpodder synchronization settings.
  */
 public class ConfigureGpodderSyncActivity extends BaseActivity implements
-        OnConfigureGpodderSyncListener {
+        ConfigureGpodderSyncDialogListener {
 
+    /** Tag to find the gpodder sync config dialog fragment under */
+    private static final String GPODDER_SYNC_CONFIG_DIALOG_TAG = "gpodder_sync_config_dialog";
     /** The fragment containing the configuration UI */
     private GpodderSyncConfigFragment configFragment;
 
@@ -41,8 +43,12 @@ public class ConfigureGpodderSyncActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
 
         // Create and show dialog fragment
-        this.configFragment = new GpodderSyncConfigFragment();
-        configFragment.show(getFragmentManager(), null);
+        if (savedInstanceState == null) {
+            this.configFragment = new GpodderSyncConfigFragment();
+            configFragment.show(getFragmentManager(), GPODDER_SYNC_CONFIG_DIALOG_TAG);
+        } else
+            this.configFragment = (GpodderSyncConfigFragment)
+                    getFragmentManager().findFragmentByTag(GPODDER_SYNC_CONFIG_DIALOG_TAG);
     }
 
     @Override

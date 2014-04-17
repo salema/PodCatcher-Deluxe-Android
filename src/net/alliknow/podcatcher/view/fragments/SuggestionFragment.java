@@ -41,7 +41,6 @@ import net.alliknow.podcatcher.adapters.GenreSpinnerAdapter;
 import net.alliknow.podcatcher.adapters.LanguageSpinnerAdapter;
 import net.alliknow.podcatcher.adapters.MediaTypeSpinnerAdapter;
 import net.alliknow.podcatcher.adapters.SuggestionListAdapter;
-import net.alliknow.podcatcher.listeners.OnAddSuggestionListener;
 import net.alliknow.podcatcher.model.types.Genre;
 import net.alliknow.podcatcher.model.types.Language;
 import net.alliknow.podcatcher.model.types.MediaType;
@@ -61,8 +60,6 @@ public class SuggestionFragment extends DialogFragment {
     /** The filter wildcard */
     public static final String FILTER_WILDCARD = "ALL";
 
-    /** The call back we work on */
-    private OnAddSuggestionListener listener;
     /** The list of suggestions to show */
     private List<Suggestion> suggestionList;
     /** The suggestion list adapter */
@@ -104,16 +101,33 @@ public class SuggestionFragment extends DialogFragment {
         }
     };
 
+    /** The call back we work on */
+    private AddSuggestionDialogListener listener;
+
+    /**
+     * Interface definition for a callback to be invoked when the user interacts
+     * with the add podcast suggestion dialog.
+     */
+    public interface AddSuggestionDialogListener extends OnCancelListener {
+
+        /**
+         * Called on listener when podcast suggestion is selected.
+         * 
+         * @param suggestion Podcast to add.
+         */
+        public void onAddSuggestion(Suggestion suggestion);
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
         // Make sure our listener is present
         try {
-            this.listener = (OnAddSuggestionListener) activity;
+            this.listener = (AddSuggestionDialogListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnAddSuggestionListener");
+                    + " must implement AddSuggestionDialogListener");
         }
     };
 
@@ -213,8 +227,7 @@ public class SuggestionFragment extends DialogFragment {
     @Override
     public void onCancel(DialogInterface dialog) {
         // Make sure the parent activity knows when we are closing
-        if (listener instanceof OnCancelListener)
-            ((OnCancelListener) listener).onCancel(dialog);
+        listener.onCancel(dialog);
 
         super.onCancel(dialog);
     }

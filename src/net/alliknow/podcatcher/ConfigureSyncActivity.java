@@ -25,22 +25,24 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
-import net.alliknow.podcatcher.listeners.OnConfigureSyncListener;
 import net.alliknow.podcatcher.listeners.OnSyncListener;
 import net.alliknow.podcatcher.model.sync.ControllerImpl;
 import net.alliknow.podcatcher.model.sync.SyncController.SyncMode;
 import net.alliknow.podcatcher.view.fragments.ConfigureSyncFragment;
+import net.alliknow.podcatcher.view.fragments.ConfigureSyncFragment.ConfigureSyncDialogListener;
 
 /**
  * Non-UI activity to configure the synchronization settings. Will use a
  * {@link ConfigureSyncFragment} to show the corresponding dialog.
  */
-public class ConfigureSyncActivity extends BaseActivity implements OnConfigureSyncListener,
+public class ConfigureSyncActivity extends BaseActivity implements ConfigureSyncDialogListener,
         OnSyncListener {
 
     /** The podcatcher help web site URL (sync anchor) */
     private static final String PODCATCHER_HELPSITE_SYNC = "http://www.podcatcher-deluxe.com/help#sync";
 
+    /** Tag to find the sync config dialog fragment under */
+    private static final String SYNC_CONFIG_DIALOG_TAG = "sync_config_dialog";
     /** The fragment containing the settings UI */
     private ConfigureSyncFragment configureSyncFragment;
 
@@ -52,11 +54,16 @@ public class ConfigureSyncActivity extends BaseActivity implements OnConfigureSy
         syncManager.addSyncListener(this);
 
         // Create and show the dialog fragment
-        configureSyncFragment = new ConfigureSyncFragment();
-        configureSyncFragment.setStyle(DialogFragment.STYLE_NORMAL,
-                android.R.style.Theme_Holo_Light_Dialog);
+        if (savedInstanceState == null) {
+            this.configureSyncFragment = new ConfigureSyncFragment();
+            // Need to set style, because this activity has no UI
+            configureSyncFragment.setStyle(DialogFragment.STYLE_NORMAL,
+                    android.R.style.Theme_Holo_Light_Dialog);
 
-        configureSyncFragment.show(getFragmentManager(), null);
+            configureSyncFragment.show(getFragmentManager(), SYNC_CONFIG_DIALOG_TAG);
+        } else
+            this.configureSyncFragment = (ConfigureSyncFragment)
+                    getFragmentManager().findFragmentByTag(SYNC_CONFIG_DIALOG_TAG);
     }
 
     @Override

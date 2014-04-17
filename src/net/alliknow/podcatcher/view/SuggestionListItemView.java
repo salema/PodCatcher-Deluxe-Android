@@ -28,9 +28,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.listeners.OnAddSuggestionListener;
 import net.alliknow.podcatcher.model.types.MediaType;
 import net.alliknow.podcatcher.model.types.Suggestion;
+import net.alliknow.podcatcher.view.fragments.SuggestionFragment.AddSuggestionDialogListener;
 
 /**
  * A list item view to represent a podcast suggestion.
@@ -85,7 +85,7 @@ public class SuggestionListItemView extends RelativeLayout {
      * @param typeWildcard Whether the current filter setting has a type
      *            wildcard.
      */
-    public void show(final Suggestion suggestion, final OnAddSuggestionListener listener,
+    public void show(final Suggestion suggestion, final AddSuggestionDialogListener listener,
             boolean alreadyAdded, boolean languageWildcard, boolean genreWildcard,
             boolean typeWildcard) {
         // 1. Set the text to display for title

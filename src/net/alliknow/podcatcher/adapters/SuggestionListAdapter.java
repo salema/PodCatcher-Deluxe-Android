@@ -22,10 +22,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.listeners.OnAddSuggestionListener;
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.types.Suggestion;
 import net.alliknow.podcatcher.view.SuggestionListItemView;
+import net.alliknow.podcatcher.view.fragments.SuggestionFragment.AddSuggestionDialogListener;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ import java.util.List;
 public class SuggestionListAdapter extends PodcatcherBaseListAdapter {
 
     /** Owner for button call backs */
-    protected final OnAddSuggestionListener listener;
+    protected final AddSuggestionDialogListener listener;
     /** The list our data resides in */
     protected List<Suggestion> list;
 
@@ -54,7 +54,7 @@ public class SuggestionListAdapter extends PodcatcherBaseListAdapter {
      * @param listener Call back for the add button to attach.
      */
     public SuggestionListAdapter(Context context, List<Suggestion> suggestions,
-            OnAddSuggestionListener listener) {
+            AddSuggestionDialogListener listener) {
         super(context);
 
         this.list = suggestions;

@@ -45,6 +45,8 @@ public class SettingsActivity extends BaseActivity {
     /** Setting key for the last sync field */
     public static final String KEY_LAST_SYNC = "last_full_sync";
 
+    /** Tag to find the add suggestion dialog fragment under */
+    private static final String SETTINGS_DIALOG_TAG = "settings_dialog";
     /** The settings fragment we display */
     private SettingsFragment settingsFragment;
 
@@ -54,11 +56,16 @@ public class SettingsActivity extends BaseActivity {
 
         setTitle(R.string.preferences);
 
-        // Create the fragment to show
-        this.settingsFragment = new SettingsFragment();
-        // Display the fragment as the main content.
-        getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, settingsFragment)
-                .commit();
+        // Create and show suggestion fragment
+        if (savedInstanceState == null) {
+            // Create the fragment to show
+            this.settingsFragment = new SettingsFragment();
+            // Display the fragment as the main content.
+            getFragmentManager().beginTransaction()
+                    .replace(android.R.id.content, settingsFragment, SETTINGS_DIALOG_TAG)
+                    .commit();
+        } else
+            this.settingsFragment = (SettingsFragment)
+                    getFragmentManager().findFragmentByTag(SETTINGS_DIALOG_TAG);
     }
 }

@@ -22,10 +22,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.listeners.OnConfigureSyncListener;
 import net.alliknow.podcatcher.model.SyncManager;
 import net.alliknow.podcatcher.model.sync.ControllerImpl;
 import net.alliknow.podcatcher.view.SyncListItemView;
+import net.alliknow.podcatcher.view.fragments.ConfigureSyncFragment.ConfigureSyncDialogListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ import java.util.List;
 public class SyncListAdapter extends PodcatcherBaseAdapter {
 
     /** The callback to invoke if the user interacts with list items */
-    private final OnConfigureSyncListener listener;
+    private final ConfigureSyncDialogListener listener;
     /** The {@link SyncManager} handle */
     private final SyncManager syncManager;
 
@@ -50,7 +50,7 @@ public class SyncListAdapter extends PodcatcherBaseAdapter {
      * @param context Context we live in.
      * @param listener The listener for user interaction.
      */
-    public SyncListAdapter(Context context, OnConfigureSyncListener listener) {
+    public SyncListAdapter(Context context, ConfigureSyncDialogListener listener) {
         super(context);
 
         this.listener = listener;
