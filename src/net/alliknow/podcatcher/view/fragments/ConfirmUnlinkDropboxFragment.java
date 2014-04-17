@@ -38,16 +38,16 @@ import net.alliknow.podcatcher.R;
  * <p>
  * <b>Register call-back:</b> The fragment will use the activity it is part of
  * as its listener. To make this work, the activity needs to implement
- * {@link OnConfirmUnlinkDropboxListener}.
+ * {@link ConfirmUnlinkDropboxDialogListener}.
  * <p>
  */
 public class ConfirmUnlinkDropboxFragment extends DialogFragment {
 
     /** The callback we are working with */
-    private OnConfirmUnlinkDropboxListener listener;
+    private ConfirmUnlinkDropboxDialogListener listener;
 
     /** The call-back for listeners to implement */
-    public interface OnConfirmUnlinkDropboxListener extends OnCancelListener {
+    public interface ConfirmUnlinkDropboxDialogListener extends OnCancelListener {
 
         /**
          * The user confirmed the unlink.
@@ -61,10 +61,10 @@ public class ConfirmUnlinkDropboxFragment extends DialogFragment {
 
         // Make sure our listener is present
         try {
-            this.listener = (OnConfirmUnlinkDropboxListener) activity;
+            this.listener = (ConfirmUnlinkDropboxDialogListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnConfirmUnlinkDropboxListener");
+                    + " must implement ConfirmUnlinkDropboxDialogListener");
         }
     }
 

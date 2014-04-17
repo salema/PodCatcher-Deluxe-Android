@@ -22,6 +22,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -37,19 +38,16 @@ import net.alliknow.podcatcher.R;
  * <p>
  * <b>Register call-back:</b> The fragment will use the activity it is part of
  * as its listener. To make this work, the activity needs to implement
- * {@link OnConfirmExplicitSuggestionListener}.
+ * {@link ConfirmExplicitSuggestionDialogListener}.
  * <p>
  */
 public class ConfirmExplicitSuggestionFragment extends DialogFragment {
 
-    /** The tag we identify our confirmation dialog fragment with */
-    public static final String TAG = "confirm_explicit_suggestion";
-
     /** The callback we are working with */
-    private OnConfirmExplicitSuggestionListener listener;
+    private ConfirmExplicitSuggestionDialogListener listener;
 
     /** The call-back for listeners to implement */
-    public interface OnConfirmExplicitSuggestionListener {
+    public interface ConfirmExplicitSuggestionDialogListener extends OnCancelListener {
 
         /**
          * The user confirmed the addition.
@@ -68,10 +66,10 @@ public class ConfirmExplicitSuggestionFragment extends DialogFragment {
 
         // Make sure our listener is present
         try {
-            this.listener = (OnConfirmExplicitSuggestionListener) activity;
+            this.listener = (ConfirmExplicitSuggestionDialogListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnConfirmExplicitSuggestionListener");
+                    + " must implement ConfirmExplicitSuggestionDialogListener");
         }
     }
 
@@ -99,8 +97,7 @@ public class ConfirmExplicitSuggestionFragment extends DialogFragment {
 
             @Override
             public void onClick(View v) {
-                if (listener != null)
-                    listener.onConfirmExplicit();
+                listener.onConfirmExplicit();
 
                 dismiss();
             }
@@ -111,6 +108,7 @@ public class ConfirmExplicitSuggestionFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 onCancel(ConfirmExplicitSuggestionFragment.this.getDialog());
+
                 dismiss();
             }
         });
@@ -124,19 +122,9 @@ public class ConfirmExplicitSuggestionFragment extends DialogFragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-
-        // We auto-dismiss here, because the fragment should not survive
-        // configuration changes
-        dismiss();
-    }
-
-    @Override
     public void onCancel(DialogInterface dialog) {
-        super.onCancel(dialog);
+        listener.onCancelExplicit();
 
-        if (listener != null)
-            listener.onCancelExplicit();
+        super.onCancel(dialog);
     }
 }

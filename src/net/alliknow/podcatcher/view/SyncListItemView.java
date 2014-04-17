@@ -29,11 +29,11 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
-import net.alliknow.podcatcher.listeners.OnConfigureSyncListener;
 import net.alliknow.podcatcher.model.SyncManager;
 import net.alliknow.podcatcher.model.sync.ControllerImpl;
 import net.alliknow.podcatcher.model.sync.SyncController;
 import net.alliknow.podcatcher.model.sync.SyncController.SyncMode;
+import net.alliknow.podcatcher.view.fragments.ConfigureSyncFragment.ConfigureSyncDialogListener;
 
 /**
  * A list item view to represent a sync controller.
@@ -85,7 +85,7 @@ public class SyncListItemView extends LinearLayout {
      *            the list item's UI.
      */
     public void show(final ControllerImpl impl, boolean linked, SyncMode mode,
-            final OnConfigureSyncListener listener) {
+            final ConfigureSyncDialogListener listener) {
         // 1. Set icon and name
         final boolean isRunning = SyncManager.getInstance().isSyncRunning(impl);
         progressBar.setVisibility(isRunning ? View.VISIBLE : View.GONE);

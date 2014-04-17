@@ -44,11 +44,14 @@ public class FirstRunActivity extends BaseActivity implements FirstRunListener {
         preferences.edit().putBoolean(SettingsActivity.KEY_FIRST_RUN, false).apply();
 
         // Create and show the fragment
-        final FirstRunFragment firstRunFragment = new FirstRunFragment();
-        firstRunFragment.setStyle(DialogFragment.STYLE_NORMAL,
-                android.R.style.Theme_Holo_Light_Dialog);
+        if (savedInstanceState == null) {
+            final FirstRunFragment firstRunFragment = new FirstRunFragment();
+            // Need to set style, because this activity has no UI
+            firstRunFragment.setStyle(DialogFragment.STYLE_NORMAL,
+                    android.R.style.Theme_Holo_Light_Dialog);
 
-        firstRunFragment.show(getFragmentManager(), null);
+            firstRunFragment.show(getFragmentManager(), null);
+        }
     }
 
     @Override

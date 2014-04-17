@@ -19,17 +19,16 @@ package net.alliknow.podcatcher;
 
 import android.app.DialogFragment;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 
-import net.alliknow.podcatcher.listeners.OnAddSuggestionListener;
 import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
 import net.alliknow.podcatcher.model.SuggestionManager;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.model.types.Suggestion;
 import net.alliknow.podcatcher.view.fragments.ConfirmExplicitSuggestionFragment;
-import net.alliknow.podcatcher.view.fragments.ConfirmExplicitSuggestionFragment.OnConfirmExplicitSuggestionListener;
+import net.alliknow.podcatcher.view.fragments.ConfirmExplicitSuggestionFragment.ConfirmExplicitSuggestionDialogListener;
 import net.alliknow.podcatcher.view.fragments.SuggestionFragment;
+import net.alliknow.podcatcher.view.fragments.SuggestionFragment.AddSuggestionDialogListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,15 +36,22 @@ import java.util.List;
 /**
  * Add podcast from suggestions activity.
  */
-public class AddSuggestionActivity extends BaseActivity implements
-        OnLoadSuggestionListener, OnAddSuggestionListener, OnConfirmExplicitSuggestionListener,
-        OnCancelListener {
+public class AddSuggestionActivity extends BaseActivity implements AddSuggestionDialogListener,
+        ConfirmExplicitSuggestionDialogListener, OnLoadSuggestionListener {
 
+    /** The suggestion manager handle */
+    private SuggestionManager suggestionManager;
+
+    /** Tag to find the add suggestion dialog fragment under */
+    private static final String ADD_SUGGESTION_DIALOG_TAG = "add_suggestion_dialog";
     /** The fragment containing the add suggestion UI */
     private SuggestionFragment suggestionFragment;
-    /** The suggestion manager */
-    private SuggestionManager suggestionManager;
-    /** Helper the store suggestion await confirmation */
+
+    /** Key to find "podcast to be confirmed" URL under */
+    private static final String TO_BE_CONFIRMED_URL_KEY = "TO_BE_CONFIRMED_URL_KEY";
+    /** Key to find "podcast to be confirmed" name under */
+    private static final String TO_BE_CONFIRMED_NAME_KEY = "TO_BE_CONFIRMED_NAME_KEY";
+    /** Helper to store suggestion awaiting confirmation */
     private Suggestion suggestionToBeConfirmed;
 
     @Override
@@ -57,11 +63,23 @@ public class AddSuggestionActivity extends BaseActivity implements
         suggestionManager.addLoadSuggestionListListener(this);
 
         // Create and show suggestion fragment
-        this.suggestionFragment = new SuggestionFragment();
-        suggestionFragment.setStyle(DialogFragment.STYLE_NORMAL,
-                android.R.style.Theme_Holo_Light_Dialog);
+        if (savedInstanceState == null) {
+            this.suggestionFragment = new SuggestionFragment();
+            // Need to set style, because this activity has no UI
+            suggestionFragment.setStyle(DialogFragment.STYLE_NORMAL,
+                    android.R.style.Theme_Holo_Light_Dialog);
 
-        suggestionFragment.show(getFragmentManager(), null);
+            suggestionFragment.show(getFragmentManager(), ADD_SUGGESTION_DIALOG_TAG);
+        } else {
+            this.suggestionFragment = (SuggestionFragment)
+                    getFragmentManager().findFragmentByTag(ADD_SUGGESTION_DIALOG_TAG);
+
+            // Restore "suggestion to be confirmed" member
+            if (savedInstanceState.containsKey(TO_BE_CONFIRMED_URL_KEY))
+                suggestionToBeConfirmed = new Suggestion(
+                        savedInstanceState.getString(TO_BE_CONFIRMED_NAME_KEY),
+                        savedInstanceState.getString(TO_BE_CONFIRMED_URL_KEY));
+        }
     }
 
     @Override
@@ -70,6 +88,16 @@ public class AddSuggestionActivity extends BaseActivity implements
 
         // Load suggestions (this has to be called after UI fragment is created)
         suggestionManager.load();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (suggestionToBeConfirmed != null) {
+            outState.putString(TO_BE_CONFIRMED_URL_KEY, suggestionToBeConfirmed.getUrl());
+            outState.putString(TO_BE_CONFIRMED_NAME_KEY, suggestionToBeConfirmed.getName());
+        }
     }
 
     @Override
@@ -110,8 +138,7 @@ public class AddSuggestionActivity extends BaseActivity implements
             this.suggestionToBeConfirmed = suggestion;
 
             // Show confirmation dialog
-            final ConfirmExplicitSuggestionFragment confirmFragment = new ConfirmExplicitSuggestionFragment();
-            confirmFragment.show(getFragmentManager(), ConfirmExplicitSuggestionFragment.TAG);
+            new ConfirmExplicitSuggestionFragment().show(getFragmentManager(), null);
         } else {
             podcastManager.addPodcast(suggestion);
             suggestionFragment.notifySuggestionAdded();

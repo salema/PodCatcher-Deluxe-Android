@@ -48,13 +48,10 @@ import net.alliknow.podcatcher.model.sync.gpodder.GpodderSyncController;
  * <p>
  * <b>Register call-back:</b> The fragment will use the activity it is part of
  * as its listener. To make this work, the activity needs to implement
- * {@link OnConfigureGpodderSyncListener}.
+ * {@link ConfigureGpodderSyncDialogListener}.
  * <p>
  */
 public class GpodderSyncConfigFragment extends DialogFragment {
-
-    /** The callback we are working with */
-    private OnConfigureGpodderSyncListener listener;
 
     /** The username text view */
     private EditText usernameEditText;
@@ -76,11 +73,14 @@ public class GpodderSyncConfigFragment extends DialogFragment {
     private int deviceIdValidColor;
     private int deviceIdInvalidColor;
 
+    /** The callback we are working with */
+    private ConfigureGpodderSyncDialogListener listener;
+
     /**
      * The callback definition, needs to implemented by the activity showing
      * this dialog.
      */
-    public interface OnConfigureGpodderSyncListener extends OnCancelListener {
+    public interface ConfigureGpodderSyncDialogListener extends OnCancelListener {
         /**
          * Called on the listener if the user submitted a gpodder.net
          * configuration.
@@ -98,10 +98,10 @@ public class GpodderSyncConfigFragment extends DialogFragment {
 
         // Make sure our listener is present
         try {
-            this.listener = (OnConfigureGpodderSyncListener) activity;
+            this.listener = (ConfigureGpodderSyncDialogListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnConfigureGpodderSyncListener");
+                    + " must implement ConfigureGpodderSyncDialogListener");
         }
     }
 
