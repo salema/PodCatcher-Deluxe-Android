@@ -17,12 +17,12 @@
 
 package net.alliknow.podcatcher.model.tasks;
 
+import static android.text.TextUtils.htmlEncode;
 import static net.alliknow.podcatcher.model.PodcastManager.OPML_FILENAME;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.text.TextUtils;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnStorePodcastListListener;
@@ -166,24 +166,21 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
     private void writePodcast(BufferedWriter writer, Podcast podcast) throws IOException {
         // Skip, if not a valid podcast
         if (hasNameAndUrl(podcast)) {
-            String opmlString = "<" + OPML.OUTLINE + " " + OPML.TEXT + "=\"" +
-                    TextUtils.htmlEncode(podcast.getName()) + "\" " +
-                    OPML.TYPE + "=\"" + OPML.RSS_TYPE + "\" " +
-                    OPML.XMLURL + "=\"" +
-                    TextUtils.htmlEncode(podcast.getUrl()) + "\"/>";
+            String opmlString = String.format("<%s %s=\"%s\" %s=\"%s\" %s=\"%s\" />",
+                    OPML.OUTLINE, OPML.TEXT, htmlEncode(podcast.getName()),
+                    OPML.TYPE, OPML.RSS_TYPE, OPML.XMLURL, htmlEncode(podcast.getUrl()));
 
             if (writeAuthorization && podcast.getAuthorization() != null) {
-                opmlString = opmlString.substring(0, opmlString.length() - 2);
+                opmlString = opmlString.substring(0, opmlString.length() - 3);
 
                 // We store the podcast password in the app's private folder
                 // (but in the clear). This is justified because it is hard to
                 // attack the file (unless you get your hands on the device) and
                 // the password is not very sensitive since it is only a
                 // podcast we are accessing, not personal information.
-                opmlString += " " + OPML.EXTRA_USER + "=\"" +
-                        TextUtils.htmlEncode(podcast.getUsername()) + "\" " +
-                        OPML.EXTRA_PASS + "=\"" +
-                        TextUtils.htmlEncode(podcast.getPassword()) + "\"/>";
+                opmlString = String.format("%s %s=\"%s\" %s=\"%s\" />", opmlString,
+                        OPML.EXTRA_USER, htmlEncode(podcast.getUsername()),
+                        OPML.EXTRA_PASS, htmlEncode(podcast.getPassword()));
             }
 
             writeLine(writer, 2, opmlString);

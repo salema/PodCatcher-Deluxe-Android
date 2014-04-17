@@ -17,6 +17,8 @@
 
 package net.alliknow.podcatcher.model.types;
 
+import java.util.Locale;
+
 /**
  * Type to indicate load progress. This has two modes: By default a progress is
  * given as the amount of work done towards a total workload. In addition, this
@@ -107,7 +109,7 @@ public class Progress {
             }
         } // Standard case
         else
-            return progress + "/" + total + "(" + getPercentDone() + ")";
+            return String.format(Locale.US, "%d/%d (%d%%)", progress, total, getPercentDone());
     }
 
     @Override
