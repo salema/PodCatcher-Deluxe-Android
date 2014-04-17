@@ -17,6 +17,8 @@
 
 package net.alliknow.podcatcher.model;
 
+import android.annotation.SuppressLint;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -26,6 +28,25 @@ import java.io.IOException;
  * Utility class to support podcast XML/RSS parsing.
  */
 public class ParserUtils {
+
+    /** A short time span format (no hours) */
+    private static final String SHORT_DURATION = "%2$d:%3$02d";
+    /** A long time span format (with hours) */
+    private static final String LONG_DURATION = "%d:%02d:%02d";
+
+    /**
+     * Format an amount of time.
+     * 
+     * @param time Non-negative amount of seconds to format.
+     * @return The time span as hh:mm:ss with appropriate omissions.
+     */
+    @SuppressLint("DefaultLocale")
+    public static String formatTime(int time) {
+        final int hours = time / 3600;
+
+        return String.format(hours > 0 ? LONG_DURATION : SHORT_DURATION,
+                hours, (time / 60) - 60 * hours, time % 60);
+    }
 
     /**
      * Skip the entire sub tree the given parser is currently pointing at.
@@ -52,33 +73,5 @@ public class ParserUtils {
 
         // We are back to the original level, behind the start tag given and any
         // sub-tree that might have been there. Return.
-    }
-
-    /**
-     * Format an amount of time.
-     * 
-     * @param time Amount in seconds to format.
-     * @return The time span as hh:mm:ss with appropriate omissions.
-     */
-    public static String formatTime(int time) {
-        int hours = time / 3600;
-
-        int minutes = (time / 60) - 60 * hours;
-        int seconds = time % 60;
-
-        String minutesString = formatNumber(minutes, hours > 0);
-        String secondsString = formatNumber(seconds, true);
-
-        if (hours > 0)
-            return hours + ":" + minutesString + ":" + secondsString;
-        else
-            return minutesString + ":" + secondsString;
-    }
-
-    private static String formatNumber(int number, boolean makeTwoDigits) {
-        if (number < 10 && makeTwoDigits)
-            return "0" + number;
-        else
-            return number + "";
     }
 }

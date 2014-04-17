@@ -42,6 +42,7 @@ import net.alliknow.podcatcher.view.fragments.AuthorizationFragment.OnEnterAutho
 import net.alliknow.podcatcher.view.fragments.PodcastListFragment;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Listener for the podcast list context mode.
@@ -137,10 +138,10 @@ public class PodcastListContextListener implements MultiChoiceModeListener {
                         (Podcast) fragment.getListAdapter().getItem(positions.get(0));
 
                 // Construct the email
-                final String uriText = "mailto:"
-                        + encode(fragment.getString(R.string.suggestion_address))
-                        + "?subject=" + encode(fragment.getString(R.string.suggestion_subject))
-                        + "&body=" + encode(suggestion.getName() + " at " + suggestion.getUrl());
+                final String uriText = String.format(Locale.US, "mailto:%s?subject=%s&body=%s",
+                        encode(fragment.getString(R.string.suggestion_address)),
+                        encode(fragment.getString(R.string.suggestion_subject)),
+                        encode(suggestion.getName() + " at " + suggestion.getUrl()));
 
                 // Go start the mail app
                 final Intent sendTo = new Intent(Intent.ACTION_SENDTO, Uri.parse(uriText));
