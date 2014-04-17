@@ -228,21 +228,21 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             // Restore UI to match selection:
             // Re-select previously selected podcast(s)
             if (selection.isAll())
-                onAllPodcastsSelected(true);
+                onAllPodcastsSelected();
             else if (selection.isSingle() && selection.isPodcastSet())
-                onPodcastSelected(selection.getPodcast(), true);
+                onPodcastSelected(selection.getPodcast());
             else if (ContentMode.DOWNLOADS.equals(selection.getMode()))
                 onDownloadsSelected();
             else if (ContentMode.PLAYLIST.equals(selection.getMode()))
                 onPlaylistSelected();
             else
-                onNoPodcastSelected(true);
+                onNoPodcastSelected();
 
             // Re-select previously selected episode
             if (selection.isEpisodeSet())
-                onEpisodeSelected(selection.getEpisode(), true);
+                onEpisodeSelected(selection.getEpisode());
             else
-                onNoEpisodeSelected(true);
+                onNoEpisodeSelected();
         }
 
         // Trigger sync event
@@ -402,47 +402,35 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         if (podcast.equals(selection.getPodcast()))
             onNoPodcastSelected();
         else if (selection.isPodcastSet())
-            onPodcastSelected(selection.getPodcast(), true);
+            onPodcastSelected(selection.getPodcast());
     }
 
     @Override
     public void onPodcastSelected(Podcast podcast) {
-        onPodcastSelected(podcast, false);
-    }
+        super.onPodcastSelected(podcast);
 
-    private void onPodcastSelected(Podcast podcast, boolean forceReload) {
-        if (forceReload || !podcast.equals(selection.getPodcast())) {
-            super.onPodcastSelected(podcast);
+        if (view.isSmallPortrait())
+            showEpisodeListActivity();
+        else
+            // Select in podcast list
+            podcastListFragment.select(podcastManager.indexOf(podcast));
 
-            if (view.isSmallPortrait())
-                showEpisodeListActivity();
-            else
-                // Select in podcast list
-                podcastListFragment.select(podcastManager.indexOf(podcast));
-
-            // Update UI
-            updateLogoViewMode();
-        }
+        // Update UI
+        updateLogoViewMode();
     }
 
     @Override
     public void onAllPodcastsSelected() {
-        onAllPodcastsSelected(false);
-    }
+        super.onAllPodcastsSelected();
 
-    private void onAllPodcastsSelected(boolean forceReload) {
-        if (forceReload || !selection.isAll()) {
-            super.onAllPodcastsSelected();
+        // Prepare podcast list fragment
+        podcastListFragment.selectAll();
 
-            // Prepare podcast list fragment
-            podcastListFragment.selectAll();
+        if (view.isSmallPortrait())
+            showEpisodeListActivity();
 
-            if (view.isSmallPortrait())
-                showEpisodeListActivity();
-
-            // Update UI
-            updateLogoViewMode();
-        }
+        // Update UI
+        updateLogoViewMode();
     }
 
     @Override
@@ -475,18 +463,12 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
 
     @Override
     public void onNoPodcastSelected() {
-        onNoPodcastSelected(false);
-    }
+        super.onNoPodcastSelected();
 
-    private void onNoPodcastSelected(boolean forceReload) {
-        if (forceReload || selection.getPodcast() != null) {
-            super.onNoPodcastSelected();
-
-            // Reset podcast list fragment
-            podcastListFragment.selectNone();
-            // Update UI
-            updateLogoViewMode();
-        }
+        // Reset podcast list fragment
+        podcastListFragment.selectNone();
+        // Update UI
+        updateLogoViewMode();
     }
 
     @Override

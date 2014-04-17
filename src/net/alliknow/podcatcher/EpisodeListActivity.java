@@ -473,42 +473,30 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
     @Override
     public void onEpisodeSelected(Episode selectedEpisode) {
-        onEpisodeSelected(selectedEpisode, false);
-    }
+        super.onEpisodeSelected(selectedEpisode);
 
-    protected void onEpisodeSelected(Episode selectedEpisode, boolean forceReload) {
-        if (forceReload || !selectedEpisode.equals(selection.getEpisode())) {
-            super.onEpisodeSelected(selectedEpisode);
+        if (!view.isSmall())
+            // Make sure selection matches in list fragment
+            updateEpisodeListSelection();
+        else if (view.isSmallPortrait()) {
+            // Send intent to open episode as a new activity
+            Intent intent = new Intent(this, ShowEpisodeActivity.class);
 
-            if (!view.isSmall())
-                // Make sure selection matches in list fragment
-                updateEpisodeListSelection();
-            else if (view.isSmallPortrait()) {
-                // Send intent to open episode as a new activity
-                Intent intent = new Intent(this, ShowEpisodeActivity.class);
-
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
-            }
-
-            updateDividerUi();
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
         }
+
+        updateDividerUi();
     }
 
     @Override
     public void onNoEpisodeSelected() {
-        onNoEpisodeSelected(false);
-    }
+        super.onNoEpisodeSelected();
 
-    protected void onNoEpisodeSelected(boolean forceReload) {
-        if (forceReload || selection.getEpisode() != null) {
-            super.onNoEpisodeSelected();
+        if (episodeListFragment != null)
+            episodeListFragment.selectNone();
 
-            if (episodeListFragment != null)
-                episodeListFragment.selectNone();
-
-            updateDividerUi();
-        }
+        updateDividerUi();
     }
 
     @Override
