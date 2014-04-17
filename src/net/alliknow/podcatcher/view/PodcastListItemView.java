@@ -17,7 +17,9 @@
 
 package net.alliknow.podcatcher.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -72,6 +74,7 @@ public class PodcastListItemView extends PodcatcherListItemView {
         // 0. Check podcast state
         final boolean loading = podcastManager.isLoading(podcast);
         final int episodeNumber = podcast.getEpisodeCount();
+        final int newEpisodeCount = episodeManager.getNewEpisodeCount(podcast);
         final boolean showLogoView = showLogo && podcast.isLogoCached();
         final boolean progressShouldFade = podcast.hashCode() == lastItemId;
 
@@ -79,7 +82,7 @@ public class PodcastListItemView extends PodcatcherListItemView {
         titleTextView.setText(podcast.getName());
 
         // 2. Set caption text and visibility
-        captionTextView.setText(createCaption(podcast, episodeNumber));
+        captionTextView.setText(createCaption(episodeNumber, newEpisodeCount));
         // The caption should only show if there are episodes or there is
         // progress to display
         ((View) captionTextView.getParent())
@@ -119,18 +122,14 @@ public class PodcastListItemView extends PodcatcherListItemView {
         progressView.publishProgress(progress);
     }
 
-    private String createCaption(Podcast podcast, int episodeCount) {
-        final int newEpisodeCount = episodeManager.getNewEpisodeCount(podcast);
+    @SuppressLint("DefaultLocale")
+    private String createCaption(int episodeCount, int newEpisodeCount) {
+        final Resources r = getResources();
+        final String startsWith = newEpisodeCount > 0 ?
+                r.getQuantityString(R.plurals.episodes_new, newEpisodeCount, newEpisodeCount) :
+                r.getString(R.string.episodes_no_new);
 
-        String caption = "";
-
-        if (newEpisodeCount == 0)
-            caption += getResources().getString(R.string.episodes_no_new);
-        else
-            caption += getResources().getQuantityString(R.plurals.episodes_new, newEpisodeCount,
-                    newEpisodeCount);
-
-        return caption + " (" + episodeCount + " "
-                + getResources().getString(R.string.episodes_total) + ")";
+        return String.format("%s (%d %s)", startsWith, episodeCount,
+                r.getString(R.string.episodes_total));
     }
 }
