@@ -26,6 +26,7 @@ import com.dropbox.sync.android.DbxRecord;
 import com.dropbox.sync.android.DbxTable;
 
 import net.alliknow.podcatcher.model.types.Episode;
+import net.alliknow.podcatcher.model.types.Podcast;
 
 import java.util.AbstractMap;
 import java.util.Iterator;
@@ -157,6 +158,13 @@ abstract class DropboxEpisodeMetadataSyncController extends DropboxPodcastListSy
         // In a later stage, one could actually walk through all episodes here
         // and publish their state to the Dropbox data store. That way, even
         // changes done when the sync controller was inactive would be included.
+    }
+
+    @Override
+    public void onPodcastRemoved(Podcast podcast) {
+        super.onPodcastRemoved(podcast);
+
+        // TODO Remove all episode metadata for the removed podcast here?
     }
 
     @Override
