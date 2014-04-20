@@ -64,6 +64,10 @@ abstract class DropboxEpisodeMetadataSyncController extends DropboxPodcastListSy
         @Override
         protected Void doInBackground(Void... params) {
             try {
+                // Wait for the episode metadata to be available in the
+                // manager because otherwise we cannot update it
+                episodeManager.blockUntilEpisodeMetadataIsLoaded();
+
                 // Walk through all the records and see what we need to do
                 final Iterator<DbxRecord> iterator = episodeTable.query().iterator();
                 while (iterator.hasNext()) {
@@ -84,7 +88,7 @@ abstract class DropboxEpisodeMetadataSyncController extends DropboxPodcastListSy
                     if (episode != null)
                         publishProgress(new AbstractMap.SimpleEntry<>(episode, record));
                 }
-            } catch (DbxException | NullPointerException e) {
+            } catch (DbxException | NullPointerException | InterruptedException e) {
                 this.cause = e;
                 cancel(true);
             }

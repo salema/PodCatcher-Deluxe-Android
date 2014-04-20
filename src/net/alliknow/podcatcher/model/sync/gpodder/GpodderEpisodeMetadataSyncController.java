@@ -80,6 +80,10 @@ abstract class GpodderEpisodeMetadataSyncController extends GpodderPodcastListSy
         @Override
         protected Void doInBackground(Void... params) {
             try {
+                // 0. Wait for the episode metadata to be available in the
+                // manager because otherwise we cannot update it
+                episodeManager.blockUntilEpisodeMetadataIsLoaded();
+
                 Log.d(TAG, "Syncing episode actions, last sync time stamp is: " + lastSyncTimeStamp);
 
                 // 1. Get the episode actions from server and apply them to the
@@ -99,8 +103,8 @@ abstract class GpodderEpisodeMetadataSyncController extends GpodderPodcastListSy
                     final EpisodeMetadata meta = new EpisodeMetadata();
                     meta.podcastUrl = action.podcast;
                     final Episode episode = meta.marshalEpisode(action.episode);
-                    // Act on the episode action
-                    if (episode != null)
+                    // Act on the episode action if in receive mode
+                    if (episode != null && SyncMode.SEND_RECEIVE.equals(mode))
                         publishProgress(new AbstractMap.SimpleEntry<>(episode, action));
                 }
 
@@ -122,7 +126,7 @@ abstract class GpodderEpisodeMetadataSyncController extends GpodderPodcastListSy
                 actions.removeAll(copy);
 
                 Log.d(TAG, "Changes left after clean-up: " + actions);
-            } catch (AuthenticationException | IOException e) {
+            } catch (AuthenticationException | IOException | InterruptedException e) {
                 this.cause = e;
                 cancel(true);
             }
