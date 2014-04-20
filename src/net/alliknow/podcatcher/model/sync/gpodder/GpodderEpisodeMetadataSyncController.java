@@ -205,7 +205,9 @@ abstract class GpodderEpisodeMetadataSyncController extends GpodderPodcastListSy
 
     @Override
     public void onStateChanged(Episode episode, boolean newState) {
-        if (!ignoreNewActions && newState)
+        // Limit the number of actions added here since this will make the whole
+        // app hang here if too many episodes are marked old at once
+        if (!ignoreNewActions && actions.size() < 25 && newState)
             actions.add(prepareAction(episode, Action.NEW, 0));
 
         Log.d(TAG, "Action waiting in gpodder.net controller: " + actions);
