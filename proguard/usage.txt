@@ -1,21 +1,305 @@
+com.dragontek.mygpoclient.Global:
+    public static final boolean DEBUG
+    public static final java.lang.String HOST
+    public static final int VERSION
+    public static final int TOPLIST_DEFAULT
+    public static final java.lang.String WEBSITE
+    4:4:public Global()
+com.dragontek.mygpoclient.Locator:
+    12:13:public Locator(java.lang.String)
+    30:29:public java.lang.String clientConfigUri()
+    40:40:public java.lang.String logoutUri()
+    56:56:public java.lang.String toplistUri()
+    60:60:public java.lang.String toplistUri(int)
+    65:66:public java.lang.String toplistUri(int,java.lang.String)
+    70:70:public java.lang.String suggestionsUri()
+    74:74:public java.lang.String suggestionsUri(int)
+    79:80:public java.lang.String suggestionsUri(int,java.lang.String)
+    84:84:public java.lang.String searchUri(java.lang.String)
+    89:90:public java.lang.String searchUri(java.lang.String,java.lang.String)
+    94:95:public java.lang.String addRemoveSubscriptionsUri(java.lang.String)
+    100:100:public java.lang.String subscriptionUpdatesUri(java.lang.String)
+    104:106:public java.lang.String subscriptionUpdatesUri(java.lang.String,long)
+    128:128:public java.lang.String downloadEpisodeActionsUri(long,java.lang.String)
+    132:133:public java.lang.String deviceUpdatesUri(long,java.lang.String)
+    138:139:public java.lang.String deviceSettingsUri(java.lang.String)
+    144:145:public java.lang.String deviceListUri()
+    149:150:public java.lang.String getPodcastDataUri(java.lang.String)
+    154:156:public java.lang.String getEpisodeDataUri(java.lang.String,java.lang.String)
+    160:161:public java.lang.String favoriteEpisodesUri()
+    165:166:public java.lang.String deviceSynchronizationUri()
+    170:171:public java.lang.String getPodcastListsUri()
+    175:176:public java.lang.String getPodcastListUri(java.lang.String,java.lang.String)
+com.dragontek.mygpoclient.Main
+com.dragontek.mygpoclient.R
+com.dragontek.mygpoclient.R$string
+com.dragontek.mygpoclient.Util:
+    3:3:public Util()
+com.dragontek.mygpoclient.api.DeviceSync
+com.dragontek.mygpoclient.api.EpisodeActionChanges:
+    public long since
+    19:22:public EpisodeActionChanges(java.util.List,long)
+com.dragontek.mygpoclient.api.MygPodderClient:
+    45:46:public MygPodderClient(java.lang.String,java.lang.String,java.lang.String)
+    53:54:public MygPodderClient(java.lang.String)
+    58:58:public java.util.Set getSubscriptions(com.dragontek.mygpoclient.api.PodcastDevice)
+    63:63:public boolean putSubscriptions(com.dragontek.mygpoclient.api.PodcastDevice,java.util.List)
+    86:89:public com.dragontek.mygpoclient.api.UpdateResult updateSubscriptions(java.lang.String,java.util.Set,java.util.Set)
+    108:116:public com.dragontek.mygpoclient.api.SubscriptionChanges pullSubscriptions(java.lang.String,long)
+    185:185:public com.dragontek.mygpoclient.api.EpisodeActionChanges downloadEpisodeActions(long,java.lang.String)
+    210:220:public boolean updateDeviceSettings(java.lang.String,java.lang.String,java.lang.String)
+    236:246:public java.util.List getDevices()
+    251:259:public com.dragontek.mygpoclient.api.DeviceSync getDeviceSync()
+com.dragontek.mygpoclient.api.MygPodderClient$1
+com.dragontek.mygpoclient.api.PodcastDevice
+com.dragontek.mygpoclient.api.SubscriptionChanges
+com.dragontek.mygpoclient.api.UpdateResult
+com.dragontek.mygpoclient.extras.iTunesSearchApi
+com.dragontek.mygpoclient.extras.iTunesSearchApi$Entity
+com.dragontek.mygpoclient.extras.iTunesSearchApi$Result
+com.dragontek.mygpoclient.feeds.Feed
+com.dragontek.mygpoclient.feeds.Feed$Episode
+com.dragontek.mygpoclient.feeds.Feed$Episode$Enclosure
+com.dragontek.mygpoclient.feeds.FeedServiceClient
+com.dragontek.mygpoclient.feeds.FeedServiceClient$1
+com.dragontek.mygpoclient.feeds.FeedServiceResponse
+com.dragontek.mygpoclient.http.HttpClient:
+    private java.lang.String _authToken
+    87:87:public java.lang.String getAuthToken()
+    91:92:public void setAuthToken(java.lang.String)
+    136:136:public java.lang.String GET(java.lang.String,org.apache.http.HttpEntity)
+com.dragontek.mygpoclient.json.JsonClient:
+    39:40:public static java.lang.String encode(java.lang.Object)
+    44:45:public static java.lang.Object decode(java.lang.String,java.lang.Class)
+com.dragontek.mygpoclient.pub.ClientConfig
+com.dragontek.mygpoclient.pub.PublicClient
+com.dragontek.mygpoclient.pub.PublicClient$1
+com.dragontek.mygpoclient.pub.PublicClient$2
+com.dragontek.mygpoclient.pub.ToplistPodcast
+com.dragontek.mygpoclient.simple.IPodcast
+com.dragontek.mygpoclient.simple.Podcast
+com.dragontek.mygpoclient.simple.SimpleClient:
+    43:44:public SimpleClient(java.lang.String)
+    72:72:public java.lang.String getAuthToken()
+    76:83:public void setAuthToken(java.lang.String)
+    138:148:public java.util.List getSuggestions(int)
+com.dragontek.mygpoclient.simple.SimpleClient$2
+com.google.gson.DefaultDateTypeAdapter
+com.google.gson.FieldAttributes:
+    53:53:public java.lang.Class getDeclaringClass()
+    60:60:public java.lang.String getName()
+    80:80:public java.lang.reflect.Type getDeclaredType()
+    100:100:public java.lang.Class getDeclaredClass()
+    111:111:public java.lang.annotation.Annotation getAnnotation(java.lang.Class)
+    121:121:public java.util.Collection getAnnotations()
+    135:135:public boolean hasModifier(int)
+    146:146:java.lang.Object get(java.lang.Object)
+    155:155:boolean isSynthetic()
+com.google.gson.Gson:
+    static final boolean DEFAULT_JSON_NON_EXECUTABLE
+    private static final java.lang.String JSON_NON_EXECUTABLE_PREFIX
+    462:465:public com.google.gson.JsonElement toJsonTree(java.lang.Object)
+    485:487:public com.google.gson.JsonElement toJsonTree(java.lang.Object,java.lang.reflect.Type)
+    546:551:public void toJson(java.lang.Object,java.lang.Appendable)
+    740:743:public java.lang.Object fromJson(java.io.Reader,java.lang.Class)
+    841:842:public java.lang.Object fromJson(com.google.gson.JsonElement,java.lang.Class)
+    865:868:public java.lang.Object fromJson(com.google.gson.JsonElement,java.lang.reflect.Type)
+com.google.gson.Gson$1:
+    126:126:public java.lang.Object deserialize(com.google.gson.JsonElement,java.lang.reflect.Type)
+com.google.gson.Gson$2:
+    132:132:public com.google.gson.JsonElement serialize(java.lang.Object)
+    135:135:public com.google.gson.JsonElement serialize(java.lang.Object,java.lang.reflect.Type)
+com.google.gson.GsonBuilder
+com.google.gson.JsonArray:
+    45:49:com.google.gson.JsonArray deepCopy()
+    70:71:public void addAll(com.google.gson.JsonArray)
+    79:79:public int size()
+    163:166:public java.math.BigDecimal getAsBigDecimal()
+    180:183:public java.math.BigInteger getAsBigInteger()
+    196:199:public float getAsFloat()
+    236:239:public byte getAsByte()
+    244:247:public char getAsCharacter()
+    260:263:public short getAsShort()
+    33:33:bridge synthetic com.google.gson.JsonElement deepCopy()
+com.google.gson.JsonDeserializationContext:
+    public abstract java.lang.Object deserialize(com.google.gson.JsonElement,java.lang.reflect.Type)
+com.google.gson.JsonDeserializer
+com.google.gson.JsonElement:
+    abstract com.google.gson.JsonElement deepCopy()
+    136:139:public com.google.gson.JsonNull getAsJsonNull()
+    217:217:public float getAsFloat()
+    257:257:public byte getAsByte()
+    271:271:public char getAsCharacter()
+    285:285:public java.math.BigDecimal getAsBigDecimal()
+    299:299:public java.math.BigInteger getAsBigInteger()
+    312:312:public short getAsShort()
+com.google.gson.JsonIOException:
+    private static final long serialVersionUID
+    33:34:public JsonIOException(java.lang.String,java.lang.Throwable)
+com.google.gson.JsonNull:
+    45:45:com.google.gson.JsonNull deepCopy()
+    26:26:bridge synthetic com.google.gson.JsonElement deepCopy()
+com.google.gson.JsonObject:
+    38:42:com.google.gson.JsonObject deepCopy()
+    68:68:public com.google.gson.JsonElement remove(java.lang.String)
+    79:80:public void addProperty(java.lang.String,java.lang.String)
+    90:91:public void addProperty(java.lang.String,java.lang.Number)
+    101:102:public void addProperty(java.lang.String,java.lang.Boolean)
+    112:113:public void addProperty(java.lang.String,java.lang.Character)
+    122:122:private com.google.gson.JsonElement createJsonElement(java.lang.Object)
+    142:142:public boolean has(java.lang.String)
+    162:162:public com.google.gson.JsonPrimitive getAsJsonPrimitive(java.lang.String)
+    182:182:public com.google.gson.JsonObject getAsJsonObject(java.lang.String)
+    32:32:bridge synthetic com.google.gson.JsonElement deepCopy()
+com.google.gson.JsonParseException:
+    static final long serialVersionUID
+com.google.gson.JsonPrimitive:
+    74:76:public JsonPrimitive(java.lang.Character)
+    84:86:JsonPrimitive(java.lang.Object)
+    90:90:com.google.gson.JsonPrimitive deepCopy()
+    204:204:public java.math.BigDecimal getAsBigDecimal()
+    215:215:public java.math.BigInteger getAsBigInteger()
+    227:227:public float getAsFloat()
+    249:249:public short getAsShort()
+    265:265:public byte getAsByte()
+    270:270:public char getAsCharacter()
+    33:33:bridge synthetic com.google.gson.JsonElement deepCopy()
+com.google.gson.JsonSerializationContext:
+    public abstract com.google.gson.JsonElement serialize(java.lang.Object)
+    public abstract com.google.gson.JsonElement serialize(java.lang.Object,java.lang.reflect.Type)
+com.google.gson.JsonSerializer
+com.google.gson.JsonStreamParser
+com.google.gson.JsonSyntaxException:
+    private static final long serialVersionUID
+com.google.gson.LongSerializationPolicy:
+    public abstract com.google.gson.JsonElement serialize(java.lang.Long)
+com.google.gson.LongSerializationPolicy$1:
+    36:36:public com.google.gson.JsonElement serialize(java.lang.Long)
+com.google.gson.LongSerializationPolicy$2:
+    47:47:public com.google.gson.JsonElement serialize(java.lang.Long)
+com.google.gson.TreeTypeAdapter
+com.google.gson.TreeTypeAdapter$1
+com.google.gson.TreeTypeAdapter$SingleTypeFactory
+com.google.gson.TypeAdapter:
+    141:143:public final void toJson(java.io.Writer,java.lang.Object)
+    186:186:public final com.google.gson.TypeAdapter nullSafe()
+    215:217:public final java.lang.String toJson(java.lang.Object)
+    255:256:public final java.lang.Object fromJson(java.io.Reader)
+    269:269:public final java.lang.Object fromJson(java.lang.String)
+    280:283:public final java.lang.Object fromJsonTree(com.google.gson.JsonElement)
+com.google.gson.TypeAdapter$1
+com.google.gson.internal.$Gson$Preconditions:
+    32:32:public $Gson$Preconditions()
+com.google.gson.internal.$Gson$Types:
+    45:45:private $Gson$Types()
+com.google.gson.internal.$Gson$Types$GenericArrayTypeImpl:
+    private static final long serialVersionUID
+com.google.gson.internal.$Gson$Types$ParameterizedTypeImpl:
+    private static final long serialVersionUID
+com.google.gson.internal.$Gson$Types$WildcardTypeImpl:
+    private static final long serialVersionUID
+com.google.gson.internal.Excluder:
+    private static final double IGNORE_VERSIONS
+    70:72:public com.google.gson.internal.Excluder withVersion(double)
+    76:81:public varargs com.google.gson.internal.Excluder withModifiers(int[])
+    85:87:public com.google.gson.internal.Excluder disableInnerClassSerialization()
+    91:93:public com.google.gson.internal.Excluder excludeFieldsWithoutExposeAnnotation()
+    98:108:public com.google.gson.internal.Excluder withExclusionStrategy(com.google.gson.ExclusionStrategy,boolean,boolean)
+com.google.gson.internal.LazilyParsedNumber:
+    76:76:private java.lang.Object writeReplace()
+com.google.gson.internal.LinkedTreeMap:
+    625:625:private java.lang.Object writeReplace()
+com.google.gson.internal.Primitives:
+    32:32:private Primitives()
+    80:80:public static boolean isWrapperType(java.lang.reflect.Type)
+    113:115:public static java.lang.Class unwrap(java.lang.Class)
+com.google.gson.internal.Streams:
+    35:79:public Streams()
+com.google.gson.internal.bind.JsonTreeReader:
+    53:55:public JsonTreeReader(com.google.gson.JsonElement)
+com.google.gson.internal.bind.JsonTreeWriter:
+    163:167:public com.google.gson.stream.JsonWriter value(double)
+com.google.gson.internal.bind.TypeAdapters:
+    58:58:private TypeAdapters()
+    769:769:public static com.google.gson.TypeAdapterFactory newFactory(com.google.gson.reflect.TypeToken,com.google.gson.TypeAdapter)
+com.google.gson.internal.bind.TypeAdapters$23:
+    private static final java.lang.String YEAR
+    private static final java.lang.String MONTH
+    private static final java.lang.String DAY_OF_MONTH
+    private static final java.lang.String HOUR_OF_DAY
+    private static final java.lang.String MINUTE
+    private static final java.lang.String SECOND
+com.google.gson.internal.bind.TypeAdapters$27
+com.google.gson.reflect.TypeToken:
+    112:112:public boolean isAssignableFrom(java.lang.Class)
+    123:140:public boolean isAssignableFrom(java.lang.reflect.Type)
+    153:153:public boolean isAssignableFrom(com.google.gson.reflect.TypeToken)
+    161:178:private static boolean isAssignableFrom(java.lang.reflect.Type,java.lang.reflect.GenericArrayType)
+    188:231:private static boolean isAssignableFrom(java.lang.reflect.Type,java.lang.reflect.ParameterizedType,java.util.Map)
+    240:250:private static boolean typeEquals(java.lang.reflect.ParameterizedType,java.lang.reflect.ParameterizedType,java.util.Map)
+    257:265:private static varargs java.lang.AssertionError buildUnexpectedTypeError(java.lang.reflect.Type,java.lang.Class[])
+    273:273:private static boolean matches(java.lang.reflect.Type,java.lang.reflect.Type,java.util.Map)
+com.google.gson.stream.JsonReader:
+    private static final long MIN_INCOMPLETE_INTEGER
+    private static final int PEEKED_NONE
+    private static final int PEEKED_BEGIN_OBJECT
+    private static final int PEEKED_END_OBJECT
+    private static final int PEEKED_BEGIN_ARRAY
+    private static final int PEEKED_END_ARRAY
+    private static final int PEEKED_TRUE
+    private static final int PEEKED_FALSE
+    private static final int PEEKED_NULL
+    private static final int PEEKED_SINGLE_QUOTED
+    private static final int PEEKED_DOUBLE_QUOTED
+    private static final int PEEKED_UNQUOTED
+    private static final int PEEKED_BUFFERED
+    private static final int PEEKED_SINGLE_QUOTED_NAME
+    private static final int PEEKED_DOUBLE_QUOTED_NAME
+    private static final int PEEKED_UNQUOTED_NAME
+    private static final int PEEKED_LONG
+    private static final int PEEKED_NUMBER
+    private static final int PEEKED_EOF
+    private static final int NUMBER_CHAR_NONE
+    private static final int NUMBER_CHAR_SIGN
+    private static final int NUMBER_CHAR_DIGIT
+    private static final int NUMBER_CHAR_DECIMAL
+    private static final int NUMBER_CHAR_FRACTION_DIGIT
+    private static final int NUMBER_CHAR_EXP_E
+    private static final int NUMBER_CHAR_EXP_SIGN
+    private static final int NUMBER_CHAR_EXP_DIGIT
+com.google.gson.stream.JsonScope
+com.google.gson.stream.JsonWriter:
+    462:468:public com.google.gson.stream.JsonWriter value(double)
+com.google.gson.stream.MalformedJsonException:
+    private static final long serialVersionUID
+    33:37:public MalformedJsonException(java.lang.String,java.lang.Throwable)
+    39:43:public MalformedJsonException(java.lang.Throwable)
 com.podcatcher.deluxe.AddPodcastActivity:
-    private static final java.lang.String ADD_PODCAST_FRAGMENT_TAG
+    private static final java.lang.String ADD_PODCAST_DIALOG_TAG
     private static final java.lang.String LOADING_URL_KEY
+    private static final java.lang.String LAST_USER_KEY
 com.podcatcher.deluxe.AddSuggestionActivity:
-    public static final java.lang.String SHOW_SUGGESTIONS_FRAGMENT_TAG
+    private static final java.lang.String ADD_SUGGESTION_DIALOG_TAG
+    private static final java.lang.String TO_BE_CONFIRMED_URL_KEY
+    private static final java.lang.String TO_BE_CONFIRMED_NAME_KEY
 com.podcatcher.deluxe.BaseActivity:
     public static final java.lang.String PODCATCHER_WEBSITE
     public static final java.lang.String PODCATCHER_HELPSITE
     public static final java.lang.String PODCAST_POSITION_LIST_KEY
     public static final int MIN_PIXEL_LARGE
 com.podcatcher.deluxe.BuildConfig
+com.podcatcher.deluxe.ConfigureGpodderSyncActivity:
+    private static final java.lang.String GPODDER_SYNC_CONFIG_DIALOG_TAG
+com.podcatcher.deluxe.ConfigureSyncActivity:
+    private static final java.lang.String PODCATCHER_HELPSITE_SYNC
+    private static final java.lang.String SYNC_CONFIG_DIALOG_TAG
 com.podcatcher.deluxe.EpisodeActivity:
     public static final java.lang.String EPISODE_URL_KEY
 com.podcatcher.deluxe.EpisodeListActivity:
     public static final java.lang.String MODE_KEY
     public static final java.lang.String PODCAST_URL_KEY
 com.podcatcher.deluxe.FirstRunActivity:
-    private static final java.lang.String FIRST_RUN_FRAGMENT_TAG
+    private static final java.lang.String PODCATCHER_HELPSITE_ADD
 com.podcatcher.deluxe.GetRestrictionsReceiver:
     public static final java.lang.String BLOCK_EXPLICIT_RESTRICTION_KEY
 com.podcatcher.deluxe.ImportPodcastActivity:
@@ -51,17 +335,22 @@ com.podcatcher.deluxe.R$string
 com.podcatcher.deluxe.R$style
 com.podcatcher.deluxe.R$xml
 com.podcatcher.deluxe.SelectFileActivity:
-    private static final java.lang.String SELECT_FILE_FRAGMENT_TAG
     public static final java.lang.String INITIAL_PATH_KEY
     public static final java.lang.String SELECTION_MODE_KEY
+    private static final java.lang.String SELECT_FILE_DIALOG_TAG
 com.podcatcher.deluxe.SettingsActivity:
     public static final java.lang.String KEY_FIRST_RUN
     public static final java.lang.String KEY_SELECT_ALL_ON_START
+    public static final java.lang.String KEY_SYNC
     public static final java.lang.String KEY_THEME_COLOR
     public static final java.lang.String KEY_WIDE_EPISODE_LIST
-    public static final java.lang.String AUTO_DOWNLOAD_KEY
-    public static final java.lang.String AUTO_DELETE_KEY
-    public static final java.lang.String DOWNLOAD_FOLDER_KEY
+    public static final java.lang.String KEY_AUTO_DOWNLOAD
+    public static final java.lang.String KEY_AUTO_DELETE
+    public static final java.lang.String KEY_DOWNLOAD_FOLDER
+    public static final java.lang.String KEY_SYNC_RECEIVE
+    public static final java.lang.String KEY_SYNC_ACTIVE
+    public static final java.lang.String KEY_LAST_SYNC
+    private static final java.lang.String SETTINGS_DIALOG_TAG
 com.podcatcher.deluxe.listeners.EpisodeListContextListener:
     private static final int MAX_DOWNLOADS
     private static final int MAX_TO_PLAYLIST
@@ -74,7 +363,9 @@ com.podcatcher.deluxe.model.EpisodeBaseManager:
 com.podcatcher.deluxe.model.EpisodeDownloadManager:
     private static final java.lang.String RESERVED_CHARS
 com.podcatcher.deluxe.model.ParserUtils:
-    28:28:public ParserUtils()
+    private static final java.lang.String SHORT_DURATION
+    private static final java.lang.String LONG_DURATION
+    30:30:public ParserUtils()
 com.podcatcher.deluxe.model.PodcastManager:
     public static final int TIME_TO_LIFE
     public static final int TIME_TO_LIFE_MOBILE
@@ -84,6 +375,42 @@ com.podcatcher.deluxe.model.PodcastManager:
     private static final int MAX_STALE_OFFLINE
     public static final java.lang.String OPML_FILENAME
     public static final java.lang.String OPML_FILE_ENCODING
+    728:750:private void putSamplePodcasts()
+com.podcatcher.deluxe.model.SyncManager:
+    public static final int TIME_TO_SYNC
+    public static final int TIME_TO_SYNC_MOBILE
+    private static final int monitorSyncHandlerTimeout
+    private static final java.lang.String TAG
+com.podcatcher.deluxe.model.sync.dropbox.DropboxBaseSyncController:
+    protected static final java.lang.String TAG
+    275:290:protected void printStore()
+    293:304:private void clearStore()
+com.podcatcher.deluxe.model.sync.dropbox.DropboxEpisodeMetadataSyncController:
+    private static final java.lang.String EPISODE_TABLE
+    private static final java.lang.String PODCAST_URL
+    private static final java.lang.String EPISODE_MEDIA_URL
+    private static final java.lang.String EPISODE_STATE
+    private static final java.lang.String EPISODE_RESUME_AT
+    private static final int RESUME_AT_RESET
+com.podcatcher.deluxe.model.sync.dropbox.DropboxPodcastListSyncController:
+    private static final java.lang.String SUBSCRIPTION_TABLE
+    private static final java.lang.String PODCAST_NAME
+    private static final java.lang.String PODCAST_URL
+    private static final java.lang.String PODCAST_USER
+    private static final java.lang.String PODCAST_PASS
+com.podcatcher.deluxe.model.sync.dropbox.DropboxSettingsSyncController:
+    private static final java.lang.String SETTINGS_TABLE
+com.podcatcher.deluxe.model.sync.gpodder.GpodderBaseSyncController:
+    public static final java.lang.String USERNAME_KEY
+    public static final java.lang.String PASSWORD_KEY
+    public static final java.lang.String DEVICE_ID_KEY
+    protected static final java.lang.String TAG
+com.podcatcher.deluxe.model.sync.gpodder.GpodderEpisodeMetadataSyncController:
+    private static final java.lang.String GPODDER_LAST_SYNC_ACTIONS
+com.podcatcher.deluxe.model.sync.gpodder.GpodderPodcastListSyncController:
+    private static final java.lang.String REMOVED_KEY
+    private static final java.lang.String ADDED_KEY
+    private static final java.lang.String FIRST_SYNC_EVER_KEY
 com.podcatcher.deluxe.model.tags.JSON
 com.podcatcher.deluxe.model.tags.METADATA
 com.podcatcher.deluxe.model.tags.OPML
@@ -121,8 +448,13 @@ com.podcatcher.deluxe.model.types.Progress:
     private static final int PROGRESS_LOAD
     private static final int PROGRESS_PARSE
     private static final int PROGRESS_DONE
+    71:71:public int getProgress()
+    78:78:public int getTotal()
 com.podcatcher.deluxe.preferences.DownloadFolderPreference:
     public static final int REQUEST_CODE
+com.podcatcher.deluxe.preferences.SynchronizationPreference:
+    private static final java.lang.String UP_ARROW
+    private static final java.lang.String UP_DOWN_ARROW
 com.podcatcher.deluxe.services.PlayEpisodeService:
     public static final java.lang.String ACTION_TOGGLE
     public static final java.lang.String ACTION_PLAY
@@ -149,33 +481,35 @@ com.podcatcher.deluxe.view.Utils:
 com.podcatcher.deluxe.view.fragments.AuthorizationFragment:
     public static final java.lang.String USERNAME_PRESET_KEY
     public static final java.lang.String TAG
-com.podcatcher.deluxe.view.fragments.ConfirmExplicitSuggestionFragment:
-    public static final java.lang.String TAG
 com.podcatcher.deluxe.view.fragments.DeleteDownloadsConfirmationFragment:
     public static final java.lang.String EPISODE_COUNT_KEY
     public static final java.lang.String TAG
 com.podcatcher.deluxe.view.fragments.EpisodeFragment:
     private static final java.lang.String SEPARATOR
-com.podcatcher.deluxe.view.fragments.FirstRunFragment:
-    private static final java.lang.String PODCATCHER_HELPSITE
 com.podcatcher.deluxe.view.fragments.SelectFileFragment:
     private static final java.lang.String SELECTED_POSITION_KEY
 com.podcatcher.deluxe.view.fragments.SuggestionFragment:
     public static final java.lang.String FILTER_WILDCARD
-    public static final java.lang.String SUGGESTION_MAIL_ADDRESS
-    public static final java.lang.String SUGGESTION_MAIL_SUBJECT
     private static final java.lang.String LANGUAGE_FILTER_POSITION
     private static final java.lang.String GENRE_FILTER_POSITION
     private static final java.lang.String MEDIATYPE_FILTER_POSITION
 net.margaritov.preference.colorpicker.ColorPickerDialog:
-    159:159:public boolean getHexValueEnabled()
+    157:157:public boolean getHexValueEnabled()
 net.margaritov.preference.colorpicker.ColorPickerPanelView:
     private static final float BORDER_WIDTH_PX
 net.margaritov.preference.colorpicker.ColorPickerPreference:
-    140:141:public void setAlphaSliderEnabled(boolean)
-    149:150:public void setHexValueEnabled(boolean)
+    138:139:public void setAlphaSliderEnabled(boolean)
+    147:148:public void setHexValueEnabled(boolean)
 net.margaritov.preference.colorpicker.ColorPickerView:
     private static final int PANEL_SAT_VAL
     private static final int PANEL_HUE
     private static final int PANEL_ALPHA
     private static final float BORDER_WIDTH_PX
+net.margaritov.preference.colorpicker.R:
+    9:9:public R()
+net.margaritov.preference.colorpicker.R$id:
+    10:10:public R$id()
+net.margaritov.preference.colorpicker.R$layout:
+    18:18:public R$layout()
+net.margaritov.preference.colorpicker.R$string:
+    22:22:public R$string()
