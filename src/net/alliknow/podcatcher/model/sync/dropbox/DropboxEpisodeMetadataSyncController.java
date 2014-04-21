@@ -114,7 +114,10 @@ abstract class DropboxEpisodeMetadataSyncController extends DropboxPodcastListSy
             // Update the resume at information
             if (record.hasField(EPISODE_RESUME_AT)) {
                 final long remoteValue = record.getLong(EPISODE_RESUME_AT);
-                final long localValue = episodeManager.getResumeAt(episode);
+                long localValue = episodeManager.getResumeAt(episode);
+                // If the local value is zero, it means the same as reset in the
+                // Dropbox sync controller context, so rewrite
+                localValue = (localValue == 0 ? RESUME_AT_RESET : localValue);
 
                 if (localValue != remoteValue)
                     episodeManager.setResumeAt(episode,

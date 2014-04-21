@@ -146,11 +146,18 @@ abstract class GpodderEpisodeMetadataSyncController extends GpodderPodcastListSy
             ignoreNewActions = true;
             switch (action) {
                 case PLAY:
-                    episodeManager.setResumeAt(episode, episodeAction.position * 1000);
+                    final int remoteValue = episodeAction.position * 1000;
+                    final int localValue = episodeManager.getResumeAt(episode);
+                    // Only act if the remote value differs by more than one sec
+                    if (Math.abs(remoteValue - localValue) > 1000)
+                        episodeManager.setResumeAt(episode, remoteValue);
                     break;
                 case NEW:
-                    episodeManager.setResumeAt(episode, null);
-                    episodeManager.setState(episode, true);
+                    // Only act if the value is not set yet
+                    if (episodeManager.getResumeAt(episode) != 0)
+                        episodeManager.setResumeAt(episode, null);
+                    if (!episodeManager.getState(episode))
+                        episodeManager.setState(episode, true);
                     break;
                 default:
                     break;
@@ -207,10 +214,10 @@ abstract class GpodderEpisodeMetadataSyncController extends GpodderPodcastListSy
     public void onStateChanged(Episode episode, boolean newState) {
         // Limit the number of actions added here since this will make the whole
         // app hang here if too many episodes are marked old at once
-        if (!ignoreNewActions && actions.size() < 25 && newState)
-            actions.add(prepareAction(episode, Action.NEW, 0));
-
-        Log.d(TAG, "Action waiting in gpodder.net controller: " + actions);
+        // if (!ignoreNewActions && actions.size() < 25 && newState)
+        // actions.add(prepareAction(episode, Action.NEW, 0));
+        //
+        // Log.d(TAG, "Action waiting in gpodder.net controller: " + actions);
     }
 
     @Override

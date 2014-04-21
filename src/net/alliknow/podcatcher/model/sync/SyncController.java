@@ -32,6 +32,7 @@ import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -198,7 +199,14 @@ public abstract class SyncController implements OnLoadPodcastListener, OnChangeP
     public void onPodcastLoaded(Podcast podcast) {
         // This should make sure that the episode metadata for the loaded
         // episode is updated
-        syncEpisodeMetadata();
+        if (podcast != null) {
+            // Only act if the podcast really has been re-loaded recently (last
+            // 30 secs.)
+            final Date loadDate = podcast.getLastLoaded();
+
+            if (loadDate != null && new Date().getTime() - loadDate.getTime() < 1000 * 30)
+                syncEpisodeMetadata();
+        }
     }
 
     @Override
