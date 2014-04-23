@@ -374,6 +374,9 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
             eventType = parser.next();
         }
 
+        // Make sure name is not empty
+        if (name == null || name.trim().isEmpty())
+            name = url;
         // Parsing completed without errors, mark as updated
         lastLoaded = new Date();
     }

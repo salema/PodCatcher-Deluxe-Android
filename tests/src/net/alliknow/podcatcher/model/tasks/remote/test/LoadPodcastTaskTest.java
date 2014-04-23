@@ -160,6 +160,17 @@ public class LoadPodcastTaskTest extends InstrumentationTestCase {
         assertTrue(mockLoader.failed);
         assertNull(mockLoader.result.getLastLoaded());
         assertEquals(mockLoader.code, PodcastLoadError.AUTH_REQUIRED);
+
+        // No title given
+        loadAndWait(mockLoader, new Podcast("MSS",
+                "http://www.mormonsundayschool.org/feed/"),
+                false);
+        assertFalse(mockLoader.failed);
+        Podcast p = mockLoader.result;
+        assertNotNull(p);
+        assertFalse(p.getEpisodes().isEmpty());
+        assertNotNull(p.getLastLoaded());
+        assertFalse(p.getName() == null || p.getName().isEmpty());
     }
 
     public final void testLoadWithBlockExplicitEpisodes() {
