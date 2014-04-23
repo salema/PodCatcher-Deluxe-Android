@@ -123,7 +123,7 @@ public class AddPodcastActivity extends BaseActivity implements AddPodcastDialog
         // Otherwise try to load it
         else {
             // We need to keep note which podcast we are loading
-            currentLoadUrl = podcastUrl;
+            currentLoadUrl = newPodcast.getUrl();
 
             podcastManager.load(newPodcast);
         }
@@ -214,6 +214,6 @@ public class AddPodcastActivity extends BaseActivity implements AddPodcastDialog
     }
 
     private boolean isCurrentlyLoadingPodcast(Podcast podcast) {
-        return podcast.getUrl().equalsIgnoreCase(currentLoadUrl);
+        return podcast != null && podcast.getUrl().equals(currentLoadUrl);
     }
 }
