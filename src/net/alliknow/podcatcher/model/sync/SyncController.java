@@ -27,6 +27,7 @@ import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.SyncManager;
+import net.alliknow.podcatcher.model.tasks.remote.DownloadEpisodeTask.EpisodeDownloadError;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
@@ -240,7 +241,7 @@ public abstract class SyncController implements OnLoadPodcastListener, OnChangeP
     }
 
     @Override
-    public void onDownloadFailed(Episode episode) {
+    public void onDownloadFailed(Episode episode, EpisodeDownloadError error) {
         // pass, this is not a sync event
     }
 

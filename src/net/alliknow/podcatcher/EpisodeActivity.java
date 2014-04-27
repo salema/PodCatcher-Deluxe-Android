@@ -33,6 +33,7 @@ import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.listeners.PlayerListener;
+import net.alliknow.podcatcher.model.tasks.remote.DownloadEpisodeTask.EpisodeDownloadError;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
@@ -257,7 +258,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
     }
 
     @Override
-    public void onDownloadFailed(Episode episode) {
+    public void onDownloadFailed(Episode episode, EpisodeDownloadError error) {
         updateDownloadUi();
     }
 

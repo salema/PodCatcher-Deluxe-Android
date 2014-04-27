@@ -97,6 +97,9 @@
     <string name="downloads_none">No downloads. Use the download icon in the menu to make episodes available offline.</string>
     <string name="download_started">Download started for \n\"%s\"</string>
     <string name="download_failed">Download failed for \n\"%s\"</string>
+    <string name="download_failed_cannot_write">Download failed for \n\"%s\"\n because the download folder cannot be written to.</string>
+    <string name="download_failed_no_space">Download failed for \n\"%s\"\n because there is not enough storage space.</string>
+    <string name="download_failed_download_app_disabled">Download failed for \n\"%s\"\n because the Android download app is disabled.</string>
     <string name="playlist">Playlist</string>
     <string name="playlist_empty">Your playlist is empty. Use the episode list\'s context menu (press and hold any episode to enter) to add episodes to the playlist.</string>
     <string name="playlist_add">Add to Playlist</string>
