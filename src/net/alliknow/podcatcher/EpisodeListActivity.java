@@ -270,8 +270,9 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             // The last podcast failed and we have no episodes at all
             if (podcastManager.getLoadCount() == 0 && currentEpisodeSet.isEmpty())
                 episodeListFragment.showLoadAllFailed();
-            // One of many podcasts failed to load
-            else
+            // One of many podcasts failed to load, show toast if this happened
+            // for the first time
+            else if (failedPodcast.getFailedLoadAttemptCount() == 1)
                 showToast(getString(R.string.podcast_load_multiple_error, failedPodcast.getName()));
         }
 
