@@ -19,8 +19,11 @@ package net.alliknow.podcatcher.model.tasks.remote;
 
 import static android.app.DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR;
 import static android.app.DownloadManager.COLUMN_LOCAL_FILENAME;
+import static android.app.DownloadManager.COLUMN_REASON;
 import static android.app.DownloadManager.COLUMN_STATUS;
 import static android.app.DownloadManager.COLUMN_TOTAL_SIZE_BYTES;
+import static android.app.DownloadManager.ERROR_FILE_ALREADY_EXISTS;
+import static android.app.DownloadManager.ERROR_INSUFFICIENT_SPACE;
 import static android.app.DownloadManager.STATUS_FAILED;
 import static android.app.DownloadManager.STATUS_SUCCESSFUL;
 import static net.alliknow.podcatcher.Podcatcher.AUTHORIZATION_KEY;
@@ -80,6 +83,8 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
     private int percentProgress;
     /** Flag on whether the download needs moving after the fact */
     private boolean needsPostDownloadMove = false;
+    /** The episode download error code */
+    private EpisodeDownloadError downloadError = EpisodeDownloadError.UNKNOWN;
 
     /** The interface to implement by the call-back for this task */
     public interface DownloadTaskListener {
@@ -115,8 +120,38 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
          * some reason.
          * 
          * @param episode The episode the download failed for.
+         * @param error The reason for failure per {@link EpisodeDownloadError}
          */
-        public void onEpisodeDownloadFailed(Episode episode);
+        public void onEpisodeDownloadFailed(Episode episode, EpisodeDownloadError error);
+    }
+
+    /**
+     * Episode download error codes as returned by
+     * {@link DownloadTaskListener#onEpisodeDownloadFailed(Episode, EpisodeDownloadError)}
+     * .
+     */
+    public static enum EpisodeDownloadError {
+        /**
+         * An error occurred, but the reason is unknown and/or does not fit any
+         * of the other codes.
+         */
+        UNKNOWN,
+
+        /**
+         * There is not enough storage on the device.
+         */
+        NO_SPACE,
+
+        /**
+         * The desired destination for the episode's media file cannot be
+         * written to.
+         */
+        DESTINATION_NOT_WRITEABLE,
+
+        /**
+         * The device's download app is disabled.
+         */
+        DOWNLOAD_APP_DISABLED
     }
 
     /**
@@ -185,7 +220,7 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
                 download.addRequestHeader(AUTHORIZATION_KEY, auth);
 
             // Start the download
-            long downloadId;
+            long downloadId = 0;
             try {
                 downloadId = downloadManager.enqueue(download);
             } catch (SecurityException se) {
@@ -198,6 +233,12 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
                 download.setDestinationUri(Uri.fromFile(
                         new File(podcatcher.getExternalCacheDir(), localFile.getName())));
                 downloadId = downloadManager.enqueue(download);
+            } catch (IllegalArgumentException lae) {
+                // The happens if the download app on the device is disabled
+                this.downloadError = EpisodeDownloadError.DOWNLOAD_APP_DISABLED;
+                cancel(false);
+
+                return null;
             }
 
             // We need to tell our listener about the download id, to
@@ -232,8 +273,10 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
                                 if (moveFile(downloadedFile, localFile))
                                     this.episodeFile = localFile;
                                 // Move operation failed -> download failed
-                                else
+                                else {
+                                    this.downloadError = EpisodeDownloadError.DESTINATION_NOT_WRITEABLE;
                                     cancel(false);
+                                }
 
                                 // We remove the file from the system's download
                                 // manager here, since we moved the downloaded
@@ -246,9 +289,22 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
                             finished = true;
                             break;
                         case STATUS_FAILED:
-                            downloadManager.remove(downloadId);
+                            final int reason = info.getInt(info.getColumnIndex(COLUMN_REASON));
+                            switch (reason) {
+                                case ERROR_FILE_ALREADY_EXISTS:
+                                    // This case is actually fine, finish
+                                    finished = true;
+                                    break;
+                                case ERROR_INSUFFICIENT_SPACE:
+                                    this.downloadError = EpisodeDownloadError.NO_SPACE;
+                                    // Fall through here, code below should run
+                                default:
+                                    downloadManager.remove(downloadId);
 
-                            cancel(false);
+                                    cancel(false);
+                                    break;
+                            }
+
                             break;
                         default:
                             // Update progress
@@ -296,7 +352,7 @@ public class DownloadEpisodeTask extends AsyncTask<Episode, Long, Void> {
 
     @Override
     protected void onCancelled(Void result) {
-        listener.onEpisodeDownloadFailed(episode);
+        listener.onEpisodeDownloadFailed(episode, downloadError);
     }
 
     private boolean moveFile(File from, File to) {

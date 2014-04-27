@@ -28,9 +28,11 @@ import android.os.StrictMode;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.Toast;
 
 import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
+import net.alliknow.podcatcher.model.tasks.remote.DownloadEpisodeTask.EpisodeDownloadError;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
@@ -556,10 +558,25 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     }
 
     @Override
-    public void onDownloadFailed(Episode episode) {
-        super.onDownloadFailed(episode);
+    public void onDownloadFailed(Episode episode, EpisodeDownloadError error) {
+        super.onDownloadFailed(episode, error);
 
-        showToast(getString(R.string.download_failed, episode.getName()));
+        switch (error) {
+            case DESTINATION_NOT_WRITEABLE:
+                showToast(getString(R.string.download_failed_cannot_write, episode.getName()),
+                        Toast.LENGTH_LONG);
+                break;
+            case NO_SPACE:
+                showToast(getString(R.string.download_failed_no_space, episode.getName()),
+                        Toast.LENGTH_LONG);
+                break;
+            case DOWNLOAD_APP_DISABLED:
+                showToast(getString(R.string.download_failed_download_app_disabled,
+                        episode.getName()), Toast.LENGTH_LONG);
+                break;
+            default:
+                showToast(getString(R.string.download_failed, episode.getName()));
+        }
     }
 
     /**

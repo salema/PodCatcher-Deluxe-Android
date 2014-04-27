@@ -38,6 +38,7 @@ import net.alliknow.podcatcher.listeners.OnLoadDownloadsListener;
 import net.alliknow.podcatcher.model.tasks.LoadDownloadsTask;
 import net.alliknow.podcatcher.model.tasks.remote.DownloadEpisodeTask;
 import net.alliknow.podcatcher.model.tasks.remote.DownloadEpisodeTask.DownloadTaskListener;
+import net.alliknow.podcatcher.model.tasks.remote.DownloadEpisodeTask.EpisodeDownloadError;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.EpisodeMetadata;
 import net.alliknow.podcatcher.model.types.Podcast;
@@ -160,7 +161,7 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
     }
 
     @Override
-    public void onEpisodeDownloadFailed(Episode episode) {
+    public void onEpisodeDownloadFailed(Episode episode, EpisodeDownloadError error) {
         // Find the metadata record for the episode
         final EpisodeMetadata meta = metadata.get(episode.getMediaUrl());
         if (meta != null) {
@@ -168,7 +169,7 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
             meta.filePath = null;
 
             for (OnDownloadEpisodeListener listener : downloadListeners)
-                listener.onDownloadFailed(episode);
+                listener.onDownloadFailed(episode, error);
 
             // Mark metadata record as dirty
             metadataChanged = true;

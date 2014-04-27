@@ -17,6 +17,7 @@
 
 package net.alliknow.podcatcher.listeners;
 
+import net.alliknow.podcatcher.model.tasks.remote.DownloadEpisodeTask.EpisodeDownloadError;
 import net.alliknow.podcatcher.model.types.Episode;
 
 /**
@@ -49,8 +50,9 @@ public interface OnDownloadEpisodeListener {
      * Called on the listener if a download failed.
      * 
      * @param episode The episode that failed to download.
+     * @param error The reason as in {@link EpisodeDownloadError}.
      */
-    public void onDownloadFailed(Episode episode);
+    public void onDownloadFailed(Episode episode, EpisodeDownloadError error);
 
     /**
      * Called on the listener if a download is removed.
