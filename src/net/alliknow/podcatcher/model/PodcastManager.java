@@ -325,6 +325,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     public void onPodcastLoaded(Podcast podcast) {
         // Remove from the map of loading task
         loadPodcastTasks.remove(podcast);
+        // Clear the failed count for this podcast
+        podcast.resetFailedLoadAttempts();
 
         // Notify listeners
         if (blockExplicit && podcast.isExplicit())
@@ -338,6 +340,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
     public void onPodcastLoadFailed(Podcast podcast, PodcastLoadError code) {
         // Remove from the map of loading task
         loadPodcastTasks.remove(podcast);
+        // Increment the failed load attempt count
+        podcast.incrementFailedLoadAttempts();
 
         // Notify listeners
         for (OnLoadPodcastListener listener : loadPodcastListeners)

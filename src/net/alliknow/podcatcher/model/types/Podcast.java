@@ -85,6 +85,9 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
     /** The podcasts list of episodes */
     protected List<Episode> episodes = new ArrayList<>();
 
+    /** The count of failed load attempts */
+    private int failedLoadAttempts = 0;
+
     /**
      * Create a new podcast by name and RSS file location. The name will not be
      * read from the file, but remains as given (unless you give
@@ -261,6 +264,28 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
         return lastLoaded == null ? null : new Date(lastLoaded.getTime());
     }
 
+    /**
+     * Reset the failed count to zero.
+     */
+    public void resetFailedLoadAttempts() {
+        this.failedLoadAttempts = 0;
+    }
+
+    /**
+     * Increment the load failed count by one.
+     */
+    public void incrementFailedLoadAttempts() {
+        this.failedLoadAttempts++;
+    }
+
+    /**
+     * @return The number of failed loads as recorded by calls to
+     *         {@link #incrementFailedLoadAttempts()}.
+     */
+    public int getFailedLoadAttemptCount() {
+        return this.failedLoadAttempts;
+    }
+
     @Override
     public String toString() {
         return name + " at " + url;
@@ -334,51 +359,61 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
      * valid results unless this method was called. Calling this method resets
      * all episode information that might have been read earlier, other meta
      * data is preserved and will only change if the feed has actually changed.
+     * Episode information is preserved, however, if parsing actually fails. In
+     * this case the episode list will not be altered.
      * 
      * @param parser Parser used to read the RSS/XML file.
      * @throws IOException If we encounter problems read the file.
      * @throws XmlPullParserException On parsing errors.
      */
     public void parse(XmlPullParser parser) throws XmlPullParserException, IOException {
-        // Reset state
+        // Reset state, keep temp list of old episodes is case of errors
+        final List<Episode> oldEpisodes = new ArrayList<>(episodes);
         episodes.clear();
 
-        // Start parsing
-        int eventType = parser.next();
-        int episodeIndex = 0;
+        try {
+            // Start parsing
+            int eventType = parser.next();
+            int episodeIndex = 0;
 
-        // Read complete document
-        while (eventType != XmlPullParser.END_DOCUMENT) {
-            // We only need start tags here
-            if (eventType == XmlPullParser.START_TAG) {
-                String tagName = parser.getName();
+            // Read complete document
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                // We only need start tags here
+                if (eventType == XmlPullParser.START_TAG) {
+                    String tagName = parser.getName();
 
-                // Podcast name found and not set yet
-                if (tagName.equalsIgnoreCase(RSS.TITLE) && name == null)
-                    name = Html.fromHtml(parser.nextText().trim()).toString();
-                // Explicit info found
-                else if (tagName.equalsIgnoreCase(RSS.EXPLICIT))
-                    explicit = parseExplicit(parser.nextText());
-                // Image found
-                else if (tagName.equalsIgnoreCase(RSS.IMAGE))
-                    parseLogo(parser);
-                // Thumbnail found (used by some podcast instead of image)
-                else if (tagName.equalsIgnoreCase(RSS.THUMBNAIL) && logoUrl == null)
-                    logoUrl = parser.getAttributeValue("", RSS.URL);
-                // Episode found
-                else if (tagName.equalsIgnoreCase(RSS.ITEM))
-                    parseEpisode(parser, episodeIndex++);
+                    // Podcast name found and not set yet
+                    if (tagName.equalsIgnoreCase(RSS.TITLE) && name == null)
+                        name = Html.fromHtml(parser.nextText().trim()).toString();
+                    // Explicit info found
+                    else if (tagName.equalsIgnoreCase(RSS.EXPLICIT))
+                        explicit = parseExplicit(parser.nextText());
+                    // Image found
+                    else if (tagName.equalsIgnoreCase(RSS.IMAGE))
+                        parseLogo(parser);
+                    // Thumbnail found (used by some podcast instead of image)
+                    else if (tagName.equalsIgnoreCase(RSS.THUMBNAIL) && logoUrl == null)
+                        logoUrl = parser.getAttributeValue("", RSS.URL);
+                    // Episode found
+                    else if (tagName.equalsIgnoreCase(RSS.ITEM))
+                        parseEpisode(parser, episodeIndex++);
+                }
+
+                // Done, get next parsing event
+                eventType = parser.next();
             }
 
-            // Done, get next parsing event
-            eventType = parser.next();
+            // Parsing completed without errors, mark as updated
+            lastLoaded = new Date();
+        } catch (XmlPullParserException | IOException e) {
+            // Reset the episode list to its former value
+            this.episodes = oldEpisodes;
+            throw e;
+        } finally {
+            // Make sure name is not empty
+            if (name == null || name.trim().isEmpty())
+                name = url;
         }
-
-        // Make sure name is not empty
-        if (name == null || name.trim().isEmpty())
-            name = url;
-        // Parsing completed without errors, mark as updated
-        lastLoaded = new Date();
     }
 
     protected void parseLogo(XmlPullParser parser) throws XmlPullParserException, IOException {
