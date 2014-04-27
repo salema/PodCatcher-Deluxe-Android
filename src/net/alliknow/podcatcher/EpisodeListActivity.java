@@ -392,7 +392,11 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             // One of many podcasts failed to load
             else {
                 updateEpisodeListUi();
-                showToast(getString(R.string.podcast_load_multiple_error, failedPodcast.getName()));
+
+                // Show toast if this happened for the first time
+                if (failedPodcast.getFailedLoadAttemptCount() == 1)
+                    showToast(getString(R.string.podcast_load_multiple_error,
+                            failedPodcast.getName()));
             }
         }
 
