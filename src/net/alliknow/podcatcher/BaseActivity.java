@@ -18,7 +18,6 @@
 package net.alliknow.podcatcher;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -29,6 +28,7 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,7 +46,8 @@ import net.alliknow.podcatcher.view.ViewMode;
  * Podcatcher base activity. Defines some common functionality useful for all
  * activities.
  */
-public abstract class BaseActivity extends Activity implements OnSharedPreferenceChangeListener {
+public abstract class BaseActivity extends ActionBarActivity implements
+        OnSharedPreferenceChangeListener {
 
     /** The podcatcher website URL */
     public static final String PODCATCHER_WEBSITE = "http://www.podcatcher-deluxe.com";

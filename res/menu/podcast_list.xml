@@ -17,10 +17,11 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/podcast_add_menuitem"
+        android:title="@string/podcast_add_title"
         android:icon="@drawable/ic_menu_add"
-        android:showAsAction="always"
-        android:title="@string/podcast_add_title" />
+        app:showAsAction="ifRoom" />
 </menu>

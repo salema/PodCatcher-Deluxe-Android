@@ -213,8 +213,8 @@ public class PodcastManager implements OnLoadPodcastListListener, OnLoadPodcastL
         this.podcastListChanged = false;
 
         // Put some nice sample podcasts for testing
-        // if (podcatcher.isInDebugMode())
-        // putSamplePodcasts();
+        if (podcatcher.isInDebugMode())
+            putSamplePodcasts();
 
         // Alert call-backs (if any)
         for (OnLoadPodcastListListener listener : loadPodcastListListeners)

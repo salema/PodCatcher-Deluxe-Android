@@ -17,21 +17,26 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/media_route_menu_item"
+        android:orderInCategory="97"
+        app:actionProviderClass="android.support.v7.app.MediaRouteActionProvider"
+        app:showAsAction="always" />
     <item
         android:id="@+id/settings_menuitem"
+        android:title="@string/preferences"
         android:orderInCategory="98"
-        android:showAsAction="never"
-        android:title="@string/preferences" />
+        app:showAsAction="never" />
     <item
         android:id="@+id/help_menuitem"
+        android:title="@string/help"
         android:orderInCategory="99"
-        android:showAsAction="never"
-        android:title="@string/help" />
+        app:showAsAction="never" />
     <item
         android:id="@+id/about_menuitem"
-        android:icon="@drawable/ic_launcher"
+        android:title="@string/about"
         android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/about" />
+        app:showAsAction="never" />
 </menu>

@@ -17,17 +17,18 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/sort_menuitem"
-        android:icon="@drawable/ic_menu_sort"
-        android:showAsAction="always"
         android:title="@string/episodes_sort_toggle"
-        android:orderInCategory="2" />
+        android:icon="@drawable/ic_menu_sort"
+        android:orderInCategory="2"
+        app:showAsAction="always" />
     <item
         android:id="@+id/filter_menuitem"
-        android:icon="@drawable/ic_menu_filter"
-        android:showAsAction="always"
         android:title="@string/episodes_filter_new"
-        android:orderInCategory="3" />
+        android:icon="@drawable/ic_menu_filter"
+        android:orderInCategory="3"
+        app:showAsAction="always" />
 </menu>
