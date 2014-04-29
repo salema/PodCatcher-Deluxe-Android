@@ -69,12 +69,7 @@
         <item quantity="one">Eine Episode</item>
         <item quantity="other">%d Episoden</item>
     </plurals>
-    <plurals name="episodes_new">
-        <item quantity="one">1 neue Episode</item>
-        <item quantity="other">%d neue Episoden</item>
-    </plurals>
     <string name="episodes_no_new">Keine neuen Episoden</string>
-    <string name="episodes_total">gesamt</string>
     <plurals name="episodes_filtered">
         <item quantity="one">Eine alte Episode gefiltert</item>
         <item quantity="other">%d alte Episoden gefiltert</item>

@@ -73,14 +73,7 @@
         <item quantity="many">%d эпизодов</item>
         <item quantity="other">%d эпизодов</item>
     </plurals>
-    <plurals name="episodes_new">
-        <item quantity="one">Один новый эпизод</item>
-        <item quantity="few">%d новых эпизодов</item>
-        <item quantity="many">%d новых эпизодов</item>
-        <item quantity="other">%d новых эпизодов</item>
-    </plurals>
     <string name="episodes_no_new">Нет новых эпизодов</string>
-    <string name="episodes_total">всего</string>
     <plurals name="episodes_filtered">
         <item quantity="one">Отфильтрован один старый эпизод</item>
         <item quantity="few">Отфильтровано %d старых эпизодов</item>

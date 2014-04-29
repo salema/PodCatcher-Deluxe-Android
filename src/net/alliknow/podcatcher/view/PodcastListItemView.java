@@ -17,9 +17,8 @@
 
 package net.alliknow.podcatcher.view;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Resources;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -36,12 +35,19 @@ public class PodcastListItemView extends PodcatcherListItemView {
 
     /** The title text view */
     private TextView titleTextView;
+    /** The sub-title view layout */
+    private View captionView;
     /** The caption text view */
     private TextView captionTextView;
+    /** The new count text view */
+    private TextView countTextView;
     /** The podcast logo view */
     private ImageView logoView;
     /** The load progress view */
     private HorizontalProgressView progressView;
+
+    /** The star drawable for the new episode count */
+    private static BitmapDrawable starDrawable;
 
     /**
      * Create a podcast item list view.
@@ -58,9 +64,22 @@ public class PodcastListItemView extends PodcatcherListItemView {
         super.onFinishInflate();
 
         titleTextView = (TextView) findViewById(R.id.list_item_title);
-        captionTextView = (TextView) findViewById(R.id.list_item_caption);
+        captionView = findViewById(R.id.list_item_caption);
+        captionTextView = (TextView) findViewById(R.id.list_item_caption_text);
+        countTextView = (TextView) findViewById(R.id.list_item_caption_count);
         logoView = (ImageView) findViewById(R.id.podcast_logo);
         progressView = (HorizontalProgressView) findViewById(R.id.list_item_progress);
+
+        // Create the class handle to star drawable if we are first
+        if (starDrawable == null) {
+            starDrawable = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_media_new);
+            final int size = starDrawable.getIntrinsicHeight() / 2;
+            // The bounds need to be set to the smaller size
+            starDrawable.setBounds(0, 0, size, size);
+        }
+        // Apply the star icon
+        countTextView.setCompoundDrawables(starDrawable, null, null, null);
+        countTextView.setCompoundDrawablePadding(0);
     }
 
     /**
@@ -82,20 +101,23 @@ public class PodcastListItemView extends PodcatcherListItemView {
         titleTextView.setText(podcast.getName());
 
         // 2. Set caption text and visibility
-        captionTextView.setText(createCaption(episodeNumber, newEpisodeCount));
+        captionTextView.setText(getResources()
+                .getQuantityString(R.plurals.episodes, episodeNumber, episodeNumber));
+        countTextView.setText(String.valueOf(newEpisodeCount));
+        countTextView.setVisibility(newEpisodeCount > 0 ? VISIBLE : GONE);
         // The caption should only show if there are episodes or there is
         // progress to display
-        ((View) captionTextView.getParent())
+        ((View) captionView.getParent())
                 .setVisibility(episodeNumber > 0 || (loading && showProgress) ? VISIBLE : GONE);
         // Whether the caption show episode numbers, either faded-in or directly
         if (episodeNumber > 0 && !loading && isShowingProgress && progressShouldFade)
-            crossfade(captionTextView, progressView);
+            crossfade(captionView, progressView);
         else
-            captionTextView.setVisibility(episodeNumber > 0 && !loading ? VISIBLE : GONE);
+            captionView.setVisibility(episodeNumber > 0 && !loading ? VISIBLE : GONE);
 
         // 3. Show/hide progress view, either fade-in or directly
         if (loading && showProgress && !isShowingProgress && progressShouldFade)
-            crossfade(progressView, captionTextView);
+            crossfade(progressView, captionView);
         else
             progressView.setVisibility(loading && showProgress ? VISIBLE : GONE);
         // We need to reset the progress here, because the view might be
@@ -120,16 +142,5 @@ public class PodcastListItemView extends PodcatcherListItemView {
      */
     public void updateProgress(Progress progress) {
         progressView.publishProgress(progress);
-    }
-
-    @SuppressLint("DefaultLocale")
-    private String createCaption(int episodeCount, int newEpisodeCount) {
-        final Resources r = getResources();
-        final String startsWith = newEpisodeCount > 0 ?
-                r.getQuantityString(R.plurals.episodes_new, newEpisodeCount, newEpisodeCount) :
-                r.getString(R.string.episodes_no_new);
-
-        return String.format("%s (%d %s)", startsWith, episodeCount,
-                r.getString(R.string.episodes_total));
     }
 }

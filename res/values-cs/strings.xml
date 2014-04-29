@@ -71,13 +71,7 @@
         <item quantity="few">%d díly</item>
         <item quantity="other">%d dílů</item>
     </plurals>
-    <plurals name="episodes_new">
-        <item quantity="one">Jeden nový díl</item>
-        <item quantity="few">%d nové díly</item>
-        <item quantity="other">%d nových dílů</item>
-    </plurals>
     <string name="episodes_no_new">Žádné nové díly</string>
-    <string name="episodes_total">celkem</string>
     <plurals name="episodes_filtered">
         <item quantity="one">Přefiltrován jeden starý díl</item>
         <item quantity="few">Přefiltrovány %d staré díly</item>
