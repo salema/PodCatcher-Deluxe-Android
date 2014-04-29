@@ -71,7 +71,6 @@ abstract class GpodderPodcastListSyncController extends GpodderBaseSyncControlle
                 final String firstEverKey = FIRST_SYNC_EVER_KEY + deviceId;
                 final boolean firstSyncEver = preferences.getBoolean(firstEverKey, true);
                 final boolean sendOnly = firstSyncEver && podcastManager.size() > 0;
-                Log.d(TAG, "Sync triggered!");
 
                 // 2. Create and fill the final subscription set to be synced
                 // and equal locally and remotely once this task is done.
@@ -91,8 +90,6 @@ abstract class GpodderPodcastListSyncController extends GpodderBaseSyncControlle
                     // 2b1. Pull the subscription list for this device currently
                     // available on the gpodder.net server.
                     synced = client.getSubscriptions(deviceId);
-
-                    reportStatus("Sync running, received remote podcast list", synced);
 
                     // 2b2. Add/remove subscriptions to/from the set as needed,
                     // this will make sure local modifications of the list will
@@ -140,8 +137,6 @@ abstract class GpodderPodcastListSyncController extends GpodderBaseSyncControlle
                     // 2b7. Finally, clean up local status
                     clearAddRemoveSets(subscriptionsAddedLocally, subscriptionsRemovedLocally);
                 }
-
-                reportStatus("Sync finished", synced);
             } catch (Throwable th) {
                 this.cause = th;
                 cancel(true);
@@ -150,15 +145,6 @@ abstract class GpodderPodcastListSyncController extends GpodderBaseSyncControlle
             }
 
             return null;
-        }
-
-        private void reportStatus(String header, Set<String> remoteSubscriptions) {
-            Log.d(TAG, header);
-
-            Log.d(TAG, "Local list: " + podcastManager.getPodcastList());
-            Log.d(TAG, "Added: " + preferences.getStringSet(ADDED_KEY, new HashSet<String>()));
-            Log.d(TAG, "Removed: " + preferences.getStringSet(REMOVED_KEY, new HashSet<String>()));
-            Log.d(TAG, "Remote list: " + remoteSubscriptions);
         }
 
         @Override
@@ -177,8 +163,6 @@ abstract class GpodderPodcastListSyncController extends GpodderBaseSyncControlle
                     public void onPodcastLoaded(Podcast podcast) {
                         podcastManager.addPodcast(podcast);
                         runningLoadPodcastTaskCount--;
-
-                        Log.d(TAG, "Add podcast: " + podcast.getName());
                     }
 
                     @Override
@@ -192,10 +176,8 @@ abstract class GpodderPodcastListSyncController extends GpodderBaseSyncControlle
                         // Bad podcast, do not add
                     }
                 }).executeOnExecutor(THREAD_POOL_EXECUTOR, podcast);
-            } else {
+            } else
                 podcastManager.removePodcast(podcastManager.indexOf(podcast));
-                Log.d(TAG, "Remove podcast: " + podcast.getName());
-            }
         }
 
         protected void onPostExecute(Void result) {
@@ -268,10 +250,6 @@ abstract class GpodderPodcastListSyncController extends GpodderBaseSyncControlle
                 .putStringSet(ADDED_KEY, subscriptionsAdded)
                 .putStringSet(REMOVED_KEY, subscriptionsRemoved)
                 .apply();
-
-        Log.d(TAG, "Updated add/remove sets");
-        Log.d(TAG, "Added: " + subscriptionsAdded);
-        Log.d(TAG, "Removed: " + subscriptionsRemoved);
     }
 
     private synchronized void clearAddRemoveSets(Set<String> added, Set<String> removed) {
