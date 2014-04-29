@@ -80,8 +80,6 @@ abstract class DropboxBaseSyncController extends SyncController
                 int sleepInterval = 250;
                 while (status.isDownloading)
                     try {
-                        Log.d(TAG, "Waiting for sync to come down, status: " + status);
-                        Log.d(TAG, "Waiting for sync to come down for " + sleepInterval + "ms.");
                         Thread.sleep(sleepInterval);
 
                         // Increase the timeout to back off a bit, but not too
@@ -178,8 +176,6 @@ abstract class DropboxBaseSyncController extends SyncController
 
     @Override
     public void onLinkedAccountChange(DbxAccountManager manager, DbxAccount account) {
-        Log.d(TAG, "Linked account changed: " + account.getAccountInfo());
-
         // Disable sync controller if Dropbox account is unlinked
         if (!account.isLinked())
             SyncManager.getInstance().setSyncMode(getImpl(), null);
@@ -188,7 +184,6 @@ abstract class DropboxBaseSyncController extends SyncController
     @Override
     public void onDatastoreStatusChange(DbxDatastore datastore) {
         final DbxDatastoreStatus status = datastore.getSyncStatus();
-        Log.d(TAG, "Datastore status changed: " + status);
 
         // If the data store has incoming data, trigger its download and apply
         // changes. Since we are only interested in the receiving part, calling
