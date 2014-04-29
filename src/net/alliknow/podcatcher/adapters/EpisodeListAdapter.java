@@ -18,10 +18,12 @@
 package net.alliknow.podcatcher.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 
 import net.alliknow.podcatcher.R;
+import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.view.EpisodeListItemView;
 
@@ -37,6 +39,9 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
     /** Whether the podcast name should be shown */
     protected boolean showPodcastNames = false;
 
+    /** Our episode manager handle */
+    private EpisodeManager episodeManager;
+
     /**
      * Create new adapter.
      * 
@@ -47,6 +52,7 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
         super(context);
 
         this.list = episodeList;
+        this.episodeManager = EpisodeManager.getInstance();
     }
 
     /**
@@ -91,11 +97,21 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         final EpisodeListItemView returnView = (EpisodeListItemView)
                 findReturnView(convertView, parent, R.layout.episode_list_item);
+        final Episode item = (Episode) getItem(position);
+        final boolean isOld = episodeManager.getState(item);
 
         // Make sure the coloring is right
-        setBackgroundColorForPosition(returnView, position);
+        if (checkedPositions.get(position))
+            returnView.setBackgroundColor(lightThemeColor);
+        else if (selectedPositions.get(position))
+            returnView.setBackgroundColor(themeColor);
+        else if (!isOld)
+            returnView.setBackgroundColor(Color.WHITE);
+        else
+            returnView.setBackgroundColor(Color.TRANSPARENT);
+
         // Make the view represent episode at given position
-        returnView.show((Episode) getItem(position), showPodcastNames);
+        returnView.show(item, showPodcastNames, isOld);
 
         return returnView;
     }

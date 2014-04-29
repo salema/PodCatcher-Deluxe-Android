@@ -18,6 +18,7 @@
 package net.alliknow.podcatcher.view;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -83,15 +84,18 @@ public class EpisodeListItemView extends PodcatcherListItemView {
      * 
      * @param episode Episode to represent.
      * @param showPodcastName Whether the podcast name should show.
+     * @param isOld Whether the episode is consider old (listened to)
      */
-    public void show(final Episode episode, boolean showPodcastName) {
+    public void show(final Episode episode, boolean showPodcastName, boolean isOld) {
         // 0. Get episode state
         final boolean downloading = episodeManager.isDownloading(episode);
         final boolean progressShouldFade = episode.hashCode() == lastItemId;
 
-        // 1. Set episode title
+        // 1. Set and format episode title
         titleTextView.setText(createTitle(episode));
-
+        titleTextView.setTypeface(null, isOld ? Typeface.NORMAL : Typeface.BOLD);
+        titleTextView.setSingleLine(isOld);
+        
         // 2. Set caption and make sure it shows
         captionTextView.setText(createCaption(episode, showPodcastName));
         // If this is the same episode, crossfade (otherwise just set it)
@@ -112,7 +116,7 @@ public class EpisodeListItemView extends PodcatcherListItemView {
             updateProgress(episodeManager.getDownloadProgress(episode));
 
         // 4. Update the metadata to show for this episode
-        updateMetadata(episode);
+        updateMetadata(episode, isOld);
 
         // 5. Store state to make sure it is available next time show() is
         // called and we can decide whether to crossfade or not
@@ -185,13 +189,12 @@ public class EpisodeListItemView extends PodcatcherListItemView {
         return result;
     }
 
-    private void updateMetadata(Episode episode) {
+    private void updateMetadata(Episode episode, boolean isOld) {
         // Okay, so this gets a bit messy, we have a lot of cases to cover.
         // 1. Find all the information we need to make the view look right
         final boolean downloading = episodeManager.isDownloading(episode);
         final boolean downloaded = episodeManager.isDownloaded(episode);
         final boolean downloadIconShows = downloaded || downloading;
-        final boolean isNew = !episodeManager.getState(episode);
         final boolean willResume = episodeManager.getResumeAt(episode) > 0;
         final int position = episodeManager.getPlaylistPosition(episode);
 
@@ -206,7 +209,7 @@ public class EpisodeListItemView extends PodcatcherListItemView {
         downloadIconView.setVisibility(downloading || downloaded ? View.VISIBLE : View.GONE);
         resumeIconView.setVisibility(willResume ? View.VISIBLE : View.GONE);
         playlistPositionView.setVisibility(position >= 0 ? View.VISIBLE : View.GONE);
-        stateIconView.setVisibility(isNew ? View.VISIBLE : View.GONE);
+        stateIconView.setVisibility(isOld ? View.GONE : View.VISIBLE);
 
         // 3. Fix the layout params of our views in the lower right corner
         // depending on the metadata showing:
@@ -220,7 +223,7 @@ public class EpisodeListItemView extends PodcatcherListItemView {
         LayoutParams params = (RelativeLayout.LayoutParams) findViewById(
                 R.id.list_item_main_content).getLayoutParams();
         params.addRule(RelativeLayout.LEFT_OF, downloadIconShows ? R.id.download_icon :
-                willResume ? R.id.resume_icon : isNew ? R.id.state_icon : R.id.playlist_position);
+                willResume ? R.id.resume_icon : isOld ? R.id.playlist_position : R.id.state_icon);
         findViewById(R.id.list_item_main_content).setLayoutParams(params);
     }
 
