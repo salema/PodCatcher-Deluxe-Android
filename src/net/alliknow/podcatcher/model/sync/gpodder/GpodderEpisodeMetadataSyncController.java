@@ -19,7 +19,6 @@ package net.alliknow.podcatcher.model.sync.gpodder;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.dragontek.mygpoclient.api.EpisodeAction;
 import com.dragontek.mygpoclient.api.EpisodeActionChanges;
@@ -84,8 +83,6 @@ abstract class GpodderEpisodeMetadataSyncController extends GpodderPodcastListSy
                 // manager because otherwise we cannot update it
                 episodeManager.blockUntilEpisodeMetadataIsLoaded();
 
-                Log.d(TAG, "Syncing episode actions, last sync time stamp is: " + lastSyncTimeStamp);
-
                 // 1. Get the episode actions from server and apply them to the
                 // local model if the episode is actually present. Giving no
                 // device id here will make sure that we get changes from all
@@ -108,13 +105,10 @@ abstract class GpodderEpisodeMetadataSyncController extends GpodderPodcastListSy
                         publishProgress(new AbstractMap.SimpleEntry<>(episode, action));
                 }
 
-                Log.d(TAG, "Changes occured on the server: " + changes.actions);
-
                 // 2. Upload local changes and clear them from the local action
                 // list, the actions triggered above are not included since the
                 // controller set the ignoreNewActions flag before applying
                 // those.
-                Log.d(TAG, "Sending changes to the server: " + actions);
                 final List<EpisodeAction> copy = new ArrayList<>(actions);
                 lastSyncTimeStamp = client.uploadEpisodeActions(copy);
 
@@ -124,8 +118,6 @@ abstract class GpodderEpisodeMetadataSyncController extends GpodderPodcastListSy
                 // should be empty afterwards.
                 actions.removeAll(changes.actions);
                 actions.removeAll(copy);
-
-                Log.d(TAG, "Changes left after clean-up: " + actions);
             } catch (AuthenticationException | IOException | InterruptedException e) {
                 this.cause = e;
                 cancel(true);
@@ -167,19 +159,16 @@ abstract class GpodderEpisodeMetadataSyncController extends GpodderPodcastListSy
         }
 
         protected void onPostExecute(Void nothing) {
-            Log.d(TAG, "Done syncing episode actions, new time stamp is: " + lastSyncTimeStamp);
             // Make sure we take note of the time stamp
             preferences.edit().putLong(GPODDER_LAST_SYNC_ACTIONS, lastSyncTimeStamp).apply();
 
             syncRunning = false;
-
             listener.onSyncCompleted(getImpl());
         }
 
         @Override
         protected void onCancelled(Void nothing) {
             syncRunning = false;
-
             listener.onSyncFailed(getImpl(), cause);
         }
     }
@@ -216,8 +205,6 @@ abstract class GpodderEpisodeMetadataSyncController extends GpodderPodcastListSy
         // app hang here if too many episodes are marked old at once
         // if (!ignoreNewActions && actions.size() < 25 && newState)
         // actions.add(prepareAction(episode, Action.NEW, 0));
-        //
-        // Log.d(TAG, "Action waiting in gpodder.net controller: " + actions);
     }
 
     @Override
@@ -229,20 +216,16 @@ abstract class GpodderEpisodeMetadataSyncController extends GpodderPodcastListSy
             // Otherwise update the server on the play position
             else
                 actions.add(prepareAction(episode, Action.PLAY, millis / 1000));
-
-        Log.d(TAG, "Action waiting in gpodder.net controller: " + actions);
     }
 
     @Override
     public void onDownloadSuccess(Episode episode) {
         actions.add(prepareAction(episode, Action.DOWNLOAD, 0));
-        Log.d(TAG, "Action waiting in gpodder.net controller: " + actions);
     }
 
     @Override
     public void onDownloadDeleted(Episode episode) {
         actions.add(prepareAction(episode, Action.DELETE, 0));
-        Log.d(TAG, "Action waiting in gpodder.net controller: " + actions);
     }
 
     private EpisodeAction prepareAction(Episode episode, Action action, int position) {

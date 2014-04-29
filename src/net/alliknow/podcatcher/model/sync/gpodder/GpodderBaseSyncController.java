@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.dragontek.mygpoclient.api.MygPodderClient;
 
@@ -68,9 +67,6 @@ abstract class GpodderBaseSyncController extends SyncController {
 
         client = new MygPodderClient(user, password);
         deviceId = preferences.getString(DEVICE_ID_KEY, getDefaultDeviceId(context));
-
-        Log.d(TAG, "Create gpodder.net sync controller with " + user + "/" + password
-                + " and device id " + deviceId);
     }
 
     /**

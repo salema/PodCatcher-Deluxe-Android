@@ -87,10 +87,8 @@ abstract class DropboxPodcastListSyncController extends DropboxSettingsSyncContr
             try {
                 // Remove podcasts not in Dropbox data store
                 for (Podcast podcast : podcastManager.getPodcastList())
-                    if (podcastTable.get(toRecordId(podcast)) == null) {
+                    if (podcastTable.get(toRecordId(podcast)) == null)
                         podcastManager.removePodcast(podcastManager.indexOf(podcast));
-                        Log.d(TAG, "Remove podcast: " + podcast.getName());
-                    }
 
                 // Add podcasts not in local list
                 final Iterator<DbxRecord> iterator = podcastTable.query().iterator();
@@ -112,7 +110,6 @@ abstract class DropboxPodcastListSyncController extends DropboxSettingsSyncContr
                             }
 
                             podcastManager.addPodcast(podcast);
-                            Log.d(TAG, "Add podcast: " + podcast.getName());
                         }
                     } else
                         Log.d(TAG, "Skipped incomplete record " + record);

@@ -112,8 +112,6 @@ public class ConfigureSyncActivity extends BaseActivity implements ConfigureSync
     @Override
     public void onSyncNow() {
         syncManager.syncAll();
-
-        // showToast(getString(R.string.sync_all_started));
     }
 
     @Override

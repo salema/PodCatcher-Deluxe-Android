@@ -19,6 +19,7 @@ package net.alliknow.podcatcher.model;
 
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -34,8 +35,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Singleton sync manager to enabled/disable sync controllers. Listens to
@@ -59,8 +58,12 @@ public class SyncManager implements SyncControllerListener {
     /** The timeout that will trigger a sync event when on mobile data */
     public static final int TIME_TO_SYNC_MOBILE = 60 * 60 * 1000;
 
-    /** This is the background sync task */
-    private class TriggerSyncTask extends TimerTask {
+    /** The handler used to periodically trigger sync */
+    private final Handler triggerSyncHandler = new Handler(Looper.getMainLooper());
+    /** The interval to check whether sync is needed (fifteen minutes) */
+    private final static int TRIGGER_SYNC_HANDLER_INTERVAL = 15 * 60 * 1000;
+    /** The actual runnable doing the trigger sync work */
+    private final Runnable triggerSyncRunnable = new Runnable() {
 
         @Override
         public void run() {
@@ -70,24 +73,26 @@ public class SyncManager implements SyncControllerListener {
                     (podcatcher.isOnFastConnection() ? TIME_TO_SYNC : TIME_TO_SYNC_MOBILE));
 
             // If we are online and the last sync is sufficiently old, trigger a
-            // full sync on all active sync controllers
+            // full sync on all active sync controllers (on the main UI thread)
             if (online && (lastSync == null || lastSync.before(triggerIfSyncedBefore)))
                 syncAll();
+
+            triggerSyncHandler.postDelayed(this, TRIGGER_SYNC_HANDLER_INTERVAL);
         }
-    }
+    };
 
     /** The call-back set for the sync listeners */
     private final Set<OnSyncListener> syncListeners = new HashSet<>();
     /** The handler used to monitor sync progress */
-    private final Handler monitorSyncHandler = new Handler();
+    private final Handler monitorSyncHandler = new Handler(Looper.getMainLooper());
     /** The check sync status timeout (in ms) */
-    private final static int monitorSyncHandlerTimeout = 1000;
+    private final static int MONITOR_SYNC_HANDLER_INTERVAL = 1000;
     /** The actual runnable doing the sync monitoring work */
     private final Runnable monitorSyncRunnable = new Runnable() {
 
         public void run() {
             if (isSyncRunning())
-                monitorSyncHandler.postDelayed(this, monitorSyncHandlerTimeout);
+                monitorSyncHandler.postDelayed(this, MONITOR_SYNC_HANDLER_INTERVAL);
             else
                 for (OnSyncListener listener : syncListeners)
                     listener.onSyncCompleted();
@@ -108,9 +113,8 @@ public class SyncManager implements SyncControllerListener {
         this.preferences = PreferenceManager.getDefaultSharedPreferences(app);
         initFromSyncPreferences();
 
-        // Start the sync timer
-        final int fifteenMinutes = 15 * 60 * 1000;
-        new Timer().schedule(new TriggerSyncTask(), fifteenMinutes, fifteenMinutes);
+        // Start the sync timer (first runs 15 minutes after start-up)
+        triggerSyncHandler.postDelayed(triggerSyncRunnable, TRIGGER_SYNC_HANDLER_INTERVAL);
     }
 
     /**
@@ -289,7 +293,7 @@ public class SyncManager implements SyncControllerListener {
             listener.onSyncStarted();
 
         // Monitor the sync action and alert listeners when finished
-        monitorSyncHandler.postDelayed(monitorSyncRunnable, monitorSyncHandlerTimeout);
+        monitorSyncHandler.postDelayed(monitorSyncRunnable, MONITOR_SYNC_HANDLER_INTERVAL);
     }
 
     @Override
