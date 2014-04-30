@@ -18,16 +18,8 @@
  */
 -->
 <resources>
-    <bool name="podcast_list_shadow_right">true</bool>
-    <bool name="episode_list_shadow_right">false</bool>
-    <bool name="podcast_list_shadow_bottom">false</bool>
-    <bool name="episode_list_shadow_bottom">false</bool>
-    <dimen name="font_size_large">20sp</dimen>
-    <dimen name="list_item_padding">4dp</dimen>
-    <dimen name="episode_view_padding">4dp</dimen>
-    <dimen name="suggestion_add_padding">8dp</dimen>
-    <dimen name="progress_bar_horizontal_height">6dp</dimen>
-    <dimen name="podcast_list_shadow_padding">4dp</dimen>
-    <dimen name="episode_list_shadow_padding">0dp</dimen>
-    <integer name="progress_bar_horizontal_weight">3</integer>
+    <declare-styleable name="DropShadowLinearLayout">
+       <attr name="shadowRight" format="reference|boolean" />
+       <attr name="shadowBottom" format="reference|boolean" />
+    </declare-styleable>
 </resources>

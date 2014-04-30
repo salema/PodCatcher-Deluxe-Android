@@ -20,7 +20,8 @@
 <net.alliknow.podcatcher.view.PodcastListItemView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingRight="@dimen/podcast_list_shadow_padding">
     <ImageView
         android:id="@+id/podcast_logo"
         android:layout_width="48dp"

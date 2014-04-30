@@ -36,7 +36,6 @@
     <color name="button_blue_dark">@android:color/holo_blue_dark</color>
     <color name="text_error">@android:color/holo_red_dark</color>
     <color name="text_secondary">@android:color/darker_gray</color>
-    <color name="divider_off">@android:color/darker_gray</color>
     <color name="divider">#ddd</color>
     <color name="featured_suggestion">#ffafaf</color>
 </resources>
