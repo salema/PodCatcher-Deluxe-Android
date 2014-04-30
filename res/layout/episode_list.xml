@@ -17,11 +17,14 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<LinearLayout
+<net.alliknow.podcatcher.view.DropShadowLinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:pcd="http://schemas.android.com/apk/res/net.alliknow.podcatcher"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    pcd:shadowRight="@bool/episode_list_shadow_right"
+    pcd:shadowBottom="@bool/episode_list_shadow_bottom">
     <ProgressBar
         android:id="@+id/progress_bar_top"
         style="@android:style/Widget.ProgressBar.Horizontal"
@@ -48,4 +51,4 @@
 	        android:layout_height="match_parent"
 	        android:text="@string/podcast_none_selected" />
     </FrameLayout>
-</LinearLayout>
+</net.alliknow.podcatcher.view.DropShadowLinearLayout>

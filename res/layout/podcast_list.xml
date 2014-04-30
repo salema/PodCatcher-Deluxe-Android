@@ -17,11 +17,14 @@
  * along with PodCatcher Deluxe. If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<LinearLayout
+<net.alliknow.podcatcher.view.DropShadowLinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:pcd="http://schemas.android.com/apk/res/net.alliknow.podcatcher"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    pcd:shadowRight="@bool/podcast_list_shadow_right"
+    pcd:shadowBottom="@bool/podcast_list_shadow_bottom">
     <FrameLayout 
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -56,4 +59,4 @@
         android:contentDescription="@string/podcast_image"
         android:scaleType="centerInside"
         android:src="@drawable/default_podcast_logo" />
-</LinearLayout>
+</net.alliknow.podcatcher.view.DropShadowLinearLayout>

@@ -23,7 +23,6 @@ import android.app.ActionBar;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
@@ -103,14 +102,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        // Make sure dividers (if any) reflect selection state
-        updateDividerUi();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
 
@@ -146,7 +137,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 episodeListFragment.resetAndSpin();
                 // Update other UI
                 updateSortingUi();
-                updateDividerUi();
 
                 // Load podcast
                 podcastManager.load(podcast);
@@ -183,7 +173,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 episodeListFragment.setShowPodcastNames(true);
                 // Update other UI
                 updateSortingUi();
-                updateDividerUi();
 
                 // Go load all podcasts
                 for (Podcast podcast : podcastManager.getPodcastList())
@@ -212,7 +201,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
             // Update other UI
             updateSortingUi();
-            updateDividerUi();
         }
     }
 
@@ -236,10 +224,8 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         }
 
         // Additionally, if on large device, process clever selection update
-        if (!view.isSmall()) {
+        if (!view.isSmall())
             updateEpisodeListSelection();
-            updateDividerUi();
-        }
 
         updateActionBar();
         updateSortingUi();
@@ -330,8 +316,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
             }
-
-            updateDividerUi();
         }
     }
 
@@ -346,8 +330,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
 
             if (episodeListFragment != null)
                 episodeListFragment.selectNone();
-
-            updateDividerUi();
         }
     }
 
@@ -355,12 +337,9 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         super.onSharedPreferenceChanged(sharedPreferences, key);
 
-        if (key.equals(SettingsActivity.KEY_THEME_COLOR)) {
+        if (episodeListFragment != null && SettingsActivity.KEY_THEME_COLOR.equals(key))
             // Make the UI reflect the change
-            if (episodeListFragment != null)
-                episodeListFragment.setThemeColors(themeColor, lightThemeColor);
-            updateDividerUi();
-        }
+            episodeListFragment.setThemeColors(themeColor, lightThemeColor);
     }
 
     /**
@@ -380,15 +359,6 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
     protected void updateSortingUi() {
         episodeListFragment.setSortMenuItemVisibility(
                 currentEpisodeSet.size() > 1, selection.isEpisodeOrderReversed());
-    }
-
-    /**
-     * Update the divider views to reflect current selection state.
-     */
-    protected void updateDividerUi() {
-        colorDivider(R.id.divider_first, selection.isPodcastSet() || !selection.isSingle());
-        colorDivider(R.id.divider_second, selection.isEpisodeSet() &&
-                currentEpisodeSet.contains(selection.getEpisode()));
     }
 
     /**
@@ -441,16 +411,5 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
         // Finally set the list and make sure selection matches
         episodeListFragment.setEpisodeList(filteredList);
         updateEpisodeListSelection();
-    }
-
-    private void colorDivider(int dividerViewId, boolean applyColor) {
-        if (getWindow() != null && getWindow().findViewById(dividerViewId) != null) {
-            View divider = getWindow().findViewById(dividerViewId);
-
-            if (applyColor)
-                divider.setBackgroundColor(themeColor);
-            else
-                divider.setBackgroundColor(getResources().getColor(R.color.divider_off));
-        }
     }
 }

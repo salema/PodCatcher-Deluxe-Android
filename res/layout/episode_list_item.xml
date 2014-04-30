@@ -22,7 +22,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="48dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingRight="@dimen/episode_list_shadow_padding">
     <TextView
         android:id="@+id/list_item_title"
         style="@style/ListItem.Title"
