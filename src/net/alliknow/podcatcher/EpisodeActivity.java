@@ -334,12 +334,16 @@ public abstract class EpisodeActivity extends CastActivity implements
         // Stop timer task
         stopPlayProgressTimer();
 
-        // Stop called: unload episode
-        if (service.isLoadedEpisode(selection.getEpisode()))
-            service.reset();
-        // Play called on unloaded episode
-        else if (selection.isEpisodeSet())
-            service.playEpisode(selection.getEpisode());
+        if (casting)
+            play(selection.getEpisode());
+        else {
+            // Stop called: unload episode
+            if (service.isLoadedEpisode(selection.getEpisode()))
+                service.reset();
+            // Play called on unloaded episode
+            else if (selection.isEpisodeSet())
+                service.playEpisode(selection.getEpisode());
+        }
 
         // Update UI
         updatePlayerUi();
@@ -348,14 +352,18 @@ public abstract class EpisodeActivity extends CastActivity implements
 
     @Override
     public void onTogglePlay() {
-        // Player is playing
-        if (service.isPlaying()) {
-            service.pause();
-            stopPlayProgressTimer();
-        } // Player in pause
+        if (casting)
+            togglePlay();
         else {
-            service.resume();
-            startPlayProgressTimer();
+            // Player is playing
+            if (service.isPlaying()) {
+                service.pause();
+                stopPlayProgressTimer();
+            } // Player in pause
+            else {
+                service.resume();
+                startPlayProgressTimer();
+            }
         }
 
         updatePlayerUi();
@@ -538,7 +546,7 @@ public abstract class EpisodeActivity extends CastActivity implements
 
             // Make sure player is shown if and as needed (update the details
             // only if they are actually visible)
-            final boolean showPlayer = service.isPreparing() || service.isPrepared();
+            final boolean showPlayer = service.isPreparing() || service.isPrepared() || casting;
             playerFragment.setPlayerVisibilility(showPlayer);
             if (showPlayer) {
                 // Make sure error view is hidden

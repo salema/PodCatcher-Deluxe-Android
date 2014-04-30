@@ -17,11 +17,13 @@
 
 package net.alliknow.podcatcher;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
 import net.alliknow.podcatcher.listeners.OnLoadSuggestionListener;
+import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.SuggestionManager;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.model.types.Suggestion;
@@ -36,11 +38,13 @@ import java.util.List;
 /**
  * Add podcast from suggestions activity.
  */
-public class AddSuggestionActivity extends BaseActivity implements AddSuggestionDialogListener,
+public class AddSuggestionActivity extends Activity implements AddSuggestionDialogListener,
         ConfirmExplicitSuggestionDialogListener, OnLoadSuggestionListener {
 
+    /** Our podcast manager handle */
+    private PodcastManager podcastManager = PodcastManager.getInstance();
     /** The suggestion manager handle */
-    private SuggestionManager suggestionManager;
+    private SuggestionManager suggestionManager = SuggestionManager.getInstance();
 
     /** Tag to find the add suggestion dialog fragment under */
     private static final String ADD_SUGGESTION_DIALOG_TAG = "add_suggestion_dialog";
@@ -58,8 +62,7 @@ public class AddSuggestionActivity extends BaseActivity implements AddSuggestion
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Get suggestions manager and register call-back
-        suggestionManager = SuggestionManager.getInstance();
+        // Register call-back
         suggestionManager.addLoadSuggestionListListener(this);
 
         // Create and show suggestion fragment

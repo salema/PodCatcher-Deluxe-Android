@@ -52,6 +52,8 @@ public class Episode extends FeedEntity implements Comparable<Episode> {
     /** The episode's media file location */
     protected String mediaUrl;
 
+    protected String mediaType;
+
     /**
      * Create a new episode.
      * 
@@ -109,6 +111,10 @@ public class Episode extends FeedEntity implements Comparable<Episode> {
      */
     public String getMediaUrl() {
         return mediaUrl;
+    }
+
+    public String getMediaType() {
+        return mediaType;
     }
 
     /**
@@ -240,6 +246,8 @@ public class Episode extends FeedEntity implements Comparable<Episode> {
                 final String urlAttribute = parser.getAttributeValue("", RSS.URL);
                 if (urlAttribute != null)
                     mediaUrl = normalizeUrl(urlAttribute);
+
+                mediaType = parser.getAttributeValue("", RSS.TYPE);
 
                 parser.nextText();
             }

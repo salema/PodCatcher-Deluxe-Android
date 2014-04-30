@@ -20,12 +20,15 @@ package net.alliknow.podcatcher;
 import static net.alliknow.podcatcher.EpisodeListActivity.PODCAST_URL_KEY;
 import static net.alliknow.podcatcher.view.fragments.AuthorizationFragment.USERNAME_PRESET_KEY;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
+import net.alliknow.podcatcher.BaseActivity.ContentMode;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
+import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
@@ -39,7 +42,7 @@ import net.alliknow.podcatcher.view.fragments.AuthorizationFragment.OnEnterAutho
  * preset the feed url edittext, start this activity with an intent that has the
  * feed URL set as its {@link Intent#getData()} return value.
  */
-public class AddPodcastActivity extends BaseActivity implements AddPodcastDialogListener,
+public class AddPodcastActivity extends Activity implements AddPodcastDialogListener,
         OnLoadPodcastListener, OnEnterAuthorizationListener {
 
     /** Tag to find the add podcast dialog fragment under */
@@ -56,6 +59,9 @@ public class AddPodcastActivity extends BaseActivity implements AddPodcastDialog
     private static final String LAST_USER_KEY = "LAST_USER_NAME";
     /** The last user name that was put in */
     private String lastUserName;
+
+    /** Our podcast manager handle */
+    private PodcastManager podcastManager = PodcastManager.getInstance();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
