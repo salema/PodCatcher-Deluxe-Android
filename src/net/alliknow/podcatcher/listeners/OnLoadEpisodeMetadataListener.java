@@ -17,33 +17,21 @@
 
 package net.alliknow.podcatcher.listeners;
 
-import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.EpisodeMetadata;
+
+import java.util.Map;
 
 /**
- * Interface definition for a callback to be invoked when a podcast is selected.
+ * Interface definition for a callback to be invoked when the episode metadata
+ * is loaded.
  */
-public interface OnSelectPodcastListener {
+public interface OnLoadEpisodeMetadataListener {
 
     /**
-     * Called on listener to reflect that a podcast has been selected.
+     * Called on completion.
      * 
-     * @param selectedPodcast Podcast selected by the user (not
-     *            <code>null</code>).
+     * @param metadata Episode metadata loaded.
      */
-    public void onPodcastSelected(Podcast selectedPodcast);
+    public void onEpisodeMetadataLoaded(Map<String, EpisodeMetadata> metadata);
 
-    /**
-     * Called on listener to reflect that all podcasts are selected.
-     */
-    public void onAllPodcastsSelected();
-
-    /**
-     * Called on listener to reflect that downloads are selected.
-     */
-    public void onDownloadsSelected();
-
-    /**
-     * Called on listener to reflect that no podcast is selected anymore.
-     */
-    public void onNoPodcastSelected();
 }

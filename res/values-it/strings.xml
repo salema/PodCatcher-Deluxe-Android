@@ -67,7 +67,21 @@
         <item quantity="one">Un episodio</item>
         <item quantity="other">%d episodi</item>
     </plurals>
+    <string name="episodes_select_all">Seleziona tutto</string>
     <string name="episodes_sort_toggle">Ordine inverso</string>
+    <string name="download">Download</string>
+    <string name="downloads">Download</string>
+    <plurals name="downloads_remove_title">
+        <item quantity="one">Elimina download</item>
+        <item quantity="other">Elimina %d download</item>
+    </plurals>
+    <plurals name="downloads_remove_text">
+        <item quantity="one">Questo episodio non è disponibile offline.</item>
+        <item quantity="other">Questi episodi non disponibili offline.</item>
+    </plurals>
+    <string name="downloads_none">Nessun download. Usa l\'icona download nel menu per rendere gli episodi disponibili offline.</string>
+    <string name="download_started">Download iniziato per\n\"%s\"</string>
+    <string name="download_failed">Download fallito per\n\"%s\"</string>
     <string name="auth">Autorizzazione</string>
     <string name="auth_edit">Modifica autorizzazione</string>
     <string name="auth_username">Nome utente</string>
@@ -111,5 +125,5 @@
     <string name="pref_theme_color_title">Colore tema</string>
     <string name="pref_wide_episode_list_title">Elenco episodio ampio</string>
     <string name="pref_wide_episode_list_summary">Fai spazio per avere più dettagli sull\'episodio</string>
-    <string name="ad">Prova &lt;a href=\"market://details?id=com.podcatcher.deluxe\"&gt;Podcatcher Deluxe&lt;/a&gt; and &lt;a href=\"market://details?id=com.podcatcher.deluxe.video\"&gt;Video Podcatcher Deluxe&lt;/a&gt; per scaricare, playlist, filtri, e molte altre caratteristiche premium!</string>
+    <string name="ad">Prova &lt;a href=\"market://details?id=com.podcatcher.deluxe\"&gt;Podcatcher Deluxe&lt;/a&gt; and &lt;a href=\"market://details?id=com.podcatcher.deluxe.video\"&gt;Video Podcatcher Deluxe&lt;/a&gt; per playlist, filtri, e molte altre caratteristiche premium!</string>
 </resources>

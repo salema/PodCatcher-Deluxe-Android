@@ -28,25 +28,48 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:text="@string/episode_none_selected" />
-    <TextView
-        android:id="@+id/episode_title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="28dp"
-        android:paddingLeft="@dimen/episode_view_padding"
-        android:textAppearance="?android:textAppearanceLarge"
-        android:textSize="@dimen/font_size_large"
-        android:visibility="gone" />
-    <TextView
-        android:id="@+id/podcast_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="20dp"
-        android:paddingLeft="@dimen/episode_view_padding"
-        android:textAppearance="?android:textAppearanceSmall"
-        android:visibility="gone"
-        android:singleLine="true"
-        android:ellipsize="end" />
+        android:orientation="horizontal"
+        android:baselineAligned="false">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/episode_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="28dp"
+                android:paddingLeft="@dimen/episode_view_padding"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:textSize="@dimen/font_size_large"
+                android:visibility="gone" />
+            <TextView
+                android:id="@+id/podcast_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="20dp"
+                android:paddingLeft="@dimen/episode_view_padding"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:visibility="gone"
+                android:singleLine="true"
+                android:ellipsize="end" />
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/download_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentBottom="true"
+                android:scaleType="centerInside"
+                android:visibility="gone" />
+        </RelativeLayout>
+    </LinearLayout>
     <ImageView
         android:id="@+id/episode_divider"
         android:layout_width="match_parent"

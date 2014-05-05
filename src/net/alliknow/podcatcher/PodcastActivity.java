@@ -27,10 +27,13 @@ import android.os.StrictMode;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.Toast;
 
 import net.alliknow.podcatcher.listeners.OnChangePodcastListListener;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListListener;
+import net.alliknow.podcatcher.model.tasks.remote.DownloadEpisodeTask.EpisodeDownloadError;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
+import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 import net.alliknow.podcatcher.view.fragments.AuthorizationFragment;
@@ -218,6 +221,8 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
                 onAllPodcastsSelected(true);
             else if (selection.isSingle() && selection.isPodcastSet())
                 onPodcastSelected(selection.getPodcast(), true);
+            else if (ContentMode.DOWNLOADS.equals(selection.getMode()))
+                onDownloadsSelected();
             else
                 onNoPodcastSelected(true);
 
@@ -390,6 +395,20 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
     }
 
     @Override
+    public void onDownloadsSelected() {
+        super.onDownloadsSelected();
+
+        // Prepare podcast list fragment
+        podcastListFragment.selectNone();
+
+        if (view.isSmallPortrait())
+            showEpisodeListActivity();
+
+        // Update UI
+        updateLogoViewMode();
+    }
+
+    @Override
     public void onNoPodcastSelected() {
         onNoPodcastSelected(false);
     }
@@ -463,6 +482,36 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
         }
     }
 
+    @Override
+    public void onDownloadProgress(Episode episode, int percent) {
+        // In small portrait mode, there is a separate episode list activity
+        // that will handle this
+        if (!view.isSmallPortrait())
+            super.onDownloadProgress(episode, percent);
+    }
+
+    @Override
+    public void onDownloadFailed(Episode episode, EpisodeDownloadError error) {
+        super.onDownloadFailed(episode, error);
+
+        switch (error) {
+            case DESTINATION_NOT_WRITEABLE:
+                showToast(getString(R.string.download_failed_cannot_write, episode.getName()),
+                        Toast.LENGTH_LONG);
+                break;
+            case NO_SPACE:
+                showToast(getString(R.string.download_failed_no_space, episode.getName()),
+                        Toast.LENGTH_LONG);
+                break;
+            case DOWNLOAD_APP_DISABLED:
+                showToast(getString(R.string.download_failed_download_app_disabled,
+                        episode.getName()), Toast.LENGTH_LONG);
+                break;
+            default:
+                showToast(getString(R.string.download_failed, episode.getName()));
+        }
+    }
+
     /**
      * Update the layout to match user's preference
      */
@@ -509,6 +558,12 @@ public class PodcastActivity extends EpisodeListActivity implements OnBackStackC
             updateActionBarSubtitleOnMultipleLoad();
         else
             contentSpinner.setSubtitle(null);
+    }
+
+    @Override
+    protected void updateDownloadUi() {
+        if (!view.isSmallPortrait())
+            super.updateDownloadUi();
     }
 
     @Override

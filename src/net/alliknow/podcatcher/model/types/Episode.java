@@ -69,6 +69,27 @@ public class Episode extends FeedEntity implements Comparable<Episode> {
     }
 
     /**
+     * Create a new episode and set all fields manually.
+     * 
+     * @param podcast Podcast this episode belongs to. Cannot be
+     *            <code>null</code>.
+     * @param name Episode name.
+     * @param mediaUrl The remote URL of this episode.
+     * @param pubDate The publication date.
+     * @param description The episode's description.
+     */
+    Episode(Podcast podcast, String name, String mediaUrl, Date pubDate, String description) {
+        this(podcast, -1);
+
+        this.name = name;
+        this.mediaUrl = mediaUrl;
+        this.description = description;
+        // Publication date might not be present
+        if (pubDate != null)
+            this.pubDate = new Date(pubDate.getTime());
+    }
+
+    /**
      * @return The owning podcast. This will not be <code>null</code>.
      */
     public Podcast getPodcast() {

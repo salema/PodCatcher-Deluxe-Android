@@ -71,7 +71,25 @@
         <item quantity="many">%d епізодів</item>
         <item quantity="other">%d епізодів</item>
     </plurals>
+    <string name="episodes_select_all">Обрати все</string>
     <string name="episodes_sort_toggle">У зворотньому порядку</string>
+    <string name="download">Завантажити</string>
+    <string name="downloads">Завантаження</string>
+    <plurals name="downloads_remove_title">
+        <item quantity="one">Видалити завантаження</item>
+        <item quantity="few">Видалити %d завантажень</item>
+        <item quantity="many">Видалити %d завантажень</item>
+        <item quantity="other">Видалити %d завантажень</item>
+    </plurals>
+    <plurals name="downloads_remove_text">
+        <item quantity="one">Цей епізод не можна буде грати без підключення до Інтернету.</item>
+        <item quantity="few">Ці епізоди не можна буде грати без підключення до Інтернету.</item>
+        <item quantity="many">Ці епізоди не можна буде грати без підключення до Інтернету.</item>
+        <item quantity="other">Ці епізоди не можна буде грати без підключення до Інтернету.</item>
+    </plurals>
+    <string name="downloads_none">Немає завантажень. Натисніть на іконку \"Завантаження\" у меню, щоб завантажити епізоди та зробити їх доступними без підключення до Інтернету.</string>
+    <string name="download_started">Почалося завантаження епізоду\n\"%s\"</string>
+    <string name="download_failed">Не вдалося завантажити епізод\n\"%s\"</string>
     <string name="auth">Авторизація</string>
     <string name="auth_edit">Змінити ім’я користувача і пароль</string>
     <string name="auth_username">Ім’я користувача</string>
@@ -115,5 +133,5 @@
     <string name="pref_theme_color_title">Колір теми</string>
     <string name="pref_wide_episode_list_title">Розширений список епізодів</string>
     <string name="pref_wide_episode_list_summary">Виділити місце для більш детальної інформації про епізоди</string>
-    <string name="ad">Спробуйте &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; та &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt;. Завантаження, плейлисти, фільтри та багато інших додаткових можливостей!</string>
+    <string name="ad">Спробуйте &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; та &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt;. Плейлисти, фільтри та багато інших додаткових можливостей!</string>
 </resources>

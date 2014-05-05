@@ -19,7 +19,9 @@ package net.alliknow.podcatcher.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.LinearLayout;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
@@ -28,7 +30,7 @@ import net.alliknow.podcatcher.model.types.Episode;
 /**
  * A list item view to represent an episode.
  */
-public class EpisodeListItemView extends LinearLayout {
+public class EpisodeListItemView extends PodcatcherListItemView {
 
     /** String to use if there is no episode title available */
     private static final String NO_TITLE = "???";
@@ -41,6 +43,10 @@ public class EpisodeListItemView extends LinearLayout {
     private TextView titleTextView;
     /** The caption text view */
     private TextView captionTextView;
+    /** The progress bar view */
+    private ProgressBar progressBarView;
+    /** The download icon view */
+    private ImageView downloadIconView;
 
     /**
      * Create an episode item list view.
@@ -58,6 +64,8 @@ public class EpisodeListItemView extends LinearLayout {
 
         titleTextView = (TextView) findViewById(R.id.list_item_title);
         captionTextView = (TextView) findViewById(R.id.list_item_caption);
+        progressBarView = (ProgressBar) findViewById(R.id.list_item_progress);
+        downloadIconView = (ImageView) findViewById(R.id.download_icon);
     }
 
     /**
@@ -67,11 +75,54 @@ public class EpisodeListItemView extends LinearLayout {
      * @param showPodcastName Whether the podcast name should show.
      */
     public void show(final Episode episode, boolean showPodcastName) {
-        // 1. Set episode title
+        // 0. Get episode state
+        final boolean downloading = episodeManager.isDownloading(episode);
+        final boolean progressShouldFade = episode.hashCode() == lastItemId;
+
+        // 1. Set and format episode title
         titleTextView.setText(createTitle(episode));
 
-        // 2. Set caption
+        // 2. Set caption and make sure it shows
         captionTextView.setText(createCaption(episode, showPodcastName));
+        // If this is the same episode, crossfade (otherwise just set it)
+        if (!downloading && isShowingProgress && progressShouldFade)
+            crossfade(captionTextView, progressBarView);
+        else
+            captionTextView.setVisibility(downloading ? GONE : VISIBLE);
+
+        // 3. Hide/show progress bar
+        // If this is the same episode, crossfade (otherwise just set it)
+        if (downloading && !isShowingProgress && progressShouldFade)
+            crossfade(progressBarView, captionTextView);
+        else
+            progressBarView.setVisibility(downloading ? VISIBLE : GONE);
+        // We need to reset the progress here, because the view might be
+        // recycled and it should not show another episode's progress
+        if (downloading)
+            updateProgress(episodeManager.getDownloadProgress(episode));
+
+        // 4. Update the metadata to show for this episode
+        updateMetadata(episode);
+
+        // 5. Store state to make sure it is available next time show() is
+        // called and we can decide whether to crossfade or not
+        this.isShowingProgress = downloading;
+        this.lastItemId = episode.hashCode();
+    }
+
+    /**
+     * Update the episode progress indicator to the progress given. Does not
+     * change the visibility of the progress view.
+     * 
+     * @param percent Progress to show.
+     */
+    public void updateProgress(int percent) {
+        // Show progress in progress bar
+        if (percent >= 0 && percent <= 100) {
+            progressBarView.setIndeterminate(false);
+            progressBarView.setProgress(percent);
+        } else
+            progressBarView.setIndeterminate(true);
     }
 
     private String createTitle(Episode episode) {
@@ -122,5 +173,20 @@ public class EpisodeListItemView extends LinearLayout {
         }
 
         return result;
+    }
+
+    private void updateMetadata(Episode episode) {
+        // Okay, so this gets a bit messy, we have a lot of cases to cover.
+        // 1. Find all the information we need to make the view look right
+        final boolean downloading = episodeManager.isDownloading(episode);
+        final boolean downloaded = episodeManager.isDownloaded(episode);
+
+        // 2. Set the view content and visibility accordingly
+        if (downloading)
+            downloadIconView.setImageResource(R.drawable.ic_media_downloading);
+        else if (downloaded)
+            downloadIconView.setImageResource(R.drawable.ic_media_downloaded);
+
+        downloadIconView.setVisibility(downloading || downloaded ? View.VISIBLE : View.GONE);
     }
 }

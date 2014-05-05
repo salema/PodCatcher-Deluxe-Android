@@ -69,7 +69,23 @@
         <item quantity="few">%d díly</item>
         <item quantity="other">%d dílů</item>
     </plurals>
+    <string name="episodes_select_all">Vybrat vše</string>
     <string name="episodes_sort_toggle">Obrátit pořadí</string>
+    <string name="download">Stahování</string>
+    <string name="downloads">Stahování</string>
+    <plurals name="downloads_remove_title">
+        <item quantity="one">Smazat stažený</item>
+        <item quantity="few">Smazat %d stažené</item>
+        <item quantity="other">Smazat %d stažených</item>
+    </plurals>
+    <plurals name="downloads_remove_text">
+        <item quantity="one">Díl nebude nadále dostupný mimo internet.</item>
+        <item quantity="few">Díly nebudou nadále dostupné mimo internet.</item>
+        <item quantity="other">Díly nebudou nadále dostupné mimo internet.</item>
+    </plurals>
+    <string name="downloads_none">Žádné stahování. Použijte ikonu pro stahování v nabídce pro zpřístupnění dílů, když nejste připojen k internetu.</string>
+    <string name="download_started">Stahování spuštěno pro \n\"%s\"</string>
+    <string name="download_failed">Stahování se nepodařilo u \n\"%s\"</string>
     <string name="auth">Oprávnění</string>
     <string name="auth_edit">Upravit oprávnění</string>
     <string name="auth_username">Uživatleské jméno</string>
@@ -113,5 +129,5 @@
     <string name="pref_theme_color_title">Barva motivu</string>
     <string name="pref_wide_episode_list_title">Rozsáhlý seznam dílů</string>
     <string name="pref_wide_episode_list_summary">Udělat prostor pro více podrobností k dílu</string>
-    <string name="ad">Zkuste &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; a &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt; kvůli stahování, seznamům skladeb, filtrům a mnoha dalším prémiovým funkcím!</string>
+    <string name="ad">Zkuste &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; a &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt; kvůli seznamům skladeb, filtrům a mnoha dalším prémiovým funkcím!</string>
 </resources>

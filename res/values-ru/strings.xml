@@ -71,7 +71,25 @@
         <item quantity="many">%d эпизодов</item>
         <item quantity="other">%d эпизодов</item>
     </plurals>
+    <string name="episodes_select_all">Выбрать все</string>
     <string name="episodes_sort_toggle">В обратном порядке</string>
+    <string name="download">Скачать</string>
+    <string name="downloads">Загрузки</string>
+    <plurals name="downloads_remove_title">
+        <item quantity="one">Удалить загрузку</item>
+        <item quantity="few">Удалить %d загрузок</item>
+        <item quantity="many">Удалить %d загрузок</item>
+        <item quantity="other">Удалить %d загрузок</item>
+    </plurals>
+    <plurals name="downloads_remove_text">
+        <item quantity="one">Вы больше не сможете просматривать этот эпизод без подключения к интернету.</item>
+        <item quantity="few">Вы больше не сможете просматривать эти эпизоды без подключения к интернету.</item>
+        <item quantity="many">Вы больше не сможете просматривать эти эпизоды без подключения к интернету.</item>
+        <item quantity="other">Вы больше не сможете просматривать эти эпизоды без подключения к интернету.</item>
+    </plurals>
+    <string name="downloads_none">Нет загруженных эпизодов. Чтобы загрузить эпизоды, нажмите на иконку загрузки в меню. Так вы сможете просматривать их без подключения к интернету.</string>
+    <string name="download_started">Началась загрузка эпизода\n\"%s\"</string>
+    <string name="download_failed">Не удалось загрузить эпизод\n\"%s\"</string>
     <string name="auth">Авторизация</string>
     <string name="auth_edit">Редактировать параметры авторизации</string>
     <string name="auth_username">Имя пользователя</string>
@@ -115,5 +133,5 @@
     <string name="pref_theme_color_title">Цвет темы</string>
     <string name="pref_wide_episode_list_title">Широкий список эпизодов</string>
     <string name="pref_wide_episode_list_summary">Выделить место для более подробной информации об эпизодах</string>
-    <string name="ad">Попробуйте также &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; и &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt;. Загрузки эпизодов, плейтисты, фильтры и множество других дополнительных возможностей!</string>
+    <string name="ad">Попробуйте также &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; и &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt;. Плейтисты, фильтры и множество других дополнительных возможностей!</string>
 </resources>

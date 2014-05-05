@@ -28,9 +28,11 @@ import android.net.http.HttpResponseCache;
 import android.os.AsyncTask;
 import android.os.Process;
 
+import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.SuggestionManager;
 import net.alliknow.podcatcher.model.SyncManager;
+import net.alliknow.podcatcher.model.tasks.LoadEpisodeMetadataTask;
 import net.alliknow.podcatcher.model.tasks.LoadPodcastListTask;
 
 import java.io.File;
@@ -76,6 +78,8 @@ public class Podcatcher extends Application {
         // since the application is an implicit singleton. We create the other
         // singletons here to make sure they know their application instance.
         PodcastManager.getInstance(this);
+        // And this one as well
+        EpisodeManager.getInstance(this);
         // dito
         SuggestionManager.getInstance(this);
         // and sync as well
@@ -89,11 +93,18 @@ public class Podcatcher extends Application {
             // This should not happen, but the app works without the cache
         }
 
-        // Now we will trigger the preparation on start-up:
-        // Load podcast list from file async, once this is finished the
+        // Now we will trigger the preparation on start-up, steps include:
+        // 1. Load podcast list from file async, once this is finished the
         // podcast manager is alerted and in turn tells the controller activity.
         // Then the UI can show the list and we are ready to go
         new LoadPodcastListTask(this, PodcastManager.getInstance())
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
+        // 2. At the same time we load episode metadata from file async (this
+        // has the potential to take a lot of time, since the amount of data
+        // might be quite big). The UI is functional without this having
+        // completed, but loading of podcasts and downloads will
+        // block until the data is available.
+        new LoadEpisodeMetadataTask(this, EpisodeManager.getInstance())
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
     }
 

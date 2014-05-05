@@ -24,6 +24,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.PodcastManager;
 
 /**
@@ -34,6 +35,8 @@ abstract class PodcatcherListItemView extends RelativeLayout {
 
     /** Our podcast manager handle */
     protected final PodcastManager podcastManager;
+    /** Our episode manager handle */
+    protected final EpisodeManager episodeManager;
 
     /** Flag for progress bar visibility, needed for correct crossfade */
     protected boolean isShowingProgress;
@@ -53,6 +56,7 @@ abstract class PodcatcherListItemView extends RelativeLayout {
         super(context, attrs);
 
         this.podcastManager = PodcastManager.getInstance();
+        this.episodeManager = EpisodeManager.getInstance();
 
         this.crossfadeDuration = context.getResources()
                 .getInteger(android.R.integer.config_shortAnimTime);

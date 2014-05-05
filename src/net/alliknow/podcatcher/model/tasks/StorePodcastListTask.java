@@ -22,14 +22,12 @@ import static net.alliknow.podcatcher.model.PodcastManager.OPML_FILENAME;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.AsyncTask;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnStorePodcastListListener;
 import net.alliknow.podcatcher.model.PodcastManager;
 import net.alliknow.podcatcher.model.tags.OPML;
 import net.alliknow.podcatcher.model.types.Podcast;
-import net.alliknow.podcatcher.model.types.Progress;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -45,7 +43,7 @@ import java.util.List;
  * Stores the a podcast list to the file system asynchronously. Use
  * {@link OnStorePodcastListListener} to monitor the task.
  */
-public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Void> {
+public class StorePodcastListTask extends StoreFileTask<List<Podcast>> {
 
     /** The call-back */
     protected final OnStorePodcastListListener listener;
@@ -65,9 +63,6 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
     protected boolean writeAuthorization = false;
     /** The exception that might have been occurred */
     protected Exception exception;
-
-    /** The indent char */
-    private static final char INDENT = ' ';
 
     /**
      * Create new task with a call-back attached.
@@ -111,7 +106,6 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
     @Override
     protected Void doInBackground(List<Podcast>... params) {
         this.podcastList = params[0];
-        BufferedWriter writer = null;
 
         try {
             // 1. Open the file and get a writer
@@ -130,10 +124,10 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
                     PodcastManager.OPML_FILE_ENCODING));
 
             // 2. Write new file content
-            writeHeader(writer, opmlFileTitle);
+            writeHeader(opmlFileTitle);
             for (Podcast podcast : podcastList)
-                writePodcast(writer, podcast);
-            writeFooter(writer);
+                writePodcast(podcast);
+            writeFooter();
         } catch (Exception ex) {
             this.exception = ex;
 
@@ -163,7 +157,7 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
             listener.onPodcastListStoreFailed(podcastList, exportLocation, exception);
     }
 
-    private void writePodcast(BufferedWriter writer, Podcast podcast) throws IOException {
+    private void writePodcast(Podcast podcast) throws IOException {
         // Skip, if not a valid podcast
         if (hasNameAndUrl(podcast)) {
             String opmlString = String.format("<%s %s=\"%s\" %s=\"%s\" %s=\"%s\" />",
@@ -183,7 +177,7 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
                         OPML.EXTRA_PASS, htmlEncode(podcast.getPassword()));
             }
 
-            writeLine(writer, 2, opmlString);
+            writeLine(2, opmlString);
         }
     }
 
@@ -195,27 +189,18 @@ public class StorePodcastListTask extends AsyncTask<List<Podcast>, Progress, Voi
                 && podcast.getUrl() != null;
     }
 
-    private void writeHeader(BufferedWriter writer, String fileName) throws IOException {
-        writeLine(writer, 0, "<?xml version=\"1.0\" encoding=\""
-                + PodcastManager.OPML_FILE_ENCODING + "\"?>");
-        writeLine(writer, 0, "<opml version=\"2.0\">");
-        writeLine(writer, 1, "<head>");
-        writeLine(writer, 2, "<title>" + fileName + "</title>");
-        writeLine(writer, 2, "<dateModified>" + new Date().toString() + "</dateModified>");
-        writeLine(writer, 1, "</head>");
-        writeLine(writer, 1, "<body>");
+    private void writeHeader(String fileName) throws IOException {
+        writeLine(0, "<?xml version=\"1.0\" encoding=\"" + FILE_ENCODING + "\"?>");
+        writeLine(0, "<opml version=\"2.0\">");
+        writeLine(1, "<head>");
+        writeLine(2, "<title>" + fileName + "</title>");
+        writeLine(2, "<dateModified>" + new Date().toString() + "</dateModified>");
+        writeLine(1, "</head>");
+        writeLine(1, "<body>");
     }
 
-    private void writeFooter(BufferedWriter writer) throws IOException {
-        writeLine(writer, 1, "</body>");
-        writeLine(writer, 0, "</opml>");
-    }
-
-    private void writeLine(BufferedWriter writer, int level, String line) throws IOException {
-        for (int i = 0; i < level * 2; i++)
-            writer.write(INDENT);
-
-        writer.write(line);
-        writer.newLine();
+    private void writeFooter() throws IOException {
+        writeLine(1, "</body>");
+        writeLine(0, "</opml>");
     }
 }

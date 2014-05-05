@@ -48,6 +48,7 @@ import android.util.Log;
 
 import net.alliknow.podcatcher.Podcatcher;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
+import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Episode;
 
 import java.util.HashMap;
@@ -85,6 +86,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
     /** Action to send to service to stop episode */
     public static final String ACTION_STOP = "net.alliknow.podcatcher.action.STOP";
 
+    /** The episode manager handle */
+    private EpisodeManager episodeManager;
     /** Current episode */
     private Episode currentEpisode;
     /** Our MediaPlayer handle */
@@ -160,6 +163,8 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
         wifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
                 .createWifiLock(WifiManager.WIFI_MODE_FULL, "mylock");
 
+        // Get our episode manager handle
+        episodeManager = EpisodeManager.getInstance();
         // Our notification helper
         notification = PlayEpisodeNotification.getInstance(this);
     }
@@ -269,23 +274,29 @@ public class PlayEpisodeService extends Service implements OnPreparedListener,
             try {
                 initPlayer();
 
-                // We add some request headers to overwrite the default user
-                // agent because this is blocked by some servers
-                final HashMap<String, String> headers = new HashMap<>(2);
-                headers.put(Podcatcher.USER_AGENT_KEY, Podcatcher.USER_AGENT_VALUE);
+                // Play local file
+                if (episodeManager.isDownloaded(episode))
+                    player.setDataSource(episodeManager.getLocalPath(episode));
+                // Need to resort to remote file
+                else {
+                    // We add some request headers to overwrite the default user
+                    // agent because this is blocked by some servers
+                    final HashMap<String, String> headers = new HashMap<>(2);
+                    headers.put(Podcatcher.USER_AGENT_KEY, Podcatcher.USER_AGENT_VALUE);
 
-                // Also set the authorization header data if needed
-                final String auth = episode.getPodcast().getAuthorization();
-                if (auth != null)
-                    headers.put(AUTHORIZATION_KEY, auth);
+                    // Also set the authorization header data if needed
+                    final String auth = episode.getPodcast().getAuthorization();
+                    if (auth != null)
+                        headers.put(AUTHORIZATION_KEY, auth);
 
-                // Actually set the remote source for the playback
-                player.setDataSource(this, Uri.parse(currentEpisode.getMediaUrl()), headers);
+                    // Actually set the remote source for the playback
+                    player.setDataSource(this, Uri.parse(currentEpisode.getMediaUrl()), headers);
 
-                // Make sure the device stays alive
+                    // We are streaming, so make wifi stay alive
+                    wifiLock.acquire();
+                }
+
                 player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
-                wifiLock.acquire();
-
                 player.prepareAsync(); // might take long! (for buffering, etc)
             } catch (Exception e) {
                 Log.d(TAG, "Prepare/Play failed for episode: " + episode, e);

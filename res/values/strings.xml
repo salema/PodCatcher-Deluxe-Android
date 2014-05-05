@@ -67,7 +67,24 @@
         <item quantity="one">One episode</item>
         <item quantity="other">%d episodes</item>
     </plurals>
+    <string name="episodes_select_all">Select all</string>
     <string name="episodes_sort_toggle">Reverse order</string>
+    <string name="download">Download</string>
+    <string name="downloads">Downloads</string>
+    <plurals name="downloads_remove_title">
+        <item quantity="one">Delete download</item>
+        <item quantity="other">Delete %d downloads</item>
+    </plurals>
+    <plurals name="downloads_remove_text">
+        <item quantity="one">This episode will no longer be available offline.</item>
+        <item quantity="other">These episodes will no longer be available offline.</item>
+    </plurals>
+    <string name="downloads_none">No downloads. Use the download icon in the menu to make episodes available offline.</string>
+    <string name="download_started">Download started for \n\"%s\"</string>
+    <string name="download_failed">Download failed for \n\"%s\"</string>
+    <string name="download_failed_cannot_write">Download failed for \n\"%s\"\n because the download folder cannot be written to.</string>
+    <string name="download_failed_no_space">Download failed for \n\"%s\"\n because there is not enough storage space.</string>
+    <string name="download_failed_download_app_disabled">Download failed for \n\"%s\"\n because the Android download app is disabled.</string>
     <string name="auth">Authorization</string>
     <string name="auth_edit">Edit Authorization</string>
     <string name="auth_username">Username</string>
@@ -111,5 +128,5 @@
     <string name="pref_theme_color_title">Theme color</string>
     <string name="pref_wide_episode_list_title">Wide episode list</string>
     <string name="pref_wide_episode_list_summary">Make room for more episode details</string>
-    <string name="ad">Try &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; and &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt; for downloads, playlists, filters, and many more premium features!</string>
+    <string name="ad">Try &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; and &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt; for playlists, filters, and many more premium features!</string>
 </resources>

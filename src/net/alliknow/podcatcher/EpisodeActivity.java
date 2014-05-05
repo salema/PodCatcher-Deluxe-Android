@@ -17,6 +17,8 @@
 
 package net.alliknow.podcatcher;
 
+import static net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationFragment.TAG;
+
 import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Context;
@@ -25,12 +27,16 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.widget.SeekBar;
 
+import net.alliknow.podcatcher.listeners.OnDownloadEpisodeListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.listeners.PlayServiceListener;
 import net.alliknow.podcatcher.listeners.PlayerListener;
+import net.alliknow.podcatcher.model.tasks.remote.DownloadEpisodeTask.EpisodeDownloadError;
 import net.alliknow.podcatcher.model.types.Episode;
 import net.alliknow.podcatcher.services.PlayEpisodeService;
 import net.alliknow.podcatcher.services.PlayEpisodeService.PlayServiceBinder;
+import net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationFragment;
+import net.alliknow.podcatcher.view.fragments.DeleteDownloadsConfirmationFragment.OnDeleteDownloadsConfirmationListener;
 import net.alliknow.podcatcher.view.fragments.EpisodeFragment;
 import net.alliknow.podcatcher.view.fragments.PlayerFragment;
 
@@ -44,7 +50,8 @@ import java.util.TimerTask;
  * or simply show this layout.
  */
 public abstract class EpisodeActivity extends BaseActivity implements
-        PlayerListener, PlayServiceListener, OnSelectEpisodeListener {
+        PlayerListener, PlayServiceListener, OnSelectEpisodeListener,
+        OnDownloadEpisodeListener {
 
     /** Key used to store episode URL in intent or bundle */
     public static final String EPISODE_URL_KEY = "episode_url_key";
@@ -125,6 +132,10 @@ public abstract class EpisodeActivity extends BaseActivity implements
         // once the service is up
         Intent intent = new Intent(this, PlayEpisodeService.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
+
+        // We have to do this here instead of onCreate since we can only react
+        // on the call-backs properly once we have our fragment
+        episodeManager.addDownloadListener(this);
     }
 
     @Override
@@ -159,6 +170,9 @@ public abstract class EpisodeActivity extends BaseActivity implements
 
         // Stop the timer
         playUpdateTimer.cancel();
+
+        // Disconnect from episode manager
+        episodeManager.removeDownloadListener(this);
 
         // Detach from play service (prevents leaking)
         if (service != null) {
@@ -204,6 +218,7 @@ public abstract class EpisodeActivity extends BaseActivity implements
         }
 
         updatePlayerUi();
+        updateDownloadUi();
     }
 
     @Override
@@ -217,6 +232,62 @@ public abstract class EpisodeActivity extends BaseActivity implements
         selection.resetEpisode();
 
         updatePlayerUi();
+        updateDownloadUi();
+    }
+
+    @Override
+    public void onDownloadProgress(Episode episode, int percent) {
+        // pass
+    }
+
+    @Override
+    public void onDownloadSuccess(Episode episode) {
+        updateDownloadUi();
+    }
+
+    @Override
+    public void onDownloadDeleted(Episode episode) {
+        updateDownloadUi();
+    }
+
+    @Override
+    public void onDownloadFailed(Episode episode, EpisodeDownloadError error) {
+        updateDownloadUi();
+    }
+
+    @Override
+    public void onToggleDownload() {
+        if (selection.isEpisodeSet()) {
+            // Check for action to perform
+            boolean download = !episodeManager.isDownloadingOrDownloaded(selection.getEpisode());
+
+            // Kick off the appropriate action
+            if (download) {
+                episodeManager.download(selection.getEpisode());
+
+                showToast(getString(R.string.download_started, selection.getEpisode().getName()));
+                updateDownloadUi();
+            }
+            else {
+                // For deletion, we show a confirmation dialog first
+                final DeleteDownloadsConfirmationFragment confirmationDialog =
+                        new DeleteDownloadsConfirmationFragment();
+                confirmationDialog.setListener(new OnDeleteDownloadsConfirmationListener() {
+
+                    @Override
+                    public void onConfirmDeletion() {
+                        episodeManager.deleteDownload(selection.getEpisode());
+                    }
+
+                    @Override
+                    public void onCancelDeletion() {
+                        // Nothing to do here...
+                    }
+                });
+
+                confirmationDialog.show(getFragmentManager(), TAG);
+            }
+        }
     }
 
     @Override
@@ -341,6 +412,23 @@ public abstract class EpisodeActivity extends BaseActivity implements
      * Sub-classes need to overwrite.
      */
     protected abstract void updateActionBar();
+
+    /**
+     * Update all UI related to the download state of the current selection.
+     * Sub-classes might want to extend this.
+     */
+    protected void updateDownloadUi() {
+        // The episode fragment might be popped out if we are in small landscape
+        // view mode and the episode list is currently visible
+        if (episodeFragment != null) {
+            final boolean downloading = episodeManager.isDownloading(selection.getEpisode());
+            final boolean downloaded = episodeManager.isDownloaded(selection.getEpisode());
+
+            episodeFragment.setDownloadMenuItemVisibility(selection.isEpisodeSet(),
+                    !(downloading || downloaded));
+            episodeFragment.setDownloadIconVisibility(downloading || downloaded, downloaded);
+        }
+    }
 
     /**
      * Update the player fragment UI to reflect current state of play.

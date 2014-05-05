@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnSelectPodcastListener;
+import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.PodcastManager;
 
 /**
@@ -86,7 +87,7 @@ public class ContentSpinner extends Spinner implements OnItemSelectedListener {
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override
@@ -96,7 +97,15 @@ public class ContentSpinner extends Spinner implements OnItemSelectedListener {
 
         @Override
         public long getItemId(int position) {
-            return position == 1 ? R.string.podcast_select_all : 0;
+            // case 0: is the dummy view
+            switch (position) {
+                case 1:
+                    return R.string.podcast_select_all;
+                case 2:
+                    return R.string.downloads;
+                default:
+                    return 0;
+            }
         }
 
         @Override
@@ -133,6 +142,15 @@ public class ContentSpinner extends Spinner implements OnItemSelectedListener {
                         subtitleView.setText(parent.getContext().getResources()
                                 .getQuantityString(R.plurals.podcasts, podcastCount, podcastCount));
                     break;
+                case 2:
+                    imageView.setImageResource(R.drawable.ic_menu_download);
+                    titleView.setText(R.string.downloads);
+
+                    // Set the subtitle
+                    final int downloadsCount = EpisodeManager.getInstance().getDownloadsSize();
+                    setEpisodeNumberText(parent, subtitleView, downloadsCount);
+
+                    break;
             }
 
             // Make sure to hide empty sub-titles
@@ -140,6 +158,15 @@ public class ContentSpinner extends Spinner implements OnItemSelectedListener {
                 subtitleView.setVisibility(View.GONE);
 
             return spinnerItemView;
+        }
+
+        private void setEpisodeNumberText(ViewGroup parent, final TextView subtitleView,
+                final int count) {
+            if (count == 0)
+                subtitleView.setText(null);
+            else
+                subtitleView.setText(parent.getContext().getResources()
+                        .getQuantityString(R.plurals.episodes, count, count));
         }
     }
 
@@ -191,6 +218,9 @@ public class ContentSpinner extends Spinner implements OnItemSelectedListener {
             switch (Long.valueOf(id).intValue()) {
                 case R.string.podcast_select_all:
                     listener.onAllPodcastsSelected();
+                    break;
+                case R.string.downloads:
+                    listener.onDownloadsSelected();
                     break;
                 default:
                     // Nothing to do here

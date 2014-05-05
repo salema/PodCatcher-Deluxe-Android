@@ -67,7 +67,21 @@
         <item quantity="one">Un épisode</item>
         <item quantity="other">%d épisodes</item>
     </plurals>
+    <string name="episodes_select_all">Sélectionner tous</string>
     <string name="episodes_sort_toggle">Inverser l’ordre</string>
+    <string name="download">Télécharger</string>
+    <string name="downloads">Téléchargements</string>
+    <plurals name="downloads_remove_title">
+        <item quantity="one">Supprimer téléchargement</item>
+        <item quantity="other">Supprimer %d téléchargements</item>
+    </plurals>
+    <plurals name="downloads_remove_text">
+        <item quantity="one">Après avoir supprimé cet épisode, celui-ci ne sera plus accessible sans connexion internet.</item>
+        <item quantity="other">Après avoir supprimé ces épisodes, ceux-ci ne seront plus accessibles sans connexion internet.</item>
+    </plurals>
+    <string name="downloads_none">Aucun épisode disponible. Pour sauvegarder des épisodes, cliquez sur le symbole de téléchargement.</string>
+    <string name="download_started">Téléchargement de\n\"%s\"\ndémarré</string>
+    <string name="download_failed">Le téléchargement a échoué:\n\"%s\"</string>
     <string name="auth">Autorisation</string>
     <string name="auth_edit">Modifier l’autorisation</string>
     <string name="auth_username">Identifiant</string>
@@ -111,5 +125,5 @@
     <string name="pref_theme_color_title">Thème de couleur</string>
     <string name="pref_wide_episode_list_title">Grande liste d’épisodes</string>
     <string name="pref_wide_episode_list_summary">Plus d’espace pour les détails d’épisode</string>
-    <string name="ad">Testez &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; et &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt;, les applications qui vous offrent plus d’options que la version simple: le téléchargement d’épisodes, la création de listes de lecture, des filtres et beaucoup d’autres fonctions!</string>
+    <string name="ad">Testez &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; et &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt;, les applications qui vous offrent plus d’options que la version simple: la création de listes de lecture, des filtres et beaucoup d’autres fonctions!</string>
 </resources>

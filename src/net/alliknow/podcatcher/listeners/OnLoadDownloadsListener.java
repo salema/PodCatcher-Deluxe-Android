@@ -17,33 +17,20 @@
 
 package net.alliknow.podcatcher.listeners;
 
-import net.alliknow.podcatcher.model.types.Podcast;
+import net.alliknow.podcatcher.model.types.Episode;
+
+import java.util.List;
 
 /**
- * Interface definition for a callback to be invoked when a podcast is selected.
+ * Interface definition for a callback to be invoked when the list of downloads
+ * is available.
  */
-public interface OnSelectPodcastListener {
+public interface OnLoadDownloadsListener {
 
     /**
-     * Called on listener to reflect that a podcast has been selected.
+     * Called on listener when the list of downloads is available.
      * 
-     * @param selectedPodcast Podcast selected by the user (not
-     *            <code>null</code>).
+     * @param downloads The actual list.
      */
-    public void onPodcastSelected(Podcast selectedPodcast);
-
-    /**
-     * Called on listener to reflect that all podcasts are selected.
-     */
-    public void onAllPodcastsSelected();
-
-    /**
-     * Called on listener to reflect that downloads are selected.
-     */
-    public void onDownloadsSelected();
-
-    /**
-     * Called on listener to reflect that no podcast is selected anymore.
-     */
-    public void onNoPodcastSelected();
+    public void onDownloadsLoaded(List<Episode> downloads);
 }

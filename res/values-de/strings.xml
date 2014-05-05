@@ -67,7 +67,21 @@
         <item quantity="one">Eine Episode</item>
         <item quantity="other">%d Episoden</item>
     </plurals>
+    <string name="episodes_select_all">Alle auswählen</string>
     <string name="episodes_sort_toggle">Reihenfolge umdrehen</string>
+    <string name="download">Download</string>
+    <string name="downloads">Downloads</string>
+    <plurals name="downloads_remove_title">
+        <item quantity="one">Download löschen</item>
+        <item quantity="other">%d Downloads löschen</item>
+    </plurals>
+    <plurals name="downloads_remove_text">
+        <item quantity="one">Diese Episode ist nach dem Löschen nicht mehr ohne Internetverbindung verfügbar.</item>
+        <item quantity="other">Diese Episoden sind nach dem Löschen nicht mehr ohne Internetverbindung verfügbar.</item>
+    </plurals>
+    <string name="downloads_none">Keine Downloads vorhanden. Benutzen Sie das Download-Zeichen im Menü, um Episoden auf dem Gerät zu speichern.</string>
+    <string name="download_started">Download gestartet für \n\"%s\"</string>
+    <string name="download_failed">Download fehlgeschlagen für \n\"%s\"</string>
     <string name="auth">Anmeldung</string>
     <string name="auth_edit">Anmeldung bearbeiten</string>
     <string name="auth_username">Benutzername</string>
@@ -111,5 +125,5 @@
     <string name="pref_theme_color_title">Farbthema</string>
     <string name="pref_wide_episode_list_title">Breite Episodenliste</string>
     <string name="pref_wide_episode_list_summary">Mehr Platz für Episodendetails</string>
-    <string name="ad">Testen Sie &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; und &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt;: Downloads, Wiedergabelisten, Filter und viele weitere Komfortfunktionen!</string>
+    <string name="ad">Testen Sie &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; und &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt;: Wiedergabelisten, Filter und viele weitere Komfortfunktionen!</string>
 </resources>

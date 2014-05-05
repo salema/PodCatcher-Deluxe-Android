@@ -67,7 +67,21 @@
         <item quantity="one">Un episodio</item>
         <item quantity="other">%d episodios</item>
     </plurals>
+    <string name="episodes_select_all">Seleccionar todos</string>
     <string name="episodes_sort_toggle">Invertir orden</string>
+    <string name="download">Descargar</string>
+    <string name="downloads">Descargas</string>
+    <plurals name="downloads_remove_title">
+        <item quantity="one">Eliminar descarga</item>
+        <item quantity="other">Eliminar %d descargas</item>
+    </plurals>
+    <plurals name="downloads_remove_text">
+        <item quantity="one">Tras borrar este episodio, éste ya no estará disponible sin conexión a internet.</item>
+        <item quantity="other">Tras borrar estos episodios, estos ya no estarán disponibles sin conexión a Internet.</item>
+    </plurals>
+    <string name="downloads_none">No hay ningún episodio disponible. Para almacenar episodios, haga clic en el símbolo de descarga del menú.</string>
+    <string name="download_started">Descarga activa:\n\"%s\"</string>
+    <string name="download_failed">La descarga ha fallado:\n\"%s\"</string>
     <string name="auth">Autorización</string>
     <string name="auth_edit">Modificar las autorizaciones</string>
     <string name="auth_username">Nombre de usuario</string>
@@ -111,5 +125,5 @@
     <string name="pref_theme_color_title">Color de tema</string>
     <string name="pref_wide_episode_list_title">Amplia lista de episodios</string>
     <string name="pref_wide_episode_list_summary">Hacer espacio para más detalles sobre los episodios</string>
-    <string name="ad">Prueba &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; y &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt;: Descargas, listas, filtros y mucho más!</string>
+    <string name="ad">Prueba &lt;a href="market://details?id=com.podcatcher.deluxe"&gt;Podcatcher Deluxe&lt;/a&gt; y &lt;a href="market://details?id=com.podcatcher.deluxe.video"&gt;Video Podcatcher Deluxe&lt;/a&gt;: Listas, filtros y mucho más!</string>
 </resources>

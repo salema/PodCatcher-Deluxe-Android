@@ -19,23 +19,28 @@ package net.alliknow.podcatcher.view.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.adapters.EpisodeListAdapter;
+import net.alliknow.podcatcher.listeners.EpisodeListContextListener;
 import net.alliknow.podcatcher.listeners.OnReverseSortingListener;
 import net.alliknow.podcatcher.listeners.OnSelectEpisodeListener;
 import net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask.PodcastLoadError;
 import net.alliknow.podcatcher.model.types.Episode;
+import net.alliknow.podcatcher.view.EpisodeListItemView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -106,6 +111,9 @@ public class EpisodeListFragment extends PodcatcherListFragment {
         topProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar_top);
 
         viewCreated = true;
+        
+        // Set list choice listener (context action mode)
+        getListView().setMultiChoiceModeListener(new EpisodeListContextListener(this));
 
         // This will make sure we show the right information once the view
         // controls are established (the list might have been set earlier)
@@ -166,6 +174,10 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
         // Update UI
         if (viewCreated) {
+            // We need to store any currently checked items here because
+            // we might want to re-check them after updating the list
+            final List<Episode> checkedEpisodes = getCheckedEpisodes();
+
             if (adapter == null)
                 // This also set the member
                 setListAdapter(new EpisodeListAdapter(getActivity(), episodeList));
@@ -174,6 +186,25 @@ public class EpisodeListFragment extends PodcatcherListFragment {
 
             // Update adapter setting
             ((EpisodeListAdapter) adapter).setShowPodcastNames(showPodcastNames);
+
+            // Restore checked items, if any
+            boolean shouldResetAllCheckedStates = true;
+            if (checkedEpisodes != null && checkedEpisodes.size() > 0) {
+                getListView().clearChoices();
+
+                for (Episode episode : checkedEpisodes) {
+                    final int newPosition = currentEpisodeList.indexOf(episode);
+
+                    if (newPosition >= 0) {
+                        getListView().setItemChecked(newPosition, true);
+                        shouldResetAllCheckedStates = false;
+                    }
+                }
+            }
+
+            // This will clear all check states and end the context mode
+            if (shouldResetAllCheckedStates)
+                getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
 
             // Update other UI elements
             if (episodeList.isEmpty())
@@ -208,6 +239,26 @@ public class EpisodeListFragment extends PodcatcherListFragment {
             sortMenuItem.setVisible(showSortMenuItem);
             sortMenuItem.setIcon(sortMenuItemState ?
                     R.drawable.ic_menu_sort_reverse : R.drawable.ic_menu_sort);
+        }
+    }
+    
+    /**
+     * Update the progress information for the episode given to reflect the
+     * percentage of given. Does nothing if the episode is off the screen.
+     * 
+     * @param episode The episode to update progress for.
+     * @param percent The percentage value to show.
+     */
+    public void showProgress(Episode episode, int percent) {
+        // To prevent this if we are not ready to handle progress update
+        // e.g. on app termination
+        if (viewCreated && currentEpisodeList != null) {
+            final EpisodeListItemView listItemView = (EpisodeListItemView)
+                    findListItemViewForIndex(currentEpisodeList.indexOf(episode));
+
+            // Is the position visible?
+            if (listItemView != null)
+                listItemView.updateProgress(percent);
         }
     }
 
@@ -318,5 +369,20 @@ public class EpisodeListFragment extends PodcatcherListFragment {
             progressView.showError(R.string.podcast_load_multiple_error_all);
 
         super.showLoadFailed();
+    }
+
+    private List<Episode> getCheckedEpisodes() {
+        List<Episode> result = null;
+
+        if (getListAdapter() != null && getListView().getCheckedItemCount() > 0) {
+            result = new ArrayList<>();
+            final SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
+
+            for (int position = 0; position < getListAdapter().getCount(); position++)
+                if (checkedItems.get(position))
+                    result.add((Episode) getListAdapter().getItem(position));
+        }
+
+        return result;
     }
 }

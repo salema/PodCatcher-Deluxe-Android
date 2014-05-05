@@ -17,33 +17,21 @@
 
 package net.alliknow.podcatcher.listeners;
 
-import net.alliknow.podcatcher.model.types.Podcast;
-
 /**
- * Interface definition for a callback to be invoked when a podcast is selected.
+ * Interface definition for a callback to be invoked when the episode meta data
+ * is written to disk.
  */
-public interface OnSelectPodcastListener {
+public interface OnStoreEpisodeMetadataListener {
 
     /**
-     * Called on listener to reflect that a podcast has been selected.
+     * Called on successful completion.
+     */
+    public void onEpisodeMetadataStored();
+
+    /**
+     * Called on failure.
      * 
-     * @param selectedPodcast Podcast selected by the user (not
-     *            <code>null</code>).
+     * @param exception The reason for the failure.
      */
-    public void onPodcastSelected(Podcast selectedPodcast);
-
-    /**
-     * Called on listener to reflect that all podcasts are selected.
-     */
-    public void onAllPodcastsSelected();
-
-    /**
-     * Called on listener to reflect that downloads are selected.
-     */
-    public void onDownloadsSelected();
-
-    /**
-     * Called on listener to reflect that no podcast is selected anymore.
-     */
-    public void onNoPodcastSelected();
+    public void onEpisodeMetadataStoreFailed(Exception exception);
 }
