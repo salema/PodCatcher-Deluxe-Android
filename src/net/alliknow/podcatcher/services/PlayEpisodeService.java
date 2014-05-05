@@ -359,12 +359,16 @@ public class PlayEpisodeService extends Service implements MediaPlayerControl,
     }
 
     private void setVideoSurface(SurfaceHolder holder) {
-        if (player != null) {
+        try {
             player.setDisplay(holder);
             player.setScreenOnWhilePlaying(holder != null);
 
             if (holder != null)
                 onVideoSizeChanged(player, player.getVideoWidth(), player.getVideoHeight());
+        } catch (IllegalArgumentException iae) {
+            Log.w(TAG, "Surface holder cannot be set as video sink", iae);
+        } catch (NullPointerException npe) {
+            // pass
         }
     }
 
