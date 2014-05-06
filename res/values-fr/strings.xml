@@ -92,6 +92,9 @@
     <string name="downloads_none">Aucun épisode disponible. Pour sauvegarder des épisodes, cliquez sur le symbole de téléchargement.</string>
     <string name="download_started">Téléchargement de\n\"%s\"\ndémarré</string>
     <string name="download_failed">Le téléchargement a échoué:\n\"%s\"</string>
+    <string name="download_failed_cannot_write">Le téléchargement a échoué:\n\"%s\"</string>
+    <string name="download_failed_no_space">Le téléchargement a échoué:\n\"%s\"</string>
+    <string name="download_failed_download_app_disabled">Le téléchargement a échoué:\n\"%s\"</string>
     <string name="playlist">Liste de lecture</string>
     <string name="playlist_empty">Votre liste de lecture est vide. Pour y ajouter de nouveaux fichiers, utilisez le menu contextuel de la liste d’épisodes (pour y accéder, cliquez sur un épisode et restez appuyé).</string>
     <string name="playlist_add">Ajouter à la liste de lecture</string>
