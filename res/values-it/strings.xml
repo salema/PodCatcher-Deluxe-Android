@@ -82,6 +82,9 @@
     <string name="downloads_none">Nessun download. Usa l\'icona download nel menu per rendere gli episodi disponibili offline.</string>
     <string name="download_started">Download iniziato per\n\"%s\"</string>
     <string name="download_failed">Download fallito per\n\"%s\"</string>
+    <string name="download_failed_cannot_write">Download fallito per\n\"%s\"</string>
+    <string name="download_failed_no_space">Download fallito per\n\"%s\"</string>
+    <string name="download_failed_download_app_disabled">Download fallito per\n\"%s\"</string>
     <string name="auth">Autorizzazione</string>
     <string name="auth_edit">Modifica autorizzazione</string>
     <string name="auth_username">Nome utente</string>

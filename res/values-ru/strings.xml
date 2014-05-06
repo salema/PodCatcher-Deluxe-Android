@@ -90,6 +90,9 @@
     <string name="downloads_none">Нет загруженных эпизодов. Чтобы загрузить эпизоды, нажмите на иконку загрузки в меню. Так вы сможете просматривать их без подключения к интернету.</string>
     <string name="download_started">Началась загрузка эпизода\n\"%s\"</string>
     <string name="download_failed">Не удалось загрузить эпизод\n\"%s\"</string>
+    <string name="download_failed_cannot_write">Не удалось загрузить эпизод\n\"%s\"</string>
+    <string name="download_failed_no_space">Не удалось загрузить эпизод\n\"%s\"</string>
+    <string name="download_failed_download_app_disabled">Не удалось загрузить эпизод\n\"%s\"</string>
     <string name="auth">Авторизация</string>
     <string name="auth_edit">Редактировать параметры авторизации</string>
     <string name="auth_username">Имя пользователя</string>

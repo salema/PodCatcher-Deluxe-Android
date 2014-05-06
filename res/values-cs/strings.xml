@@ -86,6 +86,9 @@
     <string name="downloads_none">Žádné stahování. Použijte ikonu pro stahování v nabídce pro zpřístupnění dílů, když nejste připojen k internetu.</string>
     <string name="download_started">Stahování spuštěno pro \n\"%s\"</string>
     <string name="download_failed">Stahování se nepodařilo u \n\"%s\"</string>
+    <string name="download_failed_cannot_write">Stahování se nepodařilo u \n\"%s\"</string>
+    <string name="download_failed_no_space">Stahování se nepodařilo u \n\"%s\"</string>
+    <string name="download_failed_download_app_disabled">Stahování se nepodařilo u \n\"%s\"</string>
     <string name="auth">Oprávnění</string>
     <string name="auth_edit">Upravit oprávnění</string>
     <string name="auth_username">Uživatleské jméno</string>

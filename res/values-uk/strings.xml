@@ -90,6 +90,9 @@
     <string name="downloads_none">Немає завантажень. Натисніть на іконку \"Завантаження\" у меню, щоб завантажити епізоди та зробити їх доступними без підключення до Інтернету.</string>
     <string name="download_started">Почалося завантаження епізоду\n\"%s\"</string>
     <string name="download_failed">Не вдалося завантажити епізод\n\"%s\"</string>
+    <string name="download_failed_cannot_write">Не вдалося завантажити епізод\n\"%s\"</string>
+    <string name="download_failed_no_space">Не вдалося завантажити епізод\n\"%s\"</string>
+    <string name="download_failed_download_app_disabled">Не вдалося завантажити епізод\n\"%s\"</string>
     <string name="auth">Авторизація</string>
     <string name="auth_edit">Змінити ім’я користувача і пароль</string>
     <string name="auth_username">Ім’я користувача</string>

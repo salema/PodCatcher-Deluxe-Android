@@ -82,6 +82,9 @@
     <string name="downloads_none">Aucun épisode disponible. Pour sauvegarder des épisodes, cliquez sur le symbole de téléchargement.</string>
     <string name="download_started">Téléchargement de\n\"%s\"\ndémarré</string>
     <string name="download_failed">Le téléchargement a échoué:\n\"%s\"</string>
+    <string name="download_failed_cannot_write">Le téléchargement a échoué:\n\"%s\"</string>
+    <string name="download_failed_no_space">Le téléchargement a échoué:\n\"%s\"</string>
+    <string name="download_failed_download_app_disabled">Le téléchargement a échoué:\n\"%s\"</string>
     <string name="auth">Autorisation</string>
     <string name="auth_edit">Modifier l’autorisation</string>
     <string name="auth_username">Identifiant</string>
