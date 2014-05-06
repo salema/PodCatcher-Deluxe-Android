@@ -11,6 +11,6 @@ public class Global {
     public static final String WEBSITE = "http://www.podcatcher-deluxe.com";
 
     public static final String USER_AGENT =
-            String.format("PodcatcherDeluxe/4.0.1 (%s)", WEBSITE);
+            String.format("PodcatcherDeluxe/4.0.2 (%s)", WEBSITE);
 
 }
