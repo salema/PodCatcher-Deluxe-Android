@@ -321,10 +321,12 @@ com.podcatcher.deluxe.video.Podcatcher:
     public static final java.lang.String USER_AGENT_VALUE
     public static final java.lang.String AUTHORIZATION_KEY
     public static final long HTTP_CACHE_SIZE
-com.podcatcher.deluxe.video.R
+com.podcatcher.deluxe.video.R:
+    10:10:public R()
 com.podcatcher.deluxe.video.R$anim
 com.podcatcher.deluxe.video.R$array
 com.podcatcher.deluxe.video.R$attr
+com.podcatcher.deluxe.video.R$bool
 com.podcatcher.deluxe.video.R$color
 com.podcatcher.deluxe.video.R$dimen
 com.podcatcher.deluxe.video.R$drawable
@@ -335,6 +337,8 @@ com.podcatcher.deluxe.video.R$menu
 com.podcatcher.deluxe.video.R$plurals
 com.podcatcher.deluxe.video.R$string
 com.podcatcher.deluxe.video.R$style
+com.podcatcher.deluxe.video.R$styleable:
+    428:428:public R$styleable()
 com.podcatcher.deluxe.video.R$xml
 com.podcatcher.deluxe.video.SelectFileActivity:
     public static final java.lang.String INITIAL_PATH_KEY
@@ -377,16 +381,17 @@ com.podcatcher.deluxe.video.model.PodcastManager:
     private static final int MAX_STALE_OFFLINE
     public static final java.lang.String OPML_FILENAME
     public static final java.lang.String OPML_FILE_ENCODING
-    728:750:private void putSamplePodcasts()
+    732:754:private void putSamplePodcasts()
 com.podcatcher.deluxe.video.model.SyncManager:
     public static final int TIME_TO_SYNC
     public static final int TIME_TO_SYNC_MOBILE
-    private static final int monitorSyncHandlerTimeout
+    private static final int TRIGGER_SYNC_HANDLER_INTERVAL
+    private static final int MONITOR_SYNC_HANDLER_INTERVAL
     private static final java.lang.String TAG
 com.podcatcher.deluxe.video.model.sync.dropbox.DropboxBaseSyncController:
     protected static final java.lang.String TAG
-    275:290:protected void printStore()
-    293:304:private void clearStore()
+    270:285:protected void printStore()
+    288:299:private void clearStore()
 com.podcatcher.deluxe.video.model.sync.dropbox.DropboxEpisodeMetadataSyncController:
     private static final java.lang.String EPISODE_TABLE
     private static final java.lang.String PODCAST_URL
@@ -472,6 +477,11 @@ com.podcatcher.deluxe.video.services.PlayEpisodeService:
     private static final java.lang.String TAG
 com.podcatcher.deluxe.video.services.PodcatcherRCClient:
     private static final int SUPPORTED_TRANSPORTS
+com.podcatcher.deluxe.video.view.DropShadowLinearLayout:
+    private static final int DARK_COLOR
+    private static final int LIGHT_COLOR
+    private static final int ALPHA
+    private static final int PIXELS_DPI
 com.podcatcher.deluxe.video.view.EpisodeListItemView:
     private static final java.lang.String NO_TITLE
     private static final java.lang.String NO_DATE

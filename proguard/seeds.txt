@@ -2190,6 +2190,12 @@ com.podcatcher.deluxe.video.R$anim: int slide_out_right
 com.podcatcher.deluxe.video.R$array: int genres
 com.podcatcher.deluxe.video.R$array: int languages
 com.podcatcher.deluxe.video.R$array: int types
+com.podcatcher.deluxe.video.R$attr: int shadowBottom
+com.podcatcher.deluxe.video.R$attr: int shadowRight
+com.podcatcher.deluxe.video.R$bool: int episode_list_shadow_bottom
+com.podcatcher.deluxe.video.R$bool: int episode_list_shadow_right
+com.podcatcher.deluxe.video.R$bool: int podcast_list_shadow_bottom
+com.podcatcher.deluxe.video.R$bool: int podcast_list_shadow_right
 com.podcatcher.deluxe.video.R$color: int button_blue_dark
 com.podcatcher.deluxe.video.R$color: int button_blue_light
 com.podcatcher.deluxe.video.R$color: int button_green_dark
@@ -2205,16 +2211,16 @@ com.podcatcher.deluxe.video.R$color: int button_red_dark_disabled
 com.podcatcher.deluxe.video.R$color: int button_red_light
 com.podcatcher.deluxe.video.R$color: int button_red_light_disabled
 com.podcatcher.deluxe.video.R$color: int divider
-com.podcatcher.deluxe.video.R$color: int divider_off
 com.podcatcher.deluxe.video.R$color: int featured_suggestion
 com.podcatcher.deluxe.video.R$color: int text_error
 com.podcatcher.deluxe.video.R$color: int text_secondary
 com.podcatcher.deluxe.video.R$color: int theme_dark
 com.podcatcher.deluxe.video.R$color: int theme_light
-com.podcatcher.deluxe.video.R$dimen: int divider_width
+com.podcatcher.deluxe.video.R$dimen: int episode_list_shadow_padding
 com.podcatcher.deluxe.video.R$dimen: int episode_view_padding
 com.podcatcher.deluxe.video.R$dimen: int font_size_large
 com.podcatcher.deluxe.video.R$dimen: int list_item_padding
+com.podcatcher.deluxe.video.R$dimen: int podcast_list_shadow_padding
 com.podcatcher.deluxe.video.R$dimen: int progress_bar_horizontal_height
 com.podcatcher.deluxe.video.R$dimen: int suggestion_add_padding
 com.podcatcher.deluxe.video.R$drawable: int button_blue
@@ -2281,8 +2287,6 @@ com.podcatcher.deluxe.video.R$id: int content
 com.podcatcher.deluxe.video.R$id: int current_path
 com.podcatcher.deluxe.video.R$id: int device_id
 com.podcatcher.deluxe.video.R$id: int device_id_label
-com.podcatcher.deluxe.video.R$id: int divider_first
-com.podcatcher.deluxe.video.R$id: int divider_second
 com.podcatcher.deluxe.video.R$id: int download_icon
 com.podcatcher.deluxe.video.R$id: int edit_auth_contextmenuitem
 com.podcatcher.deluxe.video.R$id: int empty
@@ -2316,6 +2320,8 @@ com.podcatcher.deluxe.video.R$id: int info_box
 com.podcatcher.deluxe.video.R$id: int info_box_divider
 com.podcatcher.deluxe.video.R$id: int last_sync
 com.podcatcher.deluxe.video.R$id: int list_item_caption
+com.podcatcher.deluxe.video.R$id: int list_item_caption_count
+com.podcatcher.deluxe.video.R$id: int list_item_caption_text
 com.podcatcher.deluxe.video.R$id: int list_item_main_content
 com.podcatcher.deluxe.video.R$id: int list_item_progress
 com.podcatcher.deluxe.video.R$id: int list_item_title
@@ -2426,7 +2432,6 @@ com.podcatcher.deluxe.video.R$plurals: int downloads_remove_text
 com.podcatcher.deluxe.video.R$plurals: int downloads_remove_title
 com.podcatcher.deluxe.video.R$plurals: int episodes
 com.podcatcher.deluxe.video.R$plurals: int episodes_filtered
-com.podcatcher.deluxe.video.R$plurals: int episodes_new
 com.podcatcher.deluxe.video.R$plurals: int podcasts
 com.podcatcher.deluxe.video.R$string: int about
 com.podcatcher.deluxe.video.R$string: int app_name
@@ -2440,6 +2445,9 @@ com.podcatcher.deluxe.video.R$string: int connect
 com.podcatcher.deluxe.video.R$string: int divider
 com.podcatcher.deluxe.video.R$string: int download
 com.podcatcher.deluxe.video.R$string: int download_failed
+com.podcatcher.deluxe.video.R$string: int download_failed_cannot_write
+com.podcatcher.deluxe.video.R$string: int download_failed_download_app_disabled
+com.podcatcher.deluxe.video.R$string: int download_failed_no_space
 com.podcatcher.deluxe.video.R$string: int download_started
 com.podcatcher.deluxe.video.R$string: int downloads
 com.podcatcher.deluxe.video.R$string: int downloads_none
@@ -2459,7 +2467,6 @@ com.podcatcher.deluxe.video.R$string: int episodes_no_new
 com.podcatcher.deluxe.video.R$string: int episodes_old
 com.podcatcher.deluxe.video.R$string: int episodes_select_all
 com.podcatcher.deluxe.video.R$string: int episodes_sort_toggle
-com.podcatcher.deluxe.video.R$string: int episodes_total
 com.podcatcher.deluxe.video.R$string: int file_select
 com.podcatcher.deluxe.video.R$string: int file_select_access_denied
 com.podcatcher.deluxe.video.R$string: int file_select_file
@@ -2554,6 +2561,9 @@ com.podcatcher.deluxe.video.R$style: int ListItem_SubTitle
 com.podcatcher.deluxe.video.R$style: int ListItem_Title
 com.podcatcher.deluxe.video.R$style: int ListView_Empty
 com.podcatcher.deluxe.video.R$style: int ProgressBar_Horizontal
+com.podcatcher.deluxe.video.R$styleable: int[] DropShadowLinearLayout
+com.podcatcher.deluxe.video.R$styleable: int DropShadowLinearLayout_shadowBottom
+com.podcatcher.deluxe.video.R$styleable: int DropShadowLinearLayout_shadowRight
 com.podcatcher.deluxe.video.R$xml: int preferences
 com.podcatcher.deluxe.video.RemovePodcastActivity
 com.podcatcher.deluxe.video.RemovePodcastActivity: RemovePodcastActivity()
@@ -2573,6 +2583,8 @@ com.podcatcher.deluxe.video.model.sync.SyncController$SyncMode: com.podcatcher.d
 com.podcatcher.deluxe.video.model.sync.SyncController$SyncMode: com.podcatcher.deluxe.video.model.sync.SyncController$SyncMode valueOf(java.lang.String)
 com.podcatcher.deluxe.video.model.sync.gpodder.GpodderEpisodeMetadataSyncController$Action: com.podcatcher.deluxe.video.model.sync.gpodder.GpodderEpisodeMetadataSyncController$Action[] values()
 com.podcatcher.deluxe.video.model.sync.gpodder.GpodderEpisodeMetadataSyncController$Action: com.podcatcher.deluxe.video.model.sync.gpodder.GpodderEpisodeMetadataSyncController$Action valueOf(java.lang.String)
+com.podcatcher.deluxe.video.model.tasks.remote.DownloadEpisodeTask$EpisodeDownloadError: com.podcatcher.deluxe.video.model.tasks.remote.DownloadEpisodeTask$EpisodeDownloadError[] values()
+com.podcatcher.deluxe.video.model.tasks.remote.DownloadEpisodeTask$EpisodeDownloadError: com.podcatcher.deluxe.video.model.tasks.remote.DownloadEpisodeTask$EpisodeDownloadError valueOf(java.lang.String)
 com.podcatcher.deluxe.video.model.tasks.remote.LoadPodcastTask$PodcastLoadError: com.podcatcher.deluxe.video.model.tasks.remote.LoadPodcastTask$PodcastLoadError[] values()
 com.podcatcher.deluxe.video.model.tasks.remote.LoadPodcastTask$PodcastLoadError: com.podcatcher.deluxe.video.model.tasks.remote.LoadPodcastTask$PodcastLoadError valueOf(java.lang.String)
 com.podcatcher.deluxe.video.model.types.Genre: com.podcatcher.deluxe.video.model.types.Genre[] values()
@@ -2593,6 +2605,8 @@ com.podcatcher.deluxe.video.services.PlayEpisodeService
 com.podcatcher.deluxe.video.services.PlayEpisodeService: PlayEpisodeService()
 com.podcatcher.deluxe.video.view.ContentSpinner: void setTitle(java.lang.String)
 com.podcatcher.deluxe.video.view.ContentSpinner: void setSubtitle(java.lang.String)
+com.podcatcher.deluxe.video.view.DropShadowLinearLayout
+com.podcatcher.deluxe.video.view.DropShadowLinearLayout: DropShadowLinearLayout(android.content.Context,android.util.AttributeSet)
 com.podcatcher.deluxe.video.view.EpisodeListItemView
 com.podcatcher.deluxe.video.view.EpisodeListItemView: EpisodeListItemView(android.content.Context,android.util.AttributeSet)
 com.podcatcher.deluxe.video.view.FileListItemView
