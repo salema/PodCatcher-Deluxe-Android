@@ -2188,6 +2188,12 @@ net.alliknow.podcatcher.R$anim: int slide_out_right
 net.alliknow.podcatcher.R$array: int genres
 net.alliknow.podcatcher.R$array: int languages
 net.alliknow.podcatcher.R$array: int types
+net.alliknow.podcatcher.R$attr: int shadowBottom
+net.alliknow.podcatcher.R$attr: int shadowRight
+net.alliknow.podcatcher.R$bool: int episode_list_shadow_bottom
+net.alliknow.podcatcher.R$bool: int episode_list_shadow_right
+net.alliknow.podcatcher.R$bool: int podcast_list_shadow_bottom
+net.alliknow.podcatcher.R$bool: int podcast_list_shadow_right
 net.alliknow.podcatcher.R$color: int button_blue_dark
 net.alliknow.podcatcher.R$color: int button_blue_light
 net.alliknow.podcatcher.R$color: int button_green_dark
@@ -2203,16 +2209,16 @@ net.alliknow.podcatcher.R$color: int button_red_dark_disabled
 net.alliknow.podcatcher.R$color: int button_red_light
 net.alliknow.podcatcher.R$color: int button_red_light_disabled
 net.alliknow.podcatcher.R$color: int divider
-net.alliknow.podcatcher.R$color: int divider_off
 net.alliknow.podcatcher.R$color: int featured_suggestion
 net.alliknow.podcatcher.R$color: int text_error
 net.alliknow.podcatcher.R$color: int text_secondary
 net.alliknow.podcatcher.R$color: int theme_dark
 net.alliknow.podcatcher.R$color: int theme_light
-net.alliknow.podcatcher.R$dimen: int divider_width
+net.alliknow.podcatcher.R$dimen: int episode_list_shadow_padding
 net.alliknow.podcatcher.R$dimen: int episode_view_padding
 net.alliknow.podcatcher.R$dimen: int font_size_large
 net.alliknow.podcatcher.R$dimen: int list_item_padding
+net.alliknow.podcatcher.R$dimen: int podcast_list_shadow_padding
 net.alliknow.podcatcher.R$dimen: int progress_bar_horizontal_height
 net.alliknow.podcatcher.R$dimen: int suggestion_add_padding
 net.alliknow.podcatcher.R$drawable: int button_blue
@@ -2230,6 +2236,8 @@ net.alliknow.podcatcher.R$drawable: int ic_file_up
 net.alliknow.podcatcher.R$drawable: int ic_gpodder
 net.alliknow.podcatcher.R$drawable: int ic_launcher
 net.alliknow.podcatcher.R$drawable: int ic_media_buffering
+net.alliknow.podcatcher.R$drawable: int ic_media_downloaded
+net.alliknow.podcatcher.R$drawable: int ic_media_downloading
 net.alliknow.podcatcher.R$drawable: int ic_media_forward
 net.alliknow.podcatcher.R$drawable: int ic_media_pause
 net.alliknow.podcatcher.R$drawable: int ic_media_play
@@ -2239,6 +2247,7 @@ net.alliknow.podcatcher.R$drawable: int ic_media_stop
 net.alliknow.podcatcher.R$drawable: int ic_menu_add
 net.alliknow.podcatcher.R$drawable: int ic_menu_authorization
 net.alliknow.podcatcher.R$drawable: int ic_menu_delete
+net.alliknow.podcatcher.R$drawable: int ic_menu_download
 net.alliknow.podcatcher.R$drawable: int ic_menu_email
 net.alliknow.podcatcher.R$drawable: int ic_menu_export
 net.alliknow.podcatcher.R$drawable: int ic_menu_import
@@ -2265,15 +2274,18 @@ net.alliknow.podcatcher.R$id: int content
 net.alliknow.podcatcher.R$id: int current_path
 net.alliknow.podcatcher.R$id: int device_id
 net.alliknow.podcatcher.R$id: int device_id_label
-net.alliknow.podcatcher.R$id: int divider_first
-net.alliknow.podcatcher.R$id: int divider_second
+net.alliknow.podcatcher.R$id: int download_icon
 net.alliknow.podcatcher.R$id: int edit_auth_contextmenuitem
 net.alliknow.podcatcher.R$id: int empty
 net.alliknow.podcatcher.R$id: int episode
 net.alliknow.podcatcher.R$id: int episode_description
 net.alliknow.podcatcher.R$id: int episode_divider
+net.alliknow.podcatcher.R$id: int episode_download_contextmenuitem
+net.alliknow.podcatcher.R$id: int episode_download_menuitem
 net.alliknow.podcatcher.R$id: int episode_list
 net.alliknow.podcatcher.R$id: int episode_load_menuitem
+net.alliknow.podcatcher.R$id: int episode_remove_contextmenuitem
+net.alliknow.podcatcher.R$id: int episode_select_all_contextmenuitem
 net.alliknow.podcatcher.R$id: int episode_title
 net.alliknow.podcatcher.R$id: int file_icon
 net.alliknow.podcatcher.R$id: int file_name
@@ -2286,6 +2298,7 @@ net.alliknow.podcatcher.R$id: int icon
 net.alliknow.podcatcher.R$id: int import_opml_button
 net.alliknow.podcatcher.R$id: int last_sync
 net.alliknow.podcatcher.R$id: int list_item_caption
+net.alliknow.podcatcher.R$id: int list_item_main_content
 net.alliknow.podcatcher.R$id: int list_item_progress
 net.alliknow.podcatcher.R$id: int list_item_title
 net.alliknow.podcatcher.R$id: int login_failed
@@ -2378,11 +2391,15 @@ net.alliknow.podcatcher.R$layout: int suggestion_list_item
 net.alliknow.podcatcher.R$layout: int sync_gpodder_config
 net.alliknow.podcatcher.R$layout: int sync_list
 net.alliknow.podcatcher.R$layout: int sync_list_item
+net.alliknow.podcatcher.R$menu: int episode
 net.alliknow.podcatcher.R$menu: int episode_list
+net.alliknow.podcatcher.R$menu: int episode_list_context
 net.alliknow.podcatcher.R$menu: int player
 net.alliknow.podcatcher.R$menu: int podcast_list
 net.alliknow.podcatcher.R$menu: int podcast_list_context
 net.alliknow.podcatcher.R$menu: int podcatcher
+net.alliknow.podcatcher.R$plurals: int downloads_remove_text
+net.alliknow.podcatcher.R$plurals: int downloads_remove_title
 net.alliknow.podcatcher.R$plurals: int episodes
 net.alliknow.podcatcher.R$plurals: int podcasts
 net.alliknow.podcatcher.R$string: int about
@@ -2396,6 +2413,14 @@ net.alliknow.podcatcher.R$string: int auth_username
 net.alliknow.podcatcher.R$string: int cancel
 net.alliknow.podcatcher.R$string: int connect
 net.alliknow.podcatcher.R$string: int divider
+net.alliknow.podcatcher.R$string: int download
+net.alliknow.podcatcher.R$string: int download_failed
+net.alliknow.podcatcher.R$string: int download_failed_cannot_write
+net.alliknow.podcatcher.R$string: int download_failed_download_app_disabled
+net.alliknow.podcatcher.R$string: int download_failed_no_space
+net.alliknow.podcatcher.R$string: int download_started
+net.alliknow.podcatcher.R$string: int downloads
+net.alliknow.podcatcher.R$string: int downloads_none
 net.alliknow.podcatcher.R$string: int dropbox_appkey
 net.alliknow.podcatcher.R$string: int dropbox_appsecret
 net.alliknow.podcatcher.R$string: int dropbox_scheme
@@ -2406,6 +2431,7 @@ net.alliknow.podcatcher.R$string: int episode_no_description
 net.alliknow.podcatcher.R$string: int episode_none
 net.alliknow.podcatcher.R$string: int episode_none_all_podcasts
 net.alliknow.podcatcher.R$string: int episode_none_selected
+net.alliknow.podcatcher.R$string: int episodes_select_all
 net.alliknow.podcatcher.R$string: int episodes_sort_toggle
 net.alliknow.podcatcher.R$string: int file_select
 net.alliknow.podcatcher.R$string: int file_select_access_denied
@@ -2489,6 +2515,9 @@ net.alliknow.podcatcher.R$style: int ListItem_SubTitle
 net.alliknow.podcatcher.R$style: int ListItem_Title
 net.alliknow.podcatcher.R$style: int ListView_Empty
 net.alliknow.podcatcher.R$style: int ProgressBar_Horizontal
+net.alliknow.podcatcher.R$styleable: int[] DropShadowLinearLayout
+net.alliknow.podcatcher.R$styleable: int DropShadowLinearLayout_shadowBottom
+net.alliknow.podcatcher.R$styleable: int DropShadowLinearLayout_shadowRight
 net.alliknow.podcatcher.R$xml: int preferences
 net.alliknow.podcatcher.RemovePodcastActivity
 net.alliknow.podcatcher.RemovePodcastActivity: RemovePodcastActivity()
@@ -2508,6 +2537,8 @@ net.alliknow.podcatcher.model.sync.ControllerImpl: net.alliknow.podcatcher.model
 net.alliknow.podcatcher.model.sync.ControllerImpl: net.alliknow.podcatcher.model.sync.ControllerImpl valueOf(java.lang.String)
 net.alliknow.podcatcher.model.sync.SyncController$SyncMode: net.alliknow.podcatcher.model.sync.SyncController$SyncMode[] values()
 net.alliknow.podcatcher.model.sync.SyncController$SyncMode: net.alliknow.podcatcher.model.sync.SyncController$SyncMode valueOf(java.lang.String)
+net.alliknow.podcatcher.model.tasks.remote.DownloadEpisodeTask$EpisodeDownloadError: net.alliknow.podcatcher.model.tasks.remote.DownloadEpisodeTask$EpisodeDownloadError[] values()
+net.alliknow.podcatcher.model.tasks.remote.DownloadEpisodeTask$EpisodeDownloadError: net.alliknow.podcatcher.model.tasks.remote.DownloadEpisodeTask$EpisodeDownloadError valueOf(java.lang.String)
 net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask$PodcastLoadError: net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask$PodcastLoadError[] values()
 net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask$PodcastLoadError: net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask$PodcastLoadError valueOf(java.lang.String)
 net.alliknow.podcatcher.model.types.Genre: net.alliknow.podcatcher.model.types.Genre[] values()
@@ -2526,6 +2557,8 @@ net.alliknow.podcatcher.services.PlayEpisodeService
 net.alliknow.podcatcher.services.PlayEpisodeService: PlayEpisodeService()
 net.alliknow.podcatcher.view.ContentSpinner: void setTitle(java.lang.String)
 net.alliknow.podcatcher.view.ContentSpinner: void setSubtitle(java.lang.String)
+net.alliknow.podcatcher.view.DropShadowLinearLayout
+net.alliknow.podcatcher.view.DropShadowLinearLayout: DropShadowLinearLayout(android.content.Context,android.util.AttributeSet)
 net.alliknow.podcatcher.view.EpisodeListItemView
 net.alliknow.podcatcher.view.EpisodeListItemView: EpisodeListItemView(android.content.Context,android.util.AttributeSet)
 net.alliknow.podcatcher.view.FileListItemView
