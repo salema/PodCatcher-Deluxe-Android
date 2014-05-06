@@ -97,6 +97,9 @@
     <string name="downloads_none">Žádné stahování. Použijte ikonu pro stahování v nabídce pro zpřístupnění dílů, když nejste připojen k internetu.</string>
     <string name="download_started">Stahování spuštěno pro \n\"%s\"</string>
     <string name="download_failed">Stahování se nepodařilo u \n\"%s\"</string>
+    <string name="download_failed_cannot_write">Stahování se nepodařilo u \n\"%s\"</string>
+    <string name="download_failed_no_space">Stahování se nepodařilo u \n\"%s\"</string>
+    <string name="download_failed_download_app_disabled">Stahování se nepodařilo u \n\"%s\"</string>
     <string name="playlist">Seznam skladeb</string>
     <string name="playlist_empty">Váš seznam skladeb je prázdný. Použijte nabídku pro seznam dílů (stiskněte a podržte všechny díly k vložení) k přidání dílů do seznamu skladeb.</string>
     <string name="playlist_add">Přidat do seznamu skladeb</string>

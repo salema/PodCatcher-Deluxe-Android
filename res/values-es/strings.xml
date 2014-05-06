@@ -92,6 +92,9 @@
     <string name="downloads_none">No hay ningún episodio disponible. Para almacenar episodios, haga clic en el símbolo de descarga del menú.</string>
     <string name="download_started">Descarga activa:\n\"%s\"</string>
     <string name="download_failed">La descarga ha fallado:\n\"%s\"</string>
+    <string name="download_failed_cannot_write">La descarga ha fallado:\n\"%s\"</string>
+    <string name="download_failed_no_space">La descarga ha fallado:\n\"%s\"</string>
+    <string name="download_failed_download_app_disabled">La descarga ha fallado:\n\"%s\"</string>
     <string name="playlist">Lista de reproducción</string>
     <string name="playlist_empty">La lista de reproducción está vacía. Para agregar archivos nuevos, utilice el menú contextual de la lista de episodios (para entrar, haga clic en un episodio y manténgalo presionado).</string>
     <string name="playlist_add">Añadir a la lista de reproducción</string>

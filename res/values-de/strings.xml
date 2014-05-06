@@ -92,6 +92,9 @@
     <string name="downloads_none">Keine Downloads vorhanden. Benutzen Sie das Download-Zeichen im Menü, um Episoden auf dem Gerät zu speichern.</string>
     <string name="download_started">Download gestartet für \n\"%s\"</string>
     <string name="download_failed">Download fehlgeschlagen für \n\"%s\"</string>
+    <string name="download_failed_cannot_write">Download fehlgeschlagen für\n\"%s\",\nda der gewählte Ordner nicht schreibbar ist.</string>
+    <string name="download_failed_no_space">Download fehlgeschlagen für\n\"%s\",\nda nicht genug Speicherplatz zur Verfügung steht.</string>
+    <string name="download_failed_download_app_disabled">Download fehlgeschlagen für\n\"%s\",\nda die Android Download-App deaktiviert ist.</string>
     <string name="playlist">Wiedergabeliste</string>
     <string name="playlist_empty">Ihre Wiedergabeliste ist leer. Bitte benutzen Sie das Kontextmenü der Episodenliste (zum Öffnen eine beliebige Episode drücken und halten) um Einträge hinzuzufügen.</string>
     <string name="playlist_add">Zur Wiedergabeliste hinzufügen</string>

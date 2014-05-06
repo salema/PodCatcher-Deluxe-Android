@@ -92,6 +92,9 @@
     <string name="downloads_none">Nessun download. Usa l\'icona download nel menu per rendere gli episodi disponibili offline.</string>
     <string name="download_started">Download iniziato per\n\"%s\"</string>
     <string name="download_failed">Download fallito per\n\"%s\"</string>
+    <string name="download_failed_cannot_write">Download fallito per\n\"%s\"</string>
+    <string name="download_failed_no_space">Download fallito per\n\"%s\"</string>
+    <string name="download_failed_download_app_disabled">Download fallito per\n\"%s\"</string>
     <string name="playlist">Playlist</string>
     <string name="playlist_empty">La tua playlist è vuota. Usa l\'elenco episodio dal menu contestuale (tieni premuto su qualsiasi episodio per visualizzarlo) per aggiungere gli episodi alla playlist.</string>
     <string name="playlist_add">Aggiungi alla playlist</string>
