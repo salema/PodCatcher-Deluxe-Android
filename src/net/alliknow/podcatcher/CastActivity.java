@@ -36,6 +36,7 @@ import com.google.android.gms.cast.Cast;
 import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
+import com.google.android.gms.cast.MediaStatus;
 import com.google.android.gms.cast.RemoteMediaPlayer;
 import com.google.android.gms.cast.RemoteMediaPlayer.MediaChannelResult;
 import com.google.android.gms.common.ConnectionResult;
@@ -55,8 +56,10 @@ public abstract class CastActivity extends BaseActivity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         RemoteMediaPlayer.OnStatusUpdatedListener, RemoteMediaPlayer.OnMetadataUpdatedListener {
 
+    protected Episode castingEpisode;
     protected boolean casting = false;
-    private boolean castPlaying = false;
+    protected MediaInfo castInfo;
+    protected MediaStatus castStatus;
     protected RemoteMediaPlayer castPlayer = new RemoteMediaPlayer();
 
     private static final String APP_ID = DEFAULT_MEDIA_RECEIVER_APPLICATION_ID;
@@ -201,11 +204,14 @@ public abstract class CastActivity extends BaseActivity implements
     @Override
     public void onStatusUpdated() {
         Log.d(TAG, "Remote media player status updated");
+
+        this.castStatus = castPlayer.getMediaStatus();
     }
 
     @Override
     public void onMetadataUpdated() {
         Log.d(TAG, "Remote media player metadata updated");
+        this.castInfo = castPlayer.getMediaInfo();
     }
 
     @Override
@@ -220,6 +226,7 @@ public abstract class CastActivity extends BaseActivity implements
     }
 
     protected void play(Episode episode) {
+        this.castingEpisode = episode;
         try {
             Cast.CastApi.setMessageReceivedCallbacks(apiClient,
                     castPlayer.getNamespace(), castPlayer);
@@ -236,22 +243,20 @@ public abstract class CastActivity extends BaseActivity implements
             MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
             mediaMetadata.putString(MediaMetadata.KEY_TITLE, episode.getName());
             mediaMetadata.putString(MediaMetadata.KEY_ARTIST, episode.getPodcast().getName());
-            MediaInfo mediaInfo = new MediaInfo.Builder(episode.getMediaUrl())
+            this.castInfo = new MediaInfo.Builder(episode.getMediaUrl())
                     .setContentType(
                             episode.getMediaType() == null ? "audio/mp3" : episode.getMediaType())
                     .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
                     .setMetadata(mediaMetadata)
                     .build();
-            castPlayer.load(apiClient, mediaInfo, true)
+            castPlayer.load(apiClient, castInfo, true, episodeManager.getResumeAt(castingEpisode))
                     .setResultCallback(new ResultCallback<RemoteMediaPlayer.MediaChannelResult>() {
                         @Override
                         public void onResult(MediaChannelResult result) {
                             if (result.getStatus().isSuccess()) {
                                 Log.d(TAG, "Media loaded successfully");
-                                castPlaying = true;
                             } else {
                                 Log.d(TAG, "Media playback failed");
-                                castPlaying = false;
                             }
                         }
                     });
@@ -265,11 +270,11 @@ public abstract class CastActivity extends BaseActivity implements
     }
 
     protected void togglePlay() {
-        if (castPlaying)
-            castPlayer.pause(apiClient);
-        else
-            castPlayer.play(apiClient);
-
-        this.castPlaying = !castPlaying;
+        if (castStatus != null) {
+            if (castStatus.getPlayerState() == MediaStatus.PLAYER_STATE_PLAYING)
+                castPlayer.pause(apiClient);
+            else
+                castPlayer.play(apiClient);
+        }
     }
 }
