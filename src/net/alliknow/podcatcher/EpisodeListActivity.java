@@ -510,8 +510,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             }
 
             // Clear and reset the playlist
-            currentEpisodeSet.clear();
-            onPlaylistLoaded(episodeManager.getPlaylist());
+            onPlaylistSelected();
         }
     }
 
@@ -531,8 +530,7 @@ public abstract class EpisodeListActivity extends EpisodeActivity implements
             }
 
             // Clear and reset the playlist
-            currentEpisodeSet.clear();
-            onPlaylistLoaded(episodeManager.getPlaylist());
+            onPlaylistSelected();
         }
     }
 

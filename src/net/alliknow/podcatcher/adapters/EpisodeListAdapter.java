@@ -19,6 +19,8 @@ package net.alliknow.podcatcher.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -102,17 +104,37 @@ public class EpisodeListAdapter extends PodcatcherBaseListAdapter {
 
         // Make sure the coloring is right
         if (checkedPositions.get(position))
-            returnView.setBackgroundColor(lightThemeColor);
+            returnView.setBackgroundDrawable(createBackground(lightThemeColor));
         else if (selectedPositions.get(position))
-            returnView.setBackgroundColor(themeColor);
+            returnView.setBackgroundDrawable(createBackground(themeColor));
         else if (!isOld)
-            returnView.setBackgroundColor(Color.WHITE);
+            returnView.setBackgroundDrawable(createBackground(Color.WHITE));
         else
-            returnView.setBackgroundColor(Color.TRANSPARENT);
+            returnView.setBackgroundDrawable(createBackground(Color.TRANSPARENT));
 
         // Make the view represent episode at given position
         returnView.show(item, showPodcastNames, isOld);
 
         return returnView;
+    }
+
+    private StateListDrawable createBackground(int defaultColor) {
+        final StateListDrawable background = new StateListDrawable();
+
+        // This is needed because we want the list selector to be visible even
+        // though is not drawn on top. To this goal, we set the background to
+        // transparent when the list item is pressed.
+        background.addState(new int[] {
+                android.R.attr.state_pressed
+        }, new ColorDrawable(Color.TRANSPARENT));
+        background.addState(new int[] {
+                android.R.attr.state_focused
+        }, new ColorDrawable(Color.TRANSPARENT));
+        background.addState(new int[] {
+                android.R.attr.state_selected
+        }, new ColorDrawable(Color.TRANSPARENT));
+        background.addState(new int[] {}, new ColorDrawable(defaultColor));
+
+        return background;
     }
 }
