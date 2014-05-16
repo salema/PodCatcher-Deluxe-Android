@@ -314,7 +314,7 @@ public class SwipeReorderListViewTouchListener implements View.OnTouchListener {
         // do something smarter and more performant.
 
         final ViewGroup.LayoutParams lp = dismissView.getLayoutParams();
-        final int originalHeight = dismissView.getHeight();
+        final int originalHeight = lp.height;
 
         ValueAnimator animator = ValueAnimator.ofInt(originalHeight, 1).setDuration(mAnimationTime);
 
