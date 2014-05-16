@@ -367,8 +367,11 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
      * @throws XmlPullParserException On parsing errors.
      */
     public void parse(XmlPullParser parser) throws XmlPullParserException, IOException {
-        // Reset state, keep temp list of old episodes is case of errors
-        final List<Episode> oldEpisodes = new ArrayList<>(episodes);
+        // Keep temp list of old episodes is case of errors (disabled for now,
+        // because this doubles our memory needs and crashes the app at times)
+        // final List<Episode> oldEpisodes = new ArrayList<>(episodes);
+
+        // Reset state
         episodes.clear();
 
         try {
@@ -407,7 +410,7 @@ public class Podcast extends FeedEntity implements Comparable<Podcast> {
             lastLoaded = new Date();
         } catch (XmlPullParserException | IOException e) {
             // Reset the episode list to its former value
-            this.episodes = oldEpisodes;
+            // this.episodes = oldEpisodes;
             throw e;
         } finally {
             // Make sure name is not empty
