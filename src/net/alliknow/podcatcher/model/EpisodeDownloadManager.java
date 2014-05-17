@@ -51,6 +51,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * This class is the part of the episode manager stack that handles the download
@@ -112,8 +113,13 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
             metadataChanged = true;
 
             // Start the actual download
-            new DownloadEpisodeTask(podcatcher, this)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, episode);
+            try {
+                new DownloadEpisodeTask(podcatcher, this)
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, episode);
+            } catch (RejectedExecutionException ree) {
+                // Too many tasks running
+                onEpisodeDownloadFailed(episode, EpisodeDownloadError.UNKNOWN);
+            }
         }
     }
 
@@ -354,8 +360,13 @@ public abstract class EpisodeDownloadManager extends EpisodeBaseManager implemen
      * @see #getDownloads()
      */
     public void getDownloadsAsync(OnLoadDownloadsListener listener, Podcast podcast) {
-        new LoadDownloadsTask(listener, podcast)
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
+        try {
+            new LoadDownloadsTask(listener, podcast)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
+        } catch (RejectedExecutionException ree) {
+            // TODO find a better solution here
+            listener.onDownloadsLoaded(new ArrayList<Episode>());
+        }
     }
 
     /**

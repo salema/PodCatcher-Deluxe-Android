@@ -35,6 +35,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Episode manager in the episode manager stack that cares for the playlist.
@@ -112,8 +113,13 @@ public abstract class EpisodePlaylistManager extends EpisodeDownloadManager {
      * @see #getPlaylist()
      */
     public void getPlaylistAsync(OnLoadPlaylistListener listener, Podcast podcast) {
-        new LoadPlaylistTask(listener, podcast)
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
+        try {
+            new LoadPlaylistTask(listener, podcast)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
+        } catch (RejectedExecutionException ree) {
+            // TODO Find better solution here
+            listener.onPlaylistLoaded(new ArrayList<Episode>());
+        }
     }
 
     /**
