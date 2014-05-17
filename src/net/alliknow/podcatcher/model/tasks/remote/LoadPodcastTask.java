@@ -20,6 +20,7 @@ package net.alliknow.podcatcher.model.tasks.remote;
 import android.util.Log;
 
 import net.alliknow.podcatcher.listeners.OnLoadPodcastListener;
+import net.alliknow.podcatcher.model.EpisodeManager;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
 
@@ -167,6 +168,10 @@ public class LoadPodcastTask extends LoadRemoteFileTask<Podcast, Void> {
                     cancel(true);
                 }
             }
+
+            // 5. We need to wait here and make sure the episode metadata is
+            // available before we return
+            EpisodeManager.getInstance().blockUntilEpisodeMetadataIsLoaded();
         } catch (XmlPullParserException xppe) {
             errorCode = PodcastLoadError.NOT_PARSEABLE;
 
