@@ -26,6 +26,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
 
+import net.alliknow.podcatcher.BaseActivity;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
@@ -51,8 +52,10 @@ import java.util.Date;
  */
 public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 
-    /** The maximum size we sample podcast logos down to */
-    private static final int LOGO_DIMENSION = 500;
+    /** The maximum size we sample podcast logos down to on phones */
+    private static final int LOGO_DIMENSION_SMALL = 100;
+    /** The maximum size we sample podcast logos down to on tablets */
+    private static final int LOGO_DIMENSION_LARGE = 250;
     /** The name of the podcast logo cache directory */
     private static final String CACHE_DIR = "logoCache";
     /** The file name ending for cached logos */
@@ -183,11 +186,9 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 
     /**
      * Create a memory-efficient bitmap at the correct size needed for the
-     * application. If the bitmap is larger than width or height given at
-     * {@link #LoadPodcastLogoTask(Context, OnLoadPodcastLogoListener)}, it will
-     * be sample down.
+     * application.
      * 
-     * @param data Bitmap data loaded from the internet.
+     * @param data Bitmap data loaded from the Internet.
      * @return The decoded and sampled bitmap.
      */
     protected Bitmap decodeAndSampleBitmap(byte[] data) {
@@ -218,10 +219,13 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
         int sampleSize = 1;
 
         // Adjust max height/width according to screen resolution
+        final boolean isLargeDevice = context.getResources().getConfiguration()
+                .smallestScreenWidthDp >= BaseActivity.MIN_PIXEL_LARGE;
         final DisplayMetrics dm = new DisplayMetrics();
         ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
                 .getDefaultDisplay().getMetrics(dm);
-        final int max = round(LOGO_DIMENSION * dm.density);
+        final int max = round((isLargeDevice ? LOGO_DIMENSION_LARGE : LOGO_DIMENSION_SMALL)
+                * dm.density);
 
         if (height > max || width > max)
             sampleSize = round((width > height ? (float) height : (float) width) / (float) max);
