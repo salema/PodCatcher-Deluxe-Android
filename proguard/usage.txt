@@ -423,11 +423,12 @@ net.alliknow.podcatcher.model.tasks.StoreFileTask:
 net.alliknow.podcatcher.model.tasks.remote.DownloadEpisodeTask:
     private static final long DOWNLOAD_STATUS_POLL_INTERVALL
 net.alliknow.podcatcher.model.tasks.remote.LoadPodcastLogoTask:
-    private static final int LOGO_DIMENSION
+    private static final int LOGO_DIMENSION_SMALL
+    private static final int LOGO_DIMENSION_LARGE
     private static final java.lang.String CACHE_DIR
     private static final java.lang.String CACHED_LOGO_ENDING
     private static final java.lang.String TAG
-    106:107:public void setMaxAge(int)
+    109:110:public void setMaxAge(int)
 net.alliknow.podcatcher.model.tasks.remote.LoadPodcastTask:
     public static final int MAX_RSS_FILE_SIZE
     private static final java.lang.String TAG
