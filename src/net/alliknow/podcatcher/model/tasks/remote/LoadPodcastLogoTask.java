@@ -22,11 +22,9 @@ import static java.lang.Math.round;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.WindowManager;
 
-import net.alliknow.podcatcher.BaseActivity;
+import net.alliknow.podcatcher.R;
 import net.alliknow.podcatcher.listeners.OnLoadPodcastLogoListener;
 import net.alliknow.podcatcher.model.types.Podcast;
 import net.alliknow.podcatcher.model.types.Progress;
@@ -52,10 +50,6 @@ import java.util.Date;
  */
 public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
 
-    /** The maximum size we sample podcast logos down to on phones */
-    private static final int LOGO_DIMENSION_SMALL = 100;
-    /** The maximum size we sample podcast logos down to on tablets */
-    private static final int LOGO_DIMENSION_LARGE = 250;
     /** The name of the podcast logo cache directory */
     private static final String CACHE_DIR = "logoCache";
     /** The file name ending for cached logos */
@@ -219,14 +213,8 @@ public class LoadPodcastLogoTask extends LoadRemoteFileTask<Podcast, Bitmap> {
         int sampleSize = 1;
 
         // Adjust max height/width according to screen resolution
-        final boolean isLargeDevice = context.getResources().getConfiguration()
-                .smallestScreenWidthDp >= BaseActivity.MIN_PIXEL_LARGE;
-        final DisplayMetrics dm = new DisplayMetrics();
-        ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
-                .getDefaultDisplay().getMetrics(dm);
-        final int max = round((isLargeDevice ? LOGO_DIMENSION_LARGE : LOGO_DIMENSION_SMALL)
-                * dm.density);
-
+        final int max = context.getResources().getDimensionPixelSize(R.dimen.logo_size);
+        // ... and calculate sample size
         if (height > max || width > max)
             sampleSize = round((width > height ? (float) height : (float) width) / (float) max);
 
