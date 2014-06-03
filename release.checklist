@@ -1,5 +1,6 @@
 Update Dropbox app key and secret to production mode
 Update version number for gpodder.net user agent
-For Amazon and SlideMe, update strings.xml and suggestion_mail.xml
-<a href=http://www.amazon.com/gp/mas/dl/android?p=com.podcatcher.deluxe>Podcatcher Deluxe</a>
-<a href=http://slideme.org/app/com.podcatcher.deluxe>Podcatcher Deluxe</a>
+For Amazon, SlideMe, and Samsung Apps, update strings.xml and suggestion_mail.xml
+<a href="http://www.amazon.com/gp/mas/dl/android?p=com.podcatcher.deluxe">Podcatcher Deluxe</a>
+<a href="http://slideme.org/app/com.podcatcher.deluxe">Podcatcher Deluxe</a>
+<a href="samsungapps://ProductDetail/com.podcatcher.deluxe">Podcatcher Deluxe</a>
